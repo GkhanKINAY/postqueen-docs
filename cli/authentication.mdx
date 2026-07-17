@@ -1,6 +1,6 @@
 ---
 title: Authentication
-description: 'Set up OAuth2 or API key authentication for the Postiz CLI'
+description: 'Set up OAuth2 or API key authentication for the PostQueen CLI'
 ---
 
 ## OAuth2 (Recommended)
@@ -8,33 +8,33 @@ description: 'Set up OAuth2 or API key authentication for the Postiz CLI'
 Authenticate using the device flow — no client ID or secret needed:
 
 ```bash
-postiz auth:login
+postqueen auth:login
 ```
 
 This will:
 1. Display a one-time code in your terminal
 2. Open your browser to authorize
-3. Automatically save credentials to `~/.postiz/credentials.json`
+3. Automatically save credentials to `~/.postqueen/credentials.json`
 
 ### Auth Commands
 
 ```bash
 # Check current auth status (verifies credentials are still valid)
-postiz auth:status
+postqueen auth:status
 
 # Remove stored credentials
-postiz auth:logout
+postqueen auth:logout
 ```
 
 ## API Key
 
-Alternatively, set your Postiz API key as an environment variable:
+Alternatively, set your PostQueen API key as an environment variable:
 
 ```bash
-export POSTIZ_API_KEY=your_api_key_here
+export POSTQUEEN_API_KEY=your_api_key_here
 ```
 
-You can get your API key from the Postiz Settings page.
+You can get your API key from the PostQueen Settings page.
 
 <Note>
 OAuth2 credentials take priority over the API key when both are present.
@@ -44,15 +44,15 @@ OAuth2 credentials take priority over the API key when both are present.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `POSTIZ_API_KEY` | No* | - | Your Postiz API key |
-| `POSTIZ_API_URL` | No | `https://api.postiz.com` | Custom API endpoint (for self-hosted Postiz) |
-| `POSTIZ_AUTH_SERVER` | No | `https://cli-auth.postiz.com` | Custom auth server URL (for self-hosted auth server) |
+| `POSTQUEEN_API_KEY` | No* | - | Your PostQueen API key |
+| `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | Custom API endpoint (for self-hosted PostQueen) |
+| `POSTQUEEN_AUTH_SERVER` | No | `https://cli-auth.postqueen.ai` | Custom auth server URL (for self-hosted auth server) |
 
-*Either OAuth2 (via `postiz auth:login`) or `POSTIZ_API_KEY` is required.
+*Either OAuth2 (via `postqueen auth:login`) or `POSTQUEEN_API_KEY` is required.
 
 ## Self-Hosting the Auth Server
 
-By default, `postiz auth:login` uses the hosted auth server at `cli-auth.postiz.com`. If you want to self-host the OAuth2 device flow server, you can run your own instance.
+By default, `postqueen auth:login` uses the hosted auth server at `cli-auth.postqueen.ai`. If you want to self-host the OAuth2 device flow server, you can run your own instance.
 
 The auth server mediates the OAuth2 device flow so CLI users can authenticate without needing client credentials.
 
@@ -64,7 +64,7 @@ The auth server mediates the OAuth2 device flow so CLI users can authenticate wi
 ### How It Works
 
 ```
-CLI                        Auth Server                    Postiz
+CLI                        Auth Server                    PostQueen
  |                              |                           |
  |-- POST /device/code ------->|                           |
  |<-- device_code + user_code --|                           |
@@ -83,16 +83,16 @@ CLI                        Auth Server                    Postiz
 
 ### 1. Clone the Repository
 
-The auth server lives in the [postiz-agent](https://github.com/gitroomhq/postiz-agent) repository:
+The auth server lives in the [postqueen-agent](https://github.com/GkhanKINAY/postqueen-agent) repository:
 
 ```bash
-git clone https://github.com/gitroomhq/postiz-agent.git
-cd postiz-agent/server
+git clone https://github.com/GkhanKINAY/postqueen-agent.git
+cd postqueen-agent/server
 ```
 
-### 2. Create an OAuth App in Postiz
+### 2. Create an OAuth App in PostQueen
 
-Go to **Postiz Settings > Developer > OAuth Apps** and create a new app. Set the callback URL to:
+Go to **PostQueen Settings > Developer > OAuth Apps** and create a new app. Set the callback URL to:
 
 ```
 https://your-server-domain.com/device/callback
@@ -105,21 +105,21 @@ Create a database. The server auto-creates the `device_requests` table on startu
 ### 4. Configure Environment
 
 ```bash
-export DATABASE_URL="postgresql://user:password@localhost:5432/postiz_auth"
-export POSTIZ_OAUTH_CLIENT_ID="pca_xxx"
-export POSTIZ_OAUTH_CLIENT_SECRET="pcs_xxx"
+export DATABASE_URL="postgresql://user:password@localhost:5432/postqueen_auth"
+export POSTQUEEN_OAUTH_CLIENT_ID="pca_xxx"
+export POSTQUEEN_OAUTH_CLIENT_SECRET="pcs_xxx"
 export SERVER_URL="https://your-server-domain.com"
 ```
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `DATABASE_URL` | Yes | - | Postgres connection string |
-| `POSTIZ_OAUTH_CLIENT_ID` | Yes | - | OAuth app client ID from Postiz |
-| `POSTIZ_OAUTH_CLIENT_SECRET` | Yes | - | OAuth app client secret from Postiz |
+| `POSTQUEEN_OAUTH_CLIENT_ID` | Yes | - | OAuth app client ID from PostQueen |
+| `POSTQUEEN_OAUTH_CLIENT_SECRET` | Yes | - | OAuth app client secret from PostQueen |
 | `PORT` | No | `3111` | Server port |
 | `SERVER_URL` | No | `http://localhost:{PORT}` | Public URL of this server |
-| `POSTIZ_FRONTEND_URL` | No | `https://platform.postiz.com` | Postiz frontend URL for OAuth redirects |
-| `POSTIZ_API_URL` | No | `https://api.postiz.com` | Postiz API URL for token exchange |
+| `POSTQUEEN_FRONTEND_URL` | No | `https://platform.postqueen.ai` | PostQueen frontend URL for OAuth redirects |
+| `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | PostQueen API URL for token exchange |
 
 ### 5. Run the Server
 
@@ -137,8 +137,8 @@ pnpm start:prod
 ### 6. Point the CLI to Your Server
 
 ```bash
-export POSTIZ_AUTH_SERVER="https://your-server-domain.com"
-postiz auth:login
+export POSTQUEEN_AUTH_SERVER="https://your-server-domain.com"
+postqueen auth:login
 ```
 
 ### Server Endpoints
@@ -147,8 +147,8 @@ postiz auth:login
 |--------|------|-------------|
 | `POST` | `/device/code` | Start a new device flow. Returns `device_code`, `user_code`, and `verification_uri`. |
 | `GET` | `/device/verify` | Browser page where the user enters their code. |
-| `POST` | `/device/verify` | Validates user code and redirects to Postiz OAuth. |
-| `GET` | `/device/callback` | Postiz redirects here after authorization. Exchanges auth code for token. |
+| `POST` | `/device/verify` | Validates user code and redirects to PostQueen OAuth. |
+| `GET` | `/device/callback` | PostQueen redirects here after authorization. Exchanges auth code for token. |
 | `POST` | `/device/token` | CLI polls this with `device_code`. Returns token when auth completes. |
 | `GET` | `/health` | Health check. |
 

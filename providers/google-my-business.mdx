@@ -56,7 +56,7 @@ The **Google My Business API** requires approval from Google. You must submit an
     <Snippet file="oauth2redirect.mdx" />
 
     **Your Google My Business OAuth2 Redirect URI:**
-    - Production: `https://your-postiz-domain.com/integrations/social/gmb`
+    - Production: `https://your-postqueen-domain.com/integrations/social/gmb`
     - Local development: `http://localhost:4200/integrations/social/gmb`
     - Docker: `http://localhost:5000/integrations/social/gmb`
 
@@ -76,12 +76,12 @@ GOOGLE_GMB_CLIENT_SECRET=""
     </Note>
   </Step>
 
-  <Step title="Restart Postiz">
-    Stop Postiz if it is running, and restart it with the updated environment variables.
+  <Step title="Restart PostQueen">
+    Stop PostQueen if it is running, and restart it with the updated environment variables.
   </Step>
 
-  <Step title="Add Google My Business in Postiz">
-    Go to the Postiz web interface, click on the "Add Channel" button, and select "Google My Business". You should be redirected to Google to authorize the application.
+  <Step title="Add Google My Business in PostQueen">
+    Go to the PostQueen web interface, click on the "Add Channel" button, and select "Google My Business". You should be redirected to Google to authorize the application.
   </Step>
 </Steps>
 
@@ -104,7 +104,7 @@ Ensure your Google Business Profile is verified and that you're logging in with 
 
 ### Analytics returns empty or filter errors
 
-The GMB performance API restricts which metric combinations and date ranges it will return data for. If Postiz shows an empty analytics chart, double-check the date range you've selected covers periods after the profile was verified. Some metrics aren't available for newer or unverified profiles at all — the API returns no data rather than an error.
+The GMB performance API restricts which metric combinations and date ranges it will return data for. If PostQueen shows an empty analytics chart, double-check the date range you've selected covers periods after the profile was verified. Some metrics aren't available for newer or unverified profiles at all — the API returns no data rather than an error.
 
 ### Known issue: connect page surfaces session-recording errors
 

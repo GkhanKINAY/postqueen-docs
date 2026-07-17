@@ -1,35 +1,35 @@
 ---
 title: Introduction
-description: 'Automate social media posting from the command line with the Postiz CLI'
+description: 'Automate social media posting from the command line with the PostQueen CLI'
 ---
 
 <Note>
-Create AI-powered UGC videos for your social media with [Agent Media](https://agent-media.ai) — generate engaging video content and schedule it directly with Postiz. Perfect for OpenClaw 🦞
+Create AI-powered UGC videos for your social media with [Agent Media](https://agent-media.ai) — generate engaging video content and schedule it directly with PostQueen. Perfect for OpenClaw 🦞
 </Note>
 
 <Warning>
-For your AI agent to work best with Postiz, install the skill by running:
+For your AI agent to work best with PostQueen, install the skill by running:
 
 ```bash
-npx skills add gitroomhq/postiz-agent
+npx skills add GkhanKINAY/postqueen-agent
 ```
 
-Or load the SKILL md file from [github.com/gitroomhq/postiz-agent](https://github.com/gitroomhq/postiz-agent).
+Or load the SKILL md file from [github.com/GkhanKINAY/postqueen-agent](https://github.com/GkhanKINAY/postqueen-agent).
 </Warning>
 
-The Postiz CLI is a command-line tool for automating social media posting across 28+ platforms. It wraps the [Public API](/public-api/introduction) so you can schedule posts, manage integrations, and upload media directly from your terminal or shell scripts.
+The PostQueen CLI is a command-line tool for automating social media posting across 28+ platforms. It wraps the [Public API](/public-api/introduction) so you can schedule posts, manage integrations, and upload media directly from your terminal or shell scripts.
 
 ## Installation
 
 <Tabs>
   <Tab title="npm">
     ```bash
-    npm install -g postiz
+    npm install -g postqueen
     ```
   </Tab>
   <Tab title="pnpm">
     ```bash
-    pnpm install -g postiz
+    pnpm install -g postqueen
     ```
   </Tab>
 </Tabs>
@@ -37,7 +37,7 @@ The Postiz CLI is a command-line tool for automating social media posting across
 Verify the installation:
 
 ```bash
-postiz --help
+postqueen --help
 ```
 
 ## Authentication
@@ -47,28 +47,28 @@ postiz --help
 Authenticate using the device flow — no client ID or secret needed:
 
 ```bash
-postiz auth:login
+postqueen auth:login
 ```
 
 This will:
 1. Display a one-time code in your terminal
 2. Open your browser to authorize
-3. Automatically save credentials to `~/.postiz/credentials.json`
+3. Automatically save credentials to `~/.postqueen/credentials.json`
 
 ```bash
 # Check current auth status
-postiz auth:status
+postqueen auth:status
 
 # Remove stored credentials
-postiz auth:logout
+postqueen auth:logout
 ```
 
 ### Option 2: API Key
 
-Set your Postiz API key as an environment variable. You can get your API key from the Postiz Settings page.
+Set your PostQueen API key as an environment variable. You can get your API key from the PostQueen Settings page.
 
 ```bash
-export POSTIZ_API_KEY=your_api_key_here
+export POSTQUEEN_API_KEY=your_api_key_here
 ```
 
 <Tip>
@@ -81,30 +81,30 @@ OAuth2 credentials take priority over the API key when both are present.
 
 ### Custom API URL (self-hosted)
 
-If you're running a self-hosted Postiz instance, point the CLI to your server:
+If you're running a self-hosted PostQueen instance, point the CLI to your server:
 
 ```bash
-export POSTIZ_API_URL=https://your-postiz-server.com
+export POSTQUEEN_API_URL=https://your-postqueen-server.com
 ```
 
 ### Self-Hosting the Auth Server
 
-By default, `postiz auth:login` uses the hosted auth server at `cli-auth.postiz.com`. If you want to self-host the OAuth2 device flow server, see the [Authentication](/cli/authentication) page for the full setup guide.
+By default, `postqueen auth:login` uses the hosted auth server at `cli-auth.postqueen.ai`. If you want to self-host the OAuth2 device flow server, see the [Authentication](/cli/authentication) page for the full setup guide.
 
 ## Quick Start
 
 ```bash
 # 1. List your connected social media accounts
-postiz integrations:list
+postqueen integrations:list
 
 # 2. Create a scheduled post
-postiz posts:create \
-  -c "Hello from the Postiz CLI!" \
+postqueen posts:create \
+  -c "Hello from the PostQueen CLI!" \
   -s "2025-01-15T10:00:00Z" \
   -i "your-integration-id"
 
 # 3. List your scheduled posts
-postiz posts:list
+postqueen posts:list
 ```
 
 ## Commands Overview

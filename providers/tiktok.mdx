@@ -8,7 +8,7 @@ description: 'How to add TikTok to your system'
 <Note>
 This integration requires that you have a TikTok developer account. It also requires that you have a public website, with https, and can upload files to that site to verify ownership.
 
-TikTok will also not allow http:// for your app redirect URI, so you will need to be accessing Postiz from HTTPS.
+TikTok will also not allow http:// for your app redirect URI, so you will need to be accessing PostQueen from HTTPS.
 </Note>
 
 <Warning>
@@ -23,7 +23,7 @@ TikTok approval is not the final step for Direct Post access. TikTok allows unau
 
 If your API client has not passed this audit, TikTok also limits Direct Post usage to up to 5 users posting in a 24-hour window, and those user accounts must be private at the time of posting. See TikTok's [Direct Post API developer guidelines](https://developers.tiktok.com/doc/content-sharing-guidelines#direct_post_api_-_developer_guidelines) for the current requirements.
 
-In practice this means: before your TikTok developer app passes audit, the `privacy_level` setting for posts is forced to **SELF_ONLY** (private) regardless of what you choose in Postiz. Once your app is audited, all privacy levels become available.
+In practice this means: before your TikTok developer app passes audit, the `privacy_level` setting for posts is forced to **SELF_ONLY** (private) regardless of what you choose in PostQueen. Once your app is audited, all privacy levels become available.
 </Warning>
 
 <Warning>
@@ -36,13 +36,13 @@ In practice this means: before your TikTok developer app passes audit, the `priv
 
     ![Create a new app](/images/providers/tiktok/tiktok_create_app.png)
 
-    * **App Name:** `MyPostiz`
+    * **App Name:** `MyPostQueen`
     * **Redirect URI:** (see below)
 
     <Snippet file="oauth2redirect.mdx" />
 
     **Your TikTok OAuth2 Redirect URI:**
-    - Production: `https://your-postiz-domain.com/integrations/social/tiktok`
+    - Production: `https://your-postqueen-domain.com/integrations/social/tiktok`
     - Local development (HTTPS required): `https://localhost:4200/integrations/social/tiktok`
     - Docker (HTTPS required): `https://localhost:5000/integrations/social/tiktok`
   </Step>
@@ -78,10 +78,10 @@ TIKTOK_CLIENT_ID=1234567890123456
 TIKTOK_CLIENT_SECRET=12345678901234567890123456789012
 ```
 
-    Restart Postiz with the updated environment variables
+    Restart PostQueen with the updated environment variables
   </Step>
 
-  <Step title="Add a TikTok channel in the Postiz web interface">
-    Go to the Postiz web interface, and click on the "Add Channel" button. Select "TikTok" from the list of available channels. You should be redirected to TikTok to authorize the application.
+  <Step title="Add a TikTok channel in the PostQueen web interface">
+    Go to the PostQueen web interface, and click on the "Add Channel" button. Select "TikTok" from the list of available channels. You should be redirected to TikTok to authorize the application.
   </Step>
 </Steps>

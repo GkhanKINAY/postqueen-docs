@@ -1,11 +1,11 @@
 ---
 title: OAuth2 Authentication
-description: 'Let users authorize your app to access Postiz on their behalf'
+description: 'Let users authorize your app to access PostQueen on their behalf'
 ---
 
 ## Overview
 
-Postiz supports OAuth2 Authorization Code flow, allowing you to build third-party applications that act on behalf of Postiz users. Instead of asking users for their API key, your app redirects them to Postiz where they approve access, and you receive a token to make API calls on their behalf.
+PostQueen supports OAuth2 Authorization Code flow, allowing you to build third-party applications that act on behalf of PostQueen users. Instead of asking users for their API key, your app redirects them to PostQueen where they approve access, and you receive a token to make API calls on their behalf.
 
 <Info>
 OAuth tokens work with all the same Public API endpoints as API keys. The only difference is how the token is obtained.
@@ -17,29 +17,29 @@ OAuth tokens work with all the same Public API endpoints as API keys. The only d
 sequenceDiagram
     participant User
     participant YourApp
-    participant Postiz
+    participant PostQueen
 
-    User->>YourApp: Clicks "Connect with Postiz"
-    YourApp->>Postiz: Redirect to /oauth/authorize
-    Postiz->>User: Shows consent screen
-    User->>Postiz: Approves access
-    Postiz->>YourApp: Redirects with ?code=...
-    YourApp->>Postiz: POST /oauth/token (exchange code)
-    Postiz->>YourApp: Returns access_token
-    YourApp->>Postiz: API calls with access_token
+    User->>YourApp: Clicks "Connect with PostQueen"
+    YourApp->>PostQueen: Redirect to /oauth/authorize
+    PostQueen->>User: Shows consent screen
+    User->>PostQueen: Approves access
+    PostQueen->>YourApp: Redirects with ?code=...
+    YourApp->>PostQueen: POST /oauth/token (exchange code)
+    PostQueen->>YourApp: Returns access_token
+    YourApp->>PostQueen: API calls with access_token
 ```
 
 ## Implementation
 
 <Steps>
   <Step title="Register Your OAuth App">
-    Go to **Settings > Developers > Apps** in your Postiz dashboard and create an OAuth application.
+    Go to **Settings > Developers > Apps** in your PostQueen dashboard and create an OAuth application.
 
     You will need to provide:
     - **App Name** - displayed to users on the consent screen
     - **Description** (optional) - explains what your app does
     - **Profile Picture** (optional) - shown on the consent screen
-    - **Redirect URL** - where Postiz sends users after they approve/deny access
+    - **Redirect URL** - where PostQueen sends users after they approve/deny access
 
     After creating the app, you will receive:
     - **Client ID** - a public identifier for your app (starts with `pca_`)
@@ -51,7 +51,7 @@ sequenceDiagram
   </Step>
 
   <Step title="Redirect Users to Authorize">
-    When a user wants to connect their Postiz account to your app, redirect them to:
+    When a user wants to connect their PostQueen account to your app, redirect them to:
 
     ```
     https://{FRONTEND_URL}/oauth/authorize?client_id={CLIENT_ID}&response_type=code&state={STATE}
@@ -66,14 +66,14 @@ sequenceDiagram
     **Example:**
 
     ```bash
-    https://platform.postiz.com/oauth/authorize?client_id=pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs&response_type=code&state=random123
+    https://platform.postqueen.ai/oauth/authorize?client_id=pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs&response_type=code&state=random123
     ```
 
     The user will see a consent screen showing your app's name, description, and the permissions being requested. They can choose to **Authorize** or **Deny**.
   </Step>
 
   <Step title="Handle the Callback">
-    After the user makes a decision, Postiz redirects them to your **Redirect URL** with query parameters.
+    After the user makes a decision, PostQueen redirects them to your **Redirect URL** with query parameters.
 
     **If approved:**
 
@@ -156,7 +156,7 @@ sequenceDiagram
     - And all other endpoints documented in this API reference
 
     <Info>
-    OAuth tokens do not expire. Users can revoke access at any time from **Settings > Approved Apps** in their Postiz dashboard.
+    OAuth tokens do not expire. Users can revoke access at any time from **Settings > Approved Apps** in their PostQueen dashboard.
     </Info>
   </Step>
 </Steps>
@@ -191,11 +191,11 @@ const app = express();
 
 const CLIENT_ID = 'pca_your_client_id';
 const CLIENT_SECRET = 'pcs_your_client_secret';
-const POSTIZ_URL = 'https://platform.postiz.com';
-const BACKEND_URL = 'https://api.postiz.com';
+const POSTQUEEN_URL = 'https://platform.postqueen.ai';
+const BACKEND_URL = 'https://api.postqueen.ai';
 const REDIRECT_URL = 'https://yourapp.com/callback';
 
-// Step 2: Redirect user to Postiz
+// Step 2: Redirect user to PostQueen
 app.get('/connect', (req, res) => {
   const state = crypto.randomBytes(16).toString('hex');
   // Store state in session for CSRF verification
@@ -207,7 +207,7 @@ app.get('/connect', (req, res) => {
     state,
   });
 
-  res.redirect(`${POSTIZ_URL}/oauth/authorize?${params}`);
+  res.redirect(`${POSTQUEEN_URL}/oauth/authorize?${params}`);
 });
 
 // Step 3 & 4: Handle callback and exchange code

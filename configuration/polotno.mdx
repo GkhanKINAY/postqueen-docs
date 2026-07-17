@@ -1,23 +1,23 @@
 ---
 title: Image & Video Editing (Polotno)
-description: 'Enable in-app image and video editing in Postiz via the Polotno SDK'
+description: 'Enable in-app image and video editing in PostQueen via the Polotno SDK'
 ---
 
-Postiz supports in-app image and video editing through the
+PostQueen supports in-app image and video editing through the
 [Polotno SDK](https://polotno.com/). Once enabled, users can design and
-edit visuals directly inside the Postiz workflow while preparing
+edit visuals directly inside the PostQueen workflow while preparing
 scheduled posts — no round-trip to an external editor.
 
 ## What you get
 
-- Create and edit visuals inside the Postiz post composer.
+- Create and edit visuals inside the PostQueen post composer.
 - Work with templates, text, images, and brand assets.
 - Update designs in place without re-uploading finished files.
 - Reuse and modify visuals across scheduled posts.
 
 Designs are stored as structured data and rendered when needed.
 Scheduling, publishing, and platform-specific logic remain handled by
-Postiz.
+PostQueen.
 
 ## Setup
 
@@ -28,7 +28,7 @@ Postiz.
     API key.
   </Step>
 
-  <Step title="Add the API key to Postiz">
+  <Step title="Add the API key to PostQueen">
     Set `NEXT_PUBLIC_POLOTNO` in your environment to the key from
     the Polotno dashboard:
 
@@ -40,13 +40,13 @@ Postiz.
 
     ```yaml
     services:
-      postiz:
+      postqueen:
         environment:
           NEXT_PUBLIC_POLOTNO: "your-polotno-api-key"
     ```
   </Step>
 
-  <Step title="Restart Postiz">
+  <Step title="Restart PostQueen">
     `NEXT_PUBLIC_POLOTNO` is read by the frontend at build time, so
     you need to rebuild the frontend image (or restart the dev
     server) for the change to take effect.
@@ -65,11 +65,8 @@ Polotno is a commercial SDK and requires a valid license for
 production use.
 
 - Licenses are purchased and managed directly through Polotno.
-- Postiz does not bundle, resell, or proxy Polotno licenses.
+- PostQueen does not bundle, resell, or proxy Polotno licenses.
 - Billing, licensing, and usage terms are handled by Polotno.
-
-Postiz users can use the coupon code **`postizfriends`** at checkout
-to receive **$100 off** a Polotno license.
 
 ## Reference
 

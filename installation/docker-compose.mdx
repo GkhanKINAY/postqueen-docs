@@ -1,6 +1,6 @@
 ---
 title: Docker Compose
-description: 'Install Postiz using Docker Compose'
+description: 'Install PostQueen using Docker Compose'
 ---
 
 <Note>
@@ -9,12 +9,12 @@ Watch the Tutorial for docker-compose install: [https://m.youtube.com/watch?v=A6
 
 <Warning>
     <strong>Warning:</strong> Please read this migration guide, on how to upgrade from v2.11.2 to v2.12.0+ for Temporal:
-    https://docs.postiz.com/installation/migration
+    https://docs.postqueen.ai/installation/migration
 </Warning>
 
 ## Docker Compose
 
-This guide assumes that you have docker installed, with a reasonable amount of resources to run Postiz. This Docker Compose setup has been tested with;
+This guide assumes that you have docker installed, with a reasonable amount of resources to run PostQueen. This Docker Compose setup has been tested with;
 
 - Virtual Machine, Ubuntu 24.04, 2Gb RAM, 2 vCPUs.
 
@@ -22,10 +22,10 @@ This guide assumes that you have docker installed, with a reasonable amount of r
 
 ### Configuration uses environment variables
 
-The docker containers for Postiz are entirely configured with environment variables.
+The docker containers for PostQueen are entirely configured with environment variables.
 
 - **Option A** - environment variables in your `docker-compose.yml` file
-- **Option B** - environment variables in a `postiz.env` file mounted in `/config` for the Postiz container only
+- **Option B** - environment variables in a `postqueen.env` file mounted in `/config` for the PostQueen container only
 - **Option C** - environment variables in a `.env` file next to your `docker-compose.yml` file (not recommended).
 
 ... or a mixture of the above options!
@@ -34,7 +34,7 @@ The docker containers for Postiz are entirely configured with environment variab
 <Steps>
   <Step title="Clone the Docker Compose repository">
       ```
-      git clone https://github.com/gitroomhq/postiz-docker-compose
+      git clone https://github.com/GkhanKINAY/postqueen-docker-compose
       ```
   </Step>
   <Step title="Configure your docker compose">
@@ -57,7 +57,7 @@ of configuration settings.
 ## The `docker-compose.yaml` file
 
 The full, up-to-date Docker Compose file is maintained in the
-[gitroomhq/postiz-docker-compose](https://github.com/gitroomhq/postiz-docker-compose)
+[GkhanKINAY/postqueen-docker-compose](https://github.com/GkhanKINAY/postqueen-docker-compose)
 repository. Cloning that repository (see the steps above) gives you the
 `docker-compose.yaml` together with the `dynamicconfig` directory that the
 Temporal service mounts, so there is nothing to copy by hand.
@@ -80,7 +80,7 @@ variables.
 
 Look through the logs for startup errors, and if you have problems, check out the [support](/support) page.
 
-If everything looks good, then you can access the Postiz web interface at https://postiz.your-server.com
+If everything looks good, then you can access the PostQueen web interface at https://postqueen.your-server.com
 
 <Snippet file="docker-envvar-apps.mdx" />
 

@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Postiz Public API",
-    "description": "API for managing social media posts, integrations, and media uploads in Postiz.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from Postiz Settings.\n\n## Rate Limits\n\nThere is a limit of **30 requests per hour**.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (27)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Medium, Dev.to, Hashnode, WordPress\n\n**Business:** Google My Business (GMB), Listmonk (newsletters)",
+    "title": "PostQueen Public API",
+    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from PostQueen Settings.\n\n## Rate Limits\n\nThere is a limit of **30 requests per hour**.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (27)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Medium, Dev.to, Hashnode, WordPress\n\n**Business:** Google My Business (GMB), Listmonk (newsletters)",
     "license": {
       "name": "MIT"
     },
@@ -10,8 +10,8 @@
   },
   "servers": [
     {
-      "url": "https://api.postiz.com/public/v1",
-      "description": "Postiz Cloud"
+      "url": "https://api.postqueen.ai/public/v1",
+      "description": "PostQueen Cloud"
     },
     {
       "url": "https://{your-domain}/api/public/v1",
@@ -19,7 +19,7 @@
       "variables": {
         "your-domain": {
           "default": "localhost:5000",
-          "description": "Your Postiz instance domain"
+          "description": "Your PostQueen instance domain"
         }
       }
     }
@@ -80,7 +80,7 @@
                     "id": "cm4ean69r0003w8w1cdomox9n",
                     "name": "Nevo David",
                     "identifier": "x",
-                    "picture": "https://uploads.postiz.com/avatar.jpg",
+                    "picture": "https://uploads.postqueen.ai/avatar.jpg",
                     "disabled": false,
                     "profile": "nevodavid",
                     "customer": {
@@ -606,7 +606,7 @@
                         },
                         "value": [
                           {
-                            "content": "Hello from the Postiz API!",
+                            "content": "Hello from the PostQueen API!",
                             "image": []
                           }
                         ],
@@ -663,11 +663,11 @@
                             "image": [
                               {
                                 "id": "img1",
-                                "path": "https://uploads.postiz.com/1.png"
+                                "path": "https://uploads.postqueen.ai/1.png"
                               },
                               {
                                 "id": "img2",
-                                "path": "https://uploads.postiz.com/2.png"
+                                "path": "https://uploads.postqueen.ai/2.png"
                               }
                             ]
                           }
@@ -699,7 +699,7 @@
                             "image": [
                               {
                                 "id": "img1",
-                                "path": "https://uploads.postiz.com/photo.jpg"
+                                "path": "https://uploads.postqueen.ai/photo.jpg"
                               }
                             ]
                           }
@@ -732,7 +732,7 @@
                             "image": [
                               {
                                 "id": "story-img",
-                                "path": "https://uploads.postiz.com/story.jpg"
+                                "path": "https://uploads.postqueen.ai/story.jpg"
                               }
                             ]
                           }
@@ -765,7 +765,7 @@
                             "image": [
                               {
                                 "id": "video-id",
-                                "path": "https://uploads.postiz.com/video.mp4"
+                                "path": "https://uploads.postqueen.ai/video.mp4"
                               }
                             ]
                           }
@@ -804,7 +804,7 @@
                             "image": [
                               {
                                 "id": "video-id",
-                                "path": "https://uploads.postiz.com/tiktok.mp4"
+                                "path": "https://uploads.postqueen.ai/tiktok.mp4"
                               }
                             ]
                           }
@@ -915,7 +915,7 @@
                             "image": [
                               {
                                 "id": "pin-img",
-                                "path": "https://uploads.postiz.com/pin.jpg"
+                                "path": "https://uploads.postqueen.ai/pin.jpg"
                               }
                             ]
                           }
@@ -948,7 +948,7 @@
                             "image": [
                               {
                                 "id": "shot-img",
-                                "path": "https://uploads.postiz.com/shot.png"
+                                "path": "https://uploads.postqueen.ai/shot.png"
                               }
                             ]
                           }
@@ -1129,7 +1129,7 @@
                         ],
                         "settings": {
                           "__type": "hashnode",
-                          "title": "Getting Started with Postiz",
+                          "title": "Getting Started with PostQueen",
                           "subtitle": "A beginner's guide",
                           "publication": "publication-id",
                           "tags": [
@@ -2115,7 +2115,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "Your Postiz API key"
+        "description": "Your PostQueen API key"
       }
     },
     "schemas": {
@@ -2236,7 +2236,7 @@
         "example": {
           "id": "e639003b-f727-4a1e-87bd-74a2c48ae41e",
           "name": "image.png",
-          "path": "https://uploads.postiz.com/image.png",
+          "path": "https://uploads.postqueen.ai/image.png",
           "organizationId": "85460a39-6329-4cf4-a252-187ce89a3480",
           "createdAt": "2024-12-14T08:18:54.274Z",
           "updatedAt": "2024-12-14T08:18:54.274Z"

@@ -3,7 +3,7 @@ title: Uploads & Storage
 description: 'Local filesystem vs Cloudflare R2 for media uploads'
 ---
 
-Postiz writes user-uploaded media (post images, avatars, generated
+PostQueen writes user-uploaded media (post images, avatars, generated
 content) through a single storage abstraction. Pick one of two backends.
 
 ## Pick a backend
@@ -16,11 +16,11 @@ STORAGE_PROVIDER="cloudflare" # write to Cloudflare R2
 
 ## Local filesystem
 
-Set the path where Postiz should write:
+Set the path where PostQueen should write:
 
 ```env
 STORAGE_PROVIDER="local"
-UPLOAD_DIRECTORY="/data/postiz/uploads"
+UPLOAD_DIRECTORY="/data/postqueen/uploads"
 NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY="/uploads"
 ```
 
@@ -39,16 +39,16 @@ In `docker-compose.yaml`:
 
 ```yaml
 services:
-  postiz:
+  postqueen:
     environment:
       STORAGE_PROVIDER: "local"
       UPLOAD_DIRECTORY: "/uploads"
       NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY: "/uploads"
     volumes:
-      - postiz-uploads:/uploads
+      - postqueen-uploads:/uploads
 
 volumes:
-  postiz-uploads:
+  postqueen-uploads:
 ```
 
 If you scale beyond one backend replica, you need a shared volume — or
@@ -60,7 +60,7 @@ TikTok (and a few others) fetch media via "pull from URL" rather than
 multipart upload. Your local `/uploads` path must therefore be
 reachable from the public internet over HTTPS for those providers to
 work. If your deployment is internet-facing through a reverse proxy
-with TLS, you're fine. If Postiz is on a private network, those
+with TLS, you're fine. If PostQueen is on a private network, those
 providers will fail and you should use [Cloudflare R2](/configuration/r2)
 or a CDN instead.
 

@@ -8,7 +8,7 @@ description: 'View platform and post-level analytics from the command line'
 Get analytics for a specific integration/channel. Returns metrics like followers, impressions, and engagement over time.
 
 ```bash
-postiz analytics:platform <integration-id>
+postqueen analytics:platform <integration-id>
 ```
 
 ### Options
@@ -21,13 +21,13 @@ postiz analytics:platform <integration-id>
 
 ```bash
 # Last 7 days (default)
-postiz analytics:platform your-integration-id
+postqueen analytics:platform your-integration-id
 
 # Last 30 days
-postiz analytics:platform your-integration-id -d 30
+postqueen analytics:platform your-integration-id -d 30
 
 # Last 90 days
-postiz analytics:platform your-integration-id -d 90
+postqueen analytics:platform your-integration-id -d 90
 ```
 
 The response is an array of metrics, each with daily data points:
@@ -62,7 +62,7 @@ The metrics returned depend on the platform. For example, X returns followers an
 Get analytics for a specific published post. Returns metrics like likes, comments, shares, and impressions.
 
 ```bash
-postiz analytics:post <post-id>
+postqueen analytics:post <post-id>
 ```
 
 ### Options
@@ -75,10 +75,10 @@ postiz analytics:post <post-id>
 
 ```bash
 # Last 7 days (default)
-postiz analytics:post your-post-id
+postqueen analytics:post your-post-id
 
 # Last 30 days
-postiz analytics:post your-post-id -d 30
+postqueen analytics:post your-post-id -d 30
 ```
 
 The response follows the same format as platform analytics:
@@ -114,11 +114,11 @@ Extract specific metrics using `jq`:
 
 ```bash
 # Get just the follower count trend
-postiz analytics:platform integration-id -d 30 | jq '.[] | select(.label=="Followers")'
+postqueen analytics:platform integration-id -d 30 | jq '.[] | select(.label=="Followers")'
 
 # Get percentage changes for all metrics
-postiz analytics:platform integration-id | jq '.[] | {label, percentageChange}'
+postqueen analytics:platform integration-id | jq '.[] | {label, percentageChange}'
 
 # Get the latest total for each post metric
-postiz analytics:post post-id | jq '.[] | {label, latest: .data[-1].total}'
+postqueen analytics:post post-id | jq '.[] | {label, latest: .data[-1].total}'
 ```

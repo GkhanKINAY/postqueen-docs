@@ -1,6 +1,6 @@
 ---
 title: Client Setup
-description: 'Configure your AI client to connect to the Postiz MCP server'
+description: 'Configure your AI client to connect to the PostQueen MCP server'
 ---
 
 ## Claude Desktop
@@ -14,8 +14,8 @@ Add the following to your Claude Desktop MCP configuration file:
     ```json
     {
       "mcpServers": {
-        "postiz": {
-          "url": "https://api.postiz.com/mcp/your-api-key"
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/your-api-key"
         }
       }
     }
@@ -27,8 +27,8 @@ Add the following to your Claude Desktop MCP configuration file:
     ```json
     {
       "mcpServers": {
-        "postiz": {
-          "url": "https://api.postiz.com/mcp/your-api-key"
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/your-api-key"
         }
       }
     }
@@ -43,7 +43,7 @@ Replace `your-api-key` with your actual API key from **Settings > Developers > P
 The fastest way is the CLI:
 
 ```bash
-claude mcp add postiz --transport http --url https://api.postiz.com/mcp/your-api-key
+claude mcp add postqueen --transport http --url https://api.postqueen.ai/mcp/your-api-key
 ```
 
 Or add it to your Claude Code config directly:
@@ -51,8 +51,8 @@ Or add it to your Claude Code config directly:
 ```json
 {
   "mcpServers": {
-    "postiz": {
-      "url": "https://api.postiz.com/mcp/your-api-key"
+    "postqueen": {
+      "url": "https://api.postqueen.ai/mcp/your-api-key"
     }
   }
 }
@@ -61,8 +61,8 @@ Or add it to your Claude Code config directly:
 The Bearer-token transport works too — pick whichever your client supports better. Both authenticate the same way:
 
 ```bash
-claude mcp add postiz --transport http \
-  --url https://api.postiz.com/mcp \
+claude mcp add postqueen --transport http \
+  --url https://api.postqueen.ai/mcp \
   --header "Authorization: Bearer your-api-key"
 ```
 
@@ -70,29 +70,29 @@ claude mcp add postiz --transport http \
 
 In Cursor, go to **Settings > MCP** and add a new server:
 
-- **Name:** Postiz
+- **Name:** PostQueen
 - **Type:** HTTP
-- **URL:** `https://api.postiz.com/mcp/your-api-key`
+- **URL:** `https://api.postqueen.ai/mcp/your-api-key`
 
 ## Other MCP Clients
 
-Any MCP-compatible client can connect to Postiz. Use the streamable HTTP transport:
+Any MCP-compatible client can connect to PostQueen. Use the streamable HTTP transport:
 
-- **URL:** `https://api.postiz.com/mcp/your-api-key`
+- **URL:** `https://api.postqueen.ai/mcp/your-api-key`
 - **Transport:** Streamable HTTP
 
 Or, if your client supports Bearer token authentication:
 
-- **URL:** `https://api.postiz.com/mcp`
+- **URL:** `https://api.postqueen.ai/mcp`
 - **Transport:** Streamable HTTP
 - **Authorization:** `Bearer your-api-key`
 
 ## Self-Hosted
 
-For self-hosted Postiz instances, replace `https://api.postiz.com` with your `NEXT_PUBLIC_BACKEND_URL`:
+For self-hosted PostQueen instances, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
 
 ```
-https://your-postiz-server.com/mcp/your-api-key
+https://your-postqueen-server.com/mcp/your-api-key
 ```
 
 ## Verify Connection

@@ -1,6 +1,6 @@
 ---
 title: Docker Compose Configuration
-description: 'How to configure your docker-compose file for Postiz'
+description: 'How to configure your docker-compose file for PostQueen'
 ---
 
 You will often see, when for example configuring providers, that the environment variables will look like this:
@@ -15,7 +15,7 @@ You can set them directly in the `environment` section of the service.
 
 ```yaml
 services:
-  postiz:
+  postqueen:
     environment:
       YOUR_ENV_VAR: "value"
       YOUR_OTHER_ENV_VAR: "value"
@@ -28,7 +28,7 @@ You can use a `.env` file to set the variables.
 **docker-compose.yml:**
 ```yaml
 services:
-  postiz:
+  postqueen:
     env_file:
       - .env
 ```
@@ -46,7 +46,7 @@ You can also use both!
 **docker-compose.yml:**
 ```yaml
 services:
-  postiz:
+  postqueen:
     environment:
       YOUR_ENV_VAR: "value"
     env_file:

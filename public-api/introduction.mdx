@@ -1,6 +1,6 @@
 ---
 title: API Overview
-description: 'Getting started with the Postiz Public API'
+description: 'Getting started with the PostQueen Public API'
 ---
 
 <Warning>
@@ -12,39 +12,39 @@ https://www.youtube.com/watch?v=c50u3K3xsCI
 ## SDKs & Integrations
 
 <CardGroup cols={2}>
-  <Card title="NodeJS SDK" icon="node-js" href="https://www.npmjs.com/package/@postiz/node">
-    Official Postiz NodeJS SDK
+  <Card title="NodeJS SDK" icon="node-js" href="https://www.npmjs.com/package/@postqueen/node">
+    Official PostQueen NodeJS SDK
   </Card>
-  <Card title="n8n Node" icon="n" href="https://www.npmjs.com/package/n8n-nodes-postiz">
-    Custom n8n node for Postiz
+  <Card title="n8n Node" icon="n" href="https://www.npmjs.com/package/n8n-nodes-postqueen">
+    Custom n8n node for PostQueen
   </Card>
 </CardGroup>
 
 ## Authentication
 
-There are two ways to authenticate with the Postiz API:
+There are two ways to authenticate with the PostQueen API:
 
 ### API Key
 
 Get your API key from **Settings > Developers > Public API**. Include it in the `Authorization` header:
 
 ```bash
-curl -H "Authorization: your-api-key" https://api.postiz.com/public/v1/integrations
+curl -H "Authorization: your-api-key" https://api.postqueen.ai/public/v1/integrations
 ```
 
 ### OAuth2 Token
 
-If you're building an app for other Postiz users, use [OAuth2 Authentication](/public-api/oauth) to get tokens that act on behalf of users. OAuth tokens start with `pos_` and are used the same way:
+If you're building an app for other PostQueen users, use [OAuth2 Authentication](/public-api/oauth) to get tokens that act on behalf of users. OAuth tokens start with `pos_` and are used the same way:
 
 ```bash
-curl -H "Authorization: pos_your-oauth-token" https://api.postiz.com/public/v1/integrations
+curl -H "Authorization: pos_your-oauth-token" https://api.postqueen.ai/public/v1/integrations
 ```
 
 ## Base URL
 
 | Environment | Base URL |
 |-------------|----------|
-| Postiz Cloud | `https://api.postiz.com/public/v1` |
+| PostQueen Cloud | `https://api.postqueen.ai/public/v1` |
 | Self-hosted | `https://{NEXT_PUBLIC_BACKEND_URL}/public/v1` |
 
 ## Rate Limits
@@ -74,21 +74,21 @@ For `DELETE` endpoints, `404` always means "already deleted" and is safe to igno
 ## Terminology
 
 <Note>
-The Postiz UI uses the term **channel**, while the API uses **integration**. They refer to the same thing—a connected social media account.
+The PostQueen UI uses the term **channel**, while the API uses **integration**. They refer to the same thing—a connected social media account.
 </Note>
 
 ## Generate Output
 
 The easiest way to generate your post payloads is by using this wizard.
-It's the same wizard to schedule posts in the Postiz app, however instead of scheduling posts, it generates the JSON payload for you to use in your API requests.
+It's the same wizard to schedule posts in the PostQueen app, however instead of scheduling posts, it generates the JSON payload for you to use in your API requests.
 
 - For cloud, make sure you are logged in.
-- For local, make sure your Postiz server is running and your are logged in.
+- For local, make sure your PostQueen server is running and your are logged in.
 
 <Tabs>
   <Tab title="Cloud">
-      <iframe src="https://platform.postiz.com/modal/dark/all" style={{zoom: 0.5, height: 1000, width: '100%'}} />
-      <a href="https://platform.postiz.com/modal/dark/all" target="_blank" rel="noopener noreferrer" style={{display: 'block', marginTop: '10px', textAlign: 'center'}}>
+      <iframe src="https://platform.postqueen.ai/modal/dark/all" style={{zoom: 0.5, height: 1000, width: '100%'}} />
+      <a href="https://platform.postqueen.ai/modal/dark/all" target="_blank" rel="noopener noreferrer" style={{display: 'block', marginTop: '10px', textAlign: 'center'}}>
          Open in full screen
       </a>
   </Tab>
@@ -98,7 +98,7 @@ It's the same wizard to schedule posts in the Postiz app, however instead of sch
              Open in full screen
         </a>
         <p style={{fontSize: '0.85em', textAlign: 'center', marginTop: '6px'}}>
-          Source-mode default. If you're running the bundled Docker image (<code>ghcr.io/gitroomhq/postiz-app</code>), the official compose maps to <code>http://localhost:4007</code>.
+          Source-mode default. If you're running the bundled Docker image (<code>ghcr.io/gkhankinay/postqueen-app</code>), the official compose maps to <code>http://localhost:4007</code>.
         </p>
   </Tab>
 </Tabs>
@@ -197,7 +197,7 @@ These platforms only require `{ "__type": "platform-name" }`:
       "integration": { "id": "your-integration-id" },
       "value": [
         {
-          "content": "Hello from the Postiz API! 🚀",
+          "content": "Hello from the PostQueen API! 🚀",
           "image": []
         }
       ],
@@ -239,14 +239,14 @@ These platforms only require `{ "__type": "platform-name" }`:
 
 ```bash
 # Step 1: Upload the image
-curl -X POST "https://api.postiz.com/public/v1/upload" \
+curl -X POST "https://api.postqueen.ai/public/v1/upload" \
   -H "Authorization: your-api-key" \
   -F "file=@photo.jpg"
 
-# Response: { "id": "img-123", "path": "https://uploads.postiz.com/photo.jpg", ... }
+# Response: { "id": "img-123", "path": "https://uploads.postqueen.ai/photo.jpg", ... }
 
 # Step 2: Create the post with the uploaded image
-curl -X POST "https://api.postiz.com/public/v1/posts" \
+curl -X POST "https://api.postqueen.ai/public/v1/posts" \
   -H "Authorization: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{
@@ -258,7 +258,7 @@ curl -X POST "https://api.postiz.com/public/v1/posts" \
       "integration": { "id": "your-instagram-id" },
       "value": [{
         "content": "Beautiful sunset 🌅 #photography",
-        "image": [{ "id": "img-123", "path": "https://uploads.postiz.com/photo.jpg" }]
+        "image": [{ "id": "img-123", "path": "https://uploads.postqueen.ai/photo.jpg" }]
       }],
       "settings": {
         "__type": "instagram",

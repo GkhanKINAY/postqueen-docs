@@ -9,15 +9,15 @@ description: 'How to add Dribbble to your system'
   <Step title="Register your application">
     [Register your application on Dribbble](https://dribbble.com/account/applications/new).
 
-    * **Name:** `MyPostizInstance`
-    * **Description:** `My Postiz Instance`
+    * **Name:** `MyPostQueenInstance`
+    * **Description:** `My PostQueen Instance`
     * **Website:** `https://example.com`
     * **Redirect URI:** (see below)
 
     <Snippet file="oauth2redirect.mdx" />
 
     **Your Dribbble OAuth2 Redirect URI:**
-    - Production: `https://your-postiz-domain.com/integrations/social/dribble`
+    - Production: `https://your-postqueen-domain.com/integrations/social/dribble`
     - Local development: `http://localhost:4200/integrations/social/dribble`
     - Docker: `http://localhost:5000/integrations/social/dribble`
   </Step>
@@ -30,11 +30,11 @@ DRIBBLE_CLIENT_ID="1234..."
 DRIBBLE_CLIENT_SECRET="5678..."
 ```
 
-    Restart Postiz with the updated environment variables
+    Restart PostQueen with the updated environment variables
   </Step>
 
-  <Step title="Add a Dribbble channel in the Postiz web interface">
-    Go to the Postiz web interface, and click on the "Add Channel" button. Select "Dribbble" from the list of available channels. You should be redirected to Dribbble to authorize the application.
+  <Step title="Add a Dribbble channel in the PostQueen web interface">
+    Go to the PostQueen web interface, and click on the "Add Channel" button. Select "Dribbble" from the list of available channels. You should be redirected to Dribbble to authorize the application.
   </Step>
 </Steps>
 

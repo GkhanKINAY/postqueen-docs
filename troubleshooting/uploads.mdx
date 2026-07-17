@@ -5,7 +5,7 @@ description: 'Payload limits, upload-from-url, video, and cancel-in-flight behav
 
 ## Body size limit
 
-The Postiz backend accepts JSON bodies up to **50 MB** on the post-creation
+The PostQueen backend accepts JSON bodies up to **50 MB** on the post-creation
 routes (`POST /public/v1/posts` for the public API, plus the internal
 `/posts` and `/copilot/*` endpoints used by the web UI). Other endpoints
 fall back to the framework default and are much smaller — don't inline
@@ -27,7 +27,7 @@ the uploaded file's detected MIME type against this allowlist:
 | TIFF | `image/tiff` |
 | MP4 video | `video/mp4` |
 
-PDFs are **not** accepted by the public API. The only PDF flow Postiz
+PDFs are **not** accepted by the public API. The only PDF flow PostQueen
 supports is LinkedIn document carousels, which are produced internally
 by converting an image carousel to PDF — you can't post a PDF directly
 through the public API.
@@ -43,7 +43,7 @@ then reference the returned `id` and `path` in the post body's
 
 ```bash
 # Step 1: upload the file
-curl -X POST "https://api.postiz.com/public/v1/upload" \
+curl -X POST "https://api.postqueen.ai/public/v1/upload" \
   -H "Authorization: your-api-key" \
   -F "file=@photo.jpg"
 
@@ -52,8 +52,8 @@ curl -X POST "https://api.postiz.com/public/v1/upload" \
 
 ## `upload-from-url` timeouts or "fetch failed"
 
-`/upload-from-url` proxies the source URL through the Postiz backend.
-If the source server is slow, unreachable, blocks Postiz's user agent,
+`/upload-from-url` proxies the source URL through the PostQueen backend.
+If the source server is slow, unreachable, blocks PostQueen's user agent,
 or sits behind authentication, the upload fails.
 
 **Fix**
@@ -66,7 +66,7 @@ or sits behind authentication, the upload fails.
 
 ## "Failed to load video metadata"
 
-Postiz inspects uploaded videos for duration, dimensions, and codec
+PostQueen inspects uploaded videos for duration, dimensions, and codec
 before passing them to the social provider. Files outside the supported
 range fail here.
 
@@ -84,7 +84,7 @@ downstream.
 
 ## "uploader plugin does not allow removing files during an upload"
 
-You hit Cancel on a file that was already being uploaded. Postiz's
+You hit Cancel on a file that was already being uploaded. PostQueen's
 uploader doesn't support mid-flight cancellation — wait for the upload
 to complete, then delete the asset from the post.
 

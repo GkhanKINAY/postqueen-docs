@@ -10,7 +10,7 @@ Use `posts:create` to schedule or draft posts to one or more platforms.
 ### Simple Post
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Hello world!" \
   -s "2025-01-15T10:00:00Z" \
   -i "your-integration-id"
@@ -32,7 +32,7 @@ postiz posts:create \
 ### Draft Post
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Review this before publishing" \
   -s "2025-01-15T10:00:00Z" \
   -t draft \
@@ -44,9 +44,9 @@ postiz posts:create \
 Upload your media first with the [`upload`](/cli/media-upload) command, then reference the returned URL:
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Check out this photo!" \
-  -m "https://uploads.postiz.com/your-image.jpg" \
+  -m "https://uploads.postqueen.ai/your-image.jpg" \
   -s "2025-01-15T10:00:00Z" \
   -i "your-integration-id"
 ```
@@ -56,7 +56,7 @@ postiz posts:create \
 Pass `-c` multiple times to create a thread. Each comment can have its own media with a corresponding `-m` flag:
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Thread 1/3" -m "image1.jpg" \
   -c "Thread 2/3" -m "image2.jpg" \
   -c "Thread 3/3" \
@@ -67,7 +67,7 @@ postiz posts:create \
 Use `-d` to control the delay between comments (in milliseconds):
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "First tweet" \
   -c "Second tweet" \
   -c "Third tweet" \
@@ -81,7 +81,7 @@ postiz posts:create \
 Send the same content to multiple platforms by passing comma-separated integration IDs:
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Posting everywhere!" \
   -s "2025-01-15T10:00:00Z" \
   -i "twitter-id,linkedin-id,facebook-id"
@@ -92,7 +92,7 @@ postiz posts:create \
 Some platforms require additional settings. Pass them as JSON with `--settings`:
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Check out this discussion" \
   -s "2025-01-15T10:00:00Z" \
   --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text"}}]}' \
@@ -100,7 +100,7 @@ postiz posts:create \
 ```
 
 <Tip>
-Use `postiz integrations:settings <id>` to discover what settings are available for each platform. See [Integrations](/cli/integrations) for details.
+Use `postqueen integrations:settings <id>` to discover what settings are available for each platform. See [Integrations](/cli/integrations) for details.
 </Tip>
 
 ### Complex Posts with JSON
@@ -108,7 +108,7 @@ Use `postiz integrations:settings <id>` to discover what settings are available 
 For posts with detailed platform-specific content, use a JSON file:
 
 ```bash
-postiz posts:create --json post.json
+postqueen posts:create --json post.json
 ```
 
 Example `post.json`:
@@ -133,13 +133,13 @@ Example `post.json`:
 ## Listing Posts
 
 ```bash
-postiz posts:list
+postqueen posts:list
 ```
 
 ### Filter by Date Range
 
 ```bash
-postiz posts:list \
+postqueen posts:list \
   --startDate "2025-01-01T00:00:00Z" \
   --endDate "2025-01-31T23:59:59Z"
 ```
@@ -147,7 +147,7 @@ postiz posts:list \
 ### Filter by Customer
 
 ```bash
-postiz posts:list --customer "customer-id"
+postqueen posts:list --customer "customer-id"
 ```
 
 ## Connecting Missing Posts
@@ -157,7 +157,7 @@ Some platforms don't return a post ID immediately after publishing (the `release
 ### List Available Content
 
 ```bash
-postiz posts:missing <post-id>
+postqueen posts:missing <post-id>
 ```
 
 Returns an array of recent content items from the provider with their ID and thumbnail URL:
@@ -184,25 +184,25 @@ This only works for posts where the `releaseId` is `"missing"`. Returns an empty
 Once you've identified the correct content, update the release ID:
 
 ```bash
-postiz posts:connect <post-id> --release-id "7321456789012345678"
+postqueen posts:connect <post-id> --release-id "7321456789012345678"
 ```
 
-After connecting, the post will support full analytics via `postiz analytics:post`.
+After connecting, the post will support full analytics via `postqueen analytics:post`.
 
 ### Full Workflow
 
 ```bash
 # 1. Find posts with missing release IDs
-postiz posts:list | jq '.posts[] | select(.releaseId == "missing") | {id, content}'
+postqueen posts:list | jq '.posts[] | select(.releaseId == "missing") | {id, content}'
 
 # 2. Get available content from the provider
-postiz posts:missing <post-id>
+postqueen posts:missing <post-id>
 
 # 3. Connect the correct content
-postiz posts:connect <post-id> --release-id "7321456789012345678"
+postqueen posts:connect <post-id> --release-id "7321456789012345678"
 
 # 4. Verify analytics now work
-postiz analytics:post <post-id>
+postqueen analytics:post <post-id>
 ```
 
 ## Changing Post Status
@@ -210,8 +210,8 @@ postiz analytics:post <post-id>
 Move a post between `draft` and `schedule` without changing its date.
 
 ```bash
-postiz posts:status <post-id> --status draft
-postiz posts:status <post-id> --status schedule
+postqueen posts:status <post-id> --status draft
+postqueen posts:status <post-id> --status schedule
 ```
 
 - `--status schedule` promotes a draft into the publishing queue and (re)starts the workflow so it will publish at its stored date.
@@ -224,5 +224,5 @@ Use this when you want to pause a scheduled post without deleting it, or hand a 
 ## Deleting Posts
 
 ```bash
-postiz posts:delete <post-id>
+postqueen posts:delete <post-id>
 ```

@@ -1,13 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "maple",
-  "name": "Postiz Documentation",
+  "name": "PostQueen Documentation",
   "colors": {
-    "primary": "#9900e6",
-    "light": "#b266ff",
-    "dark": "#7700b3"
+    "primary": "#7c3aed",
+    "light": "#a78bfa",
+    "dark": "#6d28d9"
   },
-  "favicon": "/favicon.ico",
+  "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
@@ -290,38 +290,21 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/gitroomhq/postiz-app",
+          "href": "https://github.com/GkhanKINAY/postqueen-app",
           "icon": "github"
-        },
-        {
-          "anchor": "Discord",
-          "href": "https://discord.postiz.com",
-          "icon": "discord"
-        },
-        {
-          "anchor": "YouTube",
-          "href": "https://youtube.com/@postizofficial",
-          "icon": "youtube"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.png",
-    "dark": "/logo/dark.png"
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
   },
   "navbar": {
-    "links": [
-      {
-        "icon": "discord",
-        "label": "Discord",
-        "href": "https://discord.postiz.com"
-      }
-    ],
     "primary": {
       "type": "button",
       "label": "Register to the cloud",
-      "href": "https://postiz.com"
+      "href": "https://postqueen.ai"
     }
   },
   "contextual": {
@@ -335,8 +318,7 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/gitroomhq/postiz-app",
-      "discord": "https://discord.postiz.com"
+      "github": "https://github.com/GkhanKINAY/postqueen-app"
     }
   }
 }

@@ -1,16 +1,16 @@
 ---
 title: Configuration Reference
-description: 'Environment variables reference for Postiz'
+description: 'Environment variables reference for PostQueen'
 ---
 
-Postiz is configured entirely through environment variables. Any change requires
+PostQueen is configured entirely through environment variables. Any change requires
 an application restart.
 
-The canonical list lives in the [example postiz.env file](https://raw.githubusercontent.com/gitroomhq/postiz-app/main/.env.example).
-This page documents every variable Postiz reads, grouped by purpose.
+The canonical list lives in the [example postqueen.env file](https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.env.example).
+This page documents every variable PostQueen reads, grouped by purpose.
 
 <Info>
-Variables marked **Required** are validated on boot — Postiz will fail to start
+Variables marked **Required** are validated on boot — PostQueen will fail to start
 if they're missing or malformed.
 </Info>
 
@@ -23,7 +23,7 @@ These six variables are non-optional for any deployment.
 PostgreSQL connection string used by Prisma.
 
 ```
-DATABASE_URL="postgresql://postiz-user:postiz-password@localhost:5432/postiz-db-local"
+DATABASE_URL="postgresql://postqueen-user:postqueen-password@localhost:5432/postqueen-db-local"
 ```
 
 ### `REDIS_URL` <sup>Required</sup>
@@ -40,18 +40,18 @@ A long random string used to sign session JWTs. Rotating this invalidates every 
 
 ### `FRONTEND_URL` <sup>Required</sup>
 
-The URL the **browser** uses to reach the Postiz frontend. Used as the OAuth redirect base and for email links.
+The URL the **browser** uses to reach the PostQueen frontend. Used as the OAuth redirect base and for email links.
 
 ```
-FRONTEND_URL="https://postiz.example.com"
+FRONTEND_URL="https://postqueen.example.com"
 ```
 
 ### `NEXT_PUBLIC_BACKEND_URL` <sup>Required</sup>
 
-The URL the **browser** uses to reach the Postiz backend.
+The URL the **browser** uses to reach the PostQueen backend.
 
 ```
-NEXT_PUBLIC_BACKEND_URL="https://api.postiz.example.com"
+NEXT_PUBLIC_BACKEND_URL="https://api.postqueen.example.com"
 ```
 
 ### `BACKEND_INTERNAL_URL` <sup>Required</sup>
@@ -72,7 +72,7 @@ This also disables OIDC / OAuth sign-in.
 
 ### `API_LIMIT`
 
-Per-hour limit on the public-API create-post endpoint. Defaults to `90`. Postiz Cloud uses `100`. Channel and post quotas are tiered separately by plan.
+Per-hour limit on the public-API create-post endpoint. Defaults to `90`. PostQueen Cloud uses `100`. Channel and post quotas are tiered separately by plan.
 
 ### `RUN_CRON`
 
@@ -88,7 +88,7 @@ When set, blocks the upgrade UI elements pointing to paid plans. Used for self-h
 
 ### `IS_GENERAL`
 
-Switches the frontend between routes available to the open-source build (`/launches`) and the hosted build (`/analytics`). Set to `"true"` on self-host. Leave unset on Postiz Cloud.
+Switches the frontend between routes available to the open-source build (`/launches`) and the hosted build (`/analytics`). Set to `"true"` on self-host. Leave unset on PostQueen Cloud.
 
 ### `DISABLE_IMAGE_COMPRESSION`
 
@@ -156,22 +156,22 @@ See also: [OAuth configuration](/configuration/oauth).
 
 | Variable | Purpose |
 |---|---|
-| `POSTIZ_GENERIC_OAUTH` | `true` to enable a generic OIDC sign-in provider. |
-| `POSTIZ_OAUTH_URL` | Base URL of the IdP. |
-| `POSTIZ_OAUTH_AUTH_URL` | Authorization endpoint. |
-| `POSTIZ_OAUTH_TOKEN_URL` | Token endpoint. |
-| `POSTIZ_OAUTH_USERINFO_URL` | UserInfo endpoint. |
-| `POSTIZ_OAUTH_CLIENT_ID` | Client ID issued by the IdP. |
-| `POSTIZ_OAUTH_CLIENT_SECRET` | Client secret issued by the IdP. |
-| `POSTIZ_OAUTH_SCOPE` | OIDC scope. Defaults to `openid profile email`. |
-| `NEXT_PUBLIC_POSTIZ_OAUTH_DISPLAY_NAME` | Label shown on the sign-in button. |
-| `NEXT_PUBLIC_POSTIZ_OAUTH_LOGO_URL` | Icon shown on the sign-in button. |
+| `POSTQUEEN_GENERIC_OAUTH` | `true` to enable a generic OIDC sign-in provider. |
+| `POSTQUEEN_OAUTH_URL` | Base URL of the IdP. |
+| `POSTQUEEN_OAUTH_AUTH_URL` | Authorization endpoint. |
+| `POSTQUEEN_OAUTH_TOKEN_URL` | Token endpoint. |
+| `POSTQUEEN_OAUTH_USERINFO_URL` | UserInfo endpoint. |
+| `POSTQUEEN_OAUTH_CLIENT_ID` | Client ID issued by the IdP. |
+| `POSTQUEEN_OAUTH_CLIENT_SECRET` | Client secret issued by the IdP. |
+| `POSTQUEEN_OAUTH_SCOPE` | OIDC scope. Defaults to `openid profile email`. |
+| `NEXT_PUBLIC_POSTQUEEN_OAUTH_DISPLAY_NAME` | Label shown on the sign-in button. |
+| `NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL` | Icon shown on the sign-in button. |
 
 ---
 
 ## Temporal (workflow orchestration)
 
-Since v2.12.0, Postiz uses Temporal for scheduled posts and background workflows.
+Since v2.12.0, PostQueen uses Temporal for scheduled posts and background workflows.
 Self-host deployments need to run a Temporal stack (the official docker-compose
 ships with one). See the [Temporal migration guide](/installation/migration).
 
@@ -214,7 +214,7 @@ ships with one). See the [Temporal migration guide](/installation/migration).
 
 ## Short-link providers
 
-If a Postiz user configures short-link replacement, Postiz proxies link
+If a PostQueen user configures short-link replacement, PostQueen proxies link
 shortening through one of the configured providers. Pick one set.
 
 ### Dub.co

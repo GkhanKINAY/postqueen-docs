@@ -1,6 +1,6 @@
 ---
 title: System Requirements
-description: 'Hardware, services, ports, and network requirements for self-hosting Postiz'
+description: 'Hardware, services, ports, and network requirements for self-hosting PostQueen'
 ---
 
 ## Hardware
@@ -32,15 +32,15 @@ NODE_OPTIONS="--max-old-space-size=4096" pnpm install
 
 The canonical self-host setup is the official Docker Compose repo:
 
-<Card title="postiz-docker-compose" icon="docker" href="https://github.com/gitroomhq/postiz-docker-compose">
-  Pre-wired Postiz + Postgres + Redis + Temporal. The fastest way to a working install.
+<Card title="postqueen-docker-compose" icon="docker" href="https://github.com/GkhanKINAY/postqueen-docker-compose">
+  Pre-wired PostQueen + Postgres + Redis + Temporal. The fastest way to a working install.
 </Card>
 
 If you'd rather build from source or use Kubernetes, see [Docker Compose](/installation/docker-compose), [Docker](/installation/docker), or [Kubernetes / Helm](/installation/kubernetes-helm).
 
 ## Required services
 
-Postiz needs four external services:
+PostQueen needs four external services:
 
 | Service | Minimum version |
 |---|---|
@@ -49,16 +49,16 @@ Postiz needs four external services:
 | Temporal | bundled with official docker-compose; required since v2.12.0 |
 | Object storage | Optional — local filesystem works (`STORAGE_PROVIDER=local`), Cloudflare R2 supported (`STORAGE_PROVIDER=cloudflare`) |
 
-The official [docker-compose](https://github.com/gitroomhq/postiz-docker-compose)
+The official [docker-compose](https://github.com/GkhanKINAY/postqueen-docker-compose)
 ships Postgres, Redis, and Temporal pre-wired. If you're running them
-externally, point Postiz at them via `DATABASE_URL`, `REDIS_URL`, and
+externally, point PostQueen at them via `DATABASE_URL`, `REDIS_URL`, and
 `TEMPORAL_ADDRESS`.
 
 ## Default ports
 
 | Service | Port | When |
 |---|---|---|
-| Postiz container (bundled FE + BE) | `5000` | Official Docker image (`ghcr.io/gitroomhq/postiz-app`) — exposed for you to map. The bundled compose maps host `4007:5000`. |
+| PostQueen container (bundled FE + BE) | `5000` | Official Docker image (`ghcr.io/gkhankinay/postqueen-app`) — exposed for you to map. The bundled compose maps host `4007:5000`. |
 | Backend (Nest) | `3000` | Running from source (`pnpm dev` / `pnpm start`). Override via `PORT`. |
 | Frontend (Next.js) | `4200` | Running from source. |
 | Temporal frontend | `7233` | gRPC; both modes. |
@@ -74,7 +74,7 @@ If you'd rather offload media: configure [Cloudflare R2](/configuration/r2).
 
 ## Outbound network
 
-Postiz initiates outbound HTTPS to every social provider you connect.
+PostQueen initiates outbound HTTPS to every social provider you connect.
 Strict egress firewalls **will** break OAuth — make sure the backend
 can reach:
 

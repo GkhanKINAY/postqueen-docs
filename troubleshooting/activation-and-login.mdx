@@ -39,13 +39,13 @@ rotate it lightly. Store it in a secret manager (Docker / Kubernetes
 secret, AWS/GCP Secret Manager, Doppler, 1Password, etc.) or an
 untracked `.env` file on the host. **Don't commit it to version
 control** — that includes "private" deploy repos, since anyone with
-repo access ends up with the signing key for every session token Postiz
+repo access ends up with the signing key for every session token PostQueen
 has ever issued.
 
 ## Self-host: "Origin not allowed" on launches
 
 The backend's CORS allowlist is built from `FRONTEND_URL` (and
-`MAIN_URL` if set). If you access Postiz on a hostname or port not in
+`MAIN_URL` if set). If you access PostQueen on a hostname or port not in
 that list, the backend rejects the call.
 
 **Fix:** make sure `FRONTEND_URL` exactly matches the URL you're using

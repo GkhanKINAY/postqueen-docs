@@ -8,7 +8,7 @@ description: 'Ready-to-use examples for posting to specific platforms'
 ### Simple Post
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Hello Twitter!" \
   -s "2025-01-15T10:00:00Z" \
   -i "twitter-id"
@@ -17,7 +17,7 @@ postiz posts:create \
 ### Thread
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Thread 1/3: Introduction" \
   -c "Thread 2/3: Main point" \
   -c "Thread 3/3: Conclusion" \
@@ -29,7 +29,7 @@ postiz posts:create \
 ### With Reply Controls
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Only followers can reply to this" \
   -s "2025-01-15T10:00:00Z" \
   --settings '{"who_can_reply_post":"followers"}' \
@@ -42,10 +42,10 @@ postiz posts:create \
 
 ```bash
 # 1. Get available flairs
-postiz integrations:trigger reddit-id getFlairs -d '{"subreddit":"programming"}'
+postqueen integrations:trigger reddit-id getFlairs -d '{"subreddit":"programming"}'
 
 # 2. Post with a flair
-postiz posts:create \
+postqueen posts:create \
   -c "My post content" \
   -s "2025-01-15T10:00:00Z" \
   --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"Post Title","type":"text","flair":{"id":"flair-id","name":"Discussion"}}}]}' \
@@ -56,11 +56,11 @@ postiz posts:create \
 
 ```bash
 #!/bin/bash
-REDDIT_ID=$(postiz integrations:list | jq -r '.[] | select(.identifier=="reddit") | .id')
-FLAIRS=$(postiz integrations:trigger "$REDDIT_ID" getFlairs -d '{"subreddit":"programming"}')
+REDDIT_ID=$(postqueen integrations:list | jq -r '.[] | select(.identifier=="reddit") | .id')
+FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" getFlairs -d '{"subreddit":"programming"}')
 FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
 
-postiz posts:create \
+postqueen posts:create \
   -c "Automated Reddit post" \
   -s "2025-01-15T10:00:00Z" \
   --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"text\",\"flair\":{\"id\":\"$FLAIR_ID\"}}}]}" \
@@ -71,10 +71,10 @@ postiz posts:create \
 
 ```bash
 # Upload video first
-VIDEO=$(postiz upload video.mp4)
+VIDEO=$(postqueen upload video.mp4)
 VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
 
-postiz posts:create \
+postqueen posts:create \
   -c "Video description here" \
   -m "$VIDEO_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -86,10 +86,10 @@ postiz posts:create \
 
 ```bash
 # Upload video first
-VIDEO=$(postiz upload video.mp4)
+VIDEO=$(postqueen upload video.mp4)
 VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
 
-postiz posts:create \
+postqueen posts:create \
   -c "Check this out! #fyp" \
   -m "$VIDEO_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -101,11 +101,11 @@ postiz posts:create \
 
 ```bash
 # Upload image first
-IMAGE=$(postiz upload photo.jpg)
+IMAGE=$(postqueen upload photo.jpg)
 IMAGE_URL=$(echo "$IMAGE" | jq -r '.path')
 
 # Regular post
-postiz posts:create \
+postqueen posts:create \
   -c "Beautiful day! #photography" \
   -m "$IMAGE_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -116,7 +116,7 @@ postiz posts:create \
 ### Story
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Story content" \
   -m "$IMAGE_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -129,7 +129,7 @@ postiz posts:create \
 A single video with `post_type: "post"` is published as a Reel:
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Reel caption" \
   -m "$VIDEO_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -144,10 +144,10 @@ Search the Instagram audio catalog and attach a track to the Reel
 
 ```bash
 # Find an audio ID
-AUDIO_ID=$(postiz integrations:trigger instagram-id audioSearch \
+AUDIO_ID=$(postqueen integrations:trigger instagram-id audioSearch \
   -d '{"q":"summer vibes","type":"music"}' | jq -r '.output[0].id')
 
-postiz posts:create \
+postqueen posts:create \
   -c "Reel with trending audio" \
   -m "$VIDEO_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -158,7 +158,7 @@ postiz posts:create \
 ## LinkedIn
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Professional update on LinkedIn" \
   -s "2025-01-15T10:00:00Z" \
   -i "linkedin-id"
@@ -167,7 +167,7 @@ postiz posts:create \
 ### Image Carousel
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Check out these slides!" \
   -m "image1.jpg,image2.jpg,image3.jpg" \
   -s "2025-01-15T10:00:00Z" \
@@ -178,7 +178,7 @@ postiz posts:create \
 ## Pinterest
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Pin description" \
   -m "$IMAGE_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -189,7 +189,7 @@ postiz posts:create \
 ## Discord
 
 ```bash
-postiz posts:create \
+postqueen posts:create \
   -c "Message to Discord" \
   -s "2025-01-15T10:00:00Z" \
   --settings '{"channel":"channel-id"}' \
@@ -206,7 +206,7 @@ DATES=("2025-01-14T09:00:00Z" "2025-01-15T09:00:00Z" "2025-01-16T09:00:00Z")
 CONTENT=("Monday motivation" "Tuesday tips" "Wednesday wisdom")
 
 for i in "${!DATES[@]}"; do
-  postiz posts:create \
+  postqueen posts:create \
     -c "${CONTENT[$i]}" \
     -s "${DATES[$i]}" \
     -i "twitter-id"
@@ -218,7 +218,7 @@ done
 Post different content per platform in one command using a JSON file:
 
 ```bash
-postiz posts:create --json campaign.json
+postqueen posts:create --json campaign.json
 ```
 
 Example `campaign.json`:

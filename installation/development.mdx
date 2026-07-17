@@ -1,13 +1,13 @@
 ---
 title: Development Environment
-description: 'Set up Postiz for local development'
+description: 'Set up PostQueen for local development'
 ---
 
-This article guides you for local development on  Postiz. If you're only looking to self-host, docker-compose is the recommended method.
+This article guides you for local development on  PostQueen. If you're only looking to self-host, docker-compose is the recommended method.
 [Docker-Compose](/installation/docker-compose) is the recommended method and now includes the Temporal stack for workflow processing.
 
 <Warning>
-  <strong>Important:</strong> Postiz uses Temporal for background workflows. If you are upgrading from v2.11.2 to v2.12.0 or later, follow the migration guide at [/installation/migration](/installation/migration) and use the maintained Docker Compose repository which includes the Temporal stack: [/installation/docker-compose](/installation/docker-compose).
+  <strong>Important:</strong> PostQueen uses Temporal for background workflows. If you are upgrading from v2.11.2 to v2.12.0 or later, follow the migration guide at [/installation/migration](/installation/migration) and use the maintained Docker Compose repository which includes the Temporal stack: [/installation/docker-compose](/installation/docker-compose).
 </Warning>
 
 ## Tested configurations
@@ -28,7 +28,7 @@ Several users using Windows (and WSL) have reported issues with the setup. This 
 - **Node.js** - for running the code! (version 18+)
 - **PostgreSQL** - or any other SQL database (instructions below suggest Docker)
 - **Redis** - for handling worker queues (instructions below suggest Docker)
-- **Temporal** - runs as a separate stack (Postgres + Elasticsearch + Temporal services). For local development run the Temporal stack via the `postiz-docker-compose` repository described in [/installation/docker-compose](/installation/docker-compose). Set `TEMPORAL_ADDRESS` in your `.env` to point at the Temporal service (example below).
+- **Temporal** - runs as a separate stack (Postgres + Elasticsearch + Temporal services). For local development run the Temporal stack via the `postqueen-docker-compose` repository described in [/installation/docker-compose](/installation/docker-compose). Set `TEMPORAL_ADDRESS` in your `.env` to point at the Temporal service (example below).
 
 We have some messages from users who are using Windows, which should work, but they are not tested well yet.
 
@@ -53,7 +53,7 @@ docker run --name redis -p 6379:6379 -d redis
 
 #### Option B) Postgres and Redis as docker-compose
 
-Download the [docker-compose.yaml file here](https://raw.githubusercontent.com/gitroomhq/postiz-app/main/docker-compose.dev.yaml), 
+Download the [docker-compose.yaml file here](https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/docker-compose.dev.yaml), 
 or grab it from the repository in the next step.
 
 ```bash
@@ -62,12 +62,12 @@ docker compose -f "docker-compose.dev.yaml" up
 
 To run Temporal locally, clone the maintained Docker Compose repository which includes the Temporal stack and follow the instructions in [/installation/docker-compose](/installation/docker-compose). See [/installation/migration](/installation/migration) for migration steps when moving data to the Temporal-enabled setup.
 
-## Build Postiz
+## Build PostQueen
 
 <Steps>
   <Step title="Clone the repository">
 ```bash
-git clone https://github.com/gitroomhq/postiz-app.git
+git clone https://github.com/GkhanKINAY/postqueen-app.git
 ```
   </Step>
 
@@ -76,7 +76,7 @@ Copy the `.env.example` file to `.env` and fill in the values
 
 ```bash
 # Required Settings
-DATABASE_URL="postgresql://postiz-user:postiz-password@localhost:5432/postiz-db-local"
+DATABASE_URL="postgresql://postqueen-user:postqueen-password@localhost:5432/postqueen-db-local"
 REDIS_URL="redis://localhost:6379"
 JWT_SECRET="random string for your JWT secret, make it long"
 FRONTEND_URL="http://localhost:4200"
@@ -85,7 +85,7 @@ BACKEND_INTERNAL_URL="http://localhost:3000"
 TEMPORAL_ADDRESS="localhost:7233"
 
 # Optional. Your upload directory path if you host your files locally.
-UPLOAD_DIRECTORY="/opt/postiz/uploads/"
+UPLOAD_DIRECTORY="/opt/postqueen/uploads/"
 
 # Optional: your upload directory slug if you host your files locally.
 NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY=""
@@ -104,7 +104,7 @@ EMAIL_PASS="pass" # smtp pass if you choose nodemailer
 CLOUDFLARE_ACCOUNT_ID="QhcMSXQyPuMCRpSQcSYdEuTYgHeCXHbu"
 CLOUDFLARE_ACCESS_KEY="dcfCMSuFEeCNfvByUureMZEfxWJmDqZe"
 CLOUDFLARE_SECRET_ACCESS_KEY="zTTMXBmtyLPwHEdpACGHgDgzRTNpTJewiNriLnUS"
-CLOUDFLARE_BUCKETNAME="postiz"
+CLOUDFLARE_BUCKETNAME="postqueen"
 CLOUDFLARE_BUCKET_URL="https://QhcMSXQyPuMCRpSQcSYdEuTYgHeCXHbu.r2.cloudflarestorage.com/"
 CLOUDFLARE_REGION="auto"
 

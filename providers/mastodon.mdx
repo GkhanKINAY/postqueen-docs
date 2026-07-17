@@ -14,7 +14,7 @@ Mastodon client registration is not done via the web interface, but by talking t
 Optionally check that you have `jq` installed on your system. You can normally install this with brew, apt-get, yum or chocolatey. If you don't have `jq` installed, you can remove it from the command below.
 
 <Info>
-The examples on this page use `https://mastodon.social` as the default Mastodon instance. If you are setting up Postiz to connect to a different self-hosted Mastodon instance (e.g., `https://fosstodon.org`), you must replace `https://mastodon.social` with your instance's URL in the `curl` command below. You will also need to ensure the `MASTODON_URL` environment variable in your application's `.env` file (or equivalent configuration for Docker, etc.) is set to your custom instance's URL.
+The examples on this page use `https://mastodon.social` as the default Mastodon instance. If you are setting up PostQueen to connect to a different self-hosted Mastodon instance (e.g., `https://fosstodon.org`), you must replace `https://mastodon.social` with your instance's URL in the `curl` command below. You will also need to ensure the `MASTODON_URL` environment variable in your application's `.env` file (or equivalent configuration for Docker, etc.) is set to your custom instance's URL.
 </Info>
 
 <Steps>
@@ -22,7 +22,7 @@ The examples on this page use `https://mastodon.social` as the default Mastodon 
     <Snippet file="oauth2redirect.mdx" />
 
     **Your Mastodon OAuth2 Redirect URI:**
-    - Production: `https://your-postiz-domain.com/integrations/social/mastodon`
+    - Production: `https://your-postqueen-domain.com/integrations/social/mastodon`
     - Local development: `http://localhost:4200/integrations/social/mastodon`
     - Docker: `http://localhost:5000/integrations/social/mastodon`
 
@@ -57,8 +57,8 @@ MASTODON_URL="https://mastodon.social" # Change this if connecting to a differen
 ```
   </Step>
 
-  <Step title="Start Postiz">
-    Stop Postiz if it is running, and then start it using the .env file with the Mastodon details. Click through the new channel setup and you should be asked to login on Mastodon.
+  <Step title="Start PostQueen">
+    Stop PostQueen if it is running, and then start it using the .env file with the Mastodon details. Click through the new channel setup and you should be asked to login on Mastodon.
   </Step>
 </Steps>
 
@@ -66,7 +66,7 @@ MASTODON_URL="https://mastodon.social" # Change this if connecting to a differen
 
 ### "Failed to fetch" / "fetch failed" when connecting
 
-The Postiz backend needs network access to reach your Mastodon instance. If the connect call fails at this stage, the backend container couldn't resolve or reach the `MASTODON_URL` host.
+The PostQueen backend needs network access to reach your Mastodon instance. If the connect call fails at this stage, the backend container couldn't resolve or reach the `MASTODON_URL` host.
 
 **Fix**
 

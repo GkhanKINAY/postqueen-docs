@@ -21,7 +21,7 @@ MeWe supports posting to your personal timeline as well as to groups you belong 
   <Step title="Create a new application">
     Once approved, go to your [MeWe Developer Settings](https://mewe.com/developer) and create a new application.
 
-    When selecting the application type, choose **Standalone App** since Postiz operates as an external application that connects to MeWe's API.
+    When selecting the application type, choose **Standalone App** since PostQueen operates as an external application that connects to MeWe's API.
 
     Configure the permissions your application requires for posting and group access.
   </Step>
@@ -30,12 +30,12 @@ MeWe supports posting to your personal timeline as well as to groups you belong 
     <Snippet file="oauth2redirect.mdx" />
 
     **Your MeWe OAuth2 Redirect URI:**
-    - Production: `https://your-postiz-domain.com/integrations/social/mewe`
+    - Production: `https://your-postqueen-domain.com/integrations/social/mewe`
     - Local development: `http://localhost:4200/integrations/social/mewe`
     - Docker: `http://localhost:5000/integrations/social/mewe`
 
     <Warning>
-    MeWe requires HTTPS for redirect URIs in production. Make sure your Postiz instance is served over HTTPS.
+    MeWe requires HTTPS for redirect URIs in production. Make sure your PostQueen instance is served over HTTPS.
     </Warning>
   </Step>
 
@@ -52,10 +52,10 @@ MEWE_API_KEY="your_api_key"
     </Warning>
   </Step>
 
-  <Step title="Add MeWe channel in Postiz">
-    Restart Postiz to apply the new environment variables. If you are using Docker Compose, run `docker compose down` and then `docker compose up`.
+  <Step title="Add MeWe channel in PostQueen">
+    Restart PostQueen to apply the new environment variables. If you are using Docker Compose, run `docker compose down` and then `docker compose up`.
 
-    Go to the Postiz web interface, click on "Add Channel", and select **MeWe**. You will be redirected to MeWe to authorize the connection.
+    Go to the PostQueen web interface, click on "Add Channel", and select **MeWe**. You will be redirected to MeWe to authorize the connection.
 
     Once authorized, you can choose to post to your **Timeline** or to a specific **Group** when creating posts.
   </Step>
@@ -63,7 +63,7 @@ MEWE_API_KEY="your_api_key"
 
 ## Posting Options
 
-When creating a post for MeWe in Postiz, you can configure:
+When creating a post for MeWe in PostQueen, you can configure:
 
 - **My Timeline** — Posts directly to your personal MeWe timeline.
 - **Group** — Posts to a specific MeWe group you belong to. You will be prompted to select the target group from a dropdown.

@@ -14,22 +14,22 @@ description: 'How to add Instagram to your system'
 There are two ways to connect to an Instagram account: by using a Facebook Business or through a standalone flow that connects directly to an Instagram account. Both methods will require a [Meta for Developers account](https://developers.facebook.com/apps/).
 
 <Info>
-**What Postiz supports on Instagram:**
+**What PostQueen supports on Instagram:**
 
 - Feed posts (single image, carousel, video / Reels).
 - Stories (image and video).
 - Attaching audio (music or original sounds) to Reels — Facebook Business connection only, the [Instagram Audio API](https://developers.facebook.com/docs/instagram-platform/content-publishing/audio-api/) is not available for standalone connections.
 - Replying to comments via an explicit user action.
 
-**What Postiz does not support:**
+**What PostQueen does not support:**
 
-- Story link stickers / swipe-up links — the Instagram Graph API doesn't expose interactive sticker payloads, so Postiz can only upload the story media.
+- Story link stickers / swipe-up links — the Instagram Graph API doesn't expose interactive sticker payloads, so PostQueen can only upload the story media.
 - Automatic comment auto-reply — there is no agent that watches for incoming comments and replies on your behalf. You can post a reply through the API, but each reply is an explicit action.
 </Info>
 
 ## Setting up Meta Application
 
-The following steps will guide you through the setup of a Meta application that can be used for connecting Instagram to Postiz.
+The following steps will guide you through the setup of a Meta application that can be used for connecting Instagram to PostQueen.
 
 <Steps>
   <Step title="Create a new app">
@@ -80,7 +80,7 @@ If you have a Facebook Business page that is linked to your Instagram account, y
     <Snippet file="oauth2redirect.mdx" />
 
     **Your Instagram OAuth2 Redirect URI:**
-    - Production: `https://your-postiz-domain.com/integrations/social/instagram`
+    - Production: `https://your-postqueen-domain.com/integrations/social/instagram`
     - Local development: `http://localhost:4200/integrations/social/instagram`
     - Docker: `http://localhost:5000/integrations/social/instagram`
   </Step>
@@ -140,7 +140,7 @@ Please note that standalone option requires a professional Instagram account.
     <Snippet file="oauth2redirect.mdx" />
 
     **Your Instagram Standalone OAuth2 Redirect URI:**
-    - Production: `https://your-postiz-domain.com/integrations/social/instagram-standalone`
+    - Production: `https://your-postqueen-domain.com/integrations/social/instagram-standalone`
     - Local development: `http://localhost:4200/integrations/social/instagram-standalone`
     - Docker: `http://localhost:5000/integrations/social/instagram-standalone`
   </Step>
@@ -156,8 +156,8 @@ INSTAGRAM_APP_SECRET="app secret"
 ```
   </Step>
 
-  <Step title="Add Instagram Standalone channel in Postiz Application">
-    Go to the Postiz web interface, and click on the "Add Channel" button. Select "Instagram (Standalone)" from the list of available channels. You should be redirected to the Instagram login screen to authorize the application.
+  <Step title="Add Instagram Standalone channel in PostQueen Application">
+    Go to the PostQueen web interface, and click on the "Add Channel" button. Select "Instagram (Standalone)" from the list of available channels. You should be redirected to the Instagram login screen to authorize the application.
   </Step>
 </Steps>
 

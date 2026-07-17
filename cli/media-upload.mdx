@@ -8,7 +8,7 @@ description: 'Upload images, videos, and other media files for use in posts'
 Upload a local file and receive a URL you can use in posts:
 
 ```bash
-postiz upload <file-path>
+postqueen upload <file-path>
 ```
 
 The command returns a JSON response with the uploaded file's URL:
@@ -16,23 +16,23 @@ The command returns a JSON response with the uploaded file's URL:
 ```json
 {
   "id": "img-123",
-  "path": "https://uploads.postiz.com/your-file.jpg"
+  "path": "https://uploads.postqueen.ai/your-file.jpg"
 }
 ```
 
 <Warning>
-You must upload media files to Postiz before using them in posts. Many platforms (TikTok, Instagram, YouTube) require verified URLs and will reject external links.
+You must upload media files to PostQueen before using them in posts. Many platforms (TikTok, Instagram, YouTube) require verified URLs and will reject external links.
 </Warning>
 
 ## Upload and Post Workflow
 
 ```bash
 # 1. Upload the file
-RESULT=$(postiz upload photo.jpg)
+RESULT=$(postqueen upload photo.jpg)
 FILE_URL=$(echo "$RESULT" | jq -r '.path')
 
 # 2. Use the URL in a post
-postiz posts:create \
+postqueen posts:create \
   -c "Check out this photo!" \
   -m "$FILE_URL" \
   -s "2025-01-15T10:00:00Z" \
@@ -58,15 +58,15 @@ postiz posts:create \
 
 ## Video Upload Example
 
-Platforms like TikTok, YouTube, and Instagram require video uploads through Postiz:
+Platforms like TikTok, YouTube, and Instagram require video uploads through PostQueen:
 
 ```bash
 # Upload the video
-VIDEO=$(postiz upload video.mp4)
+VIDEO=$(postqueen upload video.mp4)
 VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
 
 # Post to TikTok
-postiz posts:create \
+postqueen posts:create \
   -c "New video! #fyp" \
   -m "$VIDEO_URL" \
   -s "2025-01-15T10:00:00Z" \

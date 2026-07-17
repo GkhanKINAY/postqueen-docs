@@ -1,11 +1,11 @@
 ---
 title: Self-Host Gotchas
-description: 'Common problems specific to running Postiz yourself'
+description: 'Common problems specific to running PostQueen yourself'
 ---
 
 ## `pnpm` heap out of memory during install
 
-The Postiz monorepo is large enough that the default Node heap can
+The PostQueen monorepo is large enough that the default Node heap can
 overflow during `pnpm install` on small VMs.
 
 **Fix**
@@ -45,11 +45,11 @@ connected. We're tracking the request — see the GitHub issues tagged
 
 ## Default ports
 
-It depends on how you're running Postiz.
+It depends on how you're running PostQueen.
 
-**Official Docker image** (`ghcr.io/gitroomhq/postiz-app`): the
+**Official Docker image** (`ghcr.io/gkhankinay/postqueen-app`): the
 container bundles frontend + backend and exposes a single port `5000`.
-The official compose maps that to host `4007:5000` — so you reach Postiz
+The official compose maps that to host `4007:5000` — so you reach PostQueen
 at `http://localhost:4007/`.
 
 **Running from source** (`pnpm dev` / `pnpm start`): frontend listens
@@ -62,7 +62,7 @@ either mode.
 
 ## Mounting the uploads volume
 
-If `STORAGE_PROVIDER=local`, point `UPLOAD_DIRECTORY` at the path Postiz
+If `STORAGE_PROVIDER=local`, point `UPLOAD_DIRECTORY` at the path PostQueen
 should write to, mount that path into your container, and also set
 `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` so the frontend knows where the
 files are served from. The Next.js config rewrites `/uploads/:path*` to
@@ -72,31 +72,31 @@ files are served from. The Next.js config rewrites `/uploads/:path*` to
 For multi-container deployments, either share the same volume across all
 containers that need to read or write, or move to [Cloudflare R2](/configuration/r2).
 
-## Can I deploy Postiz on Vercel?
+## Can I deploy PostQueen on Vercel?
 
 **Frontend:** yes — it's a standard Next.js app and deploys cleanly to
 Vercel.
 
-**Backend:** no. The Postiz backend is a NestJS server that also embeds
+**Backend:** no. The PostQueen backend is a NestJS server that also embeds
 a Temporal worker. It needs a long-running Node host (Fly.io, Render,
 Railway, a VM, a Kubernetes pod, etc.) — serverless functions won't
 work.
 
 ## Email isn't sending
 
-By default, Postiz uses Resend (`EMAIL_PROVIDER=resend`) and only
+By default, PostQueen uses Resend (`EMAIL_PROVIDER=resend`) and only
 becomes active when `RESEND_API_KEY` is set. To use SMTP instead, set
 `EMAIL_PROVIDER=nodemailer` and provide `EMAIL_HOST`, `EMAIL_PORT`,
 `EMAIL_USER`, `EMAIL_PASS`, `EMAIL_SECURE`. See
 [Email configuration](/configuration/emails).
 
 If no email provider is configured, user activation emails won't go
-out — but Postiz auto-activates users in that mode, so signup still
+out — but PostQueen auto-activates users in that mode, so signup still
 works.
 
 ## Temporal isn't reachable
 
-Since v2.12.0, Postiz schedules posts through Temporal. The backend
+Since v2.12.0, PostQueen schedules posts through Temporal. The backend
 needs to reach the Temporal frontend on `TEMPORAL_ADDRESS`. If you're
 upgrading from v1.x, follow the [migration guide](/installation/migration)
 — it walks through running both stacks side by side while you copy

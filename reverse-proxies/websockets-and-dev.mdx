@@ -1,13 +1,13 @@
 ---
 title: WebSockets, HMR, and Dev Tunnels
-description: 'Running Postiz behind ngrok or a reverse proxy with WebSocket support'
+description: 'Running PostQueen behind ngrok or a reverse proxy with WebSocket support'
 ---
 
 ## Production reverse proxy
 
-How you reverse-proxy depends on how you're running Postiz:
+How you reverse-proxy depends on how you're running PostQueen:
 
-- **Official Docker image** (`ghcr.io/gitroomhq/postiz-app`): frontend
+- **Official Docker image** (`ghcr.io/gkhankinay/postqueen-app`): frontend
   and backend are bundled inside one container and exposed on a single
   port (`5000` internally; the official compose maps it to host `4007`).
   Your reverse proxy only needs to forward one upstream. Most users on
@@ -41,7 +41,7 @@ Running `next dev` behind an HTTPS tunnel needs three things:
 ```bash
 pnpm dev # binds 0.0.0.0:4200 by default in this repo
 # or explicitly
-pnpm --filter @postiz/frontend exec next dev -p 4200 -H 0.0.0.0
+pnpm --filter postqueen-frontend exec next dev -p 4200 -H 0.0.0.0
 ```
 
 **2. Allow the tunnel host in `next.config`**
@@ -68,7 +68,7 @@ few seconds.
 
 When `FRONTEND_URL` is plain HTTP, several social providers
 (Slack, TikTok, Threads, VK, Instagram standalone) refuse to register
-your redirect URI. Postiz works around this by wrapping the redirect
+your redirect URI. PostQueen works around this by wrapping the redirect
 through `https://redirectmeto.com/`:
 
 ```
@@ -80,7 +80,7 @@ immediately redirects to the HTTP target — satisfying the provider's
 HTTPS-only validation without needing your dev environment to have a
 TLS cert.
 
-**You only see this in dev.** Once `FRONTEND_URL` is HTTPS, Postiz
+**You only see this in dev.** Once `FRONTEND_URL` is HTTPS, PostQueen
 skips `redirectmeto` entirely and uses your URL directly.
 
 If you don't want `redirectmeto` in the middle even in dev, terminate

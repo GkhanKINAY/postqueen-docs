@@ -95,7 +95,7 @@ To find audio IDs, use the [trigger endpoint](/public-api/integrations/trigger)
 with the `audioSearch` tool:
 
 ```bash
-curl -X POST https://api.postiz.com/public/v1/integration-trigger/{integrationId} \
+curl -X POST https://api.postqueen.ai/public/v1/integration-trigger/{integrationId} \
   -H "Authorization: your-api-key" \
   -H "Content-Type: application/json" \
   -d '{"methodName": "audioSearch", "data": {"q": "summer vibes", "type": "music"}}'
@@ -137,7 +137,7 @@ smaller than what you see in the Instagram app.
           "image": [
             {
               "id": "image-id",
-              "path": "https://uploads.postiz.com/sunset.jpg"
+              "path": "https://uploads.postqueen.ai/sunset.jpg"
             }
           ]
         }
@@ -172,7 +172,7 @@ smaller than what you see in the Instagram app.
           "image": [
             {
               "id": "story-image-id",
-              "path": "https://uploads.postiz.com/story.jpg"
+              "path": "https://uploads.postqueen.ai/story.jpg"
             }
           ]
         }
@@ -205,7 +205,7 @@ smaller than what you see in the Instagram app.
           "image": [
             {
               "id": "collab-image-id",
-              "path": "https://uploads.postiz.com/collab.jpg"
+              "path": "https://uploads.postqueen.ai/collab.jpg"
             }
           ]
         }
@@ -243,7 +243,7 @@ Attach audio found with `audioSearch` to a single-video Reel:
           "image": [
             {
               "id": "video-id",
-              "path": "https://uploads.postiz.com/reel.mp4"
+              "path": "https://uploads.postqueen.ai/reel.mp4"
             }
           ]
         }
@@ -281,9 +281,9 @@ Create a carousel by adding multiple images:
         {
           "content": "Swipe to see all the photos! 📸",
           "image": [
-            { "id": "img1", "path": "https://uploads.postiz.com/1.jpg" },
-            { "id": "img2", "path": "https://uploads.postiz.com/2.jpg" },
-            { "id": "img3", "path": "https://uploads.postiz.com/3.jpg" }
+            { "id": "img1", "path": "https://uploads.postqueen.ai/1.jpg" },
+            { "id": "img2", "path": "https://uploads.postqueen.ai/2.jpg" },
+            { "id": "img3", "path": "https://uploads.postqueen.ai/3.jpg" }
           ]
         }
       ],

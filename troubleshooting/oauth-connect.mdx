@@ -4,17 +4,17 @@ description: 'Invalid state, invalid_grant, and fetch failed during the connect 
 ---
 
 Connecting a social channel is the highest-volume source of user errors on
-Postiz. The OAuth handshake spans three parties — your browser, the social
-provider, and the Postiz backend — and any one of them can break the flow.
+PostQueen. The OAuth handshake spans three parties — your browser, the social
+provider, and the PostQueen backend — and any one of them can break the flow.
 
 ## "Invalid state"
 
 By far the most common error. You see it as a flash-message after the
-provider redirects back to Postiz.
+provider redirects back to PostQueen.
 
-**What it means:** Postiz generates a one-time CSRF token (the `state`
+**What it means:** PostQueen generates a one-time CSRF token (the `state`
 parameter) when you start the connect flow and stores it against your
-session. The provider returns it in the redirect; Postiz compares the two.
+session. The provider returns it in the redirect; PostQueen compares the two.
 A mismatch — or a missing token — produces this error.
 
 **Common causes**
@@ -28,10 +28,10 @@ A mismatch — or a missing token — produces this error.
 
 **Fix**
 
-1. Open the Postiz tab in a single, fresh browser session.
-2. Whitelist `platform.postiz.com` (or your self-hosted domain) in any
+1. Open the PostQueen tab in a single, fresh browser session.
+2. Whitelist `platform.postqueen.ai` (or your self-hosted domain) in any
    privacy extensions for the duration of the connect.
-3. Click "Add Channel" again from inside the Postiz app — never
+3. Click "Add Channel" again from inside the PostQueen app — never
    bookmark or refresh the provider's authorize page.
 4. If your browser is in private/incognito mode, switch to a normal window.
 
@@ -43,7 +43,7 @@ round-trip.
 
 ## "invalid_grant"
 
-The OAuth code Postiz received from the provider was rejected when it
+The OAuth code PostQueen received from the provider was rejected when it
 tried to exchange it for an access token.
 
 **Common causes**
@@ -52,32 +52,32 @@ tried to exchange it for an access token.
   retry after a transient error.
 - The code expired (most providers give you ~60 seconds).
 - The redirect URI configured on the provider doesn't exactly match the
-  one Postiz is sending. A trailing slash counts.
+  one PostQueen is sending. A trailing slash counts.
 
 **Fix**
 
 1. Start the connect flow over from scratch — codes can't be reused.
 2. Re-check the redirect URI in your provider's developer console
-   matches the URL Postiz is redirecting to, character for character.
+   matches the URL PostQueen is redirecting to, character for character.
 
 ## "Failed to fetch" / "fetch failed" on provider connect
 
 You see this on calls like `POST /integrations/provider/:id/connect`.
 
-**What it means:** the Postiz backend tried to talk to the provider's
+**What it means:** the PostQueen backend tried to talk to the provider's
 API and the request failed at the network level — DNS, TLS, or a refused
 connection.
 
 **Common causes**
 
-- Self-hosted Mastodon on a custom instance the Postiz backend can't
+- Self-hosted Mastodon on a custom instance the PostQueen backend can't
   reach (firewall, missing DNS).
 - GMB metrics endpoint blocked by egress filtering.
-- A reverse proxy in front of Postiz is rewriting the outbound request.
+- A reverse proxy in front of PostQueen is rewriting the outbound request.
 
 **Fix**
 
-1. Verify the Postiz backend container can resolve and reach the
+1. Verify the PostQueen backend container can resolve and reach the
    provider's hostname (`curl https://provider.example.com/` from inside
    the container).
 2. If you're behind a corporate egress proxy, set `HTTPS_PROXY` and
@@ -87,5 +87,5 @@ connection.
 
 Some providers (TikTok, Instagram) try to upload a profile avatar as part
 of channel attach. If the upstream image is in an exotic format, this
-fails. Retry — Postiz usually falls back successfully on the second
+fails. Retry — PostQueen usually falls back successfully on the second
 attempt.

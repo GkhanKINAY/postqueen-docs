@@ -1,6 +1,6 @@
 ---
 title: Traefik + Docker Compose
-description: 'Configure Traefik as a reverse proxy for Postiz'
+description: 'Configure Traefik as a reverse proxy for PostQueen'
 ---
 
 <Snippet file="earlydoc.mdx" />
@@ -12,17 +12,17 @@ This is a very popular configuration to get an easy reverse proxy up and running
 ```yaml
 version: '3.8'
 services:
-  postiz:
+  postqueen:
     ##
     ## Include all the other configuration from the standard compose example.
     ##
 
     labels:
-      # Router for main Postiz entrypoint (on port 5000)
-      - "traefik.http.routers.postiz.rule=Host(`postiz.example.lan`)"  # Replace with your domain
-      - "traefik.http.services.postiz.loadbalancer.server.port=5000"  # Internal port for postiz
-      - "traefik.http.routers.postiz.entrypoints=websecure"  # Postiz requires HTTPS
-      - "traefik.http.routers.postiz.tls=true"
+      # Router for main PostQueen entrypoint (on port 5000)
+      - "traefik.http.routers.postqueen.rule=Host(`postqueen.example.lan`)"  # Replace with your domain
+      - "traefik.http.services.postqueen.loadbalancer.server.port=5000"  # Internal port for postqueen
+      - "traefik.http.routers.postqueen.entrypoints=websecure"  # PostQueen requires HTTPS
+      - "traefik.http.routers.postqueen.tls=true"
 
 
   traefik:
@@ -40,6 +40,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - postiz-network
+      - postqueen-network
 ```
 

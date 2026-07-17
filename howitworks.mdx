@@ -5,7 +5,7 @@ description: 'Learn the architecture of the project'
 
 ## Architecture
 
-Postiz is composed of 3 main services and 4 external services - all 3 of the main services typically run within a **single docker container**, and talk to each other through HTTP. Those services talk to other containers running the external services - the SQL Database, Redis, Temporal and Storage.
+PostQueen is composed of 3 main services and 4 external services - all 3 of the main services typically run within a **single docker container**, and talk to each other through HTTP. Those services talk to other containers running the external services - the SQL Database, Redis, Temporal and Storage.
 
 ```mermaid
 flowchart LR;
@@ -52,7 +52,7 @@ It relies on the backend to:
 
 ### Backend
 
-The backend is the "brain" of Postiz, and coordinates all the work. It triggers Temporal workflows for async operations like posting to social media, sending emails, and refreshing tokens. Typically the SQL database it talks to is Postgres, but other databases can be used.
+The backend is the "brain" of PostQueen, and coordinates all the work. It triggers Temporal workflows for async operations like posting to social media, sending emails, and refreshing tokens. Typically the SQL database it talks to is Postgres, but other databases can be used.
 
 ### Orchestrator
 
