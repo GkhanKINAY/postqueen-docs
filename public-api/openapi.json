@@ -78,11 +78,11 @@
                 "example": [
                   {
                     "id": "cm4ean69r0003w8w1cdomox9n",
-                    "name": "Nevo David",
+                    "name": "Jane Doe",
                     "identifier": "x",
                     "picture": "https://uploads.postqueen.ai/avatar.jpg",
                     "disabled": false,
-                    "profile": "nevodavid",
+                    "profile": "janedoe",
                     "customer": {
                       "id": "customer-id",
                       "name": "My Company"
