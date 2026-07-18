@@ -13,7 +13,7 @@ X, LinkedIn, LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, 
 
 ## Setup
 
-1. Get your API key: https://platform.postqueen.ai/settings
+1. Get your API key: https://app.postqueen.ai/settings
 2. Click on "Settings"
 3. Click "Reveal"
 4. Set environment variables:

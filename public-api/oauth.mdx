@@ -66,7 +66,7 @@ sequenceDiagram
     **Example:**
 
     ```bash
-    https://platform.postqueen.ai/oauth/authorize?client_id=pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs&response_type=code&state=random123
+    https://app.postqueen.ai/oauth/authorize?client_id=pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs&response_type=code&state=random123
     ```
 
     The user will see a consent screen showing your app's name, description, and the permissions being requested. They can choose to **Authorize** or **Deny**.
@@ -191,7 +191,7 @@ const app = express();
 
 const CLIENT_ID = 'pca_your_client_id';
 const CLIENT_SECRET = 'pcs_your_client_secret';
-const POSTQUEEN_URL = 'https://platform.postqueen.ai';
+const POSTQUEEN_URL = 'https://app.postqueen.ai';
 const BACKEND_URL = 'https://api.postqueen.ai';
 const REDIRECT_URL = 'https://yourapp.com/callback';
 
