@@ -37,8 +37,10 @@ run 's/gitroomhq\/postiz/GkhanKINAY\/postqueen/g'
 # 3. Emails before the generic domain rule.
 run 's/\@postiz\.com/\@postqueen.ai/g'
 
-# 4. Domains, subdomain-preserving (api./platform./docs./cli-auth./uploads. + bare postiz.com).
+# 4. Domains, subdomain-preserving (api./docs./cli-auth./uploads. + bare postiz.com).
 run 's/((?:[a-z0-9-]+\.)*)postiz\.com/${1}postqueen.ai/g'
+# 4b. Normalize the app front-door to our standard: platform. -> app.
+run 's/platform\.postqueen\.ai/app.postqueen.ai/g'
 
 # 5. npm / package identifiers (before the generic word rules).
 run 's/\@postiz\/node/\@postqueen\/node/g'          # published SDK, keep the scope
