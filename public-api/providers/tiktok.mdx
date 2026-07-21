@@ -42,7 +42,7 @@ When uploading a video to TikTok, use the following settings schema:
 | `content_posting_method` | `string` | Yes | Whether to publish directly or send to the TikTok app inbox, see below |
 
 **`DIRECT_POST` only**: TikTok applies the setting only when `content_posting_method` is
-`DIRECT_POST`. With `UPLOAD` the field is still required by the Postiz API, but TikTok silently
+`DIRECT_POST`. With `UPLOAD` the field is still required by the PostQueen API, but TikTok silently
 discards it. **Video posts only**: TikTok's photo posts have no duet, stitch, or AI-generated
 label, so these settings are discarded when the post is a picture. **Photo posts only**:
 `autoAddMusic` has no effect on videos.
@@ -71,7 +71,7 @@ label, so these settings are discarded when the post is a picture. **Photo posts
 | `UPLOAD` | Does **not** publish. Sends the media to the account's TikTok app inbox, where the user must manually finish and publish it within 24 hours or it is discarded. TikTok keeps only the title/content in this mode, every other setting is silently discarded. |
 
 <Warning>
-A post created with `UPLOAD` is reported as **successfully published** by the Postiz API, because the upload to TikTok did succeed. It will not appear on the TikTok profile until the account owner opens the TikTok app, finds the draft in their inbox, and publishes it manually. Choose `UPLOAD` only when that manual step is what the user asked for.
+A post created with `UPLOAD` is reported as **successfully published** by the PostQueen API, because the upload to TikTok did succeed. It will not appear on the TikTok profile until the account owner opens the TikTok app, finds the draft in their inbox, and publishes it manually. Choose `UPLOAD` only when that manual step is what the user asked for.
 </Warning>
 
 ---
