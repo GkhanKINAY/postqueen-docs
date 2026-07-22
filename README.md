@@ -155,7 +155,7 @@ curl -X GET "https://api.postqueen.ai/public/v1/posts?startDate=2024-12-14T08:18
 
 ## Schedule a new post
 
-Each channel has its own `settings.__type` schema. The per-provider settings are documented under [`public-api/providers/`](public-api/providers/) — **34 integrations across 30+ networks**: X, LinkedIn, LinkedIn Page, Instagram, Instagram Standalone, Facebook, TikTok, YouTube, Threads, Pinterest, Reddit, Bluesky, Discord, Slack, Telegram, Mastodon, Twitch, Kick, MeWe, Nostr, Farcaster, Lemmy, VK, WordPress, Medium, Dev.to, Hashnode, Listmonk, Google Business Profile, Whop, Skool, Moltbook, and Dribbble.
+Each channel has its own `settings.__type` schema; providers with custom settings are documented under [`public-api/providers/`](public-api/providers/). PostQueen supports **34 integrations across 30+ networks**: X, LinkedIn, LinkedIn Page, Instagram, Instagram Standalone, Facebook, TikTok, YouTube, Threads, Pinterest, Reddit, Bluesky, Discord, Slack, Telegram, Mastodon, Twitch, Kick, MeWe, Nostr, Farcaster, Lemmy, VK, WordPress, Medium, Dev.to, Hashnode, Listmonk, Google Business Profile, Whop, Skool, Moltbook, Tumblr, and Dribbble.
 
 ```bash
 curl -X POST "https://api.postqueen.ai/public/v1/posts" \
