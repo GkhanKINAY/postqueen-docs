@@ -1,0 +1,107 @@
+---
+title: Tumblr Settings
+description: 'API settings for posting to Tumblr'
+---
+
+## Settings Schema
+
+When creating a post for Tumblr, use the following settings schema:
+
+```json
+{
+  "settings": {
+    "__type": "tumblr",
+    "title": "My Post Title",
+    "tags": "design, product, launch"
+  }
+}
+```
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `__type` | `string` | Yes | Must be `tumblr` |
+| `title` | `string` | No | Optional post title (up to 4096 characters). |
+| `link` | `string` | No | Optional URL to publish as a link post. Must be a valid URL. |
+| `sourceUrl` | `string` | No | Optional source/attribution URL. Must be a valid URL. |
+| `tags` | `string` | No | Comma-separated tags for the post. |
+
+### `title`
+
+An optional title for the Tumblr post (max 4096 characters). If omitted, the post is published without a title.
+
+### `link`
+
+An optional URL to publish as a Tumblr link post. When provided it must be a valid URL.
+
+### `sourceUrl`
+
+An optional source URL used for attribution. When provided it must be a valid URL.
+
+### `tags`
+
+A comma-separated list of tags used to categorize the post on Tumblr.
+
+---
+
+## Complete Example
+
+### Text Post with Tags
+
+```json
+{
+  "type": "schedule",
+  "date": "2024-12-14T10:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "your-tumblr-integration-id"
+      },
+      "value": [
+        {
+          "content": "Here is the story behind our new brand direction.",
+          "image": []
+        }
+      ],
+      "settings": {
+        "__type": "tumblr",
+        "title": "Our New Brand Direction",
+        "tags": "branding, design, story"
+      }
+    }
+  ]
+}
+```
+
+### Link Post
+
+```json
+{
+  "type": "now",
+  "date": "2024-12-14T10:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "your-tumblr-integration-id"
+      },
+      "value": [
+        {
+          "content": "Great read on open-source scheduling.",
+          "image": []
+        }
+      ],
+      "settings": {
+        "__type": "tumblr",
+        "link": "https://postqueen.ai/blog",
+        "sourceUrl": "https://postqueen.ai",
+        "tags": "opensource, tools"
+      }
+    }
+  ]
+}
+```
