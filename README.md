@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/GkhanKINAY/postqueen-docs/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg" alt="License: AGPL-3.0"></a>
+  <a href="https://github.com/GkhanKINAY/postqueen-docs/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://www.npmjs.com/package/postqueen"><img src="https://img.shields.io/npm/v/postqueen?label=CLI&color=6d28d9" alt="CLI on npm"></a>
   <a href="https://www.npmjs.com/package/@postqueen/node"><img src="https://img.shields.io/npm/v/@postqueen/node?label=SDK&color=7c3aed" alt="SDK on npm"></a>
   <a href="https://www.npmjs.com/package/n8n-nodes-postqueen"><img src="https://img.shields.io/npm/v/n8n-nodes-postqueen?label=n8n&color=e0189e" alt="n8n node on npm"></a>
@@ -195,6 +195,6 @@ curl -X DELETE "https://api.postqueen.ai/public/v1/posts/:id" \
 
 ## License
 
-This repository is available under the [AGPL-3.0 license](LICENSE).
+This repository is available under the [MIT license](LICENSE) (the Mintlify docs template license).
 
 Original work © Nevo David / Gitroom and the Postiz contributors. Modifications © PostQueen.
