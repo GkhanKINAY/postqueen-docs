@@ -1,21 +1,23 @@
 <p align="center">
   <a href="https://postqueen.ai">
-    <img src="https://postqueen.ai/icon.svg" width="76" alt="PostQueen" />
+    <img src=".github/assets/header.svg" width="820" alt="PostQueen Docs" />
   </a>
 </p>
 
-<h1 align="center">PostQueen Docs</h1>
+<p align="center">
+  <strong>The Mintlify source powering <a href="https://docs.postqueen.ai">docs.postqueen.ai</a>:</strong> self-hosting guides, the Public REST API, CLI, NodeJS SDK, MCP server, and 30+ social networks for <a href="https://postqueen.ai">PostQueen</a>, the open-source, AI-native social media scheduler.
+</p>
 
 <p align="center">
-  <strong>Documentation for PostQueen — the open-source, AI-native social media scheduler.</strong><br />
-  The Mintlify source powering docs.postqueen.ai: self-hosting guides, the Public API, CLI, SDK, MCP, and 34 provider integrations.
+  <strong>🆕 NEW:</strong> the PostQueen <a href="https://postqueen.ai/agent">Agent CLI</a> + <a href="https://postqueen.ai/mcp">MCP server</a>: plug <b>Claude&nbsp;Code, ChatGPT, Cursor, OpenClaw, Hermes</b> or <b>Codex</b> straight into your channels.
 </p>
 
 <p align="center">
   <a href="https://postqueen.ai">Website</a> ·
-  <a href="https://app.postqueen.ai">Live App</a> ·
+  <a href="https://postqueen.ai/pricing">Pricing</a> ·
+  <a href="https://app.postqueen.ai/auth">Start free</a> ·
+  <a href="https://docs.postqueen.ai">Live docs</a> ·
   <a href="https://api.postqueen.ai/docs">API Reference</a> ·
-  <a href="https://github.com/GkhanKINAY/postqueen-app">App Repo</a> ·
   <a href="https://www.npmjs.com/package/postqueen">CLI</a>
 </p>
 
@@ -24,66 +26,65 @@
   <a href="https://www.npmjs.com/package/postqueen"><img src="https://img.shields.io/npm/v/postqueen?label=CLI&color=6d28d9" alt="CLI on npm"></a>
   <a href="https://www.npmjs.com/package/@postqueen/node"><img src="https://img.shields.io/npm/v/@postqueen/node?label=SDK&color=7c3aed" alt="SDK on npm"></a>
   <a href="https://www.npmjs.com/package/n8n-nodes-postqueen"><img src="https://img.shields.io/npm/v/n8n-nodes-postqueen?label=n8n&color=e0189e" alt="n8n node on npm"></a>
+  <a href="https://github.com/GkhanKINAY/postqueen-docs/commits/main"><img src="https://img.shields.io/github/commit-activity/m/GkhanKINAY/postqueen-docs" alt="Commit activity"></a>
 </p>
 
 <p align="center">
-  <img alt="X" src="https://postqueen.ai/channel-icons/x.svg" width="28" />
-  <img alt="LinkedIn" src="https://postqueen.ai/channel-icons/linkedin.svg" width="28" />
-  <img alt="Instagram" src="https://postqueen.ai/channel-icons/instagram.svg" width="28" />
-  <img alt="Facebook" src="https://postqueen.ai/channel-icons/facebook.svg" width="28" />
-  <img alt="TikTok" src="https://postqueen.ai/channel-icons/tiktok.svg" width="28" />
-  <img alt="YouTube" src="https://postqueen.ai/channel-icons/youtube.svg" width="28" />
-  <img alt="Threads" src="https://postqueen.ai/channel-icons/threads.svg" width="28" />
-  <img alt="Pinterest" src="https://postqueen.ai/channel-icons/pinterest.svg" width="28" />
-  <img alt="Reddit" src="https://postqueen.ai/channel-icons/reddit.svg" width="28" />
-  <img alt="Bluesky" src="https://postqueen.ai/channel-icons/bluesky.svg" width="28" />
-  <img alt="Discord" src="https://postqueen.ai/channel-icons/discord.svg" width="28" />
-  <img alt="Slack" src="https://postqueen.ai/channel-icons/slack.svg" width="28" />
-  <img alt="Telegram" src="https://postqueen.ai/channel-icons/telegram.svg" width="28" />
-  <img alt="Mastodon" src="https://postqueen.ai/channel-icons/mastodon.svg" width="28" />
-  <img alt="Twitch" src="https://postqueen.ai/channel-icons/twitch.svg" width="28" />
-  <img alt="Kick" src="https://postqueen.ai/channel-icons/kick.svg" width="28" />
-  <img alt="Nostr" src="https://postqueen.ai/channel-icons/nostr.svg" width="28" />
-  <img alt="Farcaster" src="https://postqueen.ai/channel-icons/warpcast.svg" width="28" />
-  <img alt="Lemmy" src="https://postqueen.ai/channel-icons/lemmy.svg" width="28" />
-  <img alt="VK" src="https://postqueen.ai/channel-icons/vk.svg" width="28" />
-  <img alt="Mewe" src="https://postqueen.ai/channel-icons/mewe.svg" width="28" />
-  <img alt="WordPress" src="https://postqueen.ai/channel-icons/wordpress.svg" width="28" />
-  <img alt="Medium" src="https://postqueen.ai/channel-icons/medium.svg" width="28" />
-  <img alt="Dev.to" src="https://postqueen.ai/channel-icons/devto.svg" width="28" />
-  <img alt="Hashnode" src="https://postqueen.ai/channel-icons/hashnode.svg" width="28" />
-  <img alt="Dribbble" src="https://postqueen.ai/channel-icons/dribbble.svg" width="28" />
-  <img alt="Google Business" src="https://postqueen.ai/channel-icons/google-business.svg" width="28" />
-  <img alt="Whop" src="https://postqueen.ai/channel-icons/whop.svg" width="28" />
-  <img alt="Skool" src="https://postqueen.ai/channel-icons/skool.svg" width="28" />
-  <img alt="Listmonk" src="https://postqueen.ai/channel-icons/listmonk.svg" width="28" />
+  <img src=".github/assets/channels.svg" width="760" alt="Supported social networks" />
 </p>
 
 ---
 
 ## About this repository
 
-This repository is the **Mintlify documentation site** for PostQueen — the source behind **docs.postqueen.ai**. It covers installation and self-hosting, configuration, provider setup, and the full developer surface: the Public REST API, CLI, NodeJS SDK, n8n node, and MCP server.
+This repository is the **Mintlify documentation site** for PostQueen, the source behind **[docs.postqueen.ai](https://docs.postqueen.ai)**. It covers installation and self-hosting, configuration, provider setup, and the full developer surface: the Public REST API, CLI, NodeJS SDK, n8n node, and MCP server.
 
 > PostQueen is a fork of [Postiz](https://github.com/gitroomhq/postiz-app) (AGPL-3.0). Huge thanks to Nevo David and the Postiz contributors for the foundation this project stands on.
 
-The rest of this file is a quick cURL cheat-sheet for the Public API. For the complete, browsable docs, run this site locally (see below) or read the pages under [`public-api/`](public-api/).
+The rest of this file is a quick cURL cheat-sheet for the Public API. For the complete, browsable docs, [read them online](https://docs.postqueen.ai), run this site locally (see below), or browse the `.mdx` pages under [`public-api/`](public-api/).
+
+## 💬 Just talk to your AI
+
+You don't need to write a line of code. Connect PostQueen to the AI assistant you already use, then ask in plain English:
+
+> *"Write a launch post about our new feature, generate a matching image, and schedule it for Friday at 9am on X, LinkedIn and Instagram."*
+
+> *"Turn this blog post into a week of posts, one a day, tailored for each channel."*
+
+Your assistant drafts, designs, and schedules; **every post lands in your PostQueen queue where you can review, edit or delete it before it goes live.** It works over the built-in **MCP server** or the **Agent CLI**:
+
+<p align="center">
+  <a href="https://postqueen.ai/claude-code"><b>Claude Code</b></a> ·
+  <a href="https://postqueen.ai/chatgpt"><b>ChatGPT</b></a> ·
+  <a href="https://postqueen.ai/cursor"><b>Cursor</b></a> ·
+  <a href="https://postqueen.ai/openclaw"><b>OpenClaw</b></a> ·
+  <a href="https://postqueen.ai/hermes-agent"><b>Hermes</b></a> ·
+  <a href="https://postqueen.ai/codex"><b>Codex</b></a>
+</p>
+
+**Connect in one minute:** grab your API key at **[app.postqueen.ai/settings](https://app.postqueen.ai/settings)** (Developers → Public API → Reveal), then point your assistant at PostQueen:
+
+```bash
+# Claude Code (or any MCP client)
+claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/<YOUR_API_KEY>
+```
 
 ## Resources & ecosystem
 
 | Resource | Where |
 | --- | --- |
 | **Website** | [postqueen.ai](https://postqueen.ai) |
-| **Live app** | [app.postqueen.ai](https://app.postqueen.ai) |
-| **Full docs** | this repo — pages under [`public-api/`](public-api/), [`cli/`](cli/), [`mcp/`](mcp/), [`providers/`](providers/) |
+| **Cloud (7-day free trial)** | [postqueen.ai/pricing](https://postqueen.ai/pricing) |
+| **Live app** | [app.postqueen.ai](https://app.postqueen.ai/auth) |
+| **Full docs** | [docs.postqueen.ai](https://docs.postqueen.ai), sourced from this repo ([`public-api/`](public-api/), [`cli/`](cli/), [`mcp/`](mcp/), [`providers/`](providers/)) |
 | **Public API reference** | live Swagger at [api.postqueen.ai/docs](https://api.postqueen.ai/docs) |
-| **CLI** | [`postqueen`](https://www.npmjs.com/package/postqueen) — `npm i -g postqueen` |
+| **CLI** | [`postqueen`](https://www.npmjs.com/package/postqueen), install with `npm i -g postqueen` |
 | **NodeJS SDK** | [`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) |
 | **n8n node** | [`n8n-nodes-postqueen`](https://www.npmjs.com/package/n8n-nodes-postqueen) |
 | **MCP server** | connect any MCP client to `https://api.postqueen.ai/mcp/<API_KEY>` |
 | **Application source** | [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app) |
 
-PostQueen ships **34 integrations across 30+ networks** — every action available in the UI is also a public API call, a CLI command, an SDK method, an n8n node, or an MCP tool.
+PostQueen ships across **30+ social networks**: every action available in the UI is also a public API call, a CLI command, an SDK method, an n8n node, or an MCP tool.
 
 ## Run these docs locally
 
@@ -104,9 +105,8 @@ A quick reference for the most common Public API calls. The full reference lives
 
 ## Setup
 
-1. Open **Settings → Developers → Public API** in the app.
-2. Click **Reveal** to show your API key.
-3. Set it as an environment variable:
+1. **Get your API key:** [app.postqueen.ai/settings](https://app.postqueen.ai/settings) (Developers → Public API → Reveal).
+2. Set it as an environment variable:
    ```bash
    export POSTQUEEN_API_KEY="your-api-key"
    ```
@@ -155,7 +155,7 @@ curl -X GET "https://api.postqueen.ai/public/v1/posts?startDate=2024-12-14T08:18
 
 ## Schedule a new post
 
-Each channel has its own `settings.__type` schema; providers with custom settings are documented under [`public-api/providers/`](public-api/providers/). PostQueen supports **34 integrations across 30+ networks**: X, LinkedIn, LinkedIn Page, Instagram, Instagram Standalone, Facebook, TikTok, YouTube, Threads, Pinterest, Reddit, Bluesky, Discord, Slack, Telegram, Mastodon, Twitch, Kick, MeWe, Nostr, Farcaster, Lemmy, VK, WordPress, Medium, Dev.to, Hashnode, Listmonk, Google Business Profile, Whop, Skool, Moltbook, Tumblr, and Dribbble.
+Each channel has its own `settings.__type` schema; providers with custom settings are documented under [`public-api/providers/`](public-api/providers/). PostQueen supports **30+ social networks**: X, LinkedIn, LinkedIn Page, Instagram, Instagram Standalone, Facebook, TikTok, YouTube, Threads, Pinterest, Reddit, Bluesky, Discord, Slack, Telegram, Mastodon, Twitch, Kick, MeWe, Nostr, Farcaster, Lemmy, VK, WordPress, Medium, Dev.to, Hashnode, Listmonk, Google Business Profile, Whop, Skool, Moltbook, Tumblr, and Dribbble.
 
 ```bash
 curl -X POST "https://api.postqueen.ai/public/v1/posts" \
