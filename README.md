@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://postqueen.ai">
-    <img src=".github/assets/header.svg" width="840" alt="PostQueen, the queen of your posts, your AI social media assistant" />
+    <img src=".github/assets/header.svg?v=6" width="840" alt="PostQueen, the queen of your posts, your AI social media assistant" />
   </a>
 </p>
 
@@ -68,7 +68,7 @@ The docs also ship `llms.txt` and `llms-full.txt`, so AI assistants can pull the
 The public API lives at `https://api.postqueen.ai/public/v1`. Authentication is one header: `Authorization`, set to your raw API key, with no `Bearer` prefix.
 
 <p align="center">
-  <img src=".github/assets/api-client.svg" width="620" alt="An API client posting to the PostQueen public API and receiving the scheduled posts response" />
+  <img src=".github/assets/api-client.svg?v=6" width="620" alt="An API client posting to the PostQueen public API and receiving the scheduled posts response" />
 </p>
 
 ```bash
