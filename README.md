@@ -35,7 +35,6 @@
   <a href="https://www.npmjs.com/package/postqueen"><img src="https://img.shields.io/npm/v/postqueen?label=CLI&color=6d28d9" alt="CLI on npm"></a>
   <a href="https://www.npmjs.com/package/@postqueen/node"><img src="https://img.shields.io/npm/v/@postqueen/node?label=SDK&color=7c3aed" alt="SDK on npm"></a>
   <a href="https://www.npmjs.com/package/n8n-nodes-postqueen"><img src="https://img.shields.io/npm/v/n8n-nodes-postqueen?label=n8n&color=e0189e" alt="n8n node on npm"></a>
-  <a href="https://github.com/GkhanKINAY/postqueen-docs/commits/main"><img src="https://img.shields.io/github/commit-activity/m/GkhanKINAY/postqueen-docs" alt="Commit activity"></a>
 </p>
 
 <p align="center">
