@@ -68,6 +68,10 @@ The docs also ship `llms.txt` and `llms-full.txt`, so AI assistants can pull the
 
 The public API lives at `https://api.postqueen.ai/public/v1`. Authentication is one header: `Authorization`, set to your raw API key, with no `Bearer` prefix.
 
+<p align="center">
+  <img src=".github/assets/api-client.svg" width="620" alt="An API client posting to the PostQueen public API and receiving the scheduled posts response" />
+</p>
+
 ```bash
 curl https://api.postqueen.ai/public/v1/integrations \
   -H "Authorization: $POSTQUEEN_API_KEY"
