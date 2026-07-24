@@ -2304,7 +2304,8 @@
           "type",
           "date",
           "shortLink",
-          "tags"
+          "tags",
+          "posts"
         ],
         "properties": {
           "type": {
@@ -2344,7 +2345,8 @@
             "items": {
               "$ref": "#/components/schemas/PostItem"
             },
-            "description": "Required if type is not 'draft'"
+            "minItems": 1,
+            "description": "The channels to post to and the content for each. Required for every type, drafts included: omitting it returns 400 'All posts must have an integration id'."
           }
         }
       },
