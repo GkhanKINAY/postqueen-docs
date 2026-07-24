@@ -1,20 +1,56 @@
 ---
 title: Quickstart
-description: 'Get started with PostQueen using the managed cloud or your own self-hosted instance'
+description: 'Pick where PostQueen runs, hand your agent an API key, and publish your first post'
 ---
 
-PostQueen is open source. You can use the managed cloud or run it yourself.
+PostQueen is open source. Use the managed cloud or run her on your own infrastructure: she works the same either way.
 
 ## Choose how to run PostQueen
 
 <CardGroup cols={2}>
   <Card title="Cloud" icon="cloud" href="https://postqueen.ai">
-    Sign up at [postqueen.ai](https://postqueen.ai) — no install, updates handled for you.
+    Start free for 7 days at [postqueen.ai](https://postqueen.ai). Signup happens at [app.postqueen.ai](https://app.postqueen.ai), and updates are handled for you.
   </Card>
   <Card title="Self-host" icon="server" href="/installation/docker-compose">
     Run PostQueen on your own infrastructure. Start with Docker Compose.
   </Card>
 </CardGroup>
+
+## Talk to her
+
+PostQueen answers any agent that can run a skill or call an MCP tool. Grab your API key first: in [app.postqueen.ai](https://app.postqueen.ai), open Settings, then Developers, then Public API, and hit Reveal.
+
+Install the skill and hand your agent the key:
+
+```bash
+npx skills add GkhanKINAY/postqueen-agent
+export POSTQUEEN_API_KEY="your-api-key"
+```
+
+Or connect Claude Code straight to her MCP server:
+
+```bash
+claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+That is the whole setup. For the full story, including OpenClaw, Hermes, and self-host endpoints, see the [agents overview](/agents/overview).
+
+## Your first post
+
+<Steps>
+  <Step title="Connect a channel">
+    In the app, connect at least one channel. PostQueen posts to 30+ networks, so start with the one your audience actually reads.
+  </Step>
+  <Step title="Ask her for a post">
+    From any connected agent, ask in plain language: "Write a launch post for tomorrow at 9am." Or write it yourself in the editor. Either way, the post lands on the schedule.
+  </Step>
+  <Step title="Review it on the calendar">
+    Open the calendar to see what is planned. Edit or delete anything before it goes out. Prefer to sign off on each post? Ask her for drafts and she holds every post until you approve it.
+  </Step>
+  <Step title="It publishes on time">
+    Scheduled posts go out at their scheduled time, no further confirmation needed. She runs on your terms: full autopilot, or draft-and-approve when you want the final word.
+  </Step>
+</Steps>
 
 ## Self-hosted installation options
 

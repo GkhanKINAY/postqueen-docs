@@ -1,0 +1,45 @@
+---
+title: 'Hermes'
+description: 'The autonomous open-source agent that turns one brief into a planned, scheduled week over the postqueen CLI'
+---
+
+## What Hermes is
+
+Hermes is a self-improving autonomous agent that runs on your own machine. It is open source, and it speaks PostQueen natively: everything it does goes through the same `postqueen` CLI you would type yourself, so every post it touches shows up on your calendar.
+
+Hermes is a third-party project with its own home and its own installation guide, so this page stays short on purpose. It covers what Hermes can do with PostQueen and what she needs from you to let it in.
+
+## What it does with her
+
+Hand Hermes a single brief and it takes it from there: it plans your week, writes the posts and schedules them over the CLI, on its own. You describe the outcome once, and the calendar fills in.
+
+It can also front your chat apps. With Hermes running on your machine, she reads your WhatsApp and Telegram messages and answers right there, the way a colleague would. The PostQueen mobile app is on the way, but she already answers on your phone: through OpenClaw or Hermes, or at [app.postqueen.ai](https://app.postqueen.ai).
+
+Hermes can run on a schedule too, not just on demand. A small recurring job can wake up before you do, check yesterday's numbers and have today's post drafted while your coffee is still brewing.
+
+## You stay in charge
+
+Everything Hermes does lands on your calendar, in the open. She runs on your terms: leave the schedule alone and every planned post goes out on time without another word from you, or ask for drafts and she holds each post until you approve it.
+
+## Set it up
+
+Installing and configuring Hermes itself is the Hermes project's job, and its guide does it better than a summary here would. Start at [postqueen.ai/hermes-agent](https://postqueen.ai/hermes-agent).
+
+On the PostQueen side, Hermes needs two things:
+
+1. **The PostQueen skill**, so it knows her full command set instead of guessing:
+
+   ```bash
+   npx skills add GkhanKINAY/postqueen-agent
+   ```
+
+2. **Your API key** in the `POSTQUEEN_API_KEY` environment variable. Grab it at [app.postqueen.ai](https://app.postqueen.ai) under **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+
+<CardGroup cols={2}>
+  <Card title="Agents overview" icon="robot" href="/agents/overview">
+    How PostQueen works with AI agents, and which door fits which assistant
+  </Card>
+  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
+    Install the CLI Hermes drives, set your key and learn the command set
+  </Card>
+</CardGroup>

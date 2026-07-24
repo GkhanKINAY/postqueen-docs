@@ -19,19 +19,19 @@
               "introduction",
               "howitworks",
               "quickstart",
+              "support",
               "compliance"
             ]
           },
           {
-            "group": "Installation",
+            "group": "Self-Hosting",
             "pages": [
               "installation/system-requirements",
               "installation/docker-compose",
               "installation/docker",
               "installation/kubernetes-helm",
               "installation/development",
-              "installation/devcontainer",
-              "installation/migration"
+              "installation/devcontainer"
             ]
           },
           {
@@ -114,6 +114,30 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Contributing",
+            "pages": [
+              "developer-guide"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Agents",
+        "groups": [
+          {
+            "group": "Talk to Her",
+            "pages": [
+              "agents/overview"
+            ]
+          },
+          {
+            "group": "Agent Clients",
+            "pages": [
+              "agents/openclaw",
+              "agents/hermes"
+            ]
           }
         ]
       },
@@ -123,7 +147,14 @@
           {
             "group": "Overview",
             "pages": [
-              "public-api/introduction"
+              "public-api/introduction",
+              "public-api/sdk"
+            ]
+          },
+          {
+            "group": "OAuth2 Apps",
+            "pages": [
+              "public-api/oauth"
             ]
           },
           {
@@ -179,7 +210,13 @@
             ]
           },
           {
-            "group": "Provider Settings (25 with custom settings)",
+            "group": "Automation",
+            "pages": [
+              "automation/n8n"
+            ]
+          },
+          {
+            "group": "Provider Settings",
             "pages": [
               "public-api/providers/x",
               "public-api/providers/linkedin",
@@ -262,29 +299,6 @@
             ]
           }
         ]
-      },
-      {
-        "tab": "Developer App (oAuth2)",
-        "groups": [
-          {
-            "group": "OAuth2",
-            "pages": [
-              "public-api/oauth"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Contributing",
-        "groups": [
-          {
-            "group": "Development",
-            "pages": [
-              "developer-guide",
-              "support"
-            ]
-          }
-        ]
       }
     ],
     "global": {
@@ -297,6 +311,12 @@
       ]
     }
   },
+  "redirects": [
+    {
+      "source": "/installation/migration",
+      "destination": "/installation/docker-compose"
+    }
+  ],
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
@@ -304,7 +324,7 @@
   "navbar": {
     "primary": {
       "type": "button",
-      "label": "Register to the cloud",
+      "label": "Start free for 7 days",
       "href": "https://postqueen.ai"
     }
   },
@@ -319,7 +339,8 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/GkhanKINAY/postqueen-app"
+      "github": "https://github.com/GkhanKINAY/postqueen-app",
+      "website": "https://postqueen.ai"
     }
   }
 }

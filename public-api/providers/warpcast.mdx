@@ -8,14 +8,14 @@ description: 'Provider settings for Warpcast/Farcaster posts'
 Warpcast is a client for the Farcaster protocol, a decentralized social network. When posting to Warpcast, you can specify which channels to post to.
 
 <Note>
-The settings use `subreddit` as the field name for historical reasons, but it refers to Farcaster channels.
+The `__type` identifier is spelled `wrapcast` (not `warpcast`); the API rejects any other spelling. The settings also use `subreddit` as the field name for historical reasons, but it refers to Farcaster channels.
 </Note>
 
 ## Settings Schema
 
 ```json
 {
-  "__type": "warpcast",
+  "__type": "wrapcast",
   "subreddit": [
     {
       "value": {
@@ -30,7 +30,7 @@ The settings use `subreddit` as the field name for historical reasons, but it re
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"warpcast"` |
+| `__type` | string | ✅ | Must be `"wrapcast"` |
 | `subreddit` | array | ❌ | Array of channel targets |
 | `subreddit[].value.id` | string | ✅ | Channel ID |
 
@@ -56,7 +56,7 @@ The settings use `subreddit` as the field name for historical reasons, but it re
         }
       ],
       "settings": {
-        "__type": "warpcast"
+        "__type": "wrapcast"
       }
     }
   ]
@@ -83,7 +83,7 @@ The settings use `subreddit` as the field name for historical reasons, but it re
         }
       ],
       "settings": {
-        "__type": "warpcast",
+        "__type": "wrapcast",
         "subreddit": [
           {
             "value": {
@@ -117,7 +117,7 @@ The settings use `subreddit` as the field name for historical reasons, but it re
         }
       ],
       "settings": {
-        "__type": "warpcast",
+        "__type": "wrapcast",
         "subreddit": [
           {
             "value": {
@@ -161,7 +161,7 @@ The settings use `subreddit` as the field name for historical reasons, but it re
         }
       ],
       "settings": {
-        "__type": "warpcast",
+        "__type": "wrapcast",
         "subreddit": [
           {
             "value": {

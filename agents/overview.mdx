@@ -1,0 +1,130 @@
+---
+title: 'Agents Overview'
+description: 'Give any AI assistant hands on your calendar: install her skill, connect over MCP or call the public API, and she handles the posting.'
+---
+
+## Just talk to her
+
+Message her the way you would message a colleague. She answers inside ChatGPT and the Claude app, reads your WhatsApp and Telegram messages through OpenClaw or Hermes, and she is one command away in your terminal. Tell her what you want the world to see, and she takes care of the rest: the words, the visual and the schedule.
+
+**She runs on your terms.** Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, and if you ask for drafts she holds each post until you approve it.
+
+## Three ways in
+
+Any assistant that can run a shell command or call a tool can run your socials. Pick the surface that fits yours:
+
+<CardGroup cols={3}>
+  <Card title="Agent skill + CLI" icon="terminal" href="/cli/introduction">
+    Install the skill and your agent drives the postqueen CLI, with clean JSON on every command
+  </Card>
+  <Card title="MCP" icon="plug" href="/mcp/setup">
+    Point Claude, ChatGPT or any MCP client at her hosted server and its 10 tools
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    REST for your own scripts and automations, with your API key as the only setup
+  </Card>
+</CardGroup>
+
+## Install the skill
+
+The skill teaches your coding agent how she works: which commands exist, how to discover your channels and how to schedule posts. One command installs it:
+
+```bash
+npx skills add GkhanKINAY/postqueen-agent
+```
+
+Next she needs your API key. Open [app.postqueen.ai](https://app.postqueen.ai), then go to **Settings → Developers → Public API** and click **Reveal**. Keep the key secret: it grants full access to your account.
+
+```bash
+export POSTQUEEN_API_KEY=your_api_key
+```
+
+<Note>
+Self-hosting? Set `POSTQUEEN_API_URL` to your own instance and the CLI talks to it instead of the hosted API.
+</Note>
+
+Now your agent can see your channels and schedule its first post:
+
+```bash
+# List your connected channels and their integration IDs
+postqueen integrations:list
+
+# Schedule a post (-s is required and takes an ISO 8601 date)
+postqueen posts:create \
+  -c "We just shipped dark mode 🌙" \
+  -s "2026-08-01T09:00:00Z" \
+  -i "your-integration-id"
+```
+
+The full command reference lives in the [CLI guide](/cli/introduction).
+
+## Connect over MCP
+
+Prefer tool calls over shell commands? PostQueen ships a hosted MCP server with 10 tools, so an MCP client can list your channels, upload media and schedule posts without installing anything.
+
+For Claude Code it is one line:
+
+```bash
+claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+For config-file clients, add the server to your `mcpServers` block:
+
+```json
+{
+  "mcpServers": {
+    "postqueen": {
+      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+    }
+  }
+}
+```
+
+For ChatGPT, open **Settings → Connectors** and add the same URL: `https://api.postqueen.ai/mcp/YOUR_API_KEY`.
+
+Per-client walkthroughs are in [MCP setup](/mcp/setup), and every tool is described in the [tool reference](/mcp/tools).
+
+## From your chat apps
+
+The PostQueen mobile app is on the way, but you are not waiting on it: she already answers on the phone in your pocket. Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too.
+
+<CardGroup cols={2}>
+  <Card title="OpenClaw" icon="message" href="/agents/openclaw">
+    Lives on your machine and turns your chat apps into her front door
+  </Card>
+  <Card title="Hermes" icon="wand-magic-sparkles" href="/agents/hermes">
+    Hand it one brief and it plans, writes and schedules your week over the same CLI
+  </Card>
+</CardGroup>
+
+## The night shift
+
+She does not clock out when you do. A small recurring job can wake up before you, check yesterday's numbers and have today's post drafted while your coffee is still brewing:
+
+```bash
+# Every morning, before you are up:
+postqueen analytics:platform "your-integration-id"
+
+# ...then draft the day based on what worked
+postqueen posts:create \
+  -c "Draft shaped by yesterday's numbers" \
+  -s "2026-08-01T09:00:00Z" \
+  -t draft \
+  -i "your-integration-id"
+```
+
+Drafts wait on your calendar until you promote them, so the night shift proposes and you still decide. Each step is a plain CLI command with JSON output, which means any agent that can run a command can hold the night shift: a cron script, Gemini CLI or Aider all qualify.
+
+## Try saying
+
+Once she is connected, talk to her in plain words:
+
+> *"Plan a month of content for our coffee shop and fill the calendar."*
+
+> *"Take this photo of today's special and put it on Instagram at lunchtime."*
+
+> *"We just hit 10k followers, write a warm thank-you post for all our channels."*
+
+> *"Turn my latest YouTube video into posts for X, LinkedIn and Threads."*
+
+She turns each one into scheduled posts across your channels, and the calendar stays yours to review.

@@ -3,53 +3,63 @@ title: Developer Guide
 description: 'How to get started developing with PostQueen'
 ---
 
-## Understand how to develop with PostQueen
+This page covers how the PostQueen codebase is organized and which commands you need for local development. If you want to work on her internals, start here.
 
-## How to setup your development environment
+## Set up your development environment
 
-This page explains [How to setup your development environment](/installation/development).
+Follow [How to set up your development environment](/installation/development) to install prerequisites and get the stack running locally.
 
-## Architecture Overview
+Requirements from the repository root `package.json`:
 
-Before getting started with development, have a good read of the [architecture overview](/howitworks). This will give you a good understanding of how the project is structured and how the different parts of the project interact with each other.
+* Node.js 22.x (`>=22.12.0 <23.0.0`)
+* pnpm 10.6.1 (declared via the `packageManager` field)
 
-## Repository Overview
+## Architecture overview
 
-PostQueen is an open-source project, and the source code is available on [GitHub](https://github.com/GkhanKINAY/postqueen-app).
+Before writing code, read the [architecture overview](/howitworks). It explains how the services fit together and how a post travels from the editor to a connected network.
 
-The project is generally built using scripts in the `package.json` file with npm. The main scripts are:
+## Repository overview
 
-* `npm run dev` - Starts the development server
-* `npm run prisma-generate` - Generates the Prisma client
-* `npm run prisma-db-push` - Pushes the database schema to the database
+PostQueen is open source. The application source code lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app).
 
-The entire project is built under [NX](https://nx.dev/) to have a monorepo with multiple projects.
+The repository is a monorepo managed with [pnpm workspaces](https://pnpm.io/workspaces). The workspace globs in `pnpm-workspace.yaml` are `apps/*` and `libraries/*`. A single `.env` file at the repository root is shared by all apps, which keeps local development and deployment configuration in one place. Copy `.env.example` to `.env` to start.
 
-Unlike other NX project, this project has one `.env` file that is shared between all the apps.
-It makes it easier to develop and deploy the project.
+### Apps
 
-### Frontend
+| App | What it is |
+| --- | --- |
+| `apps/frontend` | Web app built with [Next.js](https://nextjs.org/) and [TailwindCSS](https://tailwindcss.com/) |
+| `apps/backend` | API server built with [NestJS](https://nestjs.com/), organized into controllers, services, and repositories with DTOs |
+| `apps/orchestrator` | [Temporal](https://temporal.io/) workflows and activities; this is the service that schedules and publishes posts |
+| `apps/commands` | CLI tasks for administrative and maintenance operations |
+| `apps/extension` | Chrome extension |
+| `apps/sdk` | Source of the [`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) SDK |
 
-The frontend is built with [NextJS](https://nextjs.org/) and [TailwindCSS](https://tailwindcss.com/).
+Shared code lives under `libraries/`, including the NestJS libraries used by the backend and orchestrator and the shared React components used by the frontend.
 
-### Backend
+### Database
 
-The backend is built with [NestJS](https://nestjs.com/) with a basic architecture of controllers, services, repositories and dtos.
+The backend uses [Prisma](https://www.prisma.io/) as the ORM with [PostgreSQL](https://www.postgresql.org/) as the database. The schema lives at `libraries/nestjs-libraries/src/database/prisma/schema.prisma`.
 
-It uses [Prisma](https://www.prisma.io/) as an ORM to interact with the database.
-By default Prisma uses [Postgres](https://www.postgresql.org/) as a database, but it can be easily changed to any other database since there are no native queries.
+### Scheduling and background work
 
-It uses Redis to schedule posts and run background jobs.
+Post scheduling is handled by Temporal. The orchestrator app registers the workflows and activities that fire at the scheduled time and publish each post. Redis is used for caching and queues, not for scheduling posts.
 
-### Cron
+## Common commands
 
-cron is built with [NestJS](https://nestjs.com/) and share components with the backend.
+All commands run from the repository root with pnpm. The main scripts in `package.json` are:
 
-### Worker
+* `pnpm run dev` - starts the frontend, backend, and orchestrator in parallel, together with the extension
+* `pnpm run prisma-generate` - generates the Prisma client (also runs automatically after `pnpm install`)
+* `pnpm run prisma-db-push` - pushes the Prisma schema to the database
+* `pnpm run build` - builds the frontend, backend, and orchestrator
 
-worker is built with [NestJS](https://nestjs.com/) and share components with the backend.
+Useful narrower scripts:
 
-## Contributors Guide
+* `pnpm run dev:frontend`, `pnpm run dev:backend`, `pnpm run dev:orchestrator` - run a single app in dev mode
+* `pnpm run dev:docker` - starts local infrastructure from `docker-compose.dev.yaml`
+* `pnpm run test` - runs the Jest test suite
 
-The PostQueen [contributors guide](https://github.com/GkhanKINAY/postqueen-app/blob/main/CONTRIBUTING.md) is contained in the main repository. It provides information on how to contribute to the project, mainly the format for how to submit a pull request.
+## Contributors guide
 
+The [contributors guide](https://github.com/GkhanKINAY/postqueen-app/blob/main/CONTRIBUTING.md) lives in the main repository. It covers how to contribute, including the expected format for pull requests.

@@ -1,22 +1,67 @@
 ---
 title: Authentication
-description: 'Set up OAuth2 or API key authentication for the PostQueen CLI'
+description: 'Authenticate the PostQueen CLI with an API key, or self-host the optional OAuth2 device flow'
 ---
 
-## OAuth2 (Recommended)
+## API Key (Recommended)
 
-Authenticate using the device flow — no client ID or secret needed:
+The quickest way to authenticate the CLI is with your PostQueen API key. Every command works with it.
+
+Get your key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, go to **Developers > Public API**, and click **Reveal**. Then export it:
+
+```bash
+export POSTQUEEN_API_KEY=your_api_key_here
+```
+
+If you run a self-hosted PostQueen instance, also point the CLI at your own API:
+
+```bash
+export POSTQUEEN_API_URL=https://your-postqueen-instance.com
+```
+
+Verify that the key works:
+
+```bash
+# Check current auth status (verifies credentials against the API)
+postqueen auth:status
+
+# Or list your connected channels directly
+postqueen integrations:list
+```
+
+Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same Settings screen.
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `POSTQUEEN_API_KEY` | Yes* | - | Your PostQueen API key |
+| `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | Custom API endpoint (for self-hosted PostQueen) |
+| `POSTQUEEN_AUTH_SERVER` | No | `https://cli-auth.postqueen.ai` | Auth server URL for the OAuth2 device flow. The default points at a hosted auth server that is not currently available, so this variable only matters if you self-host an auth server (see below). |
+
+*`POSTQUEEN_API_KEY` is required unless you have stored OAuth2 credentials from a self-hosted auth server.
+
+<Note>
+When both are present, stored OAuth2 credentials take priority over the API key.
+</Note>
+
+## OAuth2 Device Flow (Advanced)
+
+The CLI also ships an OAuth2 device flow:
 
 ```bash
 postqueen auth:login
 ```
 
-This will:
-1. Display a one-time code in your terminal
-2. Open your browser to authorize
-3. Automatically save credentials to `~/.postqueen/credentials.json`
+`auth:login` requires an auth server to mediate the flow, and PostQueen does not currently host one. The default `cli-auth.postqueen.ai` endpoint is not available, so running the command without your own auth server will fail. Use an API key instead; every command behaves the same either way.
 
-### Auth Commands
+If you want the device flow anyway, for example to hand out short-lived CLI access without sharing API keys, you can self-host the auth server. The rest of this page covers that setup.
+
+When a reachable auth server is configured, `auth:login`:
+
+1. Displays a one-time code in your terminal
+2. Opens your browser to authorize
+3. Saves credentials to `~/.postqueen/credentials.json`
 
 ```bash
 # Check current auth status (verifies credentials are still valid)
@@ -26,42 +71,16 @@ postqueen auth:status
 postqueen auth:logout
 ```
 
-## API Key
+### Self-Hosting the Auth Server
 
-Alternatively, set your PostQueen API key as an environment variable:
+The auth server holds the OAuth app secret and mediates the device flow, so CLI users can authenticate without client credentials of their own.
 
-```bash
-export POSTQUEEN_API_KEY=your_api_key_here
-```
-
-You can get your API key from the PostQueen Settings page.
-
-<Note>
-OAuth2 credentials take priority over the API key when both are present.
-</Note>
-
-## Environment Variables
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `POSTQUEEN_API_KEY` | No* | - | Your PostQueen API key |
-| `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | Custom API endpoint (for self-hosted PostQueen) |
-| `POSTQUEEN_AUTH_SERVER` | No | `https://cli-auth.postqueen.ai` | Custom auth server URL (for self-hosted auth server) |
-
-*Either OAuth2 (via `postqueen auth:login`) or `POSTQUEEN_API_KEY` is required.
-
-## Self-Hosting the Auth Server
-
-By default, `postqueen auth:login` uses the hosted auth server at `cli-auth.postqueen.ai`. If you want to self-host the OAuth2 device flow server, you can run your own instance.
-
-The auth server mediates the OAuth2 device flow so CLI users can authenticate without needing client credentials.
-
-### Prerequisites
+#### Prerequisites
 
 - Node.js >= 18
 - PostgreSQL
 
-### How It Works
+#### How It Works
 
 ```
 CLI                        Auth Server                    PostQueen
@@ -81,7 +100,7 @@ CLI                        Auth Server                    PostQueen
  |<-- access_token ------------|                           |
 ```
 
-### 1. Clone the Repository
+#### 1. Clone the Repository
 
 The auth server lives in the [postqueen-agent](https://github.com/GkhanKINAY/postqueen-agent) repository:
 
@@ -90,7 +109,7 @@ git clone https://github.com/GkhanKINAY/postqueen-agent.git
 cd postqueen-agent/server
 ```
 
-### 2. Create an OAuth App in PostQueen
+#### 2. Create an OAuth App in PostQueen
 
 Go to **PostQueen Settings > Developer > OAuth Apps** and create a new app. Set the callback URL to:
 
@@ -98,11 +117,11 @@ Go to **PostQueen Settings > Developer > OAuth Apps** and create a new app. Set 
 https://your-server-domain.com/device/callback
 ```
 
-### 3. Set Up Postgres
+#### 3. Set Up Postgres
 
-Create a database. The server auto-creates the `device_requests` table on startup.
+Create a database. The server auto-creates the `device_requests` table on startup. Rows are deleted after the CLI retrieves the token, or on next access once expired (15 minutes).
 
-### 4. Configure Environment
+#### 4. Configure Environment
 
 ```bash
 export DATABASE_URL="postgresql://user:password@localhost:5432/postqueen_auth"
@@ -121,7 +140,7 @@ export SERVER_URL="https://your-server-domain.com"
 | `POSTQUEEN_FRONTEND_URL` | No | `https://app.postqueen.ai` | PostQueen frontend URL for OAuth redirects |
 | `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | PostQueen API URL for token exchange |
 
-### 5. Run the Server
+#### 5. Run the Server
 
 ```bash
 pnpm install
@@ -134,26 +153,28 @@ pnpm build
 pnpm start:prod
 ```
 
-### 6. Point the CLI to Your Server
+#### 6. Point the CLI to Your Server
 
 ```bash
 export POSTQUEEN_AUTH_SERVER="https://your-server-domain.com"
 postqueen auth:login
 ```
 
-### Server Endpoints
+You can also pass the URL per invocation with the `--auth-server` flag on `auth:login`.
+
+#### Server Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
 | `POST` | `/device/code` | Start a new device flow. Returns `device_code`, `user_code`, and `verification_uri`. |
-| `GET` | `/device/verify` | Browser page where the user enters their code. |
-| `POST` | `/device/verify` | Validates user code and redirects to PostQueen OAuth. |
-| `GET` | `/device/callback` | PostQueen redirects here after authorization. Exchanges auth code for token. |
-| `POST` | `/device/token` | CLI polls this with `device_code`. Returns token when auth completes. |
-| `GET` | `/health` | Health check. |
+| `GET` | `/device/verify` | Browser page where the user enters their code. Accepts an optional `?code=` query param to prefill. |
+| `POST` | `/device/verify` | Validates the user code and redirects to PostQueen OAuth. |
+| `GET` | `/device/callback` | PostQueen redirects here after authorization. Exchanges the auth code for a token. |
+| `POST` | `/device/token` | CLI polls this with `{"device_code": "..."}`. Returns `authorization_pending` until the user completes auth, then returns the token. |
+| `GET` | `/health` | Health check. Returns `{"status": "ok"}`. |
 
-### Deployment
+#### Deployment
 
-Any platform that runs Node.js and can connect to Postgres works — Railway, Fly.io, Render, VPS, etc.
+Any platform that runs Node.js and can connect to Postgres works, such as Railway, Fly.io, or a plain VPS.
 
 The server is stateless beyond Postgres, so it scales horizontally. Run multiple instances behind a load balancer if needed.

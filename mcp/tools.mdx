@@ -21,7 +21,7 @@ List all connected social media accounts (channels) for your organization.
 | `name` | string | Display name of the account |
 | `picture` | string | Profile picture URL |
 | `platform` | string | Platform identifier (e.g., `x`, `linkedin`, `facebook`) |
-| `customer` | object | The group (customer) this channel belongs to, as `{ id, name }` — omitted if the channel is not assigned to a group |
+| `customer` | object | The group (customer) this channel belongs to, as `{ id, name }`; omitted if the channel is not assigned to a group |
 
 ---
 
@@ -42,7 +42,7 @@ List all groups (customers) for your organization. Use a group's `id` with `inte
 
 ## integrationSchema
 
-Get the posting rules, character limits, required settings, and available helper tools for a specific platform. Call this before scheduling a post to understand what the platform expects.
+Get the posting rules, character limits, and required settings for a specific platform. The response also lists the platform's helper tools. Call this before scheduling a post to understand what the platform expects.
 
 **Parameters:**
 
@@ -60,7 +60,7 @@ Get the posting rules, character limits, required settings, and available helper
 | `settings` | object | JSON schema of required settings for this platform |
 | `tools` | array | Platform-specific helper tools (see `triggerTool`) |
 
-The `tools` array contains helper functions specific to the platform. For example, Discord returns a tool to list available channels, Reddit returns a tool to search for subreddits, and LinkedIn Page returns a tool to list pages.
+The `tools` array contains helper functions specific to the platform. For example, Discord returns a tool to list available channels, Reddit returns a tool to search for subreddits, and Pinterest returns a tool to list boards.
 
 Each tool in the array has:
 
@@ -94,13 +94,13 @@ Each item in `dataSchema`:
 **Example use cases:**
 - Get the list of Discord channels for a server
 - Search for Reddit subreddits
-- List LinkedIn pages you manage
-- Get Facebook page options
-- Search Instagram audio (`audioSearch`) to attach to a Reel — only on Facebook Business-linked Instagram channels
+- List Pinterest boards
+- List Slack channels
+- Search Instagram audio (`audioSearch`) to attach to a Reel (available only on Facebook Business-linked Instagram channels)
 
 ---
 
-## schedulePostTool
+## integrationSchedulePostTool
 
 Schedule, draft, or immediately publish posts to social media platforms. This is the main tool for creating content.
 
@@ -161,9 +161,9 @@ The `postsAndComments` array behavior depends on the platform:
 
 ### Multiple Posts
 
-To schedule multiple posts (e.g., 20 posts across different days), add multiple items to the `socialPost` array — each with its own `date` and `integrationId`.
+To schedule multiple posts (e.g., 20 posts across different days), add multiple items to the `socialPost` array, each with its own `date` and `integrationId`.
 
-**Returns:**
+**Returns:** An array of results, one per post in `socialPost`, each with:
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -195,11 +195,41 @@ Use the returned `path` in the `attachments` array when scheduling a post.
 
 ---
 
+## uploadFromUrlTool
+
+Upload a remote image or video into the media library from a public URL. Use this before scheduling a post when the user provides an external media URL that is not already hosted on your PostQueen domain, so the attachment passes the upload-domain validation.
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `url` | string | Yes | The public URL of the image or video to upload |
+
+**Returns:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Media ID |
+| `path` | string | URL of the hosted media |
+
+On failure, returns `{ error: string }` instead (for example, the URL could not be fetched, the file type is not allowed, or the file exceeds the size limit).
+
+**Allowed file types:**
+
+- Images: JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF
+- Video: MP4
+
+Size caps are enforced server-side.
+
+Use the returned `path` in the `attachments` array when scheduling a post.
+
+---
+
 ## generateVideoOptions
 
 List all available video generation types and their required parameters.
 
-**Parameters:** None
+**Parameters:** None required (an optional `reasoning` string is accepted).
 
 **Returns:** An array of video generators, each with:
 
@@ -215,7 +245,7 @@ List all available video generation types and their required parameters.
 | Type | Description | Requirements |
 |------|-------------|-------------|
 | Image Text Slides | Slide-based videos with text-to-speech | `prompt`, `voice` (get voice ID via `videoFunctionTool`) |
-| Veo3 | AI-generated video with audio | `prompt`, optional `images` (max 3) |
+| Veo3 | AI-generated video with audio | `prompt`, `images` (required array, may be empty, max 3) |
 
 ---
 

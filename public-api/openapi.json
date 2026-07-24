@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PostQueen Public API",
-    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from PostQueen Settings.\n\n## Rate Limits\n\nThere is a limit of **30 requests per hour**.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (27)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Medium, Dev.to, Hashnode, WordPress\n\n**Business:** Google My Business (GMB), Listmonk (newsletters)",
+    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from PostQueen Settings.\n\n## Rate Limits\n\nThere is a limit of **30 requests per hour**.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (30+)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram, Kick, Twitch\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Medium, Dev.to, Hashnode, WordPress, Moltbook\n\n**Business:** Google My Business (GMB), Listmonk (newsletters), Whop, Skool",
     "license": {
       "name": "MIT"
     },
@@ -1272,7 +1272,7 @@
                           }
                         ],
                         "settings": {
-                          "__type": "warpcast",
+                          "__type": "wrapcast",
                           "subreddit": [
                             {
                               "value": {
@@ -2132,7 +2132,7 @@
           },
           "identifier": {
             "type": "string",
-            "description": "Provider identifier (27 platforms supported)",
+            "description": "Provider identifier",
             "enum": [
               "x",
               "linkedin",
@@ -2143,7 +2143,7 @@
               "threads",
               "bluesky",
               "mastodon",
-              "warpcast",
+              "wrapcast",
               "nostr",
               "vk",
               "youtube",
@@ -3277,7 +3277,7 @@
           "__type": {
             "type": "string",
             "enum": [
-              "warpcast"
+              "wrapcast"
             ]
           },
           "subreddit": {

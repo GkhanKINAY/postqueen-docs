@@ -7,7 +7,7 @@ This article guides you for local development on  PostQueen. If you're only look
 [Docker-Compose](/installation/docker-compose) is the recommended method and now includes the Temporal stack for workflow processing.
 
 <Warning>
-  <strong>Important:</strong> PostQueen uses Temporal for background workflows. If you are upgrading from v2.11.2 to v2.12.0 or later, follow the migration guide at [/installation/migration](/installation/migration) and use the maintained Docker Compose repository which includes the Temporal stack: [/installation/docker-compose](/installation/docker-compose).
+  <strong>Important:</strong> PostQueen uses Temporal for background workflows. Use the maintained Docker Compose repository which includes the Temporal stack: [/installation/docker-compose](/installation/docker-compose).
 </Warning>
 
 ## Tested configurations
@@ -60,7 +60,7 @@ or grab it from the repository in the next step.
 docker compose -f "docker-compose.dev.yaml" up
 ```
 
-To run Temporal locally, clone the maintained Docker Compose repository which includes the Temporal stack and follow the instructions in [/installation/docker-compose](/installation/docker-compose). See [/installation/migration](/installation/migration) for migration steps when moving data to the Temporal-enabled setup.
+To run Temporal locally, clone the maintained Docker Compose repository which includes the Temporal stack and follow the instructions in [/installation/docker-compose](/installation/docker-compose).
 
 ## Build PostQueen
 

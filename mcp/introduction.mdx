@@ -3,13 +3,13 @@ title: Introduction
 description: 'Connect AI agents to PostQueen using the Model Context Protocol (MCP)'
 ---
 
-MCP (Model Context Protocol) lets AI agents interact with PostQueen directly — listing integrations, scheduling posts, generating images and videos — all through a standardized tool-calling interface.
+MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they can list your integrations, schedule posts, and generate images and videos through a standardized tool-calling interface.
 
-This means you can connect Claude, ChatGPT, Cursor, or any MCP-compatible client to your PostQueen account and manage your social media through natural language.
+That means you can connect Claude, Cursor, or any MCP-compatible client to your PostQueen account and ask her to handle your social media in plain language.
 
 ## How It Works
 
-PostQueen exposes an MCP server that provides **9 tools** to AI agents. The agent discovers these tools, understands their schemas, and calls them on your behalf.
+PostQueen exposes an MCP server that provides **10 tools** to AI agents. The agent discovers these tools, understands their schemas, and calls them on your behalf.
 
 ```mermaid
 sequenceDiagram
@@ -33,11 +33,12 @@ sequenceDiagram
 | `groupList` | List all groups (customers) for your organization |
 | `integrationSchema` | Get platform-specific posting rules and settings schema |
 | `triggerTool` | Execute platform-specific helpers (e.g., list Discord channels) |
-| `schedulePostTool` | Schedule, draft, or immediately publish posts |
+| `integrationSchedulePostTool` | Schedule, draft, or immediately publish posts |
 | `generateImageTool` | Generate AI images for posts |
 | `generateVideoOptions` | List available video generation options |
 | `videoFunctionTool` | Get video generator settings (e.g., available voices) |
 | `generateVideoTool` | Generate videos for posts |
+| `uploadFromUrlTool` | Upload a remote image or video into your media library from a public URL |
 
 ## Authentication
 
@@ -49,7 +50,7 @@ Get your API key from **Settings > Developers > Public API** in PostQueen. Use i
 
 ### OAuth Token
 
-If you're building an app for other PostQueen users, use [OAuth2](/public-api/oauth) to obtain tokens. OAuth tokens start with `pos_` and work the same way as API keys.
+If you're building an app for other PostQueen users, use [OAuth2](/public-api/oauth) to obtain tokens. OAuth tokens start with `pos_` and work like API keys when sent as a Bearer token on `/mcp`. The `/mcp/:apiKey` URL form accepts API keys only.
 
 ## Connecting
 
@@ -81,9 +82,9 @@ For self-hosted instances, replace `https://api.postqueen.ai` with your `NEXT_PU
 
 Here's what a typical interaction looks like when an AI agent uses PostQueen MCP:
 
-1. **Agent calls `integrationList`** — gets back your connected accounts (X, LinkedIn, etc.)
-2. **Agent calls `integrationSchema`** with `platform: "x"` — learns X's character limits, settings, and rules
-3. **Agent calls `schedulePostTool`** — schedules your post with the correct format
+1. **Agent calls `integrationList`** to see your connected accounts (X, LinkedIn, and so on)
+2. **Agent calls `integrationSchema`** with `platform: "x"` to learn X's character limits, settings, and rules
+3. **Agent calls `integrationSchedulePostTool`** to schedule your post in the correct format
 
 All of this happens automatically when you tell your AI agent something like:
 
@@ -93,11 +94,11 @@ All of this happens automatically when you tell your AI agent something like:
 
 ### Do I need an OpenAI key to use PostQueen MCP?
 
-No. The MCP server just exposes PostQueen's tools — your AI client (Claude, ChatGPT, Cursor, etc.) provides the model. PostQueen only needs an `OPENAI_API_KEY` if you use PostQueen's own AI features (image generation, copilot) which are separate from the MCP tools surfaced to your client.
+No key is needed for reasoning: your MCP client (Claude, Cursor, and others) provides the model. But `generateImageTool` and the video tools run PostQueen's own generation pipeline on the server, so a self-hosted backend needs `OPENAI_API_KEY` (and any video provider keys) for those specific tools. The other tools work without it.
 
 ### What happens when my API key expires or is rotated?
 
-PostQueen API keys don't auto-rotate, but if you regenerate one in Settings → Developers → Public API, every MCP client using the old key stops working until you update its config. Update the URL or the `Authorization` header in your client config and reconnect.
+PostQueen API keys don't auto-rotate, but if you regenerate one in Settings > Developers > Public API, every MCP client using the old key stops working until you update its config. Update the URL or the `Authorization` header in your client config and reconnect.
 
 ### Self-hosted: how do I expose the MCP endpoint?
 
@@ -105,4 +106,4 @@ The MCP server starts as part of the PostQueen backend and is reachable at `/mcp
 
 ### Can MCP read or reply to comments?
 
-Not today. The current tool set is read-only on integrations and write-only on posts/media — there's no `getComments` or `replyToComment` exposed via MCP. Comment replies must be triggered through the PostQueen UI.
+Not today. The current tool set is read-only on integrations and write-only on posts and media: there is no `getComments` or `replyToComment` exposed via MCP. PostQueen does not read incoming comments at all. The closest feature is Auto Actions, which can repost your own post or add a follow-up comment on it once it crosses the like milestone you set.

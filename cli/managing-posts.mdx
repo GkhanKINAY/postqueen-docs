@@ -25,7 +25,7 @@ postqueen posts:create \
 | `-t, --type` | `schedule` (default) or `draft` |
 | `-m, --media` | Comma-separated media URLs (use after uploading) |
 | `-i, --integrations` | Comma-separated integration IDs (required) |
-| `-d, --delay` | Delay between comments in milliseconds (default: 5000) |
+| `-d, --delay` | Delay between comments in minutes (default: 0) |
 | `--settings` | Platform-specific settings as JSON |
 | `-j, --json` | Path to a JSON file for complex posts |
 
@@ -64,7 +64,7 @@ postqueen posts:create \
   -i "twitter-integration-id"
 ```
 
-Use `-d` to control the delay between comments (in milliseconds):
+Use `-d` to control the delay between comments (in minutes):
 
 ```bash
 postqueen posts:create \
@@ -72,7 +72,7 @@ postqueen posts:create \
   -c "Second tweet" \
   -c "Third tweet" \
   -s "2025-01-15T10:00:00Z" \
-  -d 2000 \
+  -d 5 \
   -i "twitter-integration-id"
 ```
 

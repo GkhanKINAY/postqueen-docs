@@ -3,14 +3,16 @@ title: How it works
 description: 'Learn the architecture of the project'
 ---
 
+PostQueen may feel like one app from the outside, but under the hood she is a small, well-coordinated team of services. Here is how they fit together.
+
 ## Architecture
 
-PostQueen is composed of 3 main services and 4 external services - all 3 of the main services typically run within a **single docker container**, and talk to each other through HTTP. Those services talk to other containers running the external services - the SQL Database, Redis, Temporal and Storage.
+PostQueen is composed of 3 main services and 4 external services. All 3 of the main services typically run within a **single Docker container**, and talk to each other through HTTP. Those services talk to other containers that run the external services described below.
 
 ```mermaid
 flowchart LR;
-    classDef ext fill:#8ED14F,color:black,stroke:#fff
-    classDef svc fill:#9900e6,color:white,stroke:#fff
+    classDef ext fill:#ddd6fe,color:#3b0764,stroke:#7c3aed
+    classDef svc fill:#7c3aed,color:#ffffff,stroke:#5b21b6
 
     frontend[Frontend Service]:::svc
     backend[Backend Service]:::svc
@@ -31,14 +33,14 @@ flowchart LR;
 
 ```
 
-- [Frontend](#frontend) - Provides the Web user interface, talks to the Backend.
-- [Backend](#backend) - Does all the real work, provides an API for the frontend, and triggers workflows via Temporal.
-- [Orchestrator](#orchestrator) - Runs Temporal workflows and activities, replacing the old cron and worker services.
+- [Frontend](#frontend): Provides the Web user interface, talks to the Backend.
+- [Backend](#backend): Does all the real work, provides an API for the frontend, and triggers workflows via Temporal.
+- [Orchestrator](#orchestrator): Runs Temporal workflows and activities, replacing the old cron and worker services.
 
-- [Temporal](#temporal) - A durable workflow engine that manages scheduling, retries, and task distribution.
-- [Redis](#redis) - Used for session state management and caching.
-- [SQL Database](#db) - Stores all the data, Postgres is typically used, but any SQL database can be used.
-- [Storage](#storage) - Stores all the files, this used to be CloudFlare R2 as the default, but now it's just a local file system.
+- [Temporal](#temporal): A durable workflow engine that manages scheduling, retries, and task distribution.
+- **Redis**: Used for caching and queues.
+- **SQL Database**: Stores all the data. Postgres is typically used, but other SQL databases can work too.
+- **Storage**: Stores all the files. Cloudflare R2 used to be the default, but now it is a local file system.
 
 ### Frontend
 
@@ -68,8 +70,8 @@ The orchestrator replaces the old cron and worker services with Temporal workflo
 
 Temporal is a durable workflow execution engine. It provides:
 
-- **Reliable scheduling** - Workflows run at the right time with automatic retries on failure.
-- **Task queues** - Each social platform gets its own task queue for concurrency control.
-- **Workflow visibility** - A built-in UI for monitoring and debugging workflow execution.
-- **Durable state** - Workflow state is persisted, so nothing is lost if a service restarts.
+- **Reliable scheduling**: Workflows run at the right time with automatic retries on failure.
+- **Task queues**: Each social platform gets its own task queue for concurrency control.
+- **Workflow visibility**: A built-in UI for monitoring and debugging workflow execution.
+- **Durable state**: Workflow state is persisted, so workflows pick up where they left off after a restart.
 
