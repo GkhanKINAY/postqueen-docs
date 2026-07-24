@@ -3,15 +3,15 @@ title: Configuration Reference
 description: 'Environment variables reference for PostQueen'
 ---
 
-PostQueen is configured entirely through environment variables. Any change requires
-an application restart.
+She reads everything she needs from environment variables, at boot and only at boot.
+Change one and restart her before you expect it to take effect.
 
 The canonical list lives in the [example postqueen.env file](https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.env.example).
 This page documents every variable PostQueen reads, grouped by purpose.
 
 <Info>
 Variables marked **Required** are validated on boot: PostQueen will fail to start
-if they're missing or malformed.
+if they are missing or malformed.
 </Info>
 
 ## Required core
@@ -84,7 +84,7 @@ Comma-separated allowlist of domains for `/public/v1/upload-from-url`. If set, o
 
 ### `DISALLOW_PLUS`
 
-When set, blocks the upgrade UI elements pointing to paid plans. Used for self-host deployments that don't want to surface cloud-only billing.
+When set, blocks the upgrade UI elements pointing to paid plans. Used for self-host deployments that do not want to surface cloud-only billing.
 
 ### `IS_GENERAL`
 
@@ -106,7 +106,7 @@ Primary application URL used for absolute links in some emails and SEO metadata.
 
 ### `EXTENSION_ID`
 
-The Chrome Extension ID for cookie-based platform integrations (e.g. Skool). See the [Chrome Extension guide](/configuration/chrome-extension).
+The Chrome Extension ID for cookie-based platform integrations (e.g. Skool). Setup: [Chrome Extension guide](/configuration/chrome-extension).
 
 ### `MOBILE_APP_SCHEME`
 
@@ -173,7 +173,7 @@ See also: [OAuth configuration](/configuration/oauth).
 
 PostQueen uses Temporal for scheduled posts and background workflows.
 Self-host deployments need to run a Temporal stack (the official docker-compose
-ships with one). See [How PostQueen works](/howitworks) for the scheduling architecture.
+ships with one). The scheduling architecture: [How PostQueen works](/howitworks).
 
 | Variable | Purpose |
 |---|---|
@@ -334,7 +334,7 @@ table is just a lookup so you can find which page documents which variable.
 
 ## Runtime & build
 
-These are read from the environment but are typically managed by your runtime,
+These are read from the environment but are typically set by your runtime,
 hosting platform, or framework rather than set by hand.
 
 | Variable | Purpose |

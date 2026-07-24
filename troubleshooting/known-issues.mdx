@@ -3,11 +3,11 @@ title: Known Issues
 description: 'Live tracker of bugs we are aware of, with workarounds where possible'
 ---
 
-Bugs we've confirmed and are tracking. Each entry lists a workaround if
+Bugs we have confirmed and are tracking. Each entry lists a workaround if
 one exists. Once a fix ships, the entry will be removed (or moved into
 release notes).
 
-If you hit something that isn't here, please report it on
+If you hit something that is not here, please report it on
 [GitHub](https://github.com/GkhanKINAY/postqueen-app/issues) or email
 [support@postqueen.ai](mailto:support@postqueen.ai).
 
@@ -74,7 +74,7 @@ output resolutions assemble faster and are less likely to expire.
 
 ### `DELETE /public/v1/posts/:id` 500 on non-existent ID
 
-Deleting a post that's already been removed currently surfaces a 500
+Deleting a post that has already been removed currently surfaces a 500
 instead of a clean 404.
 
 **Workaround:** match on the specific error signature for this bug

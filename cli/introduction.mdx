@@ -3,7 +3,7 @@ title: Introduction
 description: 'Automate social media posting from the command line with the PostQueen CLI'
 ---
 
-The PostQueen CLI puts her one command away in your terminal. It wraps the [Public API](/public-api/introduction) so you can schedule posts, manage channels, and upload media across 30+ networks from a shell script, a CI job, or an AI agent. The data commands print JSON, so anything that can run a shell command can run your social media.
+The PostQueen CLI puts her one command away in your terminal. Schedule a post to 30+ networks, upload the image that goes with it or pull last week's numbers, from a shell script, a CI job or an AI agent. Underneath it is the same [Public API](/public-api/introduction) the SDK and the n8n node run on. The data commands print JSON, so anything that can run a shell command can run your social media.
 
 <img src="/images/brand/terminal-claude.svg" alt="Claude Code schedules two launch posts to X and LinkedIn with the postqueen CLI" />
 
@@ -30,7 +30,7 @@ postqueen --help
 
 ## Give your AI agent the skill
 
-If an AI assistant will be driving the CLI for you, install the PostQueen skill first. It gives the agent her full command set and the patterns behind it, so PostQueen gets clean, correct commands instead of guesswork:
+If an AI assistant will be driving the CLI for you, install the PostQueen skill first. It hands the agent her full command set and the patterns behind it, so it gets the flags right the first time instead of guessing at them:
 
 ```bash
 npx skills add GkhanKINAY/postqueen-agent
@@ -42,10 +42,10 @@ Prefer to wire it up by hand? Load the `SKILL.md` file directly from [github.com
 
 ## Authentication
 
-The CLI authenticates with your PostQueen API key. Getting it takes a minute:
+One key and the CLI is talking to your account. Getting it takes a minute:
 
 1. Open [app.postqueen.ai](https://app.postqueen.ai)
-2. Go to **Settings**, then **Developers**, then **Public API**
+2. Go to **Settings > Developers > Public API**
 3. Click **Reveal** and copy your key
 
 Then export it:
@@ -68,9 +68,9 @@ If you run a self-hosted PostQueen instance, point the CLI at your backend URL, 
 export POSTQUEEN_API_URL=https://postqueen.example.com/api
 ```
 
-An OAuth2 device flow also exists for self-hosters who run their own auth server; see the [Authentication](/cli/authentication) page for the setup guide.
+Running your own auth server? There is an OAuth2 device flow for that instead, and every command works the same either way. Setup guide: [Authentication](/cli/authentication).
 
-## Quick Start
+## Your first post
 
 ```bash
 # 1. List your connected social media accounts
@@ -99,7 +99,7 @@ postqueen posts:create \
   -i "your-integration-id"
 ```
 
-## Commands Overview
+## What she can do from a shell
 
 | Command | Description |
 |---------|-------------|
@@ -120,8 +120,10 @@ postqueen posts:create \
 | `auth:status` | Show current authentication status |
 | `auth:logout` | Remove stored credentials |
 
-Full flag-by-flag details for every command live in the [Command Reference](/cli/command-reference).
+Full flag-by-flag details: [Command Reference](/cli/command-reference).
 
 <Note>
 The data commands print a one-line header and then JSON, which makes the CLI easy to use in scripts and automation pipelines. Drop the header with `tail -n +2` before piping into `jq`.
 </Note>
+
+Anything you can type here, an agent can run for you at six in the morning while you sleep. Why she works so well with agents: [Why agents love her](/agents/why-agents).

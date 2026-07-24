@@ -3,38 +3,40 @@ title: API Overview
 description: 'Getting started with the PostQueen Public API'
 ---
 
+Scheduling, media and analytics are all public API calls, which is why agents drive her so well. REST at `https://api.postqueen.ai/public/v1`, with your API key in the `Authorization` header. That key is the only setup: your first scheduled post is one `POST` away.
+
 <img src="/images/brand/api-client.svg" alt="POST /public/v1/posts: the request body and the 201 response with the scheduled post ids" />
 
 ## SDKs & Integrations
 
 <CardGroup cols={2}>
   <Card title="NodeJS SDK" icon="node-js" href="/public-api/sdk">
-    Official PostQueen NodeJS SDK
+    Call the API from Node with the official typed client.
   </Card>
   <Card title="n8n Node" icon="diagram-project" href="/automation/n8n">
-    Automate PostQueen with the n8n community node
+    Drop the community node into any workflow, no code needed.
   </Card>
   <Card title="Zapier" icon="bolt" href="/automation/zapier">
-    Connect PostQueen to thousands of apps with Zapier
+    Wire posts into thousands of apps with a webhook and your key.
   </Card>
   <Card title="Make" icon="puzzle-piece" href="/automation/make">
-    Build PostQueen scenarios in Make
+    Call her from any scenario with the built-in HTTP module.
   </Card>
   <Card title="Webhooks" icon="webhook" href="/automation/webhooks">
-    Get notified when your posts are published
+    She calls your endpoint the moment a post goes live.
   </Card>
   <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
-    Auto-publish new items from RSS feeds to your channels
+    She reads the feed hourly and turns the newest item into a draft.
   </Card>
 </CardGroup>
 
 ## Authentication
 
-There are two ways to authenticate with the PostQueen API:
+Two ways to authenticate, and both ride in the same `Authorization` header:
 
 ### API Key
 
-Get your API key from **Settings**, then **Developers**, then **Public API**. The Developers tab appears for organization admins on a plan that includes the public API. Include the key in the `Authorization` header:
+Get your API key from **Settings > Developers > Public API**. You will see the Developers tab if you are an organization admin on a plan that includes the public API. Include the key in the `Authorization` header:
 
 ```bash
 curl -H "Authorization: your-api-key" https://api.postqueen.ai/public/v1/integrations
@@ -42,7 +44,7 @@ curl -H "Authorization: your-api-key" https://api.postqueen.ai/public/v1/integra
 
 ### OAuth2 Token
 
-If you're building an app for other PostQueen users, use [OAuth2 Authentication](/public-api/oauth) to get tokens that act on behalf of users. OAuth tokens start with `pos_` and are used the same way:
+Building an app for other PostQueen users? Use [OAuth2 Authentication](/public-api/oauth) to get tokens that act on behalf of users, so nobody has to hand over an API key. OAuth tokens start with `pos_` and are used the same way:
 
 ```bash
 curl -H "Authorization: pos_your-oauth-token" https://api.postqueen.ai/public/v1/integrations
@@ -60,24 +62,24 @@ curl -H "Authorization: pos_your-oauth-token" https://api.postqueen.ai/public/v1
 <Info>
 **30 requests per hour** limit applies only to the create post endpoint.
 
-This doesn't mean you can only post 30 times per hour: each API call counts as one request. Schedule multiple posts in a single request to maximize throughput.
+That is not a ceiling of 30 posts. Each call counts once no matter how much it carries, so put several posts in one request when you need volume.
 </Info>
 
-The rate limit is a single global value for the whole instance, and it doesn't tier by subscription plan. Plans tier on channel and post-per-month quotas instead. Self-hosters can adjust the per-hour limit with the `API_LIMIT` env var (see [Configuration Reference](/configuration/reference)). The official Docker Compose sets `API_LIMIT: 30`; with the variable unset the backend defaults to 90 requests per hour.
+The rate limit is one global value for the whole instance, and it is the same on every subscription plan. Plans differ on channel counts and posts per month instead. Self-hosting? You set the per-hour limit with the `API_LIMIT` env var. The official Docker Compose sets `API_LIMIT: 30`; with the variable unset the backend defaults to 90 requests per hour. Full env var list: [Configuration Reference](/configuration/reference).
 
 ## Errors
 
 | Status | Meaning |
 |---|---|
 | `400 Bad Request` | The request body or path parameter is malformed (wrong shape, unknown enum, missing required field). |
-| `401 Unauthorized` | `Authorization` header is missing or the API key is unrecognised. |
-| `403 Forbidden` | The API key is valid but doesn't own the resource (e.g. you tried to delete a post in another organisation). |
-| `404 Not Found` | The endpoint doesn't exist, or the path parameter (integration ID, post ID) was correct format but no row matched. |
+| `401 Unauthorized` | `Authorization` header is missing or the API key is unrecognized. |
+| `403 Forbidden` | The API key is valid but does not own the resource (e.g. you tried to delete a post in another organization). |
+| `404 Not Found` | The endpoint does not exist, or the path parameter (integration ID, post ID) was correct format but no row matched. |
 | `413 Payload Too Large` | Your request body exceeded 50 MB on `/posts`, usually because images were base64-inlined instead of pre-uploaded. See [Uploads troubleshooting](/troubleshooting/uploads). |
 | `429 Too Many Requests` | You exceeded `API_LIMIT` per hour on the create-post endpoint. |
 | `5xx` | Server error: retry with exponential backoff. |
 
-For `DELETE` endpoints, you can treat `404` as already deleted: the row is gone either way, so it is safe to ignore. A `500` *can* mean the same thing today because of a [known issue](/troubleshooting/known-issues) where a missing post ID surfaces as 500 instead of 404, but only if the error matches that specific signature. Treat other `500` responses as real server errors: log them, retry with exponential backoff, and don't silently suppress them.
+For `DELETE` endpoints, you can treat `404` as already deleted: the row is gone either way, so it is safe to ignore. A `500` *can* mean the same thing today because of a [known issue](/troubleshooting/known-issues) where a missing post ID surfaces as 500 instead of 404, but only if the error matches that specific signature. Treat other `500` responses as real server errors: log them, retry with exponential backoff, and do not swallow them quietly.
 
 ## Terminology
 
@@ -87,8 +89,7 @@ The PostQueen UI uses the term **channel**, while the API uses **integration**. 
 
 ## Generate Output
 
-The easiest way to generate your post payloads is by using this wizard.
-It's the same wizard to schedule posts in the PostQueen app, however instead of scheduling posts, it generates the JSON payload for you to use in your API requests.
+Let the app write the JSON for you. It is the same composer you use to schedule a post, except it stops one step short: instead of putting the post on your calendar, it hands over the payload for your API request.
 
 - For cloud, make sure you are logged in.
 - For local, make sure your PostQueen server is running and you are logged in.
@@ -106,14 +107,14 @@ It's the same wizard to schedule posts in the PostQueen app, however instead of 
              Open in full screen
         </a>
         <p style={{fontSize: '0.85em', textAlign: 'center', marginTop: '6px'}}>
-          Source-mode default. If you're running the bundled Docker image (<code>ghcr.io/gkhankinay/postqueen-app</code>), the official compose maps to <code>http://localhost:4007</code>.
+          Source-mode default. Running the bundled Docker image (<code>ghcr.io/gkhankinay/postqueen-app</code>)? The official compose maps to <code>http://localhost:4007</code>.
         </p>
   </Tab>
 </Tabs>
 
 ## Supported Platforms
 
-PostQueen posts to 30+ networks. When creating posts, each platform has its own settings schema, and the `settings` object must include a `__type` field matching the provider.
+She posts to 30+ networks, and each one has its own settings schema. Every post you send carries a `settings` object, and that object needs a `__type` field naming the provider.
 
 ### Platforms with custom settings
 
@@ -137,7 +138,7 @@ PostQueen posts to 30+ networks. When creating posts, each platform has its own 
     | YouTube | `youtube` | `title`, `type`, `selfDeclaredMadeForKids`, `thumbnail`, `tags` |
     | TikTok | `tiktok` | `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle`, `content_posting_method` |
 
-    TikTok applies every setting except the title only when `content_posting_method` is `DIRECT_POST`; `duet`/`stitch` are video-only and `autoAddMusic` photo-only, see [TikTok settings](/public-api/providers/tiktok).
+    TikTok applies every setting except the title only when `content_posting_method` is `DIRECT_POST`; `duet`/`stitch` are video-only and `autoAddMusic` photo-only. Every field: [TikTok settings](/public-api/providers/tiktok).
   </Tab>
   <Tab title="Community">
     | Platform | `__type` | Key settings |
@@ -194,7 +195,7 @@ These platforms only require `{ "__type": "platform-name" }`:
 | Kick | `kick` |
 
 <Card title="View Provider Settings Reference" icon="code" href="/public-api/providers/x">
-  See detailed settings schemas with examples for each platform
+  Every setting each platform accepts, with a worked example.
 </Card>
 
 ## Quick Examples

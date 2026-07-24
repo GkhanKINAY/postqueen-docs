@@ -13,7 +13,7 @@ description: 'Install PostQueen using Kubernetes and Helm'
 
 PostQueen has a helm chart that is in very active development. You can find it here;
 
-Note that this is a OCI compliant helm chart, meaning that you don't do `helm repo add`, and if you are using Flux or Helm, you must set them to OCI mode.
+Note that this is a OCI compliant helm chart, meaning that you do not do `helm repo add`, and if you are using Flux or Helm, you must set them to OCI mode.
 
 [https://github.com/GkhanKINAY/postqueen-helmchart](https://github.com/GkhanKINAY/postqueen-helmchart)
 
@@ -23,11 +23,17 @@ The `values.yml` file can be found in the repository, or a direct link to it is:
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Providers" icon="plug" href="/providers/overview">
-    Set up providers such as LinkedIn, X and Reddit
+  <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
+    Store media on Cloudflare R2 instead of the local disk
   </Card>
   <Card title="Architecture" icon="diagram-project" href="/howitworks">
-    Learn the architecture of the project
+    The services behind a post, and what each one does
+  </Card>
+  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
+    Wire up Resend or SMTP so the people you invite get their mail
+  </Card>
+  <Card title="Providers" icon="plug" href="/providers/overview">
+    Connect LinkedIn, X and Reddit with your own app keys
   </Card>
 </CardGroup>
 

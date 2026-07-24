@@ -3,7 +3,7 @@ title: Developer Guide
 description: 'How to get started developing with PostQueen'
 ---
 
-This page covers how the PostQueen codebase is organized and which commands you need for local development. If you want to work on her internals, start here.
+Want to work on her internals? Start here: how the codebase is organized, and the commands that run it on your machine.
 
 ## Set up your development environment
 
@@ -22,7 +22,7 @@ Before writing code, read the [architecture overview](/howitworks). It explains 
 
 PostQueen is open source. The application source code lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app).
 
-The repository is a monorepo managed with [pnpm workspaces](https://pnpm.io/workspaces). The workspace globs in `pnpm-workspace.yaml` are `apps/*` and `libraries/*`. A single `.env` file at the repository root is shared by all apps, which keeps local development and deployment configuration in one place. Copy `.env.example` to `.env` to start.
+The repository is a monorepo built on [pnpm workspaces](https://pnpm.io/workspaces). The workspace globs in `pnpm-workspace.yaml` are `apps/*` and `libraries/*`. A single `.env` file at the repository root is shared by all apps, which keeps local development and deployment configuration in one place. Copy `.env.example` to `.env` to start.
 
 ### Apps
 
@@ -43,13 +43,13 @@ The backend uses [Prisma](https://www.prisma.io/) as the ORM with [PostgreSQL](h
 
 ### Scheduling and background work
 
-Post scheduling is handled by Temporal. The orchestrator app registers the workflows and activities that fire at the scheduled time and publish each post. Redis is used for caching and queues, not for scheduling posts.
+She keeps the schedule in Temporal. When Thursday at 9 AM arrives, the workflow the orchestrator app registered wakes and she posts. Redis caches and queues; it never holds a schedule.
 
 ## Common commands
 
 All commands run from the repository root with pnpm. The main scripts in `package.json` are:
 
-* `pnpm run dev` - starts the frontend, backend, and orchestrator in parallel, together with the extension
+* `pnpm run dev` - starts the frontend, backend and orchestrator in parallel, together with the extension
 * `pnpm run prisma-generate` - generates the Prisma client (also runs automatically after `pnpm install`)
 * `pnpm run prisma-db-push` - pushes the Prisma schema to the database
 * `pnpm run build` - builds the frontend, backend, and orchestrator

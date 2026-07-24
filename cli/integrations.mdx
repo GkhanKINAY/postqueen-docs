@@ -3,6 +3,8 @@ title: Integrations
 description: 'Discover connected accounts, settings schemas, and dynamic tools'
 ---
 
+Every post has to name the channel it goes to, so this is where most sessions start: you ask her what is connected, and she answers with IDs.
+
 ## Listing Integrations
 
 List all connected social media accounts to get their IDs:
@@ -56,7 +58,7 @@ postqueen integrations:settings <integration-id>
 ```
 
 The response tells you:
-- What fields are available (title, privacy level, subreddit, etc.)
+- What fields are available (title, privacy level, subreddit)
 - Which fields are required
 - Character limits and validation rules
 - Available dynamic tools you can trigger
@@ -67,7 +69,7 @@ Always check `integrations:settings` before posting to a new platform to underst
 
 ## Triggering Tools
 
-Some platforms expose dynamic tools, for example fetching Reddit flairs, YouTube playlists, or LinkedIn company pages. These return data you need when constructing platform-specific settings.
+Some platforms offer dynamic tools, for example fetching Reddit flairs, YouTube playlists, or LinkedIn company pages. These return data you need when constructing platform-specific settings.
 
 ```bash
 postqueen integrations:trigger <integration-id> <method-name>

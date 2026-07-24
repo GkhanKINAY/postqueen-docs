@@ -13,7 +13,7 @@ Two routes, and you can take either. MCP is the native one here: Cursor's agent 
 
 <Steps>
   <Step title="Grab your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Both routes below use this one key. Treat it like a password, since it grants full access to your account.
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Both routes below use this one key. Treat it like a password, since it grants full access to your account.
   </Step>
   <Step title="Route A: connect over MCP">
     Cursor reads MCP servers from `.cursor/mcp.json` in a project root, or from `~/.cursor/mcp.json` for every project. Add her hosted server there:
@@ -31,7 +31,7 @@ Two routes, and you can take either. MCP is the native one here: Cursor's agent 
     The Settings UI walkthrough, the Authorization-header variant and self-hosted URLs are all on the [Cursor MCP page](/mcp/clients/cursor).
 
     <Warning>
-    A project-level `.cursor/mcp.json` carries your key into the repo. Add it to `.gitignore`, or keep the server in `~/.cursor/mcp.json` and leave the project clean. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+    A project-level `.cursor/mcp.json` carries your key into the repo. Add it to `.gitignore`, or keep the server in `~/.cursor/mcp.json` and leave the project clean. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
     </Warning>
   </Step>
   <Step title="Route B: install the CLI and her skill">
@@ -68,8 +68,6 @@ Two routes, and you can take either. MCP is the native one here: Cursor's agent 
 The saved-views branch is merged and the changelog is written. Ask in the same window:
 
 > *"We just shipped saved views. Read the changelog entry, draft three posts about it for X, LinkedIn and Bluesky, and hold them as drafts."*
-
-Here is what the agent runs underneath.
 
 It reads the repo for the source material, then discovers where the posts can go:
 
@@ -126,7 +124,7 @@ postqueen posts:create --json launch-week.json
 ```
 
 <Note>
-`image` is required on every entry, so pass `[]` when a post has no media. Any value inside it has to be a URL returned by `postqueen upload`, the same rule that applies to `-m`. See [Media upload](/cli/media-upload).
+`image` is required on every entry, so pass `[]` when a post has no media. Any value inside it has to be a URL returned by `postqueen upload`, the same rule that applies to `-m`. The rules in full: [Media upload](/cli/media-upload).
 </Note>
 
 The three drafts are now on your calendar at [app.postqueen.ai](https://app.postqueen.ai). Edit the copy there and publish when you are happy, or promote one from the terminal:
@@ -135,7 +133,7 @@ The three drafts are now on your calendar at [app.postqueen.ai](https://app.post
 postqueen posts:status <post-id> --status schedule
 ```
 
-She runs on your terms. Drafts wait for your approval, and a post you schedule goes out at its time without another word from you.
+She runs on your terms. A post you schedule goes out at its time without another word from you, everything is visible on the calendar before it publishes, and drafts wait there for your approval.
 
 ## FAQ
 

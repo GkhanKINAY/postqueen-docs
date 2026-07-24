@@ -27,7 +27,7 @@ Two routes lead to the same place. Her skill teaches Claude Code the `postqueen`
     What lands is her `SKILL.md`, registered under the name `postqueen` and declaring `Bash(postqueen:*)` as the only tool it needs. Claude Code picks it up on its own when a task looks like posting work, so it arrives already knowing the discovery flow, the flags on `posts:create` and the rule about media.
   </Step>
   <Step title="Export your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Export it in the shell you launch Claude Code from:
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Export it in the shell you launch Claude Code from:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
@@ -66,8 +66,6 @@ Two routes lead to the same place. Her skill teaches Claude Code the `postqueen`
 You just shipped dark mode and grabbed a screenshot of it. Ask in plain words:
 
 > *"Schedule a launch post about dark mode for tomorrow at 9am on X and LinkedIn, with screenshots/dark-mode.png attached."*
-
-Here is what Claude Code runs underneath.
 
 It starts by finding your channels and their integration IDs:
 
@@ -116,7 +114,7 @@ Over MCP the conversation is the same and only the plumbing changes. Claude Code
     Whichever fits the way you work. The skill plus the CLI gives you shell commands with JSON output you can pipe and script, which suits repo work and cron jobs. MCP gives Claude Code 10 tools with no local install, which suits a machine where you would rather not add a global npm package. The two coexist happily, so you can start with one and add the other later.
   </Accordion>
   <Accordion title="What can Claude Code actually do with her?">
-    Everything the CLI exposes. It lists your channels and reads what each one accepts, creates scheduled posts or drafts with media attached, and pulls analytics once they are live. Commands print a one-line header and then JSON, so the agent reads a field rather than guessing at wording on screen. Pipe through `tail -n +2` before `jq`.
+    Everything the CLI can do. It lists your channels and reads what each one accepts, creates scheduled posts or drafts with media attached, and pulls analytics once they are live. Commands print a one-line header and then JSON, so the agent reads a field rather than guessing at wording on screen. Pipe through `tail -n +2` before `jq`.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
     Yes. Ask for drafts and she holds each post on the calendar until you approve it there. Anything already scheduled is visible on the same calendar before it goes out, so you can still edit or delete it.

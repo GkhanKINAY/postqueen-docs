@@ -64,7 +64,7 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
     Hermes reads the skill on its next start. The [Hermes skills guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) covers the loader in full.
   </Step>
   <Step title="Export your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Export it in the environment Hermes runs in:
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Export it in the environment Hermes runs in:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
@@ -98,7 +98,7 @@ Hermes reads the skill and works the plan on its own:
 3. It writes the posts and runs any media through `postqueen upload` first, since only the returned URL belongs in `-m`.
 4. It schedules each post with `postqueen posts:create` and a concrete ISO date, then lists what it scheduled to confirm the plan landed.
 
-Everything ends up on your calendar at [app.postqueen.ai](https://app.postqueen.ai), in the open. Tell Hermes to use `-t draft` and each post waits there for your approval.
+Everything ends up on your calendar at [app.postqueen.ai](https://app.postqueen.ai), in the open. She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever a brief puts on the calendar goes out on time without another word from you. Want more say? Every post is visible there before it publishes, so you can edit or delete it, and telling Hermes to use `-t draft` holds each one until you approve it.
 
 ## On a schedule
 
@@ -131,7 +131,7 @@ Drafts wait on your calendar until you promote them, so the night shift proposes
     No. She works on her own through the dashboard, the CLI and the API. Hermes is one of several ways to automate her.
   </Accordion>
   <Accordion title="What can Hermes actually do with PostQueen?">
-    Everything the CLI exposes. It can list your channels and check their settings, create and schedule posts, and it can upload media and pull analytics afterwards, with JSON output an agent can parse on each command.
+    Everything the CLI can do. It can list your channels and check their settings, create and schedule posts, and it can upload media and pull analytics afterwards, with JSON output an agent can parse on each command.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
     Yes. Ask Hermes to create drafts, review them on the PostQueen calendar and approve each one when it is ready.
@@ -149,6 +149,9 @@ Drafts wait on your calendar until you promote them, so the night shift proposes
   </Card>
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
     The `postqueen` CLI that Hermes drives: installation, authentication and the full command set.
+  </Card>
+  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
+    Why an agent can drive her without guesswork, and the two rules that matter most.
   </Card>
   <Card title="Hermes project" icon="arrow-up-right-from-square" href="https://github.com/NousResearch/hermes-agent">
     The official Hermes repository from Nous Research, with its installer and documentation.

@@ -3,13 +3,20 @@ title: How it works
 description: 'The services behind PostQueen, and what each one does when a post goes out'
 ---
 
-PostQueen may feel like one app from the outside, but under the hood she is a small, well-coordinated team of services. Here is how they fit together.
+You say one thing before your first coffee, then close the laptop. Everything after that is hers. Four beats, every time:
+
+1. **You say it once**, from the app, a chat or your terminal.
+2. **She does the work**: research, copy shaped to each platform, and an image or video to match.
+3. **The calendar is yours**: let it run on autopilot, edit anything before it goes out, or ask for drafts and approve each post yourself.
+4. **It goes out on time**, every time. She fires each post exactly when planned and retries on failure, because [Temporal](#temporal) is holding the clock and quietly refreshing your platform tokens in the background.
 
 <img src="/images/brand/fanout.svg" alt="Write it once: PostQueen tailors the same post for each platform and schedules every variant" />
 
+From the outside she is one app with one calendar. Inside, she is a small team of services, and the handoffs between them are what make a 9 AM post actually leave at 9 AM.
+
 ## Architecture
 
-PostQueen is composed of 3 main services and 4 external services. All 3 of the main services typically run within a **single Docker container**, and talk to each other through HTTP. Those services talk to other containers that run the external services described below.
+Three services do her own work, and four more back them up. In most installs those three share a **single Docker container** and talk to each other through HTTP. The supporting services run alongside them, usually in containers of their own.
 
 ```mermaid
 flowchart LR;
@@ -35,13 +42,13 @@ flowchart LR;
 
 ```
 
-The three main services:
+Her own three:
 
 - [Frontend](#frontend)
 - [Backend](#backend)
 - [Orchestrator](#orchestrator)
 
-The external services they depend on:
+The four that back them up:
 
 - [Temporal](#temporal), which runs the schedule.
 - **Redis**, for caching and queues.
@@ -50,21 +57,15 @@ The external services they depend on:
 
 ### Frontend
 
-The frontend is the part that you see, the web interface.
-
-It relies on the backend to:
-
-- Schedule posts
-- Show analytics
-- Manage users
+You drag a post from Tuesday to Thursday and it sticks. The calendar, the editor and the analytics screens are the part you touch, and none of it lives in your browser. Everything on those screens comes from the backend, whether you are scheduling a post, reading your numbers or adding someone to your team.
 
 ### Backend
 
-The backend is the "brain" of PostQueen, and coordinates all the work. It triggers Temporal workflows for async operations like posting to social media, sending emails, and refreshing tokens. Typically the SQL database it talks to is Postgres, but other databases can be used.
+A post you save at 2 PM is written down before the toast finishes fading. This is her brain, and it coordinates all the work. Anything slow goes to Temporal as a workflow: publishing a post, sending an email, refreshing a platform token. Everything else it writes down in the SQL database, usually Postgres.
 
 ### Orchestrator
 
-The orchestrator replaces the old cron and worker services with Temporal workflows. It handles:
+A post you set for Thursday at 9 AM sits here until Thursday at 9 AM. Its Temporal workflows took over the jobs that used to run on cron and worker processes:
 
 - Posting scheduled content to social media platforms.
 - Refreshing tokens from different social media platforms.
@@ -74,10 +75,9 @@ The orchestrator replaces the old cron and worker services with Temporal workflo
 
 ### Temporal
 
-Temporal is a durable workflow execution engine. It provides:
+Schedule a post three weeks out, restart the server twice in between, and it still fires on the right minute. Temporal is a durable workflow execution engine, and that is what you get from it:
 
 - **Reliable scheduling**: Workflows run at the right time with automatic retries on failure.
 - **Task queues**: Each social platform gets its own task queue for concurrency control.
 - **Workflow visibility**: A built-in UI for monitoring and debugging workflow execution.
 - **Durable state**: Workflow state is persisted, so workflows pick up where they left off after a restart.
-

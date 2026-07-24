@@ -3,7 +3,7 @@ title: Webhooks
 description: 'Get an HTTP call the moment a post goes live, and use it to start a workflow anywhere else'
 ---
 
-A PostQueen webhook is outbound. When a post is published to one of your channels, PostQueen sends an HTTP POST to a URL you own, carrying the post that just went out. Nothing to poll, nothing to check: the calendar tells your other tools it is done.
+A PostQueen webhook is outbound. When she publishes to one of your channels, she posts to a URL you own, carrying the post that just went out. Nothing to poll, nothing to check: the calendar tells your other tools it is done.
 
 That one signal is enough to keep a whole stack in sync. A row lands in your sheet, a Slack channel hears about the launch, or an automation platform picks the payload up and carries on from there.
 
@@ -35,19 +35,19 @@ The Webhooks tab only appears when your plan includes webhooks, and creating one
 
 ## When it fires
 
-The webhook fires after a post has been published successfully to a channel.
+The post lands on X, and a fraction of a second later your endpoint hears about it.
 
 - **One delivery per channel.** A post scheduled to three channels publishes as three separate runs, so a webhook set to **All integrations** hears three times, once per channel, as each one goes out.
 - **Only the channels you selected.** A webhook scoped to specific integrations is skipped for posts on any other channel.
 - **Only for real publishes.** Drafts do not reach the publishing step, and a post that fails on the network after its retries stops short of it too, so neither one triggers a webhook.
 
 <Warning>
-Delivery is fire and forget. If your endpoint is down or returns an error, PostQueen does not retry and does not surface the failure. Treat the webhook as a notification, not as a guaranteed queue, and use **Send Test** whenever you change the receiving side.
+Delivery is fire and forget. If your endpoint is down or returns an error, she does not retry and does not surface the failure. Treat the webhook as a notification, not as a guaranteed queue, and use **Send Test** whenever you change the receiving side.
 </Warning>
 
 ## What arrives
 
-PostQueen sends a `POST` with `Content-Type: application/json`. The body is a JSON **array** of post objects, so parse it as a list rather than as a single object.
+She sends a `POST` with `Content-Type: application/json`. The body is a JSON **array** of post objects, so parse it as a list rather than as a single object.
 
 ```json
 [
@@ -87,9 +87,9 @@ The request carries no signature and no auth header, so the URL is the only thin
 
 ### URL requirements
 
-The URL has to be **HTTPS** and has to resolve to a public address. PostQueen rejects `localhost`, loopback, link-local and private-network addresses such as `10.x.x.x`, `192.168.x.x`, `172.16.x.x` through `172.31.x.x` and `169.254.x.x`, both as literal IPs and as hostnames that resolve to them. The same check runs on **Send Test**.
+The URL has to be **HTTPS** and has to resolve to a public address. She rejects anything that is not publicly routable: `localhost` and loopback, link-local, and the private ranges. That covers `10.x.x.x`, `192.168.x.x`, `172.16.x.x` through `172.31.x.x` and `169.254.x.x`, whether you give her the IP or a hostname that resolves to it. The same check runs on **Send Test**.
 
-If you are developing against a local listener, put a public HTTPS tunnel in front of it and give PostQueen the tunnel URL.
+Developing against a local listener? Put a public HTTPS tunnel in front of it and give her the tunnel URL.
 
 ## Use it as a trigger
 
@@ -106,7 +106,7 @@ Most no-code automation platforms have a "wait for an HTTP call" starting block.
     With the catching step listening, press **Send Test** in PostQueen. The platform captures the sample body and learns the field structure, so `releaseURL`, `content` and `integration.name` become pickable fields in the steps that follow.
   </Step>
   <Step title="Build the rest of the workflow">
-    Post the link to Slack, append a row to a sheet, or update a CRM record. The payload is an array, so use the platform's iterate or line-item handling if you want a step per entry.
+    Post the link to Slack, append a row to a sheet, or update a CRM record. The payload is an array, so use the platform's iterate or line-item step if you want one step per entry.
   </Step>
 </Steps>
 

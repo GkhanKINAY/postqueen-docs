@@ -24,7 +24,7 @@ Before re-submitting, strip the server-managed fields from the fetched object. R
 - `id` and any nested post IDs
 - `createdAt`, `updatedAt`, and any other timestamps
 - `state` / `status` / `releaseId` (these are assigned by the scheduler)
-- Anything else the API didn't ask you to provide when you originally created the post
+- Anything else the API did not ask you for when you originally created the post
 
 Then set a fresh `type` (`now`, `schedule`, or `draft`) and `date`, and `POST` the cleaned object.
 
@@ -57,7 +57,7 @@ When creating posts, each social media platform requires different settings. The
     | YouTube | `youtube` | `title`, `type` |
     | TikTok | `tiktok` | `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle`, `content_posting_method` |
 
-    TikTok honors these settings only when `content_posting_method` is `DIRECT_POST`, with `UPLOAD` it keeps only the post content/title. `duet`, `stitch`, and `video_made_with_ai` apply to video posts only; `autoAddMusic` to photo posts only. See [TikTok settings](/public-api/providers/tiktok).
+    TikTok honors these settings only when `content_posting_method` is `DIRECT_POST`, with `UPLOAD` it keeps only the post content/title. `duet`, `stitch`, and `video_made_with_ai` apply to video posts only; `autoAddMusic` to photo posts only. Every field: [TikTok settings](/public-api/providers/tiktok).
   </Tab>
   <Tab title="Community Platforms">
     | Platform | `__type` | Required Settings |
@@ -106,4 +106,4 @@ Platforms: `threads`, `mastodon`, `bluesky`, `telegram`, `nostr`, `vk`
 
 ## Detailed Provider Settings
 
-See the [Provider Settings](/public-api/providers/x) section for detailed schemas and examples for each platform.
+Schemas and examples for each platform: [Provider Settings](/public-api/providers/x).

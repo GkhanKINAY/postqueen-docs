@@ -1,85 +1,120 @@
 ---
 title: Providers Overview
-description: 'Configure social media providers for PostQueen'
+description: 'Every network PostQueen posts to, and the keys each one asks for'
 ---
 
-You can see all the providers that PostQueen supports documented in the sidebar, under "**Providers**".
+30+ networks, one calendar. She posts to all of them, and each one connects on its own terms: OAuth keys for most, a plain account login for Bluesky, the browser extension for Skool.
 
-Please note that no providers are configured by default. You will need to configure them all in your `.env` file, or as environment variables. You will need to restart PostQueen whenever you change environment variables. If you are using docker compose, you must run `docker compose down` and then `docker compose up` to rebuild the containers with the updated variables.
+Nothing is connected by default. You put each provider's credentials in your `.env` file, or set them as environment variables, and you restart PostQueen whenever you change one, because the values are read at boot. Running docker compose? Run `docker compose down` and then `docker compose up` to rebuild the containers with the updated variables.
 
 <Snippet file="never-share.mdx" />
 
-## Available Providers
+## Every network she posts to
+
+<div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px" }}>
+  <img src="/images/channels/x.svg" alt="X" height="28" />
+  <img src="/images/channels/instagram.svg" alt="Instagram" height="28" />
+  <img src="/images/channels/linkedin.svg" alt="LinkedIn" height="28" />
+  <img src="/images/channels/facebook.svg" alt="Facebook" height="28" />
+  <img src="/images/channels/tiktok.svg" alt="TikTok" height="28" />
+  <img src="/images/channels/youtube.svg" alt="YouTube" height="28" />
+  <img src="/images/channels/threads.svg" alt="Threads" height="28" />
+  <img src="/images/channels/pinterest.svg" alt="Pinterest" height="28" />
+  <img src="/images/channels/reddit.svg" alt="Reddit" height="28" />
+  <img src="/images/channels/discord.svg" alt="Discord" height="28" />
+  <img src="/images/channels/slack.svg" alt="Slack" height="28" />
+  <img src="/images/channels/telegram.svg" alt="Telegram" height="28" />
+  <img src="/images/channels/mastodon.svg" alt="Mastodon" height="28" />
+  <img src="/images/channels/bluesky.svg" alt="Bluesky" height="28" />
+  <img src="/images/channels/nostr.svg" alt="Nostr" height="28" />
+  <img src="/images/channels/warpcast.svg" alt="Farcaster" height="28" />
+  <img src="/images/channels/lemmy.svg" alt="Lemmy" height="28" />
+  <img src="/images/channels/vk.svg" alt="VK" height="28" />
+  <img src="/images/channels/mewe.svg" alt="MeWe" height="28" />
+  <img src="/images/channels/twitch.svg" alt="Twitch" height="28" />
+  <img src="/images/channels/kick.svg" alt="Kick" height="28" />
+  <img src="/images/channels/dribbble.svg" alt="Dribbble" height="28" />
+  <img src="/images/channels/medium.svg" alt="Medium" height="28" />
+  <img src="/images/channels/devto.svg" alt="Dev.to" height="28" />
+  <img src="/images/channels/hashnode.svg" alt="Hashnode" height="28" />
+  <img src="/images/channels/wordpress.svg" alt="WordPress" height="28" />
+  <img src="/images/channels/skool.svg" alt="Skool" height="28" />
+  <img src="/images/channels/whop.svg" alt="Whop" height="28" />
+  <img src="/images/channels/listmonk.svg" alt="Listmonk" height="28" />
+  <img src="/images/channels/google-business.svg" alt="Google Business Profile" height="28" />
+</div>
+
+Every one of them takes about five minutes and a set of keys:
 
 <CardGroup cols={3}>
-  <Card title="X (Twitter)" icon="x-twitter" href="/providers/x-twitter">
-    Post to X/Twitter
+  <Card title="X (Twitter)" icon="/images/channels/x.svg" href="/providers/x-twitter">
+    OAuth2 on the v2 API
   </Card>
-  <Card title="LinkedIn" icon="linkedin" href="/providers/linkedin">
-    Post to LinkedIn profiles
+  <Card title="LinkedIn" icon="/images/channels/linkedin.svg" href="/providers/linkedin">
+    Personal profiles
   </Card>
-  <Card title="LinkedIn Page" icon="linkedin" href="/providers/linkedin-page">
-    Post to LinkedIn pages
+  <Card title="LinkedIn Page" icon="/images/channels/linkedin.svg" href="/providers/linkedin-page">
+    Your company pages
   </Card>
-  <Card title="Facebook" icon="facebook" href="/providers/facebook">
-    Post to Facebook pages
+  <Card title="Facebook" icon="/images/channels/facebook.svg" href="/providers/facebook">
+    Pages, via a Meta app
   </Card>
-  <Card title="Instagram" icon="instagram" href="/providers/instagram">
-    Post to Instagram
+  <Card title="Instagram" icon="/images/channels/instagram.svg" href="/providers/instagram">
+    Shares the Meta app
   </Card>
-  <Card title="Threads" icon="threads" href="/providers/threads">
-    Post to Threads
+  <Card title="Threads" icon="/images/channels/threads.svg" href="/providers/threads">
+    Meta for Developers app
   </Card>
-  <Card title="Bluesky" icon="cloud" href="/providers/bluesky">
-    Post to Bluesky
+  <Card title="Bluesky" icon="/images/channels/bluesky.svg" href="/providers/bluesky">
+    No app keys needed
   </Card>
-  <Card title="Mastodon" icon="mastodon" href="/providers/mastodon">
-    Post to Mastodon
+  <Card title="Mastodon" icon="/images/channels/mastodon.svg" href="/providers/mastodon">
+    Register a client by API
   </Card>
-  <Card title="YouTube" icon="youtube" href="/providers/youtube">
-    Post to YouTube
+  <Card title="YouTube" icon="/images/channels/youtube.svg" href="/providers/youtube">
+    Google Cloud credentials
   </Card>
-  <Card title="Google My Business" icon="google" href="/providers/google-my-business">
-    Post to Google Business Profile
+  <Card title="Google My Business" icon="/images/channels/google-business.svg" href="/providers/google-my-business">
+    Verified Business Profile
   </Card>
-  <Card title="TikTok" icon="tiktok" href="/providers/tiktok">
-    Post to TikTok
+  <Card title="TikTok" icon="/images/channels/tiktok.svg" href="/providers/tiktok">
+    Needs a verified domain
   </Card>
-  <Card title="Reddit" icon="reddit" href="/providers/reddit">
-    Post to Reddit
+  <Card title="Reddit" icon="/images/channels/reddit.svg" href="/providers/reddit">
+    An app on Reddit Developers
   </Card>
-  <Card title="Pinterest" icon="pinterest" href="/providers/pinterest">
-    Post to Pinterest
+  <Card title="Pinterest" icon="/images/channels/pinterest.svg" href="/providers/pinterest">
+    Company account required
   </Card>
-  <Card title="Discord" icon="discord" href="/providers/discord">
-    Post to Discord
+  <Card title="Discord" icon="/images/channels/discord.svg" href="/providers/discord">
+    Manage Server permission
   </Card>
-  <Card title="Slack" icon="slack" href="/providers/slack">
-    Post to Slack
+  <Card title="Slack" icon="/images/channels/slack.svg" href="/providers/slack">
+    Your Slack workspace
   </Card>
-  <Card title="Telegram" icon="telegram" href="/providers/telegram">
-    Post to Telegram
+  <Card title="Telegram" icon="/images/channels/telegram.svg" href="/providers/telegram">
+    One bot token, one host
   </Card>
-  <Card title="Dribbble" icon="dribbble" href="/providers/dribbble">
-    Post to Dribbble
+  <Card title="Dribbble" icon="/images/channels/dribbble.svg" href="/providers/dribbble">
+    Register an application
   </Card>
-  <Card title="Skool" icon="graduation-cap" href="/providers/skool">
-    Post to Skool communities
+  <Card title="Skool" icon="/images/channels/skool.svg" href="/providers/skool">
+    Browser extension, not OAuth
   </Card>
-  <Card title="Whop" icon="store" href="/providers/whop">
-    Post to Whop forums
+  <Card title="Whop" icon="/images/channels/whop.svg" href="/providers/whop">
+    A company with a forum
   </Card>
-  <Card title="MeWe" icon="users" href="/providers/mewe">
-    Post to MeWe
+  <Card title="MeWe" icon="/images/channels/mewe.svg" href="/providers/mewe">
+    Developer Program in beta
   </Card>
-  <Card title="Farcaster" icon="hashtag" href="/providers/farcaster">
-    Post to Farcaster / Warpcast
+  <Card title="Farcaster" icon="/images/channels/warpcast.svg" href="/providers/farcaster">
+    Neynar keys. Was Warpcast
   </Card>
 </CardGroup>
 
-## Providers available via Public API only
+## Reached through the API
 
-These platforms are fully supported for scheduling and publishing through the [Public API](/public-api/introduction), but don't currently have an in-app channel-connect UI page. You can still configure their env-var keys (see [Configuration Reference](/configuration/reference)) and use them via the API.
+A handful of platforms have no channel-connect screen in the app yet. She still schedules and publishes to them through the [Public API](/public-api/introduction): configure their env-var keys and post the way you post anywhere else. Key names: [Configuration Reference](/configuration/reference).
 
 | Platform | Public API page |
 |---|---|
@@ -93,4 +128,3 @@ These platforms are fully supported for scheduling and publishing through the [P
 | Hashnode | [/public-api/providers/hashnode](/public-api/providers/hashnode) |
 | WordPress | [/public-api/providers/wordpress](/public-api/providers/wordpress) |
 | Listmonk | [/public-api/providers/listmonk](/public-api/providers/listmonk) |
-

@@ -37,13 +37,13 @@ sequenceDiagram
 
 <Steps>
   <Step title="Register Your OAuth App">
-    Go to **Settings**, then **Developers**, then **Apps** in your PostQueen dashboard and create an OAuth application.
+    Go to **Settings > Developers > Apps** in your PostQueen dashboard and create an OAuth application.
 
     <Note>
     Each organization has one OAuth application. The Developers tab appears for organization admins on a plan that includes the public API.
     </Note>
 
-    You will need to provide:
+    You will need:
     - **App Name** - displayed to users on the consent screen
     - **Description** (optional) - explains what your app does
     - **Profile Picture** (optional) - shown on the consent screen
@@ -82,7 +82,7 @@ sequenceDiagram
     The user will see a consent screen showing your app's name, description, and the permissions being requested. They can choose to **Authorize** or **Deny**.
   </Step>
 
-  <Step title="Handle the Callback">
+  <Step title="Catch the callback">
     After the user makes a decision, PostQueen redirects them to your **Redirect URL** with query parameters.
 
     **If approved:**

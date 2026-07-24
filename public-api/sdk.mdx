@@ -83,7 +83,7 @@ const channels = await postqueen.integrations();
 | `tags` | `array` | Internal tags (calendar labels), usually `[]`. |
 | `posts` | `array` | One entry per target channel: `{ integration: { id }, value: [{ content, image }], settings? }`. |
 
-`settings` is platform-specific and carries a `__type` discriminator (e.g. `{ __type: 'x', who_can_reply_post: 'everyone' }`). See [Create Post](/public-api/posts/create) for the full schema and per-platform settings.
+`settings` is platform-specific and carries a `__type` discriminator (e.g. `{ __type: 'x', who_can_reply_post: 'everyone' }`). Full schema and per-platform settings: [Create Post](/public-api/posts/create).
 
 ```typescript
 await postqueen.post({

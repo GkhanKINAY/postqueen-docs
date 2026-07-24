@@ -6,12 +6,12 @@ description: 'Build PostQueen scenarios in Make with the HTTP module, plus webho
 A Make scenario can put posts on your PostQueen calendar today. It calls the same public API as the [CLI](/cli/introduction), the [MCP server](/mcp/introduction) and the [n8n node](/automation/n8n), so anything a scenario creates lands on the same calendar where you review everything else. She publishes it on time from there.
 
 <Note>
-A native PostQueen app for Make is coming soon. Until it lands, the HTTP module below covers the same ground: scheduling, drafts, and publishing right away. Scenarios you build now stay valid, because they talk to the public API directly.
+A native PostQueen app for Make is coming soon. Until it lands, the HTTP module covers the same ground: scheduling, drafts and publishing right away. Scenarios you build now stay valid, because they talk to the public API directly.
 </Note>
 
 ## Before you start
 
-Your Public API key. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+Your Public API key. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
 
 <Warning>
 The API expects the key raw. The header is `Authorization: YOUR_API_KEY` with no `Bearer` prefix, which trips up people who have wired other APIs into Make before.
@@ -68,7 +68,7 @@ The body is the same one the [Create Post](/public-api/posts/create) reference d
 | --- | --- |
 | `type` | `schedule` for a timed post, `now` to publish immediately, `draft` to park it on the calendar for review. |
 | `date` | ISO 8601 publish time in UTC, and it has to be in the future. Read when `type` is `schedule`. |
-| `posts[].integration.id` | The channel that receives the post. See the lookup below. |
+| `posts[].integration.id` | The channel that receives the post. [Find your integration IDs](#find-your-integration-ids). |
 | `posts[].value[]` | One entry per post. Adding entries builds a thread on platforms that support threading. |
 | `posts[].settings.__type` | The provider key, such as `x`, `linkedin` or `bluesky`. Required fields per provider are listed in [Create Post](/public-api/posts/create). |
 | `shortLink` | Shortens links found in the content when set to `true`. |
@@ -81,7 +81,7 @@ Media works the same way it does everywhere else. Upload the file first with `PO
 
 ## Find your integration IDs
 
-Add a second **Make a request** module, set the method to **GET** and the URL to `https://api.postqueen.ai/public/v1/integrations`, with the same `Authorization` header. Turn on **Parse response** and run it once.
+Every post needs to name the channel it goes to, and she answers with the whole list. Add a second **Make a request** module, set the method to **GET** and the URL to `https://api.postqueen.ai/public/v1/integrations`, with the same `Authorization` header. Turn on **Parse response** and run it once.
 
 ```json
 [
@@ -102,7 +102,7 @@ Two ways to use this in practice: run the module once, copy the IDs you need and
 
 ## Trigger a scenario from PostQueen
 
-The HTTP module drives PostQueen. For the other direction, PostQueen webhooks start your scenario when a post goes out.
+The HTTP module drives her. For the other direction, she calls your scenario the moment a post goes out.
 
 <Steps>
   <Step title="Create the webhook in Make">
@@ -116,15 +116,15 @@ The HTTP module drives PostQueen. For the other direction, PostQueen webhooks st
   </Step>
 </Steps>
 
-The delivery is a `POST` with a JSON array of published posts. Each entry carries the post content and its publish time, plus a `releaseURL` pointing at the live post and an `integration` object that names the channel. That `releaseURL` is what makes the trigger worth wiring up: log a row in Airtable or drop a Slack message the moment something goes out.
+The delivery is a `POST` with a JSON array of published posts. Each entry carries the post content and its publish time, plus a `releaseURL` pointing at the live post and an `integration` object that names the channel. The moment she publishes, that `releaseURL` is what makes the trigger worth wiring up: log a row in Airtable or drop a Slack message while the post is still warm.
 
 Full payload details and delivery behavior live on the [Webhooks](/automation/webhooks) page.
 
 ## Self-hosting
 
-Everything above works against your own instance. Swap the base URL for `https://YOUR-DOMAIN/api/public/v1` and keep the header, the body and the modules as they are.
+Running her yourself? Everything above still works. Swap the base URL for `https://YOUR-DOMAIN/api/public/v1` and keep the header, the body and the modules as they are.
 
-One thing to watch: the create-post endpoint is rate limited to 30 requests per hour, and self-hosters set that value with the `API_LIMIT` env var. A scenario that loops over many rows can hit the ceiling, so batch several posts into one request where you can, or add a **Sleep** module between iterations.
+One thing to watch: the create-post endpoint is rate limited to 30 requests per hour, and you raise that with the `API_LIMIT` env var. A scenario that loops over many rows can hit the ceiling, so batch several posts into one request where you can, or add a **Sleep** module between iterations.
 
 ## Next steps
 
@@ -136,15 +136,15 @@ One thing to watch: the create-post endpoint is rate limited to 30 requests per 
     Provider settings, thread structure and the `__type` table.
   </Card>
   <Card title="Webhooks" icon="webhook" href="/automation/webhooks">
-    What PostQueen sends when a post publishes.
+    What she sends the moment a post goes out, field by field.
   </Card>
   <Card title="n8n" icon="diagram-project" href="/automation/n8n">
-    A community node with ready-made operations, if you would rather not hand-build requests.
+    Ready-made operations instead of hand-built HTTP requests.
   </Card>
   <Card title="Zapier" icon="bolt" href="/automation/zapier">
-    The same requests, set up in Zapier instead.
+    The same requests, built with Webhooks by Zapier instead.
   </Card>
   <Card title="CLI" icon="terminal" href="/cli/introduction">
-    Same API from your terminal, useful for testing a payload before you paste it into Make.
+    Test a payload in your terminal before you paste it into Make.
   </Card>
 </CardGroup>

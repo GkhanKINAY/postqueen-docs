@@ -11,20 +11,20 @@ Zapier talks to PostQueen through the [Public API](/public-api/introduction), th
 
 <CardGroup cols={2}>
   <Card title="Zapier to PostQueen" icon="arrow-right">
-    A Zap step creates a post on your calendar. Use **Webhooks by Zapier** as the action.
+    A Zap step puts a post on your calendar through **Webhooks by Zapier**.
   </Card>
   <Card title="PostQueen to Zapier" icon="arrow-left">
-    A PostQueen webhook fires when a post publishes and starts your Zap. Use **Catch Hook** as the trigger.
+    When she publishes a post, a webhook starts your Zap through **Catch Hook**.
   </Card>
 </CardGroup>
 
 <Warning>
-**Webhooks by Zapier** is a premium app. Zapier lists it on the Professional, Team, and Enterprise plans, so it is not available on the Free plan. See [Send webhooks in Zaps](https://help.zapier.com/hc/en-us/articles/8496326446989-Send-webhooks-in-Zaps) for the current plan table.
+**Webhooks by Zapier** is a premium app. Zapier lists it on the Professional, Team and Enterprise plans, so it is not available on the Free plan. The current plan table: [Send webhooks in Zaps](https://help.zapier.com/hc/en-us/articles/8496326446989-Send-webhooks-in-Zaps).
 </Warning>
 
 ## Before you start
 
-Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and hit **Reveal**. Treat it like a password and paste it only into the Zap step that needs it.
+Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and hit **Reveal**. Treat it like a password and paste it only into the Zap step that needs it.
 
 Every request in this guide uses the same two headers:
 
@@ -35,7 +35,7 @@ Every request in this guide uses the same two headers:
 
 ## Post from Zapier
 
-Any Zap trigger you already use can end in a PostQueen post, whether that is a new row in a sheet or a new item in an RSS feed.
+A new row in a sheet, a new item in an RSS feed: any Zap trigger you already use can hand her the post and she puts it on the calendar.
 
 <Steps>
   <Step title="Add the action step">
@@ -92,7 +92,7 @@ Any Zap trigger you already use can end in a PostQueen post, whether that is a n
 | `date` | ISO 8601 UTC timestamp, for example `2026-08-01T10:00:00.000Z`. |
 | `shortLink` | Set to `true` to run links through the short link service. |
 | `tags` | Required. Array of tag objects, each with `value` and `label`, for example `{"value": "launch", "label": "launch"}`. Send `[]` when you have none. |
-| `posts[].integration.id` | The channel this post goes to. See below for how to find it. |
+| `posts[].integration.id` | The channel this post goes to. [Find your integration IDs](#find-your-integration-ids). |
 | `posts[].value[].content` | The post body. Additional entries in `value` become a thread. |
 | `posts[].settings.__type` | The provider identifier, such as `bluesky`, `x`, or `linkedin`. Some providers need extra settings alongside it. |
 
@@ -104,7 +104,7 @@ If you build a Zap with the plain **POST** event instead, fill in the **Data** s
 
 ## Find your integration IDs
 
-Each connected channel has an id. List them with the same header you used above:
+Every post has to name the channel it goes to. Ask her for the list with the same header:
 
 ```bash
 curl https://api.postqueen.ai/public/v1/integrations \
@@ -132,7 +132,7 @@ The create-post endpoint allows 30 requests per hour. A Zap that fires on a busy
 
 ## React to PostQueen events
 
-PostQueen webhooks go the other way. When a post publishes, PostQueen sends a `POST` request with a JSON body to a URL you configure, and a Zapier **Catch Hook** trigger is a valid destination for it.
+Her webhooks go the other way. When she publishes, she sends a `POST` with a JSON body to a URL you configure, and a Zapier **Catch Hook** trigger is a valid destination for it.
 
 <Steps>
   <Step title="Create the Catch Hook trigger">
@@ -161,7 +161,7 @@ The payload is a JSON array holding the published post. Each entry carries these
 
 ## Self-hosting
 
-Swap the base URL. Everything else in this guide stays the same:
+Running her yourself? Swap the base URL and everything else stays the same:
 
 | Deployment | Base URL |
 | --- | --- |
@@ -178,6 +178,6 @@ Swap the base URL. Everything else in this guide stays the same:
     Authentication, base URLs, and the rest of the endpoints.
   </Card>
   <Card title="n8n" icon="diagram-project" href="/automation/n8n">
-    Prefer n8n? A community node handles the API calls for you.
+    Prefer n8n? A community node makes the API calls for you.
   </Card>
 </CardGroup>

@@ -1,14 +1,14 @@
 ## Installation Prerequisites
 
-This section will ask you to install & configure several services explained below.
+A few services have to be in place before she can start.
 
 ### Network Requirements
 
 #### HTTPS / HTTP Requirement
 
-PostQueen marks it's login cookies as Secure, this is called "secure context" in modern web browsers.
+She marks her login cookies as Secure. Browsers call this a "secure context".
 
-If you want to use a secure Login Process, you need to set up a Certificate, which can be done via Reverse Proxy like Caddy or Nginx.
+If you want a secure login process, you need a certificate, which a reverse proxy like Caddy or Nginx can give you.
 
 If you cannot use a certificate (HTTPS), add the following environment variable to your `.env` file:
 ```env
@@ -20,13 +20,13 @@ NOT_SECURED=true
 
 #### Network Ports
 
-- **5000/tcp**: for a single **single entry point** for postqueen when running in a container. This is the one port your reverse proxy should talk to.
-- **4200/tcp**: for the **Frontend** service (the web interface). Most users **do not** need to expose this port publicly.
-- **3000/tcp**: for the **Backend** service (the API). Most users **do not** need to expose this port publicly.
-- **5432/tcp**: for the **Postgres** container. Most users **do not** need to expose this port publicly.
-- **6379/tcp**: for the **Redis** container. Most users **do not** need to expose this port publicly.
+- **5000/tcp**: the **single entry point** for PostQueen when running in a container. This is the one port your reverse proxy should talk to.
+- **4200/tcp**: for the **Frontend** service (the web interface). You do not need to expose this port publicly.
+- **3000/tcp**: for the **Backend** service (the API). You do not need to expose this port publicly.
+- **5432/tcp**: for the **Postgres** container. You do not need to expose this port publicly.
+- **6379/tcp**: for the **Redis** container. You do not need to expose this port publicly.
 
-If you are using docker images, we recommend just exposing port 5000 to your external proxy. This will reduce the likelihood of misconfiguration, and make it easier to manage your network.
+Using docker images? Point your external proxy at port 5000 and nothing else. One port is harder to misconfigure and easier to reason about later.
 
 ```mermaid
 graph TD;
