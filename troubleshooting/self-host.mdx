@@ -16,7 +16,7 @@ NODE_OPTIONS="--max-old-space-size=4096" pnpm install
 
 If 4 GB still isn't enough and your host has the RAM to spare, raise it
 to `--max-old-space-size=8192`. Don't set the heap higher than your VM's
-available memory — that just trades OOM in Node for OOM-killed by the
+available memory. That just trades OOM in Node for OOM-killed by the
 kernel. If you're stuck on a 2 GB VM, build the image elsewhere and
 deploy the prebuilt artifact instead. See
 [System requirements](/installation/system-requirements) for minimum RAM.
@@ -40,7 +40,7 @@ Backend can't reach Postgres.
 There is no env-var-based way to hide a provider from the frontend
 today. The only mechanism is to set the per-organisation `disabled`
 field on the Integration row in the database after a channel is
-connected. We're tracking the request — see the GitHub issues tagged
+connected. We're tracking the request. See the GitHub issues tagged
 `enhancement`.
 
 ## Default ports
@@ -49,12 +49,12 @@ It depends on how you're running PostQueen.
 
 **Official Docker image** (`ghcr.io/gkhankinay/postqueen-app`): the
 container bundles frontend + backend and exposes a single port `5000`.
-The official compose maps that to host `4007:5000` — so you reach PostQueen
+The official compose maps that to host `4007:5000`, so you reach PostQueen
 at `http://localhost:4007/`.
 
 **Running from source** (`pnpm dev` / `pnpm start`): frontend listens
 on `4200`, backend on `3000` (overridable via `PORT`). Connect a reverse
-proxy in front to give your users a single URL — see
+proxy in front to give your users a single URL. See
 [Reverse Proxies](/reverse-proxies/caddy).
 
 Temporal listens on `7233` (gRPC) and the Temporal UI on `8080` in
@@ -74,12 +74,12 @@ containers that need to read or write, or move to [Cloudflare R2](/configuration
 
 ## Can I deploy PostQueen on Vercel?
 
-**Frontend:** yes — it's a standard Next.js app and deploys cleanly to
+**Frontend:** yes, it's a standard Next.js app and deploys cleanly to
 Vercel.
 
 **Backend:** no. The PostQueen backend is a NestJS server that also embeds
 a Temporal worker. It needs a long-running Node host (Fly.io, Render,
-Railway, a VM, a Kubernetes pod, etc.) — serverless functions won't
+Railway, a VM, a Kubernetes pod, etc.). Serverless functions won't
 work.
 
 ## Email isn't sending
@@ -91,7 +91,7 @@ becomes active when `RESEND_API_KEY` is set. To use SMTP instead, set
 [Email configuration](/configuration/emails).
 
 If no email provider is configured, user activation emails won't go
-out — but PostQueen auto-activates users in that mode, so signup still
+out, but PostQueen auto-activates users in that mode, so signup still
 works.
 
 ## Temporal isn't reachable
