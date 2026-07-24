@@ -1,0 +1,88 @@
+---
+title: OpenClaw
+description: 'Turn your chat apps into her front door with the OpenClaw agent client'
+---
+
+## What OpenClaw is
+
+OpenClaw is a third-party, open-source agent client that runs on your own machine. It is not a PostQueen component: it is one of the open agents that already speaks her language. OpenClaw turns the chat apps you already live in into her front door, WhatsApp and Telegram from your pocket, Slack and Discord with your team. You message her like any other contact, and OpenClaw does the relaying.
+
+Behind the scenes, OpenClaw drives the same `postqueen` CLI that other agents use. That matters: whatever you ask for through chat lands on the same PostQueen calendar you see at [app.postqueen.ai](https://app.postqueen.ai), where you can review, edit, or delete it.
+
+<Note>
+The PostQueen mobile app is on the way. You are not waiting on it, though: through OpenClaw she already answers on the phone in your pocket.
+</Note>
+
+## What you need
+
+- OpenClaw installed and running on your machine (the [OpenClaw set-up guide](https://postqueen.ai/openclaw) walks you through it)
+- The PostQueen skill, which teaches OpenClaw her full command set
+- Your `POSTQUEEN_API_KEY`
+- `POSTQUEEN_API_URL`, only if you self-host PostQueen
+
+## Setup
+
+<Steps>
+  <Step title="Install the PostQueen skill">
+    ```bash
+    npx skills add GkhanKINAY/postqueen-agent
+    ```
+
+    The skill gives OpenClaw the complete `postqueen` command reference, with the patterns behind it, so she gets clean instructions instead of guesswork.
+  </Step>
+  <Step title="Export your API key">
+    Grab your key in [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Then export it in the environment OpenClaw runs in:
+
+    ```bash
+    export POSTQUEEN_API_KEY="your-api-key"
+    ```
+
+    Self-hosting PostQueen? Point the CLI at your own server too:
+
+    ```bash
+    export POSTQUEEN_API_URL="https://your-postqueen-server.com"
+    ```
+  </Step>
+  <Step title="Verify the connection">
+    ```bash
+    postqueen integrations:list
+    ```
+
+    A JSON list of your connected channels means she is ready. You can also run `postqueen auth:status` to confirm your credentials are valid.
+  </Step>
+  <Step title="Connect your chat app in OpenClaw">
+    In OpenClaw, link the app you want to reach her from: WhatsApp or Telegram for your phone, Slack or Discord for your workspace. The [OpenClaw set-up guide](https://postqueen.ai/openclaw) covers each one. Once linked, send her a first message and watch the post land on your calendar.
+  </Step>
+</Steps>
+
+## Talking to her
+
+Message her the way you would message a colleague. Plain text works, and so does a voice note if your assistant supports voice: speak an idea on your walk and find it waiting on the calendar as finished posts.
+
+Try saying:
+
+> "Plan a month of content for our coffee shop and fill the calendar."
+
+> "Take this photo of today's special and put it on Instagram at lunchtime."
+
+> "We just hit 10k followers, write a warm thank-you post for all our channels."
+
+She writes the copy and schedules it across your connected channels, from one chat message.
+
+## Staying in control
+
+She runs on your terms. Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, so you can edit or delete anything, and if you ask for drafts she holds each post until you approve it on the calendar.
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Agents overview" icon="robot" href="/agents/overview">
+    Every way to put an agent in front of PostQueen, from coding assistants to chat apps.
+  </Card>
+  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
+    The `postqueen` CLI that OpenClaw drives: installation, authentication, and the full command set.
+  </Card>
+  <Card title="OpenClaw set-up guide" icon="arrow-up-right-from-square" href="https://postqueen.ai/openclaw">
+    The step-by-step guide to installing OpenClaw and linking your chat apps.
+  </Card>
+</CardGroup>

@@ -1,0 +1,177 @@
+---
+title: Node.js SDK
+description: '@postqueen/node: a typed Node.js client for the PostQueen Public API'
+---
+
+[`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) is a thin, typed wrapper over the [Public API](/public-api/introduction): every method maps 1:1 to a REST endpoint, and all but `deletePost()` return the parsed JSON response.
+
+## Installation
+
+```bash
+npm i @postqueen/node
+```
+
+## Authentication
+
+The SDK authenticates with your Public API key, sent as the `Authorization` header on every request. Get it from **[app.postqueen.ai](https://app.postqueen.ai)** → **Settings** → **Developers** → **Public API** → **Reveal**.
+
+```bash
+export POSTQUEEN_API_KEY="your_api_key"
+```
+
+## Quickstart
+
+```typescript
+import PostQueen from '@postqueen/node';
+
+const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
+
+// List connected channels (the API calls them "integrations")
+const channels = (await postqueen.integrations()) as { id: string; name: string }[];
+
+// Schedule a post
+await postqueen.post({
+  type: 'schedule',
+  date: '2026-08-01T09:00:00.000Z',
+  shortLink: false,
+  tags: [],
+  posts: [
+    {
+      integration: { id: channels[0].id },
+      value: [{ content: 'We just shipped', image: [] }],
+    },
+  ],
+});
+```
+
+## Constructor
+
+```typescript
+new PostQueen(apiKey: string, baseUrl?: string)
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `apiKey` | `string` | required | Public API key, sent as the `Authorization` header. |
+| `baseUrl` | `string` | `process.env.POSTQUEEN_API_URL \|\| 'https://api.postqueen.ai'` | API host. The client appends `/public/v1/...` to it. |
+
+Self-hosted instances pass their own backend URL, either through the second constructor argument or the `POSTQUEEN_API_URL` environment variable:
+
+```typescript
+const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!, 'https://your-host/api');
+```
+
+## Methods
+
+### `integrations()`
+
+`GET /public/v1/integrations`. Returns the list of connected channels; use each channel's `id` as `integration.id` when creating posts.
+
+```typescript
+const channels = await postqueen.integrations();
+```
+
+### `post(dto)`
+
+`POST /public/v1/posts`. Creates, schedules, or updates posts across one or more channels in a single call.
+
+| Field | Type | Description |
+|---|---|---|
+| `type` | `'draft' \| 'schedule' \| 'now' \| 'update'` | What to do with the post. |
+| `date` | `string` | ISO 8601 timestamp; the publish time for `schedule`. |
+| `shortLink` | `boolean` | Shorten links in the content. |
+| `tags` | `array` | Internal tags (calendar labels), usually `[]`. |
+| `posts` | `array` | One entry per target channel: `{ integration: { id }, value: [{ content, image }], settings? }`. |
+
+`settings` is platform-specific and carries a `__type` discriminator (e.g. `{ __type: 'x', who_can_reply_post: 'everyone' }`). See [Create Post](/public-api/posts/create) for the full schema and per-platform settings.
+
+```typescript
+await postqueen.post({
+  type: 'now',
+  date: new Date().toISOString(),
+  shortLink: false,
+  tags: [],
+  posts: [
+    {
+      integration: { id: 'your-integration-id' },
+      value: [{ content: 'Hello from the SDK', image: [] }],
+      settings: { __type: 'x', who_can_reply_post: 'everyone' },
+    },
+  ],
+});
+```
+
+### `postList(filters)`
+
+`GET /public/v1/posts`. Lists posts in a date range.
+
+| Field | Type | Description |
+|---|---|---|
+| `startDate` | `string` | ISO 8601 range start. |
+| `endDate` | `string` | ISO 8601 range end. |
+| `customer` | `string` (optional) | Filter by customer. |
+
+```typescript
+const posts = await postqueen.postList({
+  startDate: '2026-08-01T00:00:00.000Z',
+  endDate: '2026-08-31T23:59:59.000Z',
+});
+```
+
+### `upload(file, extension)`
+
+`POST /public/v1/upload` (multipart). Uploads a media file and returns the hosted media object (`{ id, path, ... }`).
+
+| Parameter | Type | Description |
+|---|---|---|
+| `file` | `Buffer` | Raw file bytes. |
+| `extension` | `string` | File extension used to derive the MIME type: `png`, `jpg`, `jpeg`, or `gif`. Anything else falls back to `image/jpeg`. |
+
+Upload media first, then reference the returned object in `value[].image` when creating the post:
+
+```typescript
+import { readFile } from 'fs/promises';
+
+const media = await postqueen.upload(await readFile('banner.png'), 'png');
+
+await postqueen.post({
+  type: 'schedule',
+  date: '2026-08-01T09:00:00.000Z',
+  shortLink: false,
+  tags: [],
+  posts: [
+    {
+      integration: { id: 'your-integration-id' },
+      value: [{ content: 'Launch day', image: [media] }],
+    },
+  ],
+});
+```
+
+### `deletePost(id)`
+
+`DELETE /public/v1/posts/{id}`. Deletes a post by ID. Unlike the other methods, this returns the raw `fetch` `Response` object rather than parsed JSON.
+
+```typescript
+await postqueen.deletePost('post-id');
+```
+
+## Notes
+
+<Note>
+The create-post endpoint is rate limited to **30 requests per hour**. Batch multiple channels into a single `post()` call instead of one call per channel.
+</Note>
+
+- Except for `deletePost()`, methods return the parsed JSON body as-is; the SDK does not throw on HTTP error statuses. Check the response for an error payload if a call misbehaves.
+- Media must be uploaded before posting: `post()` expects hosted media objects in `value[].image`, not raw files or base64.
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="API Overview" icon="book" href="/public-api/introduction">
+    Authentication, rate limits, and error codes
+  </Card>
+  <Card title="Create Post" icon="paper-plane" href="/public-api/posts/create">
+    Full request schema and per-platform settings
+  </Card>
+</CardGroup>
