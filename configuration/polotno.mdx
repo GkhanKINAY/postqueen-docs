@@ -6,9 +6,9 @@ description: 'Enable in-app image and video editing in PostQueen via the Polotno
 PostQueen supports in-app image and video editing through the
 [Polotno SDK](https://polotno.com/). Once enabled, users can design and
 edit visuals directly inside the PostQueen workflow while preparing
-scheduled posts — no round-trip to an external editor.
+scheduled posts, with no round-trip to an external editor.
 
-<img src="/images/brand/studio.svg" alt="The content studio: one topic returns the caption, the on-brand image and a voiced video" />
+<img src="/images/brand/studio.svg" alt="The content studio: one topic returns the caption and the on-brand image, in any language" />
 
 ## What you get
 
@@ -49,13 +49,14 @@ PostQueen.
   </Step>
 
   <Step title="Restart PostQueen">
-    `NEXT_PUBLIC_POLOTNO` is read by the frontend at build time, so
-    you need to rebuild the frontend image (or restart the dev
-    server) for the change to take effect.
+    PostQueen reads `NEXT_PUBLIC_POLOTNO` on the server for each
+    request, so recreating the container picks up the new value:
+    run `docker compose down`, then `docker compose up -d`. Running
+    from source, restart the dev server.
   </Step>
 </Steps>
 
-Exact steps may vary slightly depending on your deployment — see
+Exact steps vary a little by deployment. See
 [Docker Compose](/installation/docker-compose) or
 [Development](/installation/development) for environment-specific
 notes. If the variable is unset, the editor falls back to a

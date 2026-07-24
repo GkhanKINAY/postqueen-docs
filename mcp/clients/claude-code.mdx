@@ -13,25 +13,27 @@ Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings*
 claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Replace `YOUR_API_KEY` with your actual key. The server is registered for your local Claude Code configuration and is available in every session from now on.
+Replace `YOUR_API_KEY` with your actual key. By default this registers the server for you in the current project. Add `--scope user` to make PostQueen available in every project on your machine, or `--scope project` to share it with the repo through the `.mcp.json` file described below.
 
 ## Project Config Alternative
 
-To share the server with everyone working in a repository, declare it in a `.mcp.json` file at the project root instead (the same file `claude mcp add --scope project` writes):
+To share the server with everyone working in a repository, declare it in a `.mcp.json` file at the project root (the same file `claude mcp add --scope project` writes). Claude Code expands `${VAR}` environment variables there, so this form is the one that is safe to commit:
 
 ```json .mcp.json
 {
   "mcpServers": {
     "postqueen": {
       "type": "http",
-      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+      "url": "https://api.postqueen.ai/mcp/${POSTQUEEN_API_KEY}"
     }
   }
 }
 ```
 
+Everyone working in the repo exports their own `POSTQUEEN_API_KEY`, and no key ends up in version control. For a personal file you do not commit, a literal key in place of `${POSTQUEEN_API_KEY}` works the same way.
+
 <Note>
-Format per the official [Claude Code MCP documentation](https://code.claude.com/docs/en/mcp). Claude Code expands `${VAR}` environment variables in `.mcp.json`, so you can keep the key out of the file with `"url": "https://api.postqueen.ai/mcp/${POSTQUEEN_API_KEY}"`.
+Format per the official [Claude Code MCP documentation](https://code.claude.com/docs/en/mcp).
 </Note>
 
 ## Bearer Variant
@@ -43,12 +45,12 @@ claude mcp add --transport http postqueen https://api.postqueen.ai/mcp --header 
 ```
 
 <Warning>
-Your API key grants full access to your PostQueen workspace — treat it like a password, and never commit it to a shared `.mcp.json`.
+Your API key grants full access to your PostQueen workspace: treat it like a password, and use the `${POSTQUEEN_API_KEY}` form above in any `.mcp.json` you check in. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
 </Warning>
 
 ## Self-Hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP — see [Reverse Proxies](/reverse-proxies/caddy).
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://your-postqueen-server.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP; see [Reverse Proxies](/reverse-proxies/caddy).
 
 ## Verify
 

@@ -5,9 +5,9 @@ description: 'Turn your chat apps into her front door with the OpenClaw agent cl
 
 ## What OpenClaw is
 
-OpenClaw is a third-party, open-source agent client that runs on your own machine. It is not a PostQueen component: it is one of the open agents that already speaks her language. OpenClaw turns the chat apps you already live in into her front door, WhatsApp and Telegram from your pocket, Slack and Discord with your team. You message her like any other contact, and OpenClaw does the relaying.
+OpenClaw is an open-source agent client from another project, running on your own machine. Install it and the chat apps you already use become a way to reach her: WhatsApp and Telegram on your phone, Slack and Discord with your team. You message her like any other contact, and OpenClaw does the relaying.
 
-<img src="/images/brand/chat-openclaw.svg" alt="OpenClaw chat: one message and PostQueen schedules the posts" />
+<img src="/images/brand/chat-openclaw.svg" alt="A voice note to OpenClaw: PostQueen generates the visual and schedules the posts" />
 
 Behind the scenes, OpenClaw drives the same `postqueen` CLI that other agents use. That matters: whatever you ask for through chat lands on the same PostQueen calendar you see at [app.postqueen.ai](https://app.postqueen.ai), where you can review, edit, or delete it.
 
@@ -17,7 +17,7 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
 
 ## What you need
 
-- A machine that can run OpenClaw: macOS, Linux, or Windows, with Node.js 22 or newer (the OpenClaw docs recommend Node 24)
+- A machine that can run OpenClaw: macOS, Linux, or Windows, with Node.js 22.22.3+, 24.15+ or 25.9+ (the OpenClaw docs default to Node 24)
 - An API key for a model provider such as Anthropic or OpenAI, which OpenClaw asks for during onboarding
 - The PostQueen skill, which teaches OpenClaw her full command set
 - Your `POSTQUEEN_API_KEY`
@@ -52,23 +52,23 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
     npx skills add GkhanKINAY/postqueen-agent
     ```
 
-    The skill gives OpenClaw the complete `postqueen` command reference, with the patterns behind it, so she gets clean instructions instead of guesswork. If the `postqueen` CLI is not already on the machine, install it too:
+    The skill gives OpenClaw her complete command reference and the patterns behind it, so it works from documented commands instead of guessing. If the `postqueen` CLI is not already on the machine, install it too:
 
     ```bash
     npm install -g postqueen
     ```
   </Step>
   <Step title="Export your API key">
-    Grab your key in [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Then export it in the environment the OpenClaw Gateway runs in:
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Then export it in the environment the OpenClaw Gateway runs in:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
     ```
 
-    Self-hosting PostQueen? Point the CLI at your own server too:
+    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
 
     ```bash
-    export POSTQUEEN_API_URL="https://your-postqueen-server.com"
+    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
     ```
   </Step>
   <Step title="Verify the connection">
@@ -120,7 +120,7 @@ openclaw cron add \
   --message "Run 'postqueen integrations:list' to get my channel ids. Check yesterday's numbers with 'postqueen analytics:platform' for each channel, then draft one post for today and schedule it for noon with 'postqueen posts:create'."
 ```
 
-The `--session isolated` flag runs the job in its own session, and `--announce` has the agent report the result back to your chat. OpenClaw also has a heartbeat, a periodic check-in the Gateway manages per agent; the OpenClaw docs recommend cron jobs like the one above when you want precise timing. Both are covered in the [OpenClaw scheduled tasks guide](https://docs.openclaw.ai/automation/cron-jobs).
+The `--session isolated` flag runs the job in its own session, and `--announce` has the agent report the result back to your chat. OpenClaw also has a heartbeat, a periodic check-in the Gateway manages per agent; the OpenClaw docs recommend cron jobs like the one above when you want precise timing. Cron jobs are documented in the [OpenClaw scheduled tasks guide](https://docs.openclaw.ai/automation/cron-jobs), and heartbeat has its own [heartbeat page](https://docs.openclaw.ai/gateway/heartbeat).
 
 <Tip>
 Add `-t draft` to the `posts:create` command in your prompt and the overnight run stacks up drafts instead of scheduled posts. You approve them from the calendar over coffee.
@@ -128,7 +128,7 @@ Add `-t draft` to the `posts:create` command in your prompt and the overnight ru
 
 ## Staying in control
 
-She runs on your terms. Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, so you can edit or delete anything, and if you ask for drafts she holds each post until you approve it on the calendar.
+Drafts, edits and deletes work the same as anywhere else in PostQueen. Ask for drafts in your message and each post waits on the calendar until you approve it. See [how control works](/agents/overview#she-runs-on-your-terms).
 
 ## FAQ
 
@@ -143,7 +143,7 @@ She runs on your terms. Leave her alone and she is a true autopilot: whatever sh
     Yes. Ask for drafts in your message and she holds each post on the calendar until you approve it there.
   </Accordion>
   <Accordion title="Does the integration cost extra?">
-    No. Agent access uses the same API key and plan limits as your regular PostQueen account, on every plan. OpenClaw itself is open source; the only outside cost is whatever model provider you run it with.
+    No. Agent access uses the same API key and plan limits as your regular PostQueen account, on any plan. OpenClaw itself is open source; the only outside cost is whatever model provider you run it with.
   </Accordion>
 </AccordionGroup>
 

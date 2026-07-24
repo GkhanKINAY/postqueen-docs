@@ -1,0 +1,291 @@
+---
+title: Other Clients
+description: 'Connect Warp, Cline, Windsurf, or any MCP-compatible client to PostQueen'
+---
+
+PostQueen speaks MCP over streamable HTTP, so any client that can reach a remote MCP server connects with a single URL, with no local process and no wrapper package. This page covers Warp, Cline, and Windsurf specifically, then gives the generic shape you can adapt to anything else.
+
+<Note>
+You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+</Note>
+
+<Warning>
+Your API key can post to every account you have connected, so treat it like a password. Whether it sits in the URL or in an `Authorization` header, it ends up in a config file on your machine, so keep those files out of version control and off shared screens. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+</Warning>
+
+## Warp
+
+Warp connects to remote MCP servers by URL, so PostQueen plugs straight into the terminal's agent.
+
+<Steps>
+  <Step title="Open the MCP servers page">
+    Go to **Settings**, then **Agents**, then **MCP servers**. You can also search for `Open MCP Servers` in the Command Palette.
+  </Step>
+  <Step title="Add a URL server">
+    Click **+ Add** and choose **Streamable HTTP or SSE Server (URL)**, not **CLI Server (Command)**, which is for local executables.
+  </Step>
+  <Step title="Fill in the config">
+    Warp takes a `url` and an optional `headers` object:
+
+    <Tabs>
+      <Tab title="API Key in URL">
+        ```json
+        {
+          "postqueen": {
+            "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+          }
+        }
+        ```
+      </Tab>
+      <Tab title="Bearer Token">
+        ```json
+        {
+          "postqueen": {
+            "url": "https://api.postqueen.ai/mcp",
+            "headers": {
+              "Authorization": "Bearer YOUR_API_KEY"
+            }
+          }
+        }
+        ```
+      </Tab>
+    </Tabs>
+
+    Replace `YOUR_API_KEY` with the key you revealed in the PostQueen app.
+  </Step>
+  <Step title="Start the server">
+    The server appears in the list with a **Start** / **Stop** control. Start it, and Warp discovers PostQueen's [10 tools](/mcp/tools). A server that was running when you closed Warp starts again on the next launch; one you stopped stays stopped.
+  </Step>
+</Steps>
+
+Source: [Warp MCP documentation](https://docs.warp.dev/knowledge-and-collaboration/mcp).
+
+## Cline
+
+Cline supports remote servers over streamable HTTP, which it identifies with an explicit `type` field.
+
+<Steps>
+  <Step title="Open the MCP Servers panel">
+    In the Cline panel, click the **MCP Servers** icon (the stacked-server icon in the top toolbar).
+  </Step>
+  <Step title="Add the remote server">
+    Open the **Remote Servers** tab and fill in:
+
+    - **Server Name:** `postqueen`
+    - **Server URL:** `https://api.postqueen.ai/mcp/YOUR_API_KEY`
+    - **Transport Type:** **Streamable HTTP**
+
+    Click **Add Server**.
+  </Step>
+  <Step title="Or edit the config directly">
+    From the **Configure** tab, click **Configure MCP Servers** to open the MCP settings JSON, then add an entry under `mcpServers`. The Cline CLI reads the same shape from `~/.cline/mcp.json`:
+
+    <Tabs>
+      <Tab title="API Key in URL">
+        ```json
+        {
+          "mcpServers": {
+            "postqueen": {
+              "type": "streamableHttp",
+              "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
+              "disabled": false,
+              "autoApprove": []
+            }
+          }
+        }
+        ```
+      </Tab>
+      <Tab title="Bearer Token">
+        ```json
+        {
+          "mcpServers": {
+            "postqueen": {
+              "type": "streamableHttp",
+              "url": "https://api.postqueen.ai/mcp",
+              "headers": {
+                "Authorization": "Bearer YOUR_API_KEY"
+              },
+              "disabled": false,
+              "autoApprove": []
+            }
+          }
+        }
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+<Tip>
+Leave `autoApprove` empty. It lists tools Cline may run without asking, and `integrationSchedulePostTool` publishes to live accounts, so that one deserves a confirmation every time.
+</Tip>
+
+Source: [Cline: connecting to a remote server](https://docs.cline.bot/mcp/connecting-to-a-remote-server).
+
+## Windsurf
+
+Windsurf's Cascade reads MCP servers from `~/.codeium/windsurf/mcp_config.json` on macOS, Linux, and Windows. Remote HTTP servers use the `serverUrl` key, not `url`.
+
+Open **Settings**, then **Cascade**, then **MCP Servers** (or click the MCP icon at the top right of the Cascade panel) and edit the raw config:
+
+<Tabs>
+  <Tab title="API Key in URL">
+    ```json ~/.codeium/windsurf/mcp_config.json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "serverUrl": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Bearer Token">
+    ```json ~/.codeium/windsurf/mcp_config.json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "serverUrl": "https://api.postqueen.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer YOUR_API_KEY"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Tip>
+Windsurf interpolates `${env:VAR_NAME}` and `${file:/path/to/file}` in these fields, so you can keep the key out of the config file entirely:
+
+```json
+{
+  "mcpServers": {
+    "postqueen": {
+      "serverUrl": "https://api.postqueen.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:POSTQUEEN_API_KEY}"
+      }
+    }
+  }
+}
+```
+</Tip>
+
+Save the file and refresh the server list in Cascade to pick up the change.
+
+Source: [Windsurf Cascade MCP documentation](https://docs.devin.ai/desktop/cascade/mcp).
+
+## Any MCP Client
+
+For anything not listed above, these are the only details that matter.
+
+### Streamable HTTP URL
+
+Most clients ask for a single endpoint. Put the API key in the path:
+
+```
+https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+The config key differs by client. `url`, `httpUrl`, and `serverUrl` are all in use, so check your client's docs for which one it expects for streamable HTTP.
+
+### Bearer Header
+
+If your client supports custom headers, keep the key out of the URL instead:
+
+```
+URL: https://api.postqueen.ai/mcp
+Authorization: Bearer YOUR_API_KEY
+```
+
+Both forms authenticate with the same key and expose the same 10 tools. Pick whichever your client handles more cleanly.
+
+### Self-Hosted
+
+On a self-hosted instance, swap the host for your `NEXT_PUBLIC_BACKEND_URL`:
+
+```
+https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
+```
+
+Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
+
+Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. See [Reverse Proxies](/reverse-proxies/caddy).
+
+### Stdio-Only Clients
+
+Some clients only launch local processes over stdio and have no way to enter a remote URL. Bridge the gap with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which runs on your machine and forwards stdio traffic to PostQueen over HTTP. It needs [Node.js](https://nodejs.org/).
+
+<Tabs>
+  <Tab title="API Key in URL">
+    ```json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+          ]
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Bearer Token">
+    ```json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "mcp-remote",
+            "https://api.postqueen.ai/mcp",
+            "--header",
+            "Authorization: Bearer YOUR_API_KEY"
+          ]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Some stdio clients (Cursor and Claude Desktop on Windows) mangle spaces inside `args`. If the Bearer form fails there, put the whole header value in an environment variable and pass it without spaces, for example `"--header", "Authorization:${AUTH_HEADER}"` with `AUTH_HEADER` set to `Bearer YOUR_API_KEY` in the entry's `env` block.
+
+The bridge is a fallback, not an upgrade. If your client can reach a remote URL on its own, use that instead, for fewer moving parts and no Node.js dependency.
+
+## Verify
+
+Whichever client you wired up, ask it:
+
+> "List my connected social media accounts"
+
+If the connection works, the agent calls the `integrationList` tool and returns your connected accounts.
+
+<AccordionGroup>
+  <Accordion title="The client shows zero tools">
+    The server connected but discovery returned nothing, which usually means the key is wrong or truncated. Reveal it again in the PostQueen app and paste it in full, with no surrounding whitespace or quotes.
+  </Accordion>
+  <Accordion title="The connection fails outright">
+    Confirm your client is using the streamable HTTP transport rather than stdio, that it kept the trailing key segment in the URL, and that nothing on your network blocks `api.postqueen.ai`. On self-hosted setups, check that the reverse proxy forwards `/mcp` and does not buffer streaming responses.
+  </Accordion>
+  <Accordion title="Tools appear but every call errors">
+    That combination means the endpoint is right but the key was rejected. Regenerate the key in **Settings**, then **Developers**, then **Public API**, and update the config, remembering that the Bearer form needs the `Bearer ` prefix while the URL form does not.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="MCP Tools" icon="wrench" href="/mcp/tools">
+    See what all 10 tools can do
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    Real prompts and the tool calls they trigger
+  </Card>
+</CardGroup>

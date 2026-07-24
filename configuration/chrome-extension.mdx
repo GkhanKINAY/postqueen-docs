@@ -24,9 +24,12 @@ The packaged PostQueen extension is coming soon to the Chrome Web Store. Until t
 
 <Steps>
   <Step title="Build the Extension">
-    Build the extension from the [PostQueen monorepo](https://github.com/GkhanKINAY/postqueen-app):
+    Build the extension from the [PostQueen monorepo](https://github.com/GkhanKINAY/postqueen-app). The extension has no dependencies of its own, so the workspace install at the repo root has to run first:
 
     ```bash
+    git clone https://github.com/GkhanKINAY/postqueen-app
+    cd postqueen-app
+    pnpm install
     cd apps/extension
     pnpm build
     ```
@@ -89,9 +92,12 @@ Edit `apps/extension/manifest.json` and add your domain:
 
 Then rebuild the extension and load it as an unpacked extension in Chrome.
 
+The manifest field is only half of it. The service worker builds its own allowed-origin list from `FRONTEND_URL` at build time (`apps/extension/src/background.ts`), and anything outside that list is answered with `Unauthorized origin`. Set `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` in the repo-root `.env` before building, and confirm with the app team which build entry point compiles them in, since the current `pnpm build` script does not.
+
 ## Troubleshooting
 
-- **"Extension not found"** — Make sure the `EXTENSION_ID` environment variable is set and PostQueen has been restarted.
-- **"Extension not reachable"** — The extension may be disabled. Check `chrome://extensions/` and make sure PostQueen is enabled.
-- **"Could not get cookies"** — You must be logged in to the platform in the same Chrome browser where the extension is installed.
-- **Cookies expire** — The extension automatically refreshes cookies every 24 hours. If a connection drops, try reconnecting the channel.
+- **"Extension not found"**: make sure the `EXTENSION_ID` environment variable is set and PostQueen has been restarted.
+- **"Extension not reachable"**: the extension may be disabled. Check `chrome://extensions/` and make sure PostQueen is enabled.
+- **"Unauthorized origin"**: the extension was built without your `FRONTEND_URL`. Rebuild with it set.
+- **"Could not get cookies"**: you must be logged in to the platform in the same Chrome browser where the extension is installed.
+- **Cookies expire**: the extension automatically refreshes cookies every 24 hours. If a connection drops, try reconnecting the channel.

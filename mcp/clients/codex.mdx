@@ -3,7 +3,7 @@ title: OpenAI Codex
 description: 'Connect the OpenAI Codex CLI to the PostQueen MCP server'
 ---
 
-The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it can talk to PostQueen directly — no local bridge process needed. Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
+The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it can talk to PostQueen directly, with no local bridge process. Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
 
 ## Add via CLI
 
@@ -25,7 +25,7 @@ url = "https://api.postqueen.ai/mcp/YOUR_API_KEY"
 ```
 
 <Note>
-Syntax per the official [Codex MCP documentation](https://developers.openai.com/codex/mcp): a streamable HTTP server entry takes a `url`, while stdio servers take `command`/`args` instead. If your Codex version predates `codex mcp add --url` support, editing `config.toml` directly works on every version.
+Syntax per the official [Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp?surface=cli): a streamable HTTP server entry takes a `url`, while stdio servers take `command`/`args` instead. If your Codex version predates `codex mcp add --url` support, editing `config.toml` directly works on every version.
 </Note>
 
 ## Bearer Variant
@@ -51,12 +51,12 @@ export POSTQUEEN_API_KEY="your-key-here"
 ```
 
 <Warning>
-Your API key grants full access to your PostQueen workspace — treat it like a password. `~/.codex/config.toml` is a plaintext file, so the `bearer_token_env_var` form is the safer choice on shared machines. Also note: if the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails — export it before launching Codex.
+Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plaintext file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
 </Warning>
 
 ## Self-Hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP — see [Reverse Proxies](/reverse-proxies/caddy).
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://your-postqueen-server.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP; see [Reverse Proxies](/reverse-proxies/caddy).
 
 ## Verify
 

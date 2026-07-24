@@ -1,15 +1,17 @@
 ---
 title: 'Agents Overview'
-description: 'Give any AI assistant hands on your calendar: install her skill, connect over MCP or call the public API, and she handles the posting.'
+description: 'Give any assistant that can run a command or call a tool hands on your calendar: install her skill, connect over MCP or call the public API.'
 ---
 
 ## Just talk to her
 
 Message her the way you would message a colleague. She answers inside ChatGPT and the Claude app, reads your WhatsApp and Telegram messages through OpenClaw or Hermes, and she is one command away in your terminal. Tell her what you want the world to see, and she takes care of the rest: the words, the visual and the schedule.
 
-**She runs on your terms.** Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, and if you ask for drafts she holds each post until you approve it.
-
 <img src="/images/brand/open-agents.svg" alt="Chat apps feed OpenClaw, a one-line brief feeds Hermes, both drive the postqueen CLI and posts land on the calendar" />
+
+## She runs on your terms
+
+Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, and if you ask for drafts she holds each post until you approve it.
 
 ## Three ways in
 
@@ -50,10 +52,9 @@ Each guide below is self-contained: it takes one specific agent from zero to its
   <Card title="Cursor" icon="i-cursor" href="/agents/cursor">
     Bring her into your editor and post without leaving it
   </Card>
-  <Card title="Why agents love her" icon="heart" href="/agents/why-agents">
-    Clean JSON, one skill file and a stable CLI make her easy to drive
-  </Card>
 </CardGroup>
+
+Curious what makes her easy for an agent to drive? See [Why agents love her](/agents/why-agents).
 
 ## Install the skill
 
@@ -63,14 +64,20 @@ One command installs her skill into any coding agent that supports the `skills` 
 npx skills add GkhanKINAY/postqueen-agent
 ```
 
-What lands is her `SKILL.md`, a playbook that teaches your agent how she works before it runs a single command. The skill registers under the name `postqueen` and scopes itself to the CLI alone, so your agent gets exactly the commands it needs and nothing broader. After reading it, the agent knows:
+What lands is her `SKILL.md`, a playbook that teaches your agent how she works before it runs a single command. It registers under the name `postqueen` and declares `Bash(postqueen:*)` as the only tool it needs. After reading it, the agent knows:
 
 - **Discovery.** `integrations:list` returns every connected channel with its integration ID, and `integrations:settings` shows what each channel accepts.
 - **Dynamic data.** `integrations:trigger` fetches values that cannot be hardcoded, like subreddit flairs, YouTube playlists or LinkedIn company pages.
 - **Posting.** `posts:create` takes content, a required ISO 8601 date and integration IDs, with `--settings` for platform specifics and `--json` for full campaigns.
-- **Media rules.** Every file goes through `postqueen upload` first, and only the returned URL belongs in `-m`. Providers such as TikTok and Instagram reject raw file paths and external links.
+- **Media rules.** Every file goes through `postqueen upload` first, and only the returned URL belongs in `-m`. Media has to live on a PostQueen domain, and the API rejects the request otherwise.
 
-Next she needs your API key. Open [app.postqueen.ai](https://app.postqueen.ai), then go to **Settings → Developers → Public API** and click **Reveal**. Keep the key secret: it grants full access to your account.
+The skill tells your agent to install the CLI if it is missing. To put it in place yourself:
+
+```bash
+npm install -g postqueen
+```
+
+Next she needs your API key. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Keep the key secret: it grants full access to your account.
 
 ```bash
 export POSTQUEEN_API_KEY=your_api_key
@@ -93,19 +100,9 @@ postqueen posts:create \
   -i "your-integration-id"
 ```
 
-The full command reference lives in the [CLI guide](/cli/introduction).
+The full command reference lives in the [command reference](/cli/command-reference).
 
-## How an agent works with her
-
-Every agent session follows the same arc, whether it is Claude Code on your laptop or a cron job at six in the morning:
-
-1. **Authenticate.** Export `POSTQUEEN_API_KEY`, then confirm with `postqueen auth:status`. Commands fail without valid credentials, so this comes first.
-2. **Discover channels.** `postqueen integrations:list` returns each connected channel with the integration ID that later commands need.
-3. **Fetch settings.** `postqueen integrations:settings <integration-id>` shows what a channel requires, and `postqueen integrations:trigger` pulls dynamic data like subreddit flairs or YouTube playlists.
-4. **Prepare media.** `postqueen upload photo.jpg` returns a verified URL; only that URL goes into `-m`, because providers reject raw file paths.
-5. **Post.** `postqueen posts:create -c "..." -s "2026-08-01T09:00:00Z" -i "<integration-id>"` schedules the post, with `-t draft` when the agent should propose instead of publish.
-6. **Analyze.** `postqueen analytics:platform <integration-id>` and `postqueen analytics:post <post-id>` report how it landed.
-7. **Resolve issues.** If analytics returns `{"missing": true}`, `postqueen posts:missing <post-id>` lists the provider's recent content and `postqueen posts:connect <post-id> --release-id "<id>"` links the right one.
+Every agent session runs the same loop: authenticate, discover channels, prepare media, post, then check the numbers. [Why agents love her](/agents/why-agents) walks all seven steps.
 
 ## Connect over MCP
 
@@ -117,7 +114,7 @@ For Claude Code it is one line:
 claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-For config-file clients, add the server to your `mcpServers` block:
+Clients that speak remote HTTP MCP directly, such as Cursor and Codex, take the URL as-is:
 
 ```json
 {
@@ -129,42 +126,18 @@ For config-file clients, add the server to your `mcpServers` block:
 }
 ```
 
-For ChatGPT, open **Settings → Connectors** and add the same URL: `https://api.postqueen.ai/mcp/YOUR_API_KEY`.
+Claude Desktop reaches a remote server through the `mcp-remote` bridge instead. The exact config is on the [Claude Desktop page](/mcp/clients/claude-desktop).
 
 Per-client walkthroughs are in [MCP setup](/mcp/setup), and every tool is described in the [tool reference](/mcp/tools).
 
 ## From your chat apps
 
-The PostQueen mobile app is on the way, but you are not waiting on it: she already answers on the phone in your pocket. Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too. The setup guides live on the [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes) pages.
-
-## The night shift
-
-She does not clock out when you do. A small recurring job can wake up before you, check yesterday's numbers and have today's post drafted while your coffee is still brewing:
-
-```bash
-# Every morning, before you are up:
-postqueen analytics:platform "your-integration-id"
-
-# ...then draft the day based on what worked
-postqueen posts:create \
-  -c "Draft shaped by yesterday's numbers" \
-  -s "2026-08-01T09:00:00Z" \
-  -t draft \
-  -i "your-integration-id"
-```
-
-Drafts wait on your calendar until you promote them, so the night shift proposes and you still decide. Each step is a plain CLI command with JSON output, which means any agent that can run a command can hold the night shift: a cron script, Gemini CLI or Aider all qualify.
+Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too. The setup guides live on the [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes) pages.
 
 ## Try saying
 
 Once she is connected, talk to her in plain words:
 
-> *"Plan a month of content for our coffee shop and fill the calendar."*
-
-> *"Take this photo of today's special and put it on Instagram at lunchtime."*
-
-> *"We just hit 10k followers, write a warm thank-you post for all our channels."*
-
 > *"Turn my latest YouTube video into posts for X, LinkedIn and Threads."*
 
-She turns each one into scheduled posts across your channels, and the calendar stays yours to review.
+She turns a request like that into scheduled posts across your channels, and the calendar stays yours to review.

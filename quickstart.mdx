@@ -12,13 +12,13 @@ PostQueen is open source. Use the managed cloud or run her on your own infrastru
     Start free for 7 days at [postqueen.ai](https://postqueen.ai). Updates are handled for you.
   </Card>
   <Card title="Self-host" icon="server" href="/installation/docker-compose">
-    Run PostQueen on your own infrastructure. Start with Docker Compose.
+    Run PostQueen on your own infrastructure with Docker Compose, Docker, Helm or a development setup.
   </Card>
 </CardGroup>
 
 ## Talk to her
 
-PostQueen answers any agent that can run a skill or call an MCP tool. Grab your API key first: in [app.postqueen.ai](https://app.postqueen.ai), open Settings, then Developers, then Public API, and hit Reveal.
+PostQueen answers any agent that can run a skill or call an MCP tool. Grab your API key first: your workspace lives at [app.postqueen.ai](https://app.postqueen.ai), so open **Settings** there, then **Developers**, then **Public API**, and click **Reveal**.
 
 <img src="/images/brand/chat-agent.svg" alt="Just talk to her: one voice note and PostQueen generates the visual and schedules the posts" />
 
@@ -35,6 +35,8 @@ Or connect Claude Code straight to her MCP server:
 claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
+That URL contains your API key, so treat it like a password. The [MCP setup page](/mcp/setup) also shows the header form that keeps the key out of the URL.
+
 That is the whole setup. For the full story, including OpenClaw, Hermes, and self-host endpoints, see the [agents overview](/agents/overview).
 
 ## Your first post
@@ -50,28 +52,6 @@ That is the whole setup. For the full story, including OpenClaw, Hermes, and sel
     Open the calendar to see what is planned. Edit or delete anything before it goes out. Prefer to sign off on each post? Ask her for drafts and she holds every post until you approve it.
   </Step>
   <Step title="It publishes on time">
-    Scheduled posts publish on time with no extra confirmation. She runs on your terms: full autopilot, or draft-and-approve when you want the final word.
+    No extra confirmation, no reminder to click. What is on the calendar goes out.
   </Step>
 </Steps>
-
-## Self-hosted installation options
-
-<CardGroup cols={2}>
-  <Card title="Docker Compose" icon="docker" href="/installation/docker-compose">
-    Recommended option for **users**
-  </Card>
-  <Card title="Development" icon="code" href="/installation/development">
-    Recommended option for **developers**
-  </Card>
-</CardGroup>
-
-## Advanced installation options
-
-<CardGroup cols={2}>
-  <Card title="Docker (standalone)" icon="docker" href="/installation/docker">
-    Run from the command line with Docker
-  </Card>
-  <Card title="Helm" icon="dharmachakra" href="/installation/kubernetes-helm">
-    Run with Kubernetes + Helm
-  </Card>
-</CardGroup>

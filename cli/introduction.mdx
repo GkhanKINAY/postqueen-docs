@@ -3,9 +3,9 @@ title: Introduction
 description: 'Automate social media posting from the command line with the PostQueen CLI'
 ---
 
-The PostQueen CLI puts her one command away in your terminal. It wraps the [Public API](/public-api/introduction) so you can schedule posts, manage channels, and upload media across 30+ networks from a shell script, a CI job, or an AI agent. Every command takes flags and prints JSON, so anything that can run a shell command can run your social media.
+The PostQueen CLI puts her one command away in your terminal. It wraps the [Public API](/public-api/introduction) so you can schedule posts, manage channels, and upload media across 30+ networks from a shell script, a CI job, or an AI agent. The data commands print JSON, so anything that can run a shell command can run your social media.
 
-<img src="/images/brand/terminal-claude.svg" alt="A coding agent runs the postqueen CLI: it lists channels and schedules the launch posts" />
+<img src="/images/brand/terminal-claude.svg" alt="Claude Code schedules two launch posts to X and LinkedIn with the postqueen CLI" />
 
 ## Installation
 
@@ -30,7 +30,7 @@ postqueen --help
 
 ## Give your AI agent the skill
 
-If an AI assistant will be driving the CLI for you, install the PostQueen skill first. It teaches the agent the full command set and the patterns behind it, so she gets clean, correct commands instead of guesswork:
+If an AI assistant will be driving the CLI for you, install the PostQueen skill first. It gives the agent her full command set and the patterns behind it, so PostQueen gets clean, correct commands instead of guesswork:
 
 ```bash
 npx skills add GkhanKINAY/postqueen-agent
@@ -62,10 +62,10 @@ Keep the key secret: it grants full access to your account, and you can revoke o
 
 ### Custom API URL (self-hosted)
 
-If you run a self-hosted PostQueen instance, point the CLI at your server:
+If you run a self-hosted PostQueen instance, point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. The CLI appends `/public/v1/...` to whatever you set, and most single-domain setups serve the backend under `/api`:
 
 ```bash
-export POSTQUEEN_API_URL=https://your-postqueen-server.com
+export POSTQUEEN_API_URL=https://postqueen.example.com/api
 ```
 
 An OAuth2 device flow also exists for self-hosters who run their own auth server; see the [Authentication](/cli/authentication) page for the setup guide.
@@ -123,5 +123,5 @@ postqueen posts:create \
 Full flag-by-flag details for every command live in the [Command Reference](/cli/command-reference).
 
 <Note>
-All commands output JSON, making the CLI easy to use in scripts and automation pipelines.
+The data commands print a one-line header and then JSON, which makes the CLI easy to use in scripts and automation pipelines. Drop the header with `tail -n +2` before piping into `jq`.
 </Note>

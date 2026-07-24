@@ -107,7 +107,7 @@ The response follows the same format as platform analytics:
 ```
 
 <Tip>
-Post analytics are only available for published posts. Draft or queued posts won't return analytics data.
+Post analytics are only available for published posts. Draft or queued posts won't return analytics data. An empty array `[]` means either the post has not been published yet or that network does not expose per-post metrics; run `postqueen posts:list` to confirm the post has a release ID.
 </Tip>
 
 ### When a post shows `{"missing": true}`
@@ -131,15 +131,15 @@ See [Troubleshooting](/cli/troubleshooting) for the full error table.
 
 ## Scripting with Analytics
 
-Extract specific metrics using `jq`:
+Extract specific metrics using `jq`. Every analytics command prints a one-line header before the JSON, so `tail -n +2` drops it first; the header line is not JSON.
 
 ```bash
 # Get just the follower count trend
-postqueen analytics:platform integration-id -d 30 | jq '.[] | select(.label=="Followers")'
+postqueen analytics:platform integration-id -d 30 | tail -n +2 | jq '.[] | select(.label=="Followers")'
 
 # Get percentage changes for all metrics
-postqueen analytics:platform integration-id | jq '.[] | {label, percentageChange}'
+postqueen analytics:platform integration-id | tail -n +2 | jq '.[] | {label, percentageChange}'
 
 # Get the latest total for each post metric
-postqueen analytics:post post-id | jq '.[] | {label, latest: .data[-1].total}'
+postqueen analytics:post post-id | tail -n +2 | jq '.[] | {label, latest: .data[-1].total}'
 ```

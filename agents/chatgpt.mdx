@@ -1,0 +1,143 @@
+---
+title: ChatGPT
+description: 'Add her as a connector in ChatGPT, or give a Custom GPT an action that schedules posts through her public API'
+---
+
+## Working with her in ChatGPT
+
+ChatGPT is where a lot of content gets written. With PostQueen connected it is also where content gets shipped: ask for two posts about the new menu and she writes the copy, generates the images and puts both on your calendar while you keep chatting.
+
+<img src="/images/brand/chat-chatgpt.svg" alt="ChatGPT with the PostQueen connector: it generates two post images and schedules them to Instagram and X" />
+
+There are two routes in, and they solve different problems:
+
+- **The connector.** One URL in ChatGPT settings, and her [10 MCP tools](/mcp/tools) show up in your chats. This is the route most people want.
+- **A Custom GPT action.** You are building a GPT of your own and want it to call her public API directly, with no MCP in the middle.
+
+## Route 1: the connector
+
+ChatGPT reaches her over MCP. You paste one URL under **Settings**, then **Connectors**, and she becomes a tool the model can call:
+
+```
+https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+
+<Warning>
+Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+</Warning>
+
+Custom connectors sit behind ChatGPT's developer mode, which OpenAI offers on the paid web plans. The full walkthrough covers the developer mode toggle, the connector form and enabling her per chat:
+
+<Card title="ChatGPT connector setup" icon="plug" href="/mcp/clients/chatgpt">
+  Step by step, from the developer mode switch to your first tool call
+</Card>
+
+Once she is enabled in a conversation, ask for your connected channels. If ChatGPT calls `integrationList` and hands back your accounts, you are connected.
+
+## Route 2: a Custom GPT action
+
+Building your own GPT? Give it an action that talks to her [public API](/public-api/introduction). The endpoint you want is the one that creates posts:
+
+```
+POST https://api.postqueen.ai/public/v1/posts
+```
+
+Authentication is a single header carrying the raw key, with no `Bearer` prefix:
+
+```bash
+curl -X POST https://api.postqueen.ai/public/v1/posts \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "schedule",
+    "date": "2026-08-01T10:00:00.000Z",
+    "shortLink": false,
+    "tags": [],
+    "posts": [
+      {
+        "integration": { "id": "your-integration-id" },
+        "value": [
+          {
+            "content": "Latte week starts Monday. #coffee #newmenu",
+            "image": [
+              { "id": "media-id-from-upload", "path": "https://uploads.postqueen.ai/latte-week.jpg" }
+            ]
+          }
+        ],
+        "settings": { "__type": "instagram", "post_type": "post" }
+      }
+    ]
+  }'
+```
+
+A few things worth knowing before you wire the action up:
+
+- **`type`** decides the outcome. Use `schedule` with a `date`, `now` to publish immediately, or `draft` to park the post on the calendar for your approval.
+- **`settings.__type`** tells the backend which platform schema to validate against. Each provider has its own required fields, listed in [Create Post](/public-api/posts/create).
+- **Integration IDs** come from `GET /public/v1/integrations`, so a useful GPT usually gets that action too.
+- **Images** have to be uploaded through her first. Each entry in `image` is an object with an `id` and a `path` that came back from an upload, because providers reject raw file paths and outside links. See [Upload File](/public-api/uploads/upload-file).
+
+<Note>
+The create-post endpoint allows 30 requests per hour. One request can carry several posts, so a GPT that batches a week into a single call gets a lot done inside that budget. Self-hosting? Point the action at `https://YOUR-DOMAIN/api/public/v1` and tune the limit with the `API_LIMIT` env var.
+</Note>
+
+## 👑 Ask her for two posts
+
+Here is the connector doing real work. You describe what you want, she handles the rest:
+
+> **You:** Create 2 posts about our cafe's new dessert menu with photos, schedule them for this week.
+
+> **ChatGPT:** On it. Generating two images and scheduling them with PostQueen.
+>
+> `generateImageTool` running...
+>
+> *"Latte week starts Monday. #coffee #newmenu"*
+>
+> *"The raspberry cake is here. #dessert #comehungry"*
+>
+> 2 posts scheduled: Instagram + X, Thursday 10:00 AM. Both are on your calendar if you want to tweak them first.
+
+Behind that one sentence sit two tools: `generateImageTool` produces each visual and hands back a hosted URL, then `integrationSchedulePostTool` writes the calendar entries. Bringing your own image from somewhere else? `uploadFromUrlTool` pulls it into her media library first, because attachments have to live on a PostQueen URL.
+
+## Staying in control
+
+She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever lands on the calendar goes out on time without another word from you. Want more say? Every post is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and if you ask for drafts she holds each one until you approve it there.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need ChatGPT to use PostQueen?">
+    No. She works on her own through the dashboard, the CLI and the API. ChatGPT is one of several ways to reach her.
+  </Accordion>
+  <Accordion title="What can she actually do from a ChatGPT chat?">
+    Everything her 10 MCP tools cover. She can list your channels and read what each one accepts, and she can generate images, upload media and schedule posts across your 30+ networks.
+  </Accordion>
+  <Accordion title="Can I review posts before they publish?">
+    Yes. Ask for drafts and she holds each post on your calendar until you approve it there.
+  </Accordion>
+  <Accordion title="Does the connector cost extra?">
+    No. Agent access uses the same API key and plan limits as your regular PostQueen account, on any plan. ChatGPT's own developer mode does require one of OpenAI's paid plans.
+  </Accordion>
+  <Accordion title="Connector or Custom GPT action?">
+    The connector if you want her in your everyday chats with no build step. The action if you are shipping a GPT to other people and want to control exactly which calls it can make.
+  </Accordion>
+</AccordionGroup>
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Agents overview" icon="robot" href="/agents/overview">
+    Every way to put an agent in front of PostQueen, from chat apps to your terminal
+  </Card>
+  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
+    The 10 tools ChatGPT calls once the connector is on
+  </Card>
+  <Card title="Create Post API" icon="code" href="/public-api/posts/create">
+    The endpoint behind a Custom GPT action, with every provider's settings schema
+  </Card>
+  <Card title="MCP examples" icon="lightbulb" href="/mcp/examples">
+    Real prompts and the tool calls they trigger
+  </Card>
+</CardGroup>

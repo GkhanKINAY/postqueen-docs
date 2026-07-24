@@ -61,12 +61,12 @@ Pass `-c` multiple times to create a thread. Comments are automatically converte
 - **LinkedIn**: Comment on post
 - **Instagram**: First comment
 
-Each comment can have its own media with a corresponding `-m` flag:
+Each comment can have its own media with a corresponding `-m` flag. They pair by index, so leaving one out in the middle shifts every later media value onto the wrong item:
 
 ```bash
 postqueen posts:create \
-  -c "Thread 1/3" -m "image1.jpg" \
-  -c "Thread 2/3" -m "image2.jpg" \
+  -c "Thread 1/3" -m "https://uploads.postqueen.ai/image1.jpg" \
+  -c "Thread 2/3" -m "https://uploads.postqueen.ai/image2.jpg" \
   -c "Thread 3/3" \
   -s "2025-01-15T10:00:00Z" \
   -i "twitter-integration-id"
@@ -103,7 +103,7 @@ Some platforms require additional settings. Pass them as JSON with `--settings`:
 postqueen posts:create \
   -c "Check out this discussion" \
   -s "2025-01-15T10:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text"}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text","url":"","is_flair_required":false}}]}' \
   -i "reddit-integration-id"
 ```
 
@@ -119,46 +119,50 @@ For campaigns with per-platform content and settings, use a JSON file instead of
 postqueen posts:create --json campaign.json
 ```
 
-The file lists the target `integrations` and a `posts` entry per provider. Each provider entry has its own `post` array (the first item is the main post, additional items become comments/threads) and an optional `settings` object. Provider settings use a discriminator pattern: the `__type` field tells the backend which platform's settings schema to apply.
+The file is the request body her API receives. It carries the top-level `type`, `date`, `shortLink` and `tags`, then one `posts` entry per channel. Each entry has its own `integration.id`, a `value` array (the first item is the main post, additional items become comments or thread items) and an optional `settings` object.
 
 Example `campaign.json`:
 
 ```json
 {
-  "integrations": ["twitter-123", "linkedin-456", "reddit-789"],
+  "type": "schedule",
+  "date": "2026-08-01T09:00:00.000Z",
+  "shortLink": true,
+  "tags": [],
   "posts": [
     {
-      "provider": "twitter",
-      "post": [
+      "integration": { "id": "twitter-123" },
+      "value": [
         {
           "content": "Tweet version",
-          "image": ["twitter-image.jpg"]
-        }
-      ]
-    },
-    {
-      "provider": "linkedin",
-      "post": [
-        {
-          "content": "LinkedIn version with more context...",
-          "image": ["linkedin-image.jpg"]
+          "image": [
+            { "id": "img-1", "path": "https://uploads.postqueen.ai/twitter-image.jpg" }
+          ]
         }
       ],
-      "settings": {
-        "__type": "linkedin",
-        "companyId": "company-123"
-      }
+      "settings": { "who_can_reply_post": "everyone" }
     },
     {
-      "provider": "reddit",
-      "post": [
+      "integration": { "id": "linkedin-456" },
+      "value": [
+        {
+          "content": "LinkedIn version with more context...",
+          "image": [
+            { "id": "img-2", "path": "https://uploads.postqueen.ai/linkedin-image.jpg" }
+          ]
+        }
+      ],
+      "settings": { "post_as_images_carousel": false }
+    },
+    {
+      "integration": { "id": "reddit-789" },
+      "value": [
         {
           "content": "Reddit version",
           "image": []
         }
       ],
       "settings": {
-        "__type": "reddit",
         "subreddit": [{
           "value": {
             "subreddit": "programming",
@@ -175,7 +179,9 @@ Example `campaign.json`:
 ```
 
 <Note>
-When you pass `--settings` on the command line instead, you can omit `__type` — the backend adds it automatically based on the integration ID. In a `--json` file, include `__type` explicitly for each provider's settings.
+You can omit `__type` in both cases. The backend adds it from each post's integration ID, whether the settings came from `--settings` or from a `--json` file.
+
+`image` is required on every entry, so pass `[]` when there is no media, and each item is an object with an `id` and a `path` returned by `postqueen upload`. Run `postqueen integrations:settings <id>` to see the real settings schema for a channel.
 </Note>
 
 ## Listing Posts
@@ -240,8 +246,8 @@ After connecting, the post will support full analytics via `postqueen analytics:
 ### Full Workflow
 
 ```bash
-# 1. Find posts with missing release IDs
-postqueen posts:list | jq '.posts[] | select(.releaseId == "missing") | {id, content}'
+# 1. Find posts with missing release IDs (tail -n +2 drops the header line)
+postqueen posts:list | tail -n +2 | jq '.posts[] | select(.releaseId == "missing") | {id, content}'
 
 # 2. Get available content from the provider
 postqueen posts:missing <post-id>

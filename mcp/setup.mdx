@@ -3,7 +3,7 @@ title: Client Setup
 description: 'Connect your AI client to the PostQueen MCP server'
 ---
 
-PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick your client below for a step-by-step guide, or use the endpoints directly if you already know your way around MCP configs.
+PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick your client from the grid below for a step-by-step guide, or use the endpoints directly if you already know your way around MCP configs.
 
 ## Endpoints
 
@@ -24,6 +24,10 @@ The server accepts two connection forms. Both authenticate with the same API key
 </Tabs>
 
 Your API key lives in the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+
+<Warning>
+The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+</Warning>
 
 ## Pick Your Client
 
@@ -59,12 +63,14 @@ Your API key lives in the PostQueen app at [app.postqueen.ai](https://app.postqu
 On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
 
 ```
-https://your-postqueen-server.com/mcp/YOUR_API_KEY
+https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
 ```
+
+Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
 Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. See [Reverse Proxies](/reverse-proxies/caddy).
 
-## Verify Connection
+## Verify
 
 Once connected, ask your AI agent:
 

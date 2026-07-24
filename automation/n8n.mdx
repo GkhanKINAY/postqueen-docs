@@ -13,10 +13,11 @@ The node requires n8n running on Node.js 20.15 or newer.
 
 ### n8n UI (recommended)
 
-1. Open **Settings**, then **Community Nodes**.
-2. Click **Install**.
-3. Enter `n8n-nodes-postqueen` as the npm package name.
-4. Click **Install** again to confirm.
+1. Open **Settings**.
+2. Choose **Community Nodes**.
+3. Click **Install**.
+4. Enter `n8n-nodes-postqueen` as the npm package name.
+5. Click **Install** again to confirm.
 
 <img src="/images/brand/community-node.png" alt="n8n Community Nodes install dialog with n8n-nodes-postqueen entered as the package name" />
 
@@ -80,7 +81,7 @@ The node exposes 7 operations:
 | **Upload File** | Upload a file (image or video) from a binary property. |
 | **Video Function** | Run a video helper function, such as loading available voices. |
 
-**Generate Video** takes a **Video Type** (`image-text-slides` or `veo3`), an **Output Format** (`vertical` or `horizontal`), and optional **Custom Parameters** as key/value pairs such as `prompt`, `voice`, or `images`. To see which voices are available, run **Video Function** with `loadVoices` first.
+**Generate Video** takes a **Video Type**, for example `image-text-slides` or `veo3`, an **Output Format** (`vertical` or `horizontal`), and optional **Custom Parameters** as key/value pairs such as `prompt`, `voice`, or `images`. To list the voices, run **Video Function** with the function name `loadVoices` and the identifier of the video type you plan to use, such as `image-text-slides`. Both fields are required on that operation.
 
 <Note>
 There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule trigger, an RSS feed, or a webhook. Form submissions work too. Any of them can start a workflow that ends in a PostQueen operation.
@@ -96,7 +97,7 @@ There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule tr
 
 **One clip, three short-form feeds.** A new video lands in Drive, Dropbox or S3, **Upload File** brings it in, and a single **Create Post** schedules it to TikTok, Instagram and YouTube together. Upload first and pass the returned path into the post: those three networks only accept media from trusted domains, so linking a raw external URL will not work.
 
-<img src="/images/brand/flow-clips.svg" alt="New video file, Upload File, three Create Post steps for TikTok, Reels and Shorts" />
+<img src="/images/brand/flow-clips.svg" alt="New video file, Upload File, one Create Post scheduling to TikTok, Reels and Shorts" />
 
 **Queue guard.** Every Monday, **Get Posts** pulls the next seven days of your calendar. If the queue looks thin, a Slack message tells you before your followers notice a gap.
 

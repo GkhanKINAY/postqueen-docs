@@ -22,7 +22,7 @@ postqueen posts:create \
   -c "Thread 2/3: Main point" \
   -c "Thread 3/3: Conclusion" \
   -s "2025-01-15T10:00:00Z" \
-  -d 2000 \
+  -d 2 \
   -i "twitter-id"
 ```
 
@@ -30,9 +30,9 @@ postqueen posts:create \
 
 ```bash
 postqueen posts:create \
-  -c "Only followers can reply to this" \
+  -c "Only people I follow can reply to this" \
   -s "2025-01-15T10:00:00Z" \
-  --settings '{"who_can_reply_post":"followers"}' \
+  --settings '{"who_can_reply_post":"following"}' \
   -i "twitter-id"
 ```
 
@@ -56,8 +56,8 @@ postqueen posts:create \
 
 ```bash
 #!/bin/bash
-REDDIT_ID=$(postqueen integrations:list | jq -r '.[] | select(.identifier=="reddit") | .id')
-FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" getFlairs -d '{"subreddit":"programming"}')
+REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
+FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" getFlairs -d '{"subreddit":"programming"}' | tail -n +2)
 FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
 
 postqueen posts:create \
@@ -71,8 +71,7 @@ postqueen posts:create \
 
 ```bash
 # Upload video first
-VIDEO=$(postqueen upload video.mp4)
-VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
+VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 
 postqueen posts:create \
   -c "Video description here" \
@@ -86,8 +85,7 @@ postqueen posts:create \
 
 ```bash
 # Upload video first
-VIDEO=$(postqueen upload video.mp4)
-VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
+VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 
 postqueen posts:create \
   -c "Check this out! #fyp" \
@@ -103,8 +101,7 @@ TikTok applies these settings only when `content_posting_method` is `"DIRECT_POS
 
 ```bash
 # Upload image first
-IMAGE=$(postqueen upload photo.jpg)
-IMAGE_URL=$(echo "$IMAGE" | jq -r '.path')
+IMAGE_URL=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
 
 # Regular post
 postqueen posts:create \
@@ -142,12 +139,12 @@ postqueen posts:create \
 ### Reel with Audio
 
 Search the Instagram audio catalog and attach a track to the Reel
-(Facebook Business-linked channels only — an empty `q` returns trending audio):
+(Facebook Business-linked channels only, and an empty `q` returns trending audio):
 
 ```bash
 # Find an audio ID
 AUDIO_ID=$(postqueen integrations:trigger instagram-id audioSearch \
-  -d '{"q":"summer vibes","type":"music"}' | jq -r '.output[0].id')
+  -d '{"q":"summer vibes","type":"music"}' | tail -n +2 | jq -r '.output[0].id')
 
 postqueen posts:create \
   -c "Reel with trending audio" \
@@ -171,7 +168,7 @@ postqueen posts:create \
 ```bash
 postqueen posts:create \
   -c "Check out these slides!" \
-  -m "image1.jpg,image2.jpg,image3.jpg" \
+  -m "https://uploads.postqueen.ai/image1.jpg,https://uploads.postqueen.ai/image2.jpg,https://uploads.postqueen.ai/image3.jpg" \
   -s "2025-01-15T10:00:00Z" \
   --settings '{"post_as_images_carousel":true}' \
   -i "linkedin-id"
@@ -227,24 +224,29 @@ Example `campaign.json`:
 
 ```json
 {
-  "integrations": ["twitter-123", "linkedin-456", "reddit-789"],
+  "type": "schedule",
+  "date": "2026-08-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
   "posts": [
     {
-      "provider": "twitter",
-      "post": [{ "content": "Short tweet version", "image": [] }]
+      "integration": { "id": "twitter-123" },
+      "value": [{ "content": "Short tweet version", "image": [] }],
+      "settings": { "who_can_reply_post": "everyone" }
     },
     {
-      "provider": "linkedin",
-      "post": [{ "content": "More detailed LinkedIn post with professional tone", "image": [] }]
+      "integration": { "id": "linkedin-456" },
+      "value": [{ "content": "More detailed LinkedIn post with professional tone", "image": [] }]
     },
     {
-      "provider": "reddit",
-      "post": [{ "content": "Reddit post body", "image": [] }],
+      "integration": { "id": "reddit-789" },
+      "value": [{ "content": "Reddit post body", "image": [] }],
       "settings": {
-        "__type": "reddit",
-        "subreddit": [{ "value": { "subreddit": "programming", "title": "Post Title", "type": "text" } }]
+        "subreddit": [{ "value": { "subreddit": "programming", "title": "Post Title", "type": "text", "url": "", "is_flair_required": false } }]
       }
     }
   ]
 }
 ```
+
+The full field reference for this file is in [Managing Posts](/cli/managing-posts#complex-posts-with-json).

@@ -15,12 +15,12 @@ This returns a JSON array of integrations. Use `jq` to extract specific fields:
 
 ```bash
 # Get just the IDs and platform names
-postqueen integrations:list | jq '.[] | {id, identifier}'
+postqueen integrations:list | tail -n +2 | jq '.[] | {id, identifier}'
 ```
 
 ```bash
 # Find a specific platform
-postqueen integrations:list | jq '.[] | select(.identifier=="reddit")'
+postqueen integrations:list | tail -n +2 | jq '.[] | select(.identifier=="reddit")'
 ```
 
 ### Filtering by Group
@@ -43,7 +43,7 @@ This returns a JSON array of `{id, name}` objects. Use a group's `id` with `inte
 
 ```bash
 # Find a group by name, then list its integrations
-GROUP_ID=$(postqueen integrations:groups | jq -r '.[] | select(.name=="My Company") | .id')
+GROUP_ID=$(postqueen integrations:groups | tail -n +2 | jq -r '.[] | select(.name=="My Company") | .id')
 postqueen integrations:list --group "$GROUP_ID"
 ```
 
@@ -67,7 +67,7 @@ Always check `integrations:settings` before posting to a new platform to underst
 
 ## Triggering Tools
 
-Some platforms expose dynamic tools — for example, fetching Reddit flairs, YouTube playlists, or LinkedIn company pages. These return data you need when constructing platform-specific settings.
+Some platforms expose dynamic tools, for example fetching Reddit flairs, YouTube playlists, or LinkedIn company pages. These return data you need when constructing platform-specific settings.
 
 ```bash
 postqueen integrations:trigger <integration-id> <method-name>
@@ -112,7 +112,7 @@ When working with a new platform, follow this workflow:
 
 ```bash
 # 1. Find the integration ID
-INTEGRATION_ID=$(postqueen integrations:list | jq -r '.[] | select(.identifier=="reddit") | .id')
+INTEGRATION_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
 
 # 2. Check what settings and tools are available
 postqueen integrations:settings "$INTEGRATION_ID"

@@ -11,7 +11,7 @@ description: 'Getting started with the PostQueen Public API'
   <Card title="NodeJS SDK" icon="node-js" href="/public-api/sdk">
     Official PostQueen NodeJS SDK
   </Card>
-  <Card title="n8n Node" icon="n" href="/automation/n8n">
+  <Card title="n8n Node" icon="diagram-project" href="/automation/n8n">
     Automate PostQueen with the n8n community node
   </Card>
   <Card title="Zapier" icon="bolt" href="/automation/zapier">
@@ -34,7 +34,7 @@ There are two ways to authenticate with the PostQueen API:
 
 ### API Key
 
-Get your API key from **Settings > Developers > Public API**. Include it in the `Authorization` header:
+Get your API key from **Settings**, then **Developers**, then **Public API**. The Developers tab appears for organization admins on a plan that includes the public API. Include the key in the `Authorization` header:
 
 ```bash
 curl -H "Authorization: your-api-key" https://api.postqueen.ai/public/v1/integrations
@@ -53,7 +53,7 @@ curl -H "Authorization: pos_your-oauth-token" https://api.postqueen.ai/public/v1
 | Environment | Base URL |
 |-------------|----------|
 | PostQueen Cloud | `https://api.postqueen.ai/public/v1` |
-| Self-hosted | `https://{NEXT_PUBLIC_BACKEND_URL}/public/v1` |
+| Self-hosted | `{NEXT_PUBLIC_BACKEND_URL}/public/v1`, for example `https://your-domain.com/api/public/v1` |
 
 ## Rate Limits
 
@@ -63,7 +63,7 @@ curl -H "Authorization: pos_your-oauth-token" https://api.postqueen.ai/public/v1
 This doesn't mean you can only post 30 times per hour: each API call counts as one request. Schedule multiple posts in a single request to maximize throughput.
 </Info>
 
-The rate limit is a single global value for the whole instance, and it doesn't tier by subscription plan. Plans tier on channel and post-per-month quotas instead. Self-hosters can adjust the per-hour limit with the `API_LIMIT` env var (see [Configuration Reference](/configuration/reference)).
+The rate limit is a single global value for the whole instance, and it doesn't tier by subscription plan. Plans tier on channel and post-per-month quotas instead. Self-hosters can adjust the per-hour limit with the `API_LIMIT` env var (see [Configuration Reference](/configuration/reference)). The official Docker Compose sets `API_LIMIT: 30`; with the variable unset the backend defaults to 90 requests per hour.
 
 ## Errors
 
@@ -149,6 +149,7 @@ PostQueen posts to 30+ networks. When creating posts, each platform has its own 
     | Skool | `skool` | `group`, `label`, `title` |
     | Whop | `whop` | `company`, `experience`, `title` |
     | Moltbook | `moltbook` | `submolt` (required) |
+    | MeWe | `mewe` | `postType` (`timeline` or `group`), `group` (required when `postType` is `group`) |
   </Tab>
   <Tab title="Design">
     | Platform | `__type` | Key settings |
@@ -163,6 +164,7 @@ PostQueen posts to 30+ networks. When creating posts, each platform has its own 
     | Dev.to | `devto` | `title`, `main_image`, `canonical`, `organization`, `tags` |
     | Hashnode | `hashnode` | `title`, `subtitle`, `main_image`, `publication`, `tags` |
     | WordPress | `wordpress` | `title`, `main_image`, `type` |
+    | Tumblr | `tumblr` | `title`, `link`, `sourceUrl`, `tags` (all optional) |
   </Tab>
   <Tab title="Business">
     | Platform | `__type` | Key settings |

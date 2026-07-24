@@ -1,0 +1,236 @@
+---
+title: Command Reference
+description: 'Every PostQueen CLI command, flag, and default on one page'
+---
+
+The complete cheat sheet for the `postqueen` CLI: every command, every flag, every default.
+
+```bash
+postqueen <command> [options]
+```
+
+<Note>
+Most commands print a one-line human-readable header, then the full JSON result. `posts:missing` prints JSON with no header, `posts:delete` prints only a confirmation line, and the `auth:*` commands print human-readable status text. To pipe into `jq`, drop the header first:
+
+```bash
+postqueen integrations:list | tail -n +2 | jq '.[].id'
+```
+</Note>
+
+## Global options
+
+| Option | What it does |
+|--------|--------------|
+| `-h, --help` | Show help. Works per command too: `postqueen posts:create --help` |
+| `-v, --version` | Print the installed CLI version |
+
+## Environment variables
+
+| Variable | Default | What it does |
+|----------|---------|--------------|
+| `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Settings**, then **Developers**, then **Public API**, then **Reveal**. |
+| `POSTQUEEN_API_URL` | `https://api.postqueen.ai` | API base. The CLI appends `/public/v1/...` to whatever you set, so self-hosters set this to their `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api`. |
+| `POSTQUEEN_AUTH_SERVER` | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only matters if you run your own; see [Authentication](/cli/authentication). |
+
+<Note>
+Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `Error: No authentication found.`
+</Note>
+
+## Auth
+
+| Command | Flags | What it does |
+|---------|-------|--------------|
+| `postqueen auth:status` | - | Shows the active method (OAuth2 credentials or API key) and a truncated key, plus the API URL when OAuth2 credentials are in use, then verifies it by calling `/public/v1/integrations` and reports how many channels are connected. |
+| `postqueen auth:login` | `--auth-server <url>` (default `https://cli-auth.postqueen.ai`) | Starts the OAuth2 device flow: prints a one-time code and opens your browser, then saves the token to `~/.postqueen/credentials.json` with `0600` permissions. |
+| `postqueen auth:logout` | - | Deletes the stored credentials file. Prints `No stored credentials found.` if there was nothing to remove. |
+
+<Warning>
+`auth:login` needs a reachable auth server, and PostQueen does not currently host one at the default `cli-auth.postqueen.ai` address. Use an API key, or [self-host the auth server](/cli/authentication). Every command works identically either way.
+</Warning>
+
+## Integrations
+
+| Command | Flags | What it does |
+|---------|-------|--------------|
+| `postqueen integrations:list` | `--group <id>` | Lists your connected channels with their integration IDs. `--group` filters to one group (customer). |
+| `postqueen integrations:groups` | - | Lists all groups (customers) in your organization. |
+| `postqueen integrations:settings <id>` | - | Returns an `output` object describing one channel: the provider `rules`, the `maxLength` for content, and the `settings` schema plus the dynamic `tools` it exposes. |
+| `postqueen integrations:trigger <id> <method>` | `-d, --data <json>` | Calls one of those dynamic tools, for example `getSubreddits` or `getPlaylists`. `-d` passes arguments as a JSON string. |
+
+```bash
+# Find the channel you want to post to
+postqueen integrations:list
+
+# See what settings and tools it supports
+postqueen integrations:settings reddit-123
+
+# Call one of its tools
+postqueen integrations:trigger reddit-123 searchSubreddits -d '{"query":"programming"}'
+```
+
+<Tip>
+`integrations:settings` is the source of truth for `--settings`. Read it before you guess at a payload; it tells you the required fields and the character limit for that platform.
+</Tip>
+
+## Posts
+
+| Command | Flags | What it does |
+|---------|-------|--------------|
+| `postqueen posts:create` | See the flag table below | Creates a scheduled post or a draft on one or more channels. |
+| `postqueen posts:list` | `--startDate <iso>`, `--endDate <iso>`, `--customer <id>` | Lists posts in a date range. Defaults to the last 30 days through the next 30 days. |
+| `postqueen posts:delete <id>` | - | Deletes a post by ID. |
+| `postqueen posts:status <id>` | `-s, --status <draft\|schedule>` (required) | Moves a post between draft and schedule. `schedule` queues it for its stored date; `draft` pulls it back and terminates any running publishing workflow. |
+| `postqueen posts:missing <id>` | - | For a post whose release ID came back `missing`, lists recent content from the provider so you can identify the right item. |
+| `postqueen posts:connect <id>` | `--release-id <id>` (required) | Links a post to its published content by release ID, which unlocks post analytics. |
+
+### Flags for posts:create
+
+| Flag | Type | Default | What it does |
+|------|------|---------|--------------|
+| `-c, --content` | string, repeatable | - | Post content. Required unless `--json`. The first `-c` is the post; each additional `-c` becomes a comment, reply, or thread item depending on the platform. |
+| `-s, --date` | ISO 8601 string | - | **Required** unless `--json`. The schedule date, for example `"2026-12-31T12:00:00Z"`. |
+| `-i, --integrations` | comma-separated string | - | Required unless `--json`. One or more integration IDs from `integrations:list`. |
+| `-m, --media` | comma-separated string, repeatable | - | Media for the `-c` at the same position. Each value must be the `path` value returned by `postqueen upload`, which is a hosted PostQueen URL. |
+| `-t, --type` | `schedule` or `draft` | `schedule` | Whether to queue the post or save it as a draft. |
+| `-d, --delay` | number (minutes) | `0` | Delay between items, in **minutes**, not seconds. The same value is written to every item in the post. |
+| `--shortLink` | boolean | `true` | Rewrite links in the content as short links. Pass `--no-shortLink` to keep the original URLs. |
+| `--settings` | JSON string | - | Platform-specific settings such as a subreddit or a YouTube title. The backend adds the `__type` discriminator from the integration ID, so you can leave it out here. |
+| `-j, --json` | file path | - | Read the whole post structure from a JSON file. Overrides the flag-based path entirely. |
+
+```bash
+# Simple scheduled post
+postqueen posts:create \
+  -c "Hello from the CLI" \
+  -s "2026-08-01T09:00:00Z" \
+  -i "twitter-123"
+
+# Thread with 5 minutes between items, each with its own image
+postqueen posts:create \
+  -c "Thread 1/3" -m "https://uploads.postqueen.ai/one.jpg" \
+  -c "Thread 2/3" -m "https://uploads.postqueen.ai/two.jpg" \
+  -c "Thread 3/3" \
+  -d 5 \
+  -s "2026-08-01T09:00:00Z" \
+  -i "twitter-123"
+
+# Draft on three channels at once
+postqueen posts:create \
+  -c "Ship day is here" \
+  -t draft \
+  -s "2026-08-01T09:00:00Z" \
+  -i "twitter-123,linkedin-456,mastodon-789"
+```
+
+<Note>
+`-c` and `-m` pair by index in the order they are passed, so the second `-m` attaches to the second `-c`. Omitting a `-m` in the middle shifts every later media value onto the wrong item; only a trailing `-c` can safely be left without media. To leave a middle item empty, use `--json` instead.
+</Note>
+
+<Warning>
+`-s` is `--date` on `posts:create` but `--status` on `posts:status`. Same letter, different meaning, because they are different commands.
+</Warning>
+
+### Campaign files with `--json`
+
+When one piece of content per channel is not enough, drop the flags and describe the whole campaign in a file:
+
+```bash
+postqueen posts:create --json ./campaign.json
+```
+
+The file is the request body her API receives, so it carries the top-level `type`, `date`, `shortLink` and `tags`, plus one `posts` entry per channel with its own `integration.id`, `value` array and `settings` object. You can omit `__type` in the settings block. The backend fills it in from each post's integration ID.
+
+The full annotated example, including per-provider settings for Reddit, LinkedIn, and YouTube, lives in [Managing Posts](/cli/managing-posts#complex-posts-with-json).
+
+### Post lifecycle
+
+```bash
+# Pause a scheduled post without deleting it
+postqueen posts:status post-123 --status draft
+
+# Put it back in the queue
+postqueen posts:status post-123 --status schedule
+
+# Reconnect a published post so analytics work
+postqueen posts:missing post-123
+postqueen posts:connect post-123 --release-id "7321456789012345678"
+```
+
+## Analytics
+
+| Command | Flags | What it does |
+|---------|-------|--------------|
+| `postqueen analytics:platform <id>` | `-d, --date <days>` (default `7`) | Channel-level metrics such as followers and impressions, as daily data points with a percentage change. |
+| `postqueen analytics:post <id>` | `-d, --date <days>` (default `7`) | Metrics for a single published post. |
+
+```bash
+postqueen analytics:platform integration-123 -d 30
+postqueen analytics:post post-123 -d 30
+```
+
+<Warning>
+`-d` means **days** here, but **minutes** on `posts:create`. Same letter, different unit, because they are different commands.
+</Warning>
+
+If `analytics:post` returns `{"missing": true}`, the post published but never got a usable platform ID. Run `posts:missing` then `posts:connect` to link it, and analytics start flowing. See [Analytics](/cli/analytics) for the response shape.
+
+## Upload
+
+| Command | Flags | What it does |
+|---------|-------|--------------|
+| `postqueen upload <file>` | - | Uploads a local file and returns its `id` and `path`. Pass that `path` to `-m` on `posts:create`. |
+
+```bash
+IMG=$(postqueen upload ./photo.jpg | tail -n +2 | jq -r '.path')
+
+postqueen posts:create \
+  -c "Straight from the terminal" \
+  -m "$IMG" \
+  -s "2026-08-01T09:00:00Z" \
+  -i "instagram-123"
+```
+
+<Warning>
+Media must be uploaded to PostQueen first. Raw local filenames and external URLs are rejected by most providers, including TikTok, Instagram, and YouTube. See [Media Upload](/cli/media-upload).
+</Warning>
+
+## What each command calls
+
+Every command is a thin wrapper over the [Public API](/public-api/introduction). The CLI joins `POSTQUEEN_API_URL` (default `https://api.postqueen.ai`) with the paths below, and sends your key in a raw `Authorization` header with no `Bearer` prefix.
+
+| Command | Method | Endpoint |
+|---------|--------|----------|
+| `posts:create` | `POST` | `/public/v1/posts` |
+| `posts:list` | `GET` | `/public/v1/posts` |
+| `posts:delete` | `DELETE` | `/public/v1/posts/:id` |
+| `posts:status` | `PUT` | `/public/v1/posts/:id/status` |
+| `posts:missing` | `GET` | `/public/v1/posts/:id/missing` |
+| `posts:connect` | `PUT` | `/public/v1/posts/:id/release-id` |
+| `integrations:list` | `GET` | `/public/v1/integrations` (optional `?group=`) |
+| `integrations:groups` | `GET` | `/public/v1/groups` |
+| `integrations:settings` | `GET` | `/public/v1/integration-settings/:id` |
+| `integrations:trigger` | `POST` | `/public/v1/integration-trigger/:id` |
+| `analytics:platform` | `GET` | `/public/v1/analytics/:integration?date=` |
+| `analytics:post` | `GET` | `/public/v1/analytics/post/:postId?date=` |
+| `upload` | `POST` | `/public/v1/upload` |
+| `auth:status` | `GET` | `/public/v1/integrations` (used as a credential check) |
+
+<Note>
+`posts:create` is rate limited to 30 requests per hour on PostQueen Cloud. Self-hosters can change it with the `API_LIMIT` environment variable.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Managing Posts" icon="calendar" href="/cli/managing-posts">
+    Threads, campaigns, and the full JSON file format
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/cli/troubleshooting">
+    Every CLI error message and its fix
+  </Card>
+  <Card title="Platform Examples" icon="grid-2" href="/cli/platform-examples">
+    Ready-made commands per network
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    Skip the CLI and call the API directly
+  </Card>
+</CardGroup>

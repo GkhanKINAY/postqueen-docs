@@ -13,7 +13,13 @@ Hermes can also front your chat apps: WhatsApp and Telegram from your pocket, Sl
 The PostQueen mobile app is on the way. You are not waiting on it, though: through OpenClaw or Hermes she already answers on the phone in your pocket.
 </Note>
 
-Hermes is a third-party project with its own home at [github.com/NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent), so this page stays thin on the Hermes side. It covers getting Hermes installed, then everything PostQueen needs to let it in.
+## What you need
+
+- A machine that can run Hermes: macOS, Linux, or Windows. The installer pulls `uv` and Python 3.11 rather than Node.
+- An API key for a model provider such as Anthropic, OpenAI or OpenRouter, which Hermes asks for during setup
+- The `postqueen` CLI, plus the PostQueen skill that teaches Hermes her command set
+- Your `POSTQUEEN_API_KEY`
+- `POSTQUEEN_API_URL`, only if you self-host PostQueen
 
 ## Set it up
 
@@ -45,19 +51,29 @@ Hermes is a third-party project with its own home at [github.com/NousResearch/he
     npx skills add GkhanKINAY/postqueen-agent
     ```
 
-    The skill teaches Hermes her complete command set, with the patterns behind it, so she gets clean instructions instead of guesswork.
+    The skill gives Hermes her complete command set and the patterns behind it, so it works from documented commands instead of guessing.
+
+    Hermes loads skills from `~/.hermes/skills/` plus any directory listed under `skills.external_dirs`, while the `skills` CLI installs into `~/.agents/skills`. Point Hermes at that directory so it picks the skill up:
+
+    ```yaml ~/.hermes/config.yaml
+    skills:
+      external_dirs:
+        - ~/.agents/skills
+    ```
+
+    Hermes reads the skill on its next start. The [Hermes skills guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) covers the loader in full.
   </Step>
   <Step title="Export your API key">
-    Grab your key at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Export it in the environment Hermes runs in:
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Export it in the environment Hermes runs in:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
     ```
 
-    Self-hosting PostQueen? Point the CLI at your own server too:
+    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
 
     ```bash
-    export POSTQUEEN_API_URL="https://your-postqueen-server.com"
+    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
     ```
   </Step>
   <Step title="Verify the connection">
@@ -82,7 +98,7 @@ Hermes reads the skill and works the plan on its own:
 3. It writes the posts and runs any media through `postqueen upload` first, since only the returned URL belongs in `-m`.
 4. It schedules each post with `postqueen posts:create` and a concrete ISO date, then lists what it scheduled to confirm the plan landed.
 
-Everything ends up on your calendar at [app.postqueen.ai](https://app.postqueen.ai), in the open. She runs on your terms: leave the schedule alone and each planned post goes out on time without another word from you, or tell Hermes to use `-t draft` and she holds each post until you approve it on the calendar.
+Everything ends up on your calendar at [app.postqueen.ai](https://app.postqueen.ai), in the open. Tell Hermes to use `-t draft` and each post waits there for your approval.
 
 ## On a schedule
 

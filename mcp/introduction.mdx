@@ -7,7 +7,7 @@ MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they c
 
 That means you can connect Claude, Cursor, or any MCP-compatible client to your PostQueen account and ask her to handle your social media in plain language. When you are ready to plug one in, head to [Client Setup](/mcp/setup) and pick your client from the guides grouped under it.
 
-<img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post" />
+<img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
 
 ## How It Works
 
@@ -106,8 +106,8 @@ PostQueen API keys don't auto-rotate, but if you regenerate one in Settings > De
 
 ### Self-hosted: how do I expose the MCP endpoint?
 
-The MCP server starts as part of the PostQueen backend and is reachable at `/mcp` (Bearer auth), `/mcp/:apiKey` (key in URL), and `/mcp-oauth` (OAuth-protected). Your reverse proxy must forward these paths to the backend and support streaming HTTP (`Transfer-Encoding: chunked`). See [Reverse Proxies](/reverse-proxies/caddy).
+The MCP server starts as part of the PostQueen backend and is reachable at `/mcp` (Bearer auth) and `/mcp/:apiKey` (key in URL). Your reverse proxy must forward these paths to the backend and support streaming HTTP (`Transfer-Encoding: chunked`). See [Reverse Proxies](/reverse-proxies/caddy).
 
 ### Can MCP read or reply to comments?
 
-Not today. The current tool set is read-only on integrations and write-only on posts and media: there is no `getComments` or `replyToComment` exposed via MCP. PostQueen does not read incoming comments at all. The closest feature is Auto Actions, which can repost your own post or add a follow-up comment on it once it crosses the like milestone you set.
+Not today. The current tool set is read-only on integrations and write-only on posts and media: there is no `getComments` or `replyToComment` exposed via MCP. PostQueen does not read incoming comments. The closest feature is Auto Actions, which can repost your own post or add a follow-up comment on it once it crosses the like milestone you set.

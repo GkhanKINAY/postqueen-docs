@@ -13,7 +13,7 @@ Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings*
 gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Replace `YOUR_API_KEY` with your actual key. The command writes the server into your user config at `~/.gemini/settings.json` (pass `--scope project` to write to the project's `.gemini/settings.json` instead).
+Replace `YOUR_API_KEY` with your actual key. By default the command writes the server into the current project's `.gemini/settings.json`. Pass `--scope user` to write it into `~/.gemini/settings.json` instead, so it applies to every project.
 
 ## Manual Configuration
 
@@ -30,7 +30,7 @@ You can also edit `~/.gemini/settings.json` directly. Gemini CLI uses the `httpU
 ```
 
 <Note>
-Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers — PostQueen does not use SSE). A project-level `.gemini/settings.json` uses the same format.
+Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers, and PostQueen does not use SSE). A project-level `.gemini/settings.json` uses the same format.
 </Note>
 
 ## Bearer Variant
@@ -57,12 +57,12 @@ gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp --header 
 ```
 
 <Warning>
-Your API key grants full access to your PostQueen workspace — treat it like a password. Never commit a project-level `.gemini/settings.json` that contains the key, and keep the user-level file private.
+Your API key grants full access to your PostQueen workspace: treat it like a password. Since the bare `gemini mcp add` writes into the project's `.gemini/settings.json`, keep that file out of version control, and keep the user-level file private too. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
 </Warning>
 
 ## Self-Hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP — see [Reverse Proxies](/reverse-proxies/caddy).
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://your-postqueen-server.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP; see [Reverse Proxies](/reverse-proxies/caddy).
 
 ## Verify
 
@@ -72,7 +72,7 @@ Start Gemini CLI and run the built-in slash command:
 /mcp
 ```
 
-It lists configured servers with their connection status and discovered tools — `postqueen` should show as connected with 10 tools. Then ask:
+It lists configured servers with their connection status and discovered tools. `postqueen` should show as connected with 10 tools. Then ask:
 
 > "List my connected social media accounts"
 
