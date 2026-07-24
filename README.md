@@ -47,7 +47,7 @@
   <a href="https://github.com/GkhanKINAY/postqueen-docs/blob/main/LICENSE"><img src=".github/assets/badge-license.svg" alt="License: MIT"></a>
   <a href="https://www.npmjs.com/package/postqueen"><img src=".github/assets/badge-cli.svg" alt="CLI on npm"></a>
   <a href="https://www.npmjs.com/package/@postqueen/node"><img src=".github/assets/badge-sdk.svg" alt="SDK on npm"></a>
-  <a href="https://www.npmjs.com/package/n8n-nodes-postqueen"><img src=".github/assets/badge-n8n.svg" alt="n8n node on npm"></a>
+  <a href="https://www.npmjs.com/package/n8n-nodes-postqueen"><img src=".github/assets/badge-n8n.svg?v=2" alt="n8n node on npm"></a>
 </p>
 
 <br/>
@@ -200,6 +200,7 @@ LinkedIn and Instagram each support both personal and page posting. New connecto
 - 🐛 **Found a bug or have an idea?** [Open an issue](https://github.com/GkhanKINAY/postqueen-docs/issues).
 - 💌 **Need a hand?** Email **support@postqueen.ai**.
 - 📚 **Getting started?** The [docs](https://docs.postqueen.ai) walk you through everything.
+- 🤝 **Want to contribute?** Start with the [contribution guide](https://github.com/GkhanKINAY/postqueen-app/blob/main/CONTRIBUTING.md); security reports go to [SECURITY.md](https://github.com/GkhanKINAY/postqueen-app/blob/main/SECURITY.md).
 
 If PostQueen saves you time, a ⭐ on the repo genuinely helps other people find it.
 
