@@ -8,9 +8,9 @@ description: 'Expired activation links, "jwt malformed", and login API responses
 Activation links are short-lived JWTs. If you click an old one, or click
 it twice, you'll see one of these:
 
-- `jwt malformed` — the link is corrupted or truncated (a mail client
+- `jwt malformed`: the link is corrupted or truncated (a mail client
   inserted a line break, or you copied only part of the URL).
-- `jwt expired` / abort error on `/auth/activate` — the link has
+- `jwt expired` / abort error on `/auth/activate`: the link has
   passed its lifetime.
 
 **Fix**
@@ -22,7 +22,7 @@ it twice, you'll see one of these:
 ## Login API returns 404 or 204
 
 When you're not logged in, calls like `GET /api/health` or
-`GET /auth/me` return `204` or `404` by design — that's how the frontend
+`GET /auth/me` return `204` or `404` by design. That's how the frontend
 detects "no session." It is not an error.
 
 If you're already logged in and still see 404 on these endpoints, check
@@ -38,7 +38,7 @@ every existing session becomes invalid.
 rotate it lightly. Store it in a secret manager (Docker / Kubernetes
 secret, AWS/GCP Secret Manager, Doppler, 1Password, etc.) or an
 untracked `.env` file on the host. **Don't commit it to version
-control** — that includes "private" deploy repos, since anyone with
+control.** That includes "private" deploy repos, since anyone with
 repo access ends up with the signing key for every session token PostQueen
 has ever issued.
 

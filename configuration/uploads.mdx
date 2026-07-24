@@ -24,8 +24,8 @@ UPLOAD_DIRECTORY="/data/postqueen/uploads"
 NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY="/uploads"
 ```
 
-- `UPLOAD_DIRECTORY` — where the backend writes files on disk.
-- `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` — the URL prefix the frontend
+- `UPLOAD_DIRECTORY`: where the backend writes files on disk.
+- `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY`: the URL prefix the frontend
   uses to reference those files. Default `/uploads`.
 
 The Next.js frontend rewrites `/uploads/:path*` to `/api/uploads/:path*`
@@ -51,7 +51,7 @@ volumes:
   postqueen-uploads:
 ```
 
-If you scale beyond one backend replica, you need a shared volume — or
+If you scale beyond one backend replica, you need a shared volume, or
 switch to Cloudflare R2.
 
 ### Caveat: some providers need public HTTPS URLs

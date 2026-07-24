@@ -4,8 +4,8 @@ description: 'Invalid state, invalid_grant, and fetch failed during the connect 
 ---
 
 Connecting a social channel is the highest-volume source of user errors on
-PostQueen. The OAuth handshake spans three parties — your browser, the social
-provider, and the PostQueen backend — and any one of them can break the flow.
+PostQueen. The OAuth handshake spans three parties: your browser, the social
+provider, and the PostQueen backend. Any one of them can break the flow.
 
 ## "Invalid state"
 
@@ -15,7 +15,7 @@ provider redirects back to PostQueen.
 **What it means:** PostQueen generates a one-time CSRF token (the `state`
 parameter) when you start the connect flow and stores it against your
 session. The provider returns it in the redirect; PostQueen compares the two.
-A mismatch — or a missing token — produces this error.
+A mismatch, or a missing token, produces this error.
 
 **Common causes**
 
@@ -31,7 +31,7 @@ A mismatch — or a missing token — produces this error.
 1. Open the PostQueen tab in a single, fresh browser session.
 2. Whitelist `app.postqueen.ai` (or your self-hosted domain) in any
    privacy extensions for the duration of the connect.
-3. Click "Add Channel" again from inside the PostQueen app — never
+3. Click "Add Channel" again from inside the PostQueen app. Never
    bookmark or refresh the provider's authorize page.
 4. If your browser is in private/incognito mode, switch to a normal window.
 
@@ -48,7 +48,7 @@ tried to exchange it for an access token.
 
 **Common causes**
 
-- The same OAuth code was used twice — usually from a double-click or
+- The same OAuth code was used twice, usually from a double-click or
   retry after a transient error.
 - The code expired (most providers give you ~60 seconds).
 - The redirect URI configured on the provider doesn't exactly match the
@@ -56,7 +56,7 @@ tried to exchange it for an access token.
 
 **Fix**
 
-1. Start the connect flow over from scratch — codes can't be reused.
+1. Start the connect flow over from scratch. Codes can't be reused.
 2. Re-check the redirect URI in your provider's developer console
    matches the URL PostQueen is redirecting to, character for character.
 
@@ -65,7 +65,7 @@ tried to exchange it for an access token.
 You see this on calls like `POST /integrations/provider/:id/connect`.
 
 **What it means:** the PostQueen backend tried to talk to the provider's
-API and the request failed at the network level — DNS, TLS, or a refused
+API and the request failed at the network level: DNS, TLS, or a refused
 connection.
 
 **Common causes**
@@ -87,5 +87,5 @@ connection.
 
 Some providers (TikTok, Instagram) try to upload a profile avatar as part
 of channel attach. If the upstream image is in an exotic format, this
-fails. Retry — PostQueen usually falls back successfully on the second
+fails. Retry. PostQueen usually falls back successfully on the second
 attempt.

@@ -9,7 +9,7 @@ Fetch a remote URL and store the result as a PostQueen media asset. Useful when 
 
 - Must be reachable from the PostQueen backend (publicly resolvable HTTPS, no auth required).
 - Detected MIME type must be in the allowlist documented on [Upload File](/public-api/uploads/upload-file).
-- PostQueen performs an [SSRF-safe fetch](https://github.com/nodejs/undici) — private IP ranges, link-local addresses, and `localhost` are rejected.
+- PostQueen performs an [SSRF-safe fetch](https://github.com/nodejs/undici): private IP ranges, link-local addresses, and `localhost` are rejected.
 
 ## Example
 
