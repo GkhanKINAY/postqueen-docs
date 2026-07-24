@@ -1,24 +1,24 @@
 ---
 title: Compliance
-description: 'How PostQueen handles OAuth, credentials, and platform APIs to stay compliant with each social network.'
+description: 'How PostQueen authenticates with each social network and handles tokens, credentials, and platform APIs.'
 ---
 
-PostQueen is designed to keep you — and your users — inside each social platform's terms of service. This page explains how authentication and data handling work, so you can evaluate PostQueen for security, privacy, and platform-compliance reviews.
+This page explains how PostQueen authenticates with each social network and how it stores and uses tokens and credentials. Use it to evaluate PostQueen for security, privacy, and platform reviews.
 
-## How PostQueen stays compliant
+## How PostQueen connects
 
-- **Open source and self-hostable.** PostQueen is an open-source social media scheduler that supports X, LinkedIn, Instagram, Bluesky, Mastodon, Discord, and 30+ more networks. You can run it on your own infrastructure and inspect every line of code.
-- **Official OAuth flows.** The hosted service uses official, platform-approved OAuth flows to connect accounts. PostQueen never simulates a browser session or bypasses a platform's auth screen.
-- **No scraping or automation of platform content.** PostQueen does not automate or scrape content from social media platforms. It only calls documented publishing and analytics APIs.
-- **No credential proxying.** PostQueen does not collect, store, or proxy API keys or access tokens from users of the hosted service.
-- **No password prompts.** PostQueen never asks users to paste social-platform credentials into the hosted product.
-- **Direct platform authentication.** Users always authenticate directly with each platform (X, LinkedIn, Discord, and so on), which keeps every platform's compliance and your data privacy intact.
+- **Open source and self-hostable.** PostQueen is an open-source social media scheduler that supports X, LinkedIn, Instagram, Bluesky, Mastodon, Discord, and 30+ networks. You can run it on your own infrastructure and inspect every line of code.
+- **Official OAuth flows where the platform offers them.** Most networks connect through the platform's own OAuth screen: you log in on the platform's site, approve the requested scopes, and the platform issues the token. PostQueen receives only the scopes you approve.
+- **API-based publishing and analytics.** Posts and analytics go through each platform's publishing and analytics APIs. PostQueen has no headless-browser automation and does not crawl or scrape content from social platforms.
+- **Credentials only where OAuth is not available.** A few networks offer no OAuth for third-party schedulers. For those, PostQueen asks for the credential that the platform provides for API access, such as a Bluesky app password, a WordPress application password, or a Nostr key. It is stored encrypted and used only for that channel.
+- **One cookie-based exception.** Skool has no public API, so it connects through the [PostQueen Chrome extension](/configuration/chrome-extension) using your own browser session. This method is opt-in, documented, and carries its own terms-of-service warning.
+- **Encrypted token storage.** Like any scheduler, PostQueen stores the tokens and credentials for the channels you connect. They are encrypted at rest and used only to publish and fetch analytics on your behalf.
 
 ## What this means for you
 
-- If you connect accounts on the hosted service, tokens are issued by the platform to you through its own OAuth screen — PostQueen only receives the scopes you approve.
+- If you connect an OAuth-based account on the hosted service, the token is issued by the platform through its own OAuth screen, with only the scopes you approve.
 - If you self-host, you control where tokens and post content live. See [Configuration reference](/configuration/reference) for storage and encryption settings, and [OAuth configuration](/configuration/oauth) for setting up your own provider credentials.
-- If you build integrations on top of PostQueen, use the [Public API](/public-api/introduction) or [MCP server](/mcp/introduction) — both go through the same authenticated flows and respect the same platform limits.
+- If you build integrations on top of PostQueen, use the [Public API](/public-api/introduction) or [MCP server](/mcp/introduction). Both go through the same authenticated flows and respect the same platform limits.
 
 ## Reporting a concern
 
