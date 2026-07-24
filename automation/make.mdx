@@ -122,7 +122,7 @@ Full payload details and delivery behavior live on the [Webhooks](/automation/we
 
 ## Self-hosting
 
-Running her yourself? Everything above still works. Swap the base URL for `https://YOUR-DOMAIN/api/public/v1` and keep the header, the body and the modules as they are.
+Running her yourself? Everything above still works. Swap the base URL for `https://postqueen.example.com/api/public/v1` and keep the header, the body and the modules as they are.
 
 One thing to watch: the create-post endpoint is rate limited to 30 requests per hour, and you raise that with the `API_LIMIT` env var. A scenario that loops over many rows can hit the ceiling, so batch several posts into one request where you can, or add a **Sleep** module between iterations.
 

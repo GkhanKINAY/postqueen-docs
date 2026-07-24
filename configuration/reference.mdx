@@ -60,7 +60,7 @@ The URL the **frontend SSR server** uses to reach the backend from inside your n
 
 ---
 
-## Application behaviour
+## Application behavior
 
 ### `DISABLE_REGISTRATION`
 
@@ -273,7 +273,7 @@ All of these are optional. Frontend reads `NEXT_PUBLIC_*` at build time.
 | `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container ID. |
 | `NEXT_PUBLIC_FACEBOOK_PIXEL` | Facebook Pixel ID. |
 | `FACEBOOK_PIXEL_ACCESS_TOKEN` | Server-side Pixel Conversions API token. |
-| `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host (e.g. `https://eu.posthog.com`). |
+| `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host (e.g. `https://us.posthog.com`). |
 | `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project API key. |
 | `NEXT_PUBLIC_TRACKING_TRIAL` | When set, enables trial-funnel tracking events. |
 | `DATAFAST_API_KEY` | Datafast analytics API key. |
@@ -340,7 +340,7 @@ hosting platform, or framework rather than set by hand.
 |---|---|
 | `PORT` | Port the backend HTTP server binds to. Defaults to `3000`. |
 | `TZ` | Process timezone. The backend forces this to `UTC` on boot. |
-| `NODE_ENV` | Standard Node environment flag (`development` / `production`). Toggles dev-only behaviour like sourcemaps. |
+| `NODE_ENV` | Standard Node environment flag (`development` / `production`). Toggles dev-only behavior like sourcemaps. |
 | `NEXT_RUNTIME` | Set by Next.js (`nodejs` / `edge`) to select the instrumentation hook. Framework-injected. Do not set manually. |
 | `VERCEL_GIT_COMMIT_SHA` | Commit SHA used as the Sentry release tag on the frontend. Injected by Vercel. |
 | `GITHUB_SHA` | Fallback commit SHA for the Sentry release tag when not on Vercel. Injected by GitHub Actions. |

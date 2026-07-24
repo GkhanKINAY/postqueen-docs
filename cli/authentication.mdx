@@ -16,7 +16,7 @@ export POSTQUEEN_API_KEY=your_api_key_here
 If you run a self-hosted PostQueen instance, also point the CLI at your own API:
 
 ```bash
-export POSTQUEEN_API_URL=https://your-postqueen-instance.com
+export POSTQUEEN_API_URL=https://api.postqueen.example.com
 ```
 
 Verify that the key works:
@@ -114,7 +114,7 @@ cd postqueen-agent/server
 Go to **PostQueen Settings > Developer > OAuth Apps** and create a new app. Set the callback URL to:
 
 ```
-https://your-server-domain.com/device/callback
+https://auth.postqueen.example.com/device/callback
 ```
 
 #### 3. Set Up Postgres
@@ -127,7 +127,7 @@ Create a database. The server auto-creates the `device_requests` table on startu
 export DATABASE_URL="postgresql://user:password@localhost:5432/postqueen_auth"
 export POSTQUEEN_OAUTH_CLIENT_ID="pca_xxx"
 export POSTQUEEN_OAUTH_CLIENT_SECRET="pcs_xxx"
-export SERVER_URL="https://your-server-domain.com"
+export SERVER_URL="https://auth.postqueen.example.com"
 ```
 
 | Variable | Required | Default | Description |
@@ -156,7 +156,7 @@ pnpm start:prod
 #### 6. Point the CLI to Your Server
 
 ```bash
-export POSTQUEEN_AUTH_SERVER="https://your-server-domain.com"
+export POSTQUEEN_AUTH_SERVER="https://auth.postqueen.example.com"
 postqueen auth:login
 ```
 

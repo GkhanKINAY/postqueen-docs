@@ -49,7 +49,7 @@ With this setup, your API key travels inside the connector URL, so the URL itsel
 On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
 
 ```
-https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
+https://postqueen.example.com/api/mcp/YOUR_API_KEY
 ```
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).

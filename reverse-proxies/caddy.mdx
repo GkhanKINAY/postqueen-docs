@@ -8,7 +8,7 @@ This page briefly explains how to use Caddy to reverse proxy PostQueen. A config
 ## Example Caddyfile
 
 ```caddy
-postqueen.example.lan {
+postqueen.example.com {
         reverse_proxy * localhost:5000
         tls internal
 }
@@ -23,8 +23,8 @@ You will need to install the certificate into your browser with this configurati
 To ensure that PostQueen works correctly behind a reverse proxy, you may need to adjust its configuration in your .env file / environment variables. The following variables should be set to the correct values:
 
 ```bash
-MAIN_URL="https://postqueen.example.lan"
-FRONTEND_URL="https://postqueen.example.lan"
-NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.lan/api"
+MAIN_URL="https://postqueen.example.com"
+FRONTEND_URL="https://postqueen.example.com"
+NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api"
 ```
 

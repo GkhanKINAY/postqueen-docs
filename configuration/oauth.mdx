@@ -4,7 +4,7 @@ description: 'How to configure OIDC for PostQueen'
 ---
 
 <Warning>
-**Warning:** With the actual implementation of the OIDC provider, GitHub / Google login provider will be disabled.
+**Warning:** In the current implementation, enabling an OIDC provider disables GitHub and Google sign-in.
 </Warning>
 
 If you want to use OAuth/OIDC, please follow the instructions below.
@@ -15,7 +15,7 @@ We will use [Authentik](https://goauthentik.io/) as an OIDC provider example, wi
   <Step title="Create an Application/Provider on the Authentik side">
     You will find the following important information:
 
-    - `redirect_uri` => `https://postqueen.yourserver.com/settings`
+    - `redirect_uri` => `https://postqueen.example.com/settings`
     - `client_id` => `randomclientid`
     - `client_secret` => `randomclientsecret`
     - `auth_url` => `https://authentik.example.com/application/o/authorize`
@@ -23,7 +23,7 @@ We will use [Authentik](https://goauthentik.io/) as an OIDC provider example, wi
     - `userinfo_url`=> `https://authentik.example.com/application/o/userinfo`
 
     <Note>
-    The same information needs to be configured on other OIDC providers such as Keycloak, Dex, etc.
+    OIDC is a standard, so the same values come from any OIDC provider. Okta, Microsoft Entra ID, Auth0 and Google Workspace all expose them, as do self-hosted providers such as Keycloak and Dex.
     </Note>
   </Step>
 
@@ -43,9 +43,9 @@ We will use [Authentik](https://goauthentik.io/) as an OIDC provider example, wi
 
   <Step title="Configure logo URL">
     ```env
-    NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL="https://raw.githubusercontent.com/walkxcode/dashboard-icons/master/png/authentik.png"
+    NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL="https://postqueen.example.com/sso-logo.png"
     ```
-    Will display the logo of the OIDC provider on the login page button.
+    Will display the logo of the OIDC provider on the login page button. Any publicly reachable image URL works.
   </Step>
 
   <Step title="Configure POSTQUEEN_OAUTH_URL">

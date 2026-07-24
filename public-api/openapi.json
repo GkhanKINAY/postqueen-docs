@@ -14,10 +14,10 @@
       "description": "PostQueen Cloud"
     },
     {
-      "url": "https://{your-domain}/api/public/v1",
+      "url": "https://{host}/api/public/v1",
       "description": "Self-hosted",
       "variables": {
-        "your-domain": {
+        "host": {
           "default": "localhost:5000",
           "description": "Your PostQueen instance domain"
         }
