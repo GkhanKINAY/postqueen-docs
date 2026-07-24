@@ -27,34 +27,29 @@ You must upload media files to PostQueen before using them in posts. Many platfo
 ## Upload and Post Workflow
 
 ```bash
-# 1. Upload the file
-RESULT=$(postqueen upload photo.jpg)
-FILE_URL=$(echo "$RESULT" | jq -r '.path')
+# 1. Upload the file (tail -n +2 drops the header line, which is not JSON)
+IMG=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
 
 # 2. Use the URL in a post
 postqueen posts:create \
   -c "Check out this photo!" \
-  -m "$FILE_URL" \
+  -m "$IMG" \
   -s "2025-01-15T10:00:00Z" \
   -i "your-integration-id"
 ```
 
 ## Supported File Types
 
-<Tabs>
-  <Tab title="Images">
-    PNG, JPG, JPEG, GIF, WEBP, SVG, BMP, ICO
-  </Tab>
-  <Tab title="Videos">
-    MP4, MOV, AVI, MKV, WEBM, FLV, WMV, M4V, MPEG, 3GP
-  </Tab>
-  <Tab title="Audio">
-    MP3, WAV, OGG, AAC, FLAC, M4A
-  </Tab>
-  <Tab title="Documents">
-    PDF, DOC, DOCX
-  </Tab>
-</Tabs>
+The API inspects the file's bytes rather than its extension, and accepts:
+
+- **Images:** JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF (10 MB cap)
+- **Video:** MP4 (1 GB cap)
+
+Anything else returns `Unsupported file type.`
+
+<Warning>
+Only `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` and `.mp4` paths can be attached to a post. AVIF, BMP and TIFF upload successfully and are then rejected by `posts:create` with `File must have a valid extension`. Convert those before uploading.
+</Warning>
 
 ## Video Upload Example
 
@@ -62,8 +57,7 @@ Platforms like TikTok, YouTube, and Instagram require video uploads through Post
 
 ```bash
 # Upload the video
-VIDEO=$(postqueen upload video.mp4)
-VIDEO_URL=$(echo "$VIDEO" | jq -r '.path')
+VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 
 # Post to TikTok
 postqueen posts:create \

@@ -1,0 +1,89 @@
+---
+title: FAQ
+description: 'Short answers on how PostQueen runs, what she connects to, and where to get help'
+---
+
+The questions people ask before they start. If yours is not here, the [support page](/support) has the fastest route to a human.
+
+## Common questions 👑
+
+<AccordionGroup>
+  <Accordion title="What is PostQueen, in one sentence?">
+    PostQueen is an AI social media assistant who writes the copy, designs the visuals and schedules posts across 30+ networks, while you review the calendar.
+
+    New here? The [quickstart](/quickstart) takes you from an empty account to your first scheduled post.
+  </Accordion>
+
+  <Accordion title="Should I use the cloud or self-host her?">
+    Both run the same PostQueen, so pick the one that fits how you like to work.
+
+    **PostQueen Cloud** starts with a 7-day free trial at [postqueen.ai](https://postqueen.ai). Updates and the infrastructure are handled for you, and plan details live on the [pricing page](https://postqueen.ai/pricing).
+
+    **Self-hosting** is free for as long as you run it, because the app is open source. Your database, your media storage and your provider credentials stay on your own servers. [Docker Compose](/installation/docker-compose) is the recommended starting point, and the [quickstart](/quickstart) walks through both paths side by side.
+  </Accordion>
+
+  <Accordion title="Which networks can she post to?">
+    30+ networks, from the big ones like X, LinkedIn and Instagram to community platforms such as Discord, Mastodon and Reddit. The [providers overview](/providers/overview) collects the per-channel setup guides.
+
+    On the cloud you connect a channel with a couple of clicks. Self-hosters register their own provider apps first and drop the credentials into the environment, which the [OAuth configuration guide](/configuration/oauth) explains.
+  </Accordion>
+
+  <Accordion title="Is PostQueen open source?">
+    Yes. She is AGPL-3.0, forked from [Postiz](https://github.com/gitroomhq/postiz-app) with thanks to its contributors.
+
+    Her source lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app). Read it, run it on your own box, and open an issue when something looks wrong.
+  </Accordion>
+
+  <Accordion title="Do I stay in control of what gets published?">
+    She runs on your terms. On autopilot, Temporal publishes scheduled posts on time without asking you again, so the calendar keeps moving while you are away. Prefer the final word? Ask her for drafts and she holds each one until you approve it.
+
+    Either way the calendar shows what is planned before it goes out, and you can edit or delete anything on it.
+  </Accordion>
+
+  <Accordion title="Can my AI assistant use her?">
+    That is the point. Any assistant that can run a shell command or call a tool can drive your calendar.
+
+    - **Agent skill and CLI.** `npx skills add GkhanKINAY/postqueen-agent` teaches your agent the `postqueen` CLI. Start at the [CLI introduction](/cli/introduction).
+    - **MCP.** Her hosted server exposes 10 tools to any MCP client. For Claude Code it is one line: `claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY`. See the [MCP introduction](/mcp/introduction).
+    - **Public API.** REST for your own scripts, documented in the [API overview](/public-api/introduction).
+
+    The [agents overview](/agents/overview) compares the three routes and links a self-contained guide for each agent.
+  </Accordion>
+
+  <Accordion title="Which languages does she speak?">
+    She answers in whatever language you use, so brief her in Turkish and she plans in Turkish. The app interface ships in 16 languages, and you pick yours in the app settings.
+  </Accordion>
+
+  <Accordion title="Is there a mobile app?">
+    The mobile app is on the way. In the meantime she already answers on the phone in your pocket: message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord.
+
+    If you would rather use the browser, [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from a phone screen. Setup for the chat route is on the [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes) pages.
+  </Accordion>
+
+  <Accordion title="Are there API limits?">
+    One limit matters in practice: 30 requests per hour on the create-post endpoint. Each call counts as a single request, so schedule several posts in one request when you need throughput. Other endpoints, such as listing channels or reading analytics, are not capped by it.
+
+    Self-hosters can raise or lower the ceiling with the `API_LIMIT` environment variable. The [API overview](/public-api/introduction) has the full picture, including authentication and error codes.
+  </Accordion>
+
+  <Accordion title="Where do I get help?">
+    Bugs and questions about the open-source app go to [GitHub Issues](https://github.com/GkhanKINAY/postqueen-app/issues/new/choose); billing and account questions go to [support@postqueen.ai](mailto:support@postqueen.ai). The [support page](/support) shows how to write a report that gets a fast answer.
+  </Accordion>
+</AccordionGroup>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Connect a channel and schedule your first post
+  </Card>
+  <Card title="Agents" icon="robot" href="/agents/overview">
+    Hand your assistant an API key and let it run your socials
+  </Card>
+  <Card title="Providers" icon="share-nodes" href="/providers/overview">
+    Per-channel setup guides
+  </Card>
+  <Card title="Support" icon="life-ring" href="/support">
+    Where to ask, and how to ask so you get a useful answer
+  </Card>
+</CardGroup>

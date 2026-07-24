@@ -5,16 +5,21 @@ description: 'Install the n8n-nodes-postqueen community node and let your workfl
 
 The n8n node is where PostQueen works while you sleep. Wire her into a workflow once and she keeps going without you: a new blog post becomes a scheduled promotion, a morning timer becomes a fresh video, a quiet calendar becomes a Slack ping. The node talks to the same public API as the [CLI](/cli/introduction) and the [MCP server](/mcp/introduction), so everything a workflow schedules lands on the same calendar you already review.
 
+<img src="/images/brand/flow-everywhere.svg" alt="One content source, every channel: an n8n workflow fans a post out through PostQueen" />
+
 ## Install
 
 The node requires n8n running on Node.js 20.15 or newer.
 
 ### n8n UI (recommended)
 
-1. Open **Settings**, then **Community Nodes**.
-2. Click **Install**.
-3. Enter `n8n-nodes-postqueen` as the npm package name.
-4. Click **Install** again to confirm.
+1. Open **Settings**.
+2. Choose **Community Nodes**.
+3. Click **Install**.
+4. Enter `n8n-nodes-postqueen` as the npm package name.
+5. Click **Install** again to confirm.
+
+<img src="/images/brand/community-node.png" alt="n8n Community Nodes install dialog with n8n-nodes-postqueen entered as the package name" />
 
 ### npm (manual, non-Docker)
 
@@ -76,7 +81,7 @@ The node exposes 7 operations:
 | **Upload File** | Upload a file (image or video) from a binary property. |
 | **Video Function** | Run a video helper function, such as loading available voices. |
 
-**Generate Video** takes a **Video Type** (`image-text-slides` or `veo3`), an **Output Format** (`vertical` or `horizontal`), and optional **Custom Parameters** as key/value pairs such as `prompt`, `voice`, or `images`. To see which voices are available, run **Video Function** with `loadVoices` first.
+**Generate Video** takes a **Video Type**, for example `image-text-slides` or `veo3`, an **Output Format** (`vertical` or `horizontal`), and optional **Custom Parameters** as key/value pairs such as `prompt`, `voice`, or `images`. To list the voices, run **Video Function** with the function name `loadVoices` and the identifier of the video type you plan to use, such as `image-text-slides`. Both fields are required on that operation.
 
 <Note>
 There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule trigger, an RSS feed, or a webhook. Form submissions work too. Any of them can start a workflow that ends in a PostQueen operation.
@@ -88,9 +93,15 @@ There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule tr
 
 **A video channel that grows overnight.** A daily Schedule trigger runs **Generate Video** with your prompt, as `veo3` or `image-text-slides`, vertical or horizontal, with a voiceover if you want one. **Create Post** then queues the finished video to your channel, so a new upload is waiting every morning whether you opened your laptop or not. Video generation is an operation the `postqueen` CLI does not expose, which makes this node the natural no-code way to drive it.
 
+<img src="/images/brand/flow-youtube.svg" alt="Daily schedule, Generate Video, Create Post: a YouTube channel that runs overnight" />
+
 **One clip, three short-form feeds.** A new video lands in Drive, Dropbox or S3, **Upload File** brings it in, and a single **Create Post** schedules it to TikTok, Instagram and YouTube together. Upload first and pass the returned path into the post: those three networks only accept media from trusted domains, so linking a raw external URL will not work.
 
+<img src="/images/brand/flow-clips.svg" alt="New video file, Upload File, one Create Post scheduling to TikTok, Reels and Shorts" />
+
 **Queue guard.** Every Monday, **Get Posts** pulls the next seven days of your calendar. If the queue looks thin, a Slack message tells you before your followers notice a gap.
+
+<img src="/images/brand/flow-guard.svg" alt="Monday check: if the queue is empty, a Slack alert goes out" />
 
 ## Links
 
@@ -103,5 +114,11 @@ There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule tr
   </Card>
   <Card title="Public API" icon="code" href="/public-api/introduction">
     The API this node calls, if you want to go beyond the node.
+  </Card>
+  <Card title="Zapier" icon="bolt" href="/automation/zapier">
+    Using another automation tool? The same recipes work in Zapier.
+  </Card>
+  <Card title="Make" icon="diagram-project" href="/automation/make">
+    Prefer Make? It calls the same API and the same ideas carry over.
   </Card>
 </CardGroup>

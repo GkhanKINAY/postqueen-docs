@@ -26,6 +26,7 @@ postqueen posts:create \
 | `-m, --media` | Comma-separated media URLs (use after uploading) |
 | `-i, --integrations` | Comma-separated integration IDs (required) |
 | `-d, --delay` | Delay between comments in minutes (default: 0) |
+| `--shortLink` | Use short links (default: true) |
 | `--settings` | Platform-specific settings as JSON |
 | `-j, --json` | Path to a JSON file for complex posts |
 
@@ -53,12 +54,19 @@ postqueen posts:create \
 
 ### Threads and Comments
 
-Pass `-c` multiple times to create a thread. Each comment can have its own media with a corresponding `-m` flag:
+Pass `-c` multiple times to create a thread. Comments are automatically converted to threads or replies based on the platform:
+
+- **Twitter/X**: Thread of tweets
+- **Reddit**: Comment replies
+- **LinkedIn**: Comment on post
+- **Instagram**: First comment
+
+Each comment can have its own media with a corresponding `-m` flag. They pair by index, so leaving one out in the middle shifts every later media value onto the wrong item:
 
 ```bash
 postqueen posts:create \
-  -c "Thread 1/3" -m "image1.jpg" \
-  -c "Thread 2/3" -m "image2.jpg" \
+  -c "Thread 1/3" -m "https://uploads.postqueen.ai/image1.jpg" \
+  -c "Thread 2/3" -m "https://uploads.postqueen.ai/image2.jpg" \
   -c "Thread 3/3" \
   -s "2025-01-15T10:00:00Z" \
   -i "twitter-integration-id"
@@ -95,7 +103,7 @@ Some platforms require additional settings. Pass them as JSON with `--settings`:
 postqueen posts:create \
   -c "Check out this discussion" \
   -s "2025-01-15T10:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text"}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text","url":"","is_flair_required":false}}]}' \
   -i "reddit-integration-id"
 ```
 
@@ -105,30 +113,76 @@ Use `postqueen integrations:settings <id>` to discover what settings are availab
 
 ### Complex Posts with JSON
 
-For posts with detailed platform-specific content, use a JSON file:
+For campaigns with per-platform content and settings, use a JSON file instead of flags:
 
 ```bash
-postqueen posts:create --json post.json
+postqueen posts:create --json campaign.json
 ```
 
-Example `post.json`:
+The file is the request body her API receives. It carries the top-level `type`, `date`, `shortLink` and `tags`, then one `posts` entry per channel. Each entry has its own `integration.id`, a `value` array (the first item is the main post, additional items become comments or thread items) and an optional `settings` object.
+
+Example `campaign.json`:
 
 ```json
 {
-  "integrations": ["twitter-123", "linkedin-456"],
+  "type": "schedule",
+  "date": "2026-08-01T09:00:00.000Z",
+  "shortLink": true,
+  "tags": [],
   "posts": [
     {
-      "provider": "twitter",
-      "post": [{ "content": "Short tweet version", "image": [] }]
+      "integration": { "id": "twitter-123" },
+      "value": [
+        {
+          "content": "Tweet version",
+          "image": [
+            { "id": "img-1", "path": "https://uploads.postqueen.ai/twitter-image.jpg" }
+          ]
+        }
+      ],
+      "settings": { "who_can_reply_post": "everyone" }
     },
     {
-      "provider": "linkedin",
-      "post": [{ "content": "Longer LinkedIn version with more detail", "image": [] }],
-      "settings": { "__type": "linkedin" }
+      "integration": { "id": "linkedin-456" },
+      "value": [
+        {
+          "content": "LinkedIn version with more context...",
+          "image": [
+            { "id": "img-2", "path": "https://uploads.postqueen.ai/linkedin-image.jpg" }
+          ]
+        }
+      ],
+      "settings": { "post_as_images_carousel": false }
+    },
+    {
+      "integration": { "id": "reddit-789" },
+      "value": [
+        {
+          "content": "Reddit version",
+          "image": []
+        }
+      ],
+      "settings": {
+        "subreddit": [{
+          "value": {
+            "subreddit": "programming",
+            "title": "Post Title",
+            "type": "text",
+            "url": "",
+            "is_flair_required": false
+          }
+        }]
+      }
     }
   ]
 }
 ```
+
+<Note>
+You can omit `__type` in both cases. The backend adds it from each post's integration ID, whether the settings came from `--settings` or from a `--json` file.
+
+`image` is required on every entry, so pass `[]` when there is no media, and each item is an object with an `id` and a `path` returned by `postqueen upload`. Run `postqueen integrations:settings <id>` to see the real settings schema for a channel.
+</Note>
 
 ## Listing Posts
 
@@ -192,8 +246,8 @@ After connecting, the post will support full analytics via `postqueen analytics:
 ### Full Workflow
 
 ```bash
-# 1. Find posts with missing release IDs
-postqueen posts:list | jq '.posts[] | select(.releaseId == "missing") | {id, content}'
+# 1. Find posts with missing release IDs (tail -n +2 drops the header line)
+postqueen posts:list | tail -n +2 | jq '.posts[] | select(.releaseId == "missing") | {id, content}'
 
 # 2. Get available content from the provider
 postqueen posts:missing <post-id>
@@ -226,3 +280,14 @@ Use this when you want to pause a scheduled post without deleting it, or hand a 
 ```bash
 postqueen posts:delete <post-id>
 ```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Command Reference" icon="terminal" href="/cli/command-reference">
+    Every command and flag on one page
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/cli/troubleshooting">
+    Fixes for common CLI errors
+  </Card>
+</CardGroup>

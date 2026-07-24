@@ -1,9 +1,11 @@
 ---
 title: How it works
-description: 'Learn the architecture of the project'
+description: 'The services behind PostQueen, and what each one does when a post goes out'
 ---
 
 PostQueen may feel like one app from the outside, but under the hood she is a small, well-coordinated team of services. Here is how they fit together.
+
+<img src="/images/brand/fanout.svg" alt="Write it once: PostQueen tailors the same post for each platform and schedules every variant" />
 
 ## Architecture
 
@@ -33,14 +35,18 @@ flowchart LR;
 
 ```
 
-- [Frontend](#frontend): Provides the Web user interface, talks to the Backend.
-- [Backend](#backend): Does all the real work, provides an API for the frontend, and triggers workflows via Temporal.
-- [Orchestrator](#orchestrator): Runs Temporal workflows and activities, replacing the old cron and worker services.
+The three main services:
 
-- [Temporal](#temporal): A durable workflow engine that manages scheduling, retries, and task distribution.
-- **Redis**: Used for caching and queues.
-- **SQL Database**: Stores all the data. Postgres is typically used, but other SQL databases can work too.
-- **Storage**: Stores all the files. Cloudflare R2 used to be the default, but now it is a local file system.
+- [Frontend](#frontend)
+- [Backend](#backend)
+- [Orchestrator](#orchestrator)
+
+The external services they depend on:
+
+- [Temporal](#temporal), which runs the schedule.
+- **Redis**, for caching and queues.
+- **SQL Database**, which stores all the data. Postgres is the usual choice, and other SQL databases can work too.
+- **Storage**, which holds your media files. The default is the local file system, and Cloudflare R2 or another S3-compatible store can take over.
 
 ### Frontend
 

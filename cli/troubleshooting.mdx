@@ -1,0 +1,267 @@
+---
+title: Troubleshooting
+description: 'Every PostQueen CLI error message, what caused it, and how to fix it'
+---
+
+Command handlers print errors to stderr with a leading `❌` and keep results on stdout, so a failed command usually stays out of a downstream pipeline. `auth:status` is the exception: it reports its state on stdout.
+
+## Exit codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success |
+| `1` | Something went wrong. The message on stderr says what. |
+
+<Warning>
+`auth:status` is the exception: it reports `Not authenticated.` and still exits `0`. If a script needs a hard gate before it starts posting, check for connected channels instead:
+
+```bash
+postqueen integrations:list > /dev/null || exit 1
+```
+</Warning>
+
+## Reading the error output
+
+Every failed API call is wrapped twice on its way to your terminal. A single line carries all three layers:
+
+```
+❌ Failed to create post: Request failed: API Error (400): {"message":"Integration with id twitter-123 not found","error":"Bad Request","statusCode":400}
+```
+
+- `❌ Failed to create post` tells you which command gave up
+- `Request failed` is the CLI's transport wrapper, and it covers network failures too, so it does not on its own mean the server rejected you
+- `API Error (400)` and the JSON body are the real answer
+
+<Tip>
+When you are stuck, the HTTP status is the fastest signal: `401` is authentication, `404` is a wrong ID, and `400` is a bad payload. `429` means you hit the rate limit.
+</Tip>
+
+## Authentication errors
+
+| Message | What happened | Fix |
+|---------|---------------|-----|
+| `Error: No authentication found.` | No stored OAuth2 credentials and no `POSTQUEEN_API_KEY`. The CLI stops before making any request. | `export POSTQUEEN_API_KEY=your_api_key` |
+| `Not authenticated.` | Same cause, reported by `auth:status`. | Same fix. |
+| `Credentials are expired or invalid. Please re-authenticate.` | `auth:status` got a `401` or `403` when verifying. | Rotate the key in the app and re-export it, or run `auth:login` again if you use the device flow. |
+| `API Error (401): {"msg":"No API Key found"}` | The `Authorization` header never reached the API. | Confirm the variable is exported in the shell that runs the command, not just set. |
+| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong, revoked, or has whitespace. | Re-copy it from **Settings**, then **Developers**, then **Public API**, then **Reveal**. |
+| `API Error (401): {"msg":"No subscription found"}` | Billing is enabled on the instance and the organization has no active plan. | Activate a plan, or disable billing on your self-hosted instance. |
+| `Could not reach auth server at <url>` | `auth:login` could not contact the auth server. | The hosted `cli-auth.postqueen.ai` is not currently available. Use an API key, or [self-host the auth server](/cli/authentication). |
+| `Authorization expired. Please try again.` / `Authorization timed out. Please try again.` | Nobody completed the browser step before the device code expired. | Re-run `auth:login` and finish in the browser. |
+
+<Note>
+The API key goes in the `Authorization` header **raw**, with no `Bearer` prefix. If you are hand-rolling requests alongside the CLI, that is the most common mistake.
+</Note>
+
+## Flag and input errors
+
+These are caught locally, before any network call.
+
+| Message | Fix |
+|---------|-----|
+| `Either --content or --json is required` | Pass at least one `-c`, or point at a campaign file with `--json`. |
+| `--integrations is required when not using --json` | Add `-i` with one or more IDs from `integrations:list`. |
+| `--date is required when not using --json` | Add `-s "2026-12-31T12:00:00Z"`. There is no default date. |
+| `At least one -c/--content is required` | The `-c` flag was present but empty. |
+| `At least one integration ID is required` | `-i` was present but resolved to an empty list, usually a stray comma. |
+| `JSON file not found: <path>` | Check the path you passed to `--json`. |
+| `Failed to parse JSON file: <reason>` | Your campaign file is not valid JSON. Run it through `jq . campaign.json`. |
+| `Failed to parse settings JSON: <reason>` | The `--settings` string is malformed, usually shell quoting. See **JSON in the shell** under [Common gotchas](#common-gotchas). |
+| `Failed to parse data JSON: <reason>` | Same problem on the `-d` flag of `integrations:trigger`. |
+| `--release-id is required` | `posts:connect` needs `--release-id "<id>"`. |
+| `Invalid values: Argument: status, Given: "...", Choices: "draft", "schedule"` | `posts:status` accepts only those two values, and yargs rejects anything else before the command runs. |
+| `Not enough non-option arguments: got 0, need at least 1` | A required positional is missing, for example the `<id>` on `posts:delete` or the `<file>` on `upload`. Check `postqueen <command> --help` for the exact shape. |
+
+## Post creation errors
+
+| Message | What happened | Fix |
+|---------|---------------|-----|
+| `API Error (400): ... "Integration with id <id> not found"` | The integration ID does not belong to your organization, or it was disconnected. | Run `integrations:list` and copy a current ID. |
+| `API Error (400): ... "All posts must have an integration id"` | A campaign file has a `posts` entry without `integration.id`. | Add the `integration` object to every entry. |
+| `API Error (400): ... "date must be a valid ISO 8601 date string"` | `-s` was not ISO 8601. | Use the full form with a timezone: `"2026-12-31T12:00:00Z"`. |
+| `API Error (400): ... "If images do not exist, content must be a non-empty string."` | A post item has neither text nor media. | Give every `-c` real content, or attach media to it. |
+| `API Error (400): ... "Your post should have at least one character or one image."` | Same situation, caught by the server-side post validator. | Same fix. |
+| `API Error (400): ... "Please fix your settings"` | The provider's settings schema rejected your `--settings` payload. The message is often replaced by a provider-specific one that names the missing field. | Run `integrations:settings <id>` and match the schema. |
+| `API Error (400): ... "post is too long, please fix it"` | The content exceeds that platform's character limit. | Check `maxLength` in `integrations:settings <id>`. |
+| `API Error (429): ... "ThrottlerException: Too Many Requests"` | You crossed the public API rate limit, 30 requests per hour on PostQueen Cloud. | Wait for the window to roll, or batch multiple channels into one `posts:create` with a comma-separated `-i`. Self-hosters can raise `API_LIMIT`. |
+
+Settings and length failures come back in a shape that names the channel that rejected the post, which is what you want when you posted to six at once:
+
+```json
+{
+  "statusCode": 400,
+  "provider": "reddit",
+  "name": "r/programming",
+  "message": "Please fix your settings"
+}
+```
+
+<Note>
+The provider-level checks above (`Please fix your settings`, `post is too long, please fix it`) are skipped when `type` is `draft`. The settings schema itself is still validated, so a draft with an incomplete `--settings` payload is still rejected, and the empty-content check applies either way.
+</Note>
+
+## Integration and lookup errors
+
+| Message | What happened | Fix |
+|---------|---------------|-----|
+| `API Error (404): {"msg":"Integration not found"}` | `integrations:settings` or `integrations:trigger` got an ID that is not yours. | `integrations:list` for current IDs. |
+| `API Error (404): {"msg":"Integration provider not found"}` | The channel exists but its provider is not registered on this instance. | On self-hosted setups, check that the provider is not disabled. |
+| `API Error (404): {"msg":"Tool not found"}` | The method name passed to `integrations:trigger` is not exposed by that provider. | The valid names are in the `tools` array of `integrations:settings <id>`. |
+
+## Listing errors
+
+| Message | What happened | Fix |
+|---------|---------------|-----|
+| `API Error (400): ... "startDate must be a valid ISO 8601 date string"` | `--startDate` or `--endDate` was not ISO 8601. | Use `"2026-01-01T00:00:00Z"`. Omit both flags to get the default window: 30 days back through 30 days ahead. |
+
+## Upload errors
+
+`upload` prefixes every failure with `Failed to upload file:`. Server rejections then add `Upload failed (<status>):` and the response body.
+
+| Message | What happened | Fix |
+|---------|---------------|-----|
+| `Failed to upload file: ENOENT: no such file or directory` | The CLI could not read the local file, so nothing was sent. | Check the path. `upload` takes a filesystem path, not a URL. |
+| `Upload failed (400): ... "No file provided"` | The request arrived without a file part. | Make sure the path points at a real file, not an empty one. |
+| `Upload failed (400): ... "Unsupported file type."` | The API inspects the file's actual bytes, not its extension. Accepted: JPEG, PNG, GIF, WebP, AVIF, BMP, and TIFF images, plus MP4 video. | Convert the file. Renaming it will not help, because detection ignores the extension. |
+| `Upload failed (400): ... "File size exceeds the maximum allowed size of <n> bytes."` | Images cap at 10 MB, video at 1 GB. | Compress it, or upload a lower bitrate export. |
+| `File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4` | The upload succeeded, but the stored path ends in an extension posts cannot use. AVIF, BMP and TIFF upload fine and then cannot be attached. | Convert to PNG, JPG, GIF, WebP or MP4 before uploading. |
+| `All media must be uploaded through our upload API route and contain the domain: <domain>` | A self-hosted instance has `RESTRICT_UPLOAD_DOMAINS` set and your `-m` value points somewhere else. | Upload through `postqueen upload` and pass the returned `path`. |
+
+## Analytics returns `{"missing": true}`
+
+This is not an error. The post published, but the platform never handed back a usable post ID, so PostQueen has nothing to query analytics against. Reconnect it once and analytics work from then on.
+
+<Steps>
+  <Step title="Ask the provider what it has">
+    ```bash
+    postqueen posts:missing <post-id>
+    ```
+
+    You get back an array of recent items with an `id` and a preview `url`:
+
+    ```json
+    [
+      { "id": "7321456789012345678", "url": "https://.../cover-image.jpeg" }
+    ]
+    ```
+  </Step>
+  <Step title="Connect the right one">
+    ```bash
+    postqueen posts:connect <post-id> --release-id "7321456789012345678"
+    ```
+  </Step>
+  <Step title="Retry analytics">
+    ```bash
+    postqueen analytics:post <post-id>
+    ```
+  </Step>
+</Steps>
+
+<Note>
+If `analytics:post` returns an empty array `[]` instead, the post has not published yet or the provider does not expose post-level analytics. Only posts whose release ID is literally `missing` can be reconnected, and `posts:missing` returns `[]` for providers that cannot list recent content.
+</Note>
+
+## Common gotchas
+
+<AccordionGroup>
+  <Accordion title="jq fails because the output starts with a header line" icon="terminal">
+    Commands print a one-line human-readable header before the JSON, for example `🔌 Connected Integrations:` or `✅ File uploaded successfully!`. Pipe that straight into `jq` and it dies on the first token.
+
+    Drop the header first:
+
+    ```bash
+    postqueen integrations:list | tail -n +2 | jq -r '.[].id'
+    postqueen posts:list | tail -n +2 | jq '.posts | length'
+    ```
+
+    `posts:missing` is the one command that prints JSON with no header, so it pipes directly.
+  </Accordion>
+
+  <Accordion title="JSON in the shell" icon="quote-left">
+    Wrap JSON arguments in **single** quotes so the shell leaves the double quotes alone:
+
+    ```bash
+    postqueen posts:create \
+      -c "New thread" \
+      -s "2026-08-01T09:00:00Z" \
+      --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"text","url":"","is_flair_required":false}}]}' \
+      -i "reddit-123"
+    ```
+
+    Double quotes around the JSON let the shell expand `$` and eat the inner quotes, which is what produces `Failed to parse settings JSON`. For anything long, put it in a file and use `--json` instead.
+  </Accordion>
+
+  <Accordion title="The date is required and must be ISO 8601" icon="calendar">
+    `-s` has no default. Every `posts:create` needs an explicit ISO 8601 date, including drafts, since the date is what the post gets scheduled for when you promote it later.
+
+    ```bash
+    -s "2026-12-31T12:00:00Z"
+    ```
+
+    Generate one in a script:
+
+    ```bash
+    # One hour from now, UTC
+    DATE=$(date -u -v+1H +"%Y-%m-%dT%H:%M:%SZ")   # macOS
+    DATE=$(date -u -d "+1 hour" +"%Y-%m-%dT%H:%M:%SZ")  # GNU/Linux
+    ```
+  </Accordion>
+
+  <Accordion title="Media must be uploaded to PostQueen first" icon="cloud-arrow-up">
+    Every value you pass to `-m`, or to an `image` field in a campaign file, has to be the `path` value returned by `postqueen upload`, which is a hosted PostQueen URL. Local filenames and third-party URLs get rejected: TikTok, Instagram, YouTube and most other providers only accept media served from PostQueen.
+
+    ```bash
+    IMG=$(postqueen upload ./launch.png | tail -n +2 | jq -r '.path')
+    postqueen posts:create -c "We shipped" -m "$IMG" -s "2026-08-01T09:00:00Z" -i "instagram-123"
+    ```
+
+    The `tail -n +2` drops the `✅ File uploaded successfully!` header line so `jq` sees valid JSON.
+
+    This applies to quick tests too. There is no shortcut that skips the upload step.
+  </Accordion>
+
+  <Accordion title="File type is detected from content, not from the extension" icon="file-magnifying-glass">
+    The CLI guesses a MIME type from the extension when it builds the request, but the API re-detects the real type from the file's bytes and renames the stored file to match. So a `.jpg` that is secretly a PDF is rejected with `Unsupported file type.`, and a correctly formatted file with a wrong extension still uploads fine under its true type.
+
+    Keep extensions accurate anyway. It keeps your own scripts readable and avoids surprises when you inspect the returned `path`.
+  </Accordion>
+
+  <Accordion title="Character limits differ per platform" icon="text-width">
+    A thread that fits on Mastodon will be rejected by X. The limit for each channel is in its settings schema:
+
+    ```bash
+    postqueen integrations:settings <id> | tail -n +2 | jq '.output.maxLength'
+    ```
+
+    Exceeding it returns `post is too long, please fix it`, naming the provider that complained.
+  </Accordion>
+
+  <Accordion title="-d means different things on different commands" icon="triangle-exclamation">
+    | Command | `-d` is |
+    |---------|---------|
+    | `posts:create` | delay between items, in **minutes** (default `0`) |
+    | `analytics:platform`, `analytics:post` | lookback window, in **days** (default `7`) |
+    | `integrations:trigger` | a JSON **data** string for the tool |
+
+    `-s` splits the same way: it is `--date` on `posts:create` and `--status` on `posts:status`.
+
+    See the [Command Reference](/cli/command-reference) for the full flag list.
+  </Accordion>
+</AccordionGroup>
+
+## Still stuck?
+
+<CardGroup cols={2}>
+  <Card title="App troubleshooting" icon="wrench" href="/troubleshooting/overview">
+    Channel connection failures, uploads, billing, and login problems in the app itself
+  </Card>
+  <Card title="Command Reference" icon="terminal" href="/cli/command-reference">
+    Every command, flag, and default in one place
+  </Card>
+  <Card title="Report a bug" icon="github" href="https://github.com/GkhanKINAY/postqueen-agent/issues">
+    Open an issue on the CLI repository
+  </Card>
+  <Card title="Email support" icon="envelope" href="mailto:support@postqueen.ai">
+    support@postqueen.ai
+  </Card>
+</CardGroup>

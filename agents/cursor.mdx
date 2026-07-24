@@ -1,0 +1,178 @@
+---
+title: 'Cursor'
+description: "Ship the feature and schedule the announcement in one sitting: Cursor's agent drives her over MCP or the postqueen CLI"
+---
+
+## Working with her inside the editor
+
+Cursor is the AI code editor with an agent mode and MCP support, which means she can sit right beside the diff you just merged. The changelog entry and the launch post are usually the same idea written twice, and the agent already has the first one open. Ask for the second and it lands on your calendar without a context switch.
+
+## Set up
+
+Two routes, and you can take either. MCP is the native one here: Cursor's agent gets her 10 hosted tools and asks for your approval before it calls them. Her skill plus the `postqueen` CLI is the other, and it suits the agent terminal when you would rather see the exact command that ran.
+
+<Steps>
+  <Step title="Grab your API key">
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Both routes below use this one key. Treat it like a password, since it grants full access to your account.
+  </Step>
+  <Step title="Route A: connect over MCP">
+    Cursor reads MCP servers from `.cursor/mcp.json` in a project root, or from `~/.cursor/mcp.json` for every project. Add her hosted server there:
+
+    ```json .cursor/mcp.json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+        }
+      }
+    }
+    ```
+
+    The Settings UI walkthrough, the Authorization-header variant and self-hosted URLs are all on the [Cursor MCP page](/mcp/clients/cursor).
+
+    <Warning>
+    A project-level `.cursor/mcp.json` carries your key into the repo. Add it to `.gitignore`, or keep the server in `~/.cursor/mcp.json` and leave the project clean. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+    </Warning>
+  </Step>
+  <Step title="Route B: install the CLI and her skill">
+    ```bash
+    npm install -g postqueen
+    npx skills add GkhanKINAY/postqueen-agent
+    ```
+
+    The skill is her `SKILL.md`, and it teaches the agent her command set before it runs anything. Then export the key in the shell Cursor's terminal inherits:
+
+    ```bash
+    export POSTQUEEN_API_KEY="your-api-key"
+    ```
+
+    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
+
+    ```bash
+    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
+    ```
+  </Step>
+  <Step title="Verify the connection">
+    In agent mode, ask: *"List my connected social media accounts."* Over MCP the agent calls `integrationList`; over the CLI it runs:
+
+    ```bash
+    postqueen integrations:list
+    ```
+
+    A JSON list of your channels with their integration IDs means she is ready.
+  </Step>
+</Steps>
+
+## 👑 Posts about the feature you just shipped
+
+The saved-views branch is merged and the changelog is written. Ask in the same window:
+
+> *"We just shipped saved views. Read the changelog entry, draft three posts about it for X, LinkedIn and Bluesky, and hold them as drafts."*
+
+Here is what the agent runs underneath.
+
+It reads the repo for the source material, then discovers where the posts can go:
+
+```bash
+postqueen integrations:list
+```
+
+Before writing a word, it asks each channel what it accepts. The response carries character limits and required settings, so a LinkedIn draft does not arrive shaped like a tweet:
+
+```bash
+postqueen integrations:settings <integration-id>
+```
+
+Then it creates each post with `-t draft`, which tells her to hold it for you rather than queue it for publishing. The settings schema is validated even for a draft, so X still needs its `who_can_reply_post` value:
+
+```bash
+postqueen posts:create \
+  -c "Saved views are live. Filter once, name it, and it is waiting for you tomorrow." \
+  -s "2026-08-01T09:00:00Z" \
+  -t draft \
+  --settings '{"who_can_reply_post":"everyone"}' \
+  -i "twitter-id"
+```
+
+For a whole set at once, the agent can write a campaign file and pass it with `--json`, which is the cleaner path when the copy differs per channel. The file is the request body her API receives, so it carries the top-level `type`, `date`, `shortLink` and `tags` alongside one entry per channel:
+
+```json launch-week.json
+{
+  "type": "draft",
+  "date": "2026-08-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "your-x-integration-id" },
+      "value": [
+        { "content": "Saved views are live 🎉", "image": [] }
+      ],
+      "settings": { "__type": "x", "who_can_reply_post": "everyone" }
+    },
+    {
+      "integration": { "id": "your-linkedin-integration-id" },
+      "value": [
+        { "content": "Saved views are live. Here is the thinking behind them...", "image": [] }
+      ],
+      "settings": { "__type": "linkedin" }
+    }
+  ]
+}
+```
+
+```bash
+postqueen posts:create --json launch-week.json
+```
+
+<Note>
+`image` is required on every entry, so pass `[]` when a post has no media. Any value inside it has to be a URL returned by `postqueen upload`, the same rule that applies to `-m`. See [Media upload](/cli/media-upload).
+</Note>
+
+The three drafts are now on your calendar at [app.postqueen.ai](https://app.postqueen.ai). Edit the copy there and publish when you are happy, or promote one from the terminal:
+
+```bash
+postqueen posts:status <post-id> --status schedule
+```
+
+She runs on your terms. Drafts wait for your approval, and a post you schedule goes out at its time without another word from you.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need Cursor to use PostQueen?">
+    No. She works on her own through the dashboard, the CLI and the public API. Cursor is one of several ways to automate her, and the one to pick when the announcement should be written where the code is.
+  </Accordion>
+  <Accordion title="MCP or the CLI in Cursor?">
+    MCP is the smoother fit for agent mode: 10 tools, no local install, and an approval prompt before each call. The CLI is better when you want the exact command visible in the terminal, or when you plan to reuse the same script in CI later. Configuring both is fine.
+  </Accordion>
+  <Accordion title="Can the agent write posts from my repo?">
+    Yes, and that is the point of running her here. Cursor's agent can read your changelog, your release notes or the diff itself, then turn them into posts shaped for each channel. You still see every draft on the calendar before anything reaches an audience.
+  </Accordion>
+  <Accordion title="Will it publish without asking me?">
+    Only if you set it up that way. Cursor asks for approval before running MCP tools by default, so keep that on for `integrationSchedulePostTool`. On the CLI side, `-t draft` holds each post on the calendar until you approve it.
+  </Accordion>
+  <Accordion title="Can one brief cover my other channels too?">
+    Yes. PostQueen connects 30+ networks, so the same brief can become posts for every channel you have connected, each one adapted to what that channel accepts.
+  </Accordion>
+  <Accordion title="Does the integration cost extra?">
+    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.
+  </Accordion>
+</AccordionGroup>
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Cursor over MCP" icon="plug" href="/mcp/clients/cursor">
+    The full `.cursor/mcp.json` reference, the Settings UI flow and self-hosted URLs.
+  </Card>
+  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
+    The `postqueen` CLI behind Route B, with installation and the full command set.
+  </Card>
+  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
+    Why an agent can drive her without guesswork, and the two rules that matter most.
+  </Card>
+  <Card title="Agents overview" icon="compass" href="/agents/overview">
+    Every way to put an agent in front of PostQueen, from coding assistants to chat apps.
+  </Card>
+</CardGroup>

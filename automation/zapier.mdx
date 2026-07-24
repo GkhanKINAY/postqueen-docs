@@ -1,0 +1,183 @@
+---
+title: Zapier
+description: 'Connect Zapier to PostQueen today with Webhooks by Zapier, in both directions'
+---
+
+<Note>
+A native PostQueen app for Zapier is coming soon. Until it lands, the setup below already works with the tools Zapier ships out of the box.
+</Note>
+
+Zapier talks to PostQueen through the [Public API](/public-api/introduction), the same API behind the [CLI](/cli/introduction) and the [n8n node](/automation/n8n). Two directions are available today:
+
+<CardGroup cols={2}>
+  <Card title="Zapier to PostQueen" icon="arrow-right">
+    A Zap step creates a post on your calendar. Use **Webhooks by Zapier** as the action.
+  </Card>
+  <Card title="PostQueen to Zapier" icon="arrow-left">
+    A PostQueen webhook fires when a post publishes and starts your Zap. Use **Catch Hook** as the trigger.
+  </Card>
+</CardGroup>
+
+<Warning>
+**Webhooks by Zapier** is a premium app. Zapier lists it on the Professional, Team, and Enterprise plans, so it is not available on the Free plan. See [Send webhooks in Zaps](https://help.zapier.com/hc/en-us/articles/8496326446989-Send-webhooks-in-Zaps) for the current plan table.
+</Warning>
+
+## Before you start
+
+Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and hit **Reveal**. Treat it like a password and paste it only into the Zap step that needs it.
+
+Every request in this guide uses the same two headers:
+
+| Header | Value |
+| --- | --- |
+| `Authorization` | Your raw API key. There is no `Bearer` prefix on the PostQueen Public API. |
+| `Content-Type` | `application/json` |
+
+## Post from Zapier
+
+Any Zap trigger you already use can end in a PostQueen post, whether that is a new row in a sheet or a new item in an RSS feed.
+
+<Steps>
+  <Step title="Add the action step">
+    In the Zap editor, add an action and search for **Webhooks by Zapier**. Pick the **Custom Request** event. The create-post body is nested JSON with arrays inside it, and Custom Request is the event that lets you paste raw JSON. The plain **POST** event works when your body is flat key/value data, which this one is not.
+  </Step>
+  <Step title="Set the method and URL">
+    Set **Method** to `POST` and **URL** to:
+
+    ```
+    https://api.postqueen.ai/public/v1/posts
+    ```
+  </Step>
+  <Step title="Add the headers">
+    In the **Headers** section, add `Authorization` with your raw API key as the value, then add `Content-Type` with `application/json`.
+  </Step>
+  <Step title="Paste the body into Data">
+    In **Custom Request**, whatever you type into **Data** is sent exactly as entered, so paste real JSON there and drop Zapier field mappings into the string values.
+
+    ```json
+    {
+      "type": "schedule",
+      "date": "2026-08-01T10:00:00.000Z",
+      "shortLink": false,
+      "tags": [],
+      "posts": [
+        {
+          "integration": {
+            "id": "your-integration-id"
+          },
+          "value": [
+            {
+              "content": "Hello from Zapier!",
+              "image": []
+            }
+          ],
+          "settings": {
+            "__type": "bluesky"
+          }
+        }
+      ]
+    }
+    ```
+  </Step>
+  <Step title="Test it">
+    Run the step. A successful call returns an array with one entry per channel, each holding `postId` and `integration`, and the post shows up on your PostQueen calendar right away. If the response complains about the date, check that `date` is ISO 8601 in UTC and in the future.
+  </Step>
+</Steps>
+
+### What the fields mean
+
+| Field | Notes |
+| --- | --- |
+| `type` | `schedule` publishes at `date`, `now` publishes immediately and ignores `date`, `draft` stores the post without scheduling it. |
+| `date` | ISO 8601 UTC timestamp, for example `2026-08-01T10:00:00.000Z`. |
+| `shortLink` | Set to `true` to run links through the short link service. |
+| `tags` | Required. Array of tag objects, each with `value` and `label`, for example `{"value": "launch", "label": "launch"}`. Send `[]` when you have none. |
+| `posts[].integration.id` | The channel this post goes to. See below for how to find it. |
+| `posts[].value[].content` | The post body. Additional entries in `value` become a thread. |
+| `posts[].settings.__type` | The provider identifier, such as `bluesky`, `x`, or `linkedin`. Some providers need extra settings alongside it. |
+
+Full field reference and the per-provider settings live on [Create Post](/public-api/posts/create).
+
+<Tip>
+If you build a Zap with the plain **POST** event instead, fill in the **Data** section explicitly rather than relying on Zapier's pass-through behavior for an empty payload.
+</Tip>
+
+## Find your integration IDs
+
+Each connected channel has an id. List them with the same header you used above:
+
+```bash
+curl https://api.postqueen.ai/public/v1/integrations \
+  -H "Authorization: YOUR_API_KEY"
+```
+
+```json
+[
+  {
+    "id": "cm4ean69r0003w8w1cdomox9n",
+    "name": "Jane Doe",
+    "identifier": "x",
+    "picture": "https://uploads.postqueen.ai/avatar.jpg",
+    "disabled": false,
+    "profile": "janedoe"
+  }
+]
+```
+
+Copy `id` into `posts[].integration.id`, and use `identifier` as your `settings.__type`. You can also run this call as its own Zap step with the **GET** event of Webhooks by Zapier when you want the list inside a workflow.
+
+<Warning>
+The create-post endpoint allows 30 requests per hour. A Zap that fires on a busy trigger can hit that ceiling, so add a filter or a delay when your source is chatty. On self-hosted instances the limit is the `API_LIMIT` environment variable.
+</Warning>
+
+## React to PostQueen events
+
+PostQueen webhooks go the other way. When a post publishes, PostQueen sends a `POST` request with a JSON body to a URL you configure, and a Zapier **Catch Hook** trigger is a valid destination for it.
+
+<Steps>
+  <Step title="Create the Catch Hook trigger">
+    Start a new Zap, choose **Webhooks by Zapier** as the trigger, and pick **Catch Hook**. In the **Test** tab, Zapier shows your unique webhook URL. Copy it.
+  </Step>
+  <Step title="Register the URL in PostQueen">
+    Add that URL as a webhook in PostQueen. You can scope a webhook to specific channels or leave it open to all of them. The setup steps are on [Webhooks](/automation/webhooks).
+  </Step>
+  <Step title="Publish something and finish the test">
+    Let a post go out, or publish a test post, so Zapier receives a real payload to map fields from. Then build the rest of your Zap on top of it.
+  </Step>
+</Steps>
+
+The payload is a JSON array holding the published post. Each entry carries these fields:
+
+| Field | Notes |
+| --- | --- |
+| `id` | The post id in PostQueen. |
+| `content` | The published content. |
+| `publishDate` | Scheduled publish time, in ISO 8601. |
+| `releaseURL` | Link to the post on the network, when the provider returns one. |
+| `state` | The post state at the time of the call. |
+| `integration` | Object describing the channel, including its `id`, `name`, and `providerIdentifier`. |
+
+**Catch Hook** parses that body for you. Choose **Catch Raw Hook** instead when you want the unparsed body and the request headers.
+
+## Self-hosting
+
+Swap the base URL. Everything else in this guide stays the same:
+
+| Deployment | Base URL |
+| --- | --- |
+| Cloud | `https://api.postqueen.ai/public/v1` |
+| Self-hosted | `https://YOUR-DOMAIN/api/public/v1` |
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Create Post" icon="paper-plane" href="/public-api/posts/create">
+    Every field of the request body, with per-provider settings.
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    Authentication, base URLs, and the rest of the endpoints.
+  </Card>
+  <Card title="n8n" icon="diagram-project" href="/automation/n8n">
+    Prefer n8n? A community node handles the API calls for you.
+  </Card>
+</CardGroup>

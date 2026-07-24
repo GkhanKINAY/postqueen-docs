@@ -3,6 +3,10 @@ title: OAuth2 Authentication
 description: 'Let users authorize your app to access PostQueen on their behalf'
 ---
 
+## What You Can Build
+
+OAuth2 lets you build third-party apps and agents that act on behalf of PostQueen users. After a user approves your app on a consent screen, you receive a `pos_` access token that works on the Public API: list their connected channels, create and schedule posts, and pull analytics for their accounts. Tokens stay valid until the user revokes them, which they can do at any time from **Settings > Approved Apps** in their dashboard.
+
 ## Overview
 
 PostQueen supports OAuth2 Authorization Code flow, allowing you to build third-party applications that act on behalf of PostQueen users. Instead of asking users for their API key, your app redirects them to PostQueen where they approve access, and you receive a token to make API calls on their behalf.
@@ -33,7 +37,11 @@ sequenceDiagram
 
 <Steps>
   <Step title="Register Your OAuth App">
-    Go to **Settings > Developers > Apps** in your PostQueen dashboard and create an OAuth application.
+    Go to **Settings**, then **Developers**, then **Apps** in your PostQueen dashboard and create an OAuth application.
+
+    <Note>
+    Each organization has one OAuth application. The Developers tab appears for organization admins on a plan that includes the public API.
+    </Note>
 
     You will need to provide:
     - **App Name** - displayed to users on the consent screen
@@ -54,8 +62,10 @@ sequenceDiagram
     When a user wants to connect their PostQueen account to your app, redirect them to:
 
     ```
-    https://{FRONTEND_URL}/oauth/authorize?client_id={CLIENT_ID}&response_type=code&state={STATE}
+    https://app.postqueen.ai/oauth/authorize?client_id={CLIENT_ID}&response_type=code&state={STATE}
     ```
+
+    Self-hosting? Use `https://YOUR-DOMAIN/oauth/authorize` instead.
 
     | Parameter | Required | Description |
     |-----------|----------|-------------|
@@ -93,7 +103,7 @@ sequenceDiagram
     ```
 
     <Tip>
-    Always verify that the `state` parameter matches what you originally sent to prevent CSRF attacks.
+    Verify that the `state` parameter matches what you originally sent to prevent CSRF attacks.
     </Tip>
   </Step>
 
@@ -101,7 +111,7 @@ sequenceDiagram
     Make a server-side `POST` request to exchange the authorization code for an access token:
 
     ```bash
-    curl -X POST https://{BACKEND_URL}/oauth/token \
+    curl -X POST https://api.postqueen.ai/oauth/token \
       -H "Content-Type: application/json" \
       -d '{
         "grant_type": "authorization_code",
@@ -117,6 +127,8 @@ sequenceDiagram
     | `code` | Yes | The authorization code from the previous step |
     | `client_id` | Yes | Your app's Client ID |
     | `client_secret` | Yes | Your app's Client Secret |
+
+    Self-hosting? The token endpoint is `https://YOUR-DOMAIN/api/oauth/token`.
 
     **Response:**
 
@@ -146,7 +158,7 @@ sequenceDiagram
 
     ```bash
     curl -H "Authorization: pos_aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcd" \
-      https://{BACKEND_URL}/public/v1/integrations
+      https://api.postqueen.ai/public/v1/integrations
     ```
 
     The token works with all Public API endpoints:
@@ -167,7 +179,7 @@ sequenceDiagram
 
 ### Rotate Client Secret
 
-If your client secret is compromised, go to **Settings > Developers > Apps** and click **Rotate Secret**. This invalidates the old secret immediately — any token exchange requests using the old secret will fail.
+If your client secret is compromised, go to **Settings > Developers > Apps** and click **Rotate Secret**. This invalidates the old secret immediately, and any token exchange requests using the old secret will fail.
 
 <Note>
 Rotating the secret does **not** invalidate existing access tokens. Only new token exchange requests require the new secret.

@@ -1,45 +1,156 @@
 ---
 title: 'Hermes'
-description: 'The autonomous open-source agent that turns one brief into a planned, scheduled week over the postqueen CLI'
+description: 'Hand the autonomous Hermes agent one brief and it plans, writes and schedules your week over the postqueen CLI'
 ---
 
 ## What Hermes is
 
-Hermes is a self-improving autonomous agent that runs on your own machine. It is open source, and it speaks PostQueen natively: everything it does goes through the same `postqueen` CLI you would type yourself, so every post it touches shows up on your calendar.
+Hermes is an open-source autonomous agent by Nous Research that runs on your own machine. It keeps a persistent memory across sessions, follows multi-step plans and runs real shell commands. Pointed at the `postqueen` CLI, it becomes a social media operator: hand it one brief and it drafts, schedules and then verifies its own work, and every post it touches shows up on your PostQueen calendar.
 
-Hermes is a third-party project with its own home and its own installation guide, so this page stays short on purpose. It covers what Hermes can do with PostQueen and what she needs from you to let it in.
+Hermes can also front your chat apps: WhatsApp and Telegram from your pocket, Slack and Discord with your team. With Hermes running, she reads your messages there and answers the way a colleague would.
 
-## What it does with her
+<Note>
+The PostQueen mobile app is on the way. You are not waiting on it, though: through OpenClaw or Hermes she already answers on the phone in your pocket.
+</Note>
 
-Hand Hermes a single brief and it takes it from there: it plans your week, writes the posts and schedules them over the CLI, on its own. You describe the outcome once, and the calendar fills in.
+## What you need
 
-It can also front your chat apps. With Hermes running on your machine, she reads your WhatsApp and Telegram messages and answers right there, the way a colleague would. The PostQueen mobile app is on the way, but she already answers on your phone: through OpenClaw or Hermes, or at [app.postqueen.ai](https://app.postqueen.ai).
-
-Hermes can run on a schedule too, not just on demand. A small recurring job can wake up before you do, check yesterday's numbers and have today's post drafted while your coffee is still brewing.
-
-## You stay in charge
-
-Everything Hermes does lands on your calendar, in the open. She runs on your terms: leave the schedule alone and every planned post goes out on time without another word from you, or ask for drafts and she holds each post until you approve it.
+- A machine that can run Hermes: macOS, Linux, or Windows. The installer pulls `uv` and Python 3.11 rather than Node.
+- An API key for a model provider such as Anthropic, OpenAI or OpenRouter, which Hermes asks for during setup
+- The `postqueen` CLI, plus the PostQueen skill that teaches Hermes her command set
+- Your `POSTQUEEN_API_KEY`
+- `POSTQUEEN_API_URL`, only if you self-host PostQueen
 
 ## Set it up
 
-Installing and configuring Hermes itself is the Hermes project's job, and its guide does it better than a summary here would. Start at [postqueen.ai/hermes-agent](https://postqueen.ai/hermes-agent).
+<Steps>
+  <Step title="Install Hermes">
+    The Hermes project ships its own installer. On macOS or Linux:
 
-On the PostQueen side, Hermes needs two things:
+    ```bash
+    curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+    ```
 
-1. **The PostQueen skill**, so it knows her full command set instead of guessing:
+    On Windows, use the PowerShell installer instead:
 
-   ```bash
-   npx skills add GkhanKINAY/postqueen-agent
-   ```
+    ```powershell
+    iex (irm https://hermes-agent.nousresearch.com/install.ps1)
+    ```
 
-2. **Your API key** in the `POSTQUEEN_API_KEY` environment variable. Grab it at [app.postqueen.ai](https://app.postqueen.ai) under **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+    For anything Hermes-specific after that, from linking chat apps to picking a model, the [Hermes repository](https://github.com/NousResearch/hermes-agent) is the guide to follow.
+  </Step>
+  <Step title="Install the postqueen CLI where Hermes runs">
+    Hermes executes shell commands on the machine it lives on, so the CLI has to be there too:
+
+    ```bash
+    npm install -g postqueen
+    ```
+  </Step>
+  <Step title="Install the PostQueen skill">
+    ```bash
+    npx skills add GkhanKINAY/postqueen-agent
+    ```
+
+    The skill gives Hermes her complete command set and the patterns behind it, so it works from documented commands instead of guessing.
+
+    Hermes loads skills from `~/.hermes/skills/` plus any directory listed under `skills.external_dirs`, while the `skills` CLI installs into `~/.agents/skills`. Point Hermes at that directory so it picks the skill up:
+
+    ```yaml ~/.hermes/config.yaml
+    skills:
+      external_dirs:
+        - ~/.agents/skills
+    ```
+
+    Hermes reads the skill on its next start. The [Hermes skills guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) covers the loader in full.
+  </Step>
+  <Step title="Export your API key">
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Export it in the environment Hermes runs in:
+
+    ```bash
+    export POSTQUEEN_API_KEY="your-api-key"
+    ```
+
+    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
+
+    ```bash
+    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
+    ```
+  </Step>
+  <Step title="Verify the connection">
+    ```bash
+    postqueen integrations:list
+    ```
+
+    A JSON list of your connected channels means she is ready. You can also run `postqueen auth:status` to confirm your credentials are valid.
+  </Step>
+</Steps>
+
+## 👑 One brief, a full week
+
+Once connected, give Hermes a single brief:
+
+> "Draft five posts about our new release and schedule them across all our channels this week."
+
+Hermes reads the skill and works the plan on its own:
+
+1. It runs `postqueen integrations:list` to find your connected channels and their integration IDs.
+2. It checks what each channel accepts with `postqueen integrations:settings` before writing a word.
+3. It writes the posts and runs any media through `postqueen upload` first, since only the returned URL belongs in `-m`.
+4. It schedules each post with `postqueen posts:create` and a concrete ISO date, then lists what it scheduled to confirm the plan landed.
+
+Everything ends up on your calendar at [app.postqueen.ai](https://app.postqueen.ai), in the open. Tell Hermes to use `-t draft` and each post waits there for your approval.
+
+## On a schedule
+
+Hermes ships a built-in cron scheduler, so the brief does not have to come from you each morning. You create a recurring job by asking in chat or with the `hermes cron create` command; the exact syntax lives in the [Hermes cron guide](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron). A recurring brief as small as this one keeps the calendar fed:
+
+> "Every morning at 4 am, check yesterday's PostQueen numbers and draft today's post."
+
+Under the hood, that job is two CLI calls:
+
+```bash
+# Check yesterday's numbers
+postqueen analytics:platform "your-integration-id"
+
+# ...then draft today's post based on what worked
+postqueen posts:create \
+  -c "Draft shaped by yesterday's numbers" \
+  -s "2026-08-01T09:00:00Z" \
+  -t draft \
+  -i "your-integration-id"
+```
+
+<img src="/images/brand/nightshift.svg" alt="At 4 AM the agent wakes, checks yesterday's numbers and drafts today's post; it waits on your calendar for 9 AM" />
+
+Drafts wait on your calendar until you promote them, so the night shift proposes and you still decide.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need Hermes to use PostQueen?">
+    No. She works on her own through the dashboard, the CLI and the API. Hermes is one of several ways to automate her.
+  </Accordion>
+  <Accordion title="What can Hermes actually do with PostQueen?">
+    Everything the CLI exposes. It can list your channels and check their settings, create and schedule posts, and it can upload media and pull analytics afterwards, with JSON output an agent can parse on each command.
+  </Accordion>
+  <Accordion title="Can I review posts before they publish?">
+    Yes. Ask Hermes to create drafts, review them on the PostQueen calendar and approve each one when it is ready.
+  </Accordion>
+  <Accordion title="Does the integration cost extra?">
+    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.
+  </Accordion>
+</AccordionGroup>
+
+## Learn more
 
 <CardGroup cols={2}>
   <Card title="Agents overview" icon="robot" href="/agents/overview">
-    How PostQueen works with AI agents, and which door fits which assistant
+    Every way to put an agent in front of PostQueen, from coding assistants to chat apps.
   </Card>
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
-    Install the CLI Hermes drives, set your key and learn the command set
+    The `postqueen` CLI that Hermes drives: installation, authentication and the full command set.
+  </Card>
+  <Card title="Hermes project" icon="arrow-up-right-from-square" href="https://github.com/NousResearch/hermes-agent">
+    The official Hermes repository from Nous Research, with its installer and documentation.
   </Card>
 </CardGroup>

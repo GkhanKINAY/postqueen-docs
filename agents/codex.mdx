@@ -1,0 +1,187 @@
+---
+title: Codex
+description: 'Teach OpenAI Codex her CLI and the announcement ships with the code, from your terminal or your pipeline'
+---
+
+## Working with her in the repo
+
+Codex is OpenAI's software engineering agent. It works inside a repo, runs real commands and checks its own results, which is exactly the shape her CLI was built for. Point Codex at `postqueen` and shipping a release stops being two jobs: the code goes out and the launch posts land on the calendar in the same session.
+
+Because Codex runs commands rather than clicking a dashboard, it fits the places a person does not want to be at 6 AM. A cron entry or a CI job can hold the same session, run the same commands and report back.
+
+## Set up
+
+<Steps>
+  <Step title="Install the CLI where Codex runs">
+    Codex executes shell commands on the machine or container it lives in, so the CLI belongs there too:
+
+    ```bash
+    npm install -g postqueen
+    ```
+  </Step>
+  <Step title="Install the PostQueen skill">
+    ```bash
+    npx skills add GkhanKINAY/postqueen-agent
+    ```
+
+    The skill hands Codex her complete command reference along with the patterns behind it, so it arrives knowing the discovery flow and the media rule instead of guessing at flags.
+  </Step>
+  <Step title="Export your API key">
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Export it in the environment Codex runs in:
+
+    ```bash
+    export POSTQUEEN_API_KEY="your-api-key"
+    ```
+
+    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
+
+    ```bash
+    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
+    ```
+  </Step>
+  <Step title="Verify the connection">
+    ```bash
+    postqueen integrations:list
+    postqueen auth:status
+    ```
+
+    A JSON list of your connected channels means she is ready, and `auth:status` confirms the credentials are valid.
+  </Step>
+</Steps>
+
+<Note>
+Prefer tool calls to shell commands? The Codex CLI speaks MCP natively, so you can register her hosted server in `~/.codex/config.toml` and skip the local install. The [Codex MCP page](/mcp/clients/codex) has both the URL form and the bearer-token form, which keeps your key out of the config file.
+</Note>
+
+## 👑 One campaign file, a whole launch
+
+For a single post, flags are enough. For a launch where each network gets its own wording, write the campaign to a file and hand the file over:
+
+```bash
+postqueen posts:create --json campaign.json
+```
+
+The file is the request body her API receives, so anything the API accepts you can put in it. Here is a two-channel launch, scheduled for the same moment:
+
+```json campaign.json
+{
+  "type": "schedule",
+  "date": "2026-08-01T10:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "your-x-integration-id" },
+      "value": [
+        { "content": "Dark mode is live. Ship it at 2 AM like the rest of us 🌙", "image": [] }
+      ],
+      "settings": { "__type": "x", "who_can_reply_post": "everyone" }
+    },
+    {
+      "integration": { "id": "your-linkedin-integration-id" },
+      "value": [
+        {
+          "content": "v3.2 is out: dark mode, faster cold starts and a rewritten settings screen. Release notes in the comments.",
+          "image": []
+        }
+      ],
+      "settings": { "__type": "linkedin" }
+    }
+  ]
+}
+```
+
+Reading the shape:
+
+| Field | What it does |
+|---|---|
+| `type` | `schedule` publishes at `date`, `now` publishes immediately, `draft` parks the post for approval |
+| `date` | ISO 8601, required even for a draft |
+| `shortLink` | Whether her link shortener rewrites URLs in the content |
+| `posts[].integration.id` | An integration ID from `postqueen integrations:list` |
+| `posts[].value` | The post itself, plus one entry per follow-up comment or thread item |
+| `posts[].value[].image` | Uploaded media as `{ "id", "path" }` objects, where `path` is a URL returned by `postqueen upload` |
+| `posts[].settings.__type` | The provider whose settings schema applies, such as `x`, `linkedin` or `reddit`. You can leave it out, since the backend fills it in from the integration ID |
+| `posts[].settings` | The provider's own fields. X requires `who_can_reply_post`, and the schema is validated even when `type` is `draft` |
+
+Required fields differ per network, and [Create Post](/public-api/posts/create) lists them for each one. `postqueen integrations:settings <integration-id>` reports the same thing at runtime, which is what Codex should call before writing a campaign file for a channel it has not posted to yet.
+
+<Warning>
+Every value in an `image` array has to be a URL that came back from `postqueen upload`. Raw local paths and outside links get rejected by the publishing pipeline, so upload first and paste the returned `path`:
+
+```bash
+IMAGE_URL=$(postqueen upload release-banner.png | tail -n +2 | jq -r '.path')
+```
+</Warning>
+
+## In a pipeline
+
+A campaign file is plain JSON and a CLI call is a plain command, so a release job can announce itself. Generate the file from your tag and changelog, then create the posts as a step:
+
+```yaml
+- name: Announce the release
+  env:
+    POSTQUEEN_API_KEY: ${{ secrets.POSTQUEEN_API_KEY }}
+  run: |
+    npm install -g postqueen
+    postqueen posts:create --json ./campaign.json
+```
+
+Two habits keep this pleasant to live with:
+
+- **Draft first.** Set `"type": "draft"` in the campaign file while you are getting a pipeline right. The posts appear on your calendar and wait for you, so a broken job costs you a click instead of a public apology.
+- **Watch the budget.** The create-post endpoint allows 30 requests per hour, and a campaign file counts as one request no matter how many networks it covers. Batch the launch into a single file rather than looping over channels.
+
+The same command works from cron on a small box. Cron does not read your shell profile, so set the key in the crontab itself:
+
+```bash
+POSTQUEEN_API_KEY=your-api-key
+
+# Every weekday at 07:00, queue the campaign file your job just generated
+0 7 * * 1-5 /usr/local/bin/postqueen posts:create --json /srv/posts/today.json
+```
+
+<Tip>
+Ask Codex to verify its own work: `postqueen posts:list` returns what is on the calendar, so the task can end with proof rather than a claim. Commands that create, read or delete data exit `1` on failure, so a pipeline can branch on the exit code. `auth:status` is informational and exits `0` even when it reports invalid credentials, so read its output rather than its status.
+</Tip>
+
+## Staying in control
+
+She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever a job puts on the calendar goes out on time without another word from you. Want more say? Everything is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and a campaign file with `"type": "draft"` holds each post until you approve it there.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need Codex to use PostQueen?">
+    No. She works on her own through the dashboard, the CLI and the API. Codex is one of several ways to automate her.
+  </Accordion>
+  <Accordion title="What can Codex actually do with PostQueen?">
+    Everything the CLI exposes. It can list your channels and read their settings, and it can upload media, schedule posts across your 30+ networks and pull analytics afterwards, with JSON output on every command.
+  </Accordion>
+  <Accordion title="Can I review posts before they publish?">
+    Yes. Ask Codex for drafts, or set `"type": "draft"` in the campaign file, and she holds each post on the calendar until you approve it.
+  </Accordion>
+  <Accordion title="Does the integration cost extra?">
+    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.
+  </Accordion>
+  <Accordion title="Flags or a campaign file?">
+    Flags for one post to one place. A campaign file once the wording differs per network, or once a script is generating the content, because a file is easier to diff and review than a long command.
+  </Accordion>
+</AccordionGroup>
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Codex MCP setup" icon="plug" href="/mcp/clients/codex">
+    Register her hosted server in `~/.codex/config.toml`, with or without the key in the URL
+  </Card>
+  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
+    The `postqueen` CLI that Codex drives: installation, authentication and the full command set
+  </Card>
+  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
+    Why her command line reads well to something that parses flags and JSON
+  </Card>
+  <Card title="Create Post API" icon="code" href="/public-api/posts/create">
+    The request body a campaign file mirrors, with every provider's settings schema
+  </Card>
+</CardGroup>

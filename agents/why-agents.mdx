@@ -1,0 +1,159 @@
+---
+title: 'Why agents love her'
+description: 'Why an AI agent can drive her without guesswork: flag-driven commands, JSON results and one skill file that teaches the rules.'
+---
+
+Plenty of tools assume a person with a mouse on the other end, and an agent ends up fighting them. Her command line was shaped the other way around, for something that reads flags and parses output. That happens to be what your assistant does best.
+
+## Why agents get along with her
+
+Input arrives as positional arguments and flags on one line, so an agent composes the whole call up front. Nothing waits for a keystroke halfway through, so a session cannot stall on a prompt nobody is there to answer.
+
+```bash
+postqueen posts:create \
+  -c "We just shipped dark mode 🌙" \
+  -s "2026-08-01T09:00:00Z" \
+  -i "your-integration-id"
+```
+
+Results come back as JSON after a one-line human-readable header, so an agent reads a field instead of guessing at wording on screen. Drop the header with `tail -n +2` before piping into `jq`:
+
+```bash
+REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
+```
+
+Failures are just as easy to detect. A command that succeeds exits with code `0`, a command that fails exits with `1` and puts a readable message on stderr, so a script or an agent loop can branch on the result without parsing prose.
+
+One exception: `auth:status` is a human-readable report rather than a JSON command. It exits `0` whether or not the key is valid, so read its output for the `✅ Credentials are valid` line rather than branching on the exit code.
+
+Discovery closes the loop. `integrations:settings` reports what a channel accepts, including character limits and required fields, and `integrations:trigger` fetches values that cannot be hardcoded such as subreddit flairs or YouTube playlists. An agent that has met a channel for the first time can still post to it correctly, because it asks her instead of assuming.
+
+## 👑 One command teaches your agent
+
+If your agent supports the `skills` registry, a single command hands it her whole playbook:
+
+```bash
+npx skills add GkhanKINAY/postqueen-agent
+```
+
+What lands is her `SKILL.md`. It registers under the name `postqueen`, declares `Bash(postqueen:*)` as the only tool it needs, and opens with the npm install line, so an agent that finds the CLI missing can put it in place before doing anything else.
+
+The skill is auto-discovered. Your agent reads it when the task looks like posting work, then arrives already knowing the discovery flow, the flags on `posts:create` and the media rule it has to respect. You do not paste command syntax into a chat window to get started.
+
+Because the skill is plain Markdown over a plain CLI, it is model-agnostic. Claude and GPT read the same file as Gemini or an open-source model running locally, and they all end up issuing the same commands. If a thing can run a shell command, it can run your social media.
+
+<Tip>
+Prefer tool calls to shell commands? Her hosted MCP server exposes the same capabilities as 10 tools, with no local install. See [MCP setup](/mcp/setup).
+</Tip>
+
+## Two hard rules
+
+Her skill file leads with these two, because almost every failed agent run traces back to one of them.
+
+<Warning>
+**Rule 1: authenticate first.** Commands fail without valid credentials. Export your key before anything else, then confirm with `postqueen auth:status`.
+
+```bash
+export POSTQUEEN_API_KEY=your_api_key
+postqueen auth:status
+```
+
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Treat it like a password, since it grants full access to your account.
+</Warning>
+
+<Warning>
+**Rule 2: upload media before attaching it.** Every value passed to `-m`, or to an `image` field in JSON mode, has to be a URL returned by `postqueen upload`. Raw local paths like `photo.jpg` and external links like `https://example.com/photo.jpg` get rejected by the publishing pipeline, and providers such as TikTok, Instagram and YouTube only accept a PostQueen-verified URL.
+
+```bash
+IMAGE_URL=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
+postqueen posts:create \
+  -c "Today's special" \
+  -m "$IMAGE_URL" \
+  -s "2026-08-01T12:00:00Z" \
+  -i "your-integration-id"
+```
+</Warning>
+
+<Note>
+`postqueen auth:login` runs an OAuth2 device flow against a self-hosted auth server. There is no hosted auth server at the moment, so the API key is the route to take on the hosted service.
+</Note>
+
+## The core workflow
+
+Every agent session follows the same seven beats, whether it is a coding assistant on your laptop or a job that wakes up at four in the morning.
+
+<Steps>
+  <Step title="Authenticate">
+    Set the key, then verify it before spending a single API call on a real post.
+
+    ```bash
+    export POSTQUEEN_API_KEY=your_api_key
+    postqueen auth:status
+    ```
+  </Step>
+  <Step title="Discover">
+    List the connected channels and read what each one accepts.
+
+    ```bash
+    postqueen integrations:list
+    postqueen integrations:settings <integration-id>
+    ```
+  </Step>
+  <Step title="Fetch dynamic data">
+    Pull the values that only the platform knows, such as flairs, playlists or company pages.
+
+    ```bash
+    postqueen integrations:trigger <integration-id> <method> -d '{"key":"value"}'
+    ```
+  </Step>
+  <Step title="Prepare media">
+    Send each file through upload and keep the returned `path`. The `tail -n +2` drops the header line, which is not JSON.
+
+    ```bash
+    IMAGE_URL=$(postqueen upload image.jpg | tail -n +2 | jq -r '.path')
+    ```
+  </Step>
+  <Step title="Post">
+    Schedule it. The `-s` date is required and takes ISO 8601, and `-t draft` tells her to hold the post for your approval instead.
+
+    ```bash
+    postqueen posts:create \
+      -c "Content" \
+      -m "$IMAGE_URL" \
+      -s "2026-08-01T09:00:00Z" \
+      -i "<integration-id>"
+    ```
+  </Step>
+  <Step title="Analyze">
+    Ask how it landed, per channel or per post. `-d` is the number of days to look back.
+
+    ```bash
+    postqueen analytics:platform <integration-id> -d 30
+    postqueen analytics:post <post-id> -d 7
+    ```
+  </Step>
+  <Step title="Resolve">
+    If `postqueen analytics:post` returns `{"missing": true}`, the post published but the platform withheld its ID. List the provider's recent content and link the right one.
+
+    ```bash
+    postqueen posts:missing <post-id>
+    postqueen posts:connect <post-id> --release-id "<content-id>"
+    ```
+  </Step>
+</Steps>
+
+That is the whole loop. An agent that follows it can run your calendar end to end, and every step it took is visible to you as a normal command with a normal result.
+
+## Where to go next
+
+<CardGroup cols={3}>
+  <Card title="Agents overview" icon="robot" href="/agents/overview">
+    The three ways in and a setup guide for each agent she works with
+  </Card>
+  <Card title="Command reference" icon="terminal" href="/cli/command-reference">
+    Every command and flag, with the exact syntax an agent needs
+  </Card>
+  <Card title="MCP setup" icon="plug" href="/mcp/setup">
+    Connect an MCP client to her 10 hosted tools in one line
+  </Card>
+</CardGroup>

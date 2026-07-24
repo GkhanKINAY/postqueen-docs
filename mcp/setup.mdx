@@ -1,104 +1,79 @@
 ---
 title: Client Setup
-description: 'Configure your AI client to connect to the PostQueen MCP server'
+description: 'Connect your AI client to the PostQueen MCP server'
 ---
 
-## Claude Desktop
+PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick your client from the grid below for a step-by-step guide, or use the endpoints directly if you already know your way around MCP configs.
 
-Add the following to your Claude Desktop MCP configuration file:
+## Endpoints
+
+The server accepts two connection forms. Both authenticate with the same API key.
 
 <Tabs>
-  <Tab title="macOS">
-    Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
-    ```json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "url": "https://api.postqueen.ai/mcp/your-api-key"
-        }
-      }
-    }
+  <Tab title="API Key in URL">
+    ```
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
   </Tab>
-  <Tab title="Windows">
-    Edit `%APPDATA%\Claude\claude_desktop_config.json`:
-
-    ```json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "url": "https://api.postqueen.ai/mcp/your-api-key"
-        }
-      }
-    }
+  <Tab title="Bearer Token">
+    ```
+    URL: https://api.postqueen.ai/mcp
+    Authorization: Bearer YOUR_API_KEY
     ```
   </Tab>
 </Tabs>
 
-Replace `your-api-key` with your actual API key from **Settings > Developers > Public API**.
+Your API key lives in the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
 
-## Claude Code
+<Warning>
+The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+</Warning>
 
-The fastest way is the CLI:
+## Pick Your Client
 
-```bash
-claude mcp add postqueen --transport http --url https://api.postqueen.ai/mcp/your-api-key
-```
-
-Or add it to your Claude Code config directly:
-
-```json
-{
-  "mcpServers": {
-    "postqueen": {
-      "url": "https://api.postqueen.ai/mcp/your-api-key"
-    }
-  }
-}
-```
-
-The Bearer-token transport works too — pick whichever your client supports better. Both authenticate the same way:
-
-```bash
-claude mcp add postqueen --transport http \
-  --url https://api.postqueen.ai/mcp \
-  --header "Authorization: Bearer your-api-key"
-```
-
-## Cursor
-
-In Cursor, go to **Settings > MCP** and add a new server:
-
-- **Name:** PostQueen
-- **Type:** HTTP
-- **URL:** `https://api.postqueen.ai/mcp/your-api-key`
-
-## Other MCP Clients
-
-Any MCP-compatible client can connect to PostQueen. Use the streamable HTTP transport:
-
-- **URL:** `https://api.postqueen.ai/mcp/your-api-key`
-- **Transport:** Streamable HTTP
-
-Or, if your client supports Bearer token authentication:
-
-- **URL:** `https://api.postqueen.ai/mcp`
-- **Transport:** Streamable HTTP
-- **Authorization:** `Bearer your-api-key`
+<CardGroup cols={2}>
+  <Card title="Claude Code" icon="terminal" href="/mcp/clients/claude-code">
+    Add PostQueen with one `claude mcp add` command
+  </Card>
+  <Card title="Claude Desktop" icon="desktop" href="/mcp/clients/claude-desktop">
+    Connect through the desktop app on macOS or Windows
+  </Card>
+  <Card title="Claude Web & Mobile" icon="mobile" href="/mcp/clients/claude-app">
+    Add PostQueen as a connector on claude.ai
+  </Card>
+  <Card title="ChatGPT" icon="message" href="/mcp/clients/chatgpt">
+    Use PostQueen from ChatGPT connectors
+  </Card>
+  <Card title="Cursor" icon="arrow-pointer" href="/mcp/clients/cursor">
+    Configure the MCP server in Cursor settings
+  </Card>
+  <Card title="Codex" icon="code" href="/mcp/clients/codex">
+    Wire PostQueen into the Codex CLI
+  </Card>
+  <Card title="Gemini CLI" icon="wand-magic-sparkles" href="/mcp/clients/gemini-cli">
+    Register the server in your Gemini CLI settings
+  </Card>
+  <Card title="Other Clients" icon="puzzle-piece" href="/mcp/clients/other-clients">
+    Generic setup for any MCP-compatible client
+  </Card>
+</CardGroup>
 
 ## Self-Hosted
 
-For self-hosted PostQueen instances, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
 
 ```
-https://your-postqueen-server.com/mcp/your-api-key
+https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
 ```
 
-## Verify Connection
+Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
+
+Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. See [Reverse Proxies](/reverse-proxies/caddy).
+
+## Verify
 
 Once connected, ask your AI agent:
 
 > "List my connected social media accounts"
 
-If the connection is working, the agent will call the `integrationList` tool and return your connected accounts.
+If the connection works, the agent calls the `integrationList` tool and returns your connected accounts. If it fails, check that the API key was pasted in full and that your client uses the streamable HTTP transport.

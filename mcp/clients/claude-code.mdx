@@ -1,0 +1,61 @@
+---
+title: Claude Code
+description: 'Connect Claude Code to the PostQueen MCP server'
+---
+
+Claude Code connects to PostQueen over streamable HTTP with a single `claude mcp add` command, giving it access to all 10 PostQueen tools from your terminal.
+
+## Add via CLI
+
+Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings**, then **Developers**, then **Public API**, click **Reveal**), then run:
+
+```bash
+claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+Replace `YOUR_API_KEY` with your actual key. By default this registers the server for you in the current project. Add `--scope user` to make PostQueen available in every project on your machine, or `--scope project` to share it with the repo through the `.mcp.json` file described below.
+
+## Project Config Alternative
+
+To share the server with everyone working in a repository, declare it in a `.mcp.json` file at the project root (the same file `claude mcp add --scope project` writes). Claude Code expands `${VAR}` environment variables there, so this form is the one that is safe to commit:
+
+```json .mcp.json
+{
+  "mcpServers": {
+    "postqueen": {
+      "type": "http",
+      "url": "https://api.postqueen.ai/mcp/${POSTQUEEN_API_KEY}"
+    }
+  }
+}
+```
+
+Everyone working in the repo exports their own `POSTQUEEN_API_KEY`, and no key ends up in version control. For a personal file you do not commit, a literal key in place of `${POSTQUEEN_API_KEY}` works the same way.
+
+<Note>
+Format per the official [Claude Code MCP documentation](https://code.claude.com/docs/en/mcp).
+</Note>
+
+## Bearer Variant
+
+If you prefer to keep the key out of the URL, use the bare `/mcp` endpoint with an Authorization header:
+
+```bash
+claude mcp add --transport http postqueen https://api.postqueen.ai/mcp --header "Authorization: Bearer YOUR_API_KEY"
+```
+
+<Warning>
+Your API key grants full access to your PostQueen workspace: treat it like a password, and use the `${POSTQUEEN_API_KEY}` form above in any `.mcp.json` you check in. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+</Warning>
+
+## Self-Hosted
+
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://your-postqueen-server.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP; see [Reverse Proxies](/reverse-proxies/caddy).
+
+## Verify
+
+Ask Claude Code:
+
+> "List my connected social media accounts"
+
+If the connection works, it calls the `integrationList` tool and returns your connected accounts. You can also run `claude mcp list` to confirm the server shows as connected.

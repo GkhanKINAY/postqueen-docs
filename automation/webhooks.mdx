@@ -1,0 +1,133 @@
+---
+title: Webhooks
+description: 'Get an HTTP call the moment a post goes live, and use it to start a workflow anywhere else'
+---
+
+A PostQueen webhook is outbound. When a post is published to one of your channels, PostQueen sends an HTTP POST to a URL you own, carrying the post that just went out. Nothing to poll, nothing to check: the calendar tells your other tools it is done.
+
+That one signal is enough to keep a whole stack in sync. A row lands in your sheet, a Slack channel hears about the launch, or an automation platform picks the payload up and carries on from there.
+
+## Add a webhook
+
+<Steps>
+  <Step title="Open the Webhooks tab">
+    In [app.postqueen.ai](https://app.postqueen.ai), open **Settings** and choose the **Webhooks** tab. The tab is deep-linkable, so `/settings?tab=webhooks` takes you straight there.
+  </Step>
+  <Step title="Click Add a webhook">
+    The heading shows how many webhooks you already have out of your allowance, for example `Webhooks (1/10)`.
+  </Step>
+  <Step title="Give it a name and a URL">
+    **Name** is yours to recognize later. **URL** is where the POST goes. It must be a public HTTPS address.
+  </Step>
+  <Step title="Choose which channels it covers">
+    **Integrations** offers **All integrations** or **Specific integrations**. Pick **All integrations** and the webhook fires for every channel you have connected. Pick **Specific integrations** and a channel picker appears, so a webhook can watch only your YouTube channel, or only the two LinkedIn accounts a client cares about.
+  </Step>
+  <Step title="Send a test, then save">
+    **Send Test** posts a sample payload to the URL right away and tells you whether the endpoint accepted it, so you can wire up the receiving side before a real post depends on it. **Save** stores the webhook.
+  </Step>
+</Steps>
+
+Saved webhooks are listed with their name and URL, each row with an **Edit** and a **Delete** button.
+
+<Note>
+The Webhooks tab only appears when your plan includes webhooks, and creating one past your allowance is refused with a message asking you to upgrade. On a self-hosted instance with no billing configured, plan checks are skipped entirely, so the tab is there and the count is not enforced.
+</Note>
+
+## When it fires
+
+The webhook fires after a post has been published successfully to a channel.
+
+- **One delivery per channel.** A post scheduled to three channels publishes as three separate runs, so a webhook set to **All integrations** hears three times, once per channel, as each one goes out.
+- **Only the channels you selected.** A webhook scoped to specific integrations is skipped for posts on any other channel.
+- **Only for real publishes.** Drafts do not reach the publishing step, and a post that fails on the network after its retries stops short of it too, so neither one triggers a webhook.
+
+<Warning>
+Delivery is fire and forget. If your endpoint is down or returns an error, PostQueen does not retry and does not surface the failure. Treat the webhook as a notification, not as a guaranteed queue, and use **Send Test** whenever you change the receiving side.
+</Warning>
+
+## What arrives
+
+PostQueen sends a `POST` with `Content-Type: application/json`. The body is a JSON **array** of post objects, so parse it as a list rather than as a single object.
+
+```json
+[
+  {
+    "id": "cm6tcts4f0005qcwit25cis26",
+    "content": "This is the first post to instagram",
+    "publishDate": "2025-02-06T13:09:00.000Z",
+    "releaseURL": "https://instagram.com/p/example",
+    "state": "PUBLISHED",
+    "integration": {
+      "id": "cm6s4uyou0001i2r47pxix6z1",
+      "name": "test",
+      "providerIdentifier": "instagram",
+      "picture": "https://example.com/sample-avatar.jpg",
+      "type": "social"
+    }
+  }
+]
+```
+
+| Field | Description |
+| --- | --- |
+| `id` | PostQueen's id for the post. |
+| `content` | The published content. |
+| `publishDate` | Scheduled publish time, in ISO 8601. |
+| `releaseURL` | Link to the post on the network. |
+| `state` | Post state, such as `PUBLISHED`. |
+| `integration.id` | Id of the channel the post went to. |
+| `integration.name` | Channel name as it appears in your calendar. |
+| `integration.providerIdentifier` | Network identifier, such as `instagram` or `youtube`. |
+| `integration.picture` | Channel avatar URL. |
+| `integration.type` | `social` or `article`. |
+
+<Tip>
+The request carries no signature and no auth header, so the URL is the only thing standing between your endpoint and the open internet. Use a long, unguessable URL, which is exactly what Zapier, Make and n8n hand you, and treat the payload as untrusted input.
+</Tip>
+
+### URL requirements
+
+The URL has to be **HTTPS** and has to resolve to a public address. PostQueen rejects `localhost`, loopback, link-local and private-network addresses such as `10.x.x.x`, `192.168.x.x`, `172.16.x.x` through `172.31.x.x` and `169.254.x.x`, both as literal IPs and as hostnames that resolve to them. The same check runs on **Send Test**.
+
+If you are developing against a local listener, put a public HTTPS tunnel in front of it and give PostQueen the tunnel URL.
+
+## Use it as a trigger
+
+Most no-code automation platforms have a "wait for an HTTP call" starting block. Point a PostQueen webhook at one and every published post becomes the first step of a workflow.
+
+<Steps>
+  <Step title="Create the catching step">
+    In **Zapier**, start a Zap with **Webhooks by Zapier**, then **Catch Hook**. In **Make**, add a **Custom webhook** module. In **n8n**, drop a **Webhook** node on the canvas and set it to `POST`.
+  </Step>
+  <Step title="Copy the URL it gives you">
+    Each of the three hands you a unique HTTPS URL. That is the value you paste into the webhook's **URL** field in PostQueen.
+  </Step>
+  <Step title="Hit Send Test">
+    With the catching step listening, press **Send Test** in PostQueen. The platform captures the sample body and learns the field structure, so `releaseURL`, `content` and `integration.name` become pickable fields in the steps that follow.
+  </Step>
+  <Step title="Build the rest of the workflow">
+    Post the link to Slack, append a row to a sheet, or update a CRM record. The payload is an array, so use the platform's iterate or line-item handling if you want a step per entry.
+  </Step>
+</Steps>
+
+Those same platforms can also push work back into PostQueen, so a webhook out and an API call in close the loop.
+
+## Next steps
+
+<CardGroup cols={3}>
+  <Card title="Zapier" icon="bolt" href="/automation/zapier">
+    Catch the hook, then send new posts back to PostQueen.
+  </Card>
+  <Card title="Make" icon="puzzle-piece" href="/automation/make">
+    Custom webhook in, HTTP module out, all in one scenario.
+  </Card>
+  <Card title="n8n" icon="diagram-project" href="/automation/n8n">
+    Webhook node in, PostQueen community node out.
+  </Card>
+  <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
+    The other direction: a feed that fills your calendar on its own.
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    Schedule, list and delete posts from your own code.
+  </Card>
+</CardGroup>

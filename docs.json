@@ -17,8 +17,9 @@
             "group": "Getting Started",
             "pages": [
               "introduction",
-              "howitworks",
               "quickstart",
+              "howitworks",
+              "faq",
               "support",
               "compliance"
             ]
@@ -74,45 +75,27 @@
             "pages": [
               "providers/overview",
               "configuration/create-provider",
-              {
-                "group": "Social Platforms",
-                "expanded": true,
-                "pages": [
-                  "providers/x-twitter",
-                  "providers/linkedin",
-                  "providers/linkedin-page",
-                  "providers/facebook",
-                  "providers/instagram",
-                  "providers/threads",
-                  "providers/bluesky",
-                  "providers/mastodon",
-                  "providers/google-my-business",
-                  "providers/mewe",
-                  "providers/farcaster"
-                ]
-              },
-              {
-                "group": "Video Platforms",
-                "expanded": true,
-                "pages": [
-                  "providers/youtube",
-                  "providers/tiktok"
-                ]
-              },
-              {
-                "group": "Other Platforms",
-                "expanded": true,
-                "pages": [
-                  "providers/reddit",
-                  "providers/pinterest",
-                  "providers/discord",
-                  "providers/slack",
-                  "providers/telegram",
-                  "providers/dribbble",
-                  "providers/skool",
-                  "providers/whop"
-                ]
-              }
+              "providers/instagram",
+              "providers/facebook",
+              "providers/threads",
+              "providers/tiktok",
+              "providers/youtube",
+              "providers/x-twitter",
+              "providers/linkedin",
+              "providers/linkedin-page",
+              "providers/pinterest",
+              "providers/google-my-business",
+              "providers/reddit",
+              "providers/discord",
+              "providers/slack",
+              "providers/telegram",
+              "providers/bluesky",
+              "providers/mastodon",
+              "providers/farcaster",
+              "providers/mewe",
+              "providers/dribbble",
+              "providers/whop",
+              "providers/skool"
             ]
           },
           {
@@ -129,14 +112,24 @@
           {
             "group": "Talk to Her",
             "pages": [
-              "agents/overview"
+              "agents/overview",
+              "agents/why-agents"
             ]
           },
           {
-            "group": "Agent Clients",
+            "group": "Chat Agents",
             "pages": [
               "agents/openclaw",
               "agents/hermes"
+            ]
+          },
+          {
+            "group": "Coding Agents",
+            "pages": [
+              "agents/claude-code",
+              "agents/chatgpt",
+              "agents/codex",
+              "agents/cursor"
             ]
           }
         ]
@@ -149,12 +142,6 @@
             "pages": [
               "public-api/introduction",
               "public-api/sdk"
-            ]
-          },
-          {
-            "group": "OAuth2 Apps",
-            "pages": [
-              "public-api/oauth"
             ]
           },
           {
@@ -212,7 +199,11 @@
           {
             "group": "Automation",
             "pages": [
-              "automation/n8n"
+              "automation/n8n",
+              "automation/zapier",
+              "automation/make",
+              "automation/webhooks",
+              "automation/rss-autopost"
             ]
           },
           {
@@ -269,14 +260,16 @@
             "pages": [
               "cli/managing-posts",
               "cli/integrations",
-              "cli/analytics",
-              "cli/media-upload"
+              "cli/media-upload",
+              "cli/analytics"
             ]
           },
           {
-            "group": "Examples",
+            "group": "Reference",
             "pages": [
-              "cli/platform-examples"
+              "cli/command-reference",
+              "cli/platform-examples",
+              "cli/troubleshooting"
             ]
           }
         ]
@@ -292,10 +285,34 @@
             ]
           },
           {
+            "group": "Clients",
+            "pages": [
+              "mcp/clients/claude-code",
+              "mcp/clients/claude-desktop",
+              "mcp/clients/claude-app",
+              "mcp/clients/chatgpt",
+              "mcp/clients/cursor",
+              "mcp/clients/codex",
+              "mcp/clients/gemini-cli",
+              "mcp/clients/other-clients"
+            ]
+          },
+          {
             "group": "Reference",
             "pages": [
               "mcp/tools",
               "mcp/examples"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Developer Apps (OAuth2)",
+        "groups": [
+          {
+            "group": "Build on PostQueen",
+            "pages": [
+              "public-api/oauth"
             ]
           }
         ]
@@ -337,10 +354,64 @@
       "cursor"
     ]
   },
+  "seo": {
+    "metatags": {
+      "og:site_name": "PostQueen Documentation"
+    }
+  },
   "footer": {
     "socials": {
       "github": "https://github.com/GkhanKINAY/postqueen-app",
       "website": "https://postqueen.ai"
-    }
+    },
+    "links": [
+      {
+        "header": "Product",
+        "items": [
+          {
+            "label": "Website",
+            "href": "https://postqueen.ai"
+          },
+          {
+            "label": "Pricing",
+            "href": "https://postqueen.ai/pricing"
+          },
+          {
+            "label": "Open the app",
+            "href": "https://app.postqueen.ai"
+          }
+        ]
+      },
+      {
+        "header": "Developers",
+        "items": [
+          {
+            "label": "Public API",
+            "href": "/public-api/introduction"
+          },
+          {
+            "label": "CLI",
+            "href": "/cli/introduction"
+          },
+          {
+            "label": "MCP",
+            "href": "/mcp/introduction"
+          }
+        ]
+      },
+      {
+        "header": "Community",
+        "items": [
+          {
+            "label": "GitHub",
+            "href": "https://github.com/GkhanKINAY/postqueen-app"
+          },
+          {
+            "label": "Support",
+            "href": "/support"
+          }
+        ]
+      }
+    ]
   }
 }
