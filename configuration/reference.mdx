@@ -157,7 +157,6 @@ See also: [OAuth configuration](/configuration/oauth).
 | Variable | Purpose |
 |---|---|
 | `POSTQUEEN_GENERIC_OAUTH` | `true` to enable a generic OIDC sign-in provider. |
-| `POSTQUEEN_OAUTH_URL` | Base URL of the IdP. |
 | `POSTQUEEN_OAUTH_AUTH_URL` | Authorization endpoint. |
 | `POSTQUEEN_OAUTH_TOKEN_URL` | Token endpoint. |
 | `POSTQUEEN_OAUTH_USERINFO_URL` | UserInfo endpoint. |
@@ -255,11 +254,7 @@ LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
 | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key. |
 | `STRIPE_SECRET_KEY` | Stripe secret key. |
 | `STRIPE_SIGNING_KEY` | Stripe webhook signing key for subscription events. |
-| `STRIPE_SIGNING_KEY_CONNECT` | Stripe Connect webhook signing key. |
 | `STRIPE_DISCOUNT_ID` | Default Stripe discount applied to new subscriptions. |
-| `FEE_AMOUNT` | Platform fee fraction (e.g. `0.05`). |
-| `NOWPAYMENTS_API_KEY` | NOWPayments API key for crypto checkout. |
-| `NOWPAYMENTS_AMOUNT` | Default NOWPayments invoice amount. |
 
 ---
 
@@ -315,11 +310,11 @@ table is just a lookup so you can find which page documents which variable.
 | Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | [/providers/reddit](/providers/reddit) |
 | Pinterest | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | [/providers/pinterest](/providers/pinterest) |
 | Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | [/providers/discord](/providers/discord) |
-| Slack | `SLACK_ID`, `SLACK_SECRET`, `SLACK_SIGNING_SECRET` | [/providers/slack](/providers/slack) |
+| Slack | `SLACK_ID`, `SLACK_SECRET` | [/providers/slack](/providers/slack) |
 | Telegram | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` | [/providers/telegram](/providers/telegram) |
 | Mastodon | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | [/providers/mastodon](/providers/mastodon) |
 | Dribbble | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | [/providers/dribbble](/providers/dribbble) |
-| Farcaster | `NEYNAR_CLIENT_ID`, `NEYNAR_SECRET_KEY`, `NEYNAR_LOGIN_URL` | [/providers/farcaster](/providers/farcaster) |
+| Farcaster | `NEYNAR_CLIENT_ID`, `NEYNAR_SECRET_KEY` | [/providers/farcaster](/providers/farcaster) |
 | MeWe | `MEWE_HOST`, `MEWE_APP_ID`, `MEWE_API_KEY` | [/providers/mewe](/providers/mewe) |
 | Twitch | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | API only: see [/public-api/providers/twitch](/public-api/providers/twitch) |
 | Kick | `KICK_CLIENT_ID`, `KICK_SECRET` | API only: see [/public-api/providers/kick](/public-api/providers/kick) |
