@@ -182,6 +182,19 @@ LinkedIn and Instagram each support both personal and page posting. New connecto
 
 ---
 
+## 🛡️ Compliance
+
+- PostQueen is an open-source, self-hostable social media scheduler that supports X, LinkedIn, Instagram, Bluesky, Mastodon, Discord and 30+ more.
+- The hosted service uses official, platform-approved OAuth flows.
+- PostQueen does not automate or scrape content from social media platforms.
+- PostQueen does not collect, store, or proxy API keys or access tokens from users.
+- PostQueen never asks users to paste social-platform credentials into the hosted product.
+- Users always authenticate directly with each platform (X, LinkedIn, Discord, and so on), which keeps every platform's compliance and your data privacy intact.
+
+<br/>
+
+---
+
 ## ❤️ Community and support
 
 - 🐛 **Found a bug or have an idea?** [Open an issue](https://github.com/GkhanKINAY/postqueen-docs/issues).
