@@ -1,0 +1,25 @@
+---
+title: Compliance
+description: 'How PostQueen handles OAuth, credentials, and platform APIs to stay compliant with each social network.'
+---
+
+PostQueen is designed to keep you — and your users — inside each social platform's terms of service. This page explains how authentication and data handling work, so you can evaluate PostQueen for security, privacy, and platform-compliance reviews.
+
+## How PostQueen stays compliant
+
+- **Open source and self-hostable.** PostQueen is an open-source social media scheduler that supports X, LinkedIn, Instagram, Bluesky, Mastodon, Discord, and 30+ more networks. You can run it on your own infrastructure and inspect every line of code.
+- **Official OAuth flows.** The hosted service uses official, platform-approved OAuth flows to connect accounts. PostQueen never simulates a browser session or bypasses a platform's auth screen.
+- **No scraping or automation of platform content.** PostQueen does not automate or scrape content from social media platforms. It only calls documented publishing and analytics APIs.
+- **No credential proxying.** PostQueen does not collect, store, or proxy API keys or access tokens from users of the hosted service.
+- **No password prompts.** PostQueen never asks users to paste social-platform credentials into the hosted product.
+- **Direct platform authentication.** Users always authenticate directly with each platform (X, LinkedIn, Discord, and so on), which keeps every platform's compliance and your data privacy intact.
+
+## What this means for you
+
+- If you connect accounts on the hosted service, tokens are issued by the platform to you through its own OAuth screen — PostQueen only receives the scopes you approve.
+- If you self-host, you control where tokens and post content live. See [Configuration reference](/configuration/reference) for storage and encryption settings, and [OAuth configuration](/configuration/oauth) for setting up your own provider credentials.
+- If you build integrations on top of PostQueen, use the [Public API](/public-api/introduction) or [MCP server](/mcp/introduction) — both go through the same authenticated flows and respect the same platform limits.
+
+## Reporting a concern
+
+If you believe a PostQueen integration violates a platform's terms, or you have a security concern, email **support@postqueen.ai** with the details so the team can investigate.
