@@ -35,6 +35,7 @@ The docker containers for PostQueen are entirely configured with environment var
       ```
       docker compose up
       ```
+      <img src="/images/brand/compose-up.svg" alt="docker compose up: the PostQueen stack starts and is ready on localhost 4007" />
   </Step>
   <Step title="Wait for it to load">
       1. Access your frontend at: http://localhost:4007 (unless changed in variables)
@@ -74,6 +75,34 @@ Look through the logs for startup errors, and if you have problems, check out th
 If everything looks good, then you can access the PostQueen web interface at https://postqueen.your-server.com
 
 <Snippet file="docker-envvar-apps.mdx" />
+
+## Backups
+
+Not every volume in the stack needs a backup. These hold real data:
+
+- `postgres-volume` — the main PostQueen database (users, channels, posts).
+- `temporal-postgres-data` — Temporal's database, including in-flight scheduled posts.
+- `postqueen-uploads` — uploaded media, when `STORAGE_PROVIDER` is `local`.
+- `postqueen-config` — your `postqueen.env` file, if you use Option B.
+
+`postqueen-redis-data` and `temporal-elasticsearch-data` are a cache and a
+search index — both are rebuilt automatically and do not need backups.
+
+To back up a volume, archive it with a throwaway container. Compose prefixes
+volume names with the project (directory) name, so check `docker volume ls`
+for the exact name:
+
+```
+docker run --rm -v postqueen-docker-compose_postgres-volume:/data -v "$(pwd)":/backup alpine tar czf /backup/postgres-volume.tar.gz -C /data .
+```
+
+Repeat for each volume listed above.
+
+<Warning>
+`docker compose down -v` deletes all volumes — your database, scheduled
+posts, and uploads included. Use plain `docker compose down` unless you
+really mean to wipe the installation.
+</Warning>
 
 ## Next Steps
 

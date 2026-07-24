@@ -7,6 +7,8 @@ description: 'Turn your chat apps into her front door with the OpenClaw agent cl
 
 OpenClaw is a third-party, open-source agent client that runs on your own machine. It is not a PostQueen component: it is one of the open agents that already speaks her language. OpenClaw turns the chat apps you already live in into her front door, WhatsApp and Telegram from your pocket, Slack and Discord with your team. You message her like any other contact, and OpenClaw does the relaying.
 
+<img src="/images/brand/chat-openclaw.svg" alt="OpenClaw chat: one message and PostQueen schedules the posts" />
+
 Behind the scenes, OpenClaw drives the same `postqueen` CLI that other agents use. That matters: whatever you ask for through chat lands on the same PostQueen calendar you see at [app.postqueen.ai](https://app.postqueen.ai), where you can review, edit, or delete it.
 
 <Note>
@@ -15,7 +17,8 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
 
 ## What you need
 
-- OpenClaw installed and running on your machine (the [OpenClaw set-up guide](https://postqueen.ai/openclaw) walks you through it)
+- A machine that can run OpenClaw: macOS, Linux, or Windows, with Node.js 22 or newer (the OpenClaw docs recommend Node 24)
+- An API key for a model provider such as Anthropic or OpenAI, which OpenClaw asks for during onboarding
 - The PostQueen skill, which teaches OpenClaw her full command set
 - Your `POSTQUEEN_API_KEY`
 - `POSTQUEEN_API_URL`, only if you self-host PostQueen
@@ -23,15 +26,40 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
 ## Setup
 
 <Steps>
+  <Step title="Install OpenClaw">
+    On macOS or Linux:
+
+    ```bash
+    curl -fsSL https://openclaw.ai/install.sh | bash
+    ```
+
+    On Windows, in PowerShell:
+
+    ```powershell
+    iwr -useb https://openclaw.ai/install.ps1 | iex
+    ```
+
+    Then run the onboarding wizard. It walks you through choosing a model provider, setting that provider's API key, and starting the Gateway, which is the always-on process that connects your chat apps to the agent:
+
+    ```bash
+    openclaw onboard --install-daemon
+    ```
+
+    OpenClaw is a separate project with its own documentation. For install troubleshooting or alternative methods such as Docker, see the [OpenClaw getting-started guide](https://docs.openclaw.ai/start/getting-started).
+  </Step>
   <Step title="Install the PostQueen skill">
     ```bash
     npx skills add GkhanKINAY/postqueen-agent
     ```
 
-    The skill gives OpenClaw the complete `postqueen` command reference, with the patterns behind it, so she gets clean instructions instead of guesswork.
+    The skill gives OpenClaw the complete `postqueen` command reference, with the patterns behind it, so she gets clean instructions instead of guesswork. If the `postqueen` CLI is not already on the machine, install it too:
+
+    ```bash
+    npm install -g postqueen
+    ```
   </Step>
   <Step title="Export your API key">
-    Grab your key in [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Then export it in the environment OpenClaw runs in:
+    Grab your key in [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Then export it in the environment the OpenClaw Gateway runs in:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
@@ -50,12 +78,20 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
 
     A JSON list of your connected channels means she is ready. You can also run `postqueen auth:status` to confirm your credentials are valid.
   </Step>
-  <Step title="Connect your chat app in OpenClaw">
-    In OpenClaw, link the app you want to reach her from: WhatsApp or Telegram for your phone, Slack or Discord for your workspace. The [OpenClaw set-up guide](https://postqueen.ai/openclaw) covers each one. Once linked, send her a first message and watch the post land on your calendar.
+  <Step title="Link your chat app inside OpenClaw">
+    Now connect the app you want to reach her from. Telegram ships with the core OpenClaw install and only needs a bot token. WhatsApp, Slack, and Discord are official OpenClaw plugins:
+
+    ```bash
+    openclaw plugins install @openclaw/<channel-id>
+    ```
+
+    You can also let OpenClaw handle it for you: `openclaw channels add` installs the plugin on demand and starts the channel's setup flow. WhatsApp pairs by scanning a QR code, while Slack and Discord connect through a bot you add to your workspace or server. Restart the Gateway after installing a plugin.
+
+    Each channel has its own walkthrough in the [OpenClaw channel docs](https://docs.openclaw.ai/channels). Once linked, send her a first message and watch the post land on your calendar.
   </Step>
 </Steps>
 
-## Talking to her
+## Talking to her 👑
 
 Message her the way you would message a colleague. Plain text works, and so does a voice note if your assistant supports voice: speak an idea on your walk and find it waiting on the calendar as finished posts.
 
@@ -69,9 +105,47 @@ Try saying:
 
 She writes the copy and schedules it across your connected channels, from one chat message.
 
+## Run her on a schedule
+
+She does not have to wait for your message. The OpenClaw Gateway includes a scheduler, so you can give the agent a recurring job and let it drive the `postqueen` CLI while you sleep. A job is created with `openclaw cron add`: you pass a cron expression and a prompt, and the Gateway runs that prompt on schedule.
+
+Here is a weekday morning run that reviews yesterday and preps today:
+
+```bash
+openclaw cron add \
+  --name "Morning content run" \
+  --cron "0 7 * * 1-5" \
+  --session isolated \
+  --announce \
+  --message "Run 'postqueen integrations:list' to get my channel ids. Check yesterday's numbers with 'postqueen analytics:platform' for each channel, then draft one post for today and schedule it for noon with 'postqueen posts:create'."
+```
+
+The `--session isolated` flag runs the job in its own session, and `--announce` has the agent report the result back to your chat. OpenClaw also has a heartbeat, a periodic check-in the Gateway manages per agent; the OpenClaw docs recommend cron jobs like the one above when you want precise timing. Both are covered in the [OpenClaw scheduled tasks guide](https://docs.openclaw.ai/automation/cron-jobs).
+
+<Tip>
+Add `-t draft` to the `posts:create` command in your prompt and the overnight run stacks up drafts instead of scheduled posts. You approve them from the calendar over coffee.
+</Tip>
+
 ## Staying in control
 
 She runs on your terms. Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, so you can edit or delete anything, and if you ask for drafts she holds each post until you approve it on the calendar.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need OpenClaw to use PostQueen?">
+    No. She works on her own through the dashboard, CLI, and API. OpenClaw is one of several ways to automate her, and the one to pick when you want to reach her from a chat app.
+  </Accordion>
+  <Accordion title="What can she actually do from chat?">
+    Everything the CLI exposes. She can list your channels and schedule posts, upload media for you, and pull analytics afterwards, all with JSON output the agent can parse.
+  </Accordion>
+  <Accordion title="Can I review posts before they publish?">
+    Yes. Ask for drafts in your message and she holds each post on the calendar until you approve it there.
+  </Accordion>
+  <Accordion title="Does the integration cost extra?">
+    No. Agent access uses the same API key and plan limits as your regular PostQueen account, on every plan. OpenClaw itself is open source; the only outside cost is whatever model provider you run it with.
+  </Accordion>
+</AccordionGroup>
 
 ## Learn more
 
@@ -81,8 +155,5 @@ She runs on your terms. Leave her alone and she is a true autopilot: whatever sh
   </Card>
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
     The `postqueen` CLI that OpenClaw drives: installation, authentication, and the full command set.
-  </Card>
-  <Card title="OpenClaw set-up guide" icon="arrow-up-right-from-square" href="https://postqueen.ai/openclaw">
-    The step-by-step guide to installing OpenClaw and linking your chat apps.
   </Card>
 </CardGroup>

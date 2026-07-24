@@ -3,6 +3,10 @@ title: OAuth2 Authentication
 description: 'Let users authorize your app to access PostQueen on their behalf'
 ---
 
+## What You Can Build
+
+OAuth2 lets you build third-party apps and agents that act on behalf of PostQueen users. After a user approves your app on a consent screen, you receive a `pos_` access token that works on the Public API: list their connected channels, create and schedule posts, and pull analytics for their accounts. Tokens stay valid until the user revokes them, which they can do at any time from **Settings > Approved Apps** in their dashboard.
+
 ## Overview
 
 PostQueen supports OAuth2 Authorization Code flow, allowing you to build third-party applications that act on behalf of PostQueen users. Instead of asking users for their API key, your app redirects them to PostQueen where they approve access, and you receive a token to make API calls on their behalf.
@@ -93,7 +97,7 @@ sequenceDiagram
     ```
 
     <Tip>
-    Always verify that the `state` parameter matches what you originally sent to prevent CSRF attacks.
+    Verify that the `state` parameter matches what you originally sent to prevent CSRF attacks.
     </Tip>
   </Step>
 
@@ -167,7 +171,7 @@ sequenceDiagram
 
 ### Rotate Client Secret
 
-If your client secret is compromised, go to **Settings > Developers > Apps** and click **Rotate Secret**. This invalidates the old secret immediately — any token exchange requests using the old secret will fail.
+If your client secret is compromised, go to **Settings > Developers > Apps** and click **Rotate Secret**. This invalidates the old secret immediately, and any token exchange requests using the old secret will fail.
 
 <Note>
 Rotating the secret does **not** invalidate existing access tokens. Only new token exchange requests require the new secret.

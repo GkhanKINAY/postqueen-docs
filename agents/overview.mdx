@@ -9,6 +9,8 @@ Message her the way you would message a colleague. She answers inside ChatGPT an
 
 **She runs on your terms.** Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, and if you ask for drafts she holds each post until you approve it.
 
+<img src="/images/brand/open-agents.svg" alt="Chat apps feed OpenClaw, a one-line brief feeds Hermes, both drive the postqueen CLI and posts land on the calendar" />
+
 ## Three ways in
 
 Any assistant that can run a shell command or call a tool can run your socials. Pick the surface that fits yours:
@@ -25,13 +27,48 @@ Any assistant that can run a shell command or call a tool can run your socials. 
   </Card>
 </CardGroup>
 
+## 👑 Pick your agent
+
+Each guide below is self-contained: it takes one specific agent from zero to its first scheduled post.
+
+<CardGroup cols={3}>
+  <Card title="OpenClaw" icon="message" href="/agents/openclaw">
+    Lives on your machine and turns WhatsApp and Telegram into her front door
+  </Card>
+  <Card title="Hermes" icon="wand-magic-sparkles" href="/agents/hermes">
+    Hand it one brief and it plans, writes and schedules your week over the CLI
+  </Card>
+  <Card title="Claude Code" icon="square-terminal" href="/agents/claude-code">
+    One MCP command or the skill, and your coding sessions can post too
+  </Card>
+  <Card title="ChatGPT" icon="comments" href="/agents/chatgpt">
+    Add her MCP server as a connector and schedule posts from a chat
+  </Card>
+  <Card title="Codex" icon="code-branch" href="/agents/codex">
+    Teach Codex her CLI so it ships the announcement along with the code
+  </Card>
+  <Card title="Cursor" icon="i-cursor" href="/agents/cursor">
+    Bring her into your editor and post without leaving it
+  </Card>
+  <Card title="Why agents love her" icon="heart" href="/agents/why-agents">
+    Clean JSON, one skill file and a stable CLI make her easy to drive
+  </Card>
+</CardGroup>
+
 ## Install the skill
 
-The skill teaches your coding agent how she works: which commands exist, how to discover your channels and how to schedule posts. One command installs it:
+One command installs her skill into any coding agent that supports the `skills` registry:
 
 ```bash
 npx skills add GkhanKINAY/postqueen-agent
 ```
+
+What lands is her `SKILL.md`, a playbook that teaches your agent how she works before it runs a single command. The skill registers under the name `postqueen` and scopes itself to the CLI alone, so your agent gets exactly the commands it needs and nothing broader. After reading it, the agent knows:
+
+- **Discovery.** `integrations:list` returns every connected channel with its integration ID, and `integrations:settings` shows what each channel accepts.
+- **Dynamic data.** `integrations:trigger` fetches values that cannot be hardcoded, like subreddit flairs, YouTube playlists or LinkedIn company pages.
+- **Posting.** `posts:create` takes content, a required ISO 8601 date and integration IDs, with `--settings` for platform specifics and `--json` for full campaigns.
+- **Media rules.** Every file goes through `postqueen upload` first, and only the returned URL belongs in `-m`. Providers such as TikTok and Instagram reject raw file paths and external links.
 
 Next she needs your API key. Open [app.postqueen.ai](https://app.postqueen.ai), then go to **Settings → Developers → Public API** and click **Reveal**. Keep the key secret: it grants full access to your account.
 
@@ -57,6 +94,18 @@ postqueen posts:create \
 ```
 
 The full command reference lives in the [CLI guide](/cli/introduction).
+
+## How an agent works with her
+
+Every agent session follows the same arc, whether it is Claude Code on your laptop or a cron job at six in the morning:
+
+1. **Authenticate.** Export `POSTQUEEN_API_KEY`, then confirm with `postqueen auth:status`. Commands fail without valid credentials, so this comes first.
+2. **Discover channels.** `postqueen integrations:list` returns each connected channel with the integration ID that later commands need.
+3. **Fetch settings.** `postqueen integrations:settings <integration-id>` shows what a channel requires, and `postqueen integrations:trigger` pulls dynamic data like subreddit flairs or YouTube playlists.
+4. **Prepare media.** `postqueen upload photo.jpg` returns a verified URL; only that URL goes into `-m`, because providers reject raw file paths.
+5. **Post.** `postqueen posts:create -c "..." -s "2026-08-01T09:00:00Z" -i "<integration-id>"` schedules the post, with `-t draft` when the agent should propose instead of publish.
+6. **Analyze.** `postqueen analytics:platform <integration-id>` and `postqueen analytics:post <post-id>` report how it landed.
+7. **Resolve issues.** If analytics returns `{"missing": true}`, `postqueen posts:missing <post-id>` lists the provider's recent content and `postqueen posts:connect <post-id> --release-id "<id>"` links the right one.
 
 ## Connect over MCP
 
@@ -86,16 +135,7 @@ Per-client walkthroughs are in [MCP setup](/mcp/setup), and every tool is descri
 
 ## From your chat apps
 
-The PostQueen mobile app is on the way, but you are not waiting on it: she already answers on the phone in your pocket. Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too.
-
-<CardGroup cols={2}>
-  <Card title="OpenClaw" icon="message" href="/agents/openclaw">
-    Lives on your machine and turns your chat apps into her front door
-  </Card>
-  <Card title="Hermes" icon="wand-magic-sparkles" href="/agents/hermes">
-    Hand it one brief and it plans, writes and schedules your week over the same CLI
-  </Card>
-</CardGroup>
+The PostQueen mobile app is on the way, but you are not waiting on it: she already answers on the phone in your pocket. Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too. The setup guides live on the [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes) pages.
 
 ## The night shift
 

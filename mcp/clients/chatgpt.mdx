@@ -1,0 +1,68 @@
+---
+title: ChatGPT
+description: 'Add PostQueen as a custom MCP connector in ChatGPT'
+---
+
+ChatGPT can talk to PostQueen through a custom MCP connector: once it is set up, you can ask ChatGPT to list your connected accounts, generate images, and schedule posts, and it calls PostQueen's [10 MCP tools](/mcp/tools) behind the scenes.
+
+<img src="/images/brand/chat-chatgpt.svg" alt="ChatGPT with the PostQueen connector: it generates two post images and schedules them to Instagram and X" />
+
+## Prerequisites
+
+- **A paid ChatGPT plan.** Custom MCP connectors require developer mode, which OpenAI offers in beta on Plus, Pro, Business, Enterprise, and Edu plans on the web. It is not available on the Free plan, and on Business, Enterprise, and Edu a workspace admin can turn it off or restrict who gets it. Availability changes over time, so if you don't see the option, check OpenAI's [developer mode help article](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt) for the current state.
+- **Your PostQueen API key.** In the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+
+<Warning>
+With this setup, your API key travels inside the connector URL, so the URL itself is a secret. Anyone who has it can post from your accounts. Don't share screenshots of the connector settings, and if the key ever leaks, regenerate it in **Settings > Developers > Public API** and update the connector URL.
+</Warning>
+
+## Setup
+
+<Steps>
+  <Step title="Turn on developer mode">
+    In ChatGPT on the web, open **Settings**, then **Connectors**. Under **Advanced settings**, toggle on **Developer mode**. On Business, Enterprise, and Edu workspaces this switch is controlled by your admin, so ask them to enable it if you don't see it.
+  </Step>
+  <Step title="Create the connector">
+    Back in **Settings > Connectors**, click **Create** and fill in the form:
+
+    - **Name:** `PostQueen`
+    - **Description:** `Schedule and publish social media posts through PostQueen` (optional)
+    - **MCP Server URL:**
+
+      ```
+      https://api.postqueen.ai/mcp/YOUR_API_KEY
+      ```
+
+    - **Authentication:** No authentication
+
+    Replace `YOUR_API_KEY` with the key you revealed earlier. "No authentication" is correct here because the key is already embedded in the URL; there is nothing else to configure.
+
+    Check the box confirming you trust the connector, then save. ChatGPT warns that custom connectors are not verified by OpenAI; that warning is standard for every custom MCP connector.
+  </Step>
+  <Step title="Enable it in a chat">
+    A saved connector is not active everywhere automatically. In a new conversation, click the **+** button, choose **More**, then **Developer mode**, and enable the **PostQueen** connector for that chat.
+  </Step>
+</Steps>
+
+<Note>
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`, for example `https://your-postqueen-server.com/mcp/YOUR_API_KEY`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP; see [Reverse Proxies](/reverse-proxies/caddy).
+</Note>
+
+## Verify Connection
+
+With the connector enabled in a chat, ask:
+
+> "List my connected social media accounts"
+
+If everything works, ChatGPT calls the `integrationList` tool and returns your connected accounts. If it fails, check that the API key was pasted in full inside the URL, that developer mode is on, and that the connector is enabled in the current chat.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="MCP Tools" icon="wrench" href="/mcp/tools">
+    See what all 10 tools can do
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    Real prompts and the tool calls they trigger
+  </Card>
+</CardGroup>

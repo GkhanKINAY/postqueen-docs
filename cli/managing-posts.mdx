@@ -26,6 +26,7 @@ postqueen posts:create \
 | `-m, --media` | Comma-separated media URLs (use after uploading) |
 | `-i, --integrations` | Comma-separated integration IDs (required) |
 | `-d, --delay` | Delay between comments in minutes (default: 0) |
+| `--shortLink` | Use short links (default: true) |
 | `--settings` | Platform-specific settings as JSON |
 | `-j, --json` | Path to a JSON file for complex posts |
 
@@ -53,7 +54,14 @@ postqueen posts:create \
 
 ### Threads and Comments
 
-Pass `-c` multiple times to create a thread. Each comment can have its own media with a corresponding `-m` flag:
+Pass `-c` multiple times to create a thread. Comments are automatically converted to threads or replies based on the platform:
+
+- **Twitter/X**: Thread of tweets
+- **Reddit**: Comment replies
+- **LinkedIn**: Comment on post
+- **Instagram**: First comment
+
+Each comment can have its own media with a corresponding `-m` flag:
 
 ```bash
 postqueen posts:create \
@@ -105,30 +113,70 @@ Use `postqueen integrations:settings <id>` to discover what settings are availab
 
 ### Complex Posts with JSON
 
-For posts with detailed platform-specific content, use a JSON file:
+For campaigns with per-platform content and settings, use a JSON file instead of flags:
 
 ```bash
-postqueen posts:create --json post.json
+postqueen posts:create --json campaign.json
 ```
 
-Example `post.json`:
+The file lists the target `integrations` and a `posts` entry per provider. Each provider entry has its own `post` array (the first item is the main post, additional items become comments/threads) and an optional `settings` object. Provider settings use a discriminator pattern: the `__type` field tells the backend which platform's settings schema to apply.
+
+Example `campaign.json`:
 
 ```json
 {
-  "integrations": ["twitter-123", "linkedin-456"],
+  "integrations": ["twitter-123", "linkedin-456", "reddit-789"],
   "posts": [
     {
       "provider": "twitter",
-      "post": [{ "content": "Short tweet version", "image": [] }]
+      "post": [
+        {
+          "content": "Tweet version",
+          "image": ["twitter-image.jpg"]
+        }
+      ]
     },
     {
       "provider": "linkedin",
-      "post": [{ "content": "Longer LinkedIn version with more detail", "image": [] }],
-      "settings": { "__type": "linkedin" }
+      "post": [
+        {
+          "content": "LinkedIn version with more context...",
+          "image": ["linkedin-image.jpg"]
+        }
+      ],
+      "settings": {
+        "__type": "linkedin",
+        "companyId": "company-123"
+      }
+    },
+    {
+      "provider": "reddit",
+      "post": [
+        {
+          "content": "Reddit version",
+          "image": []
+        }
+      ],
+      "settings": {
+        "__type": "reddit",
+        "subreddit": [{
+          "value": {
+            "subreddit": "programming",
+            "title": "Post Title",
+            "type": "text",
+            "url": "",
+            "is_flair_required": false
+          }
+        }]
+      }
     }
   ]
 }
 ```
+
+<Note>
+When you pass `--settings` on the command line instead, you can omit `__type` — the backend adds it automatically based on the integration ID. In a `--json` file, include `__type` explicitly for each provider's settings.
+</Note>
 
 ## Listing Posts
 
@@ -226,3 +274,14 @@ Use this when you want to pause a scheduled post without deleting it, or hand a 
 ```bash
 postqueen posts:delete <post-id>
 ```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Command Reference" icon="terminal" href="/cli/command-reference">
+    Every command and flag on one page
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/cli/troubleshooting">
+    Fixes for common CLI errors
+  </Card>
+</CardGroup>

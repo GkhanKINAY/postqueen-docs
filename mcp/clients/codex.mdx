@@ -1,0 +1,67 @@
+---
+title: OpenAI Codex
+description: 'Connect the OpenAI Codex CLI to the PostQueen MCP server'
+---
+
+The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it can talk to PostQueen directly — no local bridge process needed. Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
+
+## Add via CLI
+
+Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings**, then **Developers**, then **Public API**, click **Reveal**), then run:
+
+```bash
+codex mcp add postqueen --url https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+Replace `YOUR_API_KEY` with your actual key. Codex writes the entry to `~/.codex/config.toml`, and all 10 PostQueen tools are available in every session from then on.
+
+## Config File Alternative
+
+The same registration, written by hand in `~/.codex/config.toml`:
+
+```toml ~/.codex/config.toml
+[mcp_servers.postqueen]
+url = "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+```
+
+<Note>
+Syntax per the official [Codex MCP documentation](https://developers.openai.com/codex/mcp): a streamable HTTP server entry takes a `url`, while stdio servers take `command`/`args` instead. If your Codex version predates `codex mcp add --url` support, editing `config.toml` directly works on every version.
+</Note>
+
+## Bearer Variant
+
+To keep the key out of the URL (and out of `config.toml` entirely), point Codex at the bare `/mcp` endpoint and reference the key through an environment variable:
+
+```toml ~/.codex/config.toml
+[mcp_servers.postqueen]
+url = "https://api.postqueen.ai/mcp"
+bearer_token_env_var = "POSTQUEEN_API_KEY"
+```
+
+Or via the CLI:
+
+```bash
+codex mcp add postqueen --url https://api.postqueen.ai/mcp --bearer-token-env-var POSTQUEEN_API_KEY
+```
+
+Codex reads `POSTQUEEN_API_KEY` from its environment and sends it as `Authorization: Bearer YOUR_API_KEY` on every request, so export it in your shell profile:
+
+```bash
+export POSTQUEEN_API_KEY="your-key-here"
+```
+
+<Warning>
+Your API key grants full access to your PostQueen workspace — treat it like a password. `~/.codex/config.toml` is a plaintext file, so the `bearer_token_env_var` form is the safer choice on shared machines. Also note: if the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails — export it before launching Codex.
+</Warning>
+
+## Self-Hosted
+
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP — see [Reverse Proxies](/reverse-proxies/caddy).
+
+## Verify
+
+Run `codex mcp list` to confirm the `postqueen` entry is registered, then ask Codex:
+
+> "List my connected social media accounts"
+
+If the connection works, it calls the `integrationList` tool and returns your connected accounts.

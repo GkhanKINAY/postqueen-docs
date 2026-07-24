@@ -3,6 +3,8 @@ title: Analytics
 description: 'View platform and post-level analytics from the command line'
 ---
 
+<img src="/images/brand/analytics.svg" alt="PostQueen analytics: engagement chart, followers, impressions and video views" />
+
 ## Platform Analytics
 
 Get analytics for a specific integration/channel. Returns metrics like followers, impressions, and engagement over time.
@@ -107,6 +109,25 @@ The response follows the same format as platform analytics:
 <Tip>
 Post analytics are only available for published posts. Draft or queued posts won't return analytics data.
 </Tip>
+
+### When a post shows `{"missing": true}`
+
+If `analytics:post` returns `{"missing": true}`, the post was published but the platform didn't return a usable post ID, so it isn't connected to its published content yet. Resolve it, then retry:
+
+```bash
+# 1. List available content from the provider
+postqueen posts:missing <post-id>
+
+# 2. Connect the correct content to the post
+postqueen posts:connect <post-id> --release-id "7321456789012345678"
+
+# 3. Analytics will now work
+postqueen analytics:post <post-id>
+```
+
+<Note>
+See [Troubleshooting](/cli/troubleshooting) for the full error table.
+</Note>
 
 ## Scripting with Analytics
 

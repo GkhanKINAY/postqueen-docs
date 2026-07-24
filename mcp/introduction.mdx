@@ -5,7 +5,9 @@ description: 'Connect AI agents to PostQueen using the Model Context Protocol (M
 
 MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they can list your integrations, schedule posts, and generate images and videos through a standardized tool-calling interface.
 
-That means you can connect Claude, Cursor, or any MCP-compatible client to your PostQueen account and ask her to handle your social media in plain language.
+That means you can connect Claude, Cursor, or any MCP-compatible client to your PostQueen account and ask her to handle your social media in plain language. When you are ready to plug one in, head to [Client Setup](/mcp/setup) and pick your client from the guides grouped under it.
+
+<img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post" />
 
 ## How It Works
 
@@ -53,6 +55,8 @@ Get your API key from **Settings > Developers > Public API** in PostQueen. Use i
 If you're building an app for other PostQueen users, use [OAuth2](/public-api/oauth) to obtain tokens. OAuth tokens start with `pos_` and work like API keys when sent as a Bearer token on `/mcp`. The `/mcp/:apiKey` URL form accepts API keys only.
 
 ## Connecting
+
+The server accepts two endpoint forms, shown below. For copy-paste configuration in your specific client, the [Client Setup](/mcp/setup) hub and its per-client guides cover each one step by step.
 
 <Tabs>
   <Tab title="Bearer Token">

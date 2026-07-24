@@ -5,6 +5,8 @@ description: 'Learn the architecture of the project'
 
 PostQueen may feel like one app from the outside, but under the hood she is a small, well-coordinated team of services. Here is how they fit together.
 
+<img src="/images/brand/fanout.svg" alt="Write it once: PostQueen tailors the same post for each platform and schedules every variant" />
+
 ## Architecture
 
 PostQueen is composed of 3 main services and 4 external services. All 3 of the main services typically run within a **single Docker container**, and talk to each other through HTTP. Those services talk to other containers that run the external services described below.

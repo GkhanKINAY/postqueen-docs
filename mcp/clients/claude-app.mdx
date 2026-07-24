@@ -1,0 +1,65 @@
+---
+title: Claude Web & Mobile
+description: 'Connect claude.ai and the Claude mobile apps to the PostQueen MCP server'
+---
+
+Add PostQueen as a custom connector on claude.ai once, and she follows you into the Claude apps on iOS and Android: connectors you set up on the web sync to your account, so the same chat that plans your week on a laptop answers on your phone.
+
+<img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
+
+## Add the Connector
+
+<Steps>
+  <Step title="Get your API key">
+    In the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Copy the key.
+  </Step>
+  <Step title="Open Connectors on claude.ai">
+    On [claude.ai](https://claude.ai), open **Settings**, then **Connectors** (direct link: `claude.ai/settings/connectors`).
+  </Step>
+  <Step title="Add a custom connector">
+    Click **Add custom connector**, name it `PostQueen`, and paste the server URL:
+
+    ```
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Replace `YOUR_API_KEY` with the key you copied. Leave the OAuth fields under advanced settings empty — the key in the URL is the authentication. Confirm to add it.
+  </Step>
+  <Step title="Enable it in a chat">
+    In a new chat, open the tools menu in the message box (the search-and-tools control), and toggle the **PostQueen** connector on. The first time Claude calls a PostQueen tool it asks for your approval.
+  </Step>
+</Steps>
+
+<Note>
+The custom connector form accepts a URL only — there is no field for an `Authorization` header — so use the key-in-path endpoint shown above, not the bare `/mcp` Bearer form.
+</Note>
+
+## On Your Phone
+
+Connectors are tied to your Claude account, not the device. Once PostQueen is added on claude.ai, it shows up in the Claude apps on iOS and Android too — enable it from the tools menu in a chat the same way. New custom connectors generally can't be created from the mobile apps themselves; add them on the web or desktop first and they appear on your phone.
+
+## Plan Availability
+
+At the time of writing, Anthropic's help center lists custom connectors as available across Claude plans, with the Free plan limited to a single custom connector. On Team and Enterprise plans, an organization Owner may need to add the connector in the organization's settings before members can connect it. Availability and UI naming shift over time — if you don't see the option, check Anthropic's [connectors help article](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
+
+<Warning>
+The connector URL contains your API key, and that key grants full access to your PostQueen workspace. Treat the URL like a password: don't share screenshots of the connector settings, and if the key leaks, regenerate it under **Settings**, then **Developers**, then **Public API** — then update the connector URL.
+</Warning>
+
+## Self-Hosted
+
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
+
+```
+https://your-postqueen-server.com/mcp/YOUR_API_KEY
+```
+
+Claude connects to the server from Anthropic's cloud, not from your device, so the endpoint must be reachable from the public internet over HTTPS. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP — see [Reverse Proxies](/reverse-proxies/caddy).
+
+## Verify
+
+With the connector enabled in a chat, ask Claude:
+
+> "List my connected social media accounts"
+
+If the connection works, Claude calls the `integrationList` tool and returns your connected accounts. If it fails, check that the API key was pasted in full inside the URL and that the connector is toggled on in the tools menu for that chat.
