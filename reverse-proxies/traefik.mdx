@@ -19,7 +19,7 @@ services:
 
     labels:
       # Router for main PostQueen entrypoint (on port 5000)
-      - "traefik.http.routers.postqueen.rule=Host(`postqueen.example.lan`)"  # Replace with your domain
+      - "traefik.http.routers.postqueen.rule=Host(`postqueen.example.com`)"  # Replace with your domain
       - "traefik.http.services.postqueen.loadbalancer.server.port=5000"  # Internal port for postqueen
       - "traefik.http.routers.postqueen.entrypoints=websecure"  # PostQueen requires HTTPS
       - "traefik.http.routers.postqueen.tls=true"

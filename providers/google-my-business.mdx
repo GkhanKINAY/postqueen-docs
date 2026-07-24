@@ -56,7 +56,7 @@ The **Google My Business API** requires approval from Google. You must submit an
     <Snippet file="oauth2redirect.mdx" />
 
     **Your Google My Business OAuth2 Redirect URI:**
-    - Production: `https://your-postqueen-domain.com/integrations/social/gmb`
+    - Production: `https://postqueen.example.com/integrations/social/gmb`
     - Local development: `http://localhost:4200/integrations/social/gmb`
     - Docker: `http://localhost:5000/integrations/social/gmb`
 
@@ -108,5 +108,5 @@ The GMB performance API restricts which metric combinations and date ranges it w
 
 ### Known issue: connect page surfaces session-recording errors
 
-The `/integrations/social/gmb` page can surface session-replay overlay errors that mask the actual OAuth flow. The handshake usually still completes. Refresh the Channels page after authorising on Google's side. Tracked in [Known Issues](/troubleshooting/known-issues).
+The `/integrations/social/gmb` page can surface session-replay overlay errors that mask the actual OAuth flow. The handshake usually still completes. Refresh the Channels page after authorizing on Google's side. Tracked in [Known Issues](/troubleshooting/known-issues).
 

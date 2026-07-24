@@ -137,7 +137,7 @@ The same command works from cron on a small box. Cron does not read your shell p
 ```bash
 POSTQUEEN_API_KEY=your-api-key
 
-# Every weekday at 07:00, queue the campaign file your job just generated
+# Every weekday at 7 AM, queue the campaign file your job just generated
 0 7 * * 1-5 /usr/local/bin/postqueen posts:create --json /srv/posts/today.json
 ```
 

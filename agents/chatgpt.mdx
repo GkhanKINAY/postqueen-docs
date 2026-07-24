@@ -80,7 +80,7 @@ A few things worth knowing before you wire the action up:
 - **Images** have to be uploaded through her first. Each entry in `image` is an object with an `id` and a `path` that came back from an upload, because providers reject raw file paths and outside links. The endpoint: [Upload File](/public-api/uploads/upload-file).
 
 <Note>
-The create-post endpoint allows 30 requests per hour. One request can carry several posts, so a GPT that batches a week into a single call gets a lot done inside that budget. Self-hosting? Point the action at `https://YOUR-DOMAIN/api/public/v1` and tune the limit with the `API_LIMIT` env var.
+The create-post endpoint allows 30 requests per hour. One request can carry several posts, so a GPT that batches a week into a single call gets a lot done inside that budget. Self-hosting? Point the action at `https://postqueen.example.com/api/public/v1` and tune the limit with the `API_LIMIT` env var.
 </Note>
 
 ## 👑 Ask her for two posts
