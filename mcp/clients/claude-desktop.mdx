@@ -3,7 +3,7 @@ title: Claude Desktop
 description: 'Connect Claude Desktop to the PostQueen MCP server'
 ---
 
-Claude Desktop can talk to PostQueen two ways: as a **custom connector** added in the app's settings, or through the **`mcp-remote` bridge** in `claude_desktop_config.json`.
+Claude Desktop reaches her two ways: as a **custom connector** added in the app's settings, or through the **`mcp-remote` bridge** in `claude_desktop_config.json`.
 
 <Note>
 A plain `"url"` entry in `claude_desktop_config.json` does **not** work. Claude Desktop's config file only launches local stdio servers with `command` and `args`. Remote HTTP servers are a separate mechanism ([MCP docs](https://modelcontextprotocol.io/docs/develop/connect-local-servers), [Claude Help Center](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)). Use one of the two routes below.
@@ -11,15 +11,15 @@ A plain `"url"` entry in `claude_desktop_config.json` does **not** work. Claude 
 
 ## Before You Start
 
-Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**.
 
 <Warning>
-Your API key can post to every account you have connected. Treat it like a password: anyone who sees your connector URL or config file can publish as you. Don't screenshot it and don't commit it. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+Your API key can post to every account you have connected. Treat it like a password: anyone who sees your connector URL or config file can publish as you. Do not screenshot it and do not commit it. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
 ## Option A: Custom Connector (Recommended)
 
-At the time of writing, Anthropic's help center lists custom connectors as available across Claude plans, with the Free plan limited to a single custom connector. On Team and Enterprise plans, an organization Owner may need to add the connector in the organization's settings before members can connect it. Availability and UI naming shift over time. If you don't see the option, check Anthropic's [connectors help article](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
+At the time of writing, Anthropic's help center lists custom connectors as available across Claude plans, with the Free plan limited to a single custom connector. On Team and Enterprise plans, an organization Owner may need to add the connector in the organization's settings before members can connect it. Availability and UI naming shift over time. If you do not see the option, check Anthropic's [connectors help article](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
 
 <Steps>
   <Step title="Open Connector Settings">
@@ -40,12 +40,12 @@ At the time of writing, Anthropic's help center lists custom connectors as avail
 </Steps>
 
 <Note>
-With custom connectors, Claude reaches your MCP server from Anthropic's cloud infrastructure, not from your machine. The server must be reachable over the public internet. `api.postqueen.ai` is publicly reachable, so Option A works there. A self-hosted instance behind a VPN or on your LAN won't connect this way; use Option B instead.
+With custom connectors, Claude reaches your MCP server from Anthropic's cloud infrastructure, not from your machine. The server must be reachable over the public internet. `api.postqueen.ai` is publicly reachable, so Option A works there. A self-hosted instance behind a VPN or on your LAN will not connect this way; use Option B instead.
 </Note>
 
 ## Option B: `mcp-remote` Bridge (Config File)
 
-If you prefer the config file, or your self-hosted server isn't publicly reachable, run the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge locally. It launches on your machine and forwards Claude Desktop's stdio traffic to PostQueen over HTTP. Requires [Node.js](https://nodejs.org/).
+If you prefer the config file, or your self-hosted server is not publicly reachable, run the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge locally. It launches on your machine and forwards Claude Desktop's stdio traffic to PostQueen over HTTP. Requires [Node.js](https://nodejs.org/).
 
 <Steps>
   <Step title="Open the Config File">
@@ -118,7 +118,7 @@ https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP; see [Reverse Proxies](/reverse-proxies/caddy). For Option A the server must also be reachable from the public internet; if it isn't, Option B works because the bridge runs on your machine.
+Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy). For Option A the server must also be reachable from the public internet; if it is not, Option B works because the bridge runs on your machine.
 
 ## Verify
 
@@ -129,7 +129,7 @@ Start a new conversation and ask:
 If everything is wired up, Claude calls the `integrationList` tool and returns your connected accounts.
 
 <AccordionGroup>
-  <Accordion title="PostQueen doesn't show up after a restart">
+  <Accordion title="PostQueen does not show up after a restart">
     Make sure you quit the app entirely (not just closed the window), the JSON is valid, and Node.js is installed (`node --version`). Config changes only load at launch.
   </Accordion>
   <Accordion title="Tools fail or the connection drops">

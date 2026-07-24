@@ -3,7 +3,7 @@ title: Command Reference
 description: 'Every PostQueen CLI command, flag, and default on one page'
 ---
 
-The complete cheat sheet for the `postqueen` CLI: every command, every flag, every default.
+Every command she answers, every flag and every default, on one page. When you are hunting for the exact shape of a call, this is the page to keep open.
 
 ```bash
 postqueen <command> [options]
@@ -28,8 +28,8 @@ postqueen integrations:list | tail -n +2 | jq '.[].id'
 
 | Variable | Default | What it does |
 |----------|---------|--------------|
-| `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Settings**, then **Developers**, then **Public API**, then **Reveal**. |
-| `POSTQUEEN_API_URL` | `https://api.postqueen.ai` | API base. The CLI appends `/public/v1/...` to whatever you set, so self-hosters set this to their `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api`. |
+| `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Settings > Developers > Public API**, then **Reveal**. |
+| `POSTQUEEN_API_URL` | `https://api.postqueen.ai` | API base. The CLI appends `/public/v1/...` to whatever you set. Running her yourself? Set this to your `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api`. |
 | `POSTQUEEN_AUTH_SERVER` | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only matters if you run your own; see [Authentication](/cli/authentication). |
 
 <Note>
@@ -54,7 +54,7 @@ Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over 
 |---------|-------|--------------|
 | `postqueen integrations:list` | `--group <id>` | Lists your connected channels with their integration IDs. `--group` filters to one group (customer). |
 | `postqueen integrations:groups` | - | Lists all groups (customers) in your organization. |
-| `postqueen integrations:settings <id>` | - | Returns an `output` object describing one channel: the provider `rules`, the `maxLength` for content, and the `settings` schema plus the dynamic `tools` it exposes. |
+| `postqueen integrations:settings <id>` | - | Returns an `output` object describing one channel: the provider `rules`, the `maxLength` for content, and the `settings` schema plus the dynamic `tools` it offers. |
 | `postqueen integrations:trigger <id> <method>` | `-d, --data <json>` | Calls one of those dynamic tools, for example `getSubreddits` or `getPlaylists`. `-d` passes arguments as a JSON string. |
 
 ```bash
@@ -76,7 +76,7 @@ postqueen integrations:trigger reddit-123 searchSubreddits -d '{"query":"program
 
 | Command | Flags | What it does |
 |---------|-------|--------------|
-| `postqueen posts:create` | See the flag table below | Creates a scheduled post or a draft on one or more channels. |
+| `postqueen posts:create` | `-c`, `-s`, `-i`, `-m`, `--settings`, `--json` | Creates a scheduled post or a draft on one or more channels. |
 | `postqueen posts:list` | `--startDate <iso>`, `--endDate <iso>`, `--customer <id>` | Lists posts in a date range. Defaults to the last 30 days through the next 30 days. |
 | `postqueen posts:delete <id>` | - | Deletes a post by ID. |
 | `postqueen posts:status <id>` | `-s, --status <draft\|schedule>` (required) | Moves a post between draft and schedule. `schedule` queues it for its stored date; `draft` pulls it back and terminates any running publishing workflow. |
@@ -171,7 +171,7 @@ postqueen analytics:post post-123 -d 30
 `-d` means **days** here, but **minutes** on `posts:create`. Same letter, different unit, because they are different commands.
 </Warning>
 
-If `analytics:post` returns `{"missing": true}`, the post published but never got a usable platform ID. Run `posts:missing` then `posts:connect` to link it, and analytics start flowing. See [Analytics](/cli/analytics) for the response shape.
+If `analytics:post` returns `{"missing": true}`, the post published but never got a usable platform ID. Run `posts:missing` then `posts:connect` to link it, and analytics start flowing. The response shape: [Analytics](/cli/analytics).
 
 ## Upload
 
@@ -190,7 +190,7 @@ postqueen posts:create \
 ```
 
 <Warning>
-Media must be uploaded to PostQueen first. Raw local filenames and external URLs are rejected by most providers, including TikTok, Instagram, and YouTube. See [Media Upload](/cli/media-upload).
+Media must be uploaded to PostQueen first. Raw local filenames and external URLs are rejected by most providers, including TikTok and Instagram. The upload rules: [Media Upload](/cli/media-upload).
 </Warning>
 
 ## What each command calls
@@ -215,7 +215,7 @@ Every command is a thin wrapper over the [Public API](/public-api/introduction).
 | `auth:status` | `GET` | `/public/v1/integrations` (used as a credential check) |
 
 <Note>
-`posts:create` is rate limited to 30 requests per hour on PostQueen Cloud. Self-hosters can change it with the `API_LIMIT` environment variable.
+`posts:create` is rate limited to 30 requests per hour on PostQueen Cloud. Running her yourself? Raise `API_LIMIT`.
 </Note>
 
 ## Next steps

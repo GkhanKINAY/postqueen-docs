@@ -60,7 +60,7 @@ TikTok (and a few others) fetch media via "pull from URL" rather than
 multipart upload. Your local `/uploads` path must therefore be
 reachable from the public internet over HTTPS for those providers to
 work. If your deployment is internet-facing through a reverse proxy
-with TLS, you're fine. If PostQueen is on a private network, those
+with TLS, you are fine. If PostQueen is on a private network, those
 providers will fail and you should use [Cloudflare R2](/configuration/r2)
 or a CDN instead.
 
@@ -81,7 +81,7 @@ CLOUDFLARE_REGION="auto"
 ```
 
 R2 gives you public HTTPS URLs out of the box, so the TikTok caveat
-above doesn't apply.
+above does not apply.
 
 ## Public-API uploads
 

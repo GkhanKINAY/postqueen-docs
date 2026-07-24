@@ -1,21 +1,33 @@
 ---
 title: Other Clients
-description: 'Connect Warp, Cline, Windsurf, or any MCP-compatible client to PostQueen'
+description: 'Connect Warp, Cline, Windsurf or any other MCP-compatible client to PostQueen'
 ---
 
-PostQueen speaks MCP over streamable HTTP, so any client that can reach a remote MCP server connects with a single URL, with no local process and no wrapper package. This page covers Warp, Cline, and Windsurf specifically, then gives the generic shape you can adapt to anything else.
+She speaks MCP over streamable HTTP, so any client that can reach a remote MCP server connects with a single URL, with no local process and no wrapper package. Warp, Cline and Windsurf each get their own steps, and the generic shape at the end adapts to anything else.
 
 <Note>
-You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
 </Note>
 
 <Warning>
-Your API key can post to every account you have connected, so treat it like a password. Whether it sits in the URL or in an `Authorization` header, it ends up in a config file on your machine, so keep those files out of version control and off shared screens. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+Your API key can post to every account you have connected, so treat it like a password. Whether it sits in the URL or in an `Authorization` header, it ends up in a config file on your machine, so keep those files out of version control and off shared screens. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
+
+<CardGroup cols={3}>
+  <Card title="Warp" icon="/images/brand/icon-warp.svg" href="#warp">
+    Add a URL server in the terminal agent settings.
+  </Card>
+  <Card title="Cline" icon="/images/brand/icon-cline.svg" href="#cline">
+    Add a remote server in the panel, or edit the JSON.
+  </Card>
+  <Card title="Windsurf" icon="/images/brand/icon-windsurf.svg" href="#windsurf">
+    Point `serverUrl` at PostQueen in the Cascade config.
+  </Card>
+</CardGroup>
 
 ## Warp
 
-Warp connects to remote MCP servers by URL, so PostQueen plugs straight into the terminal's agent.
+Warp connects to remote MCP servers by URL, so she plugs straight into the terminal's agent.
 
 <Steps>
   <Step title="Open the MCP servers page">
@@ -54,7 +66,7 @@ Warp connects to remote MCP servers by URL, so PostQueen plugs straight into the
     Replace `YOUR_API_KEY` with the key you revealed in the PostQueen app.
   </Step>
   <Step title="Start the server">
-    The server appears in the list with a **Start** / **Stop** control. Start it, and Warp discovers PostQueen's [10 tools](/mcp/tools). A server that was running when you closed Warp starts again on the next launch; one you stopped stays stopped.
+    The server appears in the list with a **Start** / **Stop** control. Start it, and Warp discovers her [10 tools](/mcp/tools). A server that was running when you closed Warp starts again on the next launch; one you stopped stays stopped.
   </Step>
 </Steps>
 
@@ -124,7 +136,7 @@ Source: [Cline: connecting to a remote server](https://docs.cline.bot/mcp/connec
 
 ## Windsurf
 
-Windsurf's Cascade reads MCP servers from `~/.codeium/windsurf/mcp_config.json` on macOS, Linux, and Windows. Remote HTTP servers use the `serverUrl` key, not `url`.
+Windsurf's Cascade reads MCP servers from `~/.codeium/windsurf/mcp_config.json` on macOS, Linux and Windows. Remote HTTP servers use the `serverUrl` key, not `url`, and getting that one wrong is the usual reason she never shows up.
 
 Open **Settings**, then **Cascade**, then **MCP Servers** (or click the MCP icon at the top right of the Cascade panel) and edit the raw config:
 
@@ -179,7 +191,7 @@ Source: [Windsurf Cascade MCP documentation](https://docs.devin.ai/desktop/casca
 
 ## Any MCP Client
 
-For anything not listed above, these are the only details that matter.
+For any other client, these are the only details that matter.
 
 ### Streamable HTTP URL
 
@@ -200,7 +212,7 @@ URL: https://api.postqueen.ai/mcp
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Both forms authenticate with the same key and expose the same 10 tools. Pick whichever your client handles more cleanly.
+Both forms use the same key and give you the same 10 tools. Pick whichever your client takes more cleanly.
 
 ### Self-Hosted
 
@@ -212,7 +224,7 @@ https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. See [Reverse Proxies](/reverse-proxies/caddy).
+Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
 
 ### Stdio-Only Clients
 
@@ -265,7 +277,7 @@ Whichever client you wired up, ask it:
 
 > "List my connected social media accounts"
 
-If the connection works, the agent calls the `integrationList` tool and returns your connected accounts.
+Your channel names come back, because the agent reached for her `integrationList` tool.
 
 <AccordionGroup>
   <Accordion title="The client shows zero tools">
@@ -275,7 +287,7 @@ If the connection works, the agent calls the `integrationList` tool and returns 
     Confirm your client is using the streamable HTTP transport rather than stdio, that it kept the trailing key segment in the URL, and that nothing on your network blocks `api.postqueen.ai`. On self-hosted setups, check that the reverse proxy forwards `/mcp` and does not buffer streaming responses.
   </Accordion>
   <Accordion title="Tools appear but every call errors">
-    That combination means the endpoint is right but the key was rejected. Regenerate the key in **Settings**, then **Developers**, then **Public API**, and update the config, remembering that the Bearer form needs the `Bearer ` prefix while the URL form does not.
+    That combination means the endpoint is right but the key was rejected. Regenerate the key in **Settings > Developers > Public API** and update the config, remembering that the Bearer form needs the `Bearer ` prefix while the URL form does not.
   </Accordion>
 </AccordionGroup>
 

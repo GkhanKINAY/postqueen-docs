@@ -5,6 +5,8 @@ description: 'View platform and post-level analytics from the command line'
 
 <img src="/images/brand/analytics.svg" alt="PostQueen analytics: engagement chart, followers, impressions and video views" />
 
+Ask her how last week went and she answers with numbers, per channel or per post.
+
 ## Platform Analytics
 
 Get analytics for a specific integration/channel. Returns metrics like followers, impressions, and engagement over time.
@@ -61,7 +63,7 @@ The metrics returned depend on the platform. For example, X returns followers an
 
 ## Post Analytics
 
-Get analytics for a specific published post. Returns metrics like likes, comments, shares, and impressions.
+Get analytics for a specific published post. Returns metrics like likes, comments and impressions.
 
 ```bash
 postqueen analytics:post <post-id>
@@ -107,12 +109,12 @@ The response follows the same format as platform analytics:
 ```
 
 <Tip>
-Post analytics are only available for published posts. Draft or queued posts won't return analytics data. An empty array `[]` means either the post has not been published yet or that network does not expose per-post metrics; run `postqueen posts:list` to confirm the post has a release ID.
+Post analytics are only available for published posts. Draft or queued posts will not return analytics data. An empty array `[]` means either the post has not been published yet or that network does not report per-post metrics; run `postqueen posts:list` to confirm the post has a release ID.
 </Tip>
 
 ### When a post shows `{"missing": true}`
 
-If `analytics:post` returns `{"missing": true}`, the post was published but the platform didn't return a usable post ID, so it isn't connected to its published content yet. Resolve it, then retry:
+If `analytics:post` returns `{"missing": true}`, the post was published but the platform did not return a usable post ID, so it is not connected to its published content yet. Resolve it, then retry:
 
 ```bash
 # 1. List available content from the provider
@@ -126,7 +128,7 @@ postqueen analytics:post <post-id>
 ```
 
 <Note>
-See [Troubleshooting](/cli/troubleshooting) for the full error table.
+The full error table: [Troubleshooting](/cli/troubleshooting).
 </Note>
 
 ## Scripting with Analytics

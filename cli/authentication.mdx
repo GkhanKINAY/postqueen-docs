@@ -5,7 +5,7 @@ description: 'Authenticate the PostQueen CLI with an API key, or self-host the o
 
 ## API Key (Recommended)
 
-The quickest way to authenticate the CLI is with your PostQueen API key. Every command works with it.
+One key and the CLI is talking to your account. Every command works with it, and it is the route to take on the hosted service.
 
 Get your key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, go to **Developers > Public API**, and click **Reveal**. Then export it:
 
@@ -37,7 +37,7 @@ Keep the key secret: it grants full access to your account. You can revoke or ro
 |----------|----------|---------|-------------|
 | `POSTQUEEN_API_KEY` | Yes* | - | Your PostQueen API key |
 | `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | Custom API endpoint (for self-hosted PostQueen) |
-| `POSTQUEEN_AUTH_SERVER` | No | `https://cli-auth.postqueen.ai` | Auth server URL for the OAuth2 device flow. The default points at a hosted auth server that is not currently available, so this variable only matters if you self-host an auth server (see below). |
+| `POSTQUEEN_AUTH_SERVER` | No | `https://cli-auth.postqueen.ai` | Auth server URL for the OAuth2 device flow. The default points at a hosted auth server that is not currently available, so this variable only matters if you self-host an auth server. |
 
 *`POSTQUEEN_API_KEY` is required unless you have stored OAuth2 credentials from a self-hosted auth server.
 
@@ -55,7 +55,7 @@ postqueen auth:login
 
 `auth:login` requires an auth server to mediate the flow, and PostQueen does not currently host one. The default `cli-auth.postqueen.ai` endpoint is not available, so running the command without your own auth server will fail. Use an API key instead; every command behaves the same either way.
 
-If you want the device flow anyway, for example to hand out short-lived CLI access without sharing API keys, you can self-host the auth server. The rest of this page covers that setup.
+If you want the device flow anyway, for example to hand out short-lived CLI access without sharing API keys, you can self-host the auth server, and the setup is written out in full from here on.
 
 When a reachable auth server is configured, `auth:login`:
 
@@ -73,7 +73,7 @@ postqueen auth:logout
 
 ### Self-Hosting the Auth Server
 
-The auth server holds the OAuth app secret and mediates the device flow, so CLI users can authenticate without client credentials of their own.
+The auth server holds the OAuth app secret and mediates the device flow, so you can authenticate without client credentials of your own.
 
 #### Prerequisites
 

@@ -22,10 +22,10 @@ ChatGPT reaches her over MCP. You paste one URL under **Settings**, then **Conne
 https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**.
 
 <Warning>
-Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
 Custom connectors sit behind ChatGPT's developer mode, which OpenAI offers on the paid web plans. The full walkthrough covers the developer mode toggle, the connector form and enabling her per chat:
@@ -34,7 +34,7 @@ Custom connectors sit behind ChatGPT's developer mode, which OpenAI offers on th
   Step by step, from the developer mode switch to your first tool call
 </Card>
 
-Once she is enabled in a conversation, ask for your connected channels. If ChatGPT calls `integrationList` and hands back your accounts, you are connected.
+Once she is switched on in a conversation, ask for your connected channels. If ChatGPT calls `integrationList` and hands back your accounts, you are connected.
 
 ## Route 2: a Custom GPT action
 
@@ -77,7 +77,7 @@ A few things worth knowing before you wire the action up:
 - **`type`** decides the outcome. Use `schedule` with a `date`, `now` to publish immediately, or `draft` to park the post on the calendar for your approval.
 - **`settings.__type`** tells the backend which platform schema to validate against. Each provider has its own required fields, listed in [Create Post](/public-api/posts/create).
 - **Integration IDs** come from `GET /public/v1/integrations`, so a useful GPT usually gets that action too.
-- **Images** have to be uploaded through her first. Each entry in `image` is an object with an `id` and a `path` that came back from an upload, because providers reject raw file paths and outside links. See [Upload File](/public-api/uploads/upload-file).
+- **Images** have to be uploaded through her first. Each entry in `image` is an object with an `id` and a `path` that came back from an upload, because providers reject raw file paths and outside links. The endpoint: [Upload File](/public-api/uploads/upload-file).
 
 <Note>
 The create-post endpoint allows 30 requests per hour. One request can carry several posts, so a GPT that batches a week into a single call gets a lot done inside that budget. Self-hosting? Point the action at `https://YOUR-DOMAIN/api/public/v1` and tune the limit with the `API_LIMIT` env var.
@@ -85,7 +85,7 @@ The create-post endpoint allows 30 requests per hour. One request can carry seve
 
 ## 👑 Ask her for two posts
 
-Here is the connector doing real work. You describe what you want, she handles the rest:
+You describe what you want, and she takes care of the rest:
 
 > **You:** Create 2 posts about our cafe's new dessert menu with photos, schedule them for this week.
 
@@ -138,6 +138,6 @@ She runs on your terms. Leave the schedule alone and she is a true autopilot: wh
     The endpoint behind a Custom GPT action, with every provider's settings schema
   </Card>
   <Card title="MCP examples" icon="lightbulb" href="/mcp/examples">
-    Real prompts and the tool calls they trigger
+    Real prompts and the tool calls each one triggers
   </Card>
 </CardGroup>

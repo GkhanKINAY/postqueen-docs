@@ -3,9 +3,9 @@ title: Email Notifications
 description: 'How to send notifications to users'
 ---
 
-PostQueen supports two email providers: Resend and NodeMailer (SMTP).
+Someone signs up and an activation mail is waiting in their inbox. She sends it through Resend or through your own SMTP server, whichever you point her at.
 
-If you have an email provider configured, then new users will require activation.
+Configure a provider and the people you invite have to activate before they can sign in.
 
 ```env
 EMAIL_PROVIDER: "resend|nodemailer"
@@ -20,8 +20,8 @@ EMAIL_FROM_ADDRESS: "postqueen@example.com"
 
 ## Resend
 
-PostQueen uses Resend to send email notifications to users. If this key is set, users
-will also require activation.
+Connect your domain once and she sends from it. Set this key and everyone you
+invite has to activate their account.
 
 <Steps>
   <Step title="Register on Resend">
@@ -42,7 +42,7 @@ RESEND_API_KEY="<your-api-key-here>"
 
 ## NodeMailer (SMTP)
 
-This is an alternative to Resend. You can use NodeMailer, which is simply a SMTP library, to connect to any SMTP server.
+Already have an SMTP server? Point her at it instead of Resend. NodeMailer is the SMTP library she uses to reach it.
 
 ```env
 EMAIL_PROVIDER: "nodemailer"

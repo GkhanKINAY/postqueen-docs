@@ -3,6 +3,8 @@ title: Managing Posts
 description: 'Create, list, and delete social media posts from the command line'
 ---
 
+One command puts a post on her calendar. From there she runs on your terms: a scheduled post goes out on time without another word from you, and `-t draft` holds it until you approve it.
+
 ## Creating Posts
 
 Use `posts:create` to schedule or draft posts to one or more platforms.
@@ -108,7 +110,7 @@ postqueen posts:create \
 ```
 
 <Tip>
-Use `postqueen integrations:settings <id>` to discover what settings are available for each platform. See [Integrations](/cli/integrations) for details.
+Use `postqueen integrations:settings <id>` to discover what settings are available for each platform. Full walkthrough: [Integrations](/cli/integrations).
 </Tip>
 
 ### Complex Posts with JSON
@@ -206,7 +208,7 @@ postqueen posts:list --customer "customer-id"
 
 ## Connecting Missing Posts
 
-Some platforms don't return a post ID immediately after publishing (the `releaseId` is set to `"missing"`). When this happens, you can fetch recent content from the provider and connect the correct one to your post. This enables analytics tracking.
+Some platforms do not return a post ID immediately after publishing (the `releaseId` is set to `"missing"`). When this happens, you can fetch recent content from the provider and connect the correct one to your post. This is what makes analytics work for that post.
 
 ### List Available Content
 
@@ -230,12 +232,12 @@ Returns an array of recent content items from the provider with their ID and thu
 ```
 
 <Note>
-This only works for posts where the `releaseId` is `"missing"`. Returns an empty array if the provider doesn't support this feature.
+This only works for posts where the `releaseId` is `"missing"`. Returns an empty array if the provider does not support this feature.
 </Note>
 
 ### Connect a Post
 
-Once you've identified the correct content, update the release ID:
+Once you have identified the correct content, update the release ID:
 
 ```bash
 postqueen posts:connect <post-id> --release-id "7321456789012345678"
@@ -272,7 +274,7 @@ postqueen posts:status <post-id> --status schedule
 - `--status draft` moves a scheduled post back to draft **and terminates any running publishing workflow**, so it will not publish.
 
 <Note>
-Use this when you want to pause a scheduled post without deleting it, or hand a draft off to the scheduler once it's ready.
+Use this when you want to pause a scheduled post without deleting it, or hand a draft off to the scheduler once it is ready.
 </Note>
 
 ## Deleting Posts

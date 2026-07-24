@@ -3,13 +3,15 @@ title: Support
 description: 'Where to find help with PostQueen, and how to write a report that gets a fast answer'
 ---
 
-Here is where to go, and how to ask so you get a useful answer fast.
+Most days she just works. Then one post does not go out, or a charge on your card does not look right, and you want a person to look at it. One report with the detail in it beats three vague ones.
 
-A quick note on the self-hosted app: it is supported by the community in their free time, on a best-efforts basis. Post your question with as much detail as you can, then give people a little room to respond.
+Running her on your own server? Support runs on volunteers: they answer in their own evenings, for free, so there is no support desk and no promised reply time. Write the detail down while it is fresh, then give them a day or two.
+
+GitHub is public and searchable, so your report usually helps the next person who hits the same wall.
 
 <CardGroup cols={2}>
   <Card title="GitHub Issues" icon="github" href="https://github.com/GkhanKINAY/postqueen-app/issues/new/choose">
-    The right place for bugs and questions about the open-source app. It is public and searchable, so your report may help the next person too. Attach screenshots and logs.
+    Bugs and questions about the open-source app, with screenshots and logs attached.
   </Card>
   <Card title="Email" icon="envelope" href="mailto:support@postqueen.ai">
     Billing, your account, and anything you would not post publicly.
@@ -18,17 +20,21 @@ A quick note on the self-hosted app: it is supported by the community in their f
 
 ## PostQueen Cloud: billing and refunds
 
-Write to [support@postqueen.ai](mailto:support@postqueen.ai) from the email address on your account so we can find you quickly, and say what you expected versus what happened. You can close the account yourself from **Settings**, then **Account**, then **Delete account** in the app; email works too, and GDPR requests go through the same inbox. Leave API keys, OAuth secrets and card numbers out of the message, since support does not need them to help you.
+Write to [support@postqueen.ai](mailto:support@postqueen.ai) from the email address on your account so we can find you in seconds, and tell us what you expected versus what happened instead.
 
-Before opening a billing ticket, take a quick look at the [troubleshooting pages](/troubleshooting/billing). Many "I was charged but X" cases turn out to be a Stripe.js script blocker or a private-window localStorage issue.
+Closing the account? You can do that yourself in the app: **Settings**, then **Account**, then **Delete account**. Email works too, and GDPR requests land in the same inbox.
+
+Leave API keys, OAuth secrets and card numbers out of the message: we do not need any of them to help you.
+
+One minute on the [troubleshooting pages](/troubleshooting/billing) can save you the wait. Many "I was charged but X" cases turn out to be a script blocker stopping Stripe.js, or a private window throwing localStorage away.
 
 ## 👑 How to write a report that gets a fast answer
 
-A good report gets a good answer. Walk through the four parts below in order.
+A good report gets a good answer. Four short answers are usually all it takes.
 
 ### Goal
 
-Start with what you were trying to do:
+Start with what you wanted to happen: the post you were trying to schedule, or the machine you were trying to run her on.
 
 - *I want to schedule a post on Reddit at 6pm*
 - *I want to run in a Linux container on a Raspberry Pi*
@@ -36,10 +42,10 @@ Start with what you were trying to do:
 
 ### Environment
 
-Share the relevant parts of your setup. For web app issues, that means your browser. For installation or server issues, that means your OS and how you installed:
+Which browser, which OS, which install? For trouble in the web app, the browser is the part that matters. For an installation or a server, it is your OS and how you installed:
 
-- *I'm using Firefox on Windows 10*
-- *I'm using a Raspberry Pi 4 with Ubuntu 20.04, and Node version 18*
+- *I am using Firefox on Windows 10*
+- *I am using a Raspberry Pi 4 with Ubuntu 20.04, and Node version 18*
 - *This is a fresh installation on a Mac*
 
 ### Changes
@@ -52,10 +58,10 @@ If it worked before and broke, something changed. Tell us what:
 
 ### Results
 
-Describe what happened, and what you expected instead:
+Then say what you saw, and what you expected to see instead:
 
 - *I see a blank screen*
 - *I see an error message*
 - *I see a 404 page*
 
-That is it. The more of these four you cover, the faster someone can help.
+That is it. Cover all four and the maintainer who opens your issue can go straight to the fix, instead of spending the first reply asking which browser you are on.

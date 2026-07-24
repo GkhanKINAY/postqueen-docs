@@ -3,13 +3,13 @@ title: Chrome Extension
 description: 'Set up the PostQueen browser extension for cookie-based integrations'
 ---
 
-Some platforms (like Skool) do not offer public OAuth APIs. PostQueen connects to these platforms using a browser extension that securely extracts session cookies from your browser.
+Skool has no public API, so she reaches it the way you do: through your own logged-in browser. The extension hands her the session cookie.
 
 ## How It Works
 
 1. You install the PostQueen Chrome Extension in your browser.
 2. When adding a cookie-based channel, the extension reads your session cookies for that platform.
-3. The cookies are sent to your PostQueen backend and stored securely as an encrypted JWT.
+3. The cookies go to her backend, where they are stored as an encrypted JWT.
 4. The extension automatically refreshes cookies every 24 hours to keep connections alive.
 
 <Warning>
@@ -17,7 +17,7 @@ Using cookies to interact with platforms may violate their terms of service. Use
 </Warning>
 
 <Note>
-The packaged PostQueen extension is coming soon to the Chrome Web Store. Until then, build it from source as shown below. The same steps work for both cloud and self-hosted setups.
+The packaged PostQueen extension is coming soon to the Chrome Web Store. Until then, you build it from source. The same steps work for both cloud and self-hosted setups.
 </Note>
 
 ## Installation
@@ -63,17 +63,15 @@ The packaged PostQueen extension is coming soon to the Chrome Web Store. Until t
 
 ## Supported Platforms
 
-The following platforms use the Chrome Extension for authentication:
+Skool is the one channel that needs it today:
 
-<CardGroup cols={2}>
-  <Card title="Skool" icon="graduation-cap" href="/providers/skool">
-    Post to Skool communities
-  </Card>
-</CardGroup>
+<Card title="Skool" icon="graduation-cap" href="/providers/skool">
+  She posts to your communities once the extension is loaded
+</Card>
 
 ## Self-Hosted Considerations
 
-If you are self-hosting PostQueen on a domain other than `localhost` or `*.postqueen.ai`, you need to build a custom extension with your domain in the `externally_connectable` manifest field.
+Running her on a domain other than `localhost` or `*.postqueen.ai`? You build a custom extension with your domain in the `externally_connectable` manifest field.
 
 Edit `apps/extension/manifest.json` and add your domain:
 

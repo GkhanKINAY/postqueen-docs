@@ -45,7 +45,7 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
     openclaw onboard --install-daemon
     ```
 
-    OpenClaw is a separate project with its own documentation. For install troubleshooting or alternative methods such as Docker, see the [OpenClaw getting-started guide](https://docs.openclaw.ai/start/getting-started).
+    OpenClaw is a separate project with its own documentation. Install troubleshooting and other routes such as Docker: [OpenClaw getting-started guide](https://docs.openclaw.ai/start/getting-started).
   </Step>
   <Step title="Install the PostQueen skill">
     ```bash
@@ -59,7 +59,7 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
     ```
   </Step>
   <Step title="Export your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Then export it in the environment the OpenClaw Gateway runs in:
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Then export it in the environment the OpenClaw Gateway runs in:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
@@ -85,7 +85,7 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
     openclaw plugins install @openclaw/<channel-id>
     ```
 
-    You can also let OpenClaw handle it for you: `openclaw channels add` installs the plugin on demand and starts the channel's setup flow. WhatsApp pairs by scanning a QR code, while Slack and Discord connect through a bot you add to your workspace or server. Restart the Gateway after installing a plugin.
+    You can also let OpenClaw do it for you: `openclaw channels add` installs the plugin on demand and starts the channel's setup flow. WhatsApp pairs by scanning a QR code, while Slack and Discord connect through a bot you add to your workspace or server. Restart the Gateway after installing a plugin.
 
     Each channel has its own walkthrough in the [OpenClaw channel docs](https://docs.openclaw.ai/channels). Once linked, send her a first message and watch the post land on your calendar.
   </Step>
@@ -94,6 +94,8 @@ The PostQueen mobile app is on the way. You are not waiting on it, though: throu
 ## Talking to her 👑
 
 Message her the way you would message a colleague. Plain text works, and so does a voice note if your assistant supports voice: speak an idea on your walk and find it waiting on the calendar as finished posts.
+
+<img src="/images/brand/phone-openclaw.svg" alt="She answers in your pocket: you ask in the OpenClaw chat for today's podcast to go to X and LinkedIn at 5pm, and she replies that two posts are scheduled and waiting on your calendar" />
 
 Try saying:
 
@@ -120,7 +122,7 @@ openclaw cron add \
   --message "Run 'postqueen integrations:list' to get my channel ids. Check yesterday's numbers with 'postqueen analytics:platform' for each channel, then draft one post for today and schedule it for noon with 'postqueen posts:create'."
 ```
 
-The `--session isolated` flag runs the job in its own session, and `--announce` has the agent report the result back to your chat. OpenClaw also has a heartbeat, a periodic check-in the Gateway manages per agent; the OpenClaw docs recommend cron jobs like the one above when you want precise timing. Cron jobs are documented in the [OpenClaw scheduled tasks guide](https://docs.openclaw.ai/automation/cron-jobs), and heartbeat has its own [heartbeat page](https://docs.openclaw.ai/gateway/heartbeat).
+The `--session isolated` flag runs the job in its own session, and `--announce` has the agent report the result back to your chat. OpenClaw also has a heartbeat, a periodic check-in the Gateway runs per agent; the OpenClaw docs recommend cron jobs like the one above when you want precise timing. Cron jobs are documented in the [OpenClaw scheduled tasks guide](https://docs.openclaw.ai/automation/cron-jobs), and heartbeat has its own [heartbeat page](https://docs.openclaw.ai/gateway/heartbeat).
 
 <Tip>
 Add `-t draft` to the `posts:create` command in your prompt and the overnight run stacks up drafts instead of scheduled posts. You approve them from the calendar over coffee.
@@ -128,7 +130,7 @@ Add `-t draft` to the `posts:create` command in your prompt and the overnight ru
 
 ## Staying in control
 
-Drafts, edits and deletes work the same as anywhere else in PostQueen. Ask for drafts in your message and each post waits on the calendar until you approve it. See [how control works](/agents/overview#she-runs-on-your-terms).
+Drafts, edits and deletes work the same as anywhere else in PostQueen. Ask for drafts in your message and each post waits on the calendar until you approve it. How control works: [she runs on your terms](/agents/overview#she-runs-on-your-terms).
 
 ## FAQ
 
@@ -137,7 +139,7 @@ Drafts, edits and deletes work the same as anywhere else in PostQueen. Ask for d
     No. She works on her own through the dashboard, CLI, and API. OpenClaw is one of several ways to automate her, and the one to pick when you want to reach her from a chat app.
   </Accordion>
   <Accordion title="What can she actually do from chat?">
-    Everything the CLI exposes. She can list your channels and schedule posts, upload media for you, and pull analytics afterwards, all with JSON output the agent can parse.
+    Everything the CLI can do. She can list your channels and schedule posts, upload media for you, and pull analytics afterwards, all with JSON output the agent can parse.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
     Yes. Ask for drafts in your message and she holds each post on the calendar until you approve it there.

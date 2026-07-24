@@ -54,11 +54,11 @@ docker run -d --name n8n \
 
 ## Credentials
 
-The node authenticates with a **PostQueen API** credential that has two fields:
+Two fields and the node is talking to your account:
 
 | Field | Description |
 | --- | --- |
-| **API Key** | Your PostQueen Public API key. In [app.postqueen.ai](https://app.postqueen.ai), open Settings, then Developers, then Public API, and hit Reveal. |
+| **API Key** | Your PostQueen Public API key. In [app.postqueen.ai](https://app.postqueen.ai), open Settings > Developers > Public API and hit Reveal. |
 | **Host** | Base URL of the PostQueen API. Defaults to `https://api.postqueen.ai` (cloud). |
 
 Create a new **PostQueen API** credential in n8n, paste your key, and set the host if you self-host. n8n validates the credential against a live endpoint when you save, so a typo shows up immediately.
@@ -69,45 +69,49 @@ Self-hosting? The **Host** value must end with `/api`, for example `https://your
 
 ## Operations
 
-The node exposes 7 operations:
+Seven operations cover everything the node can do:
 
 | Operation | Description |
 | --- | --- |
 | **Create Post** | Schedule, draft, or immediately publish a post to one or more channels. |
 | **Delete Post** | Delete a post by its ID. |
-| **Generate Video** | Generate a video with AI (see parameters below). |
+| **Generate Video** | Generate a video with AI. |
 | **Get Channels** | List your connected channels (integrations). |
 | **Get Posts** | List posts within a start/end date range, optionally filtered by customer. |
 | **Upload File** | Upload a file (image or video) from a binary property. |
 | **Video Function** | Run a video helper function, such as loading available voices. |
 
-**Generate Video** takes a **Video Type**, for example `image-text-slides` or `veo3`, an **Output Format** (`vertical` or `horizontal`), and optional **Custom Parameters** as key/value pairs such as `prompt`, `voice`, or `images`. To list the voices, run **Video Function** with the function name `loadVoices` and the identifier of the video type you plan to use, such as `image-text-slides`. Both fields are required on that operation.
+**Generate Video** starts with a **Video Type**, for example `image-text-slides` or `veo3`. Then pick an **Output Format**: `vertical` or `horizontal`. **Custom Parameters** are optional key/value pairs such as `prompt`, `voice` or `images`. Need the list of voices? Run **Video Function** with the function name `loadVoices` and the identifier of the video type you plan to use, such as `image-text-slides`. Both fields are required on that operation.
 
 <Note>
-There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule trigger, an RSS feed, or a webhook. Form submissions work too. Any of them can start a workflow that ends in a PostQueen operation.
+There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule trigger, an RSS feed, or a webhook. Form submissions work too. Any of them can start a workflow that ends with a new post on your calendar.
 </Note>
 
 ## Workflow ideas
 
-**Blog on autopilot.** An RSS trigger watches your blog, an AI node writes a caption for each new article, and **Create Post** schedules it to every channel you have connected. You publish the article and walk away; the promotion handles itself.
+**Blog on autopilot.** An RSS trigger watches your blog, an AI node writes a caption for each new article, and **Create Post** schedules it to every channel you have connected. You publish the article and walk away: she carries it out to every feed while you write the next one.
 
-**A video channel that grows overnight.** A daily Schedule trigger runs **Generate Video** with your prompt, as `veo3` or `image-text-slides`, vertical or horizontal, with a voiceover if you want one. **Create Post** then queues the finished video to your channel, so a new upload is waiting every morning whether you opened your laptop or not. Video generation is an operation the `postqueen` CLI does not expose, which makes this node the natural no-code way to drive it.
+<img src="/images/brand/n8n-flow.svg" alt="An RSS trigger, an AI caption, then Create Post: your blog promotes itself" />
 
-<img src="/images/brand/flow-youtube.svg" alt="Daily schedule, Generate Video, Create Post: a YouTube channel that runs overnight" />
+**A video channel that grows overnight.** A daily Schedule trigger runs **Generate Video** with your prompt, as `veo3` or `image-text-slides`, vertical or horizontal. Add a voiceover if you want one. **Create Post** then queues the finished video to your channel, so a new upload is waiting every morning whether you opened your laptop or not. Video generation is not something the `postqueen` CLI offers, so this node is where you reach for it without writing code.
+
+<img src="/images/brand/flow-youtube.svg" alt="A daily schedule, Generate Video, then Create Post: a channel that fills itself overnight" />
 
 **One clip, three short-form feeds.** A new video lands in Drive, Dropbox or S3, **Upload File** brings it in, and a single **Create Post** schedules it to TikTok, Instagram and YouTube together. Upload first and pass the returned path into the post: those three networks only accept media from trusted domains, so linking a raw external URL will not work.
 
-<img src="/images/brand/flow-clips.svg" alt="New video file, Upload File, one Create Post scheduling to TikTok, Reels and Shorts" />
+<img src="/images/brand/flow-clips.svg" alt="A new video file, Upload File, then one Create Post for TikTok, Reels and Shorts" />
 
 **Queue guard.** Every Monday, **Get Posts** pulls the next seven days of your calendar. If the queue looks thin, a Slack message tells you before your followers notice a gap.
 
-<img src="/images/brand/flow-guard.svg" alt="Monday check: if the queue is empty, a Slack alert goes out" />
+<img src="/images/brand/flow-guard.svg" alt="Monday check: if the week ahead looks empty, a Slack message reaches you first" />
+
+She runs on your terms. Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without another word from you. Want more say? Everything is visible on the calendar before it publishes, and if you set **Create Post** to draft she holds each post until you approve it.
 
 ## Links
 
 <CardGroup cols={3}>
   <Card title="postqueen-n8n on GitHub" icon="github" href="https://github.com/GkhanKINAY/postqueen-n8n">
-    The node's source, plus every workflow example above.
+    The node's source, plus ready-made versions of every workflow here.
   </Card>
   <Card title="n8n-nodes-postqueen on npm" icon="npm" href="https://www.npmjs.com/package/n8n-nodes-postqueen">
     The package page with versions and release notes.

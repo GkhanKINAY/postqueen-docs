@@ -1,6 +1,6 @@
 ---
 title: System Requirements
-description: 'Hardware, services, ports, and network requirements for self-hosting PostQueen'
+description: 'Hardware, services and network requirements for self-hosting PostQueen'
 ---
 
 ## Hardware
@@ -36,7 +36,7 @@ The canonical self-host setup is the official Docker Compose repo:
   Pre-wired PostQueen + Postgres + Redis + Temporal. The fastest way to a working install.
 </Card>
 
-If you'd rather build from source or use Kubernetes, see [Docker Compose](/installation/docker-compose), [Docker](/installation/docker), or [Kubernetes / Helm](/installation/kubernetes-helm).
+Would you rather build from source or run Kubernetes? Every install route: [Docker Compose](/installation/docker-compose), [Docker](/installation/docker) and [Kubernetes / Helm](/installation/kubernetes-helm).
 
 ## Required services
 
@@ -50,7 +50,7 @@ PostQueen needs four external services:
 | Object storage | Optional: local filesystem works (`STORAGE_PROVIDER=local`), Cloudflare R2 supported (`STORAGE_PROVIDER=cloudflare`) |
 
 The official [docker-compose](https://github.com/GkhanKINAY/postqueen-docker-compose)
-ships Postgres, Redis, and Temporal pre-wired. If you're running them
+ships Postgres, Redis, and Temporal pre-wired. If you are running them
 externally, point PostQueen at them via `DATABASE_URL`, `REDIS_URL`, and
 `TEMPORAL_ADDRESS`.
 
@@ -68,9 +68,9 @@ externally, point PostQueen at them via `DATABASE_URL`, `REDIS_URL`, and
 
 If `STORAGE_PROVIDER=local`, set `UPLOAD_DIRECTORY` to a host path and
 mount that path into the backend container. The frontend serves the
-same files through `/uploads/:path*`. See [Uploads & storage](/configuration/uploads).
+same files through `/uploads/:path*`. Storage options: [Uploads & storage](/configuration/uploads).
 
-If you'd rather offload media: configure [Cloudflare R2](/configuration/r2).
+If you would rather offload media: configure [Cloudflare R2](/configuration/r2).
 
 ## Outbound network
 
@@ -94,4 +94,4 @@ on the backend.
 The frontend talks to the backend from the browser, so
 `NEXT_PUBLIC_BACKEND_URL` must be **reachable from your users' browsers**,
 not just from the frontend SSR server. A reverse proxy in front of both
-ports is the typical setup. See [Reverse Proxies](/reverse-proxies/caddy).
+ports is the typical setup. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).

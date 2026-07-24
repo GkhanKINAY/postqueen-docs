@@ -3,10 +3,10 @@ title: Activation & Login
 description: 'Expired activation links, "jwt malformed", and login API responses'
 ---
 
-## Activation link doesn't work
+## Activation link does not work
 
 Activation links are short-lived JWTs. If you click an old one, or click
-it twice, you'll see one of these:
+it twice, you will see one of these:
 
 - `jwt malformed`: the link is corrupted or truncated (a mail client
   inserted a line break, or you copied only part of the URL).
@@ -21,11 +21,11 @@ it twice, you'll see one of these:
 
 ## Login API returns 404 or 204
 
-When you're not logged in, calls like `GET /api/health` or
-`GET /auth/me` return `204` or `404` by design. That's how the frontend
+When you are not logged in, calls like `GET /api/health` or
+`GET /auth/me` return `204` or `404` by design. That is how the frontend
 detects "no session." It is not an error.
 
-If you're already logged in and still see 404 on these endpoints, check
+If you are already logged in and still see 404 on these endpoints, check
 that `NEXT_PUBLIC_BACKEND_URL` matches the URL your browser is using to
 talk to the backend (mismatched protocols/ports break the session cookie).
 
@@ -35,9 +35,9 @@ talk to the backend (mismatched protocols/ports break the session cookie).
 every existing session becomes invalid.
 
 **Fix:** set `JWT_SECRET` once during initial deployment and never
-rotate it lightly. Store it in a secret manager (Docker / Kubernetes
-secret, AWS/GCP Secret Manager, Doppler, 1Password, etc.) or an
-untracked `.env` file on the host. **Don't commit it to version
+rotate it lightly. Store it in a secret manager such as Doppler or
+1Password, in a Docker or Kubernetes secret, or in an untracked `.env`
+file on the host. **Do not commit it to version
 control.** That includes "private" deploy repos, since anyone with
 repo access ends up with the signing key for every session token PostQueen
 has ever issued.
@@ -48,5 +48,5 @@ The backend's CORS allowlist is built from `FRONTEND_URL` (and
 `MAIN_URL` if set). If you access PostQueen on a hostname or port not in
 that list, the backend rejects the call.
 
-**Fix:** make sure `FRONTEND_URL` exactly matches the URL you're using
+**Fix:** make sure `FRONTEND_URL` exactly matches the URL you are using
 in the browser, including protocol and port.

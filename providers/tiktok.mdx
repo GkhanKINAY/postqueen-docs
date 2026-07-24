@@ -13,7 +13,7 @@ TikTok will also not allow http:// for your app redirect URI, so you will need t
 
 <Warning>
 **NOTE:** TikTok fetches media via pull_from_url. Your media files must be publicly reachable over HTTPS; localhost or private routes (e.g., /uploads) will fail. 
-Expose your uploads via a reverse proxy (e.g., [Caddy](/reverse-proxies/caddy)) or use object storage/CDN such as [Cloudflare R2](/configuration/r2) with public access.
+Serve your uploads through a reverse proxy (e.g., [Caddy](/reverse-proxies/caddy)) or use object storage/CDN such as [Cloudflare R2](/configuration/r2) with public access.
 
 Ensure the media domain is listed under your TikTok developer account's verified sites.
 </Warning>
@@ -27,7 +27,7 @@ In practice this means: before your TikTok developer app passes audit, the `priv
 </Warning>
 
 <Warning>
-**Known issue:** the `/integrations/social/tiktok` connect page can crash for some accounts. If you see a blank page or "cannot read properties of undefined" error, retry from a fresh incognito window. See [Known Issues](/troubleshooting/known-issues).
+**Known issue:** the `/integrations/social/tiktok` connect page can crash for some accounts. If you see a blank page or "cannot read properties of undefined" error, retry from a fresh incognito window. Tracked in [Known Issues](/troubleshooting/known-issues).
 </Warning>
 
 <Steps>
@@ -37,7 +37,7 @@ In practice this means: before your TikTok developer app passes audit, the `priv
     ![Create a new app](/images/providers/tiktok/tiktok_create_app.png)
 
     * **App Name:** `MyPostQueen`
-    * **Redirect URI:** (see below)
+    * **Redirect URI:** your PostQueen callback URL, shown in the next step
 
     <Snippet file="oauth2redirect.mdx" />
 

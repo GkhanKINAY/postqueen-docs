@@ -5,7 +5,7 @@ description: 'Point PostQueen at an RSS feed and she checks it hourly, turning t
 
 Publish a blog post and PostQueen notices. AutoPost watches an RSS feed for you, and when a new item shows up she writes a short caption, adds the link, and puts a draft on your calendar in your next open slot. You come back later, read it, and send it out.
 
-An AutoPost item is created as a draft, so she holds it until you open it and schedule or publish it. Each hourly check handles one item, the newest one, so a feed that publishes in bursts leaves the older items behind.
+An AutoPost item is created as a draft, so she holds it until you open it and schedule or publish it. Each hourly check takes one item, the newest one, so a feed that publishes in bursts leaves the older items behind.
 
 ## 👑 What happens on a new item
 
@@ -14,7 +14,7 @@ An AutoPost item is created as a draft, so she holds it until you open it and sc
     While a feed is active she reads it about once an hour. The first check runs right after you turn it on.
   </Step>
   <Step title="She looks at the newest item">
-    She picks the item with the newest publication date and compares its link with the last link she handled for this feed. The same link means nothing new, and she goes back to sleep.
+    She picks the item with the newest publication date and compares its link with the last link she posted for this feed. The same link means nothing new, and she goes back to sleep.
   </Step>
   <Step title="She writes the caption">
     With **Autogenerate content** set to Yes she reads the item and writes a short caption for it. Set it to No and she uses the text you wrote in the form for every item.
@@ -37,7 +37,7 @@ An AutoPost item is created as a draft, so she holds it until you open it and sc
     A form opens in a modal. Existing feeds sit above it in a list with Edit, Delete and an Active toggle.
   </Step>
   <Step title="Fill in the form">
-    The fields are described below.
+    Give it a title, paste the feed URL, and pick the channels she posts to.
   </Step>
   <Step title="Hit Send Test">
     She fetches the feed and tells you whether she can read it. A feed she cannot parse shows a warning, and the **Save** button only appears once the test passes.
@@ -67,7 +67,7 @@ Caption writing and picture generation call OpenAI. On a self-hosted install, se
 
 Each active feed runs its own hourly loop. Turning a feed on starts a check immediately, then she waits an hour and checks again, for as long as the feed stays active.
 
-One check handles one item: the newest one. If four posts go live in the same hour, she takes the newest, records it as the last item she handled, and the other three stay in the feed without drafts of their own. For a feed that publishes in bursts, that is worth knowing before you switch it on.
+One check takes one item: the newest one. If four posts go live in the same hour, she takes the newest, records it as the last item she posted, and the other three stay in the feed without drafts of their own. For a feed that publishes in bursts, that is worth knowing before you switch it on.
 
 ## Control tips
 
@@ -100,5 +100,5 @@ Adding a feed draws on the same allowance as webhooks, so if you have already us
 AutoPost is deliberately simple: one feed, one caption style, one draft per check. If you want AI captions from your own model or prompt, or custom routing that sends each item to a different channel, use the n8n RSS workflow instead. It can also pick up several items in one run and filter them by category first.
 
 <Card title="RSS to PostQueen in n8n" icon="diagram-project" href="/automation/n8n">
-  An RSS trigger, your own caption step, then Create Post. Same calendar, more control over what reaches it.
+  An RSS trigger, your own caption step, then Create Post.
 </Card>

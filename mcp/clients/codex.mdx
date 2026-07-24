@@ -3,11 +3,11 @@ title: OpenAI Codex
 description: 'Connect the OpenAI Codex CLI to the PostQueen MCP server'
 ---
 
-The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it can talk to PostQueen directly, with no local bridge process. Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
+The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it talks to her directly, with no local bridge process. Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
 
 ## Add via CLI
 
-Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings**, then **Developers**, then **Public API**, click **Reveal**), then run:
+Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings > Developers > Public API**, click **Reveal**), then run:
 
 ```bash
 codex mcp add postqueen --url https://api.postqueen.ai/mcp/YOUR_API_KEY
@@ -51,12 +51,12 @@ export POSTQUEEN_API_KEY="your-key-here"
 ```
 
 <Warning>
-Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plaintext file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plaintext file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
 ## Self-Hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://your-postqueen-server.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP; see [Reverse Proxies](/reverse-proxies/caddy).
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://your-postqueen-server.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
 
 ## Verify
 
@@ -64,4 +64,4 @@ Run `codex mcp list` to confirm the `postqueen` entry is registered, then ask Co
 
 > "List my connected social media accounts"
 
-If the connection works, it calls the `integrationList` tool and returns your connected accounts.
+Your channel names come back, because the agent reached for her `integrationList` tool.

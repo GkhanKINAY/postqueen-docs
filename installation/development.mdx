@@ -3,8 +3,8 @@ title: Development Environment
 description: 'Set up PostQueen for local development'
 ---
 
-This article guides you for local development on  PostQueen. If you're only looking to self-host, docker-compose is the recommended method.
-[Docker-Compose](/installation/docker-compose) is the recommended method and now includes the Temporal stack for workflow processing.
+Running her from source takes Node, Postgres, Redis and Temporal on your own machine. Only looking to self-host?
+[Docker-Compose](/installation/docker-compose) is the shorter road, and it now includes the Temporal stack for workflow processing.
 
 <Warning>
   <strong>Important:</strong> PostQueen uses Temporal for background workflows. Use the maintained Docker Compose repository which includes the Temporal stack: [/installation/docker-compose](/installation/docker-compose).
@@ -19,15 +19,15 @@ Naturally you can use these instructions to setup a development environment on a
 
 ### Warning about Windows
 
-Several users using Windows (and WSL) have reported issues with the setup. This is not well tested as the main developers of the project do not use Windows/WSL for development. If you are using Windows and encounter issues, please do not try to get support, as we aren't able to support you.
+Several users using Windows (and WSL) have reported issues with the setup. This is not well tested as the main developers of the project do not use Windows/WSL for development. If you are using Windows and encounter issues, please do not try to get support, as we are not able to support you.
 
 <Snippet file="installation-pre-reqs.mdx" />
 
 ### Prerequisite Local Services
 
 - **Node.js** - for running the code! (version 18+)
-- **PostgreSQL** - or any other SQL database (instructions below suggest Docker)
-- **Redis** - for handling worker queues (instructions below suggest Docker)
+- **PostgreSQL** - or any other SQL database (Docker is the easiest route)
+- **Redis** - for worker queues (Docker is the easiest route)
 - **Temporal** - runs as a separate stack (Postgres + Elasticsearch + Temporal services). For local development run the Temporal stack via the `postqueen-docker-compose` repository described in [/installation/docker-compose](/installation/docker-compose). Set `TEMPORAL_ADDRESS` in your `.env` to point at the Temporal service (example below).
 
 We have some messages from users who are using Windows, which should work, but they are not tested well yet.
@@ -154,16 +154,16 @@ If everything is not running - you had errors in the steps above, please head ov
 
 <CardGroup cols={2}>
   <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
-    Set up R2 for file storage
+    Store media on Cloudflare R2 instead of the local disk
   </Card>
   <Card title="Architecture" icon="diagram-project" href="/howitworks">
-    Learn the architecture of the project
+    The services behind a post, and what each one does
   </Card>
   <Card title="Email notifications" icon="envelope" href="/configuration/emails">
-    Set up email for notifications
+    Wire up Resend or SMTP so the people you invite get their mail
   </Card>
   <Card title="Providers" icon="plug" href="/providers/overview">
-    Set up providers such as LinkedIn, X and Reddit
+    Connect LinkedIn, X and Reddit with your own app keys
   </Card>
 </CardGroup>
 

@@ -1,25 +1,24 @@
 ---
 title: Image & Video Editing (Polotno)
-description: 'Enable in-app image and video editing in PostQueen via the Polotno SDK'
+description: 'Turn on in-app image and video editing in PostQueen with the Polotno SDK'
 ---
 
-PostQueen supports in-app image and video editing through the
-[Polotno SDK](https://polotno.com/). Once enabled, users can design and
-edit visuals directly inside the PostQueen workflow while preparing
-scheduled posts, with no round-trip to an external editor.
+You crop the photo and fix the headline without ever leaving the post
+you are writing. That editor is the
+[Polotno SDK](https://polotno.com/), and one API key turns it on.
 
 <img src="/images/brand/studio.svg" alt="The content studio: one topic returns the caption and the on-brand image, in any language" />
 
 ## What you get
 
-- Create and edit visuals inside the PostQueen post composer.
-- Work with templates, text, images, and brand assets.
+- Create and edit visuals inside the post composer.
+- Work with templates, text and brand assets.
 - Update designs in place without re-uploading finished files.
 - Reuse and modify visuals across scheduled posts.
 
-Designs are stored as structured data and rendered when needed.
-Scheduling, publishing, and platform-specific logic remain handled by
-PostQueen.
+Designs are stored as structured data and rendered when needed. She
+still does the scheduling, the publishing and the platform-specific
+work.
 
 ## Setup
 
@@ -56,20 +55,18 @@ PostQueen.
   </Step>
 </Steps>
 
-Exact steps vary a little by deployment. See
-[Docker Compose](/installation/docker-compose) or
-[Development](/installation/development) for environment-specific
-notes. If the variable is unset, the editor falls back to a
-demo/anonymous mode that is not suitable for production.
+Exact steps vary a little by deployment:
+[Docker Compose](/installation/docker-compose) and
+[Development](/installation/development). Leave the variable unset and
+the editor falls back to a demo mode that is not fit for production.
 
 ## Licensing
 
-Polotno is a commercial SDK and requires a valid license for
-production use.
+Polotno bills you separately, and a production key is not free.
 
-- Licenses are purchased and managed directly through Polotno.
-- PostQueen does not bundle, resell, or proxy Polotno licenses.
-- Billing, licensing, and usage terms are handled by Polotno.
+- You buy and renew the license directly through Polotno.
+- PostQueen does not bundle, resell or proxy Polotno licenses.
+- Polotno bills you and sets its own terms.
 
 ## Reference
 

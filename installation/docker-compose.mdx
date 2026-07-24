@@ -9,7 +9,7 @@ This guide assumes that you have docker installed, with a reasonable amount of r
 
 - Virtual Machine, Ubuntu 24.04, 2Gb RAM, 2 vCPUs.
 
-That is a floor for a single-user install. Plan for 4 GB or more once several people use it, and see [System Requirements](/installation/system-requirements).
+That is a floor for a single-user install. Plan for 4 GB or more once several people use it. The full numbers: [System Requirements](/installation/system-requirements).
 
 <Snippet file="installation-pre-reqs.mdx" />
 
@@ -107,11 +107,17 @@ really mean to wipe the installation.
 ## Next Steps
 
 <CardGroup cols={2}>
+  <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
+    Store media on Cloudflare R2 instead of the local disk
+  </Card>
   <Card title="Architecture" icon="diagram-project" href="/howitworks">
-    Learn the architecture of the project
+    The services behind a post, and what each one does
+  </Card>
+  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
+    Wire up Resend or SMTP so the people you invite get their mail
   </Card>
   <Card title="Providers" icon="plug" href="/providers/overview">
-    Set up providers such as LinkedIn, X and Reddit
+    Connect LinkedIn, X and Reddit with your own app keys
   </Card>
 </CardGroup>
 

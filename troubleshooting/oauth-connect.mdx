@@ -35,7 +35,7 @@ A mismatch, or a missing token, produces this error.
    bookmark or refresh the provider's authorize page.
 4. If your browser is in private/incognito mode, switch to a normal window.
 
-**Self-hosters:** ensure `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL`
+**Running her yourself?** Ensure `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL`
 resolve cookies to the same parent domain. If frontend and backend live on
 different domains (e.g. `app.example.com` and `api.example.com`), browsers
 will treat the backend cookie as third-party and the state token may not
@@ -51,12 +51,12 @@ tried to exchange it for an access token.
 - The same OAuth code was used twice, usually from a double-click or
   retry after a transient error.
 - The code expired (most providers give you ~60 seconds).
-- The redirect URI configured on the provider doesn't exactly match the
+- The redirect URI configured on the provider does not exactly match the
   one PostQueen is sending. A trailing slash counts.
 
 **Fix**
 
-1. Start the connect flow over from scratch. Codes can't be reused.
+1. Start the connect flow over from scratch. Codes cannot be reused.
 2. Re-check the redirect URI in your provider's developer console
    matches the URL PostQueen is redirecting to, character for character.
 
@@ -70,7 +70,7 @@ connection.
 
 **Common causes**
 
-- Self-hosted Mastodon on a custom instance the PostQueen backend can't
+- Self-hosted Mastodon on a custom instance the PostQueen backend cannot
   reach (firewall, missing DNS).
 - GMB metrics endpoint blocked by egress filtering.
 - A reverse proxy in front of PostQueen is rewriting the outbound request.
@@ -80,7 +80,7 @@ connection.
 1. Verify the PostQueen backend container can resolve and reach the
    provider's hostname (`curl https://provider.example.com/` from inside
    the container).
-2. If you're behind a corporate egress proxy, set `HTTPS_PROXY` and
+2. If you are behind a corporate egress proxy, set `HTTPS_PROXY` and
    `HTTP_PROXY` for the backend process.
 
 ## "Unsupported file type" during connect

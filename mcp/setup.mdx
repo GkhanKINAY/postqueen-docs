@@ -1,13 +1,13 @@
 ---
-title: Client Setup
+title: Connect your client
 description: 'Connect your AI client to the PostQueen MCP server'
 ---
 
-PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick your client from the grid below for a step-by-step guide, or use the endpoints directly if you already know your way around MCP configs.
+PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick the client you work in and you are two minutes from your first tool call. Already know your way around an MCP config? The endpoint is all you need.
 
 ## Endpoints
 
-The server accepts two connection forms. Both authenticate with the same API key.
+Two ways to connect, one key behind both. Put the key straight in the URL for the quickest setup: one line pasted and your client is talking to her. Keeping keys out of config files? Send the same key as a bearer token in the header.
 
 <Tabs>
   <Tab title="API Key in URL">
@@ -23,13 +23,13 @@ The server accepts two connection forms. Both authenticate with the same API key
   </Tab>
 </Tabs>
 
-Your API key lives in the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+Your API key lives in the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**.
 
 <Warning>
-The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
-## Pick Your Client
+## Pick your client
 
 <CardGroup cols={2}>
   <Card title="Claude Code" icon="/images/brand/icon-claude-code.svg" href="/mcp/clients/claude-code">
@@ -42,25 +42,25 @@ The connector URL contains your API key, and that key can post to every channel 
     Add PostQueen as a connector on claude.ai
   </Card>
   <Card title="ChatGPT" icon="/images/brand/icon-chatgpt.svg" href="/mcp/clients/chatgpt">
-    Use PostQueen from ChatGPT connectors
+    Turn on developer mode, then paste the URL as a connector
   </Card>
   <Card title="Cursor" icon="/images/brand/icon-cursor.svg" href="/mcp/clients/cursor">
-    Configure the MCP server in Cursor settings
+    One `.cursor/mcp.json` entry, or the Settings UI
   </Card>
   <Card title="Codex" icon="/images/brand/icon-codex.svg" href="/mcp/clients/codex">
-    Wire PostQueen into the Codex CLI
+    One block in `~/.codex/config.toml`, key in or out
   </Card>
   <Card title="Gemini CLI" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
-    Register the server in your Gemini CLI settings
+    One `mcpServers` entry in your settings file
   </Card>
-  <Card title="Other Clients" icon="puzzle-piece" href="/mcp/clients/other-clients">
-    Generic setup for any MCP-compatible client
+  <Card title="Other clients" icon="/images/brand/icon-other-clients.svg" href="/mcp/clients/other-clients">
+    Warp, Cline, Windsurf and the generic remote shape
   </Card>
 </CardGroup>
 
-## Self-Hosted
+## Self-hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
+Self-hosting? Replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
 
 ```
 https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
@@ -68,7 +68,7 @@ https://your-postqueen-server.com/api/mcp/YOUR_API_KEY
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. See [Reverse Proxies](/reverse-proxies/caddy).
+Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
 
 ## Verify
 
@@ -76,4 +76,6 @@ Once connected, ask your AI agent:
 
 > "List my connected social media accounts"
 
-If the connection works, the agent calls the `integrationList` tool and returns your connected accounts. If it fails, check that the API key was pasted in full and that your client uses the streamable HTTP transport.
+Your channel names come back, because the agent reached for her `integrationList` tool. Nothing came back? Check that the API key was pasted in full, then check that your client is set to the streamable HTTP transport.
+
+From here on, scheduling a post is something your assistant simply knows how to do.

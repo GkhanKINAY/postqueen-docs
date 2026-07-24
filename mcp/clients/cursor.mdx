@@ -3,17 +3,17 @@ title: Cursor
 description: 'Connect Cursor to the PostQueen MCP server'
 ---
 
-Cursor speaks MCP over streamable HTTP, so the PostQueen server plugs in with a single URL. Once connected, Cursor's agent can list your channels, schedule posts, and pull analytics without leaving the editor.
+Cursor speaks MCP over streamable HTTP, so her server plugs in with a single URL. Once connected, Cursor's agent can list your channels, schedule posts and pull analytics without leaving the editor.
 
 <Note>
-You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**.
+You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
 </Note>
 
 ## Option A: Cursor UI
 
 <Steps>
   <Step title="Open the Customize page">
-    Open the **Customize** page from the Cursor sidebar, which is where MCP servers are installed and managed.
+    Open the **Customize** page from the Cursor sidebar, which is where you install and remove MCP servers.
   </Step>
   <Step title="Add the PostQueen server">
     Add a server named `postqueen` with the streamable HTTP URL. Cursor opens an `mcp.json` file for you to edit:
@@ -75,7 +75,7 @@ A project-level file lets you scope the server to one repo.
 Both forms authenticate with the same API key; pick whichever fits your setup. See Cursor's own [MCP documentation](https://cursor.com/docs/mcp) for the full `mcp.json` reference.
 
 <Warning>
-Your API key is a secret. If you put it in a project-level `.cursor/mcp.json`, keep that file out of version control by adding it to `.gitignore`, since anyone with the key can post to your connected accounts. For personal setups, the global `~/.cursor/mcp.json` is the safer default. If the key leaks, regenerate it in **Settings**, then **Developers**, then **Public API**, and update every client that uses it.
+Your API key is a secret. If you put it in a project-level `.cursor/mcp.json`, keep that file out of version control by adding it to `.gitignore`, since anyone with the key can post to your connected accounts. For personal setups, the global `~/.cursor/mcp.json` is the safer default. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
 ## Self-Hosted
@@ -94,7 +94,7 @@ On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PU
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. See [Reverse Proxies](/reverse-proxies/caddy).
+Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
 
 ## Verify
 
@@ -102,8 +102,8 @@ Open Cursor's chat in agent mode and ask:
 
 > "List my connected social media accounts"
 
-If the connection works, the agent calls the `integrationList` tool and returns your connected accounts. If it fails, check that the `postqueen` server is enabled on the Customize page, that the API key was pasted in full, and that no firewall blocks `api.postqueen.ai`.
+Your channel names come back, because the agent reached for her `integrationList` tool. If it fails, check that the `postqueen` server is enabled on the Customize page, that the API key was pasted in full, and that no firewall blocks `api.postqueen.ai`.
 
 <Tip>
-Cursor asks for approval before running MCP tools by default. Keep that on for `integrationSchedulePostTool` so you see each post before Cursor schedules it.
+Cursor asks for approval before running MCP tools by default. Keep that on for `integrationSchedulePostTool` so you see each post before she puts it on the calendar.
 </Tip>

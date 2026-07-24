@@ -3,7 +3,7 @@ title: Troubleshooting
 description: 'Every PostQueen CLI error message, what caused it, and how to fix it'
 ---
 
-Command handlers print errors to stderr with a leading `❌` and keep results on stdout, so a failed command usually stays out of a downstream pipeline. `auth:status` is the exception: it reports its state on stdout.
+A command failed and you want to know why. She puts errors on stderr with a leading `❌` and keeps results on stdout, so a failed command usually stays out of a downstream pipeline. `auth:status` is the exception: it reports its state on stdout.
 
 ## Exit codes
 
@@ -44,7 +44,7 @@ When you are stuck, the HTTP status is the fastest signal: `401` is authenticati
 | `Not authenticated.` | Same cause, reported by `auth:status`. | Same fix. |
 | `Credentials are expired or invalid. Please re-authenticate.` | `auth:status` got a `401` or `403` when verifying. | Rotate the key in the app and re-export it, or run `auth:login` again if you use the device flow. |
 | `API Error (401): {"msg":"No API Key found"}` | The `Authorization` header never reached the API. | Confirm the variable is exported in the shell that runs the command, not just set. |
-| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong, revoked, or has whitespace. | Re-copy it from **Settings**, then **Developers**, then **Public API**, then **Reveal**. |
+| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong, revoked, or has whitespace. | Re-copy it from **Settings > Developers > Public API**, then **Reveal**. |
 | `API Error (401): {"msg":"No subscription found"}` | Billing is enabled on the instance and the organization has no active plan. | Activate a plan, or disable billing on your self-hosted instance. |
 | `Could not reach auth server at <url>` | `auth:login` could not contact the auth server. | The hosted `cli-auth.postqueen.ai` is not currently available. Use an API key, or [self-host the auth server](/cli/authentication). |
 | `Authorization expired. Please try again.` / `Authorization timed out. Please try again.` | Nobody completed the browser step before the device code expired. | Re-run `auth:login` and finish in the browser. |
@@ -66,7 +66,7 @@ These are caught locally, before any network call.
 | `At least one integration ID is required` | `-i` was present but resolved to an empty list, usually a stray comma. |
 | `JSON file not found: <path>` | Check the path you passed to `--json`. |
 | `Failed to parse JSON file: <reason>` | Your campaign file is not valid JSON. Run it through `jq . campaign.json`. |
-| `Failed to parse settings JSON: <reason>` | The `--settings` string is malformed, usually shell quoting. See **JSON in the shell** under [Common gotchas](#common-gotchas). |
+| `Failed to parse settings JSON: <reason>` | The `--settings` string is malformed, usually shell quoting. Quoting rules: **JSON in the shell** under [Common gotchas](#common-gotchas). |
 | `Failed to parse data JSON: <reason>` | Same problem on the `-d` flag of `integrations:trigger`. |
 | `--release-id is required` | `posts:connect` needs `--release-id "<id>"`. |
 | `Invalid values: Argument: status, Given: "...", Choices: "draft", "schedule"` | `posts:status` accepts only those two values, and yargs rejects anything else before the command runs. |
@@ -83,7 +83,7 @@ These are caught locally, before any network call.
 | `API Error (400): ... "Your post should have at least one character or one image."` | Same situation, caught by the server-side post validator. | Same fix. |
 | `API Error (400): ... "Please fix your settings"` | The provider's settings schema rejected your `--settings` payload. The message is often replaced by a provider-specific one that names the missing field. | Run `integrations:settings <id>` and match the schema. |
 | `API Error (400): ... "post is too long, please fix it"` | The content exceeds that platform's character limit. | Check `maxLength` in `integrations:settings <id>`. |
-| `API Error (429): ... "ThrottlerException: Too Many Requests"` | You crossed the public API rate limit, 30 requests per hour on PostQueen Cloud. | Wait for the window to roll, or batch multiple channels into one `posts:create` with a comma-separated `-i`. Self-hosters can raise `API_LIMIT`. |
+| `API Error (429): ... "ThrottlerException: Too Many Requests"` | You crossed the public API rate limit, 30 requests per hour on PostQueen Cloud. | Wait for the window to roll, or batch multiple channels into one `posts:create` with a comma-separated `-i`. Running her yourself? Raise `API_LIMIT`. |
 
 Settings and length failures come back in a shape that names the channel that rejected the post, which is what you want when you posted to six at once:
 
@@ -106,7 +106,7 @@ The provider-level checks above (`Please fix your settings`, `post is too long, 
 |---------|---------------|-----|
 | `API Error (404): {"msg":"Integration not found"}` | `integrations:settings` or `integrations:trigger` got an ID that is not yours. | `integrations:list` for current IDs. |
 | `API Error (404): {"msg":"Integration provider not found"}` | The channel exists but its provider is not registered on this instance. | On self-hosted setups, check that the provider is not disabled. |
-| `API Error (404): {"msg":"Tool not found"}` | The method name passed to `integrations:trigger` is not exposed by that provider. | The valid names are in the `tools` array of `integrations:settings <id>`. |
+| `API Error (404): {"msg":"Tool not found"}` | The method name passed to `integrations:trigger` is not offered by that provider. | The valid names are in the `tools` array of `integrations:settings <id>`. |
 
 ## Listing errors
 
@@ -116,7 +116,7 @@ The provider-level checks above (`Please fix your settings`, `post is too long, 
 
 ## Upload errors
 
-`upload` prefixes every failure with `Failed to upload file:`. Server rejections then add `Upload failed (<status>):` and the response body.
+Media has to live on a PostQueen domain before she can attach it, so this is the step most first posts trip on. `upload` prefixes every failure with `Failed to upload file:`. Server rejections then add `Upload failed (<status>):` and the response body.
 
 | Message | What happened | Fix |
 |---------|---------------|-----|
@@ -158,7 +158,7 @@ This is not an error. The post published, but the platform never handed back a u
 </Steps>
 
 <Note>
-If `analytics:post` returns an empty array `[]` instead, the post has not published yet or the provider does not expose post-level analytics. Only posts whose release ID is literally `missing` can be reconnected, and `posts:missing` returns `[]` for providers that cannot list recent content.
+If `analytics:post` returns an empty array `[]` instead, the post has not published yet or the provider does not report post-level analytics. Only posts whose release ID is literally `missing` can be reconnected, and `posts:missing` returns `[]` for providers that cannot list recent content.
 </Note>
 
 ## Common gotchas
@@ -245,23 +245,25 @@ If `analytics:post` returns an empty array `[]` instead, the post has not publis
 
     `-s` splits the same way: it is `--date` on `posts:create` and `--status` on `posts:status`.
 
-    See the [Command Reference](/cli/command-reference) for the full flag list.
+    Full flag list: [Command Reference](/cli/command-reference).
   </Accordion>
 </AccordionGroup>
+
+Nothing here matching your error? She is usually fine and the connection to a network usually is not, so start with the channel the message names.
 
 ## Still stuck?
 
 <CardGroup cols={2}>
   <Card title="App troubleshooting" icon="wrench" href="/troubleshooting/overview">
-    Channel connection failures, uploads, billing, and login problems in the app itself
+    Problems that start in the app rather than in your terminal
   </Card>
   <Card title="Command Reference" icon="terminal" href="/cli/command-reference">
     Every command, flag, and default in one place
   </Card>
   <Card title="Report a bug" icon="github" href="https://github.com/GkhanKINAY/postqueen-agent/issues">
-    Open an issue on the CLI repository
+    Wrong output or a crash? Open an issue on the CLI repository
   </Card>
   <Card title="Email support" icon="envelope" href="mailto:support@postqueen.ai">
-    support@postqueen.ai
+    Send the exact command and the full error text
   </Card>
 </CardGroup>

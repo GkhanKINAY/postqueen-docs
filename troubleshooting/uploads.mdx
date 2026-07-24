@@ -1,6 +1,6 @@
 ---
 title: Uploads & Media
-description: 'Payload limits, upload-from-url, video, and cancel-in-flight behaviour'
+description: 'Payload limits, video failures and cancel-in-flight behaviour'
 ---
 
 ## Body size limit
@@ -8,7 +8,7 @@ description: 'Payload limits, upload-from-url, video, and cancel-in-flight behav
 The PostQueen backend accepts JSON bodies up to **50 MB** on the post-creation
 routes (`POST /public/v1/posts` for the public API, plus the internal
 `/posts` and `/copilot/*` endpoints used by the web UI). Other endpoints
-fall back to the framework default and are much smaller. Don't inline
+fall back to the framework default and are much smaller. Do not inline
 base64-encoded images in arbitrary endpoints.
 
 ## Accepted MIME types (Public API)
@@ -29,7 +29,7 @@ the uploaded file's detected MIME type against this allowlist:
 
 PDFs are **not** accepted by the public API. The only PDF flow PostQueen
 supports is LinkedIn document carousels, which are produced internally
-by converting an image carousel to PDF. You can't post a PDF directly
+by converting an image carousel to PDF. You cannot post a PDF directly
 through the public API.
 
 ## "PayloadTooLargeError" when creating a post
@@ -59,7 +59,7 @@ or sits behind authentication, the upload fails.
 **Fix**
 
 - Make sure the source URL is publicly reachable HTTPS, with no auth.
-- Don't link to private S3 URLs, signed URLs that have expired, or
+- Do not link to private S3 URLs, signed URLs that have expired, or
   intranet hosts.
 - If the source is consistently slow, pre-download the file locally and
   use the multipart `/upload` endpoint instead.
@@ -85,7 +85,7 @@ downstream.
 ## "uploader plugin does not allow removing files during an upload"
 
 You hit Cancel on a file that was already being uploaded. PostQueen's
-uploader doesn't support mid-flight cancellation. Wait for the upload
+uploader does not support mid-flight cancellation. Wait for the upload
 to complete, then delete the asset from the post.
 
-This is a known UX limitation; see [Known Issues](/troubleshooting/known-issues).
+This is a known UX limitation, tracked in [Known Issues](/troubleshooting/known-issues).

@@ -5,9 +5,11 @@ description: 'Why an AI agent can drive her without guesswork: flag-driven comma
 
 Plenty of tools assume a person with a mouse on the other end, and an agent ends up fighting them. Her command line was shaped the other way around, for something that reads flags and parses output. That happens to be what your assistant does best.
 
-## Why agents get along with her
+## No prompts, no screen-scraping
 
-Input arrives as positional arguments and flags on one line, so an agent composes the whole call up front. Nothing waits for a keystroke halfway through, so a session cannot stall on a prompt nobody is there to answer.
+Your agent writes the whole call up front, positional arguments and flags on one line, and sends it. Nothing pauses halfway to wait for a keystroke. A run that fires at four in the morning, with nobody awake to answer a prompt, still gets to the end.
+
+<img src="/images/brand/terminal-claude.svg" alt="An agent composes the whole postqueen command up front, flags and all, then reads the JSON that comes back" />
 
 ```bash
 postqueen posts:create \
@@ -16,7 +18,7 @@ postqueen posts:create \
   -i "your-integration-id"
 ```
 
-Results come back as JSON after a one-line human-readable header, so an agent reads a field instead of guessing at wording on screen. Drop the header with `tail -n +2` before piping into `jq`:
+Your agent gets JSON back, behind a single human-readable header line, so it reads a field by name instead of guessing at wording on a screen. Drop the header with `tail -n +2` before piping into `jq`:
 
 ```bash
 REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
@@ -38,12 +40,12 @@ npx skills add GkhanKINAY/postqueen-agent
 
 What lands is her `SKILL.md`. It registers under the name `postqueen`, declares `Bash(postqueen:*)` as the only tool it needs, and opens with the npm install line, so an agent that finds the CLI missing can put it in place before doing anything else.
 
-The skill is auto-discovered. Your agent reads it when the task looks like posting work, then arrives already knowing the discovery flow, the flags on `posts:create` and the media rule it has to respect. You do not paste command syntax into a chat window to get started.
+Nobody has to point at it. Your agent picks the skill up on its own when the task looks like posting work, and arrives already knowing the discovery flow, the flags on `posts:create` and the media rule it has to respect. You do not paste command syntax into a chat window to get started.
 
-Because the skill is plain Markdown over a plain CLI, it is model-agnostic. Claude and GPT read the same file as Gemini or an open-source model running locally, and they all end up issuing the same commands. If a thing can run a shell command, it can run your social media.
+The skill is plain Markdown over a plain CLI, so no model has an advantage. Claude and GPT read the same file as Gemini or an open-source model on your own machine, and they all type the same commands. If a thing can run a shell command, it can run your social media.
 
 <Tip>
-Prefer tool calls to shell commands? Her hosted MCP server exposes the same capabilities as 10 tools, with no local install. See [MCP setup](/mcp/setup).
+Prefer tool calls to shell commands? Her hosted MCP server hands you the same capabilities as 10 tools, with no local install. Setup: [MCP setup](/mcp/setup).
 </Tip>
 
 ## Two hard rules
@@ -58,11 +60,11 @@ export POSTQUEEN_API_KEY=your_api_key
 postqueen auth:status
 ```
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Treat it like a password, since it grants full access to your account.
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Treat it like a password, since it grants full access to your account.
 </Warning>
 
 <Warning>
-**Rule 2: upload media before attaching it.** Every value passed to `-m`, or to an `image` field in JSON mode, has to be a URL returned by `postqueen upload`. Raw local paths like `photo.jpg` and external links like `https://example.com/photo.jpg` get rejected by the publishing pipeline, and providers such as TikTok, Instagram and YouTube only accept a PostQueen-verified URL.
+**Rule 2: upload media before attaching it.** Every value passed to `-m`, or to an `image` field in JSON mode, has to be a URL returned by `postqueen upload`. She rejects raw local paths like `photo.jpg` and external links like `https://example.com/photo.jpg`, and providers such as TikTok, Instagram and YouTube only accept a PostQueen-verified URL.
 
 ```bash
 IMAGE_URL=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
@@ -142,9 +144,9 @@ Every agent session follows the same seven beats, whether it is a coding assista
   </Step>
 </Steps>
 
-That is the whole loop. An agent that follows it can run your calendar end to end, and every step it took is visible to you as a normal command with a normal result.
+That is the whole loop. An agent that follows it runs your calendar on its own, and every step it takes stays a normal command with a result you can read.
 
-## Where to go next
+## Hand it the keys
 
 <CardGroup cols={3}>
   <Card title="Agents overview" icon="robot" href="/agents/overview">

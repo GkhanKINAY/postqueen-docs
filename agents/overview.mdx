@@ -15,7 +15,7 @@ Leave her alone and she is a true autopilot: whatever she puts on the calendar g
 
 ## Three ways in
 
-Any assistant that can run a shell command or call a tool can run your socials. Pick the surface that fits yours:
+Any assistant that can run a shell command or call a tool can run your socials. Pick the one your assistant already speaks:
 
 <CardGroup cols={3}>
   <Card title="Agent skill + CLI" icon="terminal" href="/cli/introduction">
@@ -31,7 +31,7 @@ Any assistant that can run a shell command or call a tool can run your socials. 
 
 ## 👑 Pick your agent
 
-Each guide below is self-contained: it takes one specific agent from zero to its first scheduled post.
+Whichever one you already use, you can be scheduling posts from it in a few minutes.
 
 <CardGroup cols={3}>
   <Card title="OpenClaw" icon="/images/brand/icon-openclaw.svg" href="/agents/openclaw">
@@ -54,7 +54,11 @@ Each guide below is self-contained: it takes one specific agent from zero to its
   </Card>
 </CardGroup>
 
-Curious what makes her easy for an agent to drive? See [Why agents love her](/agents/why-agents).
+Using something else? These all drive her:
+
+<img src="/images/brand/pill-claude-code.svg" height="32" alt="Claude Code" /> <img src="/images/brand/pill-chatgpt.svg" height="32" alt="ChatGPT" /> <img src="/images/brand/pill-openclaw.svg" height="32" alt="OpenClaw" /> <img src="/images/brand/pill-codex.svg" height="32" alt="Codex" /> <img src="/images/brand/pill-cursor.svg" height="32" alt="Cursor" /> <img src="/images/brand/pill-gemini-cli.svg" height="32" alt="Gemini CLI" /> <img src="/images/brand/pill-hermes.svg" height="32" alt="Hermes" /> <img src="/images/brand/pill-warp.svg" height="32" alt="Warp" /> <img src="/images/brand/pill-cline.svg" height="32" alt="Cline" /> <img src="/images/brand/pill-windsurf.svg" height="32" alt="Windsurf" />
+
+Curious what makes her easy for an agent to drive? Read [Why agents love her](/agents/why-agents).
 
 ## Install the skill
 
@@ -77,7 +81,7 @@ The skill tells your agent to install the CLI if it is missing. To put it in pla
 npm install -g postqueen
 ```
 
-Next she needs your API key. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings**, then **Developers**, then **Public API**, and click **Reveal**. Keep the key secret: it grants full access to your account.
+Next she needs your API key. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**. Keep the key secret: it grants full access to your account.
 
 ```bash
 export POSTQUEEN_API_KEY=your_api_key
@@ -100,9 +104,9 @@ postqueen posts:create \
   -i "your-integration-id"
 ```
 
-The full command reference lives in the [command reference](/cli/command-reference).
+Full command reference: [every command and flag](/cli/command-reference).
 
-Every agent session runs the same loop: authenticate, discover channels, prepare media, post, then check the numbers. [Why agents love her](/agents/why-agents) walks all seven steps.
+Every agent session runs the same loop: it authenticates, finds your channels, prepares media, posts, then checks the numbers. All seven steps, with the command each one runs: [Why agents love her](/agents/why-agents).
 
 ## Connect over MCP
 
@@ -126,18 +130,26 @@ Clients that speak remote HTTP MCP directly, such as Cursor and Codex, take the 
 }
 ```
 
-Claude Desktop reaches a remote server through the `mcp-remote` bridge instead. The exact config is on the [Claude Desktop page](/mcp/clients/claude-desktop).
+Claude Desktop reaches a remote server through the `mcp-remote` bridge instead. Copy that config from the [Claude Desktop page](/mcp/clients/claude-desktop).
 
-Per-client walkthroughs are in [MCP setup](/mcp/setup), and every tool is described in the [tool reference](/mcp/tools).
+Setup for your client: [MCP setup](/mcp/setup). Every tool she answers: [tool reference](/mcp/tools).
 
 ## From your chat apps
 
-Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too. The setup guides live on the [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes) pages.
+Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too. Setup: [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes).
+
+<img src="/images/brand/phone-agent.svg" alt="A phone chat: you ask her to push today's podcast to X and LinkedIn at 5pm and she answers that two posts are scheduled and waiting on your calendar" />
 
 ## Try saying
 
 Once she is connected, talk to her in plain words:
 
+> *"Plan a month of content for our coffee shop and fill the calendar."*
+
+> *"Take this photo of today's special and put it on Instagram at lunchtime."*
+
+> *"We just hit 10k followers, write a warm thank-you post for all our channels."*
+
 > *"Turn my latest YouTube video into posts for X, LinkedIn and Threads."*
 
-She turns a request like that into scheduled posts across your channels, and the calendar stays yours to review.
+She turns any of those into scheduled posts across your channels, and the calendar stays yours to review.

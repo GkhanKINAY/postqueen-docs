@@ -3,7 +3,7 @@ title: FAQ
 description: 'Short answers on how PostQueen runs, what she connects to, and where to get help'
 ---
 
-The questions people ask before they start. If yours is not here, the [support page](/support) has the fastest route to a human.
+Most people arrive with the same handful of questions. Autopilot, self-hosting, what she can post to. Something else on your mind? The [support page](/support) is the fastest route to a human.
 
 ## Common questions 👑
 
@@ -17,15 +17,50 @@ The questions people ask before they start. If yours is not here, the [support p
   <Accordion title="Should I use the cloud or self-host her?">
     Both run the same PostQueen, so pick the one that fits how you like to work.
 
-    **PostQueen Cloud** starts with a 7-day free trial at [postqueen.ai](https://postqueen.ai). Updates and the infrastructure are handled for you, and plan details live on the [pricing page](https://postqueen.ai/pricing).
+    **PostQueen Cloud** starts with a 7-day free trial at [postqueen.ai](https://postqueen.ai). You never patch a server, and you never watch a version number. Plans and prices: [postqueen.ai/pricing](https://postqueen.ai/pricing).
 
-    **Self-hosting** is free for as long as you run it, because the app is open source. Your database, your media storage and your provider credentials stay on your own servers. [Docker Compose](/installation/docker-compose) is the recommended starting point, and the [quickstart](/quickstart) walks through both paths side by side.
+    **Self-hosting** is free for as long as you run it, because the app is open source. Your database, your media storage and your provider credentials stay on your own servers. [Docker Compose](/installation/docker-compose) is the recommended starting point. Both paths side by side: [quickstart](/quickstart).
   </Accordion>
 
   <Accordion title="Which networks can she post to?">
-    30+ networks, from the big ones like X, LinkedIn and Instagram to community platforms such as Discord, Mastodon and Reddit. The [providers overview](/providers/overview) collects the per-channel setup guides.
+    30+ networks, from the big ones like X, LinkedIn and Instagram to community platforms such as Discord, Mastodon and Reddit.
 
-    On the cloud you connect a channel with a couple of clicks. Self-hosters register their own provider apps first and drop the credentials into the environment, which the [OAuth configuration guide](/configuration/oauth) explains.
+    <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center'}}>
+      <img src="/images/channels/instagram.svg" height="28" alt="Instagram" />
+      <img src="/images/channels/youtube.svg" height="28" alt="YouTube" />
+      <img src="/images/channels/google-business.svg" height="28" alt="Google Business Profile" />
+      <img src="/images/channels/dribbble.svg" height="28" alt="Dribbble" />
+      <img src="/images/channels/linkedin.svg" height="28" alt="LinkedIn" />
+      <img src="/images/channels/reddit.svg" height="28" alt="Reddit" />
+      <img src="/images/channels/tiktok.svg" height="28" alt="TikTok" />
+      <img src="/images/channels/facebook.svg" height="28" alt="Facebook" />
+      <img src="/images/channels/pinterest.svg" height="28" alt="Pinterest" />
+      <img src="/images/channels/threads.svg" height="28" alt="Threads" />
+      <img src="/images/channels/x.svg" height="28" alt="X" />
+      <img src="/images/channels/slack.svg" height="28" alt="Slack" />
+      <img src="/images/channels/discord.svg" height="28" alt="Discord" />
+      <img src="/images/channels/mastodon.svg" height="28" alt="Mastodon" />
+      <img src="/images/channels/bluesky.svg" height="28" alt="Bluesky" />
+      <img src="/images/channels/lemmy.svg" height="28" alt="Lemmy" />
+      <img src="/images/channels/warpcast.svg" height="28" alt="Farcaster" />
+      <img src="/images/channels/telegram.svg" height="28" alt="Telegram" />
+      <img src="/images/channels/nostr.svg" height="28" alt="Nostr" />
+      <img src="/images/channels/vk.svg" height="28" alt="VK" />
+      <img src="/images/channels/devto.svg" height="28" alt="Dev.to" />
+      <img src="/images/channels/medium.svg" height="28" alt="Medium" />
+      <img src="/images/channels/hashnode.svg" height="28" alt="Hashnode" />
+      <img src="/images/channels/wordpress.svg" height="28" alt="WordPress" />
+      <img src="/images/channels/whop.svg" height="28" alt="Whop" />
+      <img src="/images/channels/kick.svg" height="28" alt="Kick" />
+      <img src="/images/channels/mewe.svg" height="28" alt="MeWe" />
+      <img src="/images/channels/twitch.svg" height="28" alt="Twitch" />
+      <img src="/images/channels/listmonk.svg" height="28" alt="Listmonk" />
+      <img src="/images/channels/skool.svg" height="28" alt="Skool" />
+    </div>
+
+    On the cloud you connect a channel with a couple of clicks. Self-hosting? You register your own provider apps and drop the credentials into the environment first. Full walkthrough: [OAuth configuration](/configuration/oauth).
+
+    One page per channel: [providers overview](/providers/overview).
   </Accordion>
 
   <Accordion title="Is PostQueen open source?">
@@ -35,7 +70,7 @@ The questions people ask before they start. If yours is not here, the [support p
   </Accordion>
 
   <Accordion title="Do I stay in control of what gets published?">
-    She runs on your terms. On autopilot, Temporal publishes scheduled posts on time without asking you again, so the calendar keeps moving while you are away. Prefer the final word? Ask her for drafts and she holds each one until you approve it.
+    She runs on your terms. Leave her alone and she is a true autopilot: whatever she puts on the calendar goes out on time without asking you again, so a launch week keeps publishing while you sit on a plane. Prefer the final word? Ask her for drafts and she holds every post until you approve it.
 
     Either way the calendar shows what is planned before it goes out, and you can edit or delete anything on it.
   </Accordion>
@@ -44,10 +79,10 @@ The questions people ask before they start. If yours is not here, the [support p
     That is the point. Any assistant that can run a shell command or call a tool can drive your calendar.
 
     - **Agent skill and CLI.** `npx skills add GkhanKINAY/postqueen-agent` teaches your agent the `postqueen` CLI. Start at the [CLI introduction](/cli/introduction).
-    - **MCP.** Her hosted server exposes 10 tools to any MCP client. For Claude Code it is one line: `claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY`. See the [MCP introduction](/mcp/introduction).
-    - **Public API.** REST for your own scripts, documented in the [API overview](/public-api/introduction).
+    - **MCP.** Her hosted server gives any MCP client 10 tools. For Claude Code it is one line: `claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY`. Full setup: [MCP introduction](/mcp/introduction).
+    - **Public API.** REST for your own scripts: [API overview](/public-api/introduction).
 
-    The [agents overview](/agents/overview) compares the three routes and links a self-contained guide for each agent.
+    The three routes compared, with a self-contained guide for each agent: [agents overview](/agents/overview).
   </Accordion>
 
   <Accordion title="Which languages does she speak?">
@@ -57,31 +92,31 @@ The questions people ask before they start. If yours is not here, the [support p
   <Accordion title="Is there a mobile app?">
     The mobile app is on the way. In the meantime she already answers on the phone in your pocket: message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord.
 
-    If you would rather use the browser, [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from a phone screen. Setup for the chat route is on the [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes) pages.
+    If you would rather use the browser, [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from a phone screen. Chat route setup: [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes).
   </Accordion>
 
   <Accordion title="Are there API limits?">
     One limit matters in practice: 30 requests per hour on the create-post endpoint. Each call counts as a single request, so schedule several posts in one request when you need throughput. Other endpoints, such as listing channels or reading analytics, are not capped by it.
 
-    Self-hosters can raise or lower the ceiling with the `API_LIMIT` environment variable. The [API overview](/public-api/introduction) has the full picture, including authentication and error codes.
+    On your own server, you raise or lower the ceiling with the `API_LIMIT` environment variable. Authentication and error codes: [API overview](/public-api/introduction).
   </Accordion>
 
   <Accordion title="Where do I get help?">
-    Bugs and questions about the open-source app go to [GitHub Issues](https://github.com/GkhanKINAY/postqueen-app/issues/new/choose); billing and account questions go to [support@postqueen.ai](mailto:support@postqueen.ai). The [support page](/support) shows how to write a report that gets a fast answer.
+    Bugs and questions about the open-source app go to [GitHub Issues](https://github.com/GkhanKINAY/postqueen-app/issues/new/choose); billing and account questions go to [support@postqueen.ai](mailto:support@postqueen.ai). How to write a report that gets a fast answer: [support page](/support).
   </Accordion>
 </AccordionGroup>
 
-## Where to go next
+## Put her to work
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Connect a channel and schedule your first post
+    Create your account, connect a channel and schedule your first post
   </Card>
   <Card title="Agents" icon="robot" href="/agents/overview">
     Hand your assistant an API key and let it run your socials
   </Card>
   <Card title="Providers" icon="share-nodes" href="/providers/overview">
-    Per-channel setup guides
+    Setup guides for every network you can connect
   </Card>
   <Card title="Support" icon="life-ring" href="/support">
     Where to ask, and how to ask so you get a useful answer
