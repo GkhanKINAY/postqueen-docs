@@ -6,8 +6,10 @@ description: 'Environment variables reference for PostQueen'
 She reads everything she needs from environment variables, at boot and only at boot.
 Change one and restart her before you expect it to take effect.
 
-The canonical list lives in the [example postqueen.env file](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example).
-This page documents every variable PostQueen reads, grouped by purpose.
+Start from the [example env file](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example)
+in the app repository, which is the file to copy on a fresh install. This page then groups the
+variables by purpose and explains what each one does. Neither list is a strict superset of the
+other, so if you meet a variable in one and not the other, it is real either way.
 
 <Info>
 Variables marked **Required** are validated on boot: PostQueen will fail to start
@@ -84,7 +86,9 @@ Comma-separated allowlist of domains for `/public/v1/upload-from-url`. If set, o
 
 ### `DISALLOW_PLUS`
 
-When set, registration refuses any email address containing a `+`. It exists to stop one person opening account after account with plus-addressed aliases. It has no effect on OAuth sign-in, and none on the interface. Leave it unset unless you are running open signups, because plus addressing is something real people use.
+When set, any email address containing a `+` is refused at the door. It exists to stop one person opening account after account with plus-addressed aliases.
+
+Read that carefully before you switch it on, because it applies to **signing in as well as signing up**. Anyone who already has an account at an address like `you+postqueen@example.com` is locked out of it the moment this is set. Only email and password are affected: sign-in through GitHub, Google or your own OIDC provider goes around the check entirely, and nothing in the interface changes.
 
 ### `IS_GENERAL`
 
@@ -259,14 +263,13 @@ LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
 
 ## Analytics & error tracking
 
-Every one of these is optional, and a self-hosted install runs perfectly well with none of
-them set. Product analytics and error reporting are wired up for the usual vendors, so if you
-already pay for one you can point PostQueen at it. The variable names live beside their
-neighbours in [`.env.example`](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example),
-which is the file to copy from when you want one of them on.
+All of this is optional, and a self-hosted install runs perfectly well with none of it set.
+Errors can go to Sentry, on the frontend and the backend, and product analytics can go to
+PostHog. Set the keys for the service you already run and leave the rest alone.
 
-Frontend values are read at build time, so a `NEXT_PUBLIC_` change needs a rebuild rather
-than a restart.
+If you change one of these and nothing seems to happen, restart the app first. Some frontend
+values are baked in when the image is built rather than read on each request, and those need
+a rebuild before they take effect.
 
 ---
 
