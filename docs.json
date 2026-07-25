@@ -21,11 +21,6 @@
   "icons": {
     "library": "fontawesome"
   },
-  "feedback": {
-    "thumbs": false,
-    "edits": true,
-    "issues": true
-  },
   "navigation": {
     "tabs": [
       {
