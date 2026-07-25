@@ -58,6 +58,10 @@ Subreddits that mark flair as required will not accept a submission without one.
     - Production: `https://postqueen.example.com/integrations/social/reddit`
     - Local development: `http://localhost:4200/integrations/social/reddit`
     - Docker: `http://localhost:4007/integrations/social/reddit`
+
+    Reddit grants scopes at authorization rather than on the app form. PostQueen asks for four,
+    and the connect is refused if any is denied: `read`, `identity`, `submit` and `flair`.
+    `flair` is the one people are surprised by, and it is what makes flair selection work.
   </Step>
 
   <Step title="Set environment variables">
@@ -69,6 +73,9 @@ Subreddits that mark flair as required will not accept a submission without one.
 REDDIT_CLIENT_ID=""
 REDDIT_CLIENT_SECRET=""
 ```
+  </Step>
+  <Step title="Restart and add the Reddit channel">
+    <Snippet file="restart-and-add-channel.mdx" />
   </Step>
 </Steps>
 

@@ -54,6 +54,22 @@ This integration requires that you have a Pinterest Company Account.
 <Steps>
   <Step title="Create Pinterest App">
     Head to [Pinterest Developer Dashboard](https://developers.pinterest.com/apps/) and create your App. Fill out all required Information and wait on the App to get approved.
+
+    Request these five scopes. The connect is refused if any one of them is missing:
+
+    ```
+    boards:read
+    boards:write
+    pins:read
+    pins:write
+    user_accounts:read
+    ```
+
+    <Note>
+    Pinterest reviews apps before granting full access, and a new app starts with trial access
+    that covers fewer scopes than it eventually will. If the connect refuses a scope you clearly
+    requested, check whether the app is still in trial rather than assuming a typo.
+    </Note>
   </Step>
 
   <Step title="Copy the App ID and Secret">
@@ -80,6 +96,9 @@ PINTEREST_CLIENT_SECRET=""
 ```
 
     You should now be able to add the Pinterest Provider to your User / Team Account.
+  </Step>
+  <Step title="Restart and add the Pinterest channel">
+    <Snippet file="restart-and-add-channel.mdx" />
   </Step>
 </Steps>
 

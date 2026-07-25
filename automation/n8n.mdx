@@ -67,6 +67,31 @@ Create a new **PostQueen API** credential in n8n, paste your key, and set the ho
 Self-hosting? The **Host** value must end with `/api`, for example `https://postqueen.example.com/api`. Without that suffix the node cannot reach your instance's API.
 </Warning>
 
+### Check it before you build anything
+
+Drop a **PostQueen** node into a blank workflow, choose **Get Channels**, and execute the node on
+its own. Your connected channels come back as JSON with their ids. Doing this first separates a
+credential problem from a workflow problem, which is much harder to tell apart later.
+
+<AccordionGroup>
+  <Accordion title="Get Channels returns nothing, or an auth error">
+    The key or the host. Check the key is pasted in full, and if you self-host, that **Host** ends
+    with `/api`. Without that suffix the request lands on the web interface rather than the API,
+    which fails without explaining itself.
+  </Accordion>
+
+  <Accordion title="PostQueen does not appear in the node list after installing">
+    Community nodes need n8n restarted before they show up. If it is still missing after a
+    restart, check whether your n8n allows community nodes at all, since some hosted plans
+    restrict them.
+  </Accordion>
+
+  <Accordion title="A post is created but never publishes">
+    Check the date. Nothing validates that it is in the future, so a past date is accepted and
+    goes out on the next pass. Send ISO 8601 in UTC.
+  </Accordion>
+</AccordionGroup>
+
 ## Operations
 
 Seven operations cover everything the node can do:

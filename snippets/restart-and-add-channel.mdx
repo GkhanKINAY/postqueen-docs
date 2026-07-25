@@ -1,0 +1,13 @@
+Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down`
+and then `docker compose up -d`; a plain `restart` reuses the old container and its old
+environment.
+
+Then open the web interface, click **Add Channel** in the left sidebar and pick this network. You
+are sent to its login to authorize PostQueen, and the channel appears in the sidebar once you
+accept.
+
+<Note>
+**Add Channel does not check whether your variables are set.** A missing or misspelled key shows
+up as a broken authorization page on the network's side rather than a helpful message in
+PostQueen, so if the login page itself looks wrong, check the keys before anything else.
+</Note>

@@ -51,12 +51,31 @@ Where LinkedIn draws its lines:
   </Step>
 
   <Step title="Add required products">
-    Fill in all the details, once created head over to Products and make sure you add all the required products.
-    
+    Fill in all the details, then head over to **Products** and add all three:
+
+    - Share on LinkedIn
+    - Advertising API
+    - Sign in with LinkedIn using OpenID connect
+
     ![LinkedIn](/images/providers/linkedin/linkedin-002.png)
 
+    Those three together grant the seven scopes PostQueen asks for, and the connect is refused if
+    any of them is missing:
+
+    ```
+    openid
+    profile
+    w_member_social
+    r_basicprofile
+    rw_organization_admin
+    w_organization_social
+    r_organization_social
+    ```
+
     <Warning>
-    It is important to request the Advertising API permissions and fill up the request form, or you will not have the ability to refresh your tokens.
+    Request the Advertising API permissions and fill in its request form, or you will not be able
+    to refresh your tokens. That one is easy to skip because everything appears to work until the
+    first token expires.
     </Warning>
   </Step>
 
@@ -82,6 +101,9 @@ LINKEDIN_CLIENT_SECRET=""
 ```
 
     You can find those under the Auth Tab of your LinkedIn App in the developer portal.
+  </Step>
+  <Step title="Restart and add the LinkedIn channel">
+    <Snippet file="restart-and-add-channel.mdx" />
   </Step>
 </Steps>
 
