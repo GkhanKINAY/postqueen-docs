@@ -4,58 +4,66 @@ description: 'Wire her into the stack you already run: n8n, Zapier and Make on t
 icon: 'flag'
 ---
 
-Your content rarely starts in PostQueen. It starts in a sheet a client keeps filling in, in the blog post you publish on Friday, in a scenario you built two years ago and have not opened since. Nobody wants a second place to work. You want her inside the one you already run.
-
-Five routes put her there. Three of them let the tool you already use call her, so a run that used to end with a reminder now ends with a post on the calendar. Two go the other way: one tells your stack the moment a post is live, one lets her watch a feed for you. Everything meets on the same calendar, and whatever sits on it publishes on time.
+Your content rarely starts in PostQueen. It starts in a sheet a client fills in, in the post you
+publish on Friday, in a scenario you built two years ago. Five routes put her inside the tool you
+already run.
 
 <Frame>
-  <img src="/images/brand/flow-everywhere.svg" alt="Your content from AI, RSS or a sheet reaches PostQueen through Create Post and is scheduled to every channel at once" />
+  <img src="/images/brand/flow-everywhere.svg" alt="Content from AI, an RSS feed or a spreadsheet reaches PostQueen through Create Post and is scheduled to every channel at once" />
 </Frame>
-
-## Three ways your tool calls her
-
-A row appears, an article goes live, a Monday timer fires. Whatever starts the run, the last step is the same: she takes the post and puts it on your calendar. All three routes speak to the [Public API](/public-api/introduction) that sits behind the [CLI](/cli/introduction) and [MCP](/mcp/introduction), so nothing about the result depends on which one you choose.
-
-**n8n** asks the least of you, because the work is already built. Install the `n8n-nodes-postqueen` community node, paste your API key, and seven operations are waiting on the canvas, from scheduling a post to generating a video with AI. There is no PostQueen trigger node, so the run starts with something of n8n's own: a schedule, a feed, a webhook. Pick n8n when you want ready-made operations rather than hand-built HTTP calls. Setup: [n8n](/automation/n8n).
-
-**Zapier** has no native PostQueen app yet. Until it ships, **Webhooks by Zapier** covers the same ground: a **Custom Request** action, your API key in the `Authorization` header, the post as raw JSON in the **Data** field. Check one thing before you start, because Webhooks by Zapier is a premium app listed on the Professional, Team and Enterprise plans, and a Free account cannot reach her that way. Pick Zapier when your team already lives there and the trigger you need is a Zapier trigger. Setup: [Zapier](/automation/zapier).
-
-**Make** is the same story with different furniture. The **HTTP** app and its **Make a request** module send the same JSON, and **Parse response** turns the reply into fields your later modules can map. A native app is coming here too, and the scenarios you build now stay valid when it lands, because they call the public API directly. Pick Make when your scenarios already run there. Setup: [Make](/automation/make).
-
-One key covers all three. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**. In Zapier and Make you set the header yourself, `Authorization: YOUR_API_KEY` with no `Bearer` prefix, while the n8n node sends it for you once the credential is saved. The create-post endpoint allows 30 requests per hour, which a chatty trigger reaches faster than you would expect, so filter or delay a busy source.
-
-## 👑 Two ways she takes the first step
-
-No trigger upstream, nothing to poll. Here she is the one who moves.
-
-**Webhooks** are how she tells your stack that a post went out. The post lands on Instagram, and a fraction of a second later a `POST` arrives at a URL you own, carrying the content, the publish time and a `releaseURL` pointing at the live post. Add one under **Settings > Webhooks**, scoped to every channel or only the ones you name, then let a Zapier **Catch Hook**, a Make **Custom webhook** or an n8n **Webhook** node pick it up. Delivery is fire and forget, with no retry and no failure report, so treat it as a notification rather than a queue. Pick webhooks when something downstream needs to know a post is live. Setup: [Webhooks](/automation/webhooks).
-
-**RSS AutoPost** is hers alone, with no outside tool in the picture. Paste a feed URL under **Settings > Auto Post**, choose the channels, and she reads the feed about once an hour. When the newest item is one she has not posted yet, she writes a short caption for you or reuses one you wrote, adds the link and puts a draft on your calendar at your next open slot. A draft is a post state rather than a schedule, so it stays where it is until you publish it. Each check takes a single item, the newest one, which is worth knowing for a feed that publishes in bursts. Pick AutoPost when a feed is your source and you would rather not run a workflow tool at all. Setup: [RSS AutoPost](/automation/rss-autopost).
-
-Want your own prompt for the caption, several items per run, or a different channel per category? Build the same idea in n8n with an RSS trigger instead.
-
-## Self-hosting
-
-Running her on your own domain changes the address and nothing else. In n8n, set the credential **Host** to your instance with `/api` on the end, for example `https://postqueen.example.com/api`. In Zapier and Make, swap the base URL for `https://postqueen.example.com/api/public/v1` and leave the headers and bodies alone. Raise the hourly ceiling with the `API_LIMIT` environment variable.
-
-Webhooks and AutoPost live in your instance's own settings. With billing switched off the plan checks are skipped, so both tabs are there for you. AutoPost calls OpenAI for captions and pictures, so set `OPENAI_API_KEY` before you turn those on, or leave both off and run the feed without any AI key.
 
 ## Pick your route
 
 <CardGroup cols={3}>
   <Card title="n8n" icon="diagram-project" href="/automation/n8n">
-    A community node with seven ready-made operations, from scheduling to video generation.
+    A community node with seven ready-made operations, from scheduling to video generation
   </Card>
   <Card title="Zapier" icon="bolt" href="/automation/zapier">
-    Webhooks by Zapier in both directions, until the native app ships.
+    Webhooks by Zapier in both directions, until the native app ships
   </Card>
   <Card title="Make" icon="puzzle-piece" href="/automation/make">
-    The HTTP module for scenarios, plus a custom webhook coming back.
+    The HTTP module for scenarios, plus a custom webhook coming back
   </Card>
-  <Card title="Webhooks" icon="webhook" href="/automation/webhooks">
-    An HTTP call to your endpoint the moment a post goes live.
+  <Card title="Webhooks" icon="satellite-dish" href="/automation/webhooks">
+    An HTTP call to your endpoint the moment a post goes live
   </Card>
   <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
-    She watches a feed hourly and drafts the newest item for you.
+    She watches a feed hourly and drafts the newest item for you
   </Card>
 </CardGroup>
+
+| | Direction | Needs a workflow tool |
+|---|---|---|
+| **n8n · Zapier · Make** | your tool calls her | yes |
+| **Webhooks** | she calls your stack | no |
+| **RSS AutoPost** | she moves on her own | no |
+
+## What all five share
+
+<Info>
+**One API key.** In [app.postqueen.ai](https://app.postqueen.ai), open **Settings › Developers ›
+Public API** and click **Reveal**. Send it as `Authorization: YOUR_API_KEY`, with no `Bearer`
+prefix. The n8n credential sends it for you once saved.
+</Info>
+
+Everything here speaks to the [Public API](/public-api/introduction) that also sits behind the
+[CLI](/cli/introduction) and [MCP](/mcp/introduction), so the result never depends on the route.
+
+<Warning>
+The create-post endpoint allows **30 requests per hour**. A chatty trigger reaches that faster than
+you would expect, so filter or delay a busy source.
+</Warning>
+
+## Self-hosting
+
+Your own domain changes the address and nothing else.
+
+| Where | Set it to |
+|---|---|
+| n8n credential **Host** | `https://postqueen.example.com/api` |
+| Zapier and Make base URL | `https://postqueen.example.com/api/public/v1` |
+| Hourly ceiling | the `API_LIMIT` environment variable |
+
+Webhooks and AutoPost live in your instance's own settings, and with billing switched off the plan
+checks are skipped, so both tabs are there. AutoPost calls OpenAI for captions and pictures, so set
+`OPENAI_API_KEY` before turning those on, or leave them off and run the feed with no AI key at all.
