@@ -47,6 +47,14 @@ sequenceDiagram
 | `videoFunctionTool` | Get video generator settings (e.g., available voices) |
 | `generateVideoTool` | Generate videos for posts |
 | `uploadFromUrlTool` | Upload a remote image or video into your media library from a public URL |
+| `ask_postqueen` | Hand her the whole request in plain language and let her pick the steps |
+
+<Note>
+Ten of those are the same tools the in-app assistant runs. The eleventh, `ask_postqueen`, exists
+only over MCP: your client is talking to her as an agent, so it can either drive the individual
+tools itself or hand the whole job to her. That is why pages about the assistant say ten and
+pages about MCP say eleven.
+</Note>
 
 ## Authentication
 

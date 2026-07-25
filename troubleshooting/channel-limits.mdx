@@ -27,5 +27,10 @@ plan comparison.
 
 ## Self-host
 
-Self-hosted PostQueen has no channel cap. You can connect as many channels
-as the providers allow per OAuth app.
+Self-hosted PostQueen has no channel cap **while billing is off**, which is the normal state:
+billing only turns on when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. With
+it off, your account reports itself as ULTIMATE and no quota is evaluated, so you can connect as
+many channels as the providers allow per OAuth app.
+
+Set both Stripe keys and the tiers above apply to your install too.
+[Plans and limits](/using/plans-and-limits) has the full rule.

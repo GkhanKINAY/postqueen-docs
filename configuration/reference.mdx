@@ -56,13 +56,17 @@ REDIS_URL="redis://localhost:6379"
 
 A long random string used to sign session JWTs.
 
-It has a second job that decides how dangerous rotating it is. When `ENCRYPTION_KEY` is unset, this same value also encrypts everything PostQueen stores on your behalf: every channel's access and refresh tokens, provider credentials and saved cookies. Change it in that state and those rows can no longer be decrypted, so every connected channel goes dark and reconnecting each one by hand is the only way back.
+It has a second job that decides how dangerous rotating it is. When `ENCRYPTION_KEY` is unset, this same value also encrypts the secrets PostQueen holds for you: your API keys, the OAuth client secrets and codes she issues, saved provider credentials, and cookie-based logins such as Skool. Change it in that state and those rows can no longer be decrypted, so the connections that depend on them break and re-entering each one by hand is the only way back.
+
+<Note>
+**What this does not cover.** A channel's own access and refresh tokens, the ones a social network hands back at the end of its OAuth flow, are stored as the network returned them. They are not encrypted with this key, so rotating it does not invalidate them, and the database is the security boundary for those. Treat a database dump accordingly. [Compliance](/compliance) says the same thing from the other direction.
+</Note>
 
 Read [`ENCRYPTION_KEY`](#encryption-key) before you rotate this. Setting it is what makes rotating this variable safe, and on a fresh install it costs you nothing to do now.
 
 ### `ENCRYPTION_KEY`
 
-The key used to encrypt stored channel credentials. Unset, it falls back to `JWT_SECRET`, which is why every install that has never set it has the two jobs welded together.
+The key used to encrypt stored secrets: API keys, the OAuth client secrets and codes PostQueen issues, saved provider credentials and cookie logins. Unset, it falls back to `JWT_SECRET`, which is why every install that has never set it has the two jobs welded together. It does not cover a channel's own access and refresh tokens, as described above.
 
 Set it once, to the value `JWT_SECRET` currently holds. Nothing re-encrypts and nothing breaks, because the fallback was already using that value. What changes is that `JWT_SECRET` becomes a signing key you can rotate whenever you like, and the worst it can then do is log everyone out.
 

@@ -36,7 +36,7 @@ IMG=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
 postqueen posts:create \
   -c "Check out this photo!" \
   -m "$IMG" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   -i "your-integration-id"
 ```
 
@@ -65,7 +65,7 @@ VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 postqueen posts:create \
   -c "New video! #fyp" \
   -m "$VIDEO_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"content_posting_method":"DIRECT_POST","privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false}' \
   -i "tiktok-integration-id"
 ```
