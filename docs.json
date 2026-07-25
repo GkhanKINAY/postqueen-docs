@@ -142,23 +142,17 @@
             ]
           },
           {
-            "group": "Chat with her",
+            "group": "Talk to her",
             "icon": "comment-dots",
             "pages": [
+              "agents/claude-apps",
+              "agents/chatgpt",
+              "agents/chat-channels",
               "agents/openclaw",
               "agents/hermes",
-              "agents/chat-channels",
-              "agents/claude-apps"
-            ]
-          },
-          {
-            "group": "Coding agents",
-            "icon": "code",
-            "pages": [
               "agents/claude-code",
               "agents/cursor",
               "agents/codex",
-              "agents/chatgpt",
               "agents/gemini-cli"
             ]
           },
