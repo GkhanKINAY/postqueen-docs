@@ -83,7 +83,7 @@ In practice this means: before your TikTok developer app passes audit, the `priv
     **Your TikTok OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/tiktok`
     - Local development (HTTPS required): `https://localhost:4200/integrations/social/tiktok`
-    - Docker (HTTPS required): `https://localhost:5000/integrations/social/tiktok`
+    - Docker (HTTPS required): `https://localhost:4007/integrations/social/tiktok`
 
     <Warning>
     Serve your local instance over HTTPS and set `FRONTEND_URL` to match. Leave it on plain `http` and she wraps the callback through `redirectmeto.com` before sending it, which makes the literal string TikTok receives `https://redirectmeto.com/http://localhost:4200/integrations/social/tiktok`. Register whichever of the two your `FRONTEND_URL` actually produces, because a mismatch stops the login on TikTok.
@@ -105,12 +105,13 @@ In practice this means: before your TikTok developer app passes audit, the `priv
   </Step>
 
   <Step title="Add scopes">
-    Add the following scopes:
+    Add all six. The connect is refused if any one of them is missing, and `video.create` is not one of them:
     - user.info.basic
-    - video.create
-    - video.publish
-    - video.upload
     - user.info.profile
+    - user.info.stats
+    - video.list
+    - video.upload
+    - video.publish
   </Step>
 
   <Step title="Copy your client secret to environment variables">
