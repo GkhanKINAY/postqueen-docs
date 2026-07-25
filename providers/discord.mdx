@@ -63,6 +63,10 @@ This integration requires that you have **Manage Server** permissions on the Dis
 
     ![Copy Keys](/images/providers/discord/discord_copy_keys.png)
 
+    The authorization screen asks for three things: `identify`, `guilds` and `bot`. The first two
+    are verified on connect and refused if missing. `bot` is what installs the application into
+    your server, which is why the consent screen shows a server picker.
+
     Set these in your .env file as follows;
 
 ```env

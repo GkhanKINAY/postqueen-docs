@@ -11,6 +11,17 @@ icon: /images/channels/skool.svg
 Skool is a **cookie-based** integration that uses the PostQueen browser extension to connect. Unlike OAuth-based providers, Skool authentication works by extracting session cookies from your browser.
 
 <Warning>
+**Two things have to be true before you can connect Skool at all**, and neither is optional:
+
+- **Chrome or a Chromium browser.** The connect flow reaches the extension through Chrome's own
+  messaging API, which does not exist in Firefox or Safari. There is no fallback.
+- **The extension installed, and `EXTENSION_ID` set** on your instance. Without the variable the
+  connect stops with *Extension Not Found* before anything reaches Skool.
+
+Setting the extension up: [Chrome Extension](/configuration/chrome-extension).
+</Warning>
+
+<Warning>
 Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned. PostQueen does not take responsibility for any issues arising from the use of this method.
 </Warning>
 

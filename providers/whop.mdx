@@ -49,6 +49,24 @@ A large attachment can hold a post back: if Whop has not finished processing the
 <Steps>
   <Step title="Create a Whop OAuth Application">
     Go to the [Whop Developer Portal](https://dash.whop.com/settings/developer) and create a new application.
+
+    Grant it all six scopes:
+
+    ```
+    openid
+    profile
+    email
+    forum:post:create
+    forum:read
+    company:basic:read
+    ```
+
+    <Warning>
+    **Whop is the one network where a missing scope does not stop the connect.** Unlike every
+    other OAuth channel here, the scopes are not verified when you connect, so the channel appears
+    and looks healthy. You find out later, when a post fails and asks you to reconnect with the
+    required permissions. Grant all six now.
+    </Warning>
   </Step>
 
   <Step title="Get and set your Client ID">
