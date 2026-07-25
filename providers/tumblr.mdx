@@ -1,0 +1,117 @@
+---
+title: Tumblr
+description: 'How to add Tumblr to your system'
+icon: /images/channels/tumblr.png
+---
+
+<img src="/images/channels/tumblr.png" alt="Tumblr" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+## What she can post to Tumblr
+
+Tumblr gives her the most room of any network she posts to, and it is the one place a long piece
+can go out whole rather than trimmed. One account can hold several blogs, so connecting is two
+steps rather than one: you authorize Tumblr, then pick which blog this channel is.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    32,768 characters, the largest on any channel here
+  </Card>
+  <Card title="Media" icon="image">
+    Up to 30 images, or a single video
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A text post with optional title, link and source URL
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Tumblr returns no post-level numbers through their API
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `title`, `link`, `sourceUrl` and `tags`, **all optional**: [Tumblr settings](/public-api/providers/tumblr) |
+| Connect flow | Two steps. Authorize the app, then choose which blog to attach |
+| Automations | None on this network |
+| Publish rate | Three posts at a time |
+
+<Note>
+Long posts are split into blocks of about 4,000 characters on the way out, on blank lines, which
+is Tumblr's own limit for a text block rather than ours. A post reads as one piece either way.
+Alt text you set on an image is carried through.
+</Note>
+
+## Set up Tumblr
+
+<Steps>
+  <Step title="Register an application">
+    Go to [Tumblr's application registry](https://www.tumblr.com/oauth/apps) and click
+    **Register application**. Fill in the name, description and the two URL fields Tumblr asks
+    for; only the callback below has to be exact.
+  </Step>
+
+  <Step title="Set the callback URL">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Tumblr OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/tumblr`
+    - Local development: `http://localhost:4200/integrations/social/tumblr`
+    - Docker: `http://localhost:4007/integrations/social/tumblr`
+  </Step>
+
+  <Step title="Check the permissions">
+    PostQueen asks for two scopes, and the connect is refused if either is missing:
+
+    ```
+    write
+    offline_access
+    ```
+
+    `offline_access` is the one worth checking. Without it Tumblr issues a token that cannot be
+    refreshed, so the channel connects and then goes quiet when that token expires.
+  </Step>
+
+  <Step title="Set environment variables">
+    Copy the OAuth consumer key and secret from your application page.
+
+```env
+TUMBLR_CLIENT_ID=""
+TUMBLR_CLIENT_SECRET=""
+```
+  </Step>
+
+  <Step title="Restart and add the Tumblr channel">
+    <Snippet file="restart-and-add-channel.mdx" />
+
+    <Note>
+    Tumblr adds a second screen after you authorize: a list of the blogs on your account, with
+    the primary one marked. Pick the blog this channel should post to. One PostQueen channel is
+    one blog, so connect again to add another.
+    </Note>
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The channel connects and then stops working after a while">
+    Almost certainly a missing `offline_access` scope on the application. Without it there is no
+    refresh token, so posting works until the first token expires and then fails. Add the scope
+    and reconnect the channel.
+  </Accordion>
+
+  <Accordion title="Posts fail with a daily limit message">
+    Tumblr caps how much one account can publish per day and answers with its own limit error.
+    There is nothing to configure here; the posts resume the next day.
+  </Accordion>
+
+  <Accordion title="I picked the wrong blog">
+    Remove the channel and connect again. The blog is chosen at connect time and there is no way
+    to switch it afterwards on an existing channel.
+  </Accordion>
+
+  <Accordion title="A post with several videos is refused">
+    One video per post, and it cannot be mixed with images. Up to 30 images is fine.
+  </Accordion>
+</AccordionGroup>

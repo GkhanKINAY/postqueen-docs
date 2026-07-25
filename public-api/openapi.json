@@ -4014,11 +4014,8 @@
             "description": "Optional source URL"
           },
           "tags": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            },
-            "description": "Optional tags"
+            "type": "string",
+            "description": "Optional comma-separated tags, up to 4096 characters"
           }
         }
       }
