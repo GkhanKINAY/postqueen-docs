@@ -117,6 +117,34 @@ Short formats aim for around 200 characters so they fit X. Thread formats always
 
 On postqueen.ai her chat belongs to the plans that include AI, so a free plan cannot open a conversation with her.
 
+## When she does not answer
+
+<AccordionGroup>
+  <Accordion title="The chat replies that AI features are not configured">
+    That is the literal message when `OPENAI_API_KEY` is unset on a self-hosted install. Set it,
+    recreate the container, and the chat answers. Nothing else is required for the chat: unlike
+    the sparkle button, it is not gated on billing.
+  </Accordion>
+
+  <Accordion title="There is no sparkle button on the calendar">
+    Three things have to be true before it appears: at least one channel connected, a plan that
+    includes AI, and, on a self-hosted install, billing switched on with both Stripe keys set.
+    That gate is deliberate, because each click is several paid model calls on somebody's key.
+  </Accordion>
+
+  <Accordion title="Generate runs and then stops partway">
+    She names each step as it goes, so the last line on screen tells you where it stopped. A
+    research or image step that fails is usually the model provider refusing the call: a spent
+    quota, or a key without access to that model. If the chat still answers using the same key,
+    the problem is the specific model rather than the key itself.
+  </Accordion>
+
+  <Accordion title="Video generation says there are no credits">
+    Video draws on your plan's video credits, which are a separate counter from the AI allowance.
+    Room for images does not mean room for a video.
+  </Accordion>
+</AccordionGroup>
+
 ## Keep going
 
 <CardGroup cols={3}>

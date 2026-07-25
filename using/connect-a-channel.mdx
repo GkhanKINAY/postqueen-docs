@@ -1,0 +1,101 @@
+---
+title: Connect a channel
+description: 'Where Add Channel lives, what happens when you click it, and what the red mark means later'
+---
+
+A channel is one social account she can post to. Nothing is connected when you start, and until
+one is, there is nowhere for a post to go. This is the first thing to do in the app and it takes
+about a minute per account.
+
+## Adding one
+
+<Steps>
+  <Step title="Open Add Channel">
+    Your channels live in the **left sidebar**. **Add Channel** sits with them, and it is the same
+    button for every network: X, a WordPress blog, a Discord server, all of it.
+  </Step>
+
+  <Step title="Pick the network">
+    You get the list of everything she can post to. What happens next depends on the network, and
+    there are two kinds:
+
+    - **Most networks send you to their own login.** You approve PostQueen there, the browser
+      comes back, and the channel appears. Nothing to type.
+    - **A smaller group asks for a credential in the form itself.** Bluesky takes an app password,
+      WordPress takes a site URL and an application password, Mastodon needs its instance address.
+      You paste it and you are done.
+
+    [Providers](/providers/overview) says which kind each network is.
+  </Step>
+
+  <Step title="Check it arrived">
+    The channel appears in the sidebar with its avatar and name. That is the whole confirmation:
+    if it is in the list, she can post to it.
+  </Step>
+</Steps>
+
+<Note>
+**Self-hosting?** Most networks need an OAuth app that you register with the platform, and its
+keys go in your environment before **Add Channel** can offer that network at all. Each provider
+page walks through creating one. On PostQueen Cloud this is already done for you.
+</Note>
+
+## The red exclamation mark
+
+Sooner or later a channel wears a red `!` in the sidebar. It means the connection to that network
+has gone stale, usually because the platform expired the token or someone changed the account's
+password.
+
+It matters more than it looks: a dead token stops that channel's scheduled posts, and they do not
+resume on their own once you fix it. Reschedule anything that was waiting.
+
+To fix it, click the avatar, or open the three dots menu next to the channel and pick
+**Reconnect channel**, then walk the same connect flow again. If analytics are what alerted you,
+the **Refresh Channel** button under the empty chart does the same job.
+
+[When a post fails](/troubleshooting/post-failed) covers what a dead token does to a week of
+scheduled work, and [connect errors](/troubleshooting/oauth-connect) has the message-by-message
+list when the reconnect itself refuses.
+
+## Disable or delete
+
+Two different things, both in the three dots menu next to a channel.
+
+**Disable Channel** takes it out of rotation and frees the slot against your plan's channel
+limit, without giving up the connection or touching your posts. The same menu turns it back on
+later. This is the one you want when you are at a channel limit and expect to come back to the
+account.
+
+**Delete Channel** removes it for good.
+
+<Warning>
+Deleting refuses while posts still reference the channel: *"You have to delete all the posts
+associated with this channel before deleting it."* Clear its posts from the calendar first, or
+use Disable instead, which has no such requirement.
+</Warning>
+
+[Plans and limits](/using/plans-and-limits) has the caps that make Disable worth knowing about.
+
+## Channels for clients
+
+Running an agency? Channels can be grouped under a customer, and a small person icon joins the
+calendar toolbar once your channels span more than one. Picking a customer narrows both the
+calendar and the channel list to theirs. [Customers](/using/customers) covers the whole flow,
+including the invite link that lets a client connect their own accounts without seeing yours.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Write your first post" icon="pen" href="/using/writing-a-post">
+    The editor, per-channel versions and what each network accepts
+  </Card>
+  <Card title="Set up a network's app" icon="plug" href="/providers/overview">
+    The OAuth app each network wants, network by network
+  </Card>
+  <Card title="The calendar" icon="calendar" href="/using/calendar">
+    Where everything you schedule shows up
+  </Card>
+  <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
+    Dead tokens, refused posts and how to tell them apart
+  </Card>
+</CardGroup>

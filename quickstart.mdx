@@ -11,39 +11,32 @@ Your first post can go out today. You pick where she lives, hand her a key and t
   <Card title="Cloud" icon="cloud" href="https://postqueen.ai">
     Start free for 7 days. Nothing to install, nothing to keep patched.
   </Card>
-  <Card title="Self-host" icon="server" href="/installation/docker-compose">
-    Run her on your own server with Docker Compose, Helm or from source.
+  <Card title="Self-host" icon="server" href="/installation/production">
+    Run her on your own server. [Try it locally first](/installation/quickstart-local) if you just
+    want a look.
   </Card>
 </CardGroup>
-
-## Talk to her
-
-PostQueen answers any agent that can run a skill or call an MCP tool. First you need an API key, which takes a minute. Your workspace lives at [app.postqueen.ai](https://app.postqueen.ai). Open **Settings > Developers > Public API** and click **Reveal**.
-
-<img src="/images/brand/chat-agent.svg" alt="Just talk to her: one voice note and PostQueen generates the visual and schedules the posts" />
-
-Install the skill and hand your agent the key:
-
-```bash
-npx skills add GkhanKINAY/postqueen-agent
-export POSTQUEEN_API_KEY="your-api-key"
-```
-
-Or connect Claude Code straight to her over MCP:
-
-```bash
-claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
-
-That URL contains your API key, so treat it like a password. Prefer the key out of the URL? There is a header form: [MCP setup](/mcp/setup).
-
-That is the whole setup. OpenClaw, Hermes and self-host endpoints: [agents overview](/agents/overview).
 
 ## Your first post
 
 <Steps>
+  <Step title="Create your account">
+    On the cloud, sign up at [app.postqueen.ai](https://app.postqueen.ai). Self-hosting? The first
+    account you create on your own install is the owner of it.
+  </Step>
+
   <Step title="Connect a channel">
-    In the app, connect at least one channel. She posts to 30+ networks, so start with the one your audience actually reads.
+    Your channels live in the **left sidebar**, and **Add Channel** sits with them. Pick a network
+    and you are sent to its login to approve PostQueen; a few take a credential in the form
+    instead. Start with the one your audience actually reads.
+
+    The channel appears in the sidebar when it works. Full walkthrough:
+    [Connect a channel](/using/connect-a-channel).
+
+    <Note>
+    Self-hosting? Most networks need an OAuth app you register with the platform before they show
+    up here at all. [Providers](/providers/overview) has each one.
+    </Note>
 
     <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px" }}>
       <img src="/images/channels/x.svg" alt="X" height="28" />
@@ -78,8 +71,10 @@ That is the whole setup. OpenClaw, Hermes and self-host endpoints: [agents overv
       <img src="/images/channels/google-business.svg" alt="Google Business Profile" height="28" />
     </div>
   </Step>
-  <Step title="Ask her for a post">
-    From any connected agent, ask in plain language: "Write a launch post for tomorrow at 9am." Or write it yourself in the editor. Either way, the post lands on the schedule.
+  <Step title="Write a post">
+    Click a slot on the calendar, write the post, pick the channel and set a time. That is the
+    whole editor. [Writing a post](/using/writing-a-post) covers per-channel versions and what
+    each network accepts.
   </Step>
   <Step title="Review it on the calendar">
     Open the calendar to see what is planned. Edit or delete anything before it goes out. Prefer to stage a post first? Ask her for drafts: a draft is saved to the calendar at the date you gave it, and it is simply never handed to the scheduler, so it sits there until you publish it.
@@ -92,3 +87,58 @@ That is the whole setup. OpenClaw, Hermes and self-host endpoints: [agents overv
     That is the autopilot half. She runs on your terms: everything is visible on the calendar before it publishes, so you can edit or delete it, and a draft stays unscheduled until you publish it.
   </Step>
 </Steps>
+
+## Talk to her instead
+
+Now that a channel is connected, you can stop opening the app for this. PostQueen answers any
+agent that can run a skill or call an MCP tool.
+
+<img src="/images/brand/chat-agent.svg" alt="Just talk to her: one voice note and PostQueen generates the visual and schedules the posts" />
+
+You need an API key first: in the app, open **Settings > Developers > Public API** and click
+**Reveal**. Then install the skill and hand your agent the key:
+
+```bash
+npx skills add GkhanKINAY/postqueen-agent
+export POSTQUEEN_API_KEY="your-api-key"
+```
+
+Or connect Claude Code straight to her over MCP:
+
+```bash
+claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+Check it worked by asking your agent to list your connected channels. The channel you added
+above comes back.
+
+That URL contains your API key, so treat it like a password. Prefer the key out of the URL? There
+is a header form: [MCP setup](/mcp/setup). OpenClaw, Hermes and self-hosted endpoints:
+[agents overview](/agents/overview).
+
+## If something is not right
+
+<AccordionGroup>
+  <Accordion title="The network I want is not in Add Channel">
+    On a self-hosted install, a network only appears once its OAuth app keys are in your
+    environment and she has been restarted. [Providers](/providers/overview) has the setup for
+    each one. On the cloud, everything she supports is already there.
+  </Accordion>
+
+  <Accordion title="The post went to Drafts instead of being scheduled">
+    A draft is a post state rather than a queue position: it sits on the calendar at the date you
+    gave it and is never handed to the scheduler. Open it and publish it, or switch it with
+    `postqueen posts:status <id> --status schedule`.
+  </Accordion>
+
+  <Accordion title="Reveal shows nothing under Developers">
+    The Developers tab needs you to be an organization admin, and on the cloud a plan that
+    includes the public API. Self-hosted installs with billing off have it on by default.
+  </Accordion>
+
+  <Accordion title="My agent connected but cannot see any channels">
+    Almost always the key. Check it was pasted in full, and if you are self-hosting, that
+    `POSTQUEEN_API_URL` points at your backend including the `/api` suffix most single-domain
+    installs use. [CLI authentication](/cli/authentication) has the exact shape.
+  </Accordion>
+</AccordionGroup>
