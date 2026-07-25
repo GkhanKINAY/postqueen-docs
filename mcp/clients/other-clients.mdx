@@ -6,9 +6,9 @@ icon: 'ellipsis'
 
 She speaks MCP over streamable HTTP, so any client that can reach a remote MCP server connects with a single URL, with no local process and no wrapper package. Warp, Cline and Windsurf each get their own steps, and the generic shape at the end adapts to anything else.
 
-<Note>
+<Info>
 You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
-</Note>
+</Info>
 
 <Warning>
 Your API key can post to every account you have connected, so treat it like a password. Whether it sits in the URL or in an `Authorization` header, it ends up in a config file on your machine, so keep those files out of version control and off shared screens. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.

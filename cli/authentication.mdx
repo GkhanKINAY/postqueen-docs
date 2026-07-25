@@ -47,6 +47,17 @@ contact the server, so it will happily report a key that has been revoked. Treat
 configured with", not "does this still work".
 </Note>
 
+Because `auth:status` never contacts the server, the only real proof is a command that does:
+
+```bash
+postqueen integrations:list
+```
+
+<Check>
+Your connected channels come back as JSON. The key works, the URL is right, and every other
+command will reach her.
+</Check>
+
 Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same Settings screen.
 
 ## Environment Variables
