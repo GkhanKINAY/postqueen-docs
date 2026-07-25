@@ -297,56 +297,67 @@
             ]
           },
           {
-            "group": "Integrations",
+            "group": "Endpoints",
             "pages": [
-              "public-api/integrations/list",
-              "public-api/integrations/groups",
-              "public-api/integrations/connect",
-              "public-api/integrations/settings",
-              "public-api/integrations/trigger",
-              "public-api/integrations/provider-tools",
-              "public-api/integrations/delete",
-              "public-api/integrations/is-connected",
-              "public-api/integrations/find-slot"
-            ]
-          },
-          {
-            "group": "Posts",
-            "pages": [
-              "public-api/posts/list",
-              "public-api/posts/create",
-              "public-api/posts/delete",
-              "public-api/posts/delete-by-group",
-              "public-api/posts/missing-content",
-              "public-api/posts/update-release-id",
-              "public-api/posts/change-status"
-            ]
-          },
-          {
-            "group": "Analytics",
-            "pages": [
-              "public-api/analytics/platform",
-              "public-api/analytics/post"
-            ]
-          },
-          {
-            "group": "Notifications",
-            "pages": [
-              "public-api/notifications/list"
-            ]
-          },
-          {
-            "group": "Uploads",
-            "pages": [
-              "public-api/uploads/upload-file",
-              "public-api/uploads/upload-from-url"
-            ]
-          },
-          {
-            "group": "Video Generation",
-            "pages": [
-              "public-api/video/generate",
-              "public-api/video/function"
+              {
+                "group": "Integrations",
+                "pages": [
+                  "public-api/integrations/list",
+                  "public-api/integrations/groups",
+                  "public-api/integrations/connect",
+                  "public-api/integrations/settings",
+                  "public-api/integrations/trigger",
+                  "public-api/integrations/provider-tools",
+                  "public-api/integrations/delete",
+                  "public-api/integrations/is-connected",
+                  "public-api/integrations/find-slot"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Posts",
+                "pages": [
+                  "public-api/posts/list",
+                  "public-api/posts/create",
+                  "public-api/posts/delete",
+                  "public-api/posts/delete-by-group",
+                  "public-api/posts/missing-content",
+                  "public-api/posts/update-release-id",
+                  "public-api/posts/change-status"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Analytics",
+                "pages": [
+                  "public-api/analytics/platform",
+                  "public-api/analytics/post"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Notifications",
+                "pages": [
+                  "public-api/notifications/list"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Uploads",
+                "pages": [
+                  "public-api/uploads/upload-file",
+                  "public-api/uploads/upload-from-url"
+                ],
+                "expanded": false
+              },
+              {
+                "group": "Video Generation",
+                "pages": [
+                  "public-api/video/generate",
+                  "public-api/video/function"
+                ],
+                "expanded": false
+              }
             ]
           },
           {
