@@ -4,82 +4,86 @@ description: 'Where to find help with PostQueen, and how to write a report that 
 icon: 'headset'
 ---
 
-Most days she just works. Then one post does not go out, or a charge on your card does not look right, and you want a person to look at it. One report with the detail in it beats three vague ones.
-
-Running her on your own server? Support runs on volunteers: they answer in their own evenings, for free, so there is no support desk and no promised reply time. Write the detail down while it is fresh, then give them a day or two.
-
-GitHub is public and searchable, so your report usually helps the next person who hits the same wall.
+Something is not working and you want a person to look at it. Here is where to go.
 
 <CardGroup cols={2}>
   <Card title="GitHub Issues" icon="github" href="https://github.com/GkhanKINAY/postqueen-app/issues/new/choose">
-    Bugs and questions about the open-source app, with screenshots and logs attached.
+    Bugs and questions about the open-source app, with screenshots and logs attached
   </Card>
   <Card title="Email" icon="envelope" href="mailto:support@postqueen.ai">
-    Billing, your account, and anything you would not post publicly.
+    Billing, your account, and anything you would not post publicly
   </Card>
 </CardGroup>
 
-## PostQueen Cloud: billing and refunds
+<Info>
+**Self-hosting?** Support runs on volunteers who answer in their own evenings, for free, so there
+is no support desk and no promised reply time. Write the detail down while it is fresh, then give
+them a day or two. GitHub is public and searchable, so your report usually helps the next person
+who hits the same wall.
+</Info>
 
-Write to [support@postqueen.ai](mailto:support@postqueen.ai) from the email address on your account so we can find you in seconds, and tell us what you expected versus what happened instead.
+## Check these first
 
-Closing the account, or making a GDPR request? Write to the same address and we will handle it. There is no self-serve delete button in the app today.
-
-Leave API keys, OAuth secrets and card numbers out of the message: we do not need any of them to help you.
-
-One minute on the [troubleshooting pages](/troubleshooting/billing) can save you the wait. Many "I was charged but X" cases turn out to be a script blocker stopping Stripe.js, or a private window throwing localStorage away.
-
-## 👑 How to write a report that gets a fast answer
-
-A good report gets a good answer. Four short answers are usually all it takes.
-
-### Goal
-
-Start with what you wanted to happen: the post you were trying to schedule, or the machine you were trying to run her on.
-
-- *I want to schedule a post on Reddit at 6pm*
-- *I want to run in a Linux container on a Raspberry Pi*
-- *I want to use a custom domain name*
-
-### Environment
-
-Which browser, which OS, which install? For trouble in the web app, the browser is the part that matters. For an installation or a server, it is your OS and how you installed:
-
-- *I am using Firefox on Windows 10*
-- *I am using a Raspberry Pi 4 with Ubuntu 20.04, and Node version 18*
-- *This is a fresh installation on a Mac*
-
-### Changes
-
-If it worked before and broke, something changed. Tell us what:
-
-- *I updated my browser to the latest version and now ...*
-- *I upgraded to the latest release and now ...*
-- *I think this used to work, but now ...*
-
-### Results
-
-Then say what you saw, and what you expected to see instead:
-
-- *I see a blank screen*
-- *I see an error message*
-- *I see a 404 page*
-
-That is it. Cover all four and the maintainer who opens your issue can go straight to the fix, instead of spending the first reply asking which browser you are on.
-
-## Before you write
+Most reports match one of these in a minute.
 
 <CardGroup cols={2}>
   <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/overview">
-    Sorted by symptom. Most reports match one of these in a minute.
-  </Card>
-  <Card title="Known issues" icon="bug" href="/troubleshooting/known-issues">
-    Bugs we have already confirmed, with workarounds and how each was checked.
-  </Card>
-  <Card title="FAQ" icon="circle-question" href="/faq">
-    The questions that come up most, answered short.
+    Sorted by symptom
   </Card>
   <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
-    The single most common report, and how to tell the three causes apart.
+    The most common report, and how to tell the three causes apart
+  </Card>
+  <Card title="Known issues" icon="bug" href="/troubleshooting/known-issues">
+    Bugs we have already confirmed, with workarounds
+  </Card>
+  <Card title="FAQ" icon="circle-question" href="/faq">
+    The questions that come up most
   </Card>
 </CardGroup>
+
+## What to put in the report
+
+Four short answers are usually all it takes. Cover them and the maintainer who opens your issue can
+go straight to the fix, instead of spending the first reply asking which browser you are on.
+
+<AccordionGroup>
+  <Accordion title="Goal — what you wanted to happen" icon="bullseye">
+    - *I want to schedule a post on Reddit at 6pm*
+    - *I want to run in a Linux container on a Raspberry Pi*
+    - *I want to use a custom domain name*
+  </Accordion>
+
+  <Accordion title="Environment — browser, OS, install" icon="desktop">
+    For trouble in the web app the browser is what matters. For an install, your OS and how you installed it.
+
+    - *I am using Firefox on Windows 10*
+    - *I am using a Raspberry Pi 4 with Ubuntu 20.04, and Node version 18*
+    - *This is a fresh installation on a Mac*
+  </Accordion>
+
+  <Accordion title="Changes — what moved before it broke" icon="clock-rotate-left">
+    - *I updated my browser to the latest version and now …*
+    - *I upgraded to the latest release and now …*
+    - *I think this used to work, but now …*
+  </Accordion>
+
+  <Accordion title="Results — what you saw instead" icon="eye">
+    - *I see a blank screen*
+    - *I see an error message*
+    - *I see a 404 page*
+  </Accordion>
+</AccordionGroup>
+
+## Billing, refunds and your account
+
+Write to [support@postqueen.ai](mailto:support@postqueen.ai) from the address on your account, and
+say what you expected against what happened instead. Closing the account or making a GDPR request
+goes to the same address; there is no self-serve delete button in the app today.
+
+<Warning>
+Leave API keys, OAuth secrets and card numbers out of the message. We do not need any of them to
+help you.
+</Warning>
+
+Many *"I was charged but…"* cases turn out to be a script blocker stopping Stripe.js, or a private
+window throwing localStorage away: [billing troubleshooting](/troubleshooting/billing).

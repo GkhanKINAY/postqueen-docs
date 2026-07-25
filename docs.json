@@ -11,9 +11,6 @@
   "appearance": {
     "default": "system"
   },
-  "background": {
-    "decoration": "grid"
-  },
   "styling": {
     "eyebrows": "breadcrumbs",
     "codeblocks": "system"
