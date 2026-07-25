@@ -1,102 +1,179 @@
 ---
 title: Docker Compose
-description: 'Install PostQueen using Docker Compose'
+description: 'The supported way to run PostQueen, and how to configure it'
 ---
 
-## Docker Compose
+Docker Compose is the supported way to self-host PostQueen. One file describes her and the
+three services she depends on, and one command starts all of them.
 
-This guide assumes that you have docker installed, with a reasonable amount of resources to run PostQueen. This Docker Compose setup has been tested with;
-
-- Virtual Machine, Ubuntu 24.04, 2Gb RAM, 2 vCPUs.
-
-That is a floor for a single-user install. Plan for 4 GB or more once several people use it. The full numbers: [System Requirements](/installation/system-requirements).
+This page is the reference for that file: what it starts, where settings live, and how to
+change them. If you want to be walked through an install instead, use
+[Try her locally](/installation/quickstart-local) or
+[Deploy to a server](/installation/production).
 
 <Snippet file="installation-pre-reqs.mdx" />
 
-### Configuration uses environment variables
+## What the stack contains
 
-The docker containers for PostQueen are entirely configured with environment variables.
+`docker compose up -d` starts eight containers. You do not install PostgreSQL, Redis or
+Temporal separately, they come with it.
 
-- **Option A** - environment variables in your `docker-compose.yml` file
-- **Option B** - a `.env` file next to your `docker-compose.yml`. Compose reads it for `${VAR}` substitution **inside the YAML only**; it does not hand those variables to the container. To feed the container from a file you have to add an `env_file:` key to the service yourself, which [Docker Configuration](/configuration/docker) shows.
+| Service | What it does | Reachable at |
+| --- | --- | --- |
+| `postqueen` | The app itself, web interface and API | `localhost:4007` |
+| `postqueen-postgres` | PostgreSQL 17, all your data | container network only |
+| `postqueen-redis` | Redis, caching and rate limiting | container network only |
+| `temporal` | The scheduler that fires posts at their time | `127.0.0.1:7233` |
+| `temporal-ui` | Dashboard for watching scheduled work | `127.0.0.1:8080` |
+| `temporal-postgresql` | Temporal's own database, not yours | container network only |
+| `temporal-elasticsearch` | Temporal's search index | container network only |
+| `temporal-admin-tools` | One-off maintenance commands for Temporal | not a service |
 
-... or a mixture of the two!
-
-<Note>
-The Compose file mounts a `postqueen-config` volume at `/config` inside the PostQueen container. Nothing in the image reads it. Configuration reaches her through the container environment and the `.env` file in her own app directory, so dropping a file into `/config` changes nothing.
-</Note>
-
-## Installation
-<Steps>
-  <Step title="Clone the Docker Compose repository">
-      ```
-      git clone https://github.com/GkhanKINAY/postqueen-docker-compose
-      ```
-  </Step>
-  <Step title="Configure your docker compose">
-      Configure your docker compose variables
-  </Step>
-  <Step title="Run the docker-compose command">
-      ```
-      docker compose up
-      ```
-      <img src="/images/brand/compose-up.svg" alt="docker compose up: the PostQueen stack starts and is ready on localhost 4007" />
-  </Step>
-  <Step title="Wait for it to load">
-      1. Access your frontend at: http://localhost:4007 (unless changed in variables)
-      2. Visualize and monitor your workflows with temporal at: http://localhost:8080
-  </Step>
-</Steps>
-
-There is a [configuration reference](/configuration/reference) page with a list
-of configuration settings.
-
-## The `docker-compose.yaml` file
-
-The full, up-to-date Docker Compose file is maintained in the
-[GkhanKINAY/postqueen-docker-compose](https://github.com/GkhanKINAY/postqueen-docker-compose)
-repository. Cloning that repository (see the steps above) gives you the
-`docker-compose.yaml` together with the `dynamicconfig` directory that the
-Temporal service mounts, so there is nothing to copy by hand.
+Only `postqueen` is published to your whole machine. Temporal's two ports are bound to
+`127.0.0.1`, so they are reachable from the server itself and not from the network.
 
 <Note>
-Always pull the file from the repository rather than copying a snapshot: the
-services, images, and environment variables change between releases, and the
-repository is the canonical source.
+Clone the repository rather than copying the YAML out of this page. The repository also carries
+a `dynamicconfig` folder that Temporal mounts at startup, and the file changes between releases.
 </Note>
 
-## How to use docker compose
+```bash
+git clone https://github.com/GkhanKINAY/postqueen-docker-compose
+cd postqueen-docker-compose
+docker compose up -d
+```
 
-From the cloned repository directory, run `docker compose up` to start the services.
+## Where configuration lives
+
+Everything is configured with environment variables, and they ship **inline in
+`docker-compose.yaml`**. Open the file, find the `environment:` block on the `postqueen`
+service, and edit values in place:
+
+```yaml
+services:
+  postqueen:
+    environment:
+      FRONTEND_URL: 'https://postqueen.example.com'
+      INSTAGRAM_APP_ID: '12345678901234567890'
+```
+
+That is the default and it is all most people need. Note the YAML style: `KEY: 'value'` with a
+colon, not `KEY=value`.
 
 <Warning>
-**Note** When you change variables, you must run `docker compose down` and
-then `docker compose up` to recreate these containers with these updated
-variables.
+**Dropping a `.env` file next to `docker-compose.yaml` does nothing on its own.** Compose reads
+such a file only to substitute `${VARIABLE}` placeholders inside the YAML, and this file
+contains no placeholders. The variables are never passed to the container. This catches people
+out regularly, because it is genuinely how Compose behaves elsewhere.
 </Warning>
 
-Look through the logs for startup errors, and if you have problems, check out the [support](/support) page.
+### Using a file instead
 
-If everything looks good, you can reach the web interface at the `FRONTEND_URL` you configured, which is http://localhost:4007 with the defaults.
+If you would rather keep secrets out of the YAML, add an `env_file:` key yourself. Compose then
+does pass that file's contents to the container:
 
-## Backups and upgrades
+```yaml
+services:
+  postqueen:
+    env_file:
+      - postqueen.env
+```
 
-Which volumes carry data you cannot rebuild, how to restore one, and what a new image does to your database: [Backups and Upgrades](/installation/backups-and-upgrades).
+```env
+JWT_SECRET=your-long-random-string
+INSTAGRAM_APP_ID=12345678901234567890
+```
+
+Note the syntax difference. Inside `docker-compose.yaml` it is `KEY: 'value'`. Inside an env
+file it is `KEY=value` with no quotes needed.
+
+### Using both
+
+You can, and the precedence matters:
+
+<Note>
+**`environment:` wins over `env_file:`.** If the same variable appears in both, the value in
+the YAML is the one the container gets. Since the shipped file already pins many variables to
+literal values, including empty ones, a variable you set only in your env file will be ignored
+if the YAML also mentions it. Either delete the line from the YAML or set your value there.
+</Note>
+
+### What does not work
+
+<Warning>
+The Compose file mounts a `postqueen-config` volume at `/config`. **Nothing in the image reads
+it.** A file placed there is never opened. Use `environment:` or an `env_file:` key as above.
+</Warning>
+
+## Applying a change
+
+```bash
+docker compose down && docker compose up -d
+```
+
+<Warning>
+`docker compose restart` is not enough. It reuses the existing container, which still carries
+the old environment. Changed settings need the container recreated, which is what `down`
+followed by `up` does. Your data lives in volumes and survives this.
+</Warning>
+
+## The settings you are most likely to change
+
+The full list of around 135 variables is in
+[Configuration Reference](/configuration/reference). These are the ones that matter for almost
+every install.
+
+| Variable | Shipped value | Change it to |
+| --- | --- | --- |
+| `JWT_SECRET` | a placeholder sentence | A long random string, from `openssl rand -hex 32`. Set once, then leave it. |
+| `MAIN_URL` | `http://localhost:4007` | Your public address |
+| `FRONTEND_URL` | `http://localhost:4007` | The same public address |
+| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:4007/api` | Your public address, keeping `/api` |
+| `DISABLE_REGISTRATION` | `false` | `true`, once your own account exists |
+| `STORAGE_PROVIDER` | `local` | `cloudflare` if you use R2, see [Uploads](/configuration/uploads) |
+| `EMAIL_PROVIDER` | not set | `resend` or `nodemailer`, see [Email](/configuration/emails) |
+
+Two that people change and should not: `BACKEND_INTERNAL_URL` stays `http://localhost:3000`,
+because it describes a hop inside the container rather than a public address. `DATABASE_URL`
+and `REDIS_URL` already point at the bundled containers by service name and only need editing
+if you bring your own database.
+
+<Warning>
+**`RUN_CRON` and `IS_GENERAL` cannot be turned off by setting them to `false`.** They are
+tested for presence, not value, so the string `false` still counts as on. Leave them as they
+ship.
+</Warning>
+
+## Checking your configuration took effect
+
+She inspects her own settings at the end of startup and reports anything questionable, then
+carries on running anyway. A container that is up is not proof that the configuration is
+sound, so it is worth looking:
+
+```bash
+docker compose logs postqueen | grep -i "configuration issue"
+```
+
+Empty output is good news. Anything listed there names the variable it is unhappy about,
+commonly a trailing slash or a missing URL.
+
+## Pinning a version
+
+The file ships with `image: ghcr.io/gkhankinay/postqueen-app:latest`. On a real install, change
+`latest` to a specific version from the
+[releases page](https://github.com/GkhanKINAY/postqueen-app/releases):
+
+```yaml
+image: ghcr.io/gkhankinay/postqueen-app:v3.0.4
+```
+
+<Warning>
+This matters more than usual here. She reconciles her database schema on **every** boot, so an
+unattended image change is also an unattended schema change.
+[Backups and Upgrades](/installation/backups-and-upgrades) explains what that means and how to
+switch to migrations instead.
+</Warning>
 
 ## Next Steps
 
-<CardGroup cols={2}>
-  <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
-    Store media on Cloudflare R2 instead of the local disk
-  </Card>
-  <Card title="Architecture" icon="diagram-project" href="/howitworks">
-    The services behind a post, and what each one does
-  </Card>
-  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
-    Wire up Resend or SMTP so the people you invite get their mail
-  </Card>
-  <Card title="Providers" icon="plug" href="/providers/overview">
-    Connect LinkedIn, X and Reddit with your own app keys
-  </Card>
-</CardGroup>
-
+<Snippet file="next-steps-selfhost.mdx" />

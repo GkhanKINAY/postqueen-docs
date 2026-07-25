@@ -46,35 +46,44 @@
           {
             "group": "Self-Hosting",
             "pages": [
+              "installation/overview",
+              "installation/quickstart-local",
+              "installation/production",
               "installation/system-requirements",
               "installation/docker-compose",
+              {
+                "group": "Domain & HTTPS",
+                "pages": [
+                  "installation/domain-and-https",
+                  "reverse-proxies/caddy",
+                  "reverse-proxies/nginx",
+                  "reverse-proxies/traefik",
+                  "reverse-proxies/websockets-and-dev"
+                ]
+              },
               "installation/backups-and-upgrades",
-              "installation/docker",
-              "installation/kubernetes-helm",
-              "installation/development",
-              "installation/devcontainer"
+              {
+                "group": "Other install methods",
+                "pages": [
+                  "installation/docker",
+                  "installation/kubernetes-helm",
+                  "installation/development",
+                  "installation/devcontainer"
+                ]
+              }
             ]
           },
           {
             "group": "Configuration",
             "pages": [
               "configuration/reference",
-              "configuration/docker",
               "configuration/emails",
               "configuration/uploads",
               "configuration/r2",
-              "configuration/polotno",
               "configuration/oauth",
+              "configuration/rate-limits",
+              "configuration/polotno",
               "configuration/chrome-extension"
-            ]
-          },
-          {
-            "group": "Reverse Proxies",
-            "pages": [
-              "reverse-proxies/caddy",
-              "reverse-proxies/nginx",
-              "reverse-proxies/traefik",
-              "reverse-proxies/websockets-and-dev"
             ]
           },
           {
@@ -383,6 +392,10 @@
   "redirects": [
     {
       "source": "/installation/migration",
+      "destination": "/installation/docker-compose"
+    },
+    {
+      "source": "/configuration/docker",
       "destination": "/installation/docker-compose"
     }
   ],

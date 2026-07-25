@@ -1,178 +1,242 @@
 ---
 title: Development Environment
-description: 'Set up PostQueen for local development'
+description: 'Run PostQueen from source with hot reload, so you can change her'
 ---
 
-Running her from source takes Node, Postgres, Redis and Temporal on your own machine. Only looking to self-host?
-[Docker-Compose](/installation/docker-compose) is the shorter road, and it now includes the Temporal stack for workflow processing.
+This sets up PostQueen from source on your own machine, with the frontend and backend
+reloading as you edit. It is the right setup for writing code, adding a provider or fixing a
+bug.
 
-<Warning>
-  <strong>Important:</strong> PostQueen uses Temporal for background workflows. Use the maintained Docker Compose repository which includes the Temporal stack: [/installation/docker-compose](/installation/docker-compose).
-</Warning>
+If you only want to run her, not change her, [Docker Compose](/installation/docker-compose) is
+much shorter and it is the supported path.
+
+<Note>
+Prefer to let your editor do the setup? [Dev Container](/installation/devcontainer) runs this
+same environment inside a container, with Node, pnpm and the databases already in place.
+</Note>
 
 ## Tested configurations
 
-- MacOS
-- Linux (Fedora 40)
+macOS and Linux. Windows and WSL are not officially supported and are not well tested, so help
+with problems specific to them may be limited.
 
-Naturally you can use these instructions to setup a development environment on any platform, but there may not be much experience in the community to help you with any issues you may encounter.
+## What you need
 
-### Warning about Windows
+| Tool | Version | Notes |
+| --- | --- | --- |
+| Node.js | **22.12 or newer, below 23** | Enforced by the repository. Node 20 or 18 will fail. |
+| pnpm | 10.6.1 | Comes with Node through Corepack, see below |
+| Docker | any recent | Provides PostgreSQL, Redis and Temporal for you |
 
-Several users using Windows (and WSL) have reported issues with the setup. This is not well tested as the main developers of the project do not use Windows/WSL for development. Windows and WSL are not officially supported, so help with problems specific to those environments may be limited.
+<Warning>
+**Node 22 specifically.** The repository declares `>=22.12.0 <23.0.0`, and installs fail on
+older versions. If you use a version manager, switch to 22 in this directory before you start.
+</Warning>
 
-<Snippet file="installation-pre-reqs.mdx" />
-
-### Prerequisite Local Services
-
-- **Node.js** - for running the code! (version 18+)
-- **PostgreSQL** - or any other SQL database (Docker is the easiest route)
-- **Redis** - for worker queues (Docker is the easiest route)
-- **Temporal** - runs as a separate stack (Postgres + Elasticsearch + Temporal services). For local development run the Temporal stack via the `postqueen-docker-compose` repository described in [/installation/docker-compose](/installation/docker-compose). Set `TEMPORAL_ADDRESS` in your `.env` to point at the Temporal service (example below).
-
-We have some messages from users who are using Windows, which should work, but they are not tested well yet.
-
-## Installation Instructions
-
-### NodeJS (version 18+)
-
-A complete guide of how to install NodeJS can be found [here](https://nodejs.org/en/download/).
-
-### PostgreSQL (or any other SQL database) & Redis
-
-You can choose **Option A** to **Option B** to install the database.
-
-#### Option A) Postgres and Redis as Single containers
-
-You can install [Docker](https://www.docker.com/products/docker-desktop) and run:
+You do not need to install pnpm by hand. Node ships with Corepack, which fetches the exact
+version this repository expects:
 
 ```bash
-docker run -e POSTGRES_USER=root -e POSTGRES_PASSWORD=your_password --name postgres -p 5432:5432 -d postgres
-docker run --name redis -p 6379:6379 -d redis
+corepack enable
 ```
 
-#### Option B) Postgres and Redis as docker-compose
-
-You can [view `docker-compose.dev.yaml` on GitHub](https://github.com/GkhanKINAY/postqueen-app/blob/main/docker-compose.dev.yaml)
-before you run it, or just take it from the clone in the next step.
-
-```bash
-docker compose -f "docker-compose.dev.yaml" up
-```
-
-To run Temporal locally, clone the maintained Docker Compose repository which includes the Temporal stack and follow the instructions in [/installation/docker-compose](/installation/docker-compose).
-
-## Build PostQueen
+## Set it up
 
 <Steps>
   <Step title="Clone the repository">
-```bash
-git clone https://github.com/GkhanKINAY/postqueen-app.git
-```
+    ```bash
+    git clone https://github.com/GkhanKINAY/postqueen-app.git
+    cd postqueen-app
+    ```
   </Step>
 
-  <Step title="Set environment variables">
-Copy the `.env.example` file to `.env` and fill in the values
+  <Step title="Start the databases and the scheduler">
+    ```bash
+    pnpm run dev:docker
+    ```
 
-```bash
-# Required Settings
-# This DATABASE_URL matches Option B, the docker-compose.dev.yaml above.
-# On Option A the single container was created with POSTGRES_USER=root and the
-# password you chose, and with no postqueen-db-local database, so adjust the
-# user, the password and the database name to match what you actually started.
-DATABASE_URL="postgresql://postqueen-local:postqueen-local-pwd@localhost:5432/postqueen-db-local"
-REDIS_URL="redis://localhost:6379"
-JWT_SECRET="random string for your JWT secret, make it long"
-FRONTEND_URL="http://localhost:4200"
-NEXT_PUBLIC_BACKEND_URL="http://localhost:3000"
-BACKEND_INTERNAL_URL="http://localhost:3000"
-TEMPORAL_ADDRESS="localhost:7233"
+    That runs `docker-compose.dev.yaml`, which brings up PostgreSQL, Redis, Temporal and two
+    optional inspection tools. **Temporal is included**, so there is no second repository to
+    clone for it.
 
-# Set this explicitly. Uploads are written either way, but the route that serves
-# them tests for the literal string "local", so leaving it unset makes every
-# uploaded image 404.
-STORAGE_PROVIDER="local"
-
-# Optional. Your upload directory path if you host your files locally.
-UPLOAD_DIRECTORY="/opt/postqueen/uploads/"
-
-# Optional: your upload directory slug if you host your files locally.
-NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY=""
-
-# Your email provider, optional
-EMAIL_PROVIDER="resend|nodemailer"
-RESEND_API_KEY="re_1234567890" # api key if you choose resend
-EMAIL_HOST="smtp.gmail.com" # smtp host if you choose nodemailer
-EMAIL_PORT="465" # smtp port if you choose nodemailer
-EMAIL_SECURE="true" # smtp secure if you choose nodemailer
-EMAIL_USER="user" # smtp user if you choose nodemailer
-EMAIL_PASS="pass" # smtp pass if you choose nodemailer
-
-## These are dummy values, you must create your own from Cloudflare.
-## Remember to set your public internet IP address in the allow-list for the API token.
-CLOUDFLARE_ACCOUNT_ID="QhcMSXQyPuMCRpSQcSYdEuTYgHeCXHbu"
-CLOUDFLARE_ACCESS_KEY="dcfCMSuFEeCNfvByUureMZEfxWJmDqZe"
-CLOUDFLARE_SECRET_ACCESS_KEY="zTTMXBmtyLPwHEdpACGHgDgzRTNpTJewiNriLnUS"
-CLOUDFLARE_BUCKETNAME="postqueen"
-CLOUDFLARE_BUCKET_URL="https://QhcMSXQyPuMCRpSQcSYdEuTYgHeCXHbu.r2.cloudflarestorage.com/"
-CLOUDFLARE_REGION="auto"
-
-# Social Media API Settings
-X_API_KEY="Twitter API key for normal oAuth not oAuth2"
-X_API_SECRET="Twitter API secret for normal oAuth not oAuth2"
-LINKEDIN_CLIENT_ID="Linkedin Client ID"
-LINKEDIN_CLIENT_SECRET="Linkedin Client Secret"
-REDDIT_CLIENT_ID="Reddit Client ID"
-REDDIT_CLIENT_SECRET="Linkedin Client Secret"
-GITHUB_CLIENT_ID="GitHub Client ID"
-GITHUB_CLIENT_SECRET="GitHub Client Secret"
-
-# AI
-OPENAI_API_KEY="OpenAI API key"
-
-# Developer Settings
-NX_ADD_PLUGINS=false
-IS_GENERAL="true" # required for now
-```
+    | Service | Where | For |
+    | --- | --- | --- |
+    | PostgreSQL | `localhost:5432` | Your data |
+    | Redis | `localhost:6379` | Caching and rate limits |
+    | Temporal | `localhost:7233` | Scheduling posts |
+    | Temporal dashboard | http://localhost:8080 | Watching scheduled work |
+    | pgAdmin | http://localhost:8081 | Browsing the database, `admin@admin.com` / `admin` |
+    | RedisInsight | http://localhost:5540 | Browsing Redis |
   </Step>
 
-  <Step title="Install the dependencies">
-```bash
-pnpm install
-```
+  <Step title="Create your .env">
+    ```bash
+    cp .env.example .env
+    ```
+
+    One shared `.env` at the repository root serves every app in the monorepo. The defaults
+    match the containers you just started, so for a plain local setup there is nothing to
+    change. The values that matter:
+
+    ```env
+    DATABASE_URL="postgresql://postqueen-local:postqueen-local-pwd@localhost:5432/postqueen-db-local"
+    REDIS_URL="redis://localhost:6379"
+    TEMPORAL_ADDRESS="localhost:7233"
+    JWT_SECRET="any long random string will do locally"
+
+    FRONTEND_URL="http://localhost:4200"
+    NEXT_PUBLIC_BACKEND_URL="http://localhost:3000"
+    BACKEND_INTERNAL_URL="http://localhost:3000"
+
+    STORAGE_PROVIDER="local"
+    NOT_SECURED=true
+    IS_GENERAL="true"
+    ```
+
+    <Note>
+    `NOT_SECURED=true` is what lets sign-in work over plain HTTP. It belongs in local
+    development and nowhere else.
+    </Note>
+
+    Add provider keys only for the networks you actually want to test against. Each one is
+    covered under [Providers](/providers/overview).
   </Step>
 
-  <Step title="Generate the prisma client and run the migrations">
-```bash
-pnpm run prisma-db-push
-```
+  <Step title="Install dependencies">
+    ```bash
+    pnpm install
+    ```
+
+    This also generates the Prisma client for you, so there is no separate generate step.
+
+    <Note>
+    If this dies with a JavaScript heap error, give Node more room:
+
+    ```bash
+    NODE_OPTIONS="--max-old-space-size=4096" pnpm install
+    ```
+    </Note>
   </Step>
 
-  <Step title="Run the project">
-```bash
-pnpm run dev
-```
+  <Step title="Create the database schema">
+    ```bash
+    pnpm run prisma-db-push
+    ```
+  </Step>
+
+  <Step title="Run it">
+    ```bash
+    pnpm run dev
+    ```
+
+    Open **http://localhost:4200**.
+
+    <Warning>
+    `pnpm run dev` also starts the browser extension build, which wants port **8081**, and
+    pgAdmin from the previous step is already using it. If that clashes, run the two you
+    actually need:
+
+    ```bash
+    pnpm run dev-backend
+    ```
+
+    That starts only the backend and the frontend.
+    </Warning>
   </Step>
 </Steps>
 
-If everything is running successfully, open http://localhost:4200 in your browser!
+## What runs where
 
-If everything is not running - you had errors in the steps above, please head over to our [support](/support) page.
+| Part | Port | Command on its own |
+| --- | --- | --- |
+| Frontend, Next.js | 4200 | `pnpm run dev:frontend` |
+| Backend, NestJS | 3000 | `pnpm run dev:backend` |
+| Orchestrator | 3002 | `pnpm run dev:orchestrator` |
+| Browser extension | 8081 | part of `pnpm run dev` |
 
-## Next Steps 
+Note that these are not the ports the container image uses. From source the frontend and
+backend are separate servers on separate ports, while the published image puts a small proxy in
+front of both on a single port. That is why `NEXT_PUBLIC_BACKEND_URL` is `http://localhost:3000`
+here and carries an `/api` suffix in a Compose install.
+
+## Useful commands
+
+```bash
+pnpm run dev              # everything, hot reload
+pnpm run dev-backend      # backend and frontend only
+pnpm run dev:docker       # start the local databases and Temporal
+pnpm run build            # production build of all three apps
+pnpm run prisma-db-push   # apply the schema without writing a migration
+pnpm run prisma-generate   # regenerate the Prisma client after editing the schema
+pnpm test                 # test suite
+```
+
+## The layout
+
+It is a pnpm workspace, not an Nx-driven build, so tasks run through `pnpm --filter`.
+
+```
+apps/
+  frontend/       Next.js and Tailwind
+  backend/        NestJS, controllers, services, repositories, DTOs
+  orchestrator/   Temporal workflows and activities
+  extension/      Chrome extension
+  commands/       CLI entry points
+  sdk/            Public API client
+libraries/
+  nestjs-libraries/  Prisma schema, integrations, shared backend code
+  react-shared-libraries/
+  helpers/
+```
+
+Imports use the `@gitroom/*` prefix. That is intentional and correct, it is the real workspace
+alias in `tsconfig.base.json`.
+
+## If something goes wrong
+
+<AccordionGroup>
+  <Accordion title="Postgres connection refused">
+    The containers are probably not up. `docker ps` should list `postqueen-postgres` and
+    `postqueen-redis`. If not, `pnpm run dev:docker` again and watch for errors.
+  </Accordion>
+
+  <Accordion title="Password authentication failed for user">
+    `DATABASE_URL` does not match the container. The dev stack creates the user
+    `postqueen-local` with password `postqueen-local-pwd` and the database
+    `postqueen-db-local`. Copy the line from the step above exactly.
+  </Accordion>
+
+  <Accordion title="Port 8081 already in use">
+    pgAdmin and the extension's hot reload both want it. Use `pnpm run dev-backend`, or stop
+    pgAdmin with `docker stop postqueen-pg-admin`.
+  </Accordion>
+
+  <Accordion title="Nothing gets published, but posting appears to work">
+    Temporal is not reachable. It is what actually fires posts. Check `TEMPORAL_ADDRESS` is
+    `localhost:7233` and that the dashboard answers at http://localhost:8080.
+  </Accordion>
+
+  <Accordion title="Sign-in does not stick">
+    Set `NOT_SECURED=true` in `.env`. Without it the login cookie requires HTTPS, which you do
+    not have locally.
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? The [support](/support) page has where to ask.
+
+## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
-    Store media on Cloudflare R2 instead of the local disk
+  <Card title="Add a provider" icon="plug" href="/configuration/create-provider">
+    What a new social network needs on the backend and the frontend
+  </Card>
+  <Card title="Developer guide" icon="code" href="/developer-guide">
+    How the codebase is organised and how to contribute
   </Card>
   <Card title="Architecture" icon="diagram-project" href="/howitworks">
     The services behind a post, and what each one does
   </Card>
-  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
-    Wire up Resend or SMTP so the people you invite get their mail
-  </Card>
-  <Card title="Providers" icon="plug" href="/providers/overview">
-    Connect LinkedIn, X and Reddit with your own app keys
+  <Card title="Configuration reference" icon="sliders" href="/configuration/reference">
+    Every environment variable she reads
   </Card>
 </CardGroup>
-

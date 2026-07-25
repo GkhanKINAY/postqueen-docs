@@ -1,39 +1,161 @@
 ---
 title: Helm
-description: 'Install PostQueen using Kubernetes and Helm'
+description: 'Install PostQueen on Kubernetes with the official Helm chart'
 ---
 
 <Snippet file="earlydoc.mdx" />
 
+Helm is a package manager for Kubernetes. It is to a cluster roughly what Docker Compose is to
+a single machine: one command installs the app and the things it needs.
+
+This page is for people who already operate a Kubernetes cluster. If you do not, you almost
+certainly want [Docker Compose](/installation/docker-compose) instead, which is the supported
+path and considerably less work.
+
 <Snippet file="installation-recommended-options.mdx" />
 
-<Snippet file="installation-pre-reqs.mdx" />
+## Before you start
 
-## The Helm Chart
+- A Kubernetes cluster and `kubectl` pointed at it
+- Helm 3
+- An ingress controller, if you want her reachable from outside the cluster
+- A Temporal server, which the chart does not provide
 
-PostQueen has a helm chart that is in very active development. You can find it here;
+<Warning>
+**The chart does not bundle Temporal.** PostgreSQL and Redis come with it, Temporal does not,
+and Temporal is what actually fires your scheduled posts. Without a reachable one the interface
+loads, you can write posts, and nothing is ever published. Install
+[Temporal on your cluster](https://github.com/temporalio/helm-charts) or use Temporal Cloud,
+then point `TEMPORAL_ADDRESS` at it.
+</Warning>
 
-Note that this is a OCI compliant helm chart, meaning that you do not do `helm repo add`, and if you are using Flux or Helm, you must set them to OCI mode.
+## Install
 
-[https://github.com/GkhanKINAY/postqueen-helmchart](https://github.com/GkhanKINAY/postqueen-helmchart)
+The chart is published as an OCI artifact, so there is no `helm repo add` step:
 
-The `values.yml` file can be found in the repository, or a direct link to it is: [https://github.com/GkhanKINAY/postqueen-helmchart/blob/main/charts/postqueen/values.yaml](https://github.com/GkhanKINAY/postqueen-helmchart/blob/main/charts/postqueen/values.yaml)
+```bash
+helm install postqueen \
+  oci://ghcr.io/gkhankinay/postqueen-helmchart/charts/postqueen-app \
+  --version 1.1.0 \
+  --values values.yaml
+```
 
+<Note>
+**The chart is called `postqueen-app`, not `postqueen`.** The directory in the repository is
+`charts/postqueen`, but the name inside `Chart.yaml`, which is what the registry uses, is
+`postqueen-app`. The directory name will not resolve as an OCI reference.
+</Note>
+
+If you use Flux or Argo CD, point them at the same reference in OCI mode.
+
+## A minimal `values.yaml`
+
+Nothing derives the connection strings for you, not even for the bundled databases, so they
+have to be written out. The hostnames below assume a release named `postqueen`, which is what
+the command above creates.
+
+```yaml
+image:
+  repository: ghcr.io/gkhankinay/postqueen-app
+  tag: "v3.0.4"
+
+secrets:
+  JWT_SECRET: "generate-one-with-openssl-rand-hex-32"
+  DATABASE_URL: "postgresql://postqueen:postqueen-password@postqueen-postgresql:5432/postqueen"
+  REDIS_URL: "redis://:postqueen-redis-password@postqueen-redis-master:6379"
+
+env:
+  MAIN_URL: "https://postqueen.example.com"
+  FRONTEND_URL: "https://postqueen.example.com"
+  NEXT_PUBLIC_BACKEND_URL: "https://postqueen.example.com/api"
+  BACKEND_INTERNAL_URL: "http://localhost:3000"
+  TEMPORAL_ADDRESS: "temporal-frontend.temporal.svc.cluster.local:7233"
+  TEMPORAL_NAMESPACE: "default"
+  IS_GENERAL: "true"
+  STORAGE_PROVIDER: "local"
+  UPLOAD_DIRECTORY: "/uploads"
+  NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY: "uploads"
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: postqueen.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+          port: 80
+  tls:
+    - secretName: postqueen-tls
+      hosts:
+        - postqueen.example.com
+```
+
+The credentials inside those two connection strings are the chart's own defaults for the
+bundled PostgreSQL and Redis. If you change them under `postgresql.auth` or `redis.auth`,
+change them here to match. To use databases you already run, point both strings at those and
+set `postgresql.enabled: false` and `redis.enabled: false`.
+
+Every variable is explained in [Configuration Reference](/configuration/reference). Values
+under `secrets` become a Kubernetes Secret, values under `env` become a ConfigMap, and both are
+handed to the container.
+
+## Traps worth knowing about
+
+<AccordionGroup>
+  <Accordion title="The image tag needs its v prefix">
+    Published tags look like `v3.0.4`. When `image.tag` is empty the chart falls back to its
+    `appVersion`, which carries no `v`, so it resolves to an image that does not exist and the
+    pod sits in `ImagePullBackOff`. Write the tag out, with the `v`.
+  </Accordion>
+
+  <Accordion title="Uploaded media disappears when the pod restarts">
+    With no `extraVolumes` configured, `/uploads` is an `emptyDir`, which lives and dies with
+    the pod. For a real install, either mount a persistent volume through `extraVolumes` and
+    `extraVolumeMounts`, or use [Cloudflare R2](/configuration/r2). R2 is also the answer for
+    more than one replica, since a local disk cannot be shared between pods.
+  </Accordion>
+
+  <Accordion title="There are no health probes">
+    The deployment defines no liveness or readiness probes, so traffic reaches a pod that is
+    still starting, and a wedged pod is never restarted. Add your own against `/` on the
+    container port if you want that behaviour.
+  </Accordion>
+
+  <Accordion title="Empty secrets become empty variables">
+    Every key under `secrets` is rendered whether or not you gave it a value, so an unset
+    provider key arrives as an empty string rather than being absent. Harmless in practice, and
+    useful to know when something looks set but is not.
+  </Accordion>
+
+  <Accordion title="Resource names look doubled">
+    A release named `postqueen` produces objects named `postqueen-postqueen-app`. That is the
+    standard Helm naming helper, not a mistake. The bundled databases are unaffected and are
+    named `postqueen-postgresql` and `postqueen-redis-master`, which is why the connection
+    strings above look the way they do.
+  </Accordion>
+</AccordionGroup>
+
+## Check it worked
+
+```bash
+kubectl get pods
+kubectl logs deploy/postqueen-postqueen-app
+```
+
+You want `Backend started successfully on port 3000`, and then the lines after it. She reports
+configuration problems there and carries on running regardless, so a `Running` pod is not proof
+that the settings are right:
+
+```bash
+kubectl logs deploy/postqueen-postqueen-app | grep -i "configuration issue"
+```
+
+The chart lives at
+[GkhanKINAY/postqueen-helmchart](https://github.com/GkhanKINAY/postqueen-helmchart), and the
+full list of values is in
+[charts/postqueen/values.yaml](https://github.com/GkhanKINAY/postqueen-helmchart/blob/main/charts/postqueen/values.yaml).
 
 ## Next Steps
 
-<CardGroup cols={2}>
-  <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
-    Store media on Cloudflare R2 instead of the local disk
-  </Card>
-  <Card title="Architecture" icon="diagram-project" href="/howitworks">
-    The services behind a post, and what each one does
-  </Card>
-  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
-    Wire up Resend or SMTP so the people you invite get their mail
-  </Card>
-  <Card title="Providers" icon="plug" href="/providers/overview">
-    Connect LinkedIn, X and Reddit with your own app keys
-  </Card>
-</CardGroup>
-
+<Snippet file="next-steps-selfhost.mdx" />

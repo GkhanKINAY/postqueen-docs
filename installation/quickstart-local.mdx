@@ -1,0 +1,179 @@
+---
+title: Try her locally
+description: 'Run PostQueen on your own machine in about five minutes'
+---
+
+This is the fastest way to see PostQueen working. Everything runs on your own machine, nothing
+is exposed to the internet, and when you are done one command removes all of it.
+
+If you already know you want her on a server for real use, skip this page and go to
+[Deploy to a server](/installation/production) instead.
+
+<Warning>
+**This is not a production install.** It runs over plain HTTP with the placeholder signing key
+that ships in the file. It is perfect for looking around, and it is not something to put on a
+public address. When you are ready for that, follow
+[Deploy to a server](/installation/production).
+</Warning>
+
+## Before you start
+
+You need Docker, and about 4 GB of free memory. Docker Desktop covers macOS and Windows, and
+on Linux you want Docker Engine with the Compose plugin.
+
+<Steps>
+  <Step title="Install Docker">
+    Download [Docker Desktop](https://www.docker.com/products/docker-desktop/) for macOS or
+    Windows and start it. On Linux, follow
+    [Docker Engine's install page](https://docs.docker.com/engine/install/) for your
+    distribution.
+
+    Check it is running:
+
+    ```bash
+    docker --version
+    docker compose version
+    ```
+
+    Both commands should print a version number. If `docker compose version` fails but
+    `docker --version` works, you have Docker without the Compose plugin, and the install page
+    above has the extra step for it.
+  </Step>
+
+  <Step title="Get the Compose file">
+    ```bash
+    git clone https://github.com/GkhanKINAY/postqueen-docker-compose
+    cd postqueen-docker-compose
+    ```
+
+    <Note>
+    Do not skip the `cd`. Every command from here on runs inside that folder, because that is
+    where `docker-compose.yaml` lives. Cloning also gives you the `dynamicconfig` folder, which
+    Temporal reads on startup, so copying just the YAML out of this page would leave her
+    without it.
+    </Note>
+  </Step>
+
+  <Step title="Start her">
+    ```bash
+    docker compose up -d
+    ```
+
+    <img src="/images/brand/compose-up.svg" alt="docker compose up: the PostQueen stack starts and is ready on localhost 4007" />
+
+    The first run downloads several images and takes a few minutes. You will see a lot of
+    output, ending with each container reported as `Healthy` or `Started`:
+
+    ```
+     ✔ Container postqueen-postgres   Healthy
+     ✔ Container postqueen-redis      Healthy
+     ✔ Container temporal             Healthy
+     ✔ Container temporal-ui          Started
+     ✔ Container postqueen            Started
+    ```
+
+    Eight containers start in total: PostQueen, her database and Redis, and the four that make
+    up Temporal plus its dashboard.
+
+    The `-d` means she keeps running in the background after you close the terminal.
+  </Step>
+
+  <Step title="Wait for her to be ready">
+    She needs a minute or two on first boot to set up her database. Watch for it:
+
+    ```bash
+    docker compose logs -f postqueen
+    ```
+
+    You are waiting for a line like:
+
+    ```
+    postqueen  | Backend started successfully on port 3000
+    ```
+
+    Press `Ctrl+C` to stop following the logs. That does not stop her, it only stops printing.
+
+    You can also just ask whether everything is healthy:
+
+    ```bash
+    docker compose ps
+    ```
+  </Step>
+
+  <Step title="Open her">
+    Go to **http://localhost:4007** in your browser.
+
+    Create the first account. It becomes the owner of this install, so use an address you will
+    remember. There is no email server configured here, so no confirmation mail is sent and the
+    account is active straight away.
+
+    If you would like to watch the scheduler do its work, the Temporal dashboard is at
+    **http://localhost:8080**. It is optional and you can happily ignore it.
+  </Step>
+</Steps>
+
+## Common first-run problems
+
+<AccordionGroup>
+  <Accordion title="The page will not load at localhost:4007">
+    Give her another minute. On a first boot she creates the database schema before the web
+    interface answers. `docker compose logs -f postqueen` tells you where she is. If the log
+    keeps repeating and restarting, jump to [Troubleshooting](/troubleshooting/overview).
+  </Accordion>
+
+  <Accordion title="A port is already in use">
+    Something else on your machine is using 4007, 8080 or 7233. Either stop that program, or
+    change the left-hand number in the `ports:` line of the service in `docker-compose.yaml`.
+    For example `"4017:5000"` would put her on http://localhost:4017 instead.
+  </Accordion>
+
+  <Accordion title="Containers keep restarting or get killed">
+    That is almost always memory. The full stack, including Temporal and its Elasticsearch,
+    wants roughly 4 GB. In Docker Desktop, raise the memory limit under
+    **Settings → Resources**.
+  </Accordion>
+
+  <Accordion title="Uploading an image works but nothing appears on the social network">
+    Some networks fetch your media from a public URL rather than accepting the file from her.
+    On a laptop install there is no public URL, so those posts will fail. This is expected
+    here and it goes away on a real domain. [Uploads and Storage](/configuration/uploads)
+    explains which networks behave this way.
+  </Accordion>
+</AccordionGroup>
+
+## Stopping and starting again
+
+```bash
+docker compose stop          # pause her, keep everything
+docker compose start         # bring her back
+docker compose down          # remove the containers, keep your data
+```
+
+Your posts, accounts and uploads live in Docker volumes, so `down` followed by `up -d` picks up
+exactly where you left off.
+
+## Removing her completely
+
+When you are finished experimenting:
+
+```bash
+docker compose down -v
+```
+
+<Warning>
+The `-v` deletes the volumes, which means the database and every uploaded file. There is no
+undo. Leave `-v` off if you might want your test data back.
+</Warning>
+
+## What next
+
+You have a working PostQueen, connected to nothing. Two directions from here:
+
+<CardGroup cols={2}>
+  <Card title="Put her on a server" icon="server" href="/installation/production">
+    Your own domain, HTTPS, and an install other people can use
+  </Card>
+  <Card title="Connect a channel" icon="plug" href="/providers/overview">
+    Bring your own app keys and try a real post
+  </Card>
+</CardGroup>

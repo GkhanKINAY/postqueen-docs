@@ -3,7 +3,15 @@ title: R2 Configuration
 description: 'How to use Cloudflare R2 for file storage'
 ---
 
-If you do not wish to (or cannot) use local storage, an alternative way to upload images is to configure R2. It is free.
+Cloudflare R2 stores your uploaded images and video outside the container, on a URL that is
+public over HTTPS. That matters for more than tidiness: several networks fetch your media from a
+URL rather than accepting the file directly, and it is the only workable option once you run
+more than one instance.
+
+It has a free tier that covers most self-hosted installs.
+
+Deciding whether you need it at all? [Uploads and Storage](/configuration/uploads) compares it
+with the local disk. This page is the setup, start to finish.
 
 <Steps>
   <Step title="Create account and login to the console">
@@ -20,6 +28,14 @@ If you do not wish to (or cannot) use local storage, an alternative way to uploa
     - Choose Standard
 
     <img src="/images/r2/r2-create-bucket.png" alt="Create Bucket" />
+
+    <Warning>
+    If you need your media to stay in a specific region for regulatory reasons —
+    an EU jurisdiction under GDPR, for instance — pick it here, under
+    **Specify jurisdiction**. A location hint is a best-effort placement, not a
+    guarantee, and jurisdiction cannot be changed after the bucket exists.
+    Jurisdictional buckets also need `CLOUDFLARE_JURISDICTION` set below.
+    </Warning>
   </Step>
 
   <Step title="Create your R2 Token">
@@ -49,15 +65,29 @@ If you do not wish to (or cannot) use local storage, an alternative way to uploa
 
     <img src="/images/r2/r2-copy-credentials.png" alt="Copy Credentials" />
 
-    Paste the respective information into your .env environment.
+    Paste the respective information into your configuration.
 
 ```env
-CLOUDFLARE_ACCOUNT_ID="accountId"
-CLOUDFLARE_ACCESS_KEY="accessKey"
-CLOUDFLARE_SECRET_ACCESS_KEY="secretAccessKey"
-CLOUDFLARE_BUCKETNAME="bucketName"
-CLOUDFLARE_REGION="region (like wnam)"
+CLOUDFLARE_ACCOUNT_ID="your-account-id"
+CLOUDFLARE_ACCESS_KEY="your-access-key-id"
+CLOUDFLARE_SECRET_ACCESS_KEY="your-secret-access-key"
+CLOUDFLARE_BUCKETNAME="your-bucket-name"
+CLOUDFLARE_REGION="auto"
+# Only for a bucket created with a jurisdiction, e.g. "eu"
+CLOUDFLARE_JURISDICTION=""
 ```
+
+    <Note>
+    Leave `CLOUDFLARE_REGION` as `auto` unless you deliberately pinned your bucket to one
+    location when you created it, in which case use that location hint instead.
+    </Note>
+
+    <Note>
+    `CLOUDFLARE_JURISDICTION` is separate from the region and only applies if you chose
+    **Specify jurisdiction** when creating the bucket. Such a bucket answers only on
+    `<account-id>.eu.r2.cloudflarestorage.com`; left blank, the app queries the
+    account-wide endpoint and reports the bucket as missing.
+    </Note>
   </Step>
 
   <Step title="Configure Custom Domain and CORS policies">

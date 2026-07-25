@@ -3,7 +3,26 @@ title: Nginx
 description: 'Configure Nginx as a reverse proxy for PostQueen'
 ---
 
-<Snippet file="earlydoc.mdx" />
+Nginx puts PostQueen on your domain with HTTPS. It takes more configuration than
+[Caddy](/reverse-proxies/caddy) and handles certificates through a separate tool, so it is the
+right choice mainly when you already run Nginx for other things.
+
+If you are not sure what a reverse proxy is or why she needs one,
+[Domain and HTTPS](/installation/domain-and-https) explains it first.
+
+## Before you start
+
+- Your domain's **A record** points at this server. Check with `dig +short postqueen.example.com`.
+- Ports **80 and 443** are open. Port 80 is needed to prove you own the domain.
+- PostQueen is already running. Confirm with `curl -I http://localhost:4007` on the server.
+
+<Note>
+**About the port.** Under [Docker Compose](/installation/docker-compose), the normal install,
+she is published on the host as **4007**, which is the number used throughout this page. Inside
+the container she listens on 5000. If you installed her with
+[Docker on its own](/installation/docker) she is on `localhost:5000` instead, so change the
+`proxy_pass` lines below accordingly.
+</Note>
 
 ## How to add Nginx as a reverse proxy
 
@@ -140,7 +159,7 @@ server {
 
     # Reverse Proxy to PostQueen application
     location / {
-        proxy_pass http://localhost:5000;
+        proxy_pass http://localhost:4007;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -196,9 +215,9 @@ server {
     ssl_certificate /etc/letsencrypt/live/<subdomain.domain.tld>/fullchain.pem; # CHANGE HERE
     ssl_certificate_key /etc/letsencrypt/live/<subdomain.domain.tld>/privkey.pem; # CHANGE HERE
 
-    # Proxy requests to PostQueen running on port 5000
+    # Proxy requests to PostQueen, published on host port 4007 by Docker Compose
     location / {
-        proxy_pass http://localhost:5000;
+        proxy_pass http://localhost:4007;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -243,8 +262,67 @@ sudo systemctl reload nginx
 ```
   </Step>
 
-  <Step title="Done!">
-    Your Nginx reverse proxy is now running, securely serving your PostQueen instance at your subdomain.domain.tld. 🎉
+  <Step title="Tell PostQueen her address">
+    The proxy works now, but she still believes she lives on `localhost`, and she builds
+    sign-in origins and every social network's return address from these values. In your
+    `docker-compose.yaml`:
+
+    ```yaml
+    MAIN_URL: 'https://postqueen.example.com'
+    FRONTEND_URL: 'https://postqueen.example.com'
+    NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
+    ```
+
+    Keep the `/api` suffix on the last one, and leave no trailing slashes on any of them. Then
+    apply the change:
+
+    ```bash
+    docker compose down && docker compose up -d
+    ```
+
+    <Warning>
+    Skipping this step is the most common way to end up with a working padlock and a site you
+    cannot sign in to. The certificate is not the problem in that case, these three values are.
+    </Warning>
+  </Step>
+
+  <Step title="Check it">
+    From your own machine, not the server:
+
+    ```bash
+    curl -I https://postqueen.example.com
+    ```
+
+    `HTTP/2 200` means the certificate, Nginx and PostQueen are all doing their jobs. Open the
+    address in a browser and sign in. 🎉
   </Step>
 </Steps>
+
+## If it does not work
+
+<AccordionGroup>
+  <Accordion title="502 Bad Gateway">
+    Nginx is running and PostQueen is not answering on the port it was told to use. Check her
+    directly on the server with `curl -I http://localhost:4007`. If that also fails,
+    `docker compose logs postqueen` has the reason. If it succeeds, the `proxy_pass` line has
+    the wrong port.
+  </Accordion>
+
+  <Accordion title="413 Request Entity Too Large when uploading">
+    Nginx caps request bodies at 1 MB by default. The secure config above sets
+    `client_max_body_size 100M;` for exactly this reason. If you used the simple config, add
+    that line inside the `server` block and reload.
+  </Accordion>
+
+  <Accordion title="The page loads but sign-in does not stick">
+    `FRONTEND_URL` does not match the address in the browser bar, character for character. See
+    the step above.
+  </Accordion>
+
+  <Accordion title="certbot cannot validate the domain">
+    The temporary HTTP config has to be live and reachable on port 80, and
+    `dig +short postqueen.example.com` has to return this server's IP. Both have to be true at
+    the moment certbot runs.
+  </Accordion>
+</AccordionGroup>
 

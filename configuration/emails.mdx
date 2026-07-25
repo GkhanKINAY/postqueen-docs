@@ -1,60 +1,137 @@
 ---
 title: Email Notifications
-description: 'How to send notifications to users'
+description: 'Send activation and password reset mail through Resend or your own SMTP server'
 ---
 
-Someone signs up and an activation mail is waiting in their inbox. She sends it through Resend or through your own SMTP server, whichever you point her at.
+Someone signs up and an activation mail is waiting in their inbox. She sends it through Resend
+or through your own SMTP server, whichever you point her at.
 
-Configure a provider and the people you invite have to activate before they can sign in.
+<Warning>
+**Set this up before you invite anyone.** Without a working provider, password resets report
+success and send nothing, and there is no way for someone locked out to get back in. It is the
+most common thing self-hosters wish they had done on day one.
+</Warning>
 
-```env
-EMAIL_PROVIDER: "resend|nodemailer"
-```
+## What changes when you turn it on
 
-You must also set the sender name and email address for all providers as follows;
+Configuring a provider also switches on account activation. From that point, everyone you
+invite has to click a link in their mail before they can sign in. Until then, new accounts are
+active immediately and no mail is sent at all.
 
-```env
-EMAIL_FROM_NAME: "PostQueen Emailer"
-EMAIL_FROM_ADDRESS: "postqueen@example.com"
-```
+That makes the half-configured state the worst one to be in: accounts get created inactive, and
+the mail that would let them in never arrives. Set the provider **and** its credentials, or set
+neither.
 
-## Resend
-
-Connect your domain once and she sends from it.
-
-What turns email on is `EMAIL_PROVIDER=resend`, not the key. That is also what
-switches account activation on, so everyone you invite from then on has to click
-an activation link. Name the provider without finishing the setup and you get the
-worst case: accounts are created inactive and the mail that would let them in
-fails silently. Set both or set neither.
+## Pick a provider
 
 <Steps>
-  <Step title="Register on Resend">
-    Register to [Resend](https://resend.com), and connect your domain.
-  </Step>
-  <Step title="Copy your API Key">
-    Copy your API Key from the Resend control panel.
-  </Step>
-  <Step title="Edit your .env file">
-    Open the .env file and edit the following line.
+  <Step title="Choose one and name it">
+    `EMAIL_PROVIDER` has to be exactly `resend` or `nodemailer`. Any other value, including
+    leaving it unset, selects a provider that quietly sends nothing.
 
-```env
-EMAIL_PROVIDER="resend"
-RESEND_API_KEY="<your-api-key-here>"
-```
+    ```env
+    EMAIL_PROVIDER=resend
+    ```
+  </Step>
+
+  <Step title="Set who the mail comes from">
+    Both providers need these:
+
+    ```env
+    EMAIL_FROM_NAME=PostQueen
+    EMAIL_FROM_ADDRESS=hello@example.com
+    ```
+  </Step>
+
+  <Step title="Add the credentials">
+    <Tabs>
+      <Tab title="Resend">
+        Register at [Resend](https://resend.com) and verify the domain you want to send from.
+        Copy the API key from their dashboard.
+
+        ```env
+        EMAIL_PROVIDER=resend
+        RESEND_API_KEY=re_your_key_here
+        EMAIL_FROM_NAME=PostQueen
+        EMAIL_FROM_ADDRESS=hello@example.com
+        ```
+
+        The address in `EMAIL_FROM_ADDRESS` has to be on a domain you verified with Resend, or
+        they reject the send.
+      </Tab>
+
+      <Tab title="SMTP (Nodemailer)">
+        Already run a mail server, or have credentials from your provider? Point her at it.
+        Nodemailer is the SMTP library she uses.
+
+        ```env
+        EMAIL_PROVIDER=nodemailer
+        EMAIL_HOST=smtp.example.com
+        EMAIL_PORT=465
+        EMAIL_SECURE=true
+        EMAIL_USER=your-smtp-username
+        EMAIL_PASS=your-smtp-password
+        EMAIL_FROM_NAME=PostQueen
+        EMAIL_FROM_ADDRESS=hello@example.com
+        ```
+
+        `EMAIL_SECURE=true` goes with port 465, which is encrypted from the first byte. If your
+        server uses port 587 with STARTTLS instead, set `EMAIL_SECURE=false`.
+      </Tab>
+    </Tabs>
+  </Step>
+
+  <Step title="Apply and test">
+    ```bash
+    docker compose down && docker compose up -d
+    ```
+
+    Then use the password reset form with an address you can read. The mail should arrive within
+    a minute. If it does not, the logs will say why:
+
+    ```bash
+    docker compose logs postqueen | grep -i mail
+    ```
   </Step>
 </Steps>
 
-## NodeMailer (SMTP)
+<Note>
+The examples above use `KEY=value`, which is the syntax for an env file. If you are editing
+`docker-compose.yaml` directly, the same settings are written `KEY: 'value'` with a colon.
+[Docker Compose](/installation/docker-compose) covers both.
+</Note>
 
-Already have an SMTP server? Point her at it instead of Resend. NodeMailer is the SMTP library she uses to reach it.
+## If mail does not arrive
 
-```env
-EMAIL_PROVIDER: "nodemailer"
-EMAIL_HOST: "smtp.gmail.com" # smtp host if you choose nodemailer
-EMAIL_PORT: "465" # smtp port if you choose nodemailer
-EMAIL_SECURE: "true" # smtp secure if you choose nodemailer
-EMAIL_USER: "user" # smtp user if you choose nodemailer
-EMAIL_PASS: "pass" # smtp pass if you choose nodemailer
-```
+<AccordionGroup>
+  <Accordion title="Nothing is sent and nothing is logged">
+    `EMAIL_PROVIDER` is not exactly `resend` or `nodemailer`. A typo, a capital letter or an
+    unset value all land on the provider that does nothing, and it does not complain.
+  </Accordion>
 
+  <Accordion title="Resend rejects the send">
+    `EMAIL_FROM_ADDRESS` has to be on a domain verified in your Resend account. An unverified
+    domain, or a generic one you do not own, is refused.
+  </Accordion>
+
+  <Accordion title="SMTP times out">
+    Many hosting providers block outbound port 25, and some block 465 and 587 by default until
+    you ask. Test from the server itself with `nc -zv smtp.example.com 465`.
+  </Accordion>
+
+  <Accordion title="New accounts are stuck as inactive">
+    That is activation working while mail is not. Fix the provider, then have the person request
+    a new activation mail. Activation links are short lived, so an old one will not help.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Passwordless sign-in" icon="key" href="/configuration/rate-limits">
+    One-time codes by mail instead of passwords, which needs a working provider
+  </Card>
+  <Card title="Configuration reference" icon="sliders" href="/configuration/reference">
+    Every mail variable and what it does
+  </Card>
+</CardGroup>

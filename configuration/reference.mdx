@@ -4,10 +4,17 @@ description: 'Environment variables reference for PostQueen'
 ---
 
 She reads everything she needs from environment variables. Change one and restart her
-before you expect it to take effect. The exception is the handful of `NEXT_PUBLIC_`
-values consumed inside browser code, which are compiled into the bundle when the image
-is built and need a rebuild rather than a restart. Each of those says so where it is
-listed.
+before you expect it to take effect. Under Docker Compose that means
+`docker compose down` followed by `up`, because a plain restart reuses the container and
+its old environment.
+
+<Note>
+**`NEXT_PUBLIC_` variables do not need a rebuild here.** That is the usual rule for a
+Next.js app, and it does not apply to this image. Her layouts are server rendered on every
+request and hand these values to the browser at runtime, so setting one in Compose and
+restarting is enough. The single genuine exception is `NEXT_PUBLIC_VERSION`, which is baked
+in when the image is built.
+</Note>
 
 Start from the [example env file](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example)
 in the app repository, which is the file to copy on a fresh install. This page then groups the
@@ -75,15 +82,38 @@ FRONTEND_URL="https://postqueen.example.com"
 
 ### `NEXT_PUBLIC_BACKEND_URL` <sup>Required</sup>
 
-The URL the **browser** uses to reach the PostQueen backend.
+The URL the **browser** uses to reach the PostQueen backend. What goes here depends on how you
+deployed her, and the two shapes are not interchangeable.
+
+**One address, which is what the official image and Compose file do.** A proxy inside the
+container sends anything under `/api` to the backend, so the backend is a path on the same
+origin:
+
+```
+NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api"
+```
+
+**Separate hostnames**, which applies when you run the frontend and backend as separate
+services, from source or in Kubernetes:
 
 ```
 NEXT_PUBLIC_BACKEND_URL="https://api.postqueen.example.com"
 ```
 
+<Warning>
+Dropping the `/api` suffix on a Compose install is a common mistake. Requests then land on the
+frontend instead of the backend and everything after sign-in fails. If you are unsure which
+shape you have, check the shipped `docker-compose.yaml`: it uses the `/api` form.
+</Warning>
+
+Note that a trailing slash on any of these URLs is reported as a configuration issue on boot.
+
 ### `BACKEND_INTERNAL_URL` <sup>Required</sup>
 
-The URL the **frontend SSR server** uses to reach the backend from inside your network. If everything runs in the same container/host, this is usually `http://localhost:3000`.
+The URL the **frontend server** uses to reach the backend, server to server. This is not a
+public address. On the official image both run in the same container, so it stays
+`http://localhost:3000` no matter what your domain is. In a split deployment it is the
+backend's internal address, such as `http://backend:3000`.
 
 ---
 
@@ -171,8 +201,9 @@ See also: [Cloudflare R2](/configuration/r2) and [Uploads & Storage](/configurat
 | `CLOUDFLARE_ACCESS_KEY` | R2 access key. |
 | `CLOUDFLARE_SECRET_ACCESS_KEY` | R2 secret access key. |
 | `CLOUDFLARE_BUCKETNAME` | R2 bucket name. |
-| `CLOUDFLARE_BUCKET_URL` | Public-facing URL the bucket is served from. |
+| `CLOUDFLARE_BUCKET_URL` | Public-facing URL the bucket is served from — the r2.dev development URL or a custom domain, **not** the S3 API endpoint, which refuses unsigned reads. Stored with every media row and sent to the social networks, so changing it later means rewriting those rows. |
 | `CLOUDFLARE_REGION` | R2 region (usually `auto`). |
+| `CLOUDFLARE_JURISDICTION` | Only for buckets created with a jurisdiction, such as `eu` for data residency. Those buckets answer on their own endpoint (`<account>.eu.r2.cloudflarestorage.com`) and are invisible on the account-wide one, so omitting it makes an existing bucket look missing. Leave blank otherwise. |
 
 ---
 
@@ -207,6 +238,7 @@ See also: [OAuth configuration](/configuration/oauth).
 | Variable | Purpose |
 |---|---|
 | `POSTQUEEN_GENERIC_OAUTH` | `true` to enable a generic OIDC sign-in provider. |
+| `POSTQUEEN_OAUTH_URL` | Base URL of the identity provider. |
 | `POSTQUEEN_OAUTH_AUTH_URL` | Authorization endpoint. |
 | `POSTQUEEN_OAUTH_TOKEN_URL` | Token endpoint. |
 | `POSTQUEEN_OAUTH_USERINFO_URL` | UserInfo endpoint. |
@@ -230,6 +262,8 @@ ships with one). The scheduling architecture: [How PostQueen works](/howitworks)
 | `TEMPORAL_API_KEY` | API key for Temporal Cloud. Leave unset for self-host. |
 | `TEMPORAL_TLS` | `true` to require TLS to the Temporal frontend. |
 | `ORCHESTRATOR_PORT` | Port the in-process orchestrator binds to. |
+| `WORKER_CONCURRENCY_DIVIDER` | Divides each provider's concurrency limit across this many worker servers, so the total never exceeds what the network allows. Set it to the number of servers you run. Leave unset on a single-server install. |
+| `EXCLUDE_QUEUE` | Comma separated list of provider queues this server should not process, for example `reddit,x,twitch`. Used to pin a queue to one server when a provider's concurrency limit is too low to split. Only relevant across multiple workers. |
 
 ---
 
@@ -303,18 +337,61 @@ LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
 | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key. |
 | `STRIPE_SECRET_KEY` | Stripe secret key. |
 | `STRIPE_SIGNING_KEY` | Stripe webhook signing key for subscription events. |
+| `STRIPE_SIGNING_KEY_CONNECT` | Separate signing key for Stripe Connect webhooks, used by the marketplace payout flow. |
+| `STRIPE_DISCOUNT_ID` | A Stripe coupon ID offered as a win-back discount. Unset means no discount is ever applied. |
+| `FEE_AMOUNT` | Platform fee taken on marketplace transactions, as a fraction. `0.05` is five percent. |
+
+Payments are only relevant if you are running PostQueen as a commercial service. A private
+self-hosted install needs none of this, and leaving it unset simply means no billing.
+
+---
+
+## Abuse protection
+
+Rate limiting on the sign-in and sign-up endpoints is on by default and needs no configuration.
+The `GUARD_*` family tunes it, `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET` add a captcha, and
+`PASSWORDLESS_LOGIN` switches sign-in to emailed one-time codes. All of them, with their
+defaults, are on [Abuse Protection and Rate Limits](/configuration/rate-limits).
+
+---
+
+## Deployment identity
+
+Cosmetic links and addresses she shows in the interface. Every one is optional.
+
+| Variable | Purpose |
+|---|---|
+| `LEGAL_URL` | Where the "terms" and "privacy" links point. |
+| `REPOSITORY_URL` | Overrides the source-code link in the interface. |
+| `AFFILIATE_URL` | Destination of the affiliate link, when you run a programme. |
+| `AGENCY_NOTIFICATION_EMAIL` | Address notified about agency directory submissions. |
+| `EXTENSION_STORE_URL` | Where the "install the extension" button sends people. |
+| `ONBOARDING_VIDEO_URL` | Video embedded in the first-run experience. |
 
 ---
 
 ## Analytics & error tracking
 
 All of this is optional, and a self-hosted install runs perfectly well with none of it set.
-Errors can go to Sentry, on the frontend and the backend, and product analytics can go to
-PostHog. Set the keys for the service you already run and leave the rest alone.
+Set the keys for the service you already run and leave the rest alone.
 
-If you change one of these and nothing seems to happen, restart the app first. Some frontend
-values are baked in when the image is built rather than read on each request, and those need
-a rebuild before they take effect.
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_SENTRY_DSN` | Sentry project DSN. Set it and both frontend and backend report errors there. |
+| `SENTRY_SPOTLIGHT` | Sends errors to a local Spotlight debugger instead of Sentry. Development only; the official Compose file has a `debug` profile that runs one. |
+| `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Upload source maps at build time, so stack traces are readable. Only relevant if you build your own image. |
+| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | PostHog product analytics. Both are needed. |
+| `PLAUSIBLE_DOMAIN` | Loads the Plausible script for this domain. Privacy friendly and cookie free. |
+| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container ID. |
+| `NEXT_PUBLIC_FACEBOOK_PIXEL` | Meta Pixel ID for the browser side. |
+| `FACEBOOK_PIXEL_ACCESS_TOKEN` | Server side companion to the pixel, for the Conversions API. |
+| `DATAFAST_API_KEY`, `DATAFAST_WEBSITE_ID` | Datafast analytics. |
+| `DUB_PUBLISHABLE_KEY` | Dub's client side analytics, separate from `DUB_TOKEN` used for short links. |
+| `NEXT_PUBLIC_TRACKING_TRIAL` | Fires a conversion event when a trial starts. Relevant to the hosted product rather than self-hosting. |
+
+All of these are read at runtime, so setting one and recreating the container is enough. The
+build-time exceptions are the three Sentry source map variables, which only matter when you
+build the image yourself.
 
 ---
 
@@ -326,6 +403,7 @@ a rebuild before they take effect.
 | `NEXT_PUBLIC_VERSION` | Version string shown in the footer. |
 | `NEXT_PUBLIC_APP_VERSION` | Mobile/web version label. |
 | `CHATBASE_BOT_ID` and `CHATBASE_TOKEN` | The in-app support widget. It loads only when both are set, and the bot has to be one you own: its agent can offer the signed-in user a refund on their own subscription, behind a confirmation dialog showing the amount. Leave both unset and no widget loads. |
+| `DEV_BACKEND_PROXY` | Local development only. Makes the Next dev server proxy `/api` to a backend running elsewhere, such as a Compose stack on port 4007, so you can work on the frontend alone. Pair it with `NEXT_PUBLIC_BACKEND_URL="/api"`. Ignored in the built image. |
 | `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | Narrower than the name suggests. It replaces `NEXT_PUBLIC_BACKEND_URL` in one place only: the `token_endpoint` the MCP server advertises in its OAuth discovery document. Set it when your MCP clients have to reach that endpoint at a different address, such as through a tunnel. Nothing else in the app reads it. |
 
 ---
@@ -369,7 +447,7 @@ or not it has a row in this table.
 | Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | [/providers/reddit](/providers/reddit) |
 | Pinterest | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | [/providers/pinterest](/providers/pinterest) |
 | Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | [/providers/discord](/providers/discord) |
-| Slack | `SLACK_ID`, `SLACK_SECRET` | [/providers/slack](/providers/slack) |
+| Slack | `SLACK_ID`, `SLACK_SECRET`, `SLACK_SIGNING_SECRET` | [/providers/slack](/providers/slack) |
 | Telegram | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` | [/providers/telegram](/providers/telegram) |
 | Mastodon | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | [/providers/mastodon](/providers/mastodon) |
 | Dribbble | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | [/providers/dribbble](/providers/dribbble) |
@@ -431,6 +509,9 @@ hosting platform, or framework rather than set by hand.
 | Variable | Purpose |
 |---|---|
 | `PORT` | Port the backend HTTP server binds to. Defaults to `3000`. |
+| `ORCHESTRATOR_PORT` | Port the orchestrator binds to. Defaults to `3002`. |
+| `PRISMA_MIGRATE` | Apply the schema with `prisma migrate deploy` instead of `db push`. Unset, empty, `false` or `0` keeps `db push`; any other value switches to migrations, so a typo errs toward the safer path. See [Backups and Upgrades](/installation/backups-and-upgrades) before switching an existing database. |
+| `NX_ADD_PLUGINS` | Set to `false` in the shipped configuration. A build-tooling flag, not something to change. |
 | `TZ` | Process timezone. The backend forces this to `UTC` on boot. |
 | `NODE_ENV` | Standard Node environment flag (`development` / `production`). Toggles dev-only behavior like sourcemaps. |
 | `NEXT_RUNTIME` | Set by Next.js (`nodejs` / `edge`) to select the instrumentation hook. Framework-injected. Do not set manually. |

@@ -93,9 +93,16 @@ CLOUDFLARE_ACCOUNT_ID="…"
 CLOUDFLARE_ACCESS_KEY="…"
 CLOUDFLARE_SECRET_ACCESS_KEY="…"
 CLOUDFLARE_BUCKETNAME="…"
-CLOUDFLARE_BUCKET_URL="https://your-bucket-url.r2.cloudflarestorage.com/"
+CLOUDFLARE_BUCKET_URL="https://pub-your-hash.r2.dev"
 CLOUDFLARE_REGION="auto"
+# Only if you created the bucket with a jurisdiction, e.g. "eu"
+CLOUDFLARE_JURISDICTION=""
 ```
+
+`CLOUDFLARE_BUCKET_URL` is the address browsers and social networks fetch
+from, so it must be the bucket's public URL — the r2.dev one or a custom
+domain — rather than the `…r2.cloudflarestorage.com` S3 endpoint, which
+serves nothing without a signature.
 
 R2 gives you public HTTPS URLs out of the box, so the TikTok caveat
 above does not apply.

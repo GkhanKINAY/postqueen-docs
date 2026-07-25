@@ -1,37 +1,55 @@
 ## Installation Prerequisites
 
-A few services have to be in place before she can start.
+A few things have to be in place before she can start.
 
-### Network Requirements
+### HTTPS is effectively required
 
-#### HTTPS / HTTP Requirement
+She marks her login cookies as Secure, which browsers only send over an encrypted connection.
+On a real install you put a reverse proxy in front of her to hold the certificate, and
+[Domain and HTTPS](/installation/domain-and-https) walks through that.
 
-She marks her login cookies as Secure. Browsers call this a "secure context".
+If you genuinely cannot use a certificate, for example while developing on your own machine,
+there is an escape hatch:
 
-If you want a secure login process, you need a certificate, which a reverse proxy like Caddy or Nginx can give you.
-
-If you cannot use a certificate (HTTPS), add the following environment variable to your `.env` file:
 ```env
 NOT_SECURED=true
 ```
+
 <Warning>
-**Security Warning**: Setting `NOT_SECURED=true` disables secure cookie requirements. This should only be used in development environments or when you fully understand the security implications. Not recommended for production use.
+**Security Warning**: `NOT_SECURED=true` drops the secure-cookie requirements, which means
+session cookies travel in the clear. Use it for local development only, never on a server other
+people can reach.
 </Warning>
 
-#### Network Ports
+### Network ports
 
-- **5000/tcp**: the **single entry point** for PostQueen when running in a container. This is the one port your reverse proxy should talk to.
-- **4200/tcp**: for the **Frontend** service (the web interface). You do not need to expose this port publicly.
-- **3000/tcp**: for the **Backend** service (the API). You do not need to expose this port publicly.
-- **5432/tcp**: for the **Postgres** container. You do not need to expose this port publicly.
-- **6379/tcp**: for the **Redis** container. You do not need to expose this port publicly.
+Inside the container everything arrives on one port, and a small proxy splits it up from there.
+That is deliberate: one port is harder to misconfigure than three.
 
-Using docker images? Point your external proxy at port 5000 and nothing else. One port is harder to misconfigure and easier to reason about later.
+| Port | What it is | Exposed? |
+| --- | --- | --- |
+| **5000** | The single entry point **inside** the container | Only within Docker |
+| **4007** | Where Docker Compose publishes port 5000 **on your host** | Yes, this is the one your reverse proxy talks to |
+| 4200 | Frontend, inside the container | No |
+| 3000 | Backend API, inside the container | No |
+| 5432 | PostgreSQL | No |
+| 6379 | Redis | No |
+| 7233 | Temporal, bound to `127.0.0.1` | Server only |
+| 8080 | Temporal dashboard, bound to `127.0.0.1` | Server only |
+
+<Note>
+**5000 or 4007?** Both, depending on where you are standing. She always listens on 5000 inside
+the container. The Compose file publishes that as 4007 on the host, so a reverse proxy running
+on the host uses **4007**. If you run PostQueen with
+[Docker on its own](/installation/docker) and map `-p 5000:5000`, the host port is 5000
+instead. A proxy that reaches her over the Docker network, such as Traefik, uses 5000 either
+way.
+</Note>
 
 ```mermaid
 graph TD;
 	A[Your Browser] -->|HTTPS 443/tcp| B[Your Reverse Proxy]
-	B -->|HTTP 5000/tcp| C["Internal Proxy (nginx)"]
+	B -->|HTTP 4007/tcp on the host| C["Internal Proxy (nginx, listening on 5000)"]
 
 	subgraph "PostQueen Container"
 	C -->|4200/tcp| D[Frontend Service]
@@ -41,5 +59,5 @@ graph TD;
 
 	E -->|5432/tcp| F[Postgres Container]
 	E -->|6379/tcp| G[Redis Container]
+	E -->|7233/tcp| I[Temporal Container]
 ```
-

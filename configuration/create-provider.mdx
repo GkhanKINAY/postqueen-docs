@@ -3,7 +3,17 @@ title: How to add a new provider
 description: 'How to add a new provider to PostQueen'
 ---
 
-# Steps to implement a new provider
+Adding a network she can post to means writing code in two places: a provider on the backend
+that knows how to authenticate and publish, and a pair of components on the frontend for the
+preview and the per-network settings.
+
+<Note>
+**About the `@gitroom/*` import paths below.** They are correct and deliberate. That is the
+real workspace alias in `tsconfig.base.json`, inherited from the upstream project, and renaming
+it would break every import in the monorepo. Only the product is called PostQueen.
+</Note>
+
+## Steps to implement a new provider
 
 1. **The backend logic:**
    - Define DTO for the settings of the provider
@@ -24,18 +34,18 @@ For our example, we will use the X provider.
 
 <Steps>
   <Step title="Create a DTO for provider settings">
-    Head over to `nestjs-libraries/src/dtos/posts/providers-settings` and create a new file `x-provider-settings.dto.ts`
-    
+    Head over to `libraries/nestjs-libraries/src/dtos/posts/providers-settings` and create a new file `x-provider-settings.dto.ts`
+
     <Note>
     You do not have to create a DTO if there are no settings
     </Note>
 
-    Once created head over to `nestjs-libraries/src/dtos/posts/providers-settings/all.providers.settings.ts` and add the new DTO.
+    Once created head over to `libraries/nestjs-libraries/src/dtos/posts/providers-settings/all.providers.settings.ts` and add the new DTO.
 
-    Head to `libraries/nestjs-libraries/src/dtos/posts/create.post.dto.ts`, look for the discriminator and add another line in the format of:
+    Head to `libraries/nestjs-libraries/src/dtos/posts/create.post.dto.ts`, look for the discriminator and add another line, where the value is your DTO class and the name matches the provider's `identifier`:
 
 ```typescript
-{ value: DTOClassName, name: 'providerName' },
+{ value: XProviderSettingsDto, name: 'x' },
 ```
   </Step>
 
@@ -71,7 +81,7 @@ export class XProvider implements SocialProvider {
   async post(
     id: string,
     accessToken: string,
-    postDetails: PostDetails<DTOClassName>[]
+    postDetails: PostDetails<XProviderSettingsDto>[]
   ): Promise<PostResponse[]> {
     // ...post the content
   }
@@ -125,7 +135,9 @@ const ProviderSettings: FC = () => {
   );
 };
 
-export default withProvider(DevtoSettings, DevtoPreview, DTOClassName);
+// The third argument is the settings DTO class you created on the backend,
+// for example ProviderNameSettingsDto.
+export default withProvider(ProviderSettings, ProviderPreview, ProviderNameSettingsDto);
 ```
   </Step>
 
