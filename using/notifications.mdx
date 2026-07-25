@@ -1,0 +1,79 @@
+---
+title: Notifications
+description: 'What she tells you about, where it arrives, and which emails you can turn off'
+---
+
+She works while you are not watching, so the way you find out a post failed is a notification.
+Two places carry them: the bell in the app, and your inbox.
+
+## The bell
+
+Notifications collect in the app and stay there until you clear them. Newest first, a hundred to
+a page.
+
+What lands there is anything you would want to know without asking: a post that published, a post
+a network refused, a channel whose connection went stale, an invitation to an organization.
+
+The ones worth acting on immediately are failures, because a failed post does not retry itself.
+[When a post fails](/troubleshooting/post-failed) covers what each kind means.
+
+## Emails
+
+Three toggles under **Settings > Global Settings**, all on by default:
+
+| Toggle | What it stops |
+| --- | --- |
+| **Success Emails** | The mail confirming a post went out |
+| **Failure Emails** | The mail telling you a post did not |
+| **Streak Reminder Emails** | The nudge about keeping your posting streak going |
+
+Turning one off leaves the bell alone: the notification still appears in the app, you just stop
+getting mail about it.
+
+<Warning>
+**Think before turning Failure Emails off.** A failed post is silent otherwise unless you happen
+to open the app. If the volume is the problem rather than the emails themselves, the usual cause
+is one channel with a dead token failing repeatedly, and reconnecting it stops the noise at the
+source.
+</Warning>
+
+<Note>
+**Self-hosting?** No mail of any kind goes out until `EMAIL_PROVIDER` is set, whatever these
+toggles say. The bell still works. [Email Notifications](/configuration/emails) sets it up.
+</Note>
+
+## Reading them from outside the app
+
+The public API exposes the same list, which is the practical way to watch for failures from a
+script or a dashboard:
+
+```bash
+curl -H "Authorization: your-api-key" \
+  "https://api.postqueen.ai/public/v1/notifications?page=0"
+```
+
+A hundred per page, newest first, `page` starting at `0`. Full reference:
+[List Notifications](/public-api/notifications/list).
+
+<Note>
+There is no notification tool over [MCP](/mcp/limits-and-troubleshooting) and no CLI command for
+this, so an agent cannot tell you what failed. The API is the only route.
+[CLI limits](/cli/limits) lists the other gaps.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
+    What each failure means and which ones need you
+  </Card>
+  <Card title="Set up email" icon="envelope" href="/configuration/emails">
+    Self-hosting: nothing is delivered until a provider is configured
+  </Card>
+  <Card title="Webhooks" icon="bolt" href="/automation/webhooks">
+    Push the same events to your own endpoint instead of waiting for mail
+  </Card>
+  <Card title="Settings" icon="sliders" href="/using/settings">
+    Every tab, and why some are missing for you
+  </Card>
+</CardGroup>
