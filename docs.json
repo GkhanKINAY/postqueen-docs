@@ -503,16 +503,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/GkhanKINAY/postqueen-app",
-          "icon": "github"
-        }
-      ]
-    }
+    ]
   },
   "redirects": [
     {
@@ -535,6 +526,10 @@
   },
   "navbar": {
     "links": [
+      {
+        "label": "GitHub",
+        "href": "https://github.com/GkhanKINAY/postqueen-app"
+      },
       {
         "label": "Support",
         "href": "/support"
