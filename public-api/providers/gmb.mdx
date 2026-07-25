@@ -33,7 +33,7 @@ Google My Business (GMB) allows you to create posts that appear on your Google B
 | `__type` | string | ✅ | Must be `"gmb"` |
 | `topicType` | string | ❌ | Post type: `STANDARD`, `EVENT`, or `OFFER` |
 | `callToActionType` | string | ❌ | CTA button type |
-| `callToActionUrl` | string | ❌ | URL for CTA (required if callToActionType is set) |
+| `callToActionUrl` | string | ❌ | URL for the CTA button. Genuinely optional: set `callToActionType` without it and the request still succeeds, with the button quietly left off the post |
 | `eventTitle` | string | ❌ | Event name (required for EVENT type) |
 | `eventStartDate` | string | ❌ | Event start date |
 | `eventEndDate` | string | ❌ | Event end date |

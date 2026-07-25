@@ -8,7 +8,7 @@ description: 'Provider settings for Warpcast/Farcaster posts'
 Warpcast is a client for the Farcaster protocol, a decentralized social network. When posting to Warpcast, you can specify which channels to post to.
 
 <Note>
-The `__type` identifier is spelled `wrapcast` (not `warpcast`); the API rejects any other spelling. The settings also use `subreddit` as the field name for historical reasons, but it refers to Farcaster channels.
+The `__type` identifier is spelled `wrapcast`, not `warpcast`. That is the value `GET /integrations` returns and the one the settings schema is keyed on. On `POST /posts` the server overwrites `__type` with the channel's own identifier, so a misspelling is ignored rather than refused. The settings also use `subreddit` as the field name for historical reasons, but it refers to Farcaster channels.
 </Note>
 
 ## Settings Schema

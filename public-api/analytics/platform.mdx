@@ -7,7 +7,7 @@ openapi: 'GET /analytics/{integration}'
 
 The `{integration}` path parameter must be the integration's **`id`** (the UUID-shaped string returned by `GET /public/v1/integrations`).
 
-It is **not** the platform `__type` (e.g. `x`, `linkedin`) and **not** the channel display name. Passing either of those will return `400 Invalid integration`.
+It is **not** the platform `__type` (e.g. `x`, `linkedin`) and **not** the channel display name. Passing either of those returns `500` with the message `Invalid integration`. That is a rough edge rather than a designed status: the lookup throws a plain error. Read it as "no such integration in this organization".
 
 ```bash
 # Get the integration ID
@@ -21,6 +21,6 @@ curl -H "Authorization: your-api-key" \
 
 ## Common errors
 
-- `400 Invalid integration`: the path param is the wrong shape.
-- `404 Channel not found`: the integration exists but has been disconnected. Reconnect the channel from the PostQueen UI.
+- `500 Invalid integration`: no integration with that id belongs to your organization. A `__type`, a display name or an id from another workspace all land here.
+- **Empty array with `200`**: the channel exists but its token expired and could not be refreshed, so PostQueen disconnected it. Reconnect it from the PostQueen UI. There is no `404 Channel not found` on this endpoint.
 - Empty data: some platforms (notably Google My Business) restrict analytics by date range or by profile verification status. The endpoint returns an empty payload rather than an error.
