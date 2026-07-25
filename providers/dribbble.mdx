@@ -59,6 +59,13 @@ She checks the image before the shot leaves the calendar, and refuses it in her 
     - Production: `https://postqueen.example.com/integrations/social/dribbble`
     - Local development: `http://localhost:4200/integrations/social/dribbble`
     - Docker: `http://localhost:4007/integrations/social/dribbble`
+
+    Two scopes are requested, and the connect is refused if either is missing:
+
+    ```
+    public
+    upload
+    ```
   </Step>
 
   <Step title="Copy your client secret to environment variables">

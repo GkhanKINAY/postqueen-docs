@@ -85,6 +85,15 @@ The **Google My Business API** requires approval from Google. You must submit an
     2. Fill in the required app information
     3. Add yourself as a test user
     4. Save and continue through the wizard
+
+    On the **Scopes** step, add the three PostQueen asks for. The connect is refused if any one of
+    them is missing:
+
+    ```
+    https://www.googleapis.com/auth/userinfo.profile
+    https://www.googleapis.com/auth/userinfo.email
+    https://www.googleapis.com/auth/business.manage
+    ```
   </Step>
 
   <Step title="Create OAuth Credentials">
