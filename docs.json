@@ -22,9 +22,9 @@
     "library": "fontawesome"
   },
   "feedback": {
-    "thumbsRating": false,
-    "suggestEdit": true,
-    "raiseIssue": true
+    "thumbs": false,
+    "edits": true,
+    "issues": true
   },
   "navigation": {
     "tabs": [
