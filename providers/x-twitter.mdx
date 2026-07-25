@@ -1,9 +1,48 @@
 ---
 title: X (Twitter)
 description: 'How to add X to your system'
+icon: /images/channels/x.svg
 ---
 
+<img src="/images/channels/x.svg" alt="X" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to X
+
+X is the network she paces herself on. One post goes out at a time, because X allows 300 posts per three hours, and a thread is simply the first post followed by replies she chains onto it.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    280 characters, or 4,000 on a channel marked Verified
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. Up to 4 pictures, or one video
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Post, reply, thread, community post
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, unless you set `DISABLE_X_ANALYTICS`
+  </Card>
+</CardGroup>
+
+The Verified flag is read from your X profile when the channel connects, and it lives on the channel as a checkbox you can correct later. Account numbers come back as impressions, likes and retweets, plus replies, quotes and bookmarks. Per post she reads the same six.
+
+| | |
+|---|---|
+| **Post settings** | `who_can_reply_post`, `community`, `made_with_ai`, `paid_partnership`. Full schema in the [X settings reference](/public-api/providers/x) |
+| **Connect flow** | One step. She logs in as whichever account is signed in on X, so switch accounts there first if you want a different one |
+| **Automations** | Auto Repost Posts, Auto plug post, and Add Re-posters, which pulls in your other connected X channels to repost for you. The first two read like counts, so they turn off with `DISABLE_X_ANALYTICS` |
+
+<Warning>
+What X sends back when a post will not fly:
+
+- **There must be a maximum of 4 items per post.**
+- **There can be maximum of one cashtag ($SYMBOL) per post.**
+- **You are not allowed to create a post with duplicate content.** Reword it and try again.
+- **The video you are trying to post is longer than 2 minutes, which is not allowed for this account.**
+</Warning>
 
 X is a bit different.
 

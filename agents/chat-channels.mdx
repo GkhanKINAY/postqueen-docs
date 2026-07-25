@@ -1,0 +1,264 @@
+---
+title: 'Chat channels'
+description: 'Message her from WhatsApp or Telegram on your phone, or from Slack and Discord with your team, through OpenClaw or Hermes on your own machine'
+---
+
+## The front door is the app you already have open
+
+You are walking back from lunch. You open WhatsApp, hold the mic button and say "the espresso tonic is back, put it on Instagram and X for tomorrow morning." By the time you sit down at your desk, both posts are on the calendar with the photo attached and a time on them.
+
+That is the whole shape of it. No new app to learn, no dashboard to open, just the thread you were already in.
+
+<img src="/images/brand/phone-agent.svg" alt="A phone chat: you ask her to push today's podcast to X and LinkedIn at 5pm and she answers that two posts are scheduled and waiting on your calendar" />
+
+## How your message reaches her
+
+PostQueen never signs into your WhatsApp or your Slack workspace to read what you wrote. The link lives on your own machine.
+
+An agent client sits in the middle: [OpenClaw](/agents/openclaw) or [Hermes](/agents/hermes), running on a computer you control. It connects to the chat app with your own bot or your own pairing, reads your message, and runs the `postqueen` CLI with your API key. Whatever it schedules shows up on the calendar at [app.postqueen.ai](https://app.postqueen.ai) like any other post.
+
+```
+your chat app  →  OpenClaw or Hermes on your machine  →  postqueen CLI  →  your calendar
+```
+
+Two things follow from that shape, and both are worth knowing before you start:
+
+- **The agent has to be awake.** Both projects run a gateway, a background process that stays connected to your chat apps and answers while you are away. It is `openclaw gateway` on one side and `hermes gateway` on the other. Close the laptop and nothing is listening.
+- **Chat credentials never touch PostQueen.** Bot tokens, QR pairings and Slack app secrets all live in the agent's own config on your machine. PostQueen only ever sees the API key the CLI uses.
+
+<Note>
+Slack, Discord and Telegram are also publishing channels in PostQueen, which is a different thing. Connecting one of those as a channel means she posts content **into** it. This page is about talking **to** her from a chat app, and the two setups are independent.
+</Note>
+
+## Before your first message
+
+Whichever app you pick, the same groundwork comes first. It is a one-time job on the machine that will run the agent.
+
+| What | Why it is needed |
+|------|------------------|
+| OpenClaw or Hermes, installed and onboarded | The process that connects to your chat app. OpenClaw runs on Node.js, while the Hermes installer pulls `uv` and Python 3.11 |
+| A model provider API key | The agent asks for one during onboarding, for example Anthropic or OpenAI |
+| The `postqueen` CLI: `npm install -g postqueen` | The agent runs real shell commands, so the CLI has to be on the same machine |
+| Her skill | Teaches the agent her full command set, so it works from documented flags instead of guessing. See [Install the skill](/agents/skill-install) |
+| `POSTQUEEN_API_KEY` exported where the gateway runs | Her credentials. `POSTQUEEN_API_URL` too, if you self-host PostQueen |
+
+Confirm the bottom half of that stack before you go near a chat app:
+
+```bash
+postqueen integrations:list
+```
+
+A JSON list of your connected channels means the CLI half is ready, and everything after this is chat-app plumbing.
+
+<img src="/images/brand/open-agents.svg" alt="Chat apps feed OpenClaw, a one-line brief feeds Hermes, both drive the postqueen CLI and posts land on the calendar" />
+
+## WhatsApp
+
+The one people reach for first, because the phone is already in your hand and a voice note is faster than typing.
+
+**On your side:** a WhatsApp account and a phone that can scan a QR code. The OpenClaw docs recommend a separate WhatsApp number, since setup and metadata are shaped around it, though a personal number with a self-chat setup works too.
+
+WhatsApp is an official OpenClaw plugin built on Baileys, and login is QR only:
+
+```bash
+openclaw channels add --channel whatsapp
+openclaw channels login --channel whatsapp
+```
+
+`channels add` installs the plugin on demand the first time you pick WhatsApp, then walks you through the channel's setup flow. Have a way to get the live QR onto your phone before you start: terminal-rendered codes, screenshots and forwarded attachments can expire in transit.
+
+Once you are logged in, start the gateway and clear the first sender who messages you:
+
+```bash
+openclaw gateway
+openclaw pairing list whatsapp
+openclaw pairing approve whatsapp <CODE>
+```
+
+Access requests expire after an hour, and pending ones are capped at three per account.
+
+<Tip>
+Running Hermes instead? `hermes gateway setup` walks through the same channel interactively, then `hermes gateway` brings it up.
+</Tip>
+
+Full walkthrough: [OpenClaw WhatsApp channel](https://docs.openclaw.ai/channels/whatsapp).
+
+## Telegram
+
+The quickest of the four, because Telegram ships inside the core OpenClaw install and there is no plugin to add.
+
+**On your side:** a bot. Message `@BotFather` in Telegram, run `/newbot`, follow the prompts and save the token it hands back.
+
+Give that token to the gateway, either as an environment variable for the default account:
+
+```bash
+export TELEGRAM_BOT_TOKEN="123:abc"
+```
+
+Or in the gateway config, which is where you also decide how groups behave:
+
+```json5
+{
+  channels: {
+    telegram: {
+      enabled: true,
+      botToken: "123:abc",
+      dmPolicy: "pairing",
+      groups: { "*": { requireMention: true } },
+    },
+  },
+}
+```
+
+Then bring the gateway up and clear yourself through pairing:
+
+```bash
+openclaw gateway
+openclaw pairing list telegram
+openclaw pairing approve telegram <CODE>
+```
+
+Pairing codes expire after an hour. For a group you will also need your numeric Telegram user ID and the group chat ID, which supergroups prefix with `-100`. Both show up in `openclaw logs --follow`, or from `/whoami@<bot_username>` once the group is allowed.
+
+Full walkthrough: [OpenClaw Telegram channel](https://docs.openclaw.ai/channels/telegram).
+
+## Slack
+
+This is the one that changes how a team works. Someone drops a customer quote in `#marketing`, you reply "turn that into a LinkedIn post for Thursday," and it is scheduled without anyone opening a tab.
+
+**On your side:** a Slack app in your workspace. Socket Mode is the simpler route and wants two tokens, a Bot User OAuth Token and an App-Level Token carrying the `connections:write` scope. The HTTP request-URL route takes the bot token and your signing secret instead.
+
+```bash
+openclaw plugins install @openclaw/slack
+
+export SLACK_BOT_TOKEN=your-bot-token
+export SLACK_APP_TOKEN=your-app-token   # Socket Mode only
+
+openclaw config patch --file ./slack.socket.patch.json5
+openclaw gateway
+```
+
+Both tokens must come from the same Slack app in the same workspace, and a mismatch shows up as a connection failure rather than a clear error.
+
+Your bot token also needs OAuth scopes. These are the ones that come up most, and the channel doc lists the full recommended set:
+
+```
+app_mentions:read   channels:history   channels:read   chat:write
+files:read          files:write        im:history      im:write
+reactions:read      reactions:write    users:read
+```
+
+Full walkthrough: [OpenClaw Slack channel](https://docs.openclaw.ai/channels/slack).
+
+## Discord
+
+Community managers get the best of this one: your server is where the audience already is, so the person answering questions in `#general` is also the person who can queue tomorrow's announcement.
+
+**On your side:** an application with a bot user in the Discord Developer Portal, plus its token.
+
+Turn **Message Content Intent** on under the bot settings, because without it the bot receives nothing readable. **Server Members Intent** is worth adding if you plan to use role allowlists or match people by name.
+
+Invite the bot with the `bot` and `applications.commands` scopes, and these permissions:
+
+| Permission | Needed for |
+|------------|------------|
+| View Channels | Seeing the channels it is in |
+| Send Messages | Replying to you |
+| Read Message History | Following a thread of context |
+| Embed Links | Rich previews in its replies |
+| Attach Files | Sending images back |
+| Send Messages in Threads | Working inside threads and forum posts. Optional |
+
+Then hand over the token and start:
+
+```bash
+openclaw plugins install @openclaw/discord
+
+export DISCORD_BOT_TOKEN="YOUR_BOT_TOKEN"
+
+openclaw config patch --file ./discord.patch.json5
+openclaw gateway
+```
+
+The patch file points the channel at that variable:
+
+```json5
+{
+  channels: {
+    discord: {
+      enabled: true,
+      token: { source: "env", provider: "default", id: "DISCORD_BOT_TOKEN" },
+    },
+  },
+}
+```
+
+DM the bot to get a pairing code, then clear it:
+
+```bash
+openclaw pairing list discord
+openclaw pairing approve discord <CODE>
+```
+
+Full walkthrough: [OpenClaw Discord channel](https://docs.openclaw.ai/channels/discord).
+
+## At a glance
+
+| App | OpenClaw plugin | What you set up on your side |
+|-----|-----------------|------------------------------|
+| WhatsApp | `@openclaw/whatsapp` | QR pairing from your phone, separate number recommended |
+| Telegram | Bundled in core | A BotFather bot token |
+| Slack | `@openclaw/slack` | A workspace app: bot token, app-level token, OAuth scopes |
+| Discord | `@openclaw/discord` | A bot token, Message Content Intent, an invite with permissions |
+
+Hermes covers the same four from one interactive wizard, `hermes gateway setup`, and keeps them in a single gateway process. Its channel pages live in the [Hermes messaging guide](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/).
+
+## 👑 What happens after you hit send
+
+She writes the copy, generates or attaches the visual, and puts each post on the calendar with a real time on it. From there she is a true autopilot: what is on the calendar goes out when the clock says so, without another word from you. Everything is visible at [app.postqueen.ai](https://app.postqueen.ai) beforehand, so you can edit the wording, move the time or delete a post outright.
+
+Want something written but not queued? Ask for a draft in your message and the agent passes `-t draft` to `posts:create`. A draft is a post state, not a waiting room: it sits on the calendar and simply is not scheduled, so nothing publishes until you turn it into one.
+
+```bash
+# Turn a draft into a scheduled post at its stored date
+postqueen posts:status <post-id> --status schedule
+```
+
+The same switch runs the other way with `--status draft`, which also stops any publish workflow already in flight.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Does PostQueen read my WhatsApp messages?">
+    No. PostQueen has no connection to your chat apps. OpenClaw or Hermes runs on your own machine, connects to the chat app with credentials you created, and calls the PostQueen API with your key. PostQueen only ever sees the API calls.
+  </Accordion>
+  <Accordion title="Does my laptop have to stay on?">
+    Something has to stay running, yes. The gateway is what listens for your messages, so a machine that sleeps means a bot that goes quiet. A small always-on box or a server is the usual answer if you want her reachable around the clock.
+  </Accordion>
+  <Accordion title="Can my whole team message her in Slack?">
+    Yes. The Slack and Discord routes run through a bot in your workspace or server, so anyone who can talk to that bot can ask her for a post. Everything they schedule lands on the same shared calendar.
+  </Accordion>
+  <Accordion title="Which is better, OpenClaw or Hermes?">
+    For chat alone they are close, so pick the runtime you would rather have on the machine: OpenClaw runs on Node.js, Hermes on Python. Hermes goes further once you want one brief turned into a planned week, which is covered on its own page.
+  </Accordion>
+  <Accordion title="Does this cost extra?">
+    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan. OpenClaw and Hermes are both open source, so the only outside cost is the model provider you run them with.
+  </Accordion>
+</AccordionGroup>
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="OpenClaw" icon="/images/brand/icon-openclaw.svg" href="/agents/openclaw">
+    Install it, point it at her CLI and run recurring jobs from the gateway scheduler.
+  </Card>
+  <Card title="Hermes" icon="/images/brand/icon-hermes.svg" href="/agents/hermes">
+    Hand it one brief and it plans, writes and schedules your week over the same CLI.
+  </Card>
+  <Card title="Install the skill" icon="graduation-cap" href="/agents/skill-install">
+    The one-time step that teaches either agent her full command set.
+  </Card>
+  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
+    Every command your agent runs on your behalf, with flags and JSON output.
+  </Card>
+</CardGroup>

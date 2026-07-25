@@ -1,9 +1,47 @@
 ---
 title: Facebook
 description: 'How to add Facebook to your system'
+icon: /images/channels/facebook.svg
 ---
 
+<img src="/images/channels/facebook.svg" alt="Facebook" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Facebook
+
+Facebook is the one network where the caption almost never runs out of room. Sixty-three thousand characters, with or without a photo, and she can still drop a background behind the short ones.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    63,206 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. Text alone, photos, or one video
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Feed post, photo set, Reel, story, background text post
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the page and for each post
+  </Card>
+</CardGroup>
+
+Page numbers come back as impressions, media views and post engagement, plus follower count. Per post she reads impressions, clicks and reactions.
+
+| | |
+|---|---|
+| **Post settings** | `post_type`, `url`, `text_format_preset_id`. Full schema in the [Facebook settings reference](/public-api/providers/facebook) |
+| **Connect flow** | Two steps. You authorize the Meta app, then pick which page to attach |
+| **Automations** | None |
+
+<Warning>
+A few shapes Facebook will not take:
+
+- **Story should have at least one media.** Feed posts run fine on text alone, stories do not.
+- Background presets apply to text-only posts on a page, capped at 130 characters. Attach a photo or write past the cap and the post publishes as plain text instead.
+- **Photos should be smaller than 4 MB and saved as JPG, PNG.**
+</Warning>
 
 <Warning>
 **NOTE:** Please be advised that Instagram and Facebook can use the same app (no need to create two separate apps)

@@ -1,9 +1,48 @@
 ---
 title: Dribbble
 description: 'How to add Dribbble to your system'
+icon: /images/channels/dribbble.svg
 ---
 
+<img src="/images/channels/dribbble.svg" alt="Dribbble" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Dribbble
+
+Dribbble is the strictest channel she posts to: one image at an exact size, a title, and the shot goes up. Everything you write becomes the shot description, and there is a lot of room in it.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    40,000 characters, used as the shot description.
+  </Card>
+  <Card title="Media" icon="image">
+    Exactly one image, sized 400x300 or 800x600 pixels. No video.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A shot, with a required title. No threaded comments on this network.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Dribbble does not return post level numbers through their API, so her analytics call comes back empty.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `title`, required and at least one character, plus an optional `team` URL: [Dribbble settings](/public-api/providers/dribbble). |
+| Connect flow | One step, OAuth2 with the `public` and `upload` scopes. |
+| Automations | None on this network. |
+| Publish rate | Three shots at a time. |
+
+<Warning>
+She checks the image before the shot leaves the calendar, and refuses it in her own words:
+
+- **"Requires one item"** if the post carries none or more than one attachment.
+- **"Does not support mp4 files"** for video.
+- **"Invalid image size. Requires 400x300 or 800x600 px images."** for anything off those two sizes.
+</Warning>
+
+## Set up Dribbble
 
 <Steps>
   <Step title="Register your application">

@@ -74,7 +74,7 @@ curl -X POST https://api.postqueen.ai/public/v1/posts \
 
 A few things worth knowing before you wire the action up:
 
-- **`type`** decides the outcome. Use `schedule` with a `date`, `now` to publish immediately, or `draft` to park the post on the calendar for your approval.
+- **`type`** decides the outcome. Use `schedule` with a `date`, `now` to publish immediately, or `draft` to save the post on the calendar without scheduling it.
 - **`settings.__type`** tells the backend which platform schema to validate against. Each provider has its own required fields, listed in [Create Post](/public-api/posts/create).
 - **Integration IDs** come from `GET /public/v1/integrations`, so a useful GPT usually gets that action too.
 - **Images** have to be uploaded through her first. Each entry in `image` is an object with an `id` and a `path` that came back from an upload, because providers reject raw file paths and outside links. The endpoint: [Upload File](/public-api/uploads/upload-file).
@@ -103,7 +103,7 @@ Behind that one sentence sit two tools: `generateImageTool` produces each visual
 
 ## Staying in control
 
-She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever lands on the calendar goes out on time without another word from you. Want more say? Every post is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and if you ask for drafts she holds each one until you approve it there.
+She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever lands on the calendar goes out on time without another word from you. Want a closer look first? Every post is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and a post she saves as a draft stays unscheduled until you publish it there.
 
 ## FAQ
 
@@ -115,7 +115,7 @@ She runs on your terms. Leave the schedule alone and she is a true autopilot: wh
     Everything her 10 MCP tools cover. She can list your channels and read what each one accepts, and she can generate images, upload media and schedule posts across your 30+ networks.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
-    Yes. Ask for drafts and she holds each post on your calendar until you approve it there.
+    Yes. Ask for drafts and each post sits on your calendar unscheduled until you publish it there.
   </Accordion>
   <Accordion title="Does the connector cost extra?">
     No. Agent access uses the same API key and plan limits as your regular PostQueen account, on any plan. ChatGPT's own developer mode does require one of OpenAI's paid plans.

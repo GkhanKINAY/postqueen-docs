@@ -1,9 +1,43 @@
 ---
 title: Slack
 description: 'How to add Slack to your system'
+icon: /images/channels/slack.svg
 ---
 
+<img src="/images/channels/slack.svg" alt="Slack" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Slack
+
+The launch note lands in the channel you picked at nine sharp, under the name and avatar you gave the channel in PostQueen. She joins the channel herself first, so nothing bounces on a membership error.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    400,000 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. Images attach as image blocks under the text
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Channel message, threaded reply
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None
+  </Card>
+</CardGroup>
+
+Ten of her connectors report numbers back to the Analytics page. Slack is not one of them, so a Slack channel shows no chart. The message body goes up as a Slack markdown block, and she reads back the permalink so the post links straight to the message in your workspace.
+
+| | |
+|---|---|
+| **Post settings** | `channel`. Full schema in the [Slack settings reference](/public-api/providers/slack) |
+| **Connect flow** | One step. You authorize the Slack app and the channel picker lists public and private channels together. She joins the target channel before the first message goes out |
+| **Automations** | None. Comments post as threaded replies under the message |
+
+<Warning>
+She asks Slack for six bot scopes and checks all six came back before she saves the channel: `chat:write`, `channels:read`, `users:read`, `groups:read`, `channels:join` and `chat:write.customize`. That last one is what lets a message carry your own channel name and avatar. Leave it off the Slack app and the connection fails on scopes rather than on the first post.
+</Warning>
 
 <Note>
 This integration requires that you have a Slack Workspace
@@ -24,12 +58,13 @@ This integration requires that you have a Slack Workspace
 
     Head to Features > OAuth & Permissions
     1. Add the redirect URI you copied from PostQueen
-    2. At Scopes > Bot Token Scopes, add these Scopes:
+    2. At Scopes > Bot Token Scopes, add all six of these Scopes:
        - `chat:write`
        - `channels:read`
        - `users:read`
        - `groups:read`
        - `channels:join`
+       - `chat:write.customize`
   </Step>
 
   <Step title="Set an App Icon">

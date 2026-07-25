@@ -1,9 +1,48 @@
 ---
 title: Reddit
 description: 'How to add Reddit to your system'
+icon: /images/channels/reddit.svg
 ---
 
+<img src="/images/channels/reddit.svg" alt="Reddit" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Reddit
+
+One post, five subreddits, a different title and flair on each of them. She submits them one after another and hands back a permalink for every single one.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    10,000 characters in the body
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Exactly one file on a media post. Video needs a thumbnail
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Text, link, image, video, video GIF
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None
+  </Card>
+</CardGroup>
+
+Ten of her connectors report numbers back to the Analytics page. Reddit is not one of them, so a Reddit channel shows no chart and no per post figures. She also keeps Reddit to one submission at a time, because the API caps at a request per second.
+
+| | |
+|---|---|
+| **Post settings** | `subreddit`, an array where every entry carries its own `subreddit`, `title` and `type`, plus `url` and `flair`. Full schema in the [Reddit settings reference](/public-api/providers/reddit) |
+| **Connect flow** | One step. You authorize the Reddit app, and the editor then searches subreddits live, reading back each one's flairs and what it will accept |
+| **Automations** | None. Comments post as replies on the submission |
+
+<Warning>
+Reddit turns some posts back before she calls the API:
+
+- **When posting a media post, you must attached exactly one media file.**
+- **You must attach a thumbnail to your video post.**
+
+Subreddits that mark flair as required will not accept a submission without one. Pick the flair in the editor and she carries it through with the post.
+</Warning>
 
 <Steps>
   <Step title="Create an app on Reddit Developers">

@@ -1,6 +1,6 @@
 ---
 title: Providers Overview
-description: 'Every network PostQueen posts to, and the keys each one asks for'
+description: 'Every network PostQueen posts to, the ten that report analytics, and where each one is documented'
 ---
 
 30+ networks, one calendar. She posts to all of them, and each one connects on its own terms: OAuth keys for most, a plain account login for Bluesky, the browser extension for Skool.
@@ -112,19 +112,64 @@ Every one of them takes about five minutes and a set of keys:
   </Card>
 </CardGroup>
 
-## Reached through the API
+## Analytics reaches ten of them
 
-A handful of platforms have no channel-connect screen in the app yet. She still schedules and publishes to them through the [Public API](/public-api/introduction): configure their env-var keys and post the way you post anywhere else. Key names: [Configuration Reference](/configuration/reference).
+Posting is the wide part of PostQueen. Measuring is the narrow one. Ten networks report numbers back to her, per channel and per post, and every other platform publishes without a scoreboard. So an empty analytics view on Reddit or Telegram is the platform being quiet, not your setup being broken.
 
-| Platform | Public API page |
-|---|---|
-| Twitch | [/public-api/providers/twitch](/public-api/providers/twitch) |
-| Kick | [/public-api/providers/kick](/public-api/providers/kick) |
-| VK | [/public-api/providers/vk](/public-api/providers/vk) |
-| Nostr | [/public-api/providers/nostr](/public-api/providers/nostr) |
-| Lemmy | [/public-api/providers/lemmy](/public-api/providers/lemmy) |
-| Medium | [/public-api/providers/medium](/public-api/providers/medium) |
-| Dev.to | [/public-api/providers/devto](/public-api/providers/devto) |
-| Hashnode | [/public-api/providers/hashnode](/public-api/providers/hashnode) |
-| WordPress | [/public-api/providers/wordpress](/public-api/providers/wordpress) |
-| Listmonk | [/public-api/providers/listmonk](/public-api/providers/listmonk) |
+- Facebook Page
+- Google My Business
+- Instagram (Facebook Business)
+- Instagram (Standalone)
+- LinkedIn Page
+- Pinterest
+- Threads
+- TikTok
+- X (Twitter)
+- YouTube
+
+Two things catch people out. LinkedIn personal profiles are not on that list, only LinkedIn Pages report back. And Google My Business answers only for verified profiles inside the date range it allows, so it returns an empty payload rather than an error.
+
+One more, on purpose: set `DISABLE_X_ANALYTICS` and she stops asking X for numbers at all, which is what you want when your X plan does not include analytics access. See [X (Twitter)](/providers/x-twitter).
+
+## Which page covers which platform
+
+Thirty-four connectors ship in the box, and every one of them shows up in the Add Channel list whether or not this section has written it up yet. The table is the whole map: where the key-by-key walkthrough lives, where the API settings schema lives, and which channels report analytics. Instagram and LinkedIn each appear twice because each one has two connectors with different rules.
+
+| Platform | Connection guide | API settings | Analytics |
+|---|---|---|---|
+| Bluesky | [Guide](/providers/bluesky) | [Settings](/public-api/providers/bluesky) | No |
+| Dev.to | No | [Settings](/public-api/providers/devto) | No |
+| Discord | [Guide](/providers/discord) | [Settings](/public-api/providers/discord) | No |
+| Dribbble | [Guide](/providers/dribbble) | [Settings](/public-api/providers/dribbble) | No |
+| Facebook | [Guide](/providers/facebook) | [Settings](/public-api/providers/facebook) | Yes |
+| Farcaster | [Guide](/providers/farcaster) | [Settings](/public-api/providers/warpcast) | No |
+| Google My Business | [Guide](/providers/google-my-business) | [Settings](/public-api/providers/gmb) | Yes |
+| Hashnode | No | [Settings](/public-api/providers/hashnode) | No |
+| Instagram | [Guide](/providers/instagram) | [Settings](/public-api/providers/instagram) | Yes |
+| Instagram (Standalone) | No | [Settings](/public-api/providers/instagram-standalone) | Yes |
+| Kick | No | [Settings](/public-api/providers/kick) | No |
+| Lemmy | No | [Settings](/public-api/providers/lemmy) | No |
+| LinkedIn | [Guide](/providers/linkedin) | [Settings](/public-api/providers/linkedin) | No |
+| LinkedIn Page | [Guide](/providers/linkedin-page) | [Settings](/public-api/providers/linkedin-page) | Yes |
+| Listmonk | No | [Settings](/public-api/providers/listmonk) | No |
+| Mastodon | [Guide](/providers/mastodon) | [Settings](/public-api/providers/mastodon) | No |
+| Medium | No | [Settings](/public-api/providers/medium) | No |
+| MeWe | [Guide](/providers/mewe) | No | No |
+| Moltbook | No | [Settings](/public-api/providers/moltbook) | No |
+| Nostr | No | [Settings](/public-api/providers/nostr) | No |
+| Pinterest | [Guide](/providers/pinterest) | [Settings](/public-api/providers/pinterest) | Yes |
+| Reddit | [Guide](/providers/reddit) | [Settings](/public-api/providers/reddit) | No |
+| Skool | [Guide](/providers/skool) | [Settings](/public-api/providers/skool) | No |
+| Slack | [Guide](/providers/slack) | [Settings](/public-api/providers/slack) | No |
+| Telegram | [Guide](/providers/telegram) | [Settings](/public-api/providers/telegram) | No |
+| Threads | [Guide](/providers/threads) | [Settings](/public-api/providers/threads) | Yes |
+| TikTok | [Guide](/providers/tiktok) | [Settings](/public-api/providers/tiktok) | Yes |
+| Tumblr | No | No | No |
+| Twitch | No | [Settings](/public-api/providers/twitch) | No |
+| VK | No | [Settings](/public-api/providers/vk) | No |
+| Whop | [Guide](/providers/whop) | [Settings](/public-api/providers/whop) | No |
+| WordPress | No | [Settings](/public-api/providers/wordpress) | No |
+| X (Twitter) | [Guide](/providers/x-twitter) | [Settings](/public-api/providers/x) | Yes |
+| YouTube | [Guide](/providers/youtube) | [Settings](/public-api/providers/youtube) | Yes |
+
+A `No` in the Connection guide column is a gap in these docs, not a gap in the product. She connects and publishes to all thirty-four either way. The environment variable each one asks for is named in the [Configuration Reference](/configuration/reference), and the settings page tells you which fields to send with the post. Tumblr has neither page yet, and its post settings are listed with the other article platforms in the [Public API introduction](/public-api/introduction).

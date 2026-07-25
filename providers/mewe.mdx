@@ -1,7 +1,10 @@
 ---
 title: MeWe
 description: 'How to add MeWe to your system'
+icon: /images/channels/mewe.svg
 ---
+
+<img src="/images/channels/mewe.svg" alt="MeWe" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
 
 <Snippet file="never-share.mdx" />
 
@@ -9,7 +12,39 @@ description: 'How to add MeWe to your system'
 MeWe's Developer Program is currently in beta with limited spots. Your application will be reviewed, and selected participants will be granted access to the API.
 </Note>
 
-MeWe supports posting to your personal timeline as well as to groups you belong to, including photo attachments.
+## What she can post to MeWe
+
+You get room to write here. Sixty three thousand characters, photos alongside, and a choice between your own timeline and any group you belong to.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    63,206 characters per post.
+  </Card>
+  <Card title="Media" icon="image">
+    Photos only, uploaded one by one before the post goes out. Video files are dropped from the post rather than sent.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A single post, to your timeline or to one group. No threaded comments on this network.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and MeWe is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `postType` of `timeline` or `group`, plus a `group` id when you pick a group. Field shapes for every network sit in the [Create Post](/public-api/posts/create) reference. |
+| Connect flow | One step. MeWe returns a login request token, and she trades it for an API token using your app id and API key. |
+| Automations | None on this network. |
+| Publish rate | One post at a time. |
+
+<Warning>
+The group picker walks through every page of your MeWe groups, so long lists are fine, but a post to a group fails if you leave the group id empty.
+
+Three messages come back from MeWe itself. **"Access token expired, please re-authenticate"** means the channel needs reconnecting, **"Insufficient permissions for this action"** means the app is missing a permission, and **"Rate limited, retrying..."** means MeWe asked her to slow down.
+</Warning>
+
+## Set up MeWe
 
 <Steps>
   <Step title="Create a MeWe Developer Account">

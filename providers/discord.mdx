@@ -1,9 +1,45 @@
 ---
 title: Discord
 description: 'How to add Discord to your system'
+icon: /images/channels/discord.svg
 ---
 
+<img src="/images/channels/discord.svg" alt="Discord" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Discord
+
+A release note in announcements, a screenshot in general, a thread underneath for everything that follows. She writes in Discord markdown and posts as your bot, so the message looks like it belongs there.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    1,980 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. Every attachment on the post rides with the message
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Channel message, thread reply
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None
+  </Card>
+</CardGroup>
+
+Ten of her connectors report numbers back to the Analytics page. Discord is not one of them, so a Discord channel shows no chart. What it does carry is the markdown editor: headings, quotes and code fences survive the trip exactly as you wrote them. Discord rate limits are generous enough that she runs five posting jobs side by side.
+
+| | |
+|---|---|
+| **Post settings** | `channel`. Full schema in the [Discord settings reference](/public-api/providers/discord) |
+| **Connect flow** | One step. Authorizing the app drops your bot into the server, and the channel picker then lists the text, announcement and forum channels the bot can see |
+| **Automations** | None. Comments open a thread on the message and reply inside it |
+
+<Warning>
+Mentions behave in two ways. `@here` and `@everyone` pass through exactly as typed. Anyone else resolves to a member ID first, so the mention pings the right person even when their display name changes later.
+
+If the bot cannot reach the channel you picked, the post comes back saying the bot does not have access to this channel. Check the channel permissions on the Discord side rather than the PostQueen side.
+</Warning>
 
 <Note>
 This integration requires that you have **Manage Server** permissions on the Discord server you want to integrate with.

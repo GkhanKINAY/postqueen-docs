@@ -125,12 +125,12 @@ openclaw cron add \
 The `--session isolated` flag runs the job in its own session, and `--announce` has the agent report the result back to your chat. OpenClaw also has a heartbeat, a periodic check-in the Gateway runs per agent; the OpenClaw docs recommend cron jobs like the one above when you want precise timing. Cron jobs are documented in the [OpenClaw scheduled tasks guide](https://docs.openclaw.ai/automation/cron-jobs), and heartbeat has its own [heartbeat page](https://docs.openclaw.ai/gateway/heartbeat).
 
 <Tip>
-Add `-t draft` to the `posts:create` command in your prompt and the overnight run stacks up drafts instead of scheduled posts. You approve them from the calendar over coffee.
+Add `-t draft` to the `posts:create` command in your prompt and the overnight run stacks up drafts instead of scheduled posts. You publish them from the calendar over coffee.
 </Tip>
 
 ## Staying in control
 
-Drafts, edits and deletes work the same as anywhere else in PostQueen. Ask for drafts in your message and each post waits on the calendar until you approve it. How control works: [she runs on your terms](/agents/overview#she-runs-on-your-terms).
+Drafts, edits and deletes work the same as anywhere else in PostQueen. Ask for drafts in your message and each post sits on the calendar unscheduled until you publish it. How control works: [she runs on your terms](/agents/overview#she-runs-on-your-terms).
 
 ## FAQ
 
@@ -142,7 +142,7 @@ Drafts, edits and deletes work the same as anywhere else in PostQueen. Ask for d
     Everything the CLI can do. She can list your channels and schedule posts, upload media for you, and pull analytics afterwards, all with JSON output the agent can parse.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
-    Yes. Ask for drafts in your message and she holds each post on the calendar until you approve it there.
+    Yes. Ask for drafts in your message and each post sits on the calendar unscheduled until you publish it there.
   </Accordion>
   <Accordion title="Does the integration cost extra?">
     No. Agent access uses the same API key and plan limits as your regular PostQueen account, on any plan. OpenClaw itself is open source; the only outside cost is whatever model provider you run it with.
