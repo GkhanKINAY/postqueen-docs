@@ -535,12 +535,16 @@
       {
         "label": "Support",
         "href": "/support"
+      },
+      {
+        "label": "Open the app",
+        "href": "https://app.postqueen.ai"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Open the app",
-      "href": "https://app.postqueen.ai"
+      "label": "Start free for 7 days",
+      "href": "https://postqueen.ai"
     }
   },
   "contextual": {
