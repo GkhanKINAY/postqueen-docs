@@ -1,0 +1,127 @@
+---
+title: Reusable content
+description: 'A channel selection you save once, a sign-off she adds for you, and colored labels that make a month of posts readable'
+---
+
+Thursday morning. The same five channels, ticked one by one. The same closing line, typed for the four hundredth time. None of that needs your hands again.
+
+PostQueen keeps three small pieces of furniture for this. A **set** remembers who you post to and what you had written. A **signature** remembers how you sign off. A **tag** paints the calendar so a whole month reads at a glance.
+
+## Sets
+
+A set is a saved composer. It holds the channels you ticked, the settings you chose on each one, and the content that was in the editor when you pressed save.
+
+### Save one
+
+Open **Settings** and choose the **Sets** tab. The tab is deep-linkable, so `/settings?tab=sets` takes you straight there.
+
+<Steps>
+  <Step title="Press Add a set">
+    The full Create Post window opens, the same one you write in every day.
+  </Step>
+  <Step title="Pick the channels and write">
+    Tick the avatars, open each channel's settings, write the content. A set needs at least one character or one image in it, the same floor a draft has.
+  </Step>
+  <Step title="Press Save Set">
+    It sits at the bottom right, in place of the scheduling buttons. A small window titled *Save as Set* asks for a **Set Name**, and the toast reads *Set saved successfully*.
+  </Step>
+</Steps>
+
+The tab heading counts them for you, as in **Sets (3)**, and the newest sits at the top. **Edit** reopens the composer with everything loaded and the old name waiting in the name field, so saving over it updates that set in place instead of making a second one. **Delete** asks first, by name.
+
+### Use one
+
+Once a single set exists, the composer stops opening straight away. Press **Create Post**, or click an empty slot on the calendar, and a small window arrives first, headed *Choose a set or continue without one*. Click a name and the composer opens already dressed. **Continue without set** at the bottom starts you blank, and closing the window cancels the whole thing.
+
+Running the same four channels for one client every week? That is the set to make first.
+
+| What you saved | What comes back |
+|---|---|
+| The channels you ticked | All of them, already selected |
+| Each channel's own settings | Restored per channel, exactly as saved |
+| Content and media | The boxes from the first channel in the set, loaded into the shared editor |
+| The date | No. The post takes the slot you opened |
+| Tags | No. Pick them again in the composer |
+
+<Note>
+Content comes back as one shared draft, not as per-channel variants. If you rewrote the text separately for LinkedIn inside the set, reopening it gives you the first channel's version in the global editor and you shape the rest from there. Channels and their settings are the part that survives intact.
+</Note>
+
+## Signatures
+
+Every post you write ends the same way. Write that ending once.
+
+Open **Settings**, choose the **Signatures** tab at `/settings?tab=signatures`, and press **Add a signature**. You get a text box, a question, and a save button.
+
+| Field | What it does |
+|---|---|
+| The text box | Your sign-off, in plain text. The placeholder reads *Write your signature...* |
+| **Auto add signature?** | **Yes** or **No**. Yes makes this the one she reaches for on her own |
+| **Save** | Stores it and closes |
+
+The list underneath shows the first few characters of each signature, an **Auto Add?** column reading Yes or No, and **Edit** and **Delete** next to each row.
+
+<Note>
+Only one signature can be automatic. Answer **Yes** on a second one and the first one turns to **No** by itself. Your organization has exactly one automatic sign-off at a time, never two competing.
+</Note>
+
+### Where it lands
+
+There are two ways a signature reaches a post.
+
+**By hand.** In the composer, look at the small toolbar under the editor, next to the text controls. The squiggle icon carries the tooltip *Add Signature*. Click it and your signatures list opens with an extra **Use Signature** button on every row. Press one and the text drops into the box you are writing in, after a blank line. That same window adds, edits and deletes, so you can write a new sign-off without leaving the post.
+
+**By itself.** Start a post from an empty calendar slot and the automatic signature is already sitting in the editor before you type a word, on its own line. Two conditions have to hold: the signature is set to Auto Add, and you did not pick a set on the way in. A set brings its own content, so she does not stack one on top of the other.
+
+<Note>
+The prefill belongs to the calendar slot. The **Create Post** button opens a blank editor, and the toolbar icon is how you add the signature there.
+</Note>
+
+Signatures go into the shared editor, which means they reach every channel you have selected. Rewrite or remove it on one channel afterwards and only that channel changes.
+
+## Tags
+
+Tags are colored labels you put on a post. They live at the bottom left of the composer, next to the repeat control, with the date picker and the save buttons at the far right of the same bar. The control reads **Add New Tag** while the post carries none, and once you pick some it shows the first tag in its own color with a `+2` counter for the rest.
+
+| What you want | What you do |
+|---|---|
+| Make one | Open the picker, press **Add New Tag**, give it a **Name** and a **Tag Color** |
+| Put it on a post | Open the picker and click the row. The checkbox fills in |
+| Take it off | Click the row again |
+| Get rid of it entirely | Click the small red **×** on the row, then confirm |
+
+The color is the point. On the calendar, the first tag's color becomes the strip across the top of the post card and the tag names are written into it, so a week of client work, launches and reruns separates itself by eye without you reading a single line.
+
+A few edges worth knowing. The **×** only appears on tags you have not selected on the current post, which keeps you from deleting the label you are in the middle of using. There is no rename in the picker, so a tag you have outgrown is a delete and a new one. And deleting a tag takes it out of the picker without stripping it from posts that already wear it, so old cards keep their color.
+
+Tags survive an edit: reopen a tagged post and the picker comes back with the same rows checked.
+
+<Note>
+Tags travel over the API too. The create body carries a top-level `tags` array of `{ "value": "Launch", "label": "Launch" }` objects, and she matches the `label` against tags that already exist in your organization. A name she does not recognize is skipped rather than created, so make the tag in the app first. Sets and signatures stay inside the app.
+</Note>
+
+## Which plan sees what
+
+All three belong to the organization rather than to you, so a teammate opening the composer sees your sets, your signatures and your tag colors.
+
+| Feature | Where it lives | On the free plan |
+|---|---|---|
+| Sets | Settings, **Sets** tab | The tab is not listed |
+| Signatures | Settings, **Signatures** tab | The tab is not listed |
+| Tags | The composer, bottom left | Always there |
+
+The signature icon in the composer toolbar belongs to the editor rather than to the settings tab, so it stays in the toolbar whatever your plan says.
+
+Self-hosting? With billing switched off, your account reports itself as ULTIMATE, and both tabs are in the left rail of Settings from the first login. The full rule is in [Plans and limits](/using/plans-and-limits).
+
+<CardGroup cols={3}>
+  <Card title="Writing a post" icon="pen" href="/using/writing-a-post">
+    The composer these three live in, from the editor to the three ways out.
+  </Card>
+  <Card title="Calendar" icon="calendar" href="/using/calendar">
+    Where tag colors show up, and where the + starts a post with your signature in it.
+  </Card>
+  <Card title="Plans and limits" icon="gauge" href="/using/plans-and-limits">
+    What each plan unlocks, and why a self-hosted install has no gates at all.
+  </Card>
+</CardGroup>

@@ -1,0 +1,132 @@
+---
+title: 'Your assistant in the app'
+description: 'She is already inside PostQueen: pick your channels, type a sentence, and watch the calendar fill.'
+---
+
+You do not need a terminal to talk to her. Open the app, click **Agent** in the menu, and there she is: your channels down the left, the conversation in the middle, everything you asked her last week down the right. Tell her what you want the world to see. She writes it, makes the picture and puts it on the calendar.
+
+## The Agent tab
+
+The screen is three columns and each one has a job.
+
+| Column | What it is for |
+| --- | --- |
+| Left, **Select Channels** | Every connected channel, sorted and clickable. Selected channels are bright, the rest sit dimmed. The small arrow collapses the column to icons. |
+| Middle | The conversation, with the message box at the bottom. **Enter** sends, **Shift + Enter** starts a new line. |
+| Right | Your past conversations, newest first, under a **Start a new chat** button. |
+
+Opening the tab starts a fresh conversation. Clicking any title on the right reopens that one exactly where you left it.
+
+## Pick your channels first
+
+Click the avatars on the left for the accounts this conversation is about. That selection rides along with every message you send, carrying each channel's id, platform and posting settings, so she always knows what she is writing for.
+
+She does not guess the rules. Before she schedules anything she looks up that platform's character limit, its required settings and its restrictions, then follows them even if you ask her not to.
+
+Running an agency? Ask her for your groups and she lists your customers, then narrows the channels down to the one you name.
+
+## What she can reach from the chat
+
+Ten tools sit behind the conversation. You never call them by name, but this is the honest list of what she can touch:
+
+| Tool | What it does |
+| --- | --- |
+| List Integrations | Every connected channel, optionally filtered to one group |
+| List Groups | Your groups, the customers you have set up |
+| Get Integration Schema | A platform's rules, settings and maximum length |
+| Trigger Integration Tool | Values only the platform knows, like the ids a setting asks for |
+| Schedule Social Media Post | Writes the post to your calendar |
+| Generate Image | Makes a picture from a prompt and saves it to your media |
+| Generate Video | Makes a video and saves it to your media |
+| List Video Generation Options | The video types this install can make |
+| Video Function Helper | Extra values a video type needs, such as a voice id |
+| Upload Media From URL | Pulls an external image or video into your media library |
+
+Generating a video draws on the video credits of your plan.
+
+## Hand her a photo
+
+Just above the message box there is a media bar. **Insert Media** opens your Media Library, where you can pick something you already uploaded or upload something new. **Design Media** opens the designer. On a plan that includes AI you also get buttons for an AI image and an AI video.
+
+Whatever you attach travels with your next message, and it shows up inside that message in the conversation: pictures as pictures, mp4 files as a player you can press.
+
+## From chat to calendar
+
+Before she schedules, she reads the whole thing back to you: the text, the media, the date and time, the platform and the account. Say yes and she offers you two ways to land it.
+
+- **Schedule it now.** She writes the post straight to your calendar and tells you it is there.
+- **Open it in the editor.** She fills the post editor with the content and media she wrote, one editor per channel, and hands it to you unfinished. Nothing is on the calendar until you finish in the editor.
+
+Ask for several posts at once and the shape depends on the platform.
+
+| Platform family | What a list of posts becomes |
+| --- | --- |
+| Threads, Bluesky, X | Each item is a separate post in one thread |
+| LinkedIn, Facebook | The first item is the post, the rest become comments underneath |
+
+A post she writes can be scheduled for later, published immediately, or saved as a draft. A draft is a state, not a queue: it sits on your calendar unscheduled until you publish it yourself.
+
+## Your conversations stay
+
+Every conversation is saved with a title she writes for it, and the right column keeps them in order. Reopen one and the messages come back from the server, not from your browser, so the same history is there on your laptop and on your phone.
+
+Threads are stored against your organization rather than your personal login. Anyone on your team who opens the Agent tab sees the same list of conversations.
+
+## Generate Posts
+
+Some mornings you do not want a conversation. You shipped a thing, you have a link, and you want posts about it.
+
+On the calendar, in the channels column beside the button that opens a new post, there is a small sparkle button. It appears once you have at least one channel connected and your plan includes AI. Click it and the **Generate Posts** window opens with four fields.
+
+| Field | What it takes |
+| --- | --- |
+| Write anything | Your brief, ten characters minimum. Links are welcome, and she will go read them |
+| Output format | `Short post`, `Long post`, `A thread with short posts` or `A thread with long posts` |
+| Output format (the second list) | Both selects carry the same label. This one sets the person she writes in: `Personal voice ("I am happy to announce")` or `Company voice ("We are happy to announce")` |
+| Add pictures? | A checkbox. Leave it off and she skips image generation entirely |
+
+Press **Generate** and she works in the open. The line above the form names each step as it runs:
+
+| Step | What is happening |
+| --- | --- |
+| Agent starting | She reads your brief |
+| Researching your content... | She searches the web around it and keeps what she finds |
+| Understanding the category... | She classifies the material |
+| Finding the topic... | She narrows the category to a topic |
+| Finding popular posts to match with... | She pulls hooks that already worked in that topic |
+| Generating hook... | The first line or two, written to stop the scroll |
+| Generating content... | The body, in your chosen format and voice |
+| Generating pictures... | One image per post, from a prompt she wrote for it |
+| Uploading pictures... | The images land in your media library |
+| Finding time to post... | She picks the next free slot in your posting times |
+
+Then the post editor opens with the hook sitting on top of the first post, the pictures attached and the date already chosen. Change anything you like before it goes out.
+
+Short formats aim for around 200 characters so they fit X. Thread formats always come back as at least two posts. She writes no hashtags and tends to end on a call to action.
+
+<Note>
+**Self-hosting and cannot find the sparkle button?** Nothing is broken. That button appears only when your plan includes AI **and** billing is switched on, and billing is switched on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. An install with no Stripe keys is unlimited in every other way, yet the button stays hidden. The chat in the Agent tab is not affected and works with no Stripe keys at all.
+</Note>
+
+## What she needs to run
+
+| Setting | Why |
+| --- | --- |
+| `OPENAI_API_KEY` | Without it the chat answers `AI features are not configured on this installation.` |
+| `TAVILY_API_KEY` | The research step of Generate Posts searches the web through Tavily. With no key she writes from your brief alone |
+
+On postqueen.ai her chat belongs to the plans that include AI, so a free plan cannot open a conversation with her.
+
+## Keep going
+
+<CardGroup cols={3}>
+  <Card title="Talk to her outside the app" icon="comments" href="/agents/overview">
+    The same assistant, reached from your chat apps, your editor or your terminal
+  </Card>
+  <Card title="Connect your own AI tools" icon="plug" href="/mcp/setup">
+    Point an MCP client at her from Settings &gt; Developers and it gets the same tools
+  </Card>
+  <Card title="Drive her from the terminal" icon="terminal" href="/cli/introduction">
+    Every command and flag, with clean JSON on the way back
+  </Card>
+</CardGroup>

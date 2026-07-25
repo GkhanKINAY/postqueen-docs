@@ -1,0 +1,122 @@
+---
+title: Third-Party Integrations
+description: 'Paste one API key and a service you already pay for turns up inside the media picker'
+---
+
+You already pay for the avatar tool. The finished clips are already sitting in another dashboard. Getting either of them into a post means a download, a rename, then an upload, and by the time that is done the idea has gone cold. An integration removes the trip. You paste an API key once, and from then on the service is waiting at the exact spot where you were reaching for media anyway.
+
+Two ship today. Both are media services, and both work the same way.
+
+<Note>
+The app menu calls this **Integrations**. This page says third-party integrations to keep them apart from the channels she posts to. A channel is somewhere she publishes. An integration is somewhere she pulls media from, and adding one changes nothing about what goes out or when.
+</Note>
+
+## Add one
+
+Open **Integrations** in the app menu, below Plugs. The screen splits in two. Your connected accounts run down the left rail, and everything available to add fills the space on the right. Before you add anything the rail reads *No Integrations Yet*.
+
+<Steps>
+  <Step title="Click the service card">
+    Each card carries the service icon, its one-line description, and an **Add** button. Clicking anywhere on the card opens a window headed *Add API key for HeyGen*.
+  </Step>
+  <Step title="Paste the key">
+    One field, labeled **API Key**. You get it from that service's own dashboard.
+  </Step>
+  <Step title="Add Integration">
+    She calls the service with your key before she stores a thing. If the call comes back clean the toast reads *Integration added successfully*, and the account appears in the left rail.
+  </Step>
+</Steps>
+
+That check is a real request, and the name it returns is the name you will see in the rail from then on.
+
+| Service | Check she runs | Name that lands in the rail |
+|---|---|---|
+| HeyGen | `GET https://api.heygen.com/v1/user/me` | Your HeyGen first and last name |
+| Reel.Farm | `GET https://reel.farm/api/v1/videos?limit=1` | *Reel.Farm* |
+
+A key the service rejects is never stored. The window stays open with **Invalid API key** under the field, so you can fix the paste and try again.
+
+The key you typed is encrypted before it reaches the database. The row your browser reads back carries the id, the name and the identifier from the database, with the provider's own title, description and position added on top. The key itself never comes back down to the page you typed it on.
+
+Removing one is the three dots next to its name in the rail, then **Delete Integration**. A confirm dialog asks first.
+
+## Where each one shows up
+
+Every provider declares a position in its own source, and the position decides which button it lives behind.
+
+| Position | Button | Where it sits | Ships today |
+|---|---|---|---|
+| `media` | **Integrations** | The media row under the post editor, next to Insert Media and Design Media | HeyGen |
+| `media-library` | **Import** | The media library toolbar, both on the **Media** page and in the Insert Media window | Reel.Farm |
+
+Both buttons are conditional. Connect nothing at a position and that button does not render at all, which is worth remembering the first time you go looking for it. The Integrations button appears in the editor the day you add HeyGen. The Import button appears the day you add Reel.Farm.
+
+## HeyGen, a video built from the post you just wrote
+
+The card describes it as a platform for creating AI-generated avatar videos. Here is what that looks like from inside a post.
+
+Write your text first, then click **Integrations** in the media row. The window lists your connected media services as `HeyGen: <your name>`. Press **Use** and the form opens.
+
+The button worth finding early is **Generate Voice From My Post Text**. It takes the text of the post you are writing, sends it through her writing model, and hands back a spoken version of it, the kind with pauses in it that sounds like a person rather than a caption. A dialog warns you first, because it replaces whatever is already in the script box.
+
+| Field | What it takes |
+|---|---|
+| Aspect Ratio | **Portrait** or **Story** |
+| Generate Captions | **Yes** or **No** |
+| Script box | The words the avatar says, at least 20 characters long |
+| Select Avatar | A grid of the avatars on your own HeyGen account. Public HeyGen avatars are not listed |
+| Select Voice | The first 20 voices HeyGen returns, each shown with its language |
+
+The two aspect ratios send fixed dimensions:
+
+| Aspect Ratio | Dimensions sent to HeyGen |
+|---|---|
+| Story | 720 by 1280 |
+| Portrait | 1280 by 720 |
+
+Then **Generate Video**, and the screen goes dark with *Grab a coffee and relax, this may take a while...*. Behind that overlay she is asking HeyGen whether the render is done, once every three seconds, up to 180 times. Roughly nine minutes of patience, and then she stops and tells you the generation timed out.
+
+<Warning>
+The overlay says *DO NOT CLOSE THIS WINDOW!* and means it. The wait is held open by the page you are on. The overlay also points out that you can watch the same render progress in your HeyGen dashboard.
+</Warning>
+
+When it lands, the finished video is pulled into your own storage, saved into your media library, and attached to the post you were writing. No download, no re-upload.
+
+## Reel.Farm, the clips you already made
+
+The card describes it as importing UGC and greenscreen videos from your Reel.Farm account, and that is precisely the scope.
+
+Making your clips somewhere else and posting them here? This is the button that saves you the round trip.
+
+Open **Media**, or the Insert Media window inside a post, and click **Import**. The window is headed *Import From*. Pick the Reel.Farm card and a grid of your videos loads.
+
+What she asks for is narrow, so it is worth stating plainly. Completed videos only, of two kinds, `ugc` and `greenscreen`, twenty to a page. Each tile shows a thumbnail with its kind printed across the corner, which is why the clips come through labeled ugc or greenscreen rather than by filename.
+
+Click the tiles you want and each one picks up a numbered badge in the order you chose it. **Import Selected** copies them over with the count beside it. Every URL has to be a public HTTPS address, and anything pointing at an internal network is turned away. What arrives sits in your media library like any upload, and behaves like one from that moment on.
+
+## The two side by side
+
+| | HeyGen | Reel.Farm |
+|---|---|---|
+| Identifier | `heygen` | `reelfarm` |
+| Position | `media` | `media-library` |
+| Makes something new | Yes, a video rendered on request | No |
+| Brings existing files across | No | Yes |
+| Where the result lands | Your media library and the open post | Your media library |
+| Time to wait | Up to nine minutes per video | As long as the copy takes |
+
+## What is not here yet
+
+Two honest limits. The provider interface allows a third position called `webhook`, and nothing ships in it today. And integrations live in the app only: there is no public API endpoint and no MCP tool for them, so adding, using, and removing them all happen on the screens above.
+
+<CardGroup cols={3}>
+  <Card title="Writing a post" icon="pen-nib" href="/using/writing-a-post">
+    The editor and the media row where the Integrations button waits.
+  </Card>
+  <Card title="Uploads and storage" icon="cloud-arrow-up" href="/configuration/uploads">
+    Where generated and imported files are actually kept.
+  </Card>
+  <Card title="All channels" icon="grid-2" href="/providers/overview">
+    The other kind of connection, the networks she publishes to.
+  </Card>
+</CardGroup>

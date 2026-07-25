@@ -1,0 +1,125 @@
+---
+title: Posting times
+description: 'Give a channel the times of day it posts at, and she takes the next one that is still empty'
+---
+
+Twenty to seven on a Tuesday and your LinkedIn post goes out. You were on a train. She did not check with you first, because you had already told her: 06:40 is one of the times this channel posts at.
+
+That short list of times is what the product calls a slot. Every channel keeps its own list. Press **Create Post** and the date already sitting on the button is not a guess, it is the first slot on your calendar that nothing else has claimed.
+
+## Where the times live
+
+Slots belong to a channel, not to your workspace, so your company account and your side project never have to share a rhythm.
+
+<Steps>
+  <Step title="Open the channel menu">
+    In the left sidebar, click the three dots next to a channel name.
+  </Step>
+  <Step title="Choose Edit Time Slots">
+    A window opens with the title **Time Table Slots**.
+  </Step>
+  <Step title="Add a time">
+    **Add Time Slot** sits at the top with an **Hour** list, a **Minutes** list and an **Add** button. Hours run 00 to 23 and minutes run 00 to 59, so any minute of the day is yours to take.
+  </Step>
+  <Step title="Watch the list build">
+    New times join **Scheduled Times** below, with the count in the heading. The order comes from the underlying UTC time rather than the local time on screen, so a slot near midnight can look out of place in your own timezone. An untouched channel with nothing left on it reads *No time slots added yet*.
+  </Step>
+  <Step title="Save Changes">
+    Nothing reaches the server until you press it.
+  </Step>
+</Steps>
+
+Hover a row and a trash icon appears on the right. Removing a time asks *Are you sure you want to delete this slot?* first. Closing the window with Escape asks *Are you sure you want to close the window?*, and **Yes, close** throws away everything you have not saved.
+
+### Your clock and hers
+
+The hour and minute you pick are read in your timezone, taken from your saved setting or guessed from your browser. What she stores is the same moment counted as minutes past midnight UTC, and the list reads back through your timezone again on the way out.
+
+That matters the moment someone else opens the channel. A colleague two hours ahead of you sees the same slots written as different numbers, because they are the same moments told on a different clock.
+
+## What a new channel starts with
+
+Connect a channel and it arrives with three times already on it.
+
+| Stored value | Time in UTC | Read at UTC+2 |
+| --- | --- | --- |
+| 120 | 02:00 | 04:00 |
+| 400 | 06:40 | 08:40 |
+| 700 | 11:40 | 13:40 |
+
+Those three are a starting point rather than a recommendation. Replace them with the times you actually post at.
+
+## How she picks the next free slot
+
+You press a button, she comes back with a date. Underneath that there are six steps, and they run in this order every time.
+
+| Step | What she does |
+| --- | --- |
+| Collect | Reads the posting times of every channel in the workspace that is neither disabled nor deleted. Ask about one channel and she reads only that one. |
+| Merge | The times become a single pool. The same time on two channels counts once. |
+| Start at today | The search opens at midnight UTC today. |
+| Drop the past | A time that has already gone by is out of the running. |
+| Drop the taken | A time is taken when a post already sits at exactly that minute. |
+| Take the earliest | The earliest time still standing wins. Nothing standing means she steps to the next day and runs the whole check again. |
+
+Exactly that minute is the whole of the rule. A post at 11:41 leaves the 11:40 slot open. Taken is also counted across the workspace rather than per channel, so a post on Instagram at 11:40 sends her past that slot when she is looking for a time for LinkedIn.
+
+State does not come into it either. A draft parked at 11:40 holds that minute just as firmly as a scheduled post, because a draft still carries a date. Deleted posts release theirs.
+
+<Warning>
+A channel with an empty list puts nothing into the pool. Clear every time from every channel and there is nothing left for her to choose from, so keep at least one time on the channels you actually post to.
+</Warning>
+
+<Note>
+Add the same time twice and it shows twice in the list, since the window stores what you typed. The lookup counts it once.
+</Note>
+
+## Who asks her for one
+
+The slot lookup is quiet work. It happens behind a button you already press, and these are the places it runs.
+
+| Where | Times she reads |
+| --- | --- |
+| **Create Post** on the calendar | Every channel in the workspace |
+| **Create a new post** in a channel menu | That one channel |
+| **Duplicate Post** on a post card | Every channel in the workspace |
+| The browser extension composer | Every channel in the workspace, unless the extension opened for all platforms at once, where she uses the current time instead |
+| **Generate Posts** | Every channel in the workspace, at the *Finding time to post...* step |
+| [RSS AutoPost](/automation/rss-autopost) | Every channel in the workspace, once per hourly check |
+| [`GET /find-slot/{id}`](/public-api/integrations/find-slot) | The channel whose id you pass |
+
+In every case the date lands in the editor or on the post as a starting point. Change it and she does what you say. Nothing about a slot forces a post to stay in it.
+
+### Reading the API answer
+
+The public endpoint answers with one field.
+
+```json
+{ "date": "2026-07-25T11:40:00" }
+```
+
+That time is UTC, written without an offset on the end. Treat it as UTC when you convert it, and append `Z` before parsing it if your client insists on one.
+
+<Note>
+Slots are read through the public API, never written. Adding and removing times is work for the app, through the channel menu.
+</Note>
+
+## Slots on the calendar
+
+Day view is where the times stop being an abstraction. It does not draw a bare twenty-four hour column. It draws one labelled row for every posting time on your channels, plus a row for every time you already have a post that day, sorted up the page.
+
+An empty row there is a slot with nothing in it. Hover and the avatars of the channels for that time light up, click and the editor opens on it.
+
+## Keep going
+
+<CardGroup cols={3}>
+  <Card title="The calendar" icon="calendar" href="/using/calendar">
+    Where the slots show up, and how to drag a post out of one
+  </Card>
+  <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
+    A feed item becomes a draft in your next open slot, once an hour
+  </Card>
+  <Card title="Find Available Slot" icon="code" href="/public-api/integrations/find-slot">
+    The same lookup, called from your own scripts
+  </Card>
+</CardGroup>

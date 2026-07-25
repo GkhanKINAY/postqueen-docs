@@ -1,0 +1,127 @@
+---
+title: Customers
+description: 'Group channels by client, then narrow the calendar, the composer and the API down to one of them'
+---
+
+Eleven channels, three clients, one calendar. By Wednesday you cannot tell whose Thursday is whose. A customer is the label that fixes that: you put each channel in a group, and from then on the calendar, the composer and the API can all be pointed at a single client.
+
+Running an agency? This is the feature you were looking for.
+
+<Note>
+One thing wears three names in the product. The calendar dropdown says **Customers**, the channel menu says **Move / add to group**, and the API and CLI call it a **group**. Same record, same id, three labels.
+</Note>
+
+## Put a channel in a group
+
+Open the left sidebar, find the channel, and click the three dots next to its name.
+
+<Steps>
+  <Step title="Choose Move / add to group">
+    The menu item sits just above **Edit Time Slots**.
+  </Step>
+  <Step title="Type the client name">
+    The field is labeled **Select Customer** and starts on *Start typing...*. Names you already use appear as suggestions. A name that does not exist yet is created the moment you save, so the first client is one word and one click.
+  </Step>
+  <Step title="Save">
+    The channel moves under that heading in the sidebar and the toast reads *Customer Updated*.
+  </Step>
+</Steps>
+
+The match on an existing name is exact, so `Acme` and `acme co` become two separate customers. Saving with the field empty does nothing at all. To take a channel back out of a group, reopen the same window and click **Remove from customer**, the red button that only appears once the channel belongs to one.
+
+There is a faster route for the second and third channel: drag a channel in the sidebar and drop it on another group's heading. It lands in that group straight away.
+
+<Note>
+A channel belongs to one customer at a time. Assigning it to a new group moves it out of the old one.
+</Note>
+
+In the sidebar, channels with no group sit at the top under no heading, and the named groups follow underneath, sorted by name. Each heading collapses, and the state sticks between visits.
+
+## The selector that is not there yet
+
+Here is the part that reads as a bug. The customer selector, the small person icon in the calendar toolbar and in the composer, only renders when your channels span more than one group. Channels with no group count as a group of their own.
+
+| Your channels | Selector |
+|---|---|
+| No customers created yet | Hidden |
+| One customer, plus at least one channel outside it | Visible |
+| Every channel in the same single customer | Hidden again |
+
+So the icon appears after you label your first channel, and it quietly disappears the day you finish labeling the last one. Nothing is broken and nothing is lost: the groups are still there, the URL filter below still works. Keep one channel out of the groups, or add the second client, and the icon comes back.
+
+## Filter the calendar to one client
+
+The person icon sits in the calendar toolbar, next to the Day, Week and Month switch. Click it, and a dropdown headed **Customers** lists the clients that currently hold at least one channel. Pick one and the calendar redraws with only the posts that belong to that client's channels. The list view narrows the same way, across all four of its state tabs.
+
+Take the last channel out of a client and that name drops off this dropdown, though the client itself is still on record and still comes back from `GET /groups` and `integrations:groups`.
+
+Two things stay as they were. The sidebar keeps showing all of your channels, so the filter is about the calendar and not about the channel list. And the selection lands in the address bar:
+
+```
+/launches?startDate=2026-07-20&endDate=2026-07-26&display=week&customer=<customer-id>
+```
+
+Bookmark that and you have a one-click Acme calendar. Paging to next week or switching to Month keeps the client attached, and a teammate in the same organization opens the same view from the same link.
+
+<Warning>
+The dropdown lists customers only, with no *All* entry, so there is no way to clear the filter from inside it. Open `/launches` without the `customer` parameter to see everything again.
+</Warning>
+
+## Start a post for one client
+
+The same icon sits at the top of the Create Post window, to the right of the channel avatars. Picking a client there replaces your current channel selection with every channel in that group, and the toast confirms with *Customer socials selected*. Four accounts for one client, selected in one click, ready for the text underneath.
+
+The avatar row still shows all of your channels, so you can add or drop one afterwards. Picking a client a second time starts the selection over from that client's channels.
+
+## From the terminal
+
+Customers are read-only outside the app: the CLI and the API filter by them, and creating one or moving a channel into one happens in the channel menu described above.
+
+| Command | What you get |
+|---|---|
+| `postqueen integrations:groups` | Every customer as `{id, name}` |
+| `postqueen integrations:list --group "<customer-id>"` | Only that client's channels |
+| `postqueen posts:list --customer "<customer-id>"` | Only that client's posts |
+
+`posts:list` defaults to the last 30 days through the next 30 days, and takes `--startDate` and `--endDate` in ISO 8601 when you want a different window.
+
+```bash
+# Find the group by name, then read this week for that client only
+GROUP_ID=$(postqueen integrations:groups | tail -n +2 | jq -r '.[] | select(.name=="Acme") | .id')
+postqueen posts:list --customer "$GROUP_ID"
+```
+
+## From the API
+
+Same three moves over REST, on `https://api.postqueen.ai/public/v1`.
+
+| Endpoint | What you get |
+|---|---|
+| `GET /groups` | Every customer as `{id, name}` |
+| `GET /integrations?group=<customer-id>` | Only that client's channels |
+| `GET /posts?startDate=&endDate=&customer=<customer-id>` | Only that client's posts |
+
+```bash
+curl -H "Authorization: $POSTQUEEN_API_KEY" \
+  "https://api.postqueen.ai/public/v1/integrations?group=<customer-id>"
+```
+
+Every channel in the `/integrations` response carries its own `customer` object with `id` and `name`, so one unfiltered call is enough to build a client-by-client dashboard of your own. On `/posts`, `customer` is optional and `startDate` and `endDate` are required.
+
+## Let the client connect their own account
+
+You do not need the client's password to add their channel. Next to **Add Channel** in the sidebar there is a small link button, tooltip *Send Invite Link to a customer to add channel*. Pick the platform, and the invite link lands on your clipboard with a toast telling you it stays valid for one hour. Send it over, they sign in on their side, and the channel shows up in your sidebar.
+
+It arrives with no group, like any other new channel, so the last step is the same three dots and **Move / add to group**.
+
+<CardGroup cols={3}>
+  <Card title="Channels from the CLI" icon="terminal" href="/cli/integrations">
+    List channels, filter them by group, read each platform's settings schema.
+  </Card>
+  <Card title="List Groups" icon="users" href="/public-api/integrations/groups">
+    The endpoint that returns every customer with its id.
+  </Card>
+  <Card title="List Posts" icon="list" href="/public-api/posts/list">
+    Read a date range, filtered to one customer when you pass the parameter.
+  </Card>
+</CardGroup>
