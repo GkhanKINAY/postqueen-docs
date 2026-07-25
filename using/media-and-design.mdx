@@ -23,11 +23,15 @@ Try to drop more files while an upload is still running and she stops you with *
 
 | Rule | Value |
 |---|---|
-| Types the picker takes | PNG, JPEG, GIF, WebP and MP4 |
+| Types the picker offers | Any image, plus MP4 video |
+| Types that survive the upload | JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF and MP4 |
 | One upload session | 1 GB across every file in it |
-| One image | 30 MB |
+| One image, in the picker | 30 MB |
 | One video | 1 GB |
 | Image resizing | Fitted inside 1000 x 1000 pixels before upload, GIFs left untouched |
+
+The two type rows differ because the picker is permissive and the check happens on the way in.
+Hand it something outside the second list and it is refused after you choose it, not before.
 
 The resize is on by default and it is why a 12 megapixel phone photo arrives as a small file. Self-hosters who want the original pixels can turn it off with `DISABLE_IMAGE_COMPRESSION`.
 
