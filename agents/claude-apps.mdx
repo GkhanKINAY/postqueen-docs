@@ -1,0 +1,135 @@
+---
+title: 'Claude Apps'
+description: 'Add her as a custom connector once on claude.ai or in Claude Desktop, and she answers on your laptop, your desktop and your phone'
+---
+
+## Wherever you talk to Claude, she is in the room
+
+Sunday evening, phone in hand, and next week has nothing on the calendar yet. You describe the launch in two sentences, and by the time you put the phone down there are five posts waiting on your calendar, each one shaped for the channel it is going to.
+
+<img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
+
+Two surfaces, one connector. Claude Desktop takes her in **Settings > Connectors**, and claude.ai takes the same URL on the web. Connectors are tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
+
+What she brings into the chat is her [10 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts, with image and video generation in the same set. They do not list, delete or reschedule posts that already exist, and none of them returns analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+
+<Note>
+This is the chat surface. Claude Code, Anthropic's terminal tool, connects a different way and has its own page: [Claude Code](/agents/claude-code).
+</Note>
+
+## Set up
+
+<Steps>
+  <Step title="Grab your API key">
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Copy it.
+  </Step>
+  <Step title="Add her as a custom connector">
+    On [claude.ai](https://claude.ai), open **Settings**, then **Connectors** (direct link: `claude.ai/settings/connectors`). In Claude Desktop, the same page sits under **Settings > Connectors**. Click **Add custom connector**, name it `PostQueen`, and paste her endpoint with your key in the path:
+
+    ```
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Leave the OAuth fields under advanced settings empty, because the key in the URL is the authentication. The connector form takes a URL and has no field for an `Authorization` header, which is why the key rides in the path here rather than in a Bearer header.
+
+    Full walkthroughs, plus the desktop config-file route: [Claude Desktop](/mcp/clients/claude-desktop) and [Claude web and mobile](/mcp/clients/claude-app).
+
+    <Warning>
+    That URL contains your API key, which makes the URL itself a secret. Anyone holding it can post from every account you have connected, so keep it out of screenshots and shared screens. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+    </Warning>
+  </Step>
+  <Step title="Turn her on in a chat">
+    In a new chat, open the tools menu in the message box and toggle the **PostQueen** connector on. The first time Claude calls one of her tools it asks for your permission.
+  </Step>
+  <Step title="Verify the connection">
+    Ask:
+
+    > *"List my connected social media accounts."*
+
+    Your channel names come back, because Claude reached for her `integrationList` tool. If nothing comes back, check that the key was pasted in full inside the URL and that the connector is toggled on for that chat.
+  </Step>
+</Steps>
+
+## On your phone
+
+Once she is on your account, she is on your phone. Switch the connector on from the tools menu in a chat, the same way you did on the web, and the conversation that planned your week on a laptop picks up on a train.
+
+New custom connectors generally cannot be created from the mobile apps themselves, so add her on the web or desktop first and she appears on your phone afterwards.
+
+<Note>
+At the time of writing, Anthropic's help center lists custom connectors as available across Claude plans, with the Free plan limited to a single custom connector. On Team and Enterprise plans, an organization Owner may need to add the connector in the organization's settings before members can connect it. Availability and UI naming shift over time. If you do not see the option, check Anthropic's [connectors help article](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
+</Note>
+
+## 👑 A launch week planned from the couch
+
+You describe the week, and she takes care of the rest:
+
+> **You:** We launch the new pricing page on Monday. Plan five posts across the week for X and LinkedIn and schedule them for 9am each day.
+
+> **Claude:** On it. Reading your channels and what each one accepts, then scheduling with PostQueen.
+>
+> `integrationList` running...
+>
+> `integrationSchema` running for x, linkedin...
+>
+> `integrationSchedulePostTool` running...
+>
+> 5 posts scheduled across X and LinkedIn, Monday to Friday at 9:00 AM. Every one is on your calendar if you want to change the wording.
+
+Three tools carry that. `integrationList` returns each connected channel with its integration ID. `integrationSchema` asks a platform what it expects and gets back its rules, its `maxLength` and its required settings, which is how the LinkedIn version arrives longer than the X one. Then `integrationSchedulePostTool` writes the calendar entries: five days means five items in the `socialPost` array, each with its own `date` and `integrationId`.
+
+Want an image with a post? `generateImageTool` produces one and returns a hosted `path` for the `attachments` array. Bringing a picture from somewhere else? `uploadFromUrlTool` pulls it into her media library first, because attachments have to sit on a PostQueen URL.
+
+Not ready for one of them to publish? Ask for drafts, and the call carries `type` as `draft` instead of `schedule`. A draft is a post state rather than a queue position: it lands on the calendar and stays there, unscheduled, until you publish it from the editor at [app.postqueen.ai](https://app.postqueen.ai). Her MCP tools carry no status change, so that switch happens on the calendar or from the CLI with `postqueen posts:status <post-id> --status schedule`.
+
+Everything scheduled needs nothing further from you. It is visible on the calendar where you can still edit or delete it, and each post goes out at its time.
+
+## Self-hosted
+
+On a self-hosted instance, swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY` tail. Most self-hosted setups serve the backend under `/api`, so the path sits at `/api/mcp`.
+
+One thing to plan for: Claude reaches your server from Anthropic's cloud rather than from your device, so a custom connector only works if the endpoint is reachable over the public internet on HTTPS. An instance behind a VPN or sitting on your LAN will not connect that way. Claude Desktop has a way around it, because the `mcp-remote` bridge in `claude_desktop_config.json` runs on your own machine: [Claude Desktop](/mcp/clients/claude-desktop).
+
+<Warning>
+A plain `"url"` entry in `claude_desktop_config.json` does not work. That file only launches local stdio servers with `command` and `args`. Remote servers are the custom connector above, or the bridge.
+</Warning>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need Claude to use PostQueen?">
+    No. She works on her own through the dashboard, the CLI and the public API. Claude is one of several ways to reach her, and the one to pick when you would rather describe a week than build it.
+  </Accordion>
+  <Accordion title="Is this the same as Claude Code?">
+    No. Claude Code is Anthropic's terminal tool, and it connects with a single `claude mcp add` command or through her agent skill and the CLI. Setup and examples for it: [Claude Code](/agents/claude-code).
+  </Accordion>
+  <Accordion title="Can I add the connector from my phone?">
+    Generally not. New custom connectors are created on the web or in the desktop app, and they show up on your phone afterwards because connectors follow your Claude account.
+  </Accordion>
+  <Accordion title="What can she do from a Claude chat?">
+    Everything her 10 MCP tools cover. She lists your channels, reads each platform's rules and limits and schedules posts across your 30+ networks. Along the way she can fetch dynamic values such as Pinterest boards, generate an image or build a video to attach.
+  </Accordion>
+  <Accordion title="Can she tell me how last week's posts did?">
+    Not from the chat. There is no analytics tool in the MCP set, and no tool for listing or deleting posts either. Those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the `postqueen` CLI, which carries `posts:list`, `posts:delete` and `analytics:platform`.
+  </Accordion>
+  <Accordion title="Does the connector cost extra?">
+    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan. Claude's own plan rules still apply, including the single custom connector on the Free plan.
+  </Accordion>
+</AccordionGroup>
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Claude Desktop setup" icon="plug" href="/mcp/clients/claude-desktop">
+    The connector flow, the `mcp-remote` bridge and where the desktop logs live.
+  </Card>
+  <Card title="Claude web and mobile setup" icon="mobile" href="/mcp/clients/claude-app">
+    The claude.ai connector step by step, and how it reaches iOS and Android.
+  </Card>
+  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
+    All 10 tools Claude gains once the connector is on, with every parameter.
+  </Card>
+  <Card title="Agents overview" icon="compass" href="/agents/overview">
+    Every way to put an agent in front of PostQueen, from chat apps to your terminal.
+  </Card>
+</CardGroup>

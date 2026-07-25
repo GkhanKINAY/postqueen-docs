@@ -1,9 +1,50 @@
 ---
 title: Instagram
 description: 'How to add Instagram to your system'
+icon: /images/channels/instagram.svg
 ---
 
+<img src="/images/channels/instagram.svg" alt="Instagram" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Instagram
+
+A carousel of ten photos, a Reel with trending audio behind it, a story that vanishes in a day. She builds all of it from the same editor and sends it on the schedule you set.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    2,200 characters in the caption
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Always required. Up to 10 items in a carousel
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Feed post, carousel, Reel, story
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the account and for each post
+  </Card>
+</CardGroup>
+
+Account numbers come back as follower count, reach and views. Engagement sits beside them: likes, comments and shares, plus saves and replies. Per post she reads views, reach and saves, plus likes, comments and shares.
+
+| | |
+|---|---|
+| **Post settings** | `post_type`, `is_trial_reel`, `graduation_strategy`, `collaborators`, `audio`. Full schema in the [Instagram settings reference](/public-api/providers/instagram) |
+| **Connect flow** | Two steps. You authorize the Meta app, then pick which Instagram account to attach. The account must be a business account connected to a Facebook page. The standalone flow attaches the account in a single step |
+| **Automations** | None. Instagram does carry an audio search tool, used to find music or original sounds for a Reel |
+
+<Warning>
+Instagram refuses some combinations before she ever calls the API:
+
+- **Should have at least one media.** A caption on its own is not a post here.
+- **Instagram carousel only supports up to 10 media attachments.**
+- **Trial Reels can only have one video**, and **Trial Reels must be a video**.
+- **Audio can only be added to Reels, not to Stories**, only to **a single video Reel**, and only on the Facebook Business connection.
+
+Stories do not support carousels. Attach several items to a story and each one publishes as its own separate story.
+</Warning>
 
 <Warning>
 **NOTE:** Please be advised that Instagram and Facebook can use the same app (no need to create two separate apps)

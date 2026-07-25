@@ -1,9 +1,45 @@
 ---
 title: Telegram
 description: 'How to add Telegram to your system'
+icon: /images/channels/telegram.svg
 ---
 
+<img src="/images/channels/telegram.svg" alt="Telegram" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Telegram
+
+Your bot sits in the channel and drops the announcement at the hour you set, photo and caption arriving as one message. Connecting a chat costs you a single line typed into it.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    4,096 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. One file carries the text as its caption, more go out in groups of ten
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Group or channel message, reply
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None
+  </Card>
+</CardGroup>
+
+Ten of her connectors report numbers back to the Analytics page. Telegram is not one of them, so a Telegram channel shows no chart. The editor writes Telegram HTML, which means bold, underline and paragraph breaks survive and everything else is stripped before sending.
+
+| | |
+|---|---|
+| **Post settings** | None beyond `__type`. The destination chat comes from the connected channel rather than the post. See the [Telegram settings reference](/public-api/providers/telegram) |
+| **Connect flow** | Two moves inside one step. Add the bot to your group or channel, then paste the `/connect` line she shows you into that chat. She watches for it, finishes the connection, and clears both setup messages when the bot is an admin |
+| **Automations** | None. Comments post as replies to the original message |
+
+<Warning>
+Files are sorted by what they are, not by what you meant. Images go out as photos, videos as videos, and anything that reads as neither goes as a document rather than failing outright.
+
+Attach more than ten files and she sends them as several media groups back to back. Only the first group carries your text.
+</Warning>
 
 <Warning>
 PostQueen talks to Telegram using long-polling (`getUpdates`). Telegram allows only **one** connected process per bot token at a time. If you run PostQueen against the same `TELEGRAM_TOKEN` from two places (e.g. self-hosted plus cloud, or two self-hosted instances), each instance will continuously kick the other off and you will see `409 Conflict: terminated by other getUpdates` errors in the logs.

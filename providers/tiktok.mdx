@@ -1,9 +1,48 @@
 ---
 title: TikTok
 description: 'How to add TikTok to your system'
+icon: /images/channels/tiktok.svg
 ---
 
+<img src="/images/channels/tiktok.svg" alt="TikTok" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to TikTok
+
+TikTok has the deepest settings panel of any network she posts to. Privacy, comments and the duet or stitch toggles travel with the post, as do the branded-content and AI labels, so the clip lands configured instead of needing a second pass inside the app.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    2,000 characters. Photo post titles cap at 90
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Always required. One video, or one or more pictures
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Video post, photo post
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the account and for each post
+  </Card>
+</CardGroup>
+
+Account numbers come back as followers, following and total likes, plus video count and recent engagement. Per post she reads views and likes, plus comments and shares.
+
+| | |
+|---|---|
+| **Post settings** | `content_posting_method`, `privacy_level`, `title`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle`, `video_made_with_ai`. Full schema in the [TikTok settings reference](/public-api/providers/tiktok) |
+| **Connect flow** | One step. You authorize the account and she attaches it |
+| **Automations** | None |
+
+<Warning>
+TikTok is strict about what it accepts:
+
+- **No video / images selected.** Every TikTok post needs an attachment.
+- **Only pictures are supported when selecting multiple items.** Videos go one at a time.
+- **Video must be at least 720p, Picture must no exceed 1080p.**
+- **TikTok limits pending posts to 5 within any 24-hour period.** Those are posts waiting in your TikTok inbox, so clear them before sending more.
+</Warning>
 
 <Note>
 This integration requires that you have a TikTok developer account. It also requires that you have a public website, with https, and can upload files to that site to verify ownership.

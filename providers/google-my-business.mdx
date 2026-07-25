@@ -1,9 +1,49 @@
 ---
 title: Google My Business
 description: 'How to add Google My Business to your system'
+icon: /images/channels/google-business.svg
 ---
 
+<img src="/images/channels/google-business.svg" alt="Google My Business" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Google My Business
+
+A news update on the profile, an event with dates attached, an offer carrying a coupon code. All three land on your Business Profile with a button underneath, and you pick which button it is.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    1,500 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. One image, no video
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Update, event, offer
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the location. Nothing per post
+  </Card>
+</CardGroup>
+
+Location numbers come back as website clicks, phone calls and direction requests, with map views split between desktop and mobile. Per post there is nothing to show: the Business Profile Performance API reports on the location rather than the individual update, so a Google My Business post opens an empty chart by design.
+
+| | |
+|---|---|
+| **Post settings** | `topicType`, `callToActionType`, `callToActionUrl`, plus the event and offer fields. Full schema in the [Google My Business settings reference](/public-api/providers/gmb) |
+| **Connect flow** | Two steps. You authorize the Google app, then pick which business location to attach. Every location under every account you manage is listed |
+| **Automations** | None |
+
+<Warning>
+Google turns some posts back before she calls the API:
+
+- **Google My Business posts can only have one image.**
+- **Google My Business posts do not support video attachments.**
+- **Event posts require an event title.**
+
+A call to action button takes one of `BOOK`, `ORDER`, `SHOP`, `LEARN_MORE`, `SIGN_UP`, `GET_OFFER` or `CALL`, plus `NONE` for an update that carries no button at all. The type and the URL travel as a pair: the button only reaches Google when a type other than `NONE` and a valid URL are both set.
+</Warning>
 
 <Note>
 This integration allows you to post updates to your Google Business Profile. Before you start, make sure you have a Google account and a verified Google Business Profile.

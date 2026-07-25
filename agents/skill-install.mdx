@@ -1,0 +1,252 @@
+---
+title: 'Install the skill'
+description: 'Two routes put her full command set in front of your agent: the skills registry that works everywhere, and the Claude Code plugin the repo ships'
+---
+
+## The difference one file makes
+
+An agent without her skill guesses. It invents a flag that looks plausible and passes a local file path where a URL belongs, and you spend the next ten minutes reading error JSON with it.
+
+An agent that has read her skill starts with `integrations:list` to learn your real channel IDs. It checks what each channel accepts before writing a word, runs your image through `postqueen upload` because raw paths get rejected, then schedules with a proper ISO 8601 date. Same model, same prompt, completely different first attempt.
+
+Installing it is one command. This page covers both ways to run that command, and the API key that makes either one work.
+
+## What the skill actually is
+
+A single `SKILL.md` file from the [postqueen-agent](https://github.com/GkhanKINAY/postqueen-agent) repository. It registers under the name `postqueen` and declares `Bash(postqueen:*)` as the only tool it needs, so it asks for nothing beyond permission to run her CLI.
+
+Inside, it is a playbook rather than a manual page:
+
+- **Two hard rules up top.** Authenticate before anything, and put every media file through `postqueen upload` first. Raw filesystem paths and external URLs are rejected by the publishing pipeline, and most providers only accept a PostQueen-verified URL.
+- **A seven-step core workflow.** It runs from authenticate through discover and post to analyze, ending with the fix for a missing release ID when analytics comes back `{"missing": true}`.
+- **Worked patterns.** Fetching Reddit flairs and YouTube playlists, building a thread, scheduling a week in a loop.
+- **A gotchas list.** ISO 8601 dates are required, JSON goes in single quotes, character limits come from `integrations:settings`.
+
+## Two routes in
+
+Both land the same skill. Pick by which agent you are teaching.
+
+| Route | Command | Best for |
+|-------|---------|----------|
+| Skills registry | `npx skills add GkhanKINAY/postqueen-agent` | Any agent that reads the `skills` registry. One copy on the machine, read by whichever agent you launch |
+| Claude Code plugin | `/plugin marketplace add GkhanKINAY/postqueen-agent` | Claude Code only. Versioned, updatable, installable per project so your whole team gets it |
+
+If you are not sure, take the registry route. It is one line, it works from Codex to Cursor to Hermes, and nothing stops you adding the plugin later on the machines where you use Claude Code.
+
+## Route 1: the skills registry
+
+<Steps>
+  <Step title="Install the skill">
+    ```bash
+    npx skills add GkhanKINAY/postqueen-agent
+    ```
+
+    The `skills` CLI writes into `~/.agents/skills`, where agents that support the registry look for it. Most pick it up on their next start.
+  </Step>
+  <Step title="Install the CLI">
+    The skill tells your agent to install the CLI if it is missing, and it is one command either way:
+
+    ```bash
+    npm install -g postqueen
+    ```
+
+    Or with pnpm:
+
+    ```bash
+    pnpm install -g postqueen
+    ```
+  </Step>
+</Steps>
+
+<Note>
+Hermes loads skills from `~/.hermes/skills/` plus any directory listed under `skills.external_dirs`, so it needs one line of config pointing at `~/.agents/skills`. That step is written out on the [Hermes page](/agents/hermes).
+</Note>
+
+## Route 2: the Claude Code plugin
+
+The repository ships a plugin manifest at `.claude-plugin/plugin.json` and a marketplace catalog at `.claude-plugin/marketplace.json`. That makes the repo itself a Claude Code marketplace with exactly one plugin in it, named `postqueen`.
+
+Why bother, when route 1 is shorter? Because the plugin carries a version, so you pick up updates deliberately rather than by accident. It installs at a scope you choose, including project scope, which writes into `.claude/settings.json` so everyone working in that repository gets the same skill. And it shows up in `/plugin` alongside everything else you have installed, ready to disable or remove in one place.
+
+<Steps>
+  <Step title="Add the marketplace">
+    Inside Claude Code:
+
+    ```
+    /plugin marketplace add GkhanKINAY/postqueen-agent
+    ```
+
+    This registers the catalog. Nothing is installed yet.
+  </Step>
+  <Step title="Install the plugin">
+    ```
+    /plugin install postqueen@postqueen-agent
+    ```
+
+    The identifier is `plugin-name@marketplace-name`: `postqueen` from the plugin entry, `postqueen-agent` from the marketplace. Claude Code then asks for a scope:
+
+    | Scope | Where it applies |
+    |-------|------------------|
+    | User | You, across every project |
+    | Project | Everyone working in this repository |
+    | Local | You, in this repository only |
+
+    To skip the interactive step, for example in a setup script, use the shell form instead. It installs to user scope unless you pass `--scope`:
+
+    ```bash
+    claude plugin install postqueen@postqueen-agent
+    ```
+  </Step>
+  <Step title="Activate it">
+    ```
+    /reload-plugins
+    ```
+
+    This picks up the new plugin without restarting your session.
+  </Step>
+  <Step title="Install the CLI">
+    ```bash
+    npm install -g postqueen
+    ```
+
+    The plugin carries her instructions. The commands themselves still come from the npm package.
+  </Step>
+</Steps>
+
+Later on, `/plugin list` shows what you have, `/plugin marketplace update postqueen-agent` refreshes the catalog, and `/plugin uninstall postqueen@postqueen-agent` removes it.
+
+<Warning>
+Plugins run with your user privileges, so only add marketplaces you trust. This one is the same public repository the `npx skills add` route reads from, and you can read every line of it before you install.
+</Warning>
+
+## Her API key
+
+The skill teaches your agent what to run. The key is what lets it run anything at all.
+
+<Steps>
+  <Step title="Reveal your key">
+    Open [app.postqueen.ai](https://app.postqueen.ai), go to **Settings > Developers > Public API**, and click **Reveal**. Self-hosting? The same screen lives in your own instance.
+  </Step>
+  <Step title="Export it">
+    ```bash
+    export POSTQUEEN_API_KEY="your-api-key"
+    ```
+
+    Put it in your shell profile, `~/.zshrc` or `~/.bashrc`, so it survives a new terminal. If an always-on agent will be using it, export it in the environment that process starts in rather than the one you happen to be typing in.
+  </Step>
+  <Step title="Point at your own instance, if you have one">
+    Self-hosted PostQueen needs one more variable: your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. The CLI appends `/public/v1/...` to whatever you set, and most single-domain setups serve the backend under `/api`:
+
+    ```bash
+    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
+    ```
+  </Step>
+</Steps>
+
+Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same screen.
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `POSTQUEEN_API_KEY` | Yes | - | Your PostQueen API key |
+| `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | API endpoint, for self-hosted instances |
+| `POSTQUEEN_AUTH_SERVER` | No | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only relevant if you run your own |
+
+<Note>
+`postqueen auth:login` runs an OAuth2 device flow that needs an auth server to mediate it, and PostQueen does not currently host one. On the hosted service the API key is the route to take. Running your own auth server is written out in full on the [Authentication page](/cli/authentication).
+</Note>
+
+## Verify it works
+
+One command tells you the skill, the CLI and the key are all in place:
+
+```bash
+postqueen integrations:list
+```
+
+A JSON array of your connected channels means everything is wired. Each entry carries the `id` your agent will pass to `-i`, next to the account name and the platform it belongs to:
+
+```json
+[
+  {
+    "id": "twitter-ghi789",
+    "name": "@myhandle",
+    "identifier": "x",
+    "profile": "myhandle",
+    "disabled": false
+  },
+  {
+    "id": "youtube-def456",
+    "name": "My YouTube Channel",
+    "identifier": "youtube",
+    "profile": "UCabc123",
+    "disabled": false
+  }
+]
+```
+
+If the array comes back empty, the key is valid but no channels are connected yet. Connect one in the app first.
+
+<Tip>
+The data commands print a one-line header before the JSON. Drop it with `tail -n +2` before piping into `jq`:
+
+```bash
+postqueen integrations:list | tail -n +2 | jq -r '.[] | "\(.identifier)\t\(.id)"'
+```
+</Tip>
+
+To check credentials on their own, without touching your channels:
+
+```bash
+postqueen auth:status
+```
+
+## When it does not work
+
+| Symptom | What to do |
+|---------|------------|
+| `Not authenticated` | `POSTQUEEN_API_KEY` is missing from the environment the command runs in. Export it there, not just in your own shell |
+| `command not found: postqueen` | The CLI is not installed globally. Run `npm install -g postqueen` |
+| The agent ignores the skill | Most agents read skills at startup. Restart the session, and on Claude Code run `/reload-plugins` |
+| Plugin skills still missing after install | Clear the plugin cache with `rm -rf ~/.claude/plugins/cache`, restart Claude Code, then install again |
+| `Integration not found` | The integration ID is stale. Run `integrations:list` again for current IDs |
+| Everything works locally, nothing works from the agent | Its process has a different environment. Print `POSTQUEEN_API_KEY` from inside the agent to confirm it reached there |
+
+More on this in [CLI troubleshooting](/cli/troubleshooting).
+
+## 👑 First post from the skill
+
+Now ask your agent in plain words:
+
+> *"Schedule a post about our new espresso tonic for tomorrow at 9am on Instagram and X."*
+
+It runs the loop the skill taught it: find the channels, check what each one accepts, then upload the image before scheduling.
+
+```bash
+postqueen posts:create \
+  -c "The espresso tonic is back ☕ All summer, all day." \
+  -s "2026-08-01T09:00:00Z" \
+  -i "instagram-id,twitter-id"
+```
+
+She puts the post on your calendar at [app.postqueen.ai](https://app.postqueen.ai) and sends it at nine, on time, without another word from you. Prefer to write it now and schedule it later? Add `-t draft` and the post is created in the draft state, which sits on the calendar without being queued. Nothing publishes until you turn it into a scheduled post:
+
+```bash
+postqueen posts:status <post-id> --status schedule
+```
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
+    Everything your agent runs on your behalf, with flags and JSON output.
+  </Card>
+  <Card title="Command reference" icon="list" href="/cli/command-reference">
+    Every command and every flag, in one page.
+  </Card>
+  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
+    Why an agent can drive her without guesswork, and the two rules that matter most.
+  </Card>
+  <Card title="Agents overview" icon="compass" href="/agents/overview">
+    Every way to put an agent in front of PostQueen, from coding assistants to chat apps.
+  </Card>
+</CardGroup>

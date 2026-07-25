@@ -1,9 +1,49 @@
 ---
 title: LinkedIn Page
 description: 'How to add a LinkedIn Page to your system'
+icon: /images/channels/linkedin.svg
 ---
 
+<img src="/images/channels/linkedin.svg" alt="LinkedIn Page" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to a LinkedIn Page
+
+A hiring update, a product video, three slides that LinkedIn turns into a swipeable document. The post goes out as the company, not as you, and the numbers come back for the page and for the individual post.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    3,000 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. One image, one video, or two or more images for a carousel
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Text post, image post, video post, PDF carousel, comment
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the page and for each post
+  </Card>
+</CardGroup>
+
+Page numbers come back as page views, clicks and shares, with engagement and comments on the same chart and follower gains split into organic and paid. Per post she reads impressions, clicks and likes, alongside comments, shares and engagement. She keeps two LinkedIn jobs moving at once, which is the professional posting limit the page carries.
+
+| | |
+|---|---|
+| **Post settings** | `post_as_images_carousel`, `carousel_name`. Full schema in the [LinkedIn Page settings reference](/public-api/providers/linkedin-page) |
+| **Connect flow** | Two steps. You authorize the LinkedIn app, then pick which company page to attach. Only pages where LinkedIn lists you as an administrator show up |
+| **Automations** | Auto Repost Posts and Auto plug post both watch a post for a like count you set, checking every six hours for three rounds. Add comments by a different account and Add Re-posters fire once the post lands, from whichever LinkedIn channels you name |
+
+<Warning>
+LinkedIn turns some combinations back before she calls the API:
+
+- **Carousel can only be created with 2 or more images and no videos.**
+- **Can have maximum 1 media when selecting a video.**
+- **Comments can only contain text.**
+
+Two or more images plus the carousel setting become a PDF document share. That path has its own section further down this page.
+</Warning>
 
 <Steps>
   <Step title="Create a new app">
@@ -54,7 +94,7 @@ LINKEDIN_CLIENT_SECRET=""
 
 ## Posting PDFs / document carousels
 
-Upload three images to a LinkedIn Page and she stitches them into a PDF carousel. LinkedIn is the only network where that works, and only through document-carousel posts. You never upload a PDF yourself: she builds it from your images and posts it as a LinkedIn document share.
+Upload two or more images to a LinkedIn Page and she stitches them into a PDF carousel. LinkedIn is the only network where that works, and only through document-carousel posts. You never upload a PDF yourself: she builds it from your images and posts it as a LinkedIn document share.
 
 Nowhere else accepts it. The public-API upload endpoint rejects `application/pdf`.
 

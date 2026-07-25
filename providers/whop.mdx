@@ -1,13 +1,50 @@
 ---
 title: Whop
 description: 'How to add Whop to PostQueen'
+icon: /images/channels/whop.svg
 ---
+
+<img src="/images/channels/whop.svg" alt="Whop" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
 
 <Snippet file="never-share.mdx" />
 
 <Note>
 This integration requires that you have a [Whop](https://whop.com) account with at least one company and a forum experience set up.
 </Note>
+
+## What she can post to Whop
+
+Whop is where she writes long. Fifty thousand characters of Markdown into a forum, files attached, and the comments you queued waiting underneath.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    50,000 characters, written in the Markdown editor.
+  </Card>
+  <Card title="Media" icon="paperclip">
+    Any file. Each upload is watched until Whop marks it ready, for up to about nine minutes, before the post is created.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A forum post with an optional title, then comments threaded underneath it.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Whop is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `company` and `experience` are both required, `title` is optional: [Whop settings](/public-api/providers/whop). |
+| Connect flow | One step, OAuth2 with PKCE. A client id is enough, there is no client secret. |
+| Automations | None on this network. |
+| Publish rate | One post at a time. |
+
+<Warning>
+The company and forum pickers read the first 50 of each, so a very large Whop account may not show every option.
+
+A large attachment can hold a post back: if Whop has not finished processing the file after roughly nine minutes, she stops with **"File upload timed out"** rather than publishing a post with a broken attachment.
+</Warning>
+
+## Set up Whop
 
 <Steps>
   <Step title="Create a Whop OAuth Application">

@@ -95,7 +95,7 @@ Reading the shape:
 
 | Field | What it does |
 |---|---|
-| `type` | `schedule` publishes at `date`, `now` publishes immediately, `draft` parks the post for approval |
+| `type` | `schedule` publishes at `date`, `now` publishes immediately, `draft` saves the post without scheduling it |
 | `date` | ISO 8601, required even for a draft |
 | `shortLink` | Whether her link shortener rewrites URLs in the content |
 | `posts[].integration.id` | An integration ID from `postqueen integrations:list` |
@@ -129,7 +129,7 @@ A campaign file is plain JSON and a CLI call is a plain command, so a release jo
 
 Two habits keep this pleasant to live with:
 
-- **Draft first.** Set `"type": "draft"` in the campaign file while you are getting a pipeline right. The posts appear on your calendar and wait for you, so a broken job costs you a click instead of a public apology.
+- **Draft first.** Set `"type": "draft"` in the campaign file while you are getting a pipeline right. The posts appear on your calendar unscheduled, so a broken job costs you a click instead of a public apology.
 - **Watch the budget.** The create-post endpoint allows 30 requests per hour, and a campaign file counts as one request no matter how many networks it covers. Batch the launch into a single file rather than looping over channels.
 
 The same command works from cron on a small box. Cron does not read your shell profile, so set the key in the crontab itself:
@@ -147,7 +147,7 @@ Ask Codex to verify its own work: `postqueen posts:list` returns what is on the 
 
 ## Staying in control
 
-She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever a job puts on the calendar goes out on time without another word from you. Want more say? Everything is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and a campaign file with `"type": "draft"` holds each post until you approve it there.
+She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever a job puts on the calendar goes out on time without another word from you. Want a closer look first? Everything is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and a campaign file with `"type": "draft"` saves each post unscheduled until you publish it there.
 
 ## FAQ
 
@@ -159,7 +159,7 @@ She runs on your terms. Leave the schedule alone and she is a true autopilot: wh
     Everything the CLI can do. It can list your channels and read their settings, and it can upload media, schedule posts across your 30+ networks and pull analytics afterwards, with JSON output on every command.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
-    Yes. Ask Codex for drafts, or set `"type": "draft"` in the campaign file, and she holds each post on the calendar until you approve it.
+    Yes. Ask Codex for drafts, or set `"type": "draft"` in the campaign file, and each post sits on the calendar unscheduled until you publish it.
   </Accordion>
   <Accordion title="Does the integration cost extra?">
     No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.

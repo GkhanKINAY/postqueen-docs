@@ -1,7 +1,10 @@
 ---
 title: Skool
 description: 'How to add Skool to PostQueen'
+icon: /images/channels/skool.svg
 ---
+
+<img src="/images/channels/skool.svg" alt="Skool" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
 
 <Snippet file="never-share.mdx" />
 
@@ -9,6 +12,38 @@ Skool is a **cookie-based** integration that uses the PostQueen browser extensio
 
 <Warning>
 Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned. PostQueen does not take responsibility for any issues arising from the use of this method.
+</Warning>
+
+## What she can post to Skool
+
+A Skool post needs a title, a group and a label before she will send it. Once it lands, the comments you queued follow it into the same thread.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    5,000 characters per post.
+  </Card>
+  <Card title="Media" icon="image">
+    Files, uploaded to Skool file storage and attached to posts and to comments.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A titled post in one group, then comments threaded underneath it.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Skool is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `group`, `label` and `title` are all required, each at least one character: [Skool settings](/public-api/providers/skool). |
+| Connect flow | One step, through the Chrome extension. It reads the `client_id` and `auth_token` cookies on `.skool.com` and stores them encrypted. |
+| Automations | None on this network. |
+| Publish rate | One post at a time. |
+
+<Warning>
+The group picker reads your first 30 Skool groups, so a very long membership list may not show every option. If a group has no labels of its own, the only choice is **Default Label**, and she sends the post without a label attached.
+
+Two refusals come from Skool itself: **"You can't post to this channel"** when your role in the group is below what the group requires, and **"Cannot post to this label"** when the label is restricted.
 </Warning>
 
 ## Prerequisites

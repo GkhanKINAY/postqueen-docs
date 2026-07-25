@@ -1,7 +1,10 @@
 ---
 title: Farcaster
 description: 'How to add Farcaster (Warpcast) to your system'
+icon: /images/channels/warpcast.svg
 ---
+
+<img src="/images/channels/warpcast.svg" alt="Farcaster" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
 
 <Snippet file="never-share.mdx" />
 
@@ -10,10 +13,39 @@ PostQueen uses [Neynar](https://neynar.com) as the Farcaster API provider.
 You need a Neynar developer account to obtain the API credentials below.
 </Note>
 
-<Info>
-Farcaster posts on PostQueen accept images only: text + image, but no
-video. Posts can be up to 800 characters.
-</Info>
+## What she can post to Farcaster
+
+Eight hundred characters and a picture is the whole shape of a cast. Name several channels and she sends the same cast into each one, then keeps the ids so your comments land in the right threads.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    800 characters per cast.
+  </Card>
+  <Card title="Media" icon="image">
+    Images only. Video is refused before she reaches Farcaster.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A cast, into your feed or into one or more channels, then replies threaded underneath as comments.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Farcaster is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | A `subreddit` array of channel targets, each one a `value.id`. The field name is historical and it means Farcaster channels: [Warpcast settings](/public-api/providers/warpcast). |
+| Connect flow | One step, through the Neynar login screen. No scopes are requested, since the signer covers posting. |
+| Automations | None on this network. |
+| Publish rate | Three casts at a time. |
+
+<Warning>
+Attach a video and she stops before publishing with **"Can only accept images"**.
+
+Two naming quirks worth knowing. The `__type` on the API is spelled `wrapcast`, and the connect slug is `farcaster`. When you cast into several channels at once, one cast is created per channel and the ids come back comma separated in a single response.
+</Warning>
+
+## Set up Farcaster
 
 <Steps>
   <Step title="Create a Neynar app">

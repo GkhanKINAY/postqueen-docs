@@ -1,9 +1,51 @@
 ---
 title: Pinterest
 description: 'How to add Pinterest to your system'
+icon: /images/channels/pinterest.svg
 ---
 
+<img src="/images/channels/pinterest.svg" alt="Pinterest" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Pinterest
+
+A pin needs a picture, a board and somewhere to send the click. She carries all three, and your board list loads straight into the editor so you never go hunting for an ID.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    500 characters in the description
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Always required. Up to 5 images, or one video with a cover
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Image pin, multi image pin, video pin
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the account and for each pin
+  </Card>
+</CardGroup>
+
+Account numbers come back as impressions, pin clicks and saves, with pin click rate and engagement on the same chart. Per pin she reads impressions, pin clicks and saves, plus the outbound clicks that left for your link. Pinterest only serves the last 90 days either way, so a wider date range still stops there.
+
+| | |
+|---|---|
+| **Post settings** | `board`, `title`, `link`, `dominant_color`. Full schema in the [Pinterest settings reference](/public-api/providers/pinterest) |
+| **Connect flow** | One step. You authorize the Pinterest app and she pulls in up to 250 boards for the picker. The account has to be a Pinterest company account, and the developer app has to clear Pinterest review before it works |
+| **Automations** | None. The board list is a live lookup, refreshed from Pinterest each time you open it |
+
+<Warning>
+Pinterest refuses some combinations before she ever calls the API:
+
+- **Requires at least one media.** A description on its own is not a pin here.
+- **You can only have up to 5 media items.**
+- **Requires all images to have the same width and height.**
+- **If posting a video you have to also include a cover image as second media.**
+- **If posting a video you can only have two media items.**
+
+A video pin is uploaded and then polled while Pinterest transcodes it. After roughly nine minutes she stops waiting and reports back that the file took too long to process.
+</Warning>
 
 <Note>
 This integration requires that you have a Pinterest Company Account.

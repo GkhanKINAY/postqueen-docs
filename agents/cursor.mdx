@@ -81,7 +81,7 @@ Before writing a word, it asks each channel what it accepts. The response carrie
 postqueen integrations:settings <integration-id>
 ```
 
-Then it creates each post with `-t draft`, which tells her to hold it for you rather than queue it for publishing. The settings schema is validated even for a draft, so X still needs its `who_can_reply_post` value:
+Then it creates each post with `-t draft`, which saves it to the calendar rather than queueing it for publishing. The settings schema is validated even for a draft, so X still needs its `who_can_reply_post` value:
 
 ```bash
 postqueen posts:create \
@@ -133,7 +133,7 @@ The three drafts are now on your calendar at [app.postqueen.ai](https://app.post
 postqueen posts:status <post-id> --status schedule
 ```
 
-She runs on your terms. A post you schedule goes out at its time without another word from you, everything is visible on the calendar before it publishes, and drafts wait there for your approval.
+She runs on your terms. A post you schedule goes out at its time without another word from you, everything is visible on the calendar before it publishes, and a draft stays unscheduled until you publish it.
 
 ## FAQ
 
@@ -148,7 +148,7 @@ She runs on your terms. A post you schedule goes out at its time without another
     Yes, and that is the point of running her here. Cursor's agent can read your changelog, your release notes or the diff itself, then turn them into posts shaped for each channel. You still see every draft on the calendar before anything reaches an audience.
   </Accordion>
   <Accordion title="Will it publish without asking me?">
-    Only if you set it up that way. Cursor asks for approval before running MCP tools by default, so keep that on for `integrationSchedulePostTool`. On the CLI side, `-t draft` holds each post on the calendar until you approve it.
+    Only if you set it up that way. Cursor asks for approval before running MCP tools by default, so keep that on for `integrationSchedulePostTool`. On the CLI side, `-t draft` saves each post to the calendar without scheduling it.
   </Accordion>
   <Accordion title="Can one brief cover my other channels too?">
     Yes. PostQueen connects 30+ networks, so the same brief can become posts for every channel you have connected, each one adapted to what that channel accepts.

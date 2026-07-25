@@ -98,7 +98,7 @@ Finally it reads back what it queued, so you get a confirmation instead of a pro
 postqueen posts:list
 ```
 
-The post now sits on your calendar at [app.postqueen.ai](https://app.postqueen.ai). She runs on your terms: leave it there and she publishes it at nine tomorrow, on time, without another word from you. Want to look first? Add `-t draft` to the same command and she holds the post until you approve it on the calendar.
+The post now sits on your calendar at [app.postqueen.ai](https://app.postqueen.ai). She runs on your terms: leave it there and she publishes it at nine tomorrow, on time, without another word from you. Want to look first? Add `-t draft` to the same command and the post lands on the calendar unscheduled, waiting until you publish it.
 
 <Tip>
 Over MCP the conversation is the same and only the plumbing changes. Claude Code calls `integrationList`, brings media in with `uploadFromUrlTool` when it has a public URL, then schedules with `integrationSchedulePostTool`. Each tool is documented in the [MCP tool reference](/mcp/tools).
@@ -117,7 +117,7 @@ Over MCP the conversation is the same and only the plumbing changes. Claude Code
     Everything the CLI can do. It lists your channels and reads what each one accepts, creates scheduled posts or drafts with media attached, and pulls analytics once they are live. Commands print a one-line header and then JSON, so the agent reads a field rather than guessing at wording on screen. Pipe through `tail -n +2` before `jq`.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
-    Yes. Ask for drafts and she holds each post on the calendar until you approve it there. Anything already scheduled is visible on the same calendar before it goes out, so you can still edit or delete it.
+    Yes. Ask for drafts and each post lands on the calendar unscheduled, waiting until you publish it there. Anything already scheduled is visible on the same calendar before it goes out, so you can still edit or delete it.
   </Accordion>
   <Accordion title="Does the integration cost extra?">
     No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.

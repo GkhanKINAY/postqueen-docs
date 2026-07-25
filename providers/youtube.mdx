@@ -1,9 +1,47 @@
 ---
 title: YouTube
 description: 'How to Add YouTube to Your System'
+icon: /images/channels/youtube.svg
 ---
 
+<img src="/images/channels/youtube.svg" alt="YouTube" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to YouTube
+
+One video, one title and one description, uploaded and live at the minute you picked. YouTube is the only network in the list where the attachment is the whole post.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    5,000 characters in the description. Titles run 2 to 100
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Exactly one video, and it has to be a video
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Video upload, public, unlisted or private
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the channel and for each video
+  </Card>
+</CardGroup>
+
+Channel numbers come back as estimated minutes watched, average view duration and average view percentage, alongside subscribers gained, subscribers lost and likes. Per video she reads views and likes, plus comments and favorites.
+
+| | |
+|---|---|
+| **Post settings** | `title`, `type`, `tags`, `thumbnail`, `selfDeclaredMadeForKids`. Full schema in the [YouTube settings reference](/public-api/providers/youtube) |
+| **Connect flow** | Two steps. You authorize the Google app, then pick which channel to attach |
+| **Automations** | None |
+
+<Warning>
+What YouTube turns away:
+
+- **You need one media**, and **Item must be a video**. No text posts, no image posts, no second attachment.
+- Tags share a budget: **The maximum allowed is 500 characters in total.** A tag containing a space costs two extra characters, because YouTube wraps it in quotes.
+- Thumbnails have to be JPEG or PNG, and an unverified channel cannot set one at all. The video still uploads, the thumbnail is what gets dropped.
+</Warning>
 
 Follow the instructions as available in the [Obtaining authorization credentials](https://developers.google.com/youtube/registering_an_application).
 

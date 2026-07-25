@@ -1,9 +1,46 @@
 ---
 title: Mastodon
 description: 'How to add Mastodon to your system'
+icon: /images/channels/mastodon.svg
 ---
 
+<img src="/images/channels/mastodon.svg" alt="Mastodon" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Mastodon
+
+Your instance sets the house rules and she works inside them. Five hundred characters, media uploaded through the instance itself, and every status public.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    500 characters per status.
+  </Card>
+  <Card title="Media" icon="image">
+    Images and video, uploaded to your instance media endpoint with alt text kept. She adds no count limit of her own, so the instance rules apply.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A status, then replies threaded underneath it as comments.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Mastodon is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | Nothing beyond `__type`. The instance a post lands on comes from the connected channel, not from the settings block: [Mastodon settings](/public-api/providers/mastodon). |
+| Connect flow | One step, OAuth2 against the instance in `MASTODON_URL`, with the scopes `write:statuses`, `profile` and `write:media`. |
+| Automations | None on this network. |
+| Publish rate | Five posts at a time, since Mastodon instances are usually generous. |
+
+<Warning>
+Every status she sends is posted with visibility `public`. There is no unlisted, followers-only or direct option on this connector.
+
+If the instance turns your account off, reconnecting is the only fix, and the message you will see is **"Your login is currently disabled"**.
+</Warning>
+
+## Set up Mastodon
 
 Mastodon client registration does not happen in a web interface. You talk to the API directly, and `curl` is the shortest way to register a new client:
 

@@ -1,9 +1,47 @@
 ---
 title: Threads
 description: 'How to add Threads to your system'
+icon: /images/channels/threads.svg
 ---
 
+<img src="/images/channels/threads.svg" alt="Threads" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
 <Snippet file="never-share.mdx" />
+
+## What she can post to Threads
+
+Five hundred characters, no settings panel, nothing to configure. Threads is the shortest hop between a written thought and a published one, and she can keep replying to her own post to build the thread out.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    500 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. One image, one video, or a carousel
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Text post, media post, carousel, reply
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the account and for each post
+  </Card>
+</CardGroup>
+
+Numbers come back as views, likes and replies, plus reposts and quotes, at both the account and the post level.
+
+| | |
+|---|---|
+| **Post settings** | None. Threads takes `__type` and nothing else, as shown in the [Threads settings reference](/public-api/providers/threads) |
+| **Connect flow** | One step. You authorize the account and she attaches it |
+| **Automations** | Auto plug post, which adds a follow-up reply once the post passes a like count you choose |
+
+<Warning>
+What Threads sends back when something does not fit:
+
+- **Post text exceeds 500 characters limit.**
+- **One of the media URLs is invalid or inaccessible.** Threads fetches media by URL, so upload it to PostQueen first and the URL resolves.
+- **Error from Meta: We restrict certain activity to protect our community.** Slow down and try again later.
+</Warning>
 
 <Note>
 This integration requires that you have setup a Meta for Developers account already. You can start by going to the [Meta/Facebook Developer Portal](https://developers.facebook.com/apps).

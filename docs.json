@@ -113,29 +113,121 @@
             "group": "Talk to Her",
             "pages": [
               "agents/overview",
-              "agents/why-agents"
+              "agents/why-agents",
+              "agents/skill-install"
             ]
           },
           {
             "group": "Chat Agents",
             "pages": [
               "agents/openclaw",
-              "agents/hermes"
+              "agents/hermes",
+              "agents/chat-channels",
+              "agents/claude-apps"
             ]
           },
           {
             "group": "Coding Agents",
             "pages": [
               "agents/claude-code",
-              "agents/chatgpt",
+              "agents/cursor",
               "agents/codex",
-              "agents/cursor"
+              "agents/chatgpt",
+              "agents/gemini-cli",
+              "agents/other-agents"
             ]
           }
         ]
       },
       {
-        "tab": "Public API",
+        "tab": "Automation",
+        "groups": [
+          {
+            "group": "Start here",
+            "pages": [
+              "automation/overview"
+            ]
+          },
+          {
+            "group": "No-code platforms",
+            "pages": [
+              "automation/n8n",
+              "automation/zapier",
+              "automation/make"
+            ]
+          },
+          {
+            "group": "Triggers and feeds",
+            "pages": [
+              "automation/webhooks",
+              "automation/rss-autopost"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "MCP",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "mcp/introduction",
+              "mcp/setup"
+            ]
+          },
+          {
+            "group": "Clients",
+            "pages": [
+              "mcp/clients/claude-code",
+              "mcp/clients/claude-desktop",
+              "mcp/clients/claude-app",
+              "mcp/clients/chatgpt",
+              "mcp/clients/cursor",
+              "mcp/clients/codex",
+              "mcp/clients/gemini-cli",
+              "mcp/clients/other-clients"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "mcp/tools",
+              "mcp/examples"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "CLI",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "cli/introduction",
+              "cli/authentication"
+            ]
+          },
+          {
+            "group": "Usage",
+            "pages": [
+              "cli/managing-posts",
+              "cli/integrations",
+              "cli/media-upload",
+              "cli/analytics"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "cli/command-reference",
+              "cli/platform-examples",
+              "cli/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API",
         "groups": [
           {
             "group": "Overview",
@@ -197,17 +289,13 @@
             ]
           },
           {
-            "group": "Automation",
+            "group": "Build on PostQueen",
             "pages": [
-              "automation/n8n",
-              "automation/zapier",
-              "automation/make",
-              "automation/webhooks",
-              "automation/rss-autopost"
+              "public-api/oauth"
             ]
           },
           {
-            "group": "Provider Settings",
+            "group": "Posting settings by platform",
             "pages": [
               "public-api/providers/x",
               "public-api/providers/linkedin",
@@ -241,78 +329,6 @@
               "public-api/providers/kick",
               "public-api/providers/twitch",
               "public-api/providers/moltbook"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "CLI",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "cli/introduction",
-              "cli/authentication"
-            ]
-          },
-          {
-            "group": "Usage",
-            "pages": [
-              "cli/managing-posts",
-              "cli/integrations",
-              "cli/media-upload",
-              "cli/analytics"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "cli/command-reference",
-              "cli/platform-examples",
-              "cli/troubleshooting"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "MCP",
-        "groups": [
-          {
-            "group": "Getting Started",
-            "pages": [
-              "mcp/introduction",
-              "mcp/setup"
-            ]
-          },
-          {
-            "group": "Clients",
-            "pages": [
-              "mcp/clients/claude-code",
-              "mcp/clients/claude-desktop",
-              "mcp/clients/claude-app",
-              "mcp/clients/chatgpt",
-              "mcp/clients/cursor",
-              "mcp/clients/codex",
-              "mcp/clients/gemini-cli",
-              "mcp/clients/other-clients"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "mcp/tools",
-              "mcp/examples"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Developer Apps (OAuth2)",
-        "groups": [
-          {
-            "group": "Build on PostQueen",
-            "pages": [
-              "public-api/oauth"
             ]
           }
         ]
@@ -386,16 +402,20 @@
         "header": "Developers",
         "items": [
           {
-            "label": "Public API",
-            "href": "/public-api/introduction"
+            "label": "Agents",
+            "href": "/agents/overview"
+          },
+          {
+            "label": "MCP",
+            "href": "/mcp/introduction"
           },
           {
             "label": "CLI",
             "href": "/cli/introduction"
           },
           {
-            "label": "MCP",
-            "href": "/mcp/introduction"
+            "label": "API",
+            "href": "/public-api/introduction"
           }
         ]
       },
