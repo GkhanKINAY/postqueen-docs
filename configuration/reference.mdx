@@ -239,7 +239,6 @@ ships with one). The scheduling architecture: [How PostQueen works](/howitworks)
 |---|---|
 | `MCP_URL` | URL the frontend uses to advertise the MCP endpoint to clients. |
 | `AGENT_API_KEY` | Shared secret used by the agent runtime to call privileged endpoints. |
-| `AGENT_MEDIA_SSO_KEY` | Signing key for short-lived agent-media SSO tokens. |
 | `BACKEND_URL` | Legacy alias for `NEXT_PUBLIC_BACKEND_URL` in a few server contexts. |
 
 ---
@@ -326,6 +325,7 @@ a rebuild before they take effect.
 | `NEXT_PUBLIC_POLOTNO` | Polotno API key for the image editor. |
 | `NEXT_PUBLIC_VERSION` | Version string shown in the footer. |
 | `NEXT_PUBLIC_APP_VERSION` | Mobile/web version label. |
+| `CHATBASE_BOT_ID` and `CHATBASE_TOKEN` | The in-app support widget. It loads only when both are set, and the bot has to be one you own: its agent can offer the signed-in user a refund on their own subscription, behind a confirmation dialog showing the amount. Leave both unset and no widget loads. |
 | `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | Narrower than the name suggests. It replaces `NEXT_PUBLIC_BACKEND_URL` in one place only: the `token_endpoint` the MCP server advertises in its OAuth discovery document. Set it when your MCP clients have to reach that endpoint at a different address, such as through a tunnel. Nothing else in the app reads it. |
 
 ---

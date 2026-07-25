@@ -31,12 +31,12 @@ Using docker images? Point your external proxy at port 5000 and nothing else. On
 ```mermaid
 graph TD;
 	A[Your Browser] -->|HTTPS 443/tcp| B[Your Reverse Proxy]
-	B -->|HTTP 5000/tcp| C["Internal Proxy (Caddy)"]
+	B -->|HTTP 5000/tcp| C["Internal Proxy (nginx)"]
 
 	subgraph "PostQueen Container"
 	C -->|4200/tcp| D[Frontend Service]
 	C -->|3000/tcp| E[Backend Service]
-    C -->|/api| H[uploads]
+    C -->|/uploads| H[uploads on disk]
 	end
 
 	E -->|5432/tcp| F[Postgres Container]

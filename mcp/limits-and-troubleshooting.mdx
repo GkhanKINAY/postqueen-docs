@@ -17,7 +17,7 @@ You have a working connector and an agent that schedules beautifully. Then you a
 | Delete a post | No tool deletes posts | [`DELETE /posts/{id}`](/public-api/posts/delete), or `postqueen posts:delete <id>` |
 | Delete every post in a group | No tool | [`DELETE /posts/group/{group}`](/public-api/posts/delete-by-group) |
 | Move a post between draft and schedule | `integrationSchedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |
-| Read analytics | No tool returns metrics | [`GET /analytics/{integration}`](/public-api/analytics/platform) and [`GET /analytics/post/{postId}`](/public-api/analytics/post), or `postqueen analytics:platform` |
+| Read analytics | No tool returns metrics | [`GET /analytics/{integration}`](/public-api/analytics/platform) and [`GET /analytics/post/{postId}`](/public-api/analytics/post), or `postqueen analytics:platform <id>` |
 | See what published and what failed | No notification tool | [`GET /notifications`](/public-api/notifications/list), 100 per page, newest first |
 | Confirm your key still reaches her | No tool | [`GET /is-connected`](/public-api/integrations/is-connected) |
 | Find the next open slot on a channel | No tool | [`GET /find-slot/{id}`](/public-api/integrations/find-slot) |

@@ -77,7 +77,7 @@ postqueen posts:create \
 </Warning>
 
 <Note>
-`postqueen auth:login` runs an OAuth2 device flow against a self-hosted auth server. There is no hosted auth server at the moment, so the API key is the route to take on the hosted service.
+`postqueen auth:login` runs an OAuth2 device flow against `cli-auth.postqueen.ai` unless you point it elsewhere with `--auth-server` or `POSTQUEEN_AUTH_SERVER`. That host is not serving yet, so on the hosted service the API key is the route to take today, and self-hosters can run the auth server themselves in the meantime.
 </Note>
 
 ## The core workflow
