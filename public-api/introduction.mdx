@@ -50,6 +50,22 @@ Building an app for other PostQueen users? Use [OAuth2 Authentication](/public-a
 curl -H "Authorization: pos_your-oauth-token" https://api.postqueen.ai/public/v1/integrations
 ```
 
+### Which one you want
+
+Both reach the same endpoints. The difference is whose account you are acting on.
+
+| | API key | OAuth token |
+| --- | --- | --- |
+| Acts as | Your own organization | The organization of the user who authorized you |
+| Good for | Your own scripts and automation | A product other PostQueen users sign in to |
+| Lifetime | No expiry | Follows the grant. The code that produced it is single-use and short-lived |
+| Rotating it | Regenerate in **Settings > Developers > Public API**, which takes the old one out immediately | Rotate the client secret in your OAuth app settings |
+
+<Note>
+An API key has no expiry and nothing rotates it on a schedule. It stops working when you
+regenerate it and not before, so treat it as a password rather than a session.
+</Note>
+
 ## Base URL
 
 | Environment | Base URL |

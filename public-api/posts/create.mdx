@@ -111,3 +111,28 @@ Platforms: `threads`, `mastodon`, `bluesky`, `telegram`, `nostr`, `vk`
 ## Detailed Provider Settings
 
 Schemas and examples for each platform: [Provider Settings](/public-api/providers/x).
+
+## Body size
+
+<Warning>
+**Do not inline image data.** This endpoint falls back to the framework's default body limit of
+roughly **100 kB**, which a single base64 image clears easily, and you get a
+`413 PayloadTooLargeError` before anything is validated.
+
+The 50 MB limit you may have read about applies to the internal routes the web interface uses,
+not to this one.
+</Warning>
+
+Upload first, then reference what comes back:
+
+```bash
+# 1. upload the file
+curl -X POST "https://api.postqueen.ai/public/v1/upload" \
+  -H "Authorization: your-api-key" \
+  -F "file=@photo.jpg"
+
+# 2. put the returned id and path in the post body's image array
+```
+
+[Upload a File](/public-api/uploads/upload-file) lists the accepted types, and
+[Upload from URL](/public-api/uploads/upload-from-url) does the same for media already on the web.
