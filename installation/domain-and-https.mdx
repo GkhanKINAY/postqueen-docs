@@ -1,6 +1,7 @@
 ---
 title: Domain and HTTPS
 description: 'What a reverse proxy is, why PostQueen needs one, and how to choose'
+icon: 'lock'
 ---
 
 If you followed [Deploy to a server](/installation/production), PostQueen is running but only
@@ -116,6 +117,11 @@ curl -I https://postqueen.example.com
 `HTTP/2 200` means the proxy, the certificate and PostQueen are all doing their jobs. Then open
 the address in a browser and sign in. If the page loads but sign-in does not stick, the
 certificate is fine and the URL settings above are what to check.
+
+<Check>
+**Your install is live on your own domain, over HTTPS.** The padlock is real, the certificate
+renews itself, and sign-in holds between page loads.
+</Check>
 
 ## Next Steps
 

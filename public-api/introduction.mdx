@@ -5,7 +5,9 @@ description: 'Getting started with the PostQueen Public API'
 
 Scheduling, media and analytics are all public API calls, which is why agents drive her so well. REST at `https://api.postqueen.ai/public/v1`, with your API key in the `Authorization` header. That key is the only setup: your first scheduled post is one `POST` away.
 
-<img src="/images/brand/api-client.svg" alt="POST /public/v1/posts: the request body and the 201 response with the scheduled post ids" />
+<Frame>
+  <img src="/images/brand/api-client.svg" alt="POST /public/v1/posts: the request body and the 201 response with the scheduled post ids" />
+</Frame>
 
 ## SDKs & Integrations
 
@@ -358,3 +360,20 @@ curl -X POST "https://api.postqueen.ai/public/v1/posts" \
   ]
 }
 ```
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Schedule your first post" icon="paper-plane" href="/public-api/posts/create">
+    The create endpoint, field by field, with a worked request.
+  </Card>
+  <Card title="Find your channel IDs" icon="plug" href="/public-api/integrations/list">
+    Every connected channel, with the id every other call needs.
+  </Card>
+  <Card title="Use the typed client" icon="cube" href="/public-api/sdk">
+    `@postqueen/node`, where each method maps to one endpoint.
+  </Card>
+  <Card title="Build for other people" icon="key" href="/public-api/oauth">
+    OAuth2 tokens that act on your users' behalf, so nobody hands over a key.
+  </Card>
+</CardGroup>

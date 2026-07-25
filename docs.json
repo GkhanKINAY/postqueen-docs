@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "mint",
   "name": "PostQueen Documentation",
   "colors": {
     "primary": "#7c3aed",
@@ -8,25 +8,41 @@
     "dark": "#6d28d9"
   },
   "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "system"
+  },
+  "background": {
+    "decoration": "grid"
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs",
+    "codeblocks": "system"
+  },
+  "icons": {
+    "library": "fontawesome"
+  },
+  "search": {
+    "prompt": "Search channels, the API, self-hosting…"
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "User Guide",
+        "icon": "book-open",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "Quick Start",
+            "icon": "rocket",
             "pages": [
               "introduction",
               "quickstart",
               "howitworks",
-              "which-interface",
-              "faq",
-              "support",
-              "compliance"
+              "which-interface"
             ]
           },
           {
             "group": "Using PostQueen",
+            "icon": "calendar-days",
             "pages": [
               "using/connect-a-channel",
               "using/calendar",
@@ -42,121 +58,93 @@
               "using/teams-and-collaboration",
               "using/third-party-integrations",
               "using/notifications",
-              "using/settings",
-              "using/plans-and-limits"
+              "using/settings"
             ]
           },
           {
-            "group": "Self-Hosting",
+            "group": "Your Channels",
+            "icon": "plug",
             "pages": [
-              "installation/overview",
-              "installation/quickstart-local",
-              "installation/production",
-              "installation/system-requirements",
-              "installation/docker-compose",
+              "providers/overview",
               {
-                "group": "Domain & HTTPS",
+                "group": "Social networks",
+                "icon": "share-nodes",
+                "expanded": false,
                 "pages": [
-                  "installation/domain-and-https",
-                  "reverse-proxies/caddy",
-                  "reverse-proxies/nginx",
-                  "reverse-proxies/traefik",
-                  "reverse-proxies/websockets-and-dev"
+                  "providers/instagram",
+                  "providers/facebook",
+                  "providers/threads",
+                  "providers/x-twitter",
+                  "providers/linkedin",
+                  "providers/linkedin-page",
+                  "providers/tiktok",
+                  "providers/pinterest",
+                  "providers/bluesky",
+                  "providers/mastodon",
+                  "providers/farcaster",
+                  "providers/nostr",
+                  "providers/vk",
+                  "providers/mewe",
+                  "providers/tumblr",
+                  "providers/dribbble"
                 ]
               },
-              "installation/backups-and-upgrades",
               {
-                "group": "Other install methods",
+                "group": "Video and streaming",
+                "icon": "video",
+                "expanded": false,
                 "pages": [
-                  "installation/docker",
-                  "installation/kubernetes-helm",
-                  "installation/development",
-                  "installation/devcontainer"
+                  "providers/youtube",
+                  "providers/twitch",
+                  "providers/kick"
+                ]
+              },
+              {
+                "group": "Communities and chat",
+                "icon": "comments",
+                "expanded": false,
+                "pages": [
+                  "providers/reddit",
+                  "providers/lemmy",
+                  "providers/discord",
+                  "providers/slack",
+                  "providers/telegram",
+                  "providers/whop",
+                  "providers/skool",
+                  "providers/moltbook"
+                ]
+              },
+              {
+                "group": "Publishing and business",
+                "icon": "newspaper",
+                "expanded": false,
+                "pages": [
+                  "providers/wordpress",
+                  "providers/medium",
+                  "providers/devto",
+                  "providers/hashnode",
+                  "providers/listmonk",
+                  "providers/google-my-business"
                 ]
               }
             ]
           },
           {
-            "group": "Configuration",
+            "group": "Plans and account",
+            "icon": "credit-card",
             "pages": [
-              "configuration/reference",
-              "configuration/emails",
-              "configuration/uploads",
-              "configuration/r2",
-              "configuration/oauth",
-              "configuration/rate-limits",
-              "configuration/short-links",
-              "configuration/polotno",
-              "configuration/chrome-extension"
-            ]
-          },
-          {
-            "group": "Troubleshooting",
-            "pages": [
-              "troubleshooting/overview",
-              "troubleshooting/post-failed",
-              "troubleshooting/oauth-connect",
-              "troubleshooting/uploads",
-              "troubleshooting/activation-and-login",
-              "troubleshooting/billing",
-              "troubleshooting/channel-limits",
-              "troubleshooting/known-issues",
-              "troubleshooting/self-host"
-            ]
-          },
-          {
-            "group": "Providers",
-            "pages": [
-              "providers/overview",
-              "configuration/create-provider",
-              "providers/instagram",
-              "providers/facebook",
-              "providers/threads",
-              "providers/tumblr",
-              "providers/tiktok",
-              "providers/youtube",
-              "providers/twitch",
-              "providers/kick",
-              "providers/x-twitter",
-              "providers/linkedin",
-              "providers/linkedin-page",
-              "providers/pinterest",
-              "providers/google-my-business",
-              "providers/reddit",
-              "providers/lemmy",
-              "providers/discord",
-              "providers/slack",
-              "providers/telegram",
-              "providers/bluesky",
-              "providers/mastodon",
-              "providers/farcaster",
-              "providers/nostr",
-              "providers/vk",
-              "providers/mewe",
-              "providers/dribbble",
-              "providers/whop",
-              "providers/skool",
-              "providers/wordpress",
-              "providers/medium",
-              "providers/devto",
-              "providers/hashnode",
-              "providers/listmonk",
-              "providers/moltbook"
-            ]
-          },
-          {
-            "group": "Contributing",
-            "pages": [
-              "developer-guide"
+              "using/plans-and-limits"
             ]
           }
         ]
       },
       {
         "tab": "Agents",
+        "icon": "robot",
         "groups": [
           {
-            "group": "Talk to Her",
+            "group": "Start here",
+            "icon": "sparkles",
             "pages": [
               "agents/overview",
               "agents/why-agents",
@@ -164,7 +152,8 @@
             ]
           },
           {
-            "group": "Chat Agents",
+            "group": "Chat with her",
+            "icon": "comment-dots",
             "pages": [
               "agents/openclaw",
               "agents/hermes",
@@ -173,7 +162,8 @@
             ]
           },
           {
-            "group": "Coding Agents",
+            "group": "Coding agents",
+            "icon": "code",
             "pages": [
               "agents/claude-code",
               "agents/cursor",
@@ -181,20 +171,50 @@
               "agents/chatgpt",
               "agents/gemini-cli"
             ]
+          },
+          {
+            "group": "Connect over MCP",
+            "icon": "network-wired",
+            "pages": [
+              "mcp/introduction",
+              "mcp/setup",
+              {
+                "group": "Set up your client",
+                "icon": "laptop-code",
+                "expanded": false,
+                "pages": [
+                  "mcp/clients/claude-code",
+                  "mcp/clients/claude-desktop",
+                  "mcp/clients/claude-app",
+                  "mcp/clients/chatgpt",
+                  "mcp/clients/cursor",
+                  "mcp/clients/codex",
+                  "mcp/clients/gemini-cli",
+                  "mcp/clients/other-clients"
+                ]
+              },
+              "mcp/tools",
+              "mcp/examples",
+              "mcp/limits-and-troubleshooting",
+              "mcp/self-hosting"
+            ]
           }
         ]
       },
       {
         "tab": "Automation",
+        "icon": "bolt",
         "groups": [
           {
             "group": "Start here",
+            "icon": "flag",
             "pages": [
               "automation/overview"
             ]
           },
           {
             "group": "No-code platforms",
+            "icon": "diagram-project",
             "pages": [
               "automation/n8n",
               "automation/zapier",
@@ -203,6 +223,7 @@
           },
           {
             "group": "Triggers and feeds",
+            "icon": "rss",
             "pages": [
               "automation/webhooks",
               "automation/rss-autopost"
@@ -211,77 +232,66 @@
         ]
       },
       {
-        "tab": "MCP",
+        "tab": "Developer Guide",
+        "icon": "terminal",
         "groups": [
           {
             "group": "Getting Started",
+            "icon": "compass",
             "pages": [
-              "mcp/introduction",
-              "mcp/setup",
-              "mcp/self-hosting"
+              "developer/overview"
             ]
           },
           {
-            "group": "Clients",
-            "pages": [
-              "mcp/clients/claude-code",
-              "mcp/clients/claude-desktop",
-              "mcp/clients/claude-app",
-              "mcp/clients/chatgpt",
-              "mcp/clients/cursor",
-              "mcp/clients/codex",
-              "mcp/clients/gemini-cli",
-              "mcp/clients/other-clients"
-            ]
-          },
-          {
-            "group": "Reference",
-            "pages": [
-              "mcp/tools",
-              "mcp/limits-and-troubleshooting",
-              "mcp/examples"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "CLI",
-        "groups": [
-          {
-            "group": "Getting Started",
+            "group": "Command line",
+            "icon": "terminal",
             "pages": [
               "cli/introduction",
-              "cli/authentication"
-            ]
-          },
-          {
-            "group": "Usage",
-            "pages": [
+              "cli/authentication",
               "cli/managing-posts",
               "cli/integrations",
               "cli/media-upload",
-              "cli/analytics"
+              "cli/analytics",
+              "cli/command-reference",
+              "cli/platform-examples",
+              "cli/limits",
+              "cli/troubleshooting"
             ]
           },
           {
-            "group": "Reference",
+            "group": "SDK",
+            "icon": "cube",
             "pages": [
-              "cli/limits",
-              "cli/command-reference",
-              "cli/platform-examples",
-              "cli/troubleshooting"
+              "public-api/sdk"
+            ]
+          },
+          {
+            "group": "Build on PostQueen",
+            "icon": "key",
+            "pages": [
+              "public-api/oauth",
+              "public-api/oauth/authorize",
+              "public-api/oauth/token"
+            ]
+          },
+          {
+            "group": "Extend PostQueen",
+            "icon": "puzzle-piece",
+            "pages": [
+              "configuration/create-provider",
+              "developer-guide"
             ]
           }
         ]
       },
       {
-        "tab": "API",
+        "tab": "API Reference",
+        "icon": "code",
         "groups": [
           {
-            "group": "Overview",
+            "group": "Getting Started",
             "pages": [
-              "public-api/introduction",
-              "public-api/sdk"
+              "public-api/introduction"
             ]
           },
           {
@@ -338,49 +348,167 @@
             ]
           },
           {
-            "group": "Build on PostQueen",
+            "group": "Posting settings by platform",
             "pages": [
-              "public-api/oauth",
-              "public-api/oauth/authorize",
-              "public-api/oauth/token"
+              {
+                "group": "Social networks",
+                "expanded": false,
+                "pages": [
+                  "public-api/providers/instagram",
+                  "public-api/providers/instagram-standalone",
+                  "public-api/providers/facebook",
+                  "public-api/providers/threads",
+                  "public-api/providers/x",
+                  "public-api/providers/linkedin",
+                  "public-api/providers/linkedin-page",
+                  "public-api/providers/tiktok",
+                  "public-api/providers/pinterest",
+                  "public-api/providers/bluesky",
+                  "public-api/providers/mastodon",
+                  "public-api/providers/warpcast",
+                  "public-api/providers/nostr",
+                  "public-api/providers/vk",
+                  "public-api/providers/tumblr",
+                  "public-api/providers/dribbble"
+                ]
+              },
+              {
+                "group": "Video and streaming",
+                "expanded": false,
+                "pages": [
+                  "public-api/providers/youtube",
+                  "public-api/providers/twitch",
+                  "public-api/providers/kick"
+                ]
+              },
+              {
+                "group": "Communities and chat",
+                "expanded": false,
+                "pages": [
+                  "public-api/providers/reddit",
+                  "public-api/providers/lemmy",
+                  "public-api/providers/discord",
+                  "public-api/providers/slack",
+                  "public-api/providers/telegram",
+                  "public-api/providers/whop",
+                  "public-api/providers/skool",
+                  "public-api/providers/moltbook"
+                ]
+              },
+              {
+                "group": "Publishing and business",
+                "expanded": false,
+                "pages": [
+                  "public-api/providers/wordpress",
+                  "public-api/providers/medium",
+                  "public-api/providers/devto",
+                  "public-api/providers/hashnode",
+                  "public-api/providers/listmonk",
+                  "public-api/providers/gmb"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Self-Hosting",
+        "icon": "server",
+        "groups": [
+          {
+            "group": "Start here",
+            "icon": "compass",
+            "pages": [
+              "installation/overview",
+              "installation/system-requirements"
             ]
           },
           {
-            "group": "Posting settings by platform",
+            "group": "Install",
+            "icon": "download",
             "pages": [
-              "public-api/providers/x",
-              "public-api/providers/linkedin",
-              "public-api/providers/linkedin-page",
-              "public-api/providers/facebook",
-              "public-api/providers/instagram",
-              "public-api/providers/instagram-standalone",
-              "public-api/providers/threads",
-              "public-api/providers/tumblr",
-              "public-api/providers/bluesky",
-              "public-api/providers/mastodon",
-              "public-api/providers/warpcast",
-              "public-api/providers/nostr",
-              "public-api/providers/vk",
-              "public-api/providers/youtube",
-              "public-api/providers/tiktok",
-              "public-api/providers/reddit",
-              "public-api/providers/lemmy",
-              "public-api/providers/pinterest",
-              "public-api/providers/discord",
-              "public-api/providers/slack",
-              "public-api/providers/telegram",
-              "public-api/providers/dribbble",
-              "public-api/providers/medium",
-              "public-api/providers/devto",
-              "public-api/providers/hashnode",
-              "public-api/providers/wordpress",
-              "public-api/providers/listmonk",
-              "public-api/providers/gmb",
-              "public-api/providers/whop",
-              "public-api/providers/skool",
-              "public-api/providers/kick",
-              "public-api/providers/twitch",
-              "public-api/providers/moltbook"
+              "installation/quickstart-local",
+              "installation/production",
+              "installation/docker-compose"
+            ]
+          },
+          {
+            "group": "Domain and HTTPS",
+            "icon": "lock",
+            "pages": [
+              "installation/domain-and-https",
+              "reverse-proxies/caddy",
+              "reverse-proxies/nginx",
+              "reverse-proxies/traefik",
+              "reverse-proxies/websockets-and-dev"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "icon": "gear",
+            "pages": [
+              "configuration/reference",
+              "configuration/emails",
+              "configuration/uploads",
+              "configuration/r2",
+              "configuration/oauth",
+              "configuration/rate-limits",
+              "configuration/short-links",
+              "configuration/polotno",
+              "configuration/chrome-extension"
+            ]
+          },
+          {
+            "group": "Operations",
+            "icon": "box-archive",
+            "pages": [
+              "installation/backups-and-upgrades",
+              "troubleshooting/self-host"
+            ]
+          },
+          {
+            "group": "Other install methods",
+            "icon": "layer-group",
+            "pages": [
+              "installation/docker",
+              "installation/kubernetes-helm",
+              "installation/development",
+              "installation/devcontainer"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Help & Support",
+        "icon": "life-ring",
+        "groups": [
+          {
+            "group": "Support",
+            "icon": "headset",
+            "pages": [
+              "support",
+              "faq"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "icon": "wrench",
+            "pages": [
+              "troubleshooting/overview",
+              "troubleshooting/post-failed",
+              "troubleshooting/oauth-connect",
+              "troubleshooting/uploads",
+              "troubleshooting/activation-and-login",
+              "troubleshooting/billing",
+              "troubleshooting/channel-limits",
+              "troubleshooting/known-issues"
+            ]
+          },
+          {
+            "group": "Policies",
+            "icon": "scale-balanced",
+            "pages": [
+              "compliance"
             ]
           }
         ]
@@ -412,13 +540,20 @@
   ],
   "logo": {
     "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "dark": "/logo/dark.svg",
+    "href": "https://postqueen.ai"
   },
   "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "/support"
+      }
+    ],
     "primary": {
       "type": "button",
-      "label": "Start free for 7 days",
-      "href": "https://postqueen.ai"
+      "label": "Open the app",
+      "href": "https://app.postqueen.ai"
     }
   },
   "contextual": {
@@ -428,7 +563,17 @@
       "chatgpt",
       "claude",
       "cursor"
-    ]
+    ],
+    "display": "header"
+  },
+  "thumbnails": {
+    "appearance": "dark"
+  },
+  "errors": {
+    "404": {
+      "title": "That page moved, or never existed",
+      "description": "Try the search at the top, or start from the [User Guide](/introduction). If a link on our own site brought you here, [tell us](/support) and we will fix it."
+    }
   },
   "seo": {
     "metatags": {

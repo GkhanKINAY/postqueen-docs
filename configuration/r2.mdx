@@ -1,12 +1,17 @@
 ---
 title: R2 Configuration
 description: 'How to use Cloudflare R2 for file storage'
+icon: 'cloud'
 ---
 
-Cloudflare R2 stores your uploaded images and video outside the container, on a URL that is
-public over HTTPS. That matters for more than tidiness: several networks fetch your media from a
-URL rather than accepting the file directly, and it is the only workable option once you run
-more than one instance.
+Cloudflare R2 stores your uploaded images and video outside the container, reachable over HTTPS.
+That matters for more than tidiness: several networks fetch your media from a URL rather than
+accepting the file directly, and it is the only workable option once you run more than one
+instance.
+
+The bucket itself does not have to be public — PostQueen can serve media from your own domain and
+read it privately. Which way you go is decided in the "where media is read from" step below, and
+it is the choice on this page most worth reading twice.
 
 It has a free tier that covers most self-hosted installs.
 
@@ -21,13 +26,17 @@ with the local disk. This page is the setup, start to finish.
   <Step title="Create a new Bucket">
     In the dashboard sidebar, and head to the R2 page.
 
-    <img src="/images/r2/r2-page.png" alt="R2 Page" />
+    <Frame>
+      <img src="/images/r2/r2-page.png" alt="R2 Page" />
+    </Frame>
 
     Create a new Bucket.
     - Choose Automatic
     - Choose Standard
 
-    <img src="/images/r2/r2-create-bucket.png" alt="Create Bucket" />
+    <Frame>
+      <img src="/images/r2/r2-create-bucket.png" alt="Create Bucket" />
+    </Frame>
 
     <Warning>
     If you need your media to stay in a specific region for regulatory reasons —
@@ -41,29 +50,50 @@ with the local disk. This page is the setup, start to finish.
   <Step title="Create your R2 Token">
     Create your R2 Token by going to R2 Object Storage:
 
-    <img src="/images/r2/r2-object-storage.png" alt="R2 Object Storage" />
+    <Frame>
+      <img src="/images/r2/r2-object-storage.png" alt="R2 Object Storage" />
+    </Frame>
 
     Click on the API dropdown, and select [Manage API tokens](https://dash.cloudflare.com/?to=/:account/r2/api-tokens):
 
-    <img src="/images/r2/r2-manage-api-tokens.png" alt="Manage API tokens" />
+    <Frame>
+      <img src="/images/r2/r2-manage-api-tokens.png" alt="Manage API tokens" />
+    </Frame>
 
     Copy your Account ID for later, and click on "Create an API token":
 
-    <img src="/images/r2/r2-create-api-token.png" alt="Create API Token" />
+    <Frame>
+      <img src="/images/r2/r2-create-api-token.png" alt="Create API Token" />
+    </Frame>
 
     Create an Account API token:
 
-    <img src="/images/r2/r2-account-api-token.png" alt="Account API Token" />
+    <Frame>
+      <img src="/images/r2/r2-account-api-token.png" alt="Account API Token" />
+    </Frame>
 
     Under "Permissions" choose "Object Read & Write" and under "Specify bucket(s)" search for your created Bucket.
 
-    <img src="/images/r2/r2-token-permissions.png" alt="Permissions" />
+    <Frame>
+      <img src="/images/r2/r2-token-permissions.png" alt="Permissions" />
+    </Frame>
+
+    <Note>
+    **Scope it to this bucket, not to the account.** "Apply to all buckets"
+    hands whatever holds this token the run of your R2 account, and this one
+    lives in an environment variable on a web server. Should you later add a
+    bucket for backups, give that its own token rather than widening this one —
+    the two jobs have no reason to share credentials, and a backup tool has no
+    business being able to delete the media it is protecting.
+    </Note>
   </Step>
 
   <Step title="Copy your credentials">
     After the R2 Token is created, copy your "Access Key ID" and "Secret Access Key":
 
-    <img src="/images/r2/r2-copy-credentials.png" alt="Copy Credentials" />
+    <Frame>
+      <img src="/images/r2/r2-copy-credentials.png" alt="Copy Credentials" />
+    </Frame>
 
     Paste the respective information into your configuration.
 
@@ -90,17 +120,58 @@ CLOUDFLARE_JURISDICTION=""
     </Note>
   </Step>
 
-  <Step title="Configure Custom Domain and CORS policies">
-    Go to configuration and connect a custom domain (if you do not have one, you can use the one CloudFlare gives you.)
-    Add it to your .env file.
+  <Step title="Decide where media is read from">
+    `CLOUDFLARE_BUCKET_URL` is the address stored with every media row. It is
+    not only what your browser loads — **several networks fetch it with their
+    own servers** rather than accepting the file from you. Instagram and
+    Facebook take an `image_url`, and TikTok photo posts support nothing else.
+    So this address has to be reachable from the public internet, and it is
+    worth choosing deliberately.
+
+    | Option | Value | Trade |
+    |---|---|---|
+    | **Through PostQueen** | `https://your-host/api/uploads` | Your own domain, no rate limit, and **the bucket can stay private**. Media leaves through your server, so it uses your bandwidth. |
+    | **Custom domain** | `https://cdn.example.com` | Fastest and cheapest — served by Cloudflare's edge, never touching your server. Requires the domain to be hosted at Cloudflare. |
+    | **r2.dev URL** | `https://pub-….r2.dev` | Works with no setup, but Cloudflare rate-limits it and documents it as unfit for production, and a network that asks you to verify the domain you serve from cannot verify one that is not yours. |
+
+    Whichever you pick, it must **not** be the S3 API endpoint
+    (`…r2.cloudflarestorage.com`). That address refuses unsigned reads, so every
+    image would break.
+
+    Serving through PostQueen needs nothing in Cloudflare — just the setting:
+
+```env
+CLOUDFLARE_BUCKET_URL="https://your-host/api/uploads"
+```
+
+    <Note>
+    The `/api` prefix is required. Inside the container nginx maps `/uploads/`
+    to a local directory and only `/api/` reaches the backend.
+    </Note>
+
+    For a custom domain, connect it to the bucket in the R2 settings and use it
+    instead:
 
 ```env
 CLOUDFLARE_BUCKET_URL="https://cdn.example.com"
 ```
 
-    <img src="/images/r2/r2-custom-domain.png" alt="Custom Domain" />
+    <Frame>
+      <img src="/images/r2/r2-custom-domain.png" alt="Custom Domain" />
+    </Frame>
+  </Step>
 
-    Click to edit the CORS policy and add the following JSON:
+  <Step title="Set the CORS policy — only if the browser uploads directly">
+    By default the browser uploads to R2 itself, using a URL PostQueen signs for
+    it, and that is a cross-origin request the bucket has to allow.
+
+    <Note>
+    If you run with [`UPLOAD_VIA_SERVER=true`](/configuration/uploads), skip this
+    step. The browser never talks to R2 in that mode, so no CORS policy applies.
+    </Note>
+
+    Edit the CORS policy on the bucket and add the following, replacing the
+    origin with your own:
 
 ```json
 [
@@ -131,7 +202,33 @@ CLOUDFLARE_BUCKET_URL="https://cdn.example.com"
 ]
 ```
 
-    <img src="/images/r2/r2-cors-policy.png" alt="CORS Policy" />
+    `ExposeHeaders` is not decoration: a multipart upload needs the browser to
+    read each part's `ETag`, and it cannot without this.
+
+    <Frame>
+      <img src="/images/r2/r2-cors-policy.png" alt="CORS Policy" />
+    </Frame>
   </Step>
 </Steps>
+
+## Backing the bucket up
+
+Media that lives in R2 is no longer in a Docker volume, so a volume backup does
+not include it. [Backups and Upgrades](/installation/backups-and-upgrades)
+covers what that changes.
+
+Give the backup its own R2 token rather than reusing the application's. It needs
+to write to wherever backups go and to read the media bucket — nothing more, and
+in particular no reason to be able to delete the media it exists to protect.
+
+## Unfinished uploads
+
+A multipart upload that never completes leaves its parts in the bucket. They
+appear in no object listing and are still stored, so it is the kind of thing
+that grows quietly.
+
+Cloudflare adds a default lifecycle rule to every bucket that aborts them after
+seven days, visible under **Settings → Object lifecycle rules**. Nothing to set
+up; worth knowing it is what keeps an interrupted upload from costing you
+indefinitely.
 

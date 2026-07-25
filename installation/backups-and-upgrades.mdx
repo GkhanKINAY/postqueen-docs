@@ -1,6 +1,7 @@
 ---
 title: Backups and Upgrades
 description: 'Which volumes carry real data, how to restore them, and how to move her to a newer image'
+icon: 'box-archive'
 ---
 
 Run `docker volume ls` after a Compose install and six volumes come back. Two of them you could delete tonight and never notice, and a third is empty until you put something in it. The remaining three carry what no reinstall brings back, so those are the ones worth your disk space and your attention.
@@ -11,7 +12,7 @@ Run `docker volume ls` after a Compose install and six volumes come back. Two of
 |---|---|
 | `postgres-volume` | Her main database: your account, your connected channels, every post and draft |
 | `temporal-postgres-data` | Temporal's database, which carries the scheduled work that has not run yet |
-| `postqueen-uploads` | Media you uploaded, while `STORAGE_PROVIDER` is `local` |
+| `postqueen-uploads` | Media you uploaded, while `STORAGE_PROVIDER` is `local`. On R2 this volume stays empty and [the bucket is what you back up](#if-your-media-is-in-r2) |
 
 <Note>
 A fourth volume, `postqueen-config`, is mounted at `/config` and on a stock install it is empty. The shipped image reads its configuration from the container environment and from `/app/.env`, and nothing in it looks at `/config`. Back it up only if you put a file there yourself and you know what reads it.
@@ -68,6 +69,43 @@ Temporal's. Restore each archive into the image it came from.
 </Warning>
 
 A backup you have never restored is a guess. Try one on a spare machine before you need it for real.
+
+## If your media is in R2
+
+Everything above assumes `STORAGE_PROVIDER=local`. Move media to
+[Cloudflare R2](/configuration/r2) and `postqueen-uploads` stops filling up —
+along with it, a volume backup stops containing your media. The bucket becomes
+the thing to protect.
+
+<Warning>
+**Back up the database and the bucket as one.** Postgres stores only the *URL*
+of each media file, never the bytes. Restore a database from Monday next to a
+bucket from Friday and every post in between opens with broken media — nothing
+errors, the images are simply gone. Take them under the same timestamp and
+restore them together.
+</Warning>
+
+Copying a bucket is a bucket-to-bucket copy, which R2 performs server-side —
+nothing travels through your machine and there is no egress to pay for:
+
+```
+rclone copy r2:your-media-bucket r2:your-backup-bucket/media
+```
+
+<Note>
+`copy` rather than `sync`. A file deleted from the live bucket should stay in
+the backup, which is the entire reason for having one.
+</Note>
+
+Give that job **its own R2 token**, scoped to those two buckets: write where
+backups go, read the media. Reusing the application's token hands your backup
+tool the ability to delete the media it exists to protect, and reusing an
+account-wide token hands it everything else you keep in R2.
+
+One thing R2 handles for you: an interrupted multipart upload leaves parts
+behind that appear in no listing but still occupy storage. Every bucket ships
+with a lifecycle rule that aborts them after seven days, under
+**Settings → Object lifecycle rules**.
 
 ## Upgrading to a new image
 

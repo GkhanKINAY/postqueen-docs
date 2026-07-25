@@ -82,10 +82,10 @@ Follow the instructions as available in the [Obtaining authorization credentials
     https://www.googleapis.com/auth/yt-analytics.readonly
     ```
 
-    <Note>
+    <Info>
     While the app sits in **Testing**, only accounts you added as test users can connect. For an
     install you intend to keep, publish the app.
-    </Note>
+    </Info>
   </Step>
 
   <Step title="Fill in OAuth Details">
@@ -100,7 +100,9 @@ Follow the instructions as available in the [Obtaining authorization credentials
 
     Under "Authorized redirect URIs", insert your OAuth2 Redirect URI.
 
-    ![YouTube](/images/providers/youtube/youtube-001.png)
+    <Frame>
+      <img src="/images/providers/youtube/youtube-001.png" alt="The OAuth client configuration in Google Cloud Console, with the Authorized redirect URIs field" />
+    </Frame>
 
     After following all of the steps above you should be met with a screen that shows your client ID and client secret. Add these to your providers configuration.
 
@@ -113,15 +115,21 @@ YOUTUBE_CLIENT_SECRET=""
   <Step title="Add Test User">
     Add yourself as a test user of the application
 
-    ![YouTube](/images/providers/youtube/YouTube-Add-Test-Users.png)
+    <Frame>
+      <img src="/images/providers/youtube/YouTube-Add-Test-Users.png" alt="The OAuth consent screen test users panel, with the control for adding your own account" />
+    </Frame>
   </Step>
 
   <Step title="Activate YouTube's API">
     Go to "Enabled APIs and Services". Then click on "Enable APIs and Services". Search "YouTube Data API v3" and activate the API by selecting it and clicking "Enable". Do the same Process with "YouTube Analytics API" and "YouTube Reporting API".
 
-    ![Enabled APIs](/images/providers/youtube/YouTube-Enabled-APIs.png)
+    <Frame>
+      <img src="/images/providers/youtube/YouTube-Enabled-APIs.png" alt="The Enabled APIs and Services page in Google Cloud Console" />
+    </Frame>
 
-    ![Enabled APIs](/images/providers/youtube/Enable-APIs-and-Services.png)
+    <Frame>
+      <img src="/images/providers/youtube/Enable-APIs-and-Services.png" alt="The API library search results, with YouTube Data API v3 ready to enable" />
+    </Frame>
   </Step>
 
   <Step title="Restart and add the YouTube channel">
@@ -131,9 +139,9 @@ YOUTUBE_CLIENT_SECRET=""
 
 ## Additional Steps for Brand Accounts
 
-<Note>
+<Info>
 When using a Brand account you will need to set your APP to External and setup a test user. You do not need to publish the APP, but it does take time for the changes to propagate. You will also need to add the app to the trusted apps within your google workspace Admin.
-</Note>
+</Info>
 
 <Steps>
   <Step title="Go to admin.google.com">

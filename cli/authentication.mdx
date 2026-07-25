@@ -1,6 +1,7 @@
 ---
 title: Authentication
 description: 'Authenticate the PostQueen CLI with an API key, or self-host the optional OAuth2 device flow'
+icon: 'key'
 ---
 
 ## API Key (Recommended)
@@ -45,6 +46,17 @@ postqueen auth:status
 contact the server, so it will happily report a key that has been revoked. Treat it as "what am I
 configured with", not "does this still work".
 </Note>
+
+Because `auth:status` never contacts the server, the only real proof is a command that does:
+
+```bash
+postqueen integrations:list
+```
+
+<Check>
+Your connected channels come back as JSON. The key works, the URL is right, and every other
+command will reach her.
+</Check>
 
 Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same Settings screen.
 

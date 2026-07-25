@@ -1,13 +1,16 @@
 ---
 title: 'Claude Apps'
 description: 'Add her as a custom connector once on claude.ai or in Claude Desktop, and she answers on your laptop, your desktop and your phone'
+icon: 'mobile'
 ---
 
 ## Wherever you talk to Claude, she is in the room
 
 Sunday evening, phone in hand, and next week has nothing on the calendar yet. You describe the launch in two sentences, and by the time you put the phone down there are five posts waiting on your calendar, each one shaped for the channel it is going to.
 
-<img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
+<Frame>
+  <img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
+</Frame>
 
 Two surfaces, one connector. Claude Desktop takes her in **Settings > Connectors**, and claude.ai takes the same URL on the web. Connectors are tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
 
@@ -102,7 +105,9 @@ A plain `"url"` entry in `claude_desktop_config.json` does not work. That file o
     Not from the chat. There is no analytics tool in the MCP set, and no tool for listing or deleting posts either. Those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the `postqueen` CLI, which carries `posts:list`, `posts:delete` and `analytics:platform`.
   </Accordion>
   <Accordion title="Does the connector cost extra?">
-    <Snippet file="agent-plan-limits.mdx" /> Claude's own plan rules still apply, including the single custom connector on the Free plan.
+    <Snippet file="agent-plan-limits.mdx" />
+
+    Claude's own plan rules still apply, including the single custom connector on the Free plan.
   </Accordion>
 </AccordionGroup>
 

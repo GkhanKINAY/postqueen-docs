@@ -44,11 +44,11 @@ TikTok is strict about what it accepts:
 - **TikTok limits pending posts to 5 within any 24-hour period.** Those are posts waiting in your TikTok inbox, so clear them before sending more.
 </Warning>
 
-<Note>
+<Info>
 This integration requires that you have a TikTok developer account. It also requires that you have a public website, with https, and can upload files to that site to verify ownership.
 
 TikTok will also not allow http:// for your app redirect URI, so you will need to be accessing PostQueen from HTTPS.
-</Note>
+</Info>
 
 <Warning>
 **NOTE:** Photo posts are the ones TikTok pulls from a URL, so for those your media has to be publicly reachable over HTTPS; localhost or private routes such as `/uploads` will fail. Serve your uploads through a reverse proxy (e.g. [Caddy](/reverse-proxies/caddy)) or object storage such as [Cloudflare R2](/configuration/r2) with public access. Videos are streamed up by PostQueen itself, so a private path works for those.
@@ -72,7 +72,9 @@ In practice this means: before your TikTok developer app passes audit, TikTok ac
   <Step title="Create your app">
     Go here: [https://developers.tiktok.com/apps](https://developers.tiktok.com/apps)
 
-    ![Create a new app](/images/providers/tiktok/tiktok_create_app.png)
+    <Frame>
+      <img src="/images/providers/tiktok/tiktok_create_app.png" alt="Create a new app" />
+    </Frame>
 
     * **App Name:** `MyPostQueen`
     * **Redirect URI:** your PostQueen callback URL, shown in the next step

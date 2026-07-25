@@ -1,11 +1,14 @@
 ---
 title: Introduction
 description: 'Automate social media posting from the command line with the PostQueen CLI'
+icon: 'terminal'
 ---
 
 The PostQueen CLI puts her one command away in your terminal. Schedule a post to 30+ networks, upload the image that goes with it or pull last week's numbers, from a shell script, a CI job or an AI agent. Underneath it is the same [Public API](/public-api/introduction) the SDK and the n8n node run on. The data commands print JSON, so anything that can run a shell command can run your social media.
 
-<img src="/images/brand/terminal-claude.svg" alt="Claude Code schedules two launch posts to X and LinkedIn with the postqueen CLI" />
+<Frame>
+  <img src="/images/brand/terminal-claude.svg" alt="Claude Code schedules two launch posts to X and LinkedIn with the postqueen CLI" />
+</Frame>
 
 ## Installation
 
@@ -127,3 +130,20 @@ The data commands print a one-line header and then JSON, which makes the CLI eas
 </Note>
 
 Anything you can type here, an agent can run for you at six in the morning while you sleep. Why she works so well with agents: [Why agents love her](/agents/why-agents).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Get your key in place" icon="key" href="/cli/authentication">
+    Where the key lives, and the self-hosted URL shape that trips people up.
+  </Card>
+  <Card title="Schedule a post" icon="paper-plane" href="/cli/managing-posts">
+    Channels, threads and drafts, in one command.
+  </Card>
+  <Card title="Every flag" icon="book" href="/cli/command-reference">
+    The full reference, including which commands print plain text.
+  </Card>
+  <Card title="What it cannot do" icon="gauge" href="/cli/limits">
+    Thirteen of the API's twenty-two endpoints, and where the other nine live.
+  </Card>
+</CardGroup>
