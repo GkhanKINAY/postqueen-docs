@@ -83,24 +83,29 @@ postqueen integrations:trigger <integration-id> <method-name> -d '{"key":"value"
 
 ### Examples
 
-**Get Reddit flairs for a subreddit:**
+**Get Reddit flairs and restrictions for a subreddit:**
 ```bash
-postqueen integrations:trigger reddit-id getFlairs -d '{"subreddit":"programming"}'
+postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"programming"}'
 ```
 
-**Get YouTube playlists:**
+**Search subreddits by keyword:**
 ```bash
-postqueen integrations:trigger youtube-id getPlaylists
+postqueen integrations:trigger reddit-id subreddits -d '{"word":"programming"}'
 ```
 
-**Get LinkedIn company pages:**
+**Get Discord channels:**
 ```bash
-postqueen integrations:trigger linkedin-id getCompanies
+postqueen integrations:trigger discord-id channels
+```
+
+**Get Whop companies:**
+```bash
+postqueen integrations:trigger whop-id companies
 ```
 
 **Get Pinterest boards:**
 ```bash
-postqueen integrations:trigger pinterest-id getBoards
+postqueen integrations:trigger pinterest-id boards
 ```
 
 **Search Instagram audio for a Reel** (Facebook Business-linked channels only, empty `q` returns trending audio):
@@ -120,7 +125,7 @@ INTEGRATION_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(
 postqueen integrations:settings "$INTEGRATION_ID"
 
 # 3. Use tools to fetch dynamic data (e.g., flairs)
-postqueen integrations:trigger "$INTEGRATION_ID" getFlairs -d '{"subreddit":"programming"}'
+postqueen integrations:trigger "$INTEGRATION_ID" restrictions -d '{"subreddit":"programming"}'
 
 # 4. Create a post with the discovered settings
 postqueen posts:create \

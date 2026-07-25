@@ -55,7 +55,7 @@ Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over 
 | `postqueen integrations:list` | `--group <id>` | Lists your connected channels with their integration IDs. `--group` filters to one group (customer). |
 | `postqueen integrations:groups` | - | Lists all groups (customers) in your organization. |
 | `postqueen integrations:settings <id>` | - | Returns an `output` object describing one channel: the provider `rules`, the `maxLength` for content, and the `settings` schema plus the dynamic `tools` it offers. |
-| `postqueen integrations:trigger <id> <method>` | `-d, --data <json>` | Calls one of those dynamic tools, for example `getSubreddits` or `getPlaylists`. `-d` passes arguments as a JSON string. |
+| `postqueen integrations:trigger <id> <method>` | `-d, --data <json>` | Calls one of those dynamic tools, for example Reddit's `subreddits` or Pinterest's `boards`. `-d` passes arguments as a JSON string. |
 
 ```bash
 # Find the channel you want to post to
@@ -65,7 +65,7 @@ postqueen integrations:list
 postqueen integrations:settings reddit-123
 
 # Call one of its tools
-postqueen integrations:trigger reddit-123 searchSubreddits -d '{"query":"programming"}'
+postqueen integrations:trigger reddit-123 subreddits -d '{"word":"programming"}'
 ```
 
 <Tip>

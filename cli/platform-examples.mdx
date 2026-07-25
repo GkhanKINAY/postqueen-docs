@@ -42,7 +42,7 @@ postqueen posts:create \
 
 ```bash
 # 1. Get available flairs
-postqueen integrations:trigger reddit-id getFlairs -d '{"subreddit":"programming"}'
+postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"programming"}'
 
 # 2. Post with a flair
 postqueen posts:create \
@@ -57,7 +57,7 @@ postqueen posts:create \
 ```bash
 #!/bin/bash
 REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
-FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" getFlairs -d '{"subreddit":"programming"}' | tail -n +2)
+FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" restrictions -d '{"subreddit":"programming"}' | tail -n +2)
 FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
 
 postqueen posts:create \
