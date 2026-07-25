@@ -1,100 +1,114 @@
 ---
 title: Known Issues
-description: 'Live tracker of bugs we are aware of, with workarounds where possible'
+description: 'Bugs we have confirmed, with what we could and could not verify'
 ---
 
-Bugs we have confirmed and are tracking. Each entry lists a workaround if
-one exists. Once a fix ships, the entry will be removed (or moved into
-release notes).
+**Last reviewed 25 July 2026, against `v3.0.9`.** Each entry says how it was checked, because an
+entry that is quietly stale is worse than no entry: it tells you a working feature is broken.
 
-If you hit something that is not here, please report it on
-[GitHub](https://github.com/GkhanKINAY/postqueen-app/issues) or email
-[support@postqueen.ai](mailto:support@postqueen.ai).
+<Note>
+There is no public issue tracker behind these yet. The repository has issue tracking enabled and
+nothing filed, so there is no thread to follow for status. If one of these matters to you,
+[open an issue](https://github.com/GkhanKINAY/postqueen-app/issues) and it becomes the place this
+page points to.
+</Note>
 
-## Channel connect
+## Confirmed in the code
 
-### TikTok connect page sometimes crashes
+These were traced to the line that causes them.
 
-The `/integrations/social/tiktok` page can fail with `cannot read
-properties of undefined` for a subset of accounts.
+### `DELETE /public/v1/posts/:id` returns 500 for an id that does not exist
 
-**Workaround:** retry; if it persists, open the connect flow in a fresh
-incognito window. Once the channel is added the rest of the TikTok UI
-works normally.
+The handler looks the post up and then reads its group without checking it found one, so a
+missing id throws instead of returning a clean `404`.
 
-### X (Twitter) connect page sometimes crashes
+**Workaround:** if your client treats "already deleted" as success, match on the `500` from this
+endpoint specifically. Other `500`s here are real failures, so do not swallow the status code
+generally.
 
-The X connect screen can throw a `t/r is not a function` error after the
-provider redirect.
+**Note on the error text:** it is a plain JavaScript `TypeError` about reading `integrationId` of
+undefined, not a Prisma error. Earlier versions of this page said Prisma, which sent people
+looking for the wrong signature.
 
-**Workaround:** start the connect flow over from the Channels page rather
-than refreshing the broken screen.
+### `PUT /public/v1/posts/:id/release-id` can still return 500
 
-### GMB connect page shows session-recording errors
+The original cause is fixed: the value is coerced to a string now, so a non-string body no longer
+produces a data-validation error.
 
-The Google My Business connect page surfaces session-replay errors that
-mask the underlying flow.
+What remains is different. The update matches on the post id, your organization and a release id
+that is not yet set, and when nothing matches, the database error surfaces uncaught as a `500`.
+So you get it for a wrong id, a post in another organization, or a post whose release id is
+already filled in.
 
-**Workaround:** ignore the overlay error; the OAuth handshake usually
-still completes. Refresh the Channels page after authorizing on
-Google's side.
+**Workaround:** confirm the post exists and has no release id before calling. Validating the body
+shape, which this page used to recommend, no longer prevents the common case.
 
-## Posting
+### An upload cannot be cancelled once it starts
 
-### `/launches` page null-deref during loading
+The uploader is rendered with its cancel, pause and retry controls hidden, and there is no abort
+path behind them.
 
-The launches view can throw null-reference errors while data is still
-loading, briefly showing a broken state.
+**Workaround:** let it finish, then delete the asset from the post.
 
-**Workaround:** refresh the page once data arrives. State usually
-settles within a couple of seconds.
+## Reported, not reproducible from the code
 
-## Media generation
+Real reports, but we could not confirm them by reading the source, so treat them as leads. If you
+hit one, the detail in an issue would let us fix it properly.
 
-### AI image generation returns 400 "Unknown parameter: 'response_format'"
+<AccordionGroup>
+  <Accordion title="TikTok connect page crashes for some accounts">
+    Reported as `cannot read properties of undefined` on the connect page. The code path was
+    substantially rewritten since the report and now guards its response parsing, so we cannot
+    point at a line.
 
-`/media/generate-image-with-prompt`, `/posts/generator`, and
-`/media/generate-image` can fail against newer OpenAI API versions
-because the request uses a parameter that has since changed names.
+    **If it happens:** retry, and if it persists, run the connect flow in a fresh incognito
+    window.
+  </Accordion>
 
-**Workaround:** no client-side workaround. A fix is needed in the
-PostQueen backend. Use externally-generated images and the
-[`/public/v1/upload`](/public-api/uploads/upload-file) endpoint in the
-meantime.
+  <Accordion title="X connect page throws t/r is not a function">
+    Those are minified names, so there is nothing to search for without the original error and a
+    source map.
 
-### "Failed to generate video" via Transloadit
+    **If it happens:** start again from the channel list rather than refreshing the broken screen.
+  </Accordion>
 
-Long-running video assemblies can hit Transloadit's assembly expiry
-window.
+  <Accordion title="Google My Business connect page shows session-recording errors">
+    Session replay is on at full sampling, so the mechanism is certainly still there. Whether the
+    overlay still appears on this page specifically, we could not confirm without running it.
 
-**Workaround:** retry the generation. Shorter prompts and smaller
-output resolutions assemble faster and are less likely to expire.
+    **If it happens:** ignore the overlay. The authorization usually completes anyway; refresh
+    your channel list afterwards.
+  </Accordion>
 
-## Public API
+  <Accordion title="The calendar throws null-reference errors while loading">
+    The component uses optional chaining broadly during load and we found no unguarded access
+    that would explain it.
 
-### `DELETE /public/v1/posts/:id` 500 on non-existent ID
+    **If it happens:** refresh once the data has arrived.
+  </Accordion>
 
-Deleting a post that has already been removed currently surfaces a 500
-instead of a clean 404.
+  <Accordion title="Video generation fails">
+    This one was previously attributed to Transloadit assembly expiry. That attribution looks
+    wrong: the error text comes from the Veo3 generator path, which is a different provider
+    entirely, so the old advice about shorter prompts does not follow from it.
 
-**Workaround:** match on the specific error signature for this bug
-(a Prisma `undefined.integrationId` error in the response body) before
-treating the 500 as "already deleted." Other 500 responses from this
-endpoint indicate real server errors. Log and retry them normally
-rather than swallowing every 500.
+    **If it happens:** retry. We would like a report on this one, because the cause is not what
+    the page used to say.
+  </Accordion>
+</AccordionGroup>
 
-### `PUT /public/v1/posts/:id/release-id` validation 500
+## Fixed since this page last claimed otherwise
 
-Sending malformed input to the release-id endpoint surfaces a Prisma
-validation error as 500.
+### AI image generation, `Unknown parameter: 'response_format'`
 
-**Workaround:** validate input shape client-side before sending.
+**Fixed in May 2026.** The parameter that newer OpenAI versions rejected was removed and the
+model updated. All three routes that were affected go through the same function, so all three are
+covered.
 
-## Uploads
+It is listed here rather than deleted because the page carried it for two months after the fix,
+and anyone who read it in that window was told to work around something that already worked. If
+you are on an older image than `v3.0.9`, upgrading is the fix.
 
-### Cannot cancel an in-flight upload
+## Something not here?
 
-The uploader does not support mid-flight cancellation.
-
-**Workaround:** wait for the upload to finish, then delete the asset
-from the post.
+<Snippet file="report-it.mdx" />

@@ -2,13 +2,19 @@
 # Idempotent Postiz -> PostQueen brand sweep for the docs site.
 # Re-run after every upstream merge (git fetch upstream && git merge upstream/main).
 #
-# NOT covered by this script (hand-maintained; re-check after upstream merges):
+# NOT covered by this script (hand-maintained; re-check after upstream merges).
+# These are the real exclusions below, not just a list — the two used to disagree,
+# and introduction.mdx / faq.mdx / README.md were being rewritten despite this
+# comment claiming otherwise, which turned "a fork of Postiz" into "a fork of
+# PostQueen" on every run.
 #   - docs.json                          (name, brand colors, logo/favicon, social anchors)
 #   - configuration/chrome-extension.mdx (store listing neutralized; PostQueen ext not published yet)
-#   - configuration/polotno.mdx          (upstream Polotno partner coupon removed)
-#   - introduction.mdx                   (dead YouTube note removed; upstream attribution added)
-#   - README.md                          (upstream attribution block)
-#   - logo/*, favicon.*                  (brand assets)
+#   - introduction.mdx, faq.mdx, README.md  (AGPL attribution to Postiz — must survive rebranding)
+#   - logo/*, favicon.*, images/*        (brand assets)
+#
+# configuration/polotno.mdx is deliberately NOT excluded: the upstream partner
+# coupon was removed by hand, and the file contains no "Postiz" string for this
+# script to damage.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
@@ -18,6 +24,9 @@ FILES=$(git ls-files -- . \
   ':!LICENSE' \
   ':!docs.json' \
   ':!configuration/chrome-extension.mdx' \
+  ':!introduction.mdx' \
+  ':!faq.mdx' \
+  ':!README.md' \
   ':!logo/**' ':!images/**' \
   | while IFS= read -r f; do [ -f "$f" ] && grep -Iq . "$f" 2>/dev/null && printf '%s\n' "$f"; done)
 
