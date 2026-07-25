@@ -17,17 +17,16 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
   </Accordion>
 
   <Accordion title="Should I use the cloud or self-host her?" icon="scale-balanced">
-    Both run the same PostQueen, so pick the one that fits how you like to work.
+    Both run the same code.
 
-    **PostQueen Cloud** starts with a 7-day free trial at [postqueen.ai](https://postqueen.ai). You never patch a server, and you never watch a version number. Plans and prices: [postqueen.ai/pricing](https://postqueen.ai/pricing).
-
-    **Self-hosting** is free for as long as you run it, because the app is open source. Your database, your media storage and your provider credentials stay on your own servers. [Try her locally](/installation/quickstart-local) takes about five minutes on your own machine, and [Deploy to a server](/installation/production) goes from a bare VPS to your own domain.
+    | | |
+    |---|---|
+    | **[Cloud](https://postqueen.ai)** | 7-day free trial, nothing to patch |
+    | **[Self-host](/installation/overview)** | Free forever, your database and your tokens |
   </Accordion>
 
   <Accordion title="Is there a mobile app?" icon="mobile">
-    The mobile app is on the way. In the meantime she already answers on the phone in your pocket: message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord.
-
-    If you would rather use the browser, [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from a phone screen. Chat route setup: [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes).
+    On the way. Meanwhile [app.postqueen.ai](https://app.postqueen.ai) runs the whole calendar from a phone browser, and she answers on WhatsApp or Telegram through [OpenClaw](/agents/openclaw) or [Hermes](/agents/hermes).
   </Accordion>
 </AccordionGroup>
 
@@ -78,9 +77,9 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
   </Accordion>
 
   <Accordion title="Do I stay in control of what gets published?" icon="eye">
-    She runs on your terms. Leave her alone and she is a true autopilot: whatever lands on the calendar goes out on time without asking you again, so a launch week keeps publishing while you sit on a plane. Prefer to stage things first? Ask her for drafts instead: a draft is saved to your calendar but never scheduled, so nothing leaves until you publish it.
+    Everything is on the calendar before it goes out, and you can edit or delete any of it.
 
-    Either way the calendar shows what is planned before it goes out, and you can edit or delete anything on it.
+    Scheduled means scheduled: it publishes on time without asking again. Want to stage things instead? Ask her for drafts, which sit on the calendar until you publish them.
   </Accordion>
 </AccordionGroup>
 
@@ -88,19 +87,19 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
 
 <AccordionGroup>
   <Accordion title="Can my AI assistant use her?" icon="robot">
-    That is the point. Any assistant that can run a shell command or call a tool can drive your calendar.
+    Any assistant that can run a command or call a tool.
 
-    - **Agent skill and CLI.** `npx skills add GkhanKINAY/postqueen-agent` teaches your agent the `postqueen` CLI. Start at the [CLI introduction](/cli/introduction).
-    - **MCP.** Her hosted server gives any MCP client 11 tools. For Claude Code it is one line: `claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY`. Full setup: [MCP introduction](/mcp/introduction).
-    - **Public API.** REST for your own scripts: [API overview](/public-api/introduction).
+    - **[MCP](/mcp/introduction)** gives any client 11 tools, from one URL
+    - **[CLI](/cli/introduction)** via `npx skills add GkhanKINAY/postqueen-agent`
+    - **[Public API](/public-api/introduction)** for your own scripts
 
-    The routes compared side by side: [which interface](/which-interface).
+    Compared side by side: [which interface](/which-interface).
   </Accordion>
 
   <Accordion title="Are there API limits?" icon="gauge-high">
-    One limit matters in practice: 30 requests per hour on the create-post endpoint. Each call counts as a single request, so schedule several posts in one request when you need throughput. Other endpoints, such as listing channels or reading analytics, are not capped by it.
+    30 requests per hour on create-post, and nothing else is capped by it. Schedule several posts in one request when you need throughput.
 
-    On your own server, you raise or lower the ceiling with the `API_LIMIT` environment variable. Authentication and error codes: [API overview](/public-api/introduction).
+    Self-hosting? Raise or lower it with `API_LIMIT`.
   </Accordion>
 </AccordionGroup>
 
@@ -116,25 +115,21 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
 
 ## Still need help?
 
-<AccordionGroup>
-  <Accordion title="Where do I get help?" icon="headset">
-    Bugs and questions about the open-source app go to [GitHub Issues](https://github.com/GkhanKINAY/postqueen-app/issues/new/choose); billing and account questions go to [support@postqueen.ai](mailto:support@postqueen.ai). How to write a report that gets a fast answer: [support page](/support).
-  </Accordion>
-</AccordionGroup>
-
-## Put her to work
-
-<CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Create your account, connect a channel and schedule your first post
+<CardGroup cols={1}>
+  <Card title="Contact support" icon="headset" href="/support">
+    Bugs go to GitHub Issues, billing and account questions go to support@postqueen.ai. The page
+    also shows what to put in a report so the first reply is the useful one.
   </Card>
-  <Card title="Agents" icon="robot" href="/agents/overview">
-    Hand your assistant an API key and let it run your socials
+</CardGroup>
+
+<CardGroup cols={3}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Connect a channel and schedule your first post
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/overview">
+    Sorted by symptom
   </Card>
   <Card title="Providers" icon="share-nodes" href="/providers/overview">
-    Setup guides for every network you can connect
-  </Card>
-  <Card title="Support" icon="life-ring" href="/support">
-    Where to ask, and how to ask so you get a useful answer
+    Setup for every network
   </Card>
 </CardGroup>

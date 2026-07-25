@@ -11,32 +11,46 @@ icon: 'house'
   </div>
 </Frame>
 
-Tell her what to share. She writes it, designs it and puts it on your calendar.
+## Start here
 
-## Why PostQueen?
-
-<CardGroup cols={3}>
-  <Card title="She writes it" icon="wand-magic-sparkles">
-    Give her a rough idea and she turns it into a post, shaped for each network you picked
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Connect a channel and put your first post on the calendar. About five minutes
   </Card>
-  <Card title="One calendar, 30+ networks" icon="calendar">
-    X, Instagram, LinkedIn, TikTok, YouTube, Discord, your WordPress blog. One week on one screen
-  </Card>
-  <Card title="She designs it too" icon="image">
-    AI images and video from a prompt, plus a built-in design editor, on plans that include AI
-  </Card>
-  <Card title="Reach her from anywhere" icon="robot">
-    Your terminal, a chat with Claude or ChatGPT, or the workflow tool your team already runs
-  </Card>
-  <Card title="You stay in control" icon="eye">
-    Everything is on the calendar before it publishes, so you can change it, move it or drop it
-  </Card>
-  <Card title="Yours to host" icon="server">
-    AGPL-3.0. Run her on your own server and your tokens never leave your database
+  <Card title="How it works" icon="diagram-project" href="/howitworks">
+    What happens between pressing schedule and the post going out
   </Card>
 </CardGroup>
 
-<Frame caption="Some of the 30+ networks she posts to">
+## Reach her from anywhere
+
+Every route below rides the same public API, so a post lands on the same calendar whichever one you
+choose. [Which interface](/which-interface) weighs them against each other.
+
+<CardGroup cols={3}>
+  <Card title="Agents" icon="robot" href="/agents/overview">
+    Ask Claude or ChatGPT for a post instead of writing one
+  </Card>
+  <Card title="Automation" icon="bolt" href="/automation/overview">
+    n8n, Zapier and Make, or an RSS feed she watches herself
+  </Card>
+  <Card title="CLI" icon="terminal" href="/cli/introduction">
+    Sixteen commands, clean JSON, at home in a CI job
+  </Card>
+  <Card title="MCP" icon="network-wired" href="/mcp/introduction">
+    One URL, and your assistant can post for you. Nothing to install
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    REST for your own code, and the layer the others ride on
+  </Card>
+  <Card title="Self-hosting" icon="server" href="/installation/overview">
+    Your server, your database, your tokens. AGPL-3.0
+  </Card>
+</CardGroup>
+
+## Every network she posts to
+
+<Frame>
   <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px" }}>
     <img src="/images/channels/x.svg" alt="X" height="28" noZoom />
     <img src="/images/channels/instagram.svg" alt="Instagram" height="28" noZoom />
@@ -71,38 +85,11 @@ Tell her what to share. She writes it, designs it and puts it on your calendar.
   </div>
 </Frame>
 
-## Reach her from anywhere
-
-Most of the time you will work in the app. She answers from everywhere else too, and all of these
-ride the same public API, so a post lands on the same calendar whichever door you came through.
-
-<CardGroup cols={2}>
-  <Card title="Agents" icon="robot" href="/agents/overview">
-    Let Claude, ChatGPT or any assistant run your calendar
-  </Card>
-  <Card title="Automation" icon="bolt" href="/automation/overview">
-    n8n, Zapier and Make put posts on her calendar, and an RSS feed fills it on its own
-  </Card>
-  <Card title="CLI" icon="terminal" href="/cli/introduction">
-    Script posts, media and analytics from any shell, with clean JSON every time
-  </Card>
-  <Card title="MCP" icon="network-wired" href="/mcp/introduction">
-    One URL, and Claude Code or ChatGPT can post for you. Nothing to install
-  </Card>
-  <Card title="Public API" icon="code" href="/public-api/introduction">
-    Schedule posts, push media and read the numbers over REST
-  </Card>
-  <Card title="Self-hosting" icon="server" href="/installation/overview">
-    Run the whole thing yourself, on your own hardware
-  </Card>
-</CardGroup>
-
-Weighing them against each other, down to what each one can and cannot reach:
-[Which interface](/which-interface).
+One setup page each, with the exact keys and redirect URI: [Providers](/providers/overview).
 
 <CardGroup cols={1}>
-  <Card title="Ready to get started?" icon="rocket" href="/quickstart">
-    Connect a channel and put your first post on the calendar. About five minutes.
+  <Card title="Stuck on something?" icon="circle-question" href="/support">
+    Troubleshooting sorted by symptom, the questions that come up most, and how to reach a human
   </Card>
 </CardGroup>
 

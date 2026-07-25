@@ -4,91 +4,109 @@ description: 'Invalid state, invalid_grant, and fetch failed during the connect 
 icon: 'plug-circle-xmark'
 ---
 
-Connecting a social channel is the highest-volume source of user errors on
-PostQueen. The OAuth handshake spans three parties: your browser, the social
-provider, and the PostQueen backend. Any one of them can break the flow.
+Connecting a channel is the highest-volume source of errors here. The handshake spans three
+parties, so any one of them can break it.
 
-## "Invalid state"
+| You saw | Jump to |
+|---|---|
+| **Invalid state** | [below](#invalid-state) |
+| **invalid_grant** | [below](#invalid-grant) |
+| **Failed to fetch** on connect | [below](#failed-to-fetch-fetch-failed-on-provider-connect) |
+| **Unsupported file type** | [below](#unsupported-file-type-during-connect) |
 
-By far the most common error. You see it as a flash-message after the
-provider redirects back to PostQueen.
+## Invalid state
 
-**What it means:** PostQueen generates a one-time CSRF token (the `state`
-parameter) when you start the connect flow and stores it against your
-session. The provider returns it in the redirect; PostQueen compares the two.
-A mismatch, or a missing token, produces this error.
+The most common one, shown as a flash message after the provider redirects back.
 
-**Common causes**
+<Info>
+PostQueen generates a one-time CSRF token when you start the connect and stores it against your
+session. The provider returns it in the redirect and the two are compared. A mismatch, or a missing
+token, produces this.
+</Info>
 
-- You started the connect in one browser tab and finished it in another.
-- You refreshed the provider's login page mid-flow.
-- A third-party-cookie blocker (Brave's Shields, Safari's ITP, hardened
-  uBlock, Firefox Total Cookie Protection) dropped the session cookie
-  between the redirect out and the redirect back.
-- You took longer than the session expiry to complete the OAuth login.
+<AccordionGroup>
+  <Accordion title="What causes it" icon="circle-question">
+    - You started the connect in one tab and finished it in another
+    - You refreshed the provider's login page mid-flow
+    - A third-party-cookie blocker dropped the session cookie between the redirect out and back: Brave Shields, Safari ITP, hardened uBlock, Firefox Total Cookie Protection
+    - You took longer than the session expiry to finish the login
+  </Accordion>
+</AccordionGroup>
 
-**Fix**
+<Steps>
+  <Step title="Use one fresh browser session">
+    Not a private window, and not two tabs.
+  </Step>
+  <Step title="Whitelist the domain in any privacy extension">
+    `app.postqueen.ai`, or your own domain, for the length of the connect.
+  </Step>
+  <Step title="Start again from Add Channel inside the app">
+    Never bookmark or refresh the provider's authorize page.
+  </Step>
+</Steps>
 
-1. Open the PostQueen tab in a single, fresh browser session.
-2. Whitelist `app.postqueen.ai` (or your self-hosted domain) in any
-   privacy extensions for the duration of the connect.
-3. Click "Add Channel" again from inside the PostQueen app. Never
-   bookmark or refresh the provider's authorize page.
-4. If your browser is in private/incognito mode, switch to a normal window.
+<Warning>
+**Self-hosting?** `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` must resolve cookies to the same
+parent domain. Split them across `app.example.com` and `api.example.com` and the browser treats the
+backend cookie as third-party, so the state token may never round-trip.
+</Warning>
 
-**Running her yourself?** Ensure `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL`
-resolve cookies to the same parent domain. If frontend and backend live on
-different domains (e.g. `app.example.com` and `api.example.com`), browsers
-will treat the backend cookie as third-party and the state token may not
-round-trip.
+## invalid_grant
 
-## "invalid_grant"
+The code the provider returned was rejected when PostQueen exchanged it for a token.
 
-The OAuth code PostQueen received from the provider was rejected when it
-tried to exchange it for an access token.
+<AccordionGroup>
+  <Accordion title="What causes it" icon="circle-question">
+    - The same code was used twice, usually a double-click or a retry
+    - The code expired. Most providers give you about 60 seconds
+    - The redirect URI on the provider does not match the one PostQueen sends, character for character. A trailing slash counts
+  </Accordion>
+</AccordionGroup>
 
-**Common causes**
+<Steps>
+  <Step title="Start the connect over">
+    Codes cannot be reused.
+  </Step>
+  <Step title="Compare the redirect URI exactly">
+    Provider console against what PostQueen redirects to. Each provider page lists the exact string.
+  </Step>
+</Steps>
 
-- The same OAuth code was used twice, usually from a double-click or
-  retry after a transient error.
-- The code expired (most providers give you ~60 seconds).
-- The redirect URI configured on the provider does not exactly match the
-  one PostQueen is sending. A trailing slash counts.
+## Failed to fetch / fetch failed on provider connect
 
-**Fix**
+Seen on calls like `POST /integrations/provider/:id/connect`. The backend tried to reach the
+provider's API and failed at the network level: DNS, TLS, or a refused connection.
 
-1. Start the connect flow over from scratch. Codes cannot be reused.
-2. Re-check the redirect URI in your provider's developer console
-   matches the URL PostQueen is redirecting to, character for character.
+<AccordionGroup>
+  <Accordion title="What causes it" icon="circle-question">
+    - A self-hosted Mastodon instance the backend cannot reach, through firewall or missing DNS
+    - The GMB metrics endpoint blocked by egress filtering
+    - A reverse proxy in front of PostQueen rewriting the outbound request
+  </Accordion>
+</AccordionGroup>
 
-## "Failed to fetch" / "fetch failed" on provider connect
+<Steps>
+  <Step title="Test reachability from inside the container">
+    ```bash
+    curl https://provider.example.com/
+    ```
+  </Step>
+  <Step title="Check your egress path">
+    See the warning below before you reach for a proxy.
+  </Step>
+</Steps>
 
-You see this on calls like `POST /integrations/provider/:id/connect`.
+<Warning>
+**PostQueen cannot use a corporate egress proxy.** `HTTPS_PROXY` and `HTTP_PROXY` are not read, and
+provider calls go out through a dispatcher that would ignore them anyway. You need a transparent
+proxy or an allowlist at the network layer.
+</Warning>
 
-**What it means:** the PostQueen backend tried to talk to the provider's
-API and the request failed at the network level: DNS, TLS, or a refused
-connection.
+## Unsupported file type during connect
 
-**Common causes**
+TikTok and Instagram upload a profile avatar as part of attaching the channel, and an exotic source
+format fails.
 
-- Self-hosted Mastodon on a custom instance the PostQueen backend cannot
-  reach (firewall, missing DNS).
-- GMB metrics endpoint blocked by egress filtering.
-- A reverse proxy in front of PostQueen is rewriting the outbound request.
-
-**Fix**
-
-1. Verify the PostQueen backend container can resolve and reach the
-   provider's hostname (`curl https://provider.example.com/` from inside
-   the container).
-2. If you are behind a corporate egress proxy, note that PostQueen cannot use it:
-   `HTTPS_PROXY` and `HTTP_PROXY` are not read, and provider calls go out through
-   a dispatcher that would ignore them anyway. You need a transparent proxy or an
-   egress allowlist at the network layer.
-
-## "Unsupported file type" during connect
-
-Some providers (TikTok, Instagram) try to upload a profile avatar as part
-of channel attach. If the upstream image is in an exotic format, this
-fails. Retry. PostQueen usually falls back successfully on the second
-attempt.
+<Check>
+Retry. The second attempt usually succeeds.
+</Check>
