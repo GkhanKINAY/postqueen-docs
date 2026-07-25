@@ -208,7 +208,7 @@ If `analytics:post` returns an empty array `[]` instead, the post has not publis
   </Accordion>
 
   <Accordion title="Media must be uploaded to PostQueen first" icon="cloud-arrow-up">
-    Every value you pass to `-m`, or to an `image` field in a campaign file, has to be the `path` value returned by `postqueen upload`, which is a hosted PostQueen URL. Local filenames and third-party URLs get rejected: TikTok, Instagram, YouTube and most other providers only accept media served from PostQueen.
+    Every value you pass to `-m`, or to an `image` field in a campaign file, has to be the `path` value returned by `postqueen upload`, which is a hosted PostQueen URL. Local filenames are rejected outright. Third-party URLs are refused too on PostQueen Cloud, and on a self-hosted instance only when the operator has set `RESTRICT_UPLOAD_DOMAINS`; without it they pass validation and fail later at the network instead, because TikTok, Instagram, YouTube and most other providers only accept media served from a domain they can reach.
 
     ```bash
     IMG=$(postqueen upload ./launch.png | tail -n +2 | jq -r '.path')

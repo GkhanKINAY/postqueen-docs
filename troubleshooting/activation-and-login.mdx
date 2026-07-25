@@ -34,6 +34,19 @@ talk to the backend (mismatched protocols/ports break the session cookie).
 `JWT_SECRET` controls signing for session tokens. If you regenerate it,
 every existing session becomes invalid.
 
+<Warning>
+Everyone logging in again is the mild half of what happens. Unless you have set
+`ENCRYPTION_KEY`, this same value also encrypts every channel's access token,
+refresh token, provider credentials and saved cookies. Rotating it in that state
+leaves those rows undecryptable, and every connected channel has to be
+reconnected by hand.
+
+If you rotated it and your channels have gone dark, put the old value back. That
+is the whole recovery. Then set `ENCRYPTION_KEY` to that old value before
+rotating anything, which separates the two jobs and makes `JWT_SECRET` safe to
+change. See the [Configuration Reference](/configuration/reference#encryption-key).
+</Warning>
+
 **Fix:** set `JWT_SECRET` once during initial deployment and never
 rotate it lightly. Store it in a secret manager such as Doppler or
 1Password, in a Docker or Kubernetes secret, or in an untracked `.env`

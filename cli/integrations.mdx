@@ -85,7 +85,7 @@ postqueen integrations:trigger <integration-id> <method-name> -d '{"key":"value"
 
 **Get Reddit flairs and restrictions for a subreddit:**
 ```bash
-postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"programming"}'
+postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"/r/programming"}'
 ```
 
 **Search subreddits by keyword:**
@@ -125,12 +125,12 @@ INTEGRATION_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(
 postqueen integrations:settings "$INTEGRATION_ID"
 
 # 3. Use tools to fetch dynamic data (e.g., flairs)
-postqueen integrations:trigger "$INTEGRATION_ID" restrictions -d '{"subreddit":"programming"}'
+postqueen integrations:trigger "$INTEGRATION_ID" restrictions -d '{"subreddit":"/r/programming"}'
 
 # 4. Create a post with the discovered settings
 postqueen posts:create \
   -c "My post" \
   -s "2025-01-15T10:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"Post Title","type":"text"}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"text","is_flair_required":false}}]}' \
   -i "$INTEGRATION_ID"
 ```

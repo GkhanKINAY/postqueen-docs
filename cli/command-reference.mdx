@@ -33,7 +33,7 @@ postqueen integrations:list | tail -n +2 | jq '.[].id'
 | `POSTQUEEN_AUTH_SERVER` | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only matters if you run your own; see [Authentication](/cli/authentication). |
 
 <Note>
-Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `❌ Error: No authentication found.` followed by two lines naming your options. All three go to stderr, so redirect with `2>&1` if you want them in a log.
+Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `❌ Error: No authentication found.`, an `Options:` header, then two numbered lines naming your options. All four go to stderr, so redirect with `2>&1` if you want them in a log.
 </Note>
 
 ## Auth
