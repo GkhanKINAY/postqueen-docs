@@ -5,7 +5,7 @@ description: 'Connect your AI client to PostQueen over MCP'
 
 PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick the client you work in and you are two minutes from your first tool call. Already know your way around an MCP config? The endpoint is all you need.
 
-## Endpoints
+## The address to paste
 
 Two ways to connect, one key behind both. Put the key straight in the URL for the quickest setup: one line pasted and your client is talking to her. Keeping keys out of config files? Send the same key as a bearer token in the header.
 
@@ -68,7 +68,7 @@ https://postqueen.example.com/api/mcp/YOUR_API_KEY
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
 
 ## Verify
 
@@ -76,6 +76,42 @@ Once connected, ask your AI agent:
 
 > "List my connected social media accounts"
 
-Your channel names come back, because the agent reached for her `integrationList` tool. Nothing came back? Check that the API key was pasted in full, then check that your client is set to the streamable HTTP transport.
+Your channel names come back, because the agent reached for her `integrationList` tool. From here
+on, scheduling a post is something your assistant simply knows how to do.
 
-From here on, scheduling a post is something your assistant simply knows how to do.
+## When nothing comes back
+
+<AccordionGroup>
+  <Accordion title="The client shows no tools at all">
+    Read the status code before changing anything, because it says which endpoint form you are
+    actually on:
+
+    | Status | What it means |
+    | --- | --- |
+    | `401 Missing Authorization header` | You are on the Bearer form and the header is not arriving |
+    | `401 Invalid API Key or OAuth token` | Bearer form, and the token is wrong or revoked |
+    | `400 Invalid API Key` | You are on the URL form. Also what a `pos_` OAuth token gets here, because the path form only ever looks a value up as an API key |
+
+    Responses on these routes are plain text rather than JSON, so some clients show them as a bare
+    "server error" with the real message only in a log.
+  </Accordion>
+
+  <Accordion title="It connected, and then every call fails">
+    Connecting proves less than it looks. Both forms answer the browser's preflight with a `200`
+    and permissive CORS headers **before any key is checked**, so a client can report success
+    while holding a key that does not work. The first real call is the honest one.
+  </Accordion>
+
+  <Accordion title="Self-hosted, and it just hangs">
+    Almost always the reverse proxy buffering the response. MCP streams, and a proxy that holds
+    the whole reply, or that talks HTTP/1.0 upstream, breaks it while leaving the rest of the app
+    working. [MCP on a self-hosted install](/mcp/self-hosting) has the working blocks and a
+    `curl` that isolates it.
+  </Accordion>
+
+  <Accordion title="It worked yesterday">
+    Check whether the API key was regenerated. Rotating it in **Settings > Developers > Public
+    API** takes the old one out immediately and every client still holding it stops mid
+    conversation. PostQueen keys never rotate on their own.
+  </Accordion>
+</AccordionGroup>

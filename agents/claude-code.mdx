@@ -44,16 +44,14 @@ Two routes lead to the same place. Her skill teaches Claude Code the `postqueen`
     postqueen integrations:list
     ```
 
-    A JSON list of your connected channels means she is ready. `postqueen auth:status` checks your credentials on their own if a command starts failing later.
+    A JSON list of your connected channels means she is ready. If a command starts failing later,
+    `postqueen auth:status` shows which credentials the CLI is using, though it does not contact
+    the server, so this same command is the real test.
   </Step>
   <Step title="Or connect over MCP">
-    Prefer tool calls to shell commands? One command registers her hosted server:
-
-    ```bash
-    claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
-    ```
-
-    The project-scoped `.mcp.json` form, the Authorization-header variant and self-hosted URLs are all covered on the [Claude Code MCP page](/mcp/clients/claude-code).
+    Prefer tool calls to shell commands? It is one `claude mcp add` line, and the scoping options,
+    the header variant and self-hosted URLs are all on
+    [Claude Code over MCP](/mcp/clients/claude-code).
   </Step>
 </Steps>
 
@@ -120,7 +118,7 @@ Over MCP the conversation is the same and only the plumbing changes. Claude Code
     Yes. Ask for drafts and each post lands on the calendar unscheduled, waiting until you publish it there. Anything already scheduled is visible on the same calendar before it goes out, so you can still edit or delete it.
   </Accordion>
   <Accordion title="Does the integration cost extra?">
-    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.
+    <Snippet file="agent-plan-limits.mdx" />
   </Accordion>
 </AccordionGroup>
 

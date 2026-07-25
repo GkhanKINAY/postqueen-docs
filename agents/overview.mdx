@@ -54,17 +54,22 @@ Whichever one you already use, you can be scheduling posts from it in a few minu
   </Card>
 </CardGroup>
 
-Using something else? These four reach her over MCP instead of the agent skill, so their setup lives with the MCP client guides:
+Talking to her in a chat app instead? She answers in
+[WhatsApp, Telegram and the rest](/agents/chat-channels), and
+[Claude on the web and your phone](/agents/claude-apps) is a connector away.
+
+Using something else? These reach her over MCP instead of the agent skill, so their setup lives
+with the MCP client guides:
 
 <CardGroup cols={2}>
-  <Card title="Gemini CLI" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
-    One command in the terminal, or one entry in your settings file
+  <Card title="Gemini CLI" icon="/images/brand/icon-gemini-cli.svg" href="/agents/gemini-cli">
+    One command in the terminal, and the release notes write themselves
   </Card>
   <Card title="Warp" icon="/images/brand/icon-warp.svg" href="/mcp/clients/other-clients#warp">
-    Add her as a URL server in the agent settings, no local process
+    Add her as a URL entry in the agent settings, no local process
   </Card>
   <Card title="Cline" icon="/images/brand/icon-cline.svg" href="/mcp/clients/other-clients#cline">
-    Add a remote server in the panel, or paste the URL into the JSON
+    Add a remote entry in the panel, or paste the URL into the JSON
   </Card>
   <Card title="Windsurf" icon="/images/brand/icon-windsurf.svg" href="/mcp/clients/other-clients#windsurf">
     Point `serverUrl` at her in the Cascade config and post from there
@@ -81,71 +86,34 @@ One command installs her skill into any coding agent that supports the `skills` 
 npx skills add GkhanKINAY/postqueen-agent
 ```
 
-What lands is her `SKILL.md`, a playbook that teaches your agent how she works before it runs a single command. It registers under the name `postqueen` and declares `Bash(postqueen:*)` as the only tool it needs. After reading it, the agent knows:
+What lands is her `SKILL.md`, a playbook that teaches your agent how she works before it runs a
+single command. After reading it, the agent knows how to find your channels, ask each platform
+what it accepts, fetch things that cannot be hardcoded like subreddit flairs, and upload media
+the way she requires.
 
-- **Discovery.** `integrations:list` returns every connected channel with its integration ID, and `integrations:settings` shows what each channel accepts.
-- **Dynamic data.** `integrations:trigger` fetches values that cannot be hardcoded, like subreddit flairs, Pinterest boards or Discord channels. The full list is in [Provider Tools](/public-api/integrations/provider-tools).
-- **Posting.** `posts:create` takes content, a required ISO 8601 date and integration IDs, with `--settings` for platform specifics and `--json` for full campaigns.
-- **Media rules.** Every file goes through `postqueen upload` first, and only the returned URL belongs in `-m`. Media has to live on a PostQueen domain, and the API rejects the request otherwise.
+<Card title="Install the skill, step by step" icon="download" href="/agents/skill-install">
+  The API key, the CLI, self-hosted setup, and a table of what goes wrong with each fix
+</Card>
 
-The skill tells your agent to install the CLI if it is missing. To put it in place yourself:
-
-```bash
-npm install -g postqueen
-```
-
-Next she needs your API key. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**. Keep the key secret: it grants full access to your account.
-
-```bash
-export POSTQUEEN_API_KEY=your_api_key
-```
-
-<Note>
-Self-hosting? Set `POSTQUEEN_API_URL` to your own instance and the CLI talks to it instead of the hosted API.
-</Note>
-
-Now your agent can see your channels and schedule its first post:
-
-```bash
-# List your connected channels and their integration IDs
-postqueen integrations:list
-
-# Schedule a post (-s is required and takes an ISO 8601 date)
-postqueen posts:create \
-  -c "We just shipped dark mode 🌙" \
-  -s "2026-08-01T09:00:00Z" \
-  -i "your-integration-id"
-```
-
-Full command reference: [every command and flag](/cli/command-reference).
-
-Every agent session runs the same loop: it authenticates, finds your channels, prepares media, posts, then checks the numbers. All seven steps, with the command each one runs: [Why agents love her](/agents/why-agents).
+Every agent session then runs the same loop: authenticate, find your channels, prepare media,
+post, check the numbers. All seven steps with the command each one runs:
+[Why agents love her](/agents/why-agents).
 
 ## Connect over MCP
 
 Prefer tool calls over shell commands? PostQueen speaks MCP at one URL she hosts, so an MCP client gets 11 tools to list your channels, upload media and schedule posts without installing anything.
 
-For Claude Code it is one line:
+There is one URL and every client takes it a slightly different way: a single command in Claude
+Code, one JSON entry in Cursor, a connector form on claude.ai, a bridge in Claude Desktop.
 
-```bash
-claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
-
-Clients that speak remote HTTP MCP directly, such as Cursor and Codex, take the URL as-is:
-
-```json
-{
-  "mcpServers": {
-    "postqueen": {
-      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
-    }
-  }
-}
-```
-
-Claude Desktop reaches a remote server through the `mcp-remote` bridge instead. Copy that config from the [Claude Desktop page](/mcp/clients/claude-desktop).
-
-Setup for your client: [MCP setup](/mcp/setup). Every tool she answers: [tool reference](/mcp/tools).
+<CardGroup cols={2}>
+  <Card title="Connect your client" icon="plug" href="/mcp/setup">
+    The URL, both auth forms, and the steps for each client
+  </Card>
+  <Card title="Every tool" icon="wrench" href="/mcp/tools">
+    All 11, with the parameters each one takes
+  </Card>
+</CardGroup>
 
 ## From your chat apps
 

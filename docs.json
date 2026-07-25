@@ -174,8 +174,7 @@
               "agents/cursor",
               "agents/codex",
               "agents/chatgpt",
-              "agents/gemini-cli",
-              "agents/other-agents"
+              "agents/gemini-cli"
             ]
           }
         ]
@@ -213,7 +212,8 @@
             "group": "Getting Started",
             "pages": [
               "mcp/introduction",
-              "mcp/setup"
+              "mcp/setup",
+              "mcp/self-hosting"
             ]
           },
           {
@@ -394,6 +394,10 @@
     {
       "source": "/installation/migration",
       "destination": "/installation/docker-compose"
+    },
+    {
+      "source": "/agents/other-agents",
+      "destination": "/mcp/clients/other-clients"
     },
     {
       "source": "/configuration/docker",

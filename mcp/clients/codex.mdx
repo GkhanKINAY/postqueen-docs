@@ -56,7 +56,7 @@ Your API key grants full access to your PostQueen workspace: treat it like a pas
 
 ## Self-Hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy must forward the `/mcp` paths and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
 
 ## Verify
 
