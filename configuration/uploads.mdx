@@ -100,13 +100,42 @@ CLOUDFLARE_REGION="auto"
 CLOUDFLARE_JURISDICTION=""
 ```
 
-`CLOUDFLARE_BUCKET_URL` is the address browsers and social networks fetch
-from, so it must be the bucket's public URL — the r2.dev one or a custom
-domain — rather than the `…r2.cloudflarestorage.com` S3 endpoint, which
-serves nothing without a signature.
+`CLOUDFLARE_BUCKET_URL` is the address browsers and social networks fetch from.
+It must never be the `…r2.cloudflarestorage.com` S3 endpoint, which serves
+nothing without a signature. You have three choices for it — a custom domain,
+the r2.dev URL, or PostQueen serving the media itself — compared in the
+[R2 setup guide](/configuration/r2#decide-where-media-is-read-from).
 
-R2 gives you public HTTPS URLs out of the box, so the TikTok caveat
-above does not apply.
+Any of them gives you a public HTTPS address, so the TikTok caveat above does
+not apply.
+
+### Two ways an upload can travel
+
+By default the browser sends the file **straight to the bucket**, using a URL
+the backend signs for it. The file never passes through your server:
+
+```mermaid
+graph LR;
+	A[Browser] -->|1. asks for a signed URL| B[PostQueen]
+	A -->|2. uploads the file| C[(R2 bucket)]
+```
+
+With `UPLOAD_VIA_SERVER=true` the file is posted to PostQueen, which writes it
+to the bucket itself:
+
+```mermaid
+graph LR;
+	A[Browser] -->|uploads the file| B[PostQueen]
+	B -->|streams it on| C[(R2 bucket)]
+```
+
+The first is faster and costs you no bandwidth. The second is sturdier: nothing
+between the browser and the bucket can interfere, and it lets the bucket stay
+private. The next section is what "interfere" looks like in practice.
+
+Either way the size limit is the same — **1 GB per file**, enforced while the
+upload is being read rather than after it finishes. What a social network will
+publish is far smaller and decided by the network, not by this.
 
 ### When uploads fail with a CORS error
 
@@ -138,6 +167,37 @@ UPLOAD_VIA_SERVER="true"
 
 The trade is bandwidth: every upload now travels through your server twice
 instead of going straight to storage.
+
+### Serving media from your own domain
+
+Point `CLOUDFLARE_BUCKET_URL` at your own host and PostQueen serves the media
+itself:
+
+```env
+CLOUDFLARE_BUCKET_URL="https://your-host/api/uploads"
+```
+
+It reads each file from R2 over the S3 API and streams it back, cached for a
+year — object names are random and nothing is ever overwritten, so there is
+nothing to invalidate. That buys you your own domain, no rate limit, no DNS
+changes, and a bucket that can stay **entirely private**: switch its public
+access off and nothing reaches it except your server.
+
+The cost is bandwidth, since media leaves through your server rather than the
+bucket's edge. Note the `/api` prefix — nginx inside the container maps
+`/uploads/` to a local directory, so only `/api/uploads` reaches the backend.
+
+The other two options, and when each makes sense, are in the
+[R2 setup guide](/configuration/r2#decide-where-media-is-read-from).
+
+<Warning>
+Use a bucket that holds **only** PostQueen media. This endpoint is public by
+necessity — the social networks fetch it with no session — so anything in that
+bucket is potentially reachable. It will only serve objects whose names match
+what PostQueen itself writes (a random name plus an image, video or audio
+extension), which keeps a stray backup or export out of reach, but a dedicated
+bucket is the setup to aim for.
+</Warning>
 
 ## Public-API uploads
 

@@ -206,7 +206,7 @@ See also: [Cloudflare R2](/configuration/r2) and [Uploads & Storage](/configurat
 | `CLOUDFLARE_ACCESS_KEY` | R2 access key. |
 | `CLOUDFLARE_SECRET_ACCESS_KEY` | R2 secret access key. |
 | `CLOUDFLARE_BUCKETNAME` | R2 bucket name. |
-| `CLOUDFLARE_BUCKET_URL` | Public-facing URL the bucket is served from — the r2.dev development URL or a custom domain, **not** the S3 API endpoint, which refuses unsigned reads. Stored with every media row and sent to the social networks, so changing it later means rewriting those rows. |
+| `CLOUDFLARE_BUCKET_URL` | Where media is read from. A custom domain on the bucket, the r2.dev development URL, or `https://your-host/api/uploads` to have PostQueen serve it from a private bucket. **Not** the S3 API endpoint, which refuses unsigned reads. Stored with every media row and fetched by the social networks themselves, so the choice matters — see [Uploads and Storage](/configuration/uploads). |
 | `CLOUDFLARE_REGION` | R2 region (usually `auto`). |
 | `CLOUDFLARE_JURISDICTION` | Only for buckets created with a jurisdiction, such as `eu` for data residency. Those buckets answer on their own endpoint (`<account>.eu.r2.cloudflarestorage.com`) and are invisible on the account-wide one, so omitting it makes an existing bucket look missing. Leave blank otherwise. |
 | `UPLOAD_VIA_SERVER` | `true` posts files to the backend, which writes them to storage, instead of the browser uploading straight to the bucket with a presigned URL. Only affects `cloudflare` storage. Costs server bandwidth, but survives anything that rewrites the request in transit — see [Uploads and Storage](/configuration/uploads). |
