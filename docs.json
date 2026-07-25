@@ -25,6 +25,24 @@
             ]
           },
           {
+            "group": "Using PostQueen",
+            "pages": [
+              "using/calendar",
+              "using/writing-a-post",
+              "using/threads",
+              "using/posting-times",
+              "using/media-and-design",
+              "using/assistant",
+              "using/auto-actions",
+              "using/analytics",
+              "using/reusable-content",
+              "using/customers",
+              "using/teams-and-collaboration",
+              "using/third-party-integrations",
+              "using/plans-and-limits"
+            ]
+          },
+          {
             "group": "Self-Hosting",
             "pages": [
               "installation/system-requirements",

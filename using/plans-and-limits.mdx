@@ -1,0 +1,110 @@
+---
+title: Plans and limits
+description: 'What each plan unlocks, where the counters actually sit, and why a self-hosted install has no limits at all'
+---
+
+Five channels connect on a Tuesday afternoon and nobody asks you for anything. On STANDARD, the sixth one stops you. That is the whole shape of it: PostQueen counts a handful of things, and your plan sets how high each count is allowed to go.
+
+What follows is what the code checks, not what a landing page promises. For what a plan costs today, go to [postqueen.ai/pricing](https://postqueen.ai/pricing), because prices move and this page is about what you get, not what you pay.
+
+## What each plan unlocks
+
+| Plan | Channels | Posts per month | Team members | AI images per month | AI videos per month | Webhooks | Public API |
+|---|---|---|---|---|---|---|---|
+| **FREE** | 0 | 0 | No | 0 | 0 | 0 | No |
+| **STANDARD** | 5 | 1,000,000 | No | 20 | 3 | 2 | Yes |
+| **TEAM** | 10 | 1,000,000 | Yes | 100 | 10 | 10 | Yes |
+| **PRO** | 30 | 1,000,000 | Yes | 300 | 30 | 30 | Yes |
+| **ULTIMATE** | 100 | 1,000,000 | Yes | 500 | 60 | 10,000 | Yes |
+
+A million posts a month is the literal number in the source, and the billing screen prints anything above ten thousand as **Unlimited**. Read it as unlimited and stop thinking about it.
+
+FREE is not a plan you work in. It is the state an organization sits in before it has a subscription, which is why every number on that row is zero. On PostQueen Cloud an organization in that state shows its admins the plan picker where the calendar would be, and everyone else a line telling them to ask an admin, so the counters never come up.
+
+## Where each counter actually sits
+
+### Channels
+
+A channel is one connected account. The check runs at connect time and counts only the channels that are currently working: anything flagged as needing a reconnect is not counted against you, and reconnecting a channel you already own skips the check entirely, so a token refresh never costs you a slot.
+
+Moving down a plan does not delete anything. Enough channels are switched off to bring you back to the new number, they keep their history, and disabling one lets you switch another back on. Team members follow the same logic: dropping to a plan without team members disables every member below superadmin rather than removing them.
+
+### Posts per month
+
+The month is your month. The count runs from the day your subscription started, rolled forward a whole month at a time, so a subscription that began on the 14th resets on the 14th. What counts is a post whose publish date is on or after the start of the current period and whose state is queued or published, so a draft sitting on your calendar costs you nothing until you schedule it.
+
+That window has a floor and no ceiling. Queue something for six months out and it counts against this month the moment you schedule it.
+
+### Team members
+
+This one is a yes or no, not a seat count. On a plan that includes it you invite as many people as you want, and the **Teams** tab appears in Settings for organization admins. On a plan without it the tab is not there.
+
+### AI images and AI videos
+
+Both are monthly credits, counted from the same subscription anniversary as posts. Generating one image spends one image credit, generating one video spends one video credit, and the counters run independently. Run out of image credits and the generator sends you to billing instead of generating.
+
+The **AI Img** tab inside the picture editor is a separate switch: it shows up on TEAM and above, so a STANDARD organization has image credits but not that tab. **Generate** is the button you press once you are inside it.
+
+### Webhooks
+
+A straight ceiling on how many webhook endpoints the organization can have registered at once. Creating one past the number in the table is refused. Two on STANDARD is genuinely two, and ULTIMATE's ten thousand is there so nobody ever meets the wall.
+
+### Public API
+
+Available from STANDARD upward. Two things have to be true for a call to work: the organization needs a subscription on record, and you need the key. The key lives in **Settings > Developers**, and that tab appears for organization admins on a plan that includes the API. Without a subscription the API answers `401` with `No subscription found`, whichever authentication you use.
+
+Building on it? Start at the [API Overview](/public-api/introduction).
+
+## What else moves with the plan
+
+Numbers are not the only thing a tier decides. A few parts of Settings appear or stay hidden based on the plan alone:
+
+| Interface piece | Appears when |
+|---|---|
+| **Teams** tab | The plan includes team members, and you are an organization admin |
+| **Webhooks** tab | The plan allows at least one webhook |
+| **Auto Post** tab | The plan includes Auto Post, which is TEAM and above |
+| **Sets** and **Signatures** tabs | Any plan other than FREE |
+| **Developers** tab | The plan includes the public API, and you are an organization admin |
+| **AI Img** tab in the picture editor | The plan includes the image generator, which is TEAM and above |
+
+## Self-hosting: billing off, limits off
+
+Here is the rule that matters most if you run PostQueen yourself. Billing is only on when **both** `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. Set neither and billing is off. Set only one of the two and billing is still off, deliberately, because a half-configured install used to land in a state that was neither self-hosted nor paying.
+
+With billing off, none of the tables above apply:
+
+- Every permission check short-circuits and grants what was asked for, without evaluating a quota. No channel ceiling, no monthly post count, no webhook limit.
+- Your own account reports itself as **ULTIMATE** with 10,000 channels, which is what makes every tier-gated tab in Settings show up.
+- The public API stops asking for a subscription. An API key or an OAuth token works on a fresh install with no billing configured at all.
+- AI image generation skips the credit check, and the picture editor stops asking the credits endpoint for a balance.
+
+<Note>
+This is by design, not a loophole. Omitting the Stripe keys is the supported way to run PostQueen without limits, and the [Configuration Reference](/configuration/reference) treats those two keys as optional throughout.
+</Note>
+
+### What stays hidden when billing is off
+
+Billing being off also removes the parts of the interface that only make sense when there is something to pay for. On a self-hosted install with no Stripe keys, these are not rendered at all:
+
+- **Billing** in the left rail, and the **Upgrade** shortcut underneath it.
+- The plan picker that would otherwise take over the whole screen for an organization with no subscription.
+- The **Affiliate** and **UGC** entries in the rail.
+- The browser extension link in the top bar.
+- The wallet sign-in option on the sign in and sign up screens.
+- The **Generate Posts** wizard, the icon button beside New Post in the channel sidebar.
+- Manage billing inside the superadmin impersonation bar.
+
+The Generate Posts one is worth knowing before you go hunting for it. That wizard is hidden on a billing-free install even though the AI behind it works fine, so on a self-hosted box you reach the same ground through the chat agent in the app chrome or the assistant inside the composer. The [public API](/public-api/introduction) is not a third route here. It will schedule posts you have already written, but it has no endpoint that generates the copy for you.
+
+<CardGroup cols={3}>
+  <Card title="Configuration Reference" icon="sliders" href="/configuration/reference">
+    Every environment variable, including the two Stripe keys that decide all of this.
+  </Card>
+  <Card title="API Overview" icon="plug" href="/public-api/introduction">
+    Where the API key lives, how to authenticate, and what the rate limit really covers.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/automation/webhooks">
+    She calls your endpoint the moment a post goes live, up to your plan's count.
+  </Card>
+</CardGroup>

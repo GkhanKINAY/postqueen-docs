@@ -1,0 +1,141 @@
+---
+title: Auto Actions
+description: 'She watches a post after it lands and pushes it further when it earns the attention'
+---
+
+Your 9 AM post is doing better than usual by lunch. Auto Actions are how she notices that and gets behind it, without you sitting on the tab hitting refresh. You name a like count once. The next post from that channel that clears it gets reposted, or gets a follow-up from you underneath it.
+
+That is the whole promise, and the honest version of it is narrower than it sounds.
+
+<Note>
+Auto Actions exist on four channels only. Two actions exist. Each one watches a post for a short stretch after it publishes and then stops for good.
+</Note>
+
+## Where you set them
+
+Open **Plugs** in the app menu and the left rail is short. Only channels that have Auto Actions show up there, so you can have ten networks connected and still see one name. Connect nothing that qualifies and the screen says so, then names the channels worth adding.
+
+Pick a channel and you get a card per action. **Set Plug** opens it, you fill in the fields, and **Activate** saves it. The card then carries a toggle, so you can switch the action off later without losing what you typed. Come back and the button reads **Edit Plug**.
+
+Two things worth knowing before you turn one on:
+
+- The setup belongs to the **connected channel**, not to a post. Activate it once and it applies to everything that channel publishes from then on.
+- It is not retroactive. A post that went out this morning is already past her; the action only attaches to posts published after you activate it.
+
+Nothing here touches your schedule. Your post still goes out at the minute you set. Auto Actions only decide what happens to it afterwards.
+
+## The two actions
+
+| Action | Channels | What she does when the count is reached |
+|---|---|---|
+| **Auto Repost Posts** | X, Bluesky, LinkedIn Page | Reposts your own post from the same account. On LinkedIn Page she reshares it from the page |
+| **Auto plug post** | X, Bluesky, Threads, LinkedIn Page | Puts your follow-up text under the post: a reply on X, Bluesky and Threads, a comment on LinkedIn Page |
+
+Threads is the odd one. It has the follow-up and nothing else, because there is no Auto Repost Posts on Threads at all.
+
+## The trigger, and the ceiling
+
+Both actions read exactly one number: the like count on the post that just published. You give her the threshold, she compares, and if the post is short she does nothing and waits.
+
+| | |
+|---|---|
+| **Trigger** | The like count on the published post, against the **Amount of likes** you set |
+| **Checks per post** | Three |
+| **Starts** | Six hours after the post publishes. Nothing is read at publish time |
+| **Lands at** | Roughly six, eighteen and thirty-six hours after publish |
+| **Fires** | Once. The first check that clears the threshold performs the action and cancels the checks still queued behind it |
+| **Ends** | After the third check, whether it worked or not |
+
+The gaps widen as they go, because each check waits its own interval on top of the one before it. Six hours of quiet, then twelve, then eighteen.
+
+Here is the ceiling, plainly. Three checks and she is finished with that post. There is no fourth look, no daily sweep, no catching up later. A post that takes off on day three has already been left behind, and a threshold set too high simply means the action never fires. Set the number where your posts actually land on a good day, not where you wish they landed.
+
+Writing for a slow burn audience? Auto Actions are the wrong tool for it. The whole window closes about a day and a half after the post goes out.
+
+<Warning>
+Auto Repost Posts on Bluesky is the exception to the three checks. It reports back as done after the first check either way, so the remaining two are dropped. On Bluesky the post has to clear your threshold inside the first six hours or the repost never happens.
+</Warning>
+
+### What the cards say
+
+The wording on each card is worth reading before you set a number, because it is the app's own description of the action:
+
+| Action | Description on the card |
+|---|---|
+| **Auto Repost Posts** | "When a post reached a certain number of likes, repost it to increase engagement (1 week old posts)" |
+| **Auto plug post** | "When a post reached a certain number of likes, add another post to it so you followers get a notification about your promotion" |
+
+The age note on Auto Repost Posts, **1 week old posts**, is the text the card carries.
+
+### Fields
+
+| Action | Field | What goes in it |
+|---|---|---|
+| **Auto Repost Posts** | Amount of likes | A whole number |
+| **Auto plug post** | Amount of likes | A whole number |
+| **Auto plug post** | Post to plug | Your follow-up message, three characters or more |
+
+## X, and the analytics switch
+
+Both X actions read the like count through the X API, which makes them part of analytics. Set `DISABLE_X_ANALYTICS` on your install and they are gone, rather than sitting there and failing quietly. X has only those two Auto Actions, so losing both takes the channel out of the Plugs left rail altogether. If X was the only channel qualifying, the page falls back to its empty state.
+
+The editor plug below, **Add Re-posters**, keeps working through it. It never reads a number, so there is nothing for that switch to turn off.
+
+## The other plugs, inside the editor
+
+Open a post for X or LinkedIn and look at the channel's **Settings** panel, under the platform options. There is a second kind of plug there, and it has nothing to do with like counts or thresholds. It runs once, on a delay you choose, counted from the moment the post publishes.
+
+That delay holds as written when no Auto Action is running on the same channel. When one is, both queue up together and each waits its turn, so a long delay can land later than the number you picked.
+
+The work is done by your **other** accounts. You pick which ones from a list headed "Accounts that will engage:", and the account publishing the post is never in that list, because it cannot repost itself.
+
+| Channel | Plug | What happens |
+|---|---|---|
+| X | **Add Re-posters** | The other X channels you picked repost the post |
+| LinkedIn, LinkedIn Page | **Add Re-posters** | The other LinkedIn accounts you picked reshare the post |
+| LinkedIn, LinkedIn Page | **Add comments by a different account** | The other LinkedIn accounts you picked leave the comment you wrote |
+
+The delay is a dropdown, not a free field. These are the choices:
+
+| | |
+|---|---|
+| Immediately | 8 hours |
+| 1 hour | 12 hours |
+| 2 hours | 15 hours |
+| 3 hours | 24 hours |
+
+Running an agency, or a brand account next to a founder account? This is the pair of plugs that pays for itself. The founder account comments on the brand post an hour later, and it reads like a person rather than a schedule.
+
+If a plug shows **No available accounts**, it is not broken. You have connected only one account on that network, and there is nobody else for it to pick.
+
+## Setting one up
+
+<Steps>
+  <Step title="Connect the channels you need">
+    One channel for an Auto Action. Two or more on the same network for the editor plugs, since the second account is the one doing the work.
+  </Step>
+  <Step title="Open Plugs and pick a channel">
+    The left rail lists only the channels that qualify. Choose one and its cards appear.
+  </Step>
+  <Step title="Set the like count you actually hit">
+    Look at your own recent numbers on that network and pick something a good post clears within a few hours. Too high and nothing ever fires.
+  </Step>
+  <Step title="Write the follow-up, if you chose Auto plug post">
+    This one publishes as a reply or a comment in your own voice, so write it as a sentence you would send yourself.
+  </Step>
+  <Step title="Activate, then watch one post">
+    Publish something, let it run, and check whether the action fired. Then adjust the number. That first post tells you more than any guess.
+  </Step>
+</Steps>
+
+<CardGroup cols={3}>
+  <Card title="X (Twitter)" icon="x-twitter" href="/providers/x-twitter">
+    Both Auto Actions, plus Add Re-posters and the analytics switch that turns two of them off.
+  </Card>
+  <Card title="LinkedIn Page" icon="linkedin" href="/providers/linkedin-page">
+    The only channel where the follow-up lands as a comment instead of a reply.
+  </Card>
+  <Card title="All channels" icon="grid-2" href="/providers/overview">
+    What every network she posts to can and cannot do.
+  </Card>
+</CardGroup>

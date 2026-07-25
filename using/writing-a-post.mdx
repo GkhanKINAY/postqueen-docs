@@ -1,0 +1,167 @@
+---
+title: Writing a post
+description: 'One editor, every channel you picked, and three ways for a post to leave it'
+---
+
+Press **Create Post** and she has already found your next open slot. The composer opens with that date sitting on the button at the bottom, a blank editor on the left and a live preview on the right. You write the thing once. She shapes it for every channel you selected.
+
+## Pick your channels
+
+Your connected channels sit across the top as round avatars. Grey means this one is sitting the post out. A purple ring means it is coming along. Click to toggle.
+
+Nothing leaves the composer until at least one is on. While the row is empty the main button reads **Check the circles above** and stays disabled.
+
+Running an agency? When your channels belong to more than one customer, a person icon appears at the end of the row. Pick a customer from it and she selects every channel that customer owns, and drops the rest. With a single customer the icon never appears at all.
+
+A second row shows up underneath: a globe first, then one small chip per selected channel. The globe is the shared text. The chips are the per-channel view. A red X on a chip pulls that channel out of the post, after a confirmation.
+
+## One text, or one per channel
+
+The globe is where you land, and everything you type there goes out to every channel you picked.
+
+Click a channel chip while you are still in global mode and the editor dims behind a lock, with one button on it: **Edit content**. Press it and that channel takes a copy of whatever the global text holds at that moment. From then on the two are separate. Edits to the global text no longer reach that channel.
+
+Two markers keep you oriented:
+
+- A pink dot on the chip, tooltip *No longer in global mode*.
+- A line under the editor reading *Editing a Specific Network*, with **Back to global** next to it.
+
+**Back to global** asks *This action is irreversible. Are you sure you want to go back to global mode?* and it means every word. That channel's own copy is dropped and it follows the global text again.
+
+### The character badge
+
+At the end of the attachments row there is a small badge, and it counts while you type.
+
+In global mode the number on the right is the smallest limit you have not already passed. Write past a 280 character channel while a 3000 character one is also selected and the badge rolls over from `x/280` to `x/3000`. Hover it for the breakdown: one line per channel, each with its own count and limit. Channels you split off read **Internal Edit** instead, because their limit now belongs to their own text.
+
+The color is the part that tracks every channel. The badge turns red the moment any channel still following global is over its own limit, and it also turns red when the post has neither a character nor an image, or when a selected channel strips links out of posts and your text contains one. That last case names names: *Links will be removed from: ...*
+
+## What the preview shows
+
+The right half of the composer is **Post Preview**, and it follows whatever you are looking at on the left. On the globe you get her general preview. Click a channel chip and the panel swaps to that platform's own rendering. Before you type anything it reads *Start writing your post for a preview*.
+
+## Channel settings
+
+Some channels want more than words. Under the editor sits a purple bar. On the globe it reads **Settings** and stacks every selected channel one after another. On a channel chip it carries that channel's name, and shows only that one. Click the bar to expand it.
+
+What lives inside depends on the platform, and each one has its own page under [Providers](/providers/overview).
+
+Miss something in there and she does not fail quietly. The save stops, a warning names the channel, and the composer jumps to that channel with the settings bar already open.
+
+## Threads, comments and delays
+
+One post is rarely one box. The button under the editor adds the next one, and its label follows the platform: **Add comment or post**, **Add post**, or **Add comment**.
+
+Once there is more than one box, a small column of controls appears down the right side of each one.
+
+| Control | What it does | Where it appears |
+|---|---|---|
+| Up and down arrows | Move this box earlier or later in the chain | Every box |
+| Trash | Delete the box, after a confirmation | Every box, once there are two or more |
+| Clock | Hold this box back for a while after the one before it | Boxes after the first |
+
+The clock carries presets of `1m` `2m` `5m` `10m` `15m` `30m` `1h` `2h`, a field for any number of minutes you want instead, and **Remove delay** to clear it. A box with a delay on it wears a pink clock so you can see it at a glance.
+
+## Attachments
+
+The row under the editor is where media goes in.
+
+| Control | What it opens |
+|---|---|
+| **Insert Media** | Your media library, everything you have uploaded before |
+| **Design Media** | The built-in design editor, on plans that include AI |
+| **AI Image** and **AI Video** | Generation from the text you have already written, on plans that include AI |
+| **Integrations** | Third-party media sources, when your install has some connected |
+
+Faster still: drag files straight onto the editor, which answers with *Drop your files here to upload*, or paste them out of your clipboard. Images and MP4 video are accepted, up to 1 GB per upload session.
+
+Each attachment lands as a thumbnail. Drag them by the corner to reorder. Hover one and a settings icon opens **Media Settings**, where you write alt text for accessibility and, on a video, scrub to the right frame and press **Select This Frame** to make it the cover.
+
+While an upload or a generation is running, the buttons at the bottom of the composer stay disabled. That is on purpose. Nothing schedules halfway through a file.
+
+## Tags
+
+Bottom left of the composer bar, next to **Repeat Post Every...**. Tags are colored labels you attach to a post: pick them from the list, or press **Add New Tag** and give it a name and a color.
+
+They are not decoration on the calendar. The first tag's color becomes the strip across the top of the post card, and the tag names are written into it, so a month of posts sorts itself by eye.
+
+## Three ways out
+
+| Control | Where the post lands |
+|---|---|
+| **Save as Draft** | Written down at the date shown, published by nobody |
+| **Add to calendar** | Scheduled, and it goes out at the date shown |
+| **Post Now** | Out the door immediately |
+
+**Post Now** hides behind the arrow on the main button until you hover it.
+
+The main button renames itself for whatever you opened. It reads **Add to calendar** on a new post, **Schedule** when you reopen a draft, and **Update** when you reopen one that is already scheduled or already out.
+
+Reopen a post that has already published, press the main button, and she asks first, with two answers: **Just update the post details**, or **Republish the post**.
+
+<Note>
+Opening an existing post from the calendar scopes the composer to that one channel, so the globe row and the per-channel chips are not there. Global mode is for composing something new across several channels at once.
+</Note>
+
+### A draft is a state, not a review queue
+
+**Save as Draft** writes the post exactly as you left it, at the date you gave it, and stops. It shows up on your calendar at that date and time with *Draft:* in front of the content, and it sits there. It stays a draft until you open it and press **Schedule**, which puts it in the queue for its stored date.
+
+There is no approver in PostQueen, no approve step and no reject button. Scheduled means scheduled. Whatever is on the calendar goes out on time without asking you again, and a draft is simply a post that has not been handed to the scheduler yet.
+
+### What she checks before saving
+
+Validation runs on her server, not in your browser, so it cannot be talked around from the page.
+
+Every post needs at least one character or one image, drafts included. A schedule or a **Post Now** gets a harder look: each channel's settings, each channel's length limit, each channel's own rules. The first failure stops the save, warns you with the channel named, and drops you on that channel so you can see what it wants.
+
+## Repeat schedules
+
+Also in the bottom bar: **Repeat Post Every...**. Pick an interval and the post keeps coming back.
+
+| Option | Interval |
+|---|---|
+| Day | 1 day |
+| Two Days | 2 days |
+| Three Days | 3 days |
+| Four Days | 4 days |
+| Five Days | 5 days |
+| Six Days | 6 days |
+| Week | 7 days |
+| Two Weeks | 14 days |
+| Month | 30 days |
+| Cancel | Clears the repeat |
+
+One post is stored, with the interval written on it. Your calendar draws every future occurrence from the first date onward, so you can see the rhythm before it happens. After each publish, her workflow sleeps the interval and publishes again.
+
+## The short link prompt
+
+Put a URL in your post and, on the way out, she asks once: *Do you want to shortlink the URLs? it will let you get statistics over clicks*. Say yes and the links go out shortened, with click statistics behind them.
+
+Whether she asks at all is a setting.
+
+| Shortlink preference | What happens |
+|---|---|
+| Ask every time | The prompt appears whenever your text carries a link. This is the default |
+| Always shortlink | Links are shortened without asking |
+| Never shortlink | No prompt and no shortening |
+
+Two things skip the question quietly. Channels that strip links out of posts are left out of the check, because a shortlink they delete helps nobody. And an install with no short link provider set up never asks in the first place.
+
+<Warning>
+Closing the composer asks *Are you sure you want to close this modal? (all data will be lost)*, and that is literal. Nothing is written down until you press **Save as Draft**, **Add to calendar** or **Post Now**.
+</Warning>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Per-platform settings" icon="sliders" href="/providers/overview">
+    What each channel asks for inside that purple bar, one page per platform
+  </Card>
+  <Card title="The same post from your terminal" icon="terminal" href="/cli/managing-posts">
+    Channels, threads and drafts, in one command
+  </Card>
+  <Card title="Ask her instead of typing it" icon="comments" href="/agents/overview">
+    Hand the writing to a chat agent and let her fill the calendar
+  </Card>
+</CardGroup>
