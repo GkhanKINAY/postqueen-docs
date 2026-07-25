@@ -80,8 +80,10 @@ connection.
 1. Verify the PostQueen backend container can resolve and reach the
    provider's hostname (`curl https://provider.example.com/` from inside
    the container).
-2. If you are behind a corporate egress proxy, set `HTTPS_PROXY` and
-   `HTTP_PROXY` for the backend process.
+2. If you are behind a corporate egress proxy, note that PostQueen cannot use it:
+   `HTTPS_PROXY` and `HTTP_PROXY` are not read, and provider calls go out through
+   a dispatcher that would ignore them anyway. You need a transparent proxy or an
+   egress allowlist at the network layer.
 
 ## "Unsupported file type" during connect
 

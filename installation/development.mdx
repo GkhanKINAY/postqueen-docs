@@ -76,13 +76,22 @@ Copy the `.env.example` file to `.env` and fill in the values
 
 ```bash
 # Required Settings
-DATABASE_URL="postgresql://postqueen-user:postqueen-password@localhost:5432/postqueen-db-local"
+# This DATABASE_URL matches Option B, the docker-compose.dev.yaml above.
+# On Option A the single container was created with POSTGRES_USER=root and the
+# password you chose, and with no postqueen-db-local database, so adjust the
+# user, the password and the database name to match what you actually started.
+DATABASE_URL="postgresql://postqueen-local:postqueen-local-pwd@localhost:5432/postqueen-db-local"
 REDIS_URL="redis://localhost:6379"
 JWT_SECRET="random string for your JWT secret, make it long"
 FRONTEND_URL="http://localhost:4200"
 NEXT_PUBLIC_BACKEND_URL="http://localhost:3000"
 BACKEND_INTERNAL_URL="http://localhost:3000"
 TEMPORAL_ADDRESS="localhost:7233"
+
+# Set this explicitly. Uploads are written either way, but the route that serves
+# them tests for the literal string "local", so leaving it unset makes every
+# uploaded image 404.
+STORAGE_PROVIDER="local"
 
 # Optional. Your upload directory path if you host your files locally.
 UPLOAD_DIRECTORY="/opt/postqueen/uploads/"

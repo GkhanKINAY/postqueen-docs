@@ -18,7 +18,7 @@ That is a floor for a single-user install. Plan for 4 GB or more once several pe
 The docker containers for PostQueen are entirely configured with environment variables.
 
 - **Option A** - environment variables in your `docker-compose.yml` file
-- **Option B** - environment variables in a `.env` file next to your `docker-compose.yml` file, which Compose reads and passes through (not recommended).
+- **Option B** - a `.env` file next to your `docker-compose.yml`. Compose reads it for `${VAR}` substitution **inside the YAML only**; it does not hand those variables to the container. To feed the container from a file you have to add an `env_file:` key to the service yourself, which [Docker Configuration](/configuration/docker) shows.
 
 ... or a mixture of the two!
 

@@ -67,8 +67,9 @@ externally, point PostQueen at them via `DATABASE_URL`, `REDIS_URL`, and
 ## Filesystem
 
 If `STORAGE_PROVIDER=local`, set `UPLOAD_DIRECTORY` to a host path and
-mount that path into the backend container. The frontend serves the
-same files through `/uploads/:path*`. Storage options: [Uploads & storage](/configuration/uploads).
+mount it where the **frontend** can read it, which is the part that serves
+`/uploads/:path*`. On the official image that path is hard-coded to `/uploads`,
+so leave `UPLOAD_DIRECTORY` alone there. Storage options: [Uploads & storage](/configuration/uploads).
 
 If you would rather offload media: configure [Cloudflare R2](/configuration/r2).
 
@@ -86,8 +87,10 @@ can reach:
 - the Mastodon instance you configure via `MASTODON_URL`
 - any other provider you intend to use
 
-If your environment requires a proxy, set `HTTPS_PROXY` and `HTTP_PROXY`
-on the backend.
+There is no proxy support. `HTTPS_PROXY` and `HTTP_PROXY` are not read anywhere,
+and provider calls go out through a dispatcher that would ignore them regardless.
+Behind a corporate egress proxy you need a transparent proxy or an allowlist at
+the network layer.
 
 ## Inbound network
 

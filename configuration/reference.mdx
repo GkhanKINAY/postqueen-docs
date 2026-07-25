@@ -3,22 +3,31 @@ title: Configuration Reference
 description: 'Environment variables reference for PostQueen'
 ---
 
-She reads everything she needs from environment variables, at boot and only at boot.
-Change one and restart her before you expect it to take effect.
+She reads everything she needs from environment variables. Change one and restart her
+before you expect it to take effect. The exception is the handful of `NEXT_PUBLIC_`
+values consumed inside browser code, which are compiled into the bundle when the image
+is built and need a rebuild rather than a restart. Each of those says so where it is
+listed.
 
 Start from the [example env file](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example)
 in the app repository, which is the file to copy on a fresh install. This page then groups the
 variables by purpose and explains what each one does. Neither list is a strict superset of the
 other, so if you meet a variable in one and not the other, it is real either way.
 
-<Info>
-Variables marked **Required** are validated on boot: PostQueen will fail to start
-if they are missing or malformed.
-</Info>
+<Warning>
+Variables marked **Required** are checked on boot, but only warned about. The check runs
+*after* the server is already listening and every problem it finds is logged as a
+`Configuration issue` line. Nothing throws and nothing exits.
+
+So a running container is not proof that the configuration is right. Read the first
+minute of `docker compose logs` on a fresh deployment and look for that phrase.
+</Warning>
 
 ## Required core
 
-These six variables are non-optional for any deployment.
+The boot check treats eight variables as non-optional: the six below, plus
+[`MAIN_URL`](#main-url) and [`STORAGE_PROVIDER`](#storage-provider), which are listed
+under their own sections further down.
 
 ### `DATABASE_URL` <sup>Required</sup>
 
@@ -80,6 +89,17 @@ The URL the **frontend SSR server** uses to reach the backend from inside your n
 
 ## Application behavior
 
+<Warning>
+**Writing `false` turns most of these on.** Only five variables compare against the literal
+string `true`: `DISABLE_REGISTRATION`, `PASSWORDLESS_LOGIN`, `DISABLE_SSRF_PROTECTION`,
+`TEMPORAL_TLS` and `EMAIL_SECURE`. Every other switch on this page is read as
+`!!process.env.NAME`, and in JavaScript the string `"false"` is truthy.
+
+So for `IS_GENERAL`, `POSTQUEEN_GENERIC_OAUTH`, `DISABLE_IMAGE_COMPRESSION`, `RUN_CRON`
+and their neighbours: set the variable to enable, and **remove the line** to disable.
+Setting it to `false`, `0` or `no` enables it just as surely as `true` does.
+</Warning>
+
 ### `DISABLE_REGISTRATION`
 
 Set to `true` and only the first account can be created. After that, sign-up is refused. Useful for self-host where you want full control.
@@ -100,7 +120,9 @@ When set, the backend process runs the scheduled-task workers. Leave unset on AP
 
 ### `RESTRICT_UPLOAD_DOMAINS`
 
-Comma-separated allowlist of domains for `/public/v1/upload-from-url`. If set, only URLs whose hostname matches an entry are accepted.
+A single substring that every media URL in a `POST /public/v1/posts` body must contain, usually your own host or CDN. Unset, any URL passes.
+
+Two things about it surprise people. It is **one value, not a list**: the check is a plain substring test against the whole URL, so `a.com,b.com` demands that literal text and nothing ever matches. And it does **not** guard `/public/v1/upload-from-url`, which has its own rules: the URL must end in one of six extensions and must not point at a private address.
 
 ### `DISALLOW_PLUS`
 
@@ -142,9 +164,9 @@ See also: [Cloudflare R2](/configuration/r2) and [Uploads & Storage](/configurat
 
 | Variable | Purpose |
 |---|---|
-| `STORAGE_PROVIDER` | `local` or `cloudflare`. Defaults to `local`. |
+| `STORAGE_PROVIDER` | `local` or `cloudflare`. **Set it explicitly.** Writing falls back to `local`, but the frontend rewrite that serves `/uploads/...` tests for the literal string `local`, so leaving it unset uploads your files successfully and then serves every one of them as a 404. |
 | `UPLOAD_DIRECTORY` | Filesystem path for `local` storage writes. |
-| `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` | Public URL prefix the frontend uses to reference uploaded files. |
+| `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` | The URL path segment for uploaded files, **with no leading slash**. Defaults to `uploads`. It is joined after a slash that is already there, so `/uploads` gives you `https://host//uploads/...`. |
 | `CLOUDFLARE_ACCOUNT_ID` | R2 account ID. |
 | `CLOUDFLARE_ACCESS_KEY` | R2 access key. |
 | `CLOUDFLARE_SECRET_ACCESS_KEY` | R2 secret access key. |

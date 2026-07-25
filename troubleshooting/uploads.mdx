@@ -5,16 +5,18 @@ description: 'Payload limits, video failures and cancel-in-flight behavior'
 
 ## Body size limit
 
-The PostQueen backend accepts JSON bodies up to **50 MB** on the post-creation
-routes (`POST /public/v1/posts` for the public API, plus the internal
-`/posts` and `/copilot/*` endpoints used by the web UI). Other endpoints
-fall back to the framework default and are much smaller. Do not inline
-base64-encoded images in arbitrary endpoints.
+The **50 MB** JSON body limit is mounted on two path prefixes, `/posts` and
+`/copilot/*`, which are the internal routes the web UI uses.
+
+`POST /public/v1/posts` is **not** one of them. It falls back to the framework
+default of roughly 100 kB, which is far smaller than most people expect and is
+reached by a single inlined image. Upload your media first and reference the
+returned `path`.
 
 ## Accepted MIME types (Public API)
 
-The `/public/v1/upload` and `/public/v1/upload-from-url` endpoints validate
-the uploaded file's detected MIME type against this allowlist:
+`/public/v1/upload` validates the uploaded file's detected MIME type against
+this allowlist:
 
 | Type | MIME |
 |---|---|
@@ -26,6 +28,17 @@ the uploaded file's detected MIME type against this allowlist:
 | BMP | `image/bmp` |
 | TIFF | `image/tiff` |
 | MP4 video | `video/mp4` |
+
+`/public/v1/upload-from-url` applies the same allowlist to the bytes it
+downloads, but only after a check on the URL itself: the path, ignoring any
+query string, has to end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`.
+AVIF, BMP and TIFF therefore cannot be fetched from a URL at all, only sent
+through the multipart endpoint. The refusal is a `400` naming extensions rather
+than MIME types, which is the clue that you have hit this check and not the one
+above.
+
+Per-file size caps apply to both: **10 MB** for images and **1 GB** for video,
+reported as `File size exceeds the maximum allowed size of ... bytes.`
 
 PDFs are **not** accepted by the public API. The only PDF flow PostQueen
 supports is LinkedIn document carousels, which are produced internally

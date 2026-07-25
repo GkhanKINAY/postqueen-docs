@@ -84,8 +84,12 @@ work.
 
 ## Email is not sending
 
-By default, PostQueen uses Resend (`EMAIL_PROVIDER=resend`) and only
-becomes active when `RESEND_API_KEY` is set. To use SMTP instead, set
+PostQueen sends no email at all unless `EMAIL_PROVIDER` is set to exactly
+`resend` or `nodemailer`. There is no default: unset means the no-op provider.
+
+Check that first, because it also decides activation. `EMAIL_PROVIDER=resend`
+with no `RESEND_API_KEY` still counts as a provider, so new signups are created
+inactive and wait for a mail that can never arrive. To use SMTP instead, set
 `EMAIL_PROVIDER=nodemailer` and set `EMAIL_HOST`, `EMAIL_PORT`,
 `EMAIL_USER`, `EMAIL_PASS`, `EMAIL_SECURE`. Full setup:
 [Email configuration](/configuration/emails).

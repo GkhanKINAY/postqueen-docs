@@ -20,8 +20,13 @@ EMAIL_FROM_ADDRESS: "postqueen@example.com"
 
 ## Resend
 
-Connect your domain once and she sends from it. Set this key and everyone you
-invite has to activate their account.
+Connect your domain once and she sends from it.
+
+What turns email on is `EMAIL_PROVIDER=resend`, not the key. That is also what
+switches account activation on, so everyone you invite from then on has to click
+an activation link. Name the provider without finishing the setup and you get the
+worst case: accounts are created inactive and the mail that would let them in
+fails silently. Set both or set neither.
 
 <Steps>
   <Step title="Register on Resend">

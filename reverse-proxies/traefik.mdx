@@ -18,6 +18,10 @@ services:
     ##
 
     labels:
+      # Required. The Traefik service below runs with exposedbydefault=false,
+      # so without this line Traefik ignores the container entirely and the
+      # four labels underneath never become a router.
+      - "traefik.enable=true"
       # Router for main PostQueen entrypoint (on port 5000)
       - "traefik.http.routers.postqueen.rule=Host(`postqueen.example.com`)"  # Replace with your domain
       - "traefik.http.services.postqueen.loadbalancer.server.port=5000"  # Internal port for postqueen
