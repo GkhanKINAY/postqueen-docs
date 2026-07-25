@@ -1,0 +1,91 @@
+---
+title: Hashnode
+description: 'How to add Hashnode to PostQueen'
+icon: /images/channels/hashnode.svg
+---
+
+<img src="/images/channels/hashnode.svg" alt="Hashnode" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+<Warning>
+**Hashnode moved its GraphQL API onto a paid plan on 13 May 2026.** Their [changelog entry](https://hashnode.com/changelog/2026-05-13-graphql-api-paid-access) states that the Pro plan now covers both sides of the API: *"Queries against your publication now require Pro, the same as publishing."*
+
+PostQueen reaches Hashnode through that API and nothing else, once to connect the channel and once for every article. So a publication without Pro is a publication she cannot publish to. Hashnode says the upgrade is self-serve from your blog dashboard, under **Billing**.
+</Warning>
+
+## What she can post to Hashnode
+
+Hashnode wants a home for every article before it will take one. You pick the publication in the settings panel, she attaches the title, the tags and the Markdown, and the piece lands on that blog under your name. Ten thousand characters is the ceiling, which is generous for an essay and tight for a book chapter.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    10,000 characters. The editor is Markdown.
+  </Card>
+  <Card title="Media" icon="image">
+    One cover picture. She sends it as a web address and Hashnode fetches the file itself.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    One article in one publication. A title, a subtitle and tags, with a cover picture and a canonical link if you want them.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Hashnode is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `title` needs at least six characters. A `publication` and at least one tag are required. Subtitle, cover picture and canonical link are optional: [Hashnode settings](/public-api/providers/hashnode). |
+| Connect flow | One step, inside the app. You paste a Hashnode personal access token into a modal titled **Add Provider**. There is no developer app, no redirect URI and nothing to set in `.env` to get the channel connected. |
+| Automations | None on this network. |
+| Publish rate | Three posts at a time. |
+
+<Warning>
+Two things catch people out.
+
+- **A cover picture has to be reachable from the public internet.** She does not upload the file to Hashnode. She sends a URL, built from your `NEXT_PUBLIC_BACKEND_URL` and `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` when the picture lives on your own instance, and Hashnode fetches it from the outside. That second variable falls back to `uploads` when you leave it unset. A PostQueen running on `localhost` or behind a private network serves an address Hashnode cannot open, so the article arrives with no cover.
+- **She sends the first block only.** The composer offers **Add comment** underneath the article, and Hashnode receives the first block. Anything below it goes nowhere.
+
+One more, on the connection itself: **"Invalid credentials"** comes back when the token does not answer at `https://gql.hashnode.com`.
+</Warning>
+
+## Set up Hashnode
+
+<Steps>
+  <Step title="Generate a personal access token">
+    Open [Hashnode developer settings](https://hashnode.com/settings/developer) and click **Generate New Token**.
+
+    Copy the token straight away. Hashnode calls it a Personal Access Token, and it is the value that travels in the `Authorization` header on every call she makes.
+  </Step>
+
+  <Step title="Add Hashnode as a channel">
+    In PostQueen, click **Add Channel** and pick **Hashnode**. A modal titled **Add Provider** opens with a single field:
+
+    | Field | Type | What to paste |
+    |---|---|---|
+    | **API key** | Password | The personal access token from Hashnode developer settings. At least three characters, or the form refuses it. |
+
+    Press **Connect**. She runs a `me` query against `https://gql.hashnode.com`, and the channel lands on your dashboard with your Hashnode name and profile picture.
+  </Step>
+
+  <Step title="Pick a publication and write">
+    Open a new post, select the Hashnode channel and fill the settings panel:
+
+    - **Title**: required, at least six characters.
+    - **Subtitle**: optional, at least two characters when you use it.
+    - **Canonical Link**: optional, for a piece that lives elsewhere first.
+    - **Cover picture**: optional, and it has to be publicly fetchable.
+    - **Select publication**: required. She reads your first fifty publications.
+    - **Tags**: at least one, drawn from the Hashnode tag list bundled with PostQueen.
+
+    Schedule it and walk away. Autopilot sends it at the time you set.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+- **"API key is invalid"** in the connect modal: the field rejects anything under three characters. Paste the whole token.
+- **"Invalid credentials"** after pressing Connect: Hashnode did not accept the token. Generate a fresh one under [developer settings](https://hashnode.com/settings/developer) and try again.
+- **No publication picker in the settings panel**: she found no publications on the account behind that token. Create a blog on Hashnode first, then reopen the post.
+- **The article published without its cover**: Hashnode could not fetch the address she sent. Check that your PostQueen upload directory answers on a public URL.
+- **The channel connects but publishing fails**: check the Pro plan on the publication you are posting to. See the note at the top of this page.

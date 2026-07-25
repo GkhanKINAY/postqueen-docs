@@ -6,7 +6,7 @@ description: 'Environment variables reference for PostQueen'
 She reads everything she needs from environment variables, at boot and only at boot.
 Change one and restart her before you expect it to take effect.
 
-The canonical list lives in the [example postqueen.env file](https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.env.example).
+The canonical list lives in the [example postqueen.env file](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example).
 This page documents every variable PostQueen reads, grouped by purpose.
 
 <Info>
@@ -270,7 +270,7 @@ All of these are optional. Frontend reads `NEXT_PUBLIC_*` at build time.
 | `FACEBOOK_PIXEL_ACCESS_TOKEN` | Server-side Pixel Conversions API token. |
 | `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host (e.g. `https://us.posthog.com`). |
 | `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project API key. |
-| `NEXT_PUBLIC_TRACKING_TRIAL` | When set, enables trial-funnel tracking events. |
+| `NEXT_PUBLIC_TRACKING_TRIAL` | When set, turns on trial-funnel tracking events. |
 | `DATAFAST_API_KEY` | Datafast analytics API key. |
 | `DATAFAST_WEBSITE_ID` | Datafast website ID. |
 | `SENTRY_AUTH_TOKEN` | Build-time Sentry token for sourcemap upload. |
@@ -293,9 +293,29 @@ All of these are optional. Frontend reads `NEXT_PUBLIC_*` at build time.
 
 ## Social provider keys
 
-Each social provider has its own env-var block. See the per-provider setup
-pages under [Providers](/providers/overview) for the exact OAuth steps; this
-table is just a lookup so you can find which page documents which variable.
+You came here to find out which variable belongs to which network. This table is
+that lookup, and the setup page in the third column is where the key-by-key
+walkthrough lives.
+
+Not every network appears below, and that is the point. Eight of them ask for no
+environment variable at all, because they take their credentials in the connect
+form itself. You type the key once in Add Channel and never open your `.env` file
+for them:
+
+- Bluesky
+- Dev.to
+- Hashnode
+- Lemmy
+- Listmonk
+- Medium
+- Nostr
+- WordPress
+
+Moltbook needs no environment variable either. It has a connect screen of its own
+that registers the channel and issues its key for you.
+
+Every network in [Providers](/providers/overview) connects from Add Channel whether
+or not it has a row in this table.
 
 | Provider | Variables | Setup |
 |---|---|---|
@@ -316,13 +336,50 @@ table is just a lookup so you can find which page documents which variable.
 | Dribbble | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | [/providers/dribbble](/providers/dribbble) |
 | Farcaster | `NEYNAR_CLIENT_ID`, `NEYNAR_SECRET_KEY` | [/providers/farcaster](/providers/farcaster) |
 | MeWe | `MEWE_HOST`, `MEWE_APP_ID`, `MEWE_API_KEY` | [/providers/mewe](/providers/mewe) |
-| Twitch | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | API only: see [/public-api/providers/twitch](/public-api/providers/twitch) |
-| Kick | `KICK_CLIENT_ID`, `KICK_SECRET` | API only: see [/public-api/providers/kick](/public-api/providers/kick) |
-| VK | `VK_ID` | API only: see [/public-api/providers/vk](/public-api/providers/vk) |
+| Twitch | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | [/providers/twitch](/providers/twitch) |
+| Kick | `KICK_CLIENT_ID`, `KICK_SECRET` | [/providers/kick](/providers/kick) |
+| VK | `VK_ID` | [/providers/vk](/providers/vk) |
 | Whop | `WHOP_CLIENT_ID` | [/providers/whop](/providers/whop) |
 | GitHub (sign-in) | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | [/configuration/oauth](/configuration/oauth) |
-| Beehiiv | `BEEHIIVE_API_KEY`, `BEEHIIVE_PUBLICATION_ID` | Newsletter provider |
-| Listmonk | `LISTMONK_DOMAIN`, `LISTMONK_USER`, `LISTMONK_API_KEY`, `LISTMONK_LIST_ID`, `LISTMONK_WELCOME_TEMPLATE_ID` | Newsletter provider |
+
+<Note>
+Two variable names break the pattern and cost people an afternoon. Kick signs its
+secret as `KICK_SECRET`, not `KICK_CLIENT_SECRET`. Dribbble spells its variables
+with three `b` characters, `DRIBBBLE_CLIENT_ID` and `DRIBBBLE_CLIENT_SECRET`, while
+the network itself is spelled with two.
+</Note>
+
+---
+
+## Product newsletter sender
+
+This block trips people up, so read it before you copy anything into your `.env`
+file. These variables have nothing to do with posting. They subscribe each new
+PostQueen signup to a mailing list you own, and that is all they do.
+
+When someone registers, PostQueen calls one newsletter sender with their email
+address. It picks Beehiiv if `BEEHIIVE_API_KEY` is set, otherwise Listmonk if
+`LISTMONK_API_KEY` is set, otherwise nobody. Leave all of them unset and no
+signup email is ever forwarded anywhere.
+
+| Variable | Purpose |
+|---|---|
+| `BEEHIIVE_API_KEY` | Beehiiv API key. Setting this selects Beehiiv as the sender. |
+| `BEEHIIVE_PUBLICATION_ID` | Beehiiv publication the new signup is added to. |
+| `LISTMONK_DOMAIN` | Base URL of your Listmonk server, used for the subscriber call. |
+| `LISTMONK_USER` | Listmonk API user, sent as HTTP basic auth. |
+| `LISTMONK_API_KEY` | Listmonk API token. Setting this selects Listmonk as the sender. |
+| `LISTMONK_LIST_ID` | Numeric ID of the list the new signup is added to. |
+| `LISTMONK_WELCOME_TEMPLATE_ID` | Template ID for the welcome email sent to that new subscriber. |
+
+<Warning>
+`LISTMONK_*` does **not** configure the Listmonk channel. The channel you connect
+in Add Channel to publish campaigns asks for its URL, username and password in the
+connect form, and it ignores these variables completely. Setting them will not make
+the channel appear, and leaving them unset will not stop it working. See
+[Listmonk](/providers/listmonk) for the channel. There is no Beehiiv channel at
+all: Beehiiv exists only as a sender for the list above.
+</Warning>
 
 ---
 

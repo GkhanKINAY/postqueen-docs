@@ -1,0 +1,139 @@
+---
+title: Backups and Upgrades
+description: 'Which volumes carry real data, how to restore them, and how to move her to a newer image'
+---
+
+Run `docker volume ls` after a Compose install and six volumes come back. Two of them you could delete tonight and never notice, and a third is empty until you put something in it. The remaining three carry what no reinstall brings back, so those are the ones worth your disk space and your attention.
+
+## What you cannot rebuild
+
+| Volume | What is inside |
+|---|---|
+| `postgres-volume` | Her main database: your account, your connected channels, every post and draft |
+| `temporal-postgres-data` | Temporal's database, which carries the scheduled work that has not run yet |
+| `postqueen-uploads` | Media you uploaded, while `STORAGE_PROVIDER` is `local` |
+
+<Note>
+A fourth volume, `postqueen-config`, is mounted at `/config` and on a stock install it is empty. The shipped image reads its configuration from the container environment and from `/app/.env`, and nothing in it looks at `/config`. Back it up only if you put a file there yourself and you know what reads it.
+</Note>
+
+## What rebuilds itself
+
+`postqueen-redis-data` is a cache. `temporal-elasticsearch-data` is the search index behind the Temporal UI at http://localhost:8080, and the `temporalio/auto-setup` image sets that index up again when it starts against an empty cluster. Leave both out of your backup.
+
+One more thing lives outside Docker entirely. The directory you cloned holds your edited `docker-compose.yaml` and the `dynamicconfig` folder that Temporal bind-mounts from it. Those are ordinary files on the host, so whatever already backs up your home directory covers them.
+
+<Note>
+Compose prefixes volume names with the project name, which is the directory you
+cloned into. The commands below assume the default `postqueen-docker-compose_`
+prefix. Check `docker volume ls` and use the exact names you see.
+</Note>
+
+## Back up a volume
+
+Stop her first. Postgres writes to `postgres-volume` the whole time she is up, and a tar of a live data directory can catch a half-written page.
+
+```
+docker compose down
+```
+
+Then archive each volume with a throwaway container that mounts the volume at `/data` and your current directory at `/backup`:
+
+```
+docker run --rm -v postqueen-docker-compose_postgres-volume:/data -v "$(pwd)":/backup alpine tar czf /backup/postgres-volume.tar.gz -C /data .
+```
+
+Run that line again for `temporal-postgres-data` and `postqueen-uploads`, changing the volume name and the archive name each time. Add `postqueen-config` to the list only if you put a file in it. Once the archives are on disk, bring her back:
+
+```
+docker compose up -d
+```
+
+## Restore from that backup
+
+Same trip, reversed. Replace the volume rather than untarring over a populated one, so nothing from the old contents survives underneath:
+
+```
+docker compose down
+docker volume rm postqueen-docker-compose_postgres-volume
+docker volume create postqueen-docker-compose_postgres-volume
+docker run --rm -v postqueen-docker-compose_postgres-volume:/data -v "$(pwd)":/backup alpine tar xzf /backup/postgres-volume.tar.gz -C /data
+docker compose up -d
+```
+
+<Warning>
+A Postgres data directory only opens under the major version that wrote it. The
+bundled Compose runs `postgres:17-alpine` for her database and `postgres:16` for
+Temporal's. Restore each archive into the image it came from.
+</Warning>
+
+A backup you have never restored is a guess. Try one on a spare machine before you need it for real.
+
+## Upgrading to a new image
+
+The Compose file points at `ghcr.io/gkhankinay/postqueen-app:latest`. Two commands move you to a newer build:
+
+```
+docker compose pull
+docker compose up -d
+```
+
+`pull` fetches the new image, and `up -d` recreates the containers whose image changed. Nothing in your Compose file has to change.
+
+Back up `postgres-volume` before you pull. The next section is why.
+
+### Where migrations run
+
+You never run a migration by hand. Her image starts `pnpm run pm2`, which clears the old pm2 processes, applies the Prisma schema, then starts backend, frontend and orchestrator. So the first thing a freshly pulled container does is reshape the database to match the schema that build expects, before anything is listening.
+
+Which command does the reshaping depends on one variable:
+
+| `PRISMA_MIGRATE` | What runs |
+|---|---|
+| unset, empty, `false`, `False`, `FALSE` or `0` | `prisma db push --accept-data-loss` |
+| anything else at all | `prisma migrate deploy` |
+
+The comparison is a literal string match against that short list, so it is stricter than it looks. `no` and `off` both read as true here and select `prisma migrate deploy`, and so does `false ` with a trailing space.
+
+`--accept-data-loss` means she carries on instead of stopping to warn you, so a column the new schema dropped goes away with its contents. That is the whole argument for taking the backup first. The repository ships a single migration, `0_init`, so the default `db push` path is the one nearly every install follows. Leave the variable alone unless you have a reason.
+
+Watch the first minute of the upgrade:
+
+```
+docker compose logs -f postqueen
+```
+
+### Pinning a version instead
+
+Every release publishes twice, once under its version tag and once as `latest`. Pinning the version tag in your Compose file turns an upgrade into a deliberate edit rather than something `docker compose pull` decides for you:
+
+```yaml
+image: ghcr.io/gkhankinay/postqueen-app:v3.0.2
+```
+
+## The one flag that destroys everything
+
+<Warning>
+`docker compose down -v` deletes the volumes along with the containers. Her
+database and your uploads go in that one command, with no prompt and no undo,
+and the scheduled posts sitting in Temporal go with them.
+Plain `docker compose down` leaves every volume where it is. That is the one you
+want for a restart, a variable change or an upgrade.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Docker Compose" icon="docker" href="/installation/docker-compose">
+    The install this page assumes, start to finish
+  </Card>
+  <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
+    Move media to Cloudflare R2 and shrink what you back up
+  </Card>
+  <Card title="System requirements" icon="server" href="/installation/system-requirements">
+    Disk, RAM and the services she needs
+  </Card>
+  <Card title="Support" icon="life-ring" href="/support">
+    When a restore or an upgrade does not go your way
+  </Card>
+</CardGroup>

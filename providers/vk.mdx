@@ -1,0 +1,85 @@
+---
+title: VK
+description: 'How to add VK to your system'
+icon: /images/channels/vk.svg
+---
+
+<img src="/images/channels/vk.svg" alt="VK" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+## What she can post to VK
+
+You wrote two thousand characters, picked three photos, and want it on your wall on Sunday morning. She uploads the photos to VK first, attaches them to the text, and puts the whole thing up at the time you chose.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    2,048 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. Photos upload to your wall, and an `.mp4` goes up through VK video
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A wall post, with comments underneath it
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None
+  </Card>
+</CardGroup>
+
+Everything lands on your personal wall. There is no group target and no community target on this connector, so a VK channel is one wall and only that wall. She runs two VK jobs at a time, which keeps her inside the API limits without crawling. The link on a sent post opens it in your VK feed.
+
+| | |
+|---|---|
+| **Post settings** | None. The settings block carries `__type` and nothing else, shown in the [VK settings reference](/public-api/providers/vk) |
+| **Connect flow** | One step with PKCE. VK returns a device id alongside the code, and she keeps it next to the refresh token so the channel can renew itself later |
+| **Automations** | None. Comments post as comments on the same wall post |
+
+<Steps>
+  <Step title="Create an app in the VK developer portal">
+    Sign in to VK and create an application in the developer portal. She uses the VK ID authorization flow, which runs against `id.vk.com`, and she asks for these scopes:
+
+```
+vkid.personal_info
+email
+wall
+status
+docs
+photos
+video
+```
+
+    `wall` is the one that lets her post, and `photos` and `video` are what the uploads need.
+  </Step>
+
+  <Step title="Configure the OAuth2 Redirect URI">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your VK OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/vk`
+    - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/vk`
+    - Docker: `https://redirectmeto.com/http://localhost:5000/integrations/social/vk`
+
+    <Warning>
+    VK will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to VK, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on VK with a redirect mismatch.
+    </Warning>
+  </Step>
+
+  <Step title="Set the environment variable">
+    VK issues no client secret for this flow, so there is exactly one value to set.
+
+```env
+VK_ID=""
+```
+
+    That is the application id from your VK app. She sends it on the authorization request, on the token exchange and on every wall call, so it stays in use for the life of the channel.
+  </Step>
+
+  <Step title="Add the VK channel">
+    Restart PostQueen so the new variable is read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+
+    In the web interface click **Add Channel** and pick **VK**, then accept the request on the VK side.
+
+    Add Channel does not check whether `VK_ID` is set, so a missing value shows up as a broken authorization page on the VK side rather than a helpful message in PostQueen.
+  </Step>
+</Steps>

@@ -18,10 +18,13 @@ That is a floor for a single-user install. Plan for 4 GB or more once several pe
 The docker containers for PostQueen are entirely configured with environment variables.
 
 - **Option A** - environment variables in your `docker-compose.yml` file
-- **Option B** - environment variables in a `postqueen.env` file mounted in `/config` for the PostQueen container only
-- **Option C** - environment variables in a `.env` file next to your `docker-compose.yml` file (not recommended).
+- **Option B** - environment variables in a `.env` file next to your `docker-compose.yml` file, which Compose reads and passes through (not recommended).
 
-... or a mixture of the above options!
+... or a mixture of the two!
+
+<Note>
+The Compose file mounts a `postqueen-config` volume at `/config` inside the PostQueen container. Nothing in the image reads it. Configuration reaches her through the container environment and the `.env` file in her own app directory, so dropping a file into `/config` changes nothing.
+</Note>
 
 ## Installation
 <Steps>
@@ -76,33 +79,9 @@ Look through the logs for startup errors, and if you have problems, check out th
 
 If everything looks good, you can reach the web interface at the `FRONTEND_URL` you configured, which is http://localhost:4007 with the defaults.
 
-## Backups
+## Backups and upgrades
 
-Not every volume in the stack needs a backup. These hold real data:
-
-- `postgres-volume`: the main PostQueen database (users, channels, posts).
-- `temporal-postgres-data`: Temporal's database, including in-flight scheduled posts.
-- `postqueen-uploads`: uploaded media, when `STORAGE_PROVIDER` is `local`.
-- `postqueen-config`: your `postqueen.env` file, if you use Option B.
-
-`postqueen-redis-data` and `temporal-elasticsearch-data` are a cache and a
-search index. Both are rebuilt automatically and do not need backups.
-
-To back up a volume, archive it with a throwaway container. Compose prefixes
-volume names with the project (directory) name, so check `docker volume ls`
-for the exact name:
-
-```
-docker run --rm -v postqueen-docker-compose_postgres-volume:/data -v "$(pwd)":/backup alpine tar czf /backup/postgres-volume.tar.gz -C /data .
-```
-
-Repeat for each volume listed above.
-
-<Warning>
-`docker compose down -v` deletes all volumes, your database, scheduled
-posts and uploads included. Use plain `docker compose down` unless you
-really mean to wipe the installation.
-</Warning>
+Which volumes carry data you cannot rebuild, how to restore one, and what a new image does to your database: [Backups and Upgrades](/installation/backups-and-upgrades).
 
 ## Next Steps
 

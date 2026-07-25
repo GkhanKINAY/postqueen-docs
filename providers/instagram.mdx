@@ -92,13 +92,13 @@ The following steps will guide you through the setup of a Meta application that 
   <Step title="Select business">
     Then select business
 
-    ![Business](https://github.com/user-attachments/assets/74bde861-5441-46bb-b5b8-c5229e980237)
+    ![Select business](/images/providers/facebook/facebook-select-business.png)
   </Step>
 
   <Step title="Add details and create app">
     Add all your details and click Create App
 
-    ![Create an app details page](https://github.com/user-attachments/assets/f0c03825-0f9b-4467-94a4-ab8cf6ed7e1d)
+    ![Create an app details page](/images/providers/facebook/facebook-create-app-details.png)
   </Step>
 </Steps>
 
@@ -108,7 +108,7 @@ If you have a Facebook Business page that is linked to your Instagram account, y
 
 <Steps>
   <Step title="Set up Login for Business">
-    ![Setup Login with Instagram](https://github.com/user-attachments/assets/08d3c1d1-d498-49d1-adac-aa6248e7c10c)
+    ![Set up login for business](/images/providers/facebook/facebook-setup-login.png)
 
     Set up login for business
   </Step>
@@ -116,7 +116,7 @@ If you have a Facebook Business page that is linked to your Instagram account, y
   <Step title="Set up Redirect URI">
     Set up a redirect URI back to the application
     
-    ![Instagram](https://github.com/user-attachments/assets/78496d3f-3b84-4724-afc8-ed217d892c6d)
+    ![Valid OAuth Redirect URIs field in Client OAuth settings](/images/providers/instagram/instagram-redirect-uri.png)
 
     <Snippet file="oauth2redirect.mdx" />
 
@@ -127,7 +127,7 @@ If you have a Facebook Business page that is linked to your Instagram account, y
   </Step>
 
   <Step title="Set up permissions">
-    ![step 7](https://github.com/user-attachments/assets/a81aa2a3-de66-4099-906b-b78c641d1a23)
+    ![Advanced permissions screen](/images/providers/facebook/facebook-advanced-permissions.png)
 
     Go to advanced permission and request access for the following scopes:
     - `instagram_basic`
@@ -140,7 +140,7 @@ If you have a Facebook Business page that is linked to your Instagram account, y
   </Step>
 
   <Step title="Copy your credentials">
-    ![Keys](https://github.com/user-attachments/assets/ac11f87f-4951-47f8-8344-7fbc9de942e4)
+    ![App ID and App Secret on the basic settings screen](/images/providers/facebook/facebook-app-keys.png)
 
     Go to basic permissions copy your App ID and App Secret and paste them in your `.env` file
 
@@ -162,6 +162,13 @@ If you want to connect directly to your Instagram account without having to use 
 Please note that standalone option requires a professional Instagram account.
 </Warning>
 
+The permissions are not the ones listed above. Instagram asks for its own four here:
+
+- `instagram_business_basic`
+- `instagram_business_content_publish`
+- `instagram_business_manage_comments`
+- `instagram_business_manage_insights`
+
 <Steps>
   <Step title="Set up Instagram">
     !["Add products to your app" section of app creation](/images/providers/instagram-standalone/instagram-standalone-001.png)
@@ -182,8 +189,14 @@ Please note that standalone option requires a professional Instagram account.
 
     **Your Instagram Standalone OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/instagram-standalone`
-    - Local development: `http://localhost:4200/integrations/social/instagram-standalone`
-    - Docker: `http://localhost:5000/integrations/social/instagram-standalone`
+    - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/instagram-standalone`
+    - Docker: `https://redirectmeto.com/http://localhost:5000/integrations/social/instagram-standalone`
+
+    <Warning>
+    Instagram will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to Instagram, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on Instagram with a redirect mismatch.
+
+    The Facebook Business flow above does not do this. It sends your `FRONTEND_URL` through unchanged, so those redirect URIs stay bare.
+    </Warning>
   </Step>
 
   <Step title="Copy Instagram App ID and Secret">
@@ -199,8 +212,20 @@ INSTAGRAM_APP_SECRET="app secret"
 
   <Step title="Add Instagram Standalone channel in PostQueen Application">
     Go to the PostQueen web interface, and click on the "Add Channel" button. Select "Instagram (Standalone)" from the list of available channels. You should be redirected to the Instagram login screen to authorize the application.
+
+    Approve all four permissions on that screen. If the granted list comes back short, she stops before the channel is created and says `Not enough scopes, when choosing a provider, please add all the scopes`.
   </Step>
 </Steps>
+
+Once the channel is in, it stays in. The short lived code from that login is traded for a long lived token good for 58 days, and a background job wakes when the clock runs out, refreshes the token and goes back to sleep. You never re-authorize the channel by hand.
+
+Analytics come through as well. Both the account numbers and the per post numbers listed at the top of this page are read straight from `graph.instagram.com`, so a standalone channel charts the same as one attached through a Facebook page.
+
+<Note>
+Two things do not carry over. Attaching audio to a Reel runs through the Facebook Business connection only, so a Reel from a standalone channel goes out without an added track.
+
+The ten item carousel guard is the other one. A standalone channel checks only that you attached at least one piece of media and that a Trial Reel is a single video. An eleventh carousel item sails past her and comes back as a rejection from Instagram instead.
+</Note>
 
 ## Adding App Roles
 

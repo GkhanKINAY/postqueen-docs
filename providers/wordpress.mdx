@@ -1,0 +1,103 @@
+---
+title: WordPress
+description: 'How to add WordPress to PostQueen'
+icon: /images/channels/wordpress.svg
+---
+
+<img src="/images/channels/wordpress.svg" alt="WordPress" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+## What she can post to WordPress
+
+Your own site is the one channel nobody can take away from you, and she treats it that way. She signs in over the REST API with an Application Password, reads back the post types your site actually offers, and files the piece where you tell her. Categories, tags and a featured image come along if you set them.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    100,000 characters. The editor is HTML here, not Markdown.
+  </Card>
+  <Card title="Media" icon="image">
+    One cover picture. She uploads it into your media library and sets it as the featured image.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Whatever your site offers. She reads your post types and drops the `wp_` internal ones, the `nav_` menu ones and `attachment` from the list.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and WordPress is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `title` needs at least two characters and `type` is required. Status, categories and WordPress tags are optional, and so is a cover picture: [WordPress settings](/public-api/providers/wordpress). |
+| Connect flow | One step, inside the app, with three fields: **Domain URL**, **Username** and **Password**. There is no developer app, no redirect URI and no environment variable. |
+| Automations | None on this network. |
+| Publish rate | Five posts at a time. |
+
+<Warning>
+**Your site has to be reachable from the internet.** Outbound calls run through an SSRF guard that resolves the host and refuses private addresses, so a WordPress on `localhost`, on a Docker network or on an internal VPC address never answers. Self-hosters who genuinely run PostQueen and WordPress side by side on a private network can opt out with `DISABLE_SSRF_PROTECTION=true`. It stays on by default.
+
+**Status is a post state, not a queue.** The **Status** field defaults to Publish, with Draft, Pending and Private sitting beside it. Choose Draft and she still sends the piece on schedule. It simply arrives in your WordPress drafts rather than on the front page.
+
+**She sends the first block only.** The composer offers **Add comment** underneath the post, and WordPress receives the first block.
+</Warning>
+
+## Set up WordPress
+
+<Steps>
+  <Step title="Create an Application Password">
+    In your WordPress admin, go to **Users**, then **Profile**, and scroll to the **Application Passwords** section. Give it a name you will recognize, `PostQueen` is fine, then add it. WordPress shows the generated password once. Copy it exactly as it appears, spaces included, before you leave the page.
+
+    This is not your login password. It is a separate credential you can revoke on its own, which is the whole point of it.
+
+    <Note>
+    No Application Passwords section on the profile page? WordPress hides it on sites served over plain HTTP. Its [own documentation](https://developer.wordpress.org/advanced-administration/security/application-passwords/) is direct about it: Application Passwords are available when requests are served over HTTPS, and the section is hidden otherwise. Put a certificate on the site and it reappears.
+    </Note>
+  </Step>
+
+  <Step title="Add WordPress as a channel">
+    In PostQueen, click **Add Channel** and pick **WordPress**. A modal titled **Add Provider** opens with three fields:
+
+    | Field | Type | What to paste |
+    |---|---|---|
+    | **Domain URL** | Text | The root of your site, with the scheme and no trailing slash: `https://example.com`. It has to start with `http://` or `https://` and carry a dotted host name. |
+    | **Username** | Text | Your WordPress login name, the one the Application Password belongs to. |
+    | **Password** | Password | The Application Password from the previous step, not your login password. The field carries a small **i** next to its label with the same reminder: *"Application password, create in User->Profile"*. |
+
+    Press **Connect**. She calls `/wp-json/wp/v2/users/me` on your domain with those credentials, and the channel appears carrying your display name and avatar.
+  </Step>
+
+  <Step title="File the first post">
+    Open a new post, select the WordPress channel and fill the settings panel:
+
+    - **Title**: required, at least two characters.
+    - **Select type**: required, read live from your site.
+    - **Status**: Publish by default. The other three states are Draft, Pending and Private.
+    - **Categories** and **WordPress Tags**: optional. She reads the first hundred of each from your site.
+    - **Cover picture**: optional. She uploads it and attaches it as the featured image.
+
+    Schedule it. Autopilot sends it at the time you set, and the post lands at whatever status you chose.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+A failed connection returns one of five messages, and each one points somewhere specific. These are the exact strings she shows you, so the one on your screen is the one to read.
+
+- **"Could not reach your WordPress site. Check the Domain URL and that the site is publicly accessible."** Nothing answered at all: a DNS failure, a refused connection or a TLS error. It is also what a private address looks like from behind the SSRF guard. Open the Domain URL in a browser from outside your own network and see what comes back.
+
+- **"WordPress rejected the login. A security plugin or server setting may be blocking the REST API or stripping the Authorization header, or the username / Application Password is incorrect."** Your site answered 401 or 403. Two suspects. Either the credentials are wrong, so generate a fresh Application Password and paste it whole, or something in front of WordPress is eating the `Authorization` header, which security plugins and some server configurations do by default.
+
+- **"WordPress returned an unexpected error (HTTP 500). Make sure the REST API is enabled and Application Passwords are available."** Any other failing status code, with the real number in place of 500. Usually the REST API is switched off, or Application Passwords are unavailable on that site.
+
+- **"WordPress did not return a valid response. The REST API may be disabled or blocked by a security plugin."** A 200 that was not JSON. A maintenance page, a security plugin interstitial or a caching layer answered instead of WordPress itself.
+
+- **"Invalid credentials"**. WordPress answered cleanly and returned a REST error where the user record should have been. The username and Application Password do not match an account on that site.
+
+One more arrives later, at publish time rather than connect time:
+
+- **"The connect user has insufficient permissions to create posts"**, which she raises when WordPress answers `rest_cannot_create`. The account you connected needs a role that can create the post type you chose.
+
+And one that is not an error message at all:
+
+- **No post type picker in the settings panel**: she found no usable types on your site, which normally means the REST API call did not get through. Fix the connection first, then reopen the post.

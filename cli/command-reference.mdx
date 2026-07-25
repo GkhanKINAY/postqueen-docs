@@ -33,7 +33,7 @@ postqueen integrations:list | tail -n +2 | jq '.[].id'
 | `POSTQUEEN_AUTH_SERVER` | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only matters if you run your own; see [Authentication](/cli/authentication). |
 
 <Note>
-Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `Error: No authentication found.`
+Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `❌ Error: No authentication found.` followed by two lines naming your options. All three go to stderr, so redirect with `2>&1` if you want them in a log.
 </Note>
 
 ## Auth
@@ -217,6 +217,53 @@ Every command is a thin wrapper over the [Public API](/public-api/introduction).
 <Note>
 `posts:create` is rate limited to 30 requests per hour on PostQueen Cloud. Running her yourself? Raise `API_LIMIT`.
 </Note>
+
+## Scripting and CI
+
+You drop a `posts:create` into a deploy script, it works from your terminal, and then it fails the moment a machine runs it. Four behaviors account for most of that gap.
+
+**A header line comes before the JSON.** `integrations:list` opens with `🔌 Connected Integrations:` and `upload` opens with `✅ File uploaded successfully!`, so `jq` chokes on the first token. Strip line one with `tail -n +2`. Two commands break the pattern: `posts:missing` prints bare JSON and pipes straight through, and `posts:delete` prints a confirmation line with no JSON at all.
+
+**Anything that fails exits `1`.** Errors go to stderr behind a `❌` and results stay on stdout, so a failed command falls out of your pipeline instead of feeding it half a result. `set -e` catches it. Every message and its cause: [Troubleshooting](/cli/troubleshooting).
+
+<Warning>
+`auth:status` is the exception. It prints `❌ Not authenticated.` on stdout and still exits `0`, which makes it worthless as a gate. Gate on a command that really calls the API:
+
+```bash
+postqueen integrations:list > /dev/null || exit 1
+```
+</Warning>
+
+**Cron does not read your shell profile.** The `export POSTQUEEN_API_KEY=...` sitting in your `~/.zshrc` is invisible to a crontab entry, and the job dies on `❌ Error: No authentication found.` before it sends anything. That line goes to stderr, so a crontab redirecting only stdout captures nothing and the failure looks silent. Give cron the key in its own environment, and redirect with `2>&1`.
+
+A script that gates first, then uploads and posts:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+export POSTQUEEN_API_KEY="your_api_key"
+
+# Fail fast if the key is dead, before doing any real work
+postqueen integrations:list > /dev/null || exit 1
+
+IMG=$(postqueen upload ./build/release.png | tail -n +2 | jq -r '.path')
+DATE=$(date -u -d "+1 hour" +"%Y-%m-%dT%H:%M:%SZ")   # GNU/Linux
+
+postqueen posts:create \
+  -c "Version $(git describe --tags) is live" \
+  -m "$IMG" \
+  -s "$DATE" \
+  -i "twitter-123"
+```
+
+The crontab that runs it sets the key itself:
+
+```
+POSTQUEEN_API_KEY=your_api_key
+
+0 9 * * 1 /opt/scripts/weekly-post.sh >> /var/log/postqueen.log 2>&1
+```
 
 ## Next steps
 
