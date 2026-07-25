@@ -4,11 +4,21 @@ description: 'The CLI, MCP, the public API or an automation platform: four ways 
 icon: 'signs-post'
 ---
 
-The calendar looks right and the app does everything you need, but the work does not start there. It starts in a terminal. It starts in a chat window, in a nightly script, on an n8n canvas somebody built two years ago. You want her where the work already happens.
+Four routes run her from outside the app, and all four end in the same place: a post on your
+calendar. They ride the same [Public API](/public-api/introduction), so the result never depends on
+which one you picked.
 
-Four routes take her there, and every one of them ends in the same place: a post on your calendar. All four sit on the same [Public API](/public-api/introduction), so the result never depends on which one you picked. Whatever lands on that calendar goes out at the time you set. A post created as a draft keeps its date and does nothing until you publish it, so a draft you retry weeks later can fire the moment you move it, because that stored date is already behind you.
+<Warning>
+**The create-post cap is shared too.** One instance-wide `API_LIMIT` per organization per hour,
+identical on every plan. Cloud and the shipped Compose files set it to 30; unset on your own
+instance it sits at 90. A chatty source reaches it faster than you expect, whichever route it came
+in on.
+</Warning>
 
-One more thing they share: the create-post endpoint is capped per organization per hour, and the cap is a single instance-wide `API_LIMIT` that is identical on every plan. PostQueen Cloud and the shipped Compose files both set it to 30. Leave it unset on your own instance and it sits at 90. A chatty source reaches it faster than you would expect, whichever route it came in on.
+<Note>
+A draft keeps the date you gave it and does nothing until you publish it. Publish one weeks later
+and it can fire immediately, because that stored date is already behind you.
+</Note>
 
 ## The four at a glance
 

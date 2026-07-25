@@ -43,6 +43,8 @@ She waits two seconds before every write, on the post and on each comment, and s
 Announcements are quieter than normal messages in one specific way. Twitch answers an announcement with no message id, so she stores a placeholder and nothing links back to it in chat. She does not read that answer for a failure either, which means an announcement Twitch turned down still records as posted. Watch your first announcement land in your own chat before you trust a run of them. A normal chat message returns a real id and a real sent flag, so it reports honestly.
 </Note>
 
+<Snippet file="setup-is-selfhost-only.mdx" />
+
 <Steps>
   <Step title="Register an app in the Twitch developer console">
     Sign in to the Twitch developer console and register a new application. You need the client id and the client secret from it, and the redirect URL from the next step.
