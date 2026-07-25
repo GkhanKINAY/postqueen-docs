@@ -15,6 +15,10 @@ The top-level `type` field controls when (and whether) the post is published:
 
 Drafts are how you stage content via the API without committing to a publish time, useful for content review workflows or pre-filling a calendar from an external CMS.
 
+<Note>
+  `posts` is required for every `type`, drafts included. Each entry must include an `integration.id`, or the request returns `400 Bad Request` with the message `All posts must have an integration id`. A draft still has to be attached to at least one channel — there is no way to create a channel-less draft via the API.
+</Note>
+
 ## Duplicating a post
 
 There is no dedicated duplicate / clone endpoint. To copy an existing post, fetch it with `GET /posts` and submit the content as a new `POST /posts` request.
