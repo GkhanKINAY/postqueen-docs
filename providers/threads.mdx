@@ -57,17 +57,23 @@ Threads requires the `THREADS_APP_ID` and `THREADS_APP_SECRET` environment varia
   <Step title="Create an app">
     Go to Meta for Developers and [create a new app](https://developers.facebook.com/apps/creation/). Give your app a name and email.
 
-    ![Create app](/images/providers/threads/threads_app_name.png)
+    <Frame>
+      <img src="/images/providers/threads/threads_app_name.png" alt="Create app" />
+    </Frame>
   </Step>
 
   <Step title="Request access to Threads">
     Select *Access the Threads API*.
 
-    ![Request access](/images/providers/threads/threads_request_api.png)
+    <Frame>
+      <img src="/images/providers/threads/threads_request_api.png" alt="Request access" />
+    </Frame>
   </Step>
 
   <Step title="Add business details, or skip">
-    ![Add business details](/images/providers/threads/threads_business.png)
+    <Frame>
+      <img src="/images/providers/threads/threads_business.png" alt="Add business details" />
+    </Frame>
 
     If you are unable to skip or move to the next step, and get a message saying "There are no business portfolios available to connect to this app", go to your [Meta Business Suite Settings](https://business.facebook.com/latest/settings/business_users) and make sure you have enabled Two-Factor Authentication (2FA) for your account.
   </Step>
@@ -86,7 +92,9 @@ Threads requires the `THREADS_APP_ID` and `THREADS_APP_SECRET` environment varia
     - `threads_manage_replies`
     - `threads_manage_insights`
 
-    ![Configure API access](/images/providers/threads/threads_access.png)
+    <Frame>
+      <img src="/images/providers/threads/threads_access.png" alt="Configure API access" />
+    </Frame>
 
     <Warning>
     Threads is the one network where a missing scope does not stop the connect. The channel
@@ -115,7 +123,9 @@ Threads requires the `THREADS_APP_ID` and `THREADS_APP_SECRET` environment varia
     You can use the same value for the **Uninstall Callback URL** and **Delete Callback URL**, but note that PostQueen does not support either at this time. The form will not save unless you enter something.
     </Note>
 
-    ![Set threads API settings](/images/providers/threads/threads_api_settings.png)
+    <Frame>
+      <img src="/images/providers/threads/threads_api_settings.png" alt="Set threads API settings" />
+    </Frame>
 
     Go back to the 'Dashboard' view of the Facebook developers portal and click "Finish customization". Make sure you clicked through the setup wizard, and select "Yes I'm finished" to complete the setup. The API may not work until you have done this.
   </Step>
@@ -138,14 +148,18 @@ Threads requires the `THREADS_APP_ID` and `THREADS_APP_SECRET` environment varia
     - Open [Website permissions](https://www.threads.com/settings/website_permissions), and switch to the "Invites" tab;
     - If all has gone well, you should have a pending invite. Accept that invite.
 
-    ![Threads invite](/images/providers/threads/threads_invite.png)
+    <Frame>
+      <img src="/images/providers/threads/threads_invite.png" alt="Threads invite" />
+    </Frame>
   </Step>
 
   <Step title="Start testing">
     - Go back to the Meta developers portal, and in the sidebar, click *Testing*, and then open the *Open Graph API Explorer*. 
     - In the header, dropdown the API selector and change it to threads.net v1. 
 
-    ![API Version](/images/providers/threads/threads_api_version.png)
+    <Frame>
+      <img src="/images/providers/threads/threads_api_version.png" alt="API Version" />
+    </Frame>
 
     - In the right sidebar, under *Access Token*, click *Generate Threads Access Token*. This will open a new window where you can select the Threads account you want to test with - it should be an account that accepted the earlier invite. If everything has worked successfully you should be provided with a very long alphanumeric access token - you do not need to do anything with this, but it proves things are working correctly.
   </Step>

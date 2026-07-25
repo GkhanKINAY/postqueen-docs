@@ -1,30 +1,43 @@
 ---
 title: FAQ
 description: 'Short answers on how PostQueen runs, what she connects to, and where to get help'
+icon: 'circle-question'
 ---
 
-Most people arrive with the same handful of questions. Autopilot, self-hosting, what she can post to. Something else on your mind? The [support page](/support) is the fastest route to a human.
+Most people arrive with the same handful of questions. Autopilot, self-hosting, what she can post
+to. Cannot find yours? The [support page](/support) is the fastest route to a human.
 
-## Common questions 👑
+## Getting started
 
 <AccordionGroup>
-  <Accordion title="What is PostQueen, in one sentence?">
+  <Accordion title="What is PostQueen, in one sentence?" icon="crown">
     PostQueen is an AI social media assistant who writes the copy, designs the visuals and schedules posts across 30+ networks, while you review the calendar.
 
-    New here? The [quickstart](/quickstart) takes you from an empty account to your first scheduled post.
+    New here? The [quickstart](/quickstart) takes you from an empty account to your first scheduled post in about five minutes.
   </Accordion>
 
-  <Accordion title="Should I use the cloud or self-host her?">
+  <Accordion title="Should I use the cloud or self-host her?" icon="scale-balanced">
     Both run the same PostQueen, so pick the one that fits how you like to work.
 
     **PostQueen Cloud** starts with a 7-day free trial at [postqueen.ai](https://postqueen.ai). You never patch a server, and you never watch a version number. Plans and prices: [postqueen.ai/pricing](https://postqueen.ai/pricing).
 
-    **Self-hosting** is free for as long as you run it, because the app is open source. Your database, your media storage and your provider credentials stay on your own servers. [Try her locally](/installation/quickstart-local) takes about five minutes on your own machine, and [Deploy to a server](/installation/production) goes from a bare VPS to your own domain. Both paths side by side: [quickstart](/quickstart).
+    **Self-hosting** is free for as long as you run it, because the app is open source. Your database, your media storage and your provider credentials stay on your own servers. [Try her locally](/installation/quickstart-local) takes about five minutes on your own machine, and [Deploy to a server](/installation/production) goes from a bare VPS to your own domain.
   </Accordion>
 
-  <Accordion title="Which networks can she post to?">
+  <Accordion title="Is there a mobile app?" icon="mobile">
+    The mobile app is on the way. In the meantime she already answers on the phone in your pocket: message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord.
+
+    If you would rather use the browser, [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from a phone screen. Chat route setup: [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes).
+  </Accordion>
+</AccordionGroup>
+
+## Channels and posting
+
+<AccordionGroup>
+  <Accordion title="Which networks can she post to?" icon="share-nodes">
     30+ networks, from the big ones like X, LinkedIn and Instagram to community platforms such as Discord, Mastodon and Reddit.
 
+    <Frame caption="Some of the networks she posts to. One setup page each on Providers">
     <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center'}}>
       <img src="/images/channels/instagram.svg" height="28" alt="Instagram" />
       <img src="/images/channels/youtube.svg" height="28" alt="YouTube" />
@@ -57,47 +70,54 @@ Most people arrive with the same handful of questions. Autopilot, self-hosting, 
       <img src="/images/channels/listmonk.svg" height="28" alt="Listmonk" />
       <img src="/images/channels/skool.svg" height="28" alt="Skool" />
     </div>
+    </Frame>
 
     On the cloud you connect a channel with a couple of clicks. Self-hosting? You register your own provider apps and drop the credentials into the environment first. Full walkthrough: [OAuth configuration](/configuration/oauth).
 
     One page per channel: [providers overview](/providers/overview).
   </Accordion>
 
-  <Accordion title="Is PostQueen open source?">
-    Yes. She is AGPL-3.0, forked from [Postiz](https://github.com/gitroomhq/postiz-app) with thanks to its contributors.
-
-    Her source lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app). Read it, run it on your own box, and open an issue when something looks wrong.
-  </Accordion>
-
-  <Accordion title="Do I stay in control of what gets published?">
+  <Accordion title="Do I stay in control of what gets published?" icon="eye">
     She runs on your terms. Leave her alone and she is a true autopilot: whatever lands on the calendar goes out on time without asking you again, so a launch week keeps publishing while you sit on a plane. Prefer to stage things first? Ask her for drafts instead: a draft is saved to your calendar but never scheduled, so nothing leaves until you publish it.
 
     Either way the calendar shows what is planned before it goes out, and you can edit or delete anything on it.
   </Accordion>
+</AccordionGroup>
 
-  <Accordion title="Can my AI assistant use her?">
+## Agents and the API
+
+<AccordionGroup>
+  <Accordion title="Can my AI assistant use her?" icon="robot">
     That is the point. Any assistant that can run a shell command or call a tool can drive your calendar.
 
     - **Agent skill and CLI.** `npx skills add GkhanKINAY/postqueen-agent` teaches your agent the `postqueen` CLI. Start at the [CLI introduction](/cli/introduction).
     - **MCP.** Her hosted server gives any MCP client 11 tools. For Claude Code it is one line: `claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY`. Full setup: [MCP introduction](/mcp/introduction).
     - **Public API.** REST for your own scripts: [API overview](/public-api/introduction).
 
-    The three routes compared, with a self-contained guide for each agent: [agents overview](/agents/overview).
+    The routes compared side by side: [which interface](/which-interface).
   </Accordion>
 
-  <Accordion title="Is there a mobile app?">
-    The mobile app is on the way. In the meantime she already answers on the phone in your pocket: message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord.
-
-    If you would rather use the browser, [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from a phone screen. Chat route setup: [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes).
-  </Accordion>
-
-  <Accordion title="Are there API limits?">
+  <Accordion title="Are there API limits?" icon="gauge-high">
     One limit matters in practice: 30 requests per hour on the create-post endpoint. Each call counts as a single request, so schedule several posts in one request when you need throughput. Other endpoints, such as listing channels or reading analytics, are not capped by it.
 
     On your own server, you raise or lower the ceiling with the `API_LIMIT` environment variable. Authentication and error codes: [API overview](/public-api/introduction).
   </Accordion>
+</AccordionGroup>
 
-  <Accordion title="Where do I get help?">
+## Open source and licensing
+
+<AccordionGroup>
+  <Accordion title="Is PostQueen open source?" icon="code-branch">
+    Yes. She is AGPL-3.0, forked from [Postiz](https://github.com/gitroomhq/postiz-app) with thanks to its contributors.
+
+    Her source lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app). Read it, run it on your own box, and open an issue when something looks wrong.
+  </Accordion>
+</AccordionGroup>
+
+## Still need help?
+
+<AccordionGroup>
+  <Accordion title="Where do I get help?" icon="headset">
     Bugs and questions about the open-source app go to [GitHub Issues](https://github.com/GkhanKINAY/postqueen-app/issues/new/choose); billing and account questions go to [support@postqueen.ai](mailto:support@postqueen.ai). How to write a report that gets a fast answer: [support page](/support).
   </Accordion>
 </AccordionGroup>

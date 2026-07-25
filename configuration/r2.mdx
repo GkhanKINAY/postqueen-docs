@@ -1,6 +1,7 @@
 ---
 title: R2 Configuration
 description: 'How to use Cloudflare R2 for file storage'
+icon: 'cloud'
 ---
 
 Cloudflare R2 stores your uploaded images and video outside the container, on a URL that is
@@ -21,13 +22,17 @@ with the local disk. This page is the setup, start to finish.
   <Step title="Create a new Bucket">
     In the dashboard sidebar, and head to the R2 page.
 
-    <img src="/images/r2/r2-page.png" alt="R2 Page" />
+    <Frame>
+      <img src="/images/r2/r2-page.png" alt="R2 Page" />
+    </Frame>
 
     Create a new Bucket.
     - Choose Automatic
     - Choose Standard
 
-    <img src="/images/r2/r2-create-bucket.png" alt="Create Bucket" />
+    <Frame>
+      <img src="/images/r2/r2-create-bucket.png" alt="Create Bucket" />
+    </Frame>
 
     <Warning>
     If you need your media to stay in a specific region for regulatory reasons —
@@ -41,29 +46,41 @@ with the local disk. This page is the setup, start to finish.
   <Step title="Create your R2 Token">
     Create your R2 Token by going to R2 Object Storage:
 
-    <img src="/images/r2/r2-object-storage.png" alt="R2 Object Storage" />
+    <Frame>
+      <img src="/images/r2/r2-object-storage.png" alt="R2 Object Storage" />
+    </Frame>
 
     Click on the API dropdown, and select [Manage API tokens](https://dash.cloudflare.com/?to=/:account/r2/api-tokens):
 
-    <img src="/images/r2/r2-manage-api-tokens.png" alt="Manage API tokens" />
+    <Frame>
+      <img src="/images/r2/r2-manage-api-tokens.png" alt="Manage API tokens" />
+    </Frame>
 
     Copy your Account ID for later, and click on "Create an API token":
 
-    <img src="/images/r2/r2-create-api-token.png" alt="Create API Token" />
+    <Frame>
+      <img src="/images/r2/r2-create-api-token.png" alt="Create API Token" />
+    </Frame>
 
     Create an Account API token:
 
-    <img src="/images/r2/r2-account-api-token.png" alt="Account API Token" />
+    <Frame>
+      <img src="/images/r2/r2-account-api-token.png" alt="Account API Token" />
+    </Frame>
 
     Under "Permissions" choose "Object Read & Write" and under "Specify bucket(s)" search for your created Bucket.
 
-    <img src="/images/r2/r2-token-permissions.png" alt="Permissions" />
+    <Frame>
+      <img src="/images/r2/r2-token-permissions.png" alt="Permissions" />
+    </Frame>
   </Step>
 
   <Step title="Copy your credentials">
     After the R2 Token is created, copy your "Access Key ID" and "Secret Access Key":
 
-    <img src="/images/r2/r2-copy-credentials.png" alt="Copy Credentials" />
+    <Frame>
+      <img src="/images/r2/r2-copy-credentials.png" alt="Copy Credentials" />
+    </Frame>
 
     Paste the respective information into your configuration.
 
@@ -98,7 +115,9 @@ CLOUDFLARE_JURISDICTION=""
 CLOUDFLARE_BUCKET_URL="https://cdn.example.com"
 ```
 
-    <img src="/images/r2/r2-custom-domain.png" alt="Custom Domain" />
+    <Frame>
+      <img src="/images/r2/r2-custom-domain.png" alt="Custom Domain" />
+    </Frame>
 
     Click to edit the CORS policy and add the following JSON:
 
@@ -131,7 +150,9 @@ CLOUDFLARE_BUCKET_URL="https://cdn.example.com"
 ]
 ```
 
-    <img src="/images/r2/r2-cors-policy.png" alt="CORS Policy" />
+    <Frame>
+      <img src="/images/r2/r2-cors-policy.png" alt="CORS Policy" />
+    </Frame>
   </Step>
 </Steps>
 
