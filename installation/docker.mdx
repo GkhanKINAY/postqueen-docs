@@ -9,18 +9,30 @@ description: 'Install PostQueen using Docker standalone'
 
 ## Set environment variables
 
-She reads everything she needs from environment variables, and there are a lot of them, so a `.env` file beats a long `docker run` line you have to maintain.
+She reads everything she needs from environment variables, and there are a lot of them, so a file on your host beats a `docker run` line long enough to wrap three times.
 
-Her containers look for that file in `/config`. Docker creates it for you on a docker volume the first time you start her up.
+Keep that file wherever you like and hand it to Docker with `--env-file`. Docker reads it on the host and sets each line in the container environment, which is where she looks. Start from the shipped example, which you can [view on GitHub](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example) and copy into your own `postqueen.env`.
 
-The default .env file can be found here; [example .env file](https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.env.example)
+<Warning>
+Mounting that file inside the container does not work. Nothing in the image reads `/config`, so a file placed there is never opened. `--env-file` is the mechanism, and the container environment is the destination.
+</Warning>
 
 ## Create the container
 
-One command creates the container. Replace `./config` with the path to your config directory, and have Postgres and Redis running first.
+One command creates the container. Point `--env-file` at your own file, and have Postgres and Redis running first.
 
 ```bash
-docker create --name postqueen -v postqueen-uploads:/uploads/ -v postqueen-config:/config/ -p 5000:5000 ghcr.io/gkhankinay/postqueen-app:latest
+docker create --name postqueen \
+  --env-file ./postqueen.env \
+  -v postqueen-uploads:/uploads/ \
+  -p 5000:5000 \
+  ghcr.io/gkhankinay/postqueen-app:latest
+```
+
+Then start her and watch the first minute:
+
+```bash
+docker start postqueen && docker logs -f postqueen
 ```
 
 ## Next Steps

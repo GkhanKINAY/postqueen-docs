@@ -1,0 +1,12 @@
+---
+title: 'Get Consent Screen Details'
+openapi: 'GET /oauth/authorize'
+---
+
+You are building the consent step and you want to know whether the `client_id` you are holding is real before you send anyone anywhere. This is the call that tells you.
+
+PostQueen's own consent page calls it too. Redirecting a user to `https://app.postqueen.ai/oauth/authorize` is the normal path, and that page hits this endpoint to draw your app's name, description and picture on the screen they approve. Walk the whole flow on [OAuth2 Authentication](/public-api/oauth).
+
+<Note>
+This endpoint sits outside `/public/v1` and takes no API key. A `client_id` that does not resolve comes back as a `400` reading `Invalid client_id`.
+</Note>

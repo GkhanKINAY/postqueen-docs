@@ -53,6 +53,10 @@
     {
       "name": "Video Generation",
       "description": "Generate videos with AI"
+    },
+    {
+      "name": "OAuth",
+      "description": "Authorize third-party apps and exchange codes for access tokens"
     }
   ],
   "paths": {
@@ -2101,6 +2105,285 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/authorize": {
+      "get": {
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "Get consent screen details",
+        "description": "Validates an OAuth application and returns the details PostQueen shows on the consent screen. The consent page at `https://app.postqueen.ai/oauth/authorize` calls this endpoint, so you normally redirect the user to that page instead of calling this yourself. It is useful for checking that a `client_id` is valid.\n\nThis endpoint lives outside `/public/v1` and takes no API key.",
+        "operationId": "oauthAuthorize",
+        "security": [],
+        "servers": [
+          {
+            "url": "https://api.postqueen.ai",
+            "description": "PostQueen Cloud"
+          },
+          {
+            "url": "https://{host}/api",
+            "description": "Self-hosted",
+            "variables": {
+              "host": {
+                "default": "localhost:5000",
+                "description": "Your PostQueen instance domain"
+              }
+            }
+          }
+        ],
+        "parameters": [
+          {
+            "name": "client_id",
+            "in": "query",
+            "required": true,
+            "description": "Your app's Client ID (starts with `pca_`)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "response_type",
+            "in": "query",
+            "required": true,
+            "description": "Must be `code`. No other response type is supported.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "code"
+              ]
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "An opaque value echoed back in the response and in the redirect to your app. Use a random value to protect against CSRF.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The OAuth application is valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "app": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "App name shown on the consent screen"
+                        },
+                        "description": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "App description shown on the consent screen"
+                        },
+                        "picture": {
+                          "$ref": "#/components/schemas/MediaFile",
+                          "description": "The app's profile picture, or null when none is set. Use `picture.path` as the image URL."
+                        },
+                        "clientId": {
+                          "type": "string",
+                          "description": "The app's Client ID"
+                        },
+                        "redirectUrl": {
+                          "type": "string",
+                          "description": "Where PostQueen sends the user after they approve or deny"
+                        }
+                      }
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "The `state` you sent, echoed back. Absent if you did not send one."
+                    }
+                  }
+                },
+                "example": {
+                  "app": {
+                    "name": "My Scheduler",
+                    "description": "Schedules posts from my CRM",
+                    "picture": null,
+                    "clientId": "pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs",
+                    "redirectUrl": "https://yourapp.com/callback"
+                  },
+                  "state": "random123"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unknown `client_id`, or a missing/invalid query parameter",
+            "content": {
+              "application/json": {
+                "example": {
+                  "statusCode": 400,
+                  "message": "Invalid client_id"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/token": {
+      "post": {
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "Exchange an authorization code for an access token",
+        "description": "Exchanges the authorization code from your callback for a `pos_` access token. Call this from your server, since it requires your client secret. The code expires 10 minutes after it is issued and can only be used once. The access token does not expire; users revoke it from Settings > Approved Apps.\n\nThis endpoint lives outside `/public/v1` and takes no API key. The token it returns is used as the `Authorization` header on every other endpoint in this reference.",
+        "operationId": "oauthToken",
+        "security": [],
+        "servers": [
+          {
+            "url": "https://api.postqueen.ai",
+            "description": "PostQueen Cloud"
+          },
+          {
+            "url": "https://{host}/api",
+            "description": "Self-hosted",
+            "variables": {
+              "host": {
+                "default": "localhost:5000",
+                "description": "Your PostQueen instance domain"
+              }
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "enum": [
+                      "authorization_code"
+                    ],
+                    "description": "Must be `authorization_code`"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "The authorization code from your callback URL"
+                  },
+                  "client_id": {
+                    "type": "string",
+                    "description": "Your app's Client ID (starts with `pca_`)"
+                  },
+                  "client_secret": {
+                    "type": "string",
+                    "description": "Your app's Client Secret (starts with `pcs_`)"
+                  }
+                },
+                "required": [
+                  "grant_type",
+                  "code",
+                  "client_id",
+                  "client_secret"
+                ]
+              },
+              "example": {
+                "grant_type": "authorization_code",
+                "code": "abc123",
+                "client_id": "pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs",
+                "client_secret": "pcs_your_client_secret"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token issued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Organization ID of the user who authorized your app"
+                    },
+                    "cus": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "The organization's Stripe customer ID, or null when it has none"
+                    },
+                    "access_token": {
+                      "type": "string",
+                      "description": "The token to send in the `Authorization` header (starts with `pos_`)"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "description": "Always `bearer`"
+                    }
+                  }
+                },
+                "example": {
+                  "id": "85460a39-6329-4cf4-a252-187ce89a3480",
+                  "cus": "cus_stripe_customer_id",
+                  "access_token": "pos_aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcd",
+                  "token_type": "bearer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`unsupported_grant_type` when `grant_type` is not `authorization_code`, or `invalid_grant` when the code is unknown, belongs to another app, or has expired",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "enum": [
+                        "unsupported_grant_type",
+                        "invalid_grant"
+                      ]
+                    },
+                    "error_description": {
+                      "type": "string",
+                      "description": "Present only when the code has expired"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "invalid_grant",
+                  "error_description": "Code has expired"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`invalid_client` when the Client ID is unknown or the Client Secret does not match",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "enum": [
+                        "invalid_client"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "error": "invalid_client"
                 }
               }
             }

@@ -5,7 +5,11 @@ description: 'Every network PostQueen posts to, the ten that report analytics, a
 
 30+ networks, one calendar. She posts to all of them, and each one connects on its own terms: OAuth keys for most, a plain account login for Bluesky, the browser extension for Skool.
 
-Nothing is connected by default. You put each provider's credentials in your `.env` file, or set them as environment variables, and you restart PostQueen whenever you change one, because the values are read at boot. Running docker compose? Run `docker compose down` and then `docker compose up` to rebuild the containers with the updated variables.
+Nothing is connected by default, and every network is added the same way, from Add Channel. What changes is where the credential goes.
+
+Most networks want an OAuth app you register with the platform. Those keys go in your `.env` file, or into the environment some other way, and PostQueen reads them at boot. Change one and restart her before you expect it to take effect. Running docker compose? Run `docker compose down` and then `docker compose up` to rebuild the containers with the updated variables.
+
+A smaller group asks for nothing in your `.env` file at all. Those take their credential straight in the connect form, so you paste an API key or a login there and you are done. Nothing to restart, nothing to redeploy. The card for each one below says which kind it is, and the [Configuration Reference](/configuration/reference) lists the ones that need no variable.
 
 <Snippet file="never-share.mdx" />
 
@@ -42,9 +46,10 @@ Nothing is connected by default. You put each provider's credentials in your `.e
   <img src="/images/channels/whop.svg" alt="Whop" height="28" />
   <img src="/images/channels/listmonk.svg" alt="Listmonk" height="28" />
   <img src="/images/channels/google-business.svg" alt="Google Business Profile" height="28" />
+  <img src="/images/channels/moltbook.png" alt="Moltbook" height="28" />
 </div>
 
-Every one of them takes about five minutes and a set of keys:
+Most of them take about five minutes. Pick the one you want and the page tells you exactly what it asks for:
 
 <CardGroup cols={3}>
   <Card title="X (Twitter)" icon="/images/channels/x.svg" href="/providers/x-twitter">
@@ -110,6 +115,39 @@ Every one of them takes about five minutes and a set of keys:
   <Card title="Farcaster" icon="/images/channels/warpcast.svg" href="/providers/farcaster">
     Neynar keys. Was Warpcast
   </Card>
+  <Card title="Twitch" icon="/images/channels/twitch.svg" href="/providers/twitch">
+    OAuth keys from Twitch
+  </Card>
+  <Card title="Kick" icon="/images/channels/kick.svg" href="/providers/kick">
+    OAuth keys from Kick
+  </Card>
+  <Card title="VK" icon="/images/channels/vk.svg" href="/providers/vk">
+    One app ID, no secret
+  </Card>
+  <Card title="Medium" icon="/images/channels/medium.svg" href="/providers/medium">
+    An API key, no app
+  </Card>
+  <Card title="Dev.to" icon="/images/channels/devto.svg" href="/providers/devto">
+    An API key, no app
+  </Card>
+  <Card title="Hashnode" icon="/images/channels/hashnode.svg" href="/providers/hashnode">
+    An API key, no app
+  </Card>
+  <Card title="WordPress" icon="/images/channels/wordpress.svg" href="/providers/wordpress">
+    Your site URL and a login
+  </Card>
+  <Card title="Lemmy" icon="/images/channels/lemmy.svg" href="/providers/lemmy">
+    Instance URL and a login
+  </Card>
+  <Card title="Nostr" icon="/images/channels/nostr.svg" href="/providers/nostr">
+    Your private key, nothing else
+  </Card>
+  <Card title="Listmonk" icon="/images/channels/listmonk.svg" href="/providers/listmonk">
+    Your own Listmonk server
+  </Card>
+  <Card title="Moltbook" icon="/images/channels/moltbook.png" href="/providers/moltbook">
+    Registers itself on connect
+  </Card>
 </CardGroup>
 
 ## Analytics reaches ten of them
@@ -133,30 +171,30 @@ One more, on purpose: set `DISABLE_X_ANALYTICS` and she stops asking X for numbe
 
 ## Which page covers which platform
 
-Thirty-four connectors ship in the box, and every one of them shows up in the Add Channel list whether or not this section has written it up yet. The table is the whole map: where the key-by-key walkthrough lives, where the API settings schema lives, and which channels report analytics. Instagram and LinkedIn each appear twice because each one has two connectors with different rules.
+Thirty-four connectors ship in the box, and every one of them shows up in the Add Channel list. None of them is API-only, and none of them is hidden behind a flag. The table below is the whole map: where the key-by-key walkthrough lives, where the API settings schema lives, and which channels report analytics. Instagram and LinkedIn each appear twice because each one has two connectors with different rules. Instagram Standalone shares a page with Instagram, so its link drops you at the right section rather than a page of its own.
 
 | Platform | Connection guide | API settings | Analytics |
 |---|---|---|---|
 | Bluesky | [Guide](/providers/bluesky) | [Settings](/public-api/providers/bluesky) | No |
-| Dev.to | No | [Settings](/public-api/providers/devto) | No |
+| Dev.to | [Guide](/providers/devto) | [Settings](/public-api/providers/devto) | No |
 | Discord | [Guide](/providers/discord) | [Settings](/public-api/providers/discord) | No |
 | Dribbble | [Guide](/providers/dribbble) | [Settings](/public-api/providers/dribbble) | No |
 | Facebook | [Guide](/providers/facebook) | [Settings](/public-api/providers/facebook) | Yes |
 | Farcaster | [Guide](/providers/farcaster) | [Settings](/public-api/providers/warpcast) | No |
 | Google My Business | [Guide](/providers/google-my-business) | [Settings](/public-api/providers/gmb) | Yes |
-| Hashnode | No | [Settings](/public-api/providers/hashnode) | No |
+| Hashnode | [Guide](/providers/hashnode) | [Settings](/public-api/providers/hashnode) | No |
 | Instagram | [Guide](/providers/instagram) | [Settings](/public-api/providers/instagram) | Yes |
-| Instagram (Standalone) | No | [Settings](/public-api/providers/instagram-standalone) | Yes |
-| Kick | No | [Settings](/public-api/providers/kick) | No |
-| Lemmy | No | [Settings](/public-api/providers/lemmy) | No |
+| Instagram (Standalone) | [Guide](/providers/instagram#instagram-standalone-option) | [Settings](/public-api/providers/instagram-standalone) | Yes |
+| Kick | [Guide](/providers/kick) | [Settings](/public-api/providers/kick) | No |
+| Lemmy | [Guide](/providers/lemmy) | [Settings](/public-api/providers/lemmy) | No |
 | LinkedIn | [Guide](/providers/linkedin) | [Settings](/public-api/providers/linkedin) | No |
 | LinkedIn Page | [Guide](/providers/linkedin-page) | [Settings](/public-api/providers/linkedin-page) | Yes |
-| Listmonk | No | [Settings](/public-api/providers/listmonk) | No |
+| Listmonk | [Guide](/providers/listmonk) | [Settings](/public-api/providers/listmonk) | No |
 | Mastodon | [Guide](/providers/mastodon) | [Settings](/public-api/providers/mastodon) | No |
-| Medium | No | [Settings](/public-api/providers/medium) | No |
+| Medium | [Guide](/providers/medium) | [Settings](/public-api/providers/medium) | No |
 | MeWe | [Guide](/providers/mewe) | No | No |
-| Moltbook | No | [Settings](/public-api/providers/moltbook) | No |
-| Nostr | No | [Settings](/public-api/providers/nostr) | No |
+| Moltbook | [Guide](/providers/moltbook) | [Settings](/public-api/providers/moltbook) | No |
+| Nostr | [Guide](/providers/nostr) | [Settings](/public-api/providers/nostr) | No |
 | Pinterest | [Guide](/providers/pinterest) | [Settings](/public-api/providers/pinterest) | Yes |
 | Reddit | [Guide](/providers/reddit) | [Settings](/public-api/providers/reddit) | No |
 | Skool | [Guide](/providers/skool) | [Settings](/public-api/providers/skool) | No |
@@ -165,11 +203,11 @@ Thirty-four connectors ship in the box, and every one of them shows up in the Ad
 | Threads | [Guide](/providers/threads) | [Settings](/public-api/providers/threads) | Yes |
 | TikTok | [Guide](/providers/tiktok) | [Settings](/public-api/providers/tiktok) | Yes |
 | Tumblr | No | No | No |
-| Twitch | No | [Settings](/public-api/providers/twitch) | No |
-| VK | No | [Settings](/public-api/providers/vk) | No |
+| Twitch | [Guide](/providers/twitch) | [Settings](/public-api/providers/twitch) | No |
+| VK | [Guide](/providers/vk) | [Settings](/public-api/providers/vk) | No |
 | Whop | [Guide](/providers/whop) | [Settings](/public-api/providers/whop) | No |
-| WordPress | No | [Settings](/public-api/providers/wordpress) | No |
+| WordPress | [Guide](/providers/wordpress) | [Settings](/public-api/providers/wordpress) | No |
 | X (Twitter) | [Guide](/providers/x-twitter) | [Settings](/public-api/providers/x) | Yes |
 | YouTube | [Guide](/providers/youtube) | [Settings](/public-api/providers/youtube) | Yes |
 
-A `No` in the Connection guide column is a gap in these docs, not a gap in the product. She connects and publishes to all thirty-four either way. The environment variable each one asks for is named in the [Configuration Reference](/configuration/reference), and the settings page tells you which fields to send with the post. Tumblr has neither page yet, and its post settings are listed with the other article platforms in the [Public API introduction](/public-api/introduction).
+Tumblr is the last row without a connection guide, and that is a gap in these docs rather than a gap in the product. She connects and publishes to all thirty-four either way. Whatever each network asks for is named in the [Configuration Reference](/configuration/reference), and the settings page tells you which fields to send with the post. Tumblr has neither page yet, and its post settings are listed with the other article platforms in the [Public API introduction](/public-api/introduction). MeWe is the reverse case: the connection guide is written, the settings page is not.

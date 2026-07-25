@@ -1,0 +1,14 @@
+---
+title: 'Exchange Code for Token'
+openapi: 'POST /oauth/token'
+---
+
+The user approved your app and PostQueen sent them back to you with a code on the query string. Trade it here for the `pos_` token you will use on every call after this one.
+
+Two things about that code are worth planning around. It is good for ten minutes, and it works exactly once, because the exchange clears it as it hands you the token. Run the same request twice and the second one comes back as `invalid_grant`.
+
+<Warning>
+Make this call from your server. It carries your client secret, which never belongs in a browser or a mobile binary. A wrong secret and an unknown `client_id` both answer `401` with `invalid_client`, so the response will not tell you which of the two you got wrong.
+</Warning>
+
+The token that comes back does not expire on a clock. It stops working when the user revokes your app from **Settings > Approved Apps**. Full flow, including how to register the app in the first place, on [OAuth2 Authentication](/public-api/oauth).

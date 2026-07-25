@@ -19,6 +19,7 @@
               "introduction",
               "quickstart",
               "howitworks",
+              "which-interface",
               "faq",
               "support",
               "compliance"
@@ -47,6 +48,7 @@
             "pages": [
               "installation/system-requirements",
               "installation/docker-compose",
+              "installation/backups-and-upgrades",
               "installation/docker",
               "installation/kubernetes-helm",
               "installation/development",
@@ -79,6 +81,7 @@
             "group": "Troubleshooting",
             "pages": [
               "troubleshooting/overview",
+              "troubleshooting/post-failed",
               "troubleshooting/oauth-connect",
               "troubleshooting/uploads",
               "troubleshooting/activation-and-login",
@@ -98,22 +101,33 @@
               "providers/threads",
               "providers/tiktok",
               "providers/youtube",
+              "providers/twitch",
+              "providers/kick",
               "providers/x-twitter",
               "providers/linkedin",
               "providers/linkedin-page",
               "providers/pinterest",
               "providers/google-my-business",
               "providers/reddit",
+              "providers/lemmy",
               "providers/discord",
               "providers/slack",
               "providers/telegram",
               "providers/bluesky",
               "providers/mastodon",
               "providers/farcaster",
+              "providers/nostr",
+              "providers/vk",
               "providers/mewe",
               "providers/dribbble",
               "providers/whop",
-              "providers/skool"
+              "providers/skool",
+              "providers/wordpress",
+              "providers/medium",
+              "providers/devto",
+              "providers/hashnode",
+              "providers/listmonk",
+              "providers/moltbook"
             ]
           },
           {
@@ -210,6 +224,7 @@
             "group": "Reference",
             "pages": [
               "mcp/tools",
+              "mcp/limits-and-troubleshooting",
               "mcp/examples"
             ]
           }
@@ -309,7 +324,9 @@
           {
             "group": "Build on PostQueen",
             "pages": [
-              "public-api/oauth"
+              "public-api/oauth",
+              "public-api/oauth/authorize",
+              "public-api/oauth/token"
             ]
           },
           {

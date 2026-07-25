@@ -84,6 +84,10 @@ In practice this means: before your TikTok developer app passes audit, the `priv
     - Production: `https://postqueen.example.com/integrations/social/tiktok`
     - Local development (HTTPS required): `https://localhost:4200/integrations/social/tiktok`
     - Docker (HTTPS required): `https://localhost:5000/integrations/social/tiktok`
+
+    <Warning>
+    Serve your local instance over HTTPS and set `FRONTEND_URL` to match. Leave it on plain `http` and she wraps the callback through `redirectmeto.com` before sending it, which makes the literal string TikTok receives `https://redirectmeto.com/http://localhost:4200/integrations/social/tiktok`. Register whichever of the two your `FRONTEND_URL` actually produces, because a mismatch stops the login on TikTok.
+    </Warning>
   </Step>
 
   <Step title="Set a TOS and Privacy Policy">
@@ -95,7 +99,7 @@ In practice this means: before your TikTok developer app passes audit, the `priv
   <Step title="Add apps">
     Add the "Login Kit" and "Content Posting API" to your app.
 
-    For "Login Kit", set the redirect URI to http://localhost:4200/integrations/social/tiktok
+    For "Login Kit", set the redirect URI to the same value you registered two steps back. It is one URI across the app, not a second one just for Login Kit.
 
     For Content posting API, enable "Direct Post".
   </Step>

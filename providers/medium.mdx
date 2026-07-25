@@ -1,0 +1,100 @@
+---
+title: Medium
+description: 'Medium closed its API to new integrations, so only an older token connects'
+icon: /images/channels/medium.svg
+---
+
+<img src="/images/channels/medium.svg" alt="Medium" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+## The door is closed
+
+Most setup guides end with a working channel. This one probably will not, and it is better that you hear it here than after twenty minutes of hunting through Medium settings for a token that does not exist any more.
+
+Medium says it plainly in its own help center, on the [API and importing](https://help.medium.com/hc/en-us/articles/213480228-API-Importing) page:
+
+> Medium will not be issuing any new integration tokens for our API and will not allow any new integrations. However, all existing tokens will continue to work.
+
+Medium's own [API documentation](https://github.com/Medium/medium-api-docs) opens on the same note: *"The Medium API is no longer supported. We do not recommend using it."*
+
+<Warning>
+So the Medium channel connects in exactly one case: you already hold an integration token issued before Medium stopped handing them out, and it still works. There is no path to a new one. No developer app, no support request, no workaround inside PostQueen changes that, because the block sits on Medium's side of the wire.
+
+If you cannot find an existing token on your account, you do not have one, and the rest of this page is reference rather than instruction.
+</Warning>
+
+## What she can post to Medium
+
+For the people who kept a token, nothing about the connector changed. She takes a title, a Markdown body and up to four topics, and sends the article either to your own profile or to a publication you belong to. Where it goes decides what state it lands in, which is the part worth reading twice.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    100,000 characters. The editor is Markdown.
+  </Card>
+  <Card title="Media" icon="image">
+    No cover picture field on this connector. Pictures ride inside the Markdown body.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    One article, to your profile or to a publication. A title, a subtitle and topics, with a canonical link if you want one.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Medium is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `title` and `subtitle` are both required, each at least two characters. Topics cap at four. Publication and canonical link are optional: [Medium settings](/public-api/providers/medium). |
+| Connect flow | One step, inside the app, and only with a token you already hold. You paste it into a modal titled **Add Provider**. There is no developer app, no redirect URI and no environment variable. |
+| Automations | None on this network. |
+| Publish rate | Three posts at a time. |
+
+<Warning>
+**A publication turns the article into a draft on Medium.** Pick a publication in the settings panel and she posts it with a draft status. Leave the publication empty and the article goes to your own profile as a public post.
+
+Autopilot is not the difference here. She sends the article on schedule either way. What changes is the state it arrives in on Medium's side, so an article aimed at a publication waits in that publication's drafts until someone opens Medium and publishes it.
+</Warning>
+
+<Note>
+The **Subtitle** field is required before she will accept the post, and it is not part of what she sends to Medium. Fill it for the composer's sake. What reaches Medium is the title, the body and the topics, plus a canonical link when you set one.
+</Note>
+
+## Set up Medium
+
+<Steps>
+  <Step title="Find your existing integration token">
+    Look through your Medium account settings for an integration token issued before Medium closed the API. If one is listed, copy it.
+
+    If nothing is listed, stop here. Medium is not issuing new ones, and there is no substitute credential this connector accepts.
+  </Step>
+
+  <Step title="Add Medium as a channel">
+    In PostQueen, click **Add Channel** and pick **Medium**. A modal titled **Add Provider** opens with a single field:
+
+    | Field | Type | What to paste |
+    |---|---|---|
+    | **API key** | Password | Your existing Medium integration token. At least three characters, or the form refuses it. |
+
+    Press **Connect**. She calls `https://api.medium.com/v1/me` with the token as a bearer credential, and the channel appears with your Medium name and picture.
+  </Step>
+
+  <Step title="Write the first article">
+    Open a new post, select the Medium channel and fill the settings panel:
+
+    - **Title**: required, at least two characters.
+    - **Subtitle**: required by the form, not sent to Medium.
+    - **Canonical Link**: optional, for a piece published elsewhere first.
+    - **Select publication**: optional, and it changes where the article lands and in what state.
+    - **Topics**: optional, up to four.
+
+    She sends the first block only. The composer offers **Add post in a thread** underneath the article, and anything below that first block goes nowhere.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+- **"API key is invalid"** in the connect modal: the field rejects anything under three characters. Paste the whole token.
+- **"Invalid credentials"** after pressing Connect: Medium did not accept the token. On an account with no pre-existing token, this is the expected answer, and no amount of retrying changes it.
+- **The article is a draft on Medium**: you selected a publication. Clear the publication field to publish to your own profile instead.
+- **No publication picker in the settings panel**: she found no publications on your account, so there is nothing to choose and every article goes to your profile.

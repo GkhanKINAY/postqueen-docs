@@ -1,0 +1,99 @@
+---
+title: Listmonk
+description: 'How to add Listmonk to your system'
+icon: /images/channels/listmonk.svg
+---
+
+<img src="/images/channels/listmonk.svg" alt="Listmonk" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+Listmonk is the one channel in the calendar that sends email. It connects the way self-hosted software usually does, with an address and a login rather than an OAuth app, so there is nothing to register and nothing to add to your `.env` file. You click **Listmonk** in **Add Channel** and type three values into the form that opens.
+
+<Warning>
+**Publishing sends the campaign.** She creates the campaign in Listmonk and immediately sets its status to running, in the same publish. No draft campaign is left behind for you to look over, and there is no second click on the Listmonk side. A post scheduled for Tuesday at nine means the email leaves at Tuesday at nine.
+</Warning>
+
+## What she can post to Listmonk
+
+You are writing an email, not a status. The editor is the HTML one, the subject line and the list live in the post settings, and the whole thing goes out as one regular campaign.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    300,000 characters in the composer, which is far past anything a newsletter needs.
+  </Card>
+  <Card title="Media" icon="image">
+    None uploaded. Files attached to the post are not sent to Listmonk, so images belong in the HTML body as links to somewhere they are already hosted.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    One campaign to one list. Extra boxes added under the post are not sent, because this connector has no comment or thread call at all.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Listmonk is not one of them. Open rates stay in Listmonk where they are collected.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | **Subject** and **Preview** are text fields, **Select List** and **Select Template** are dropdowns she fills from your instance. Subject, preview and list are all required, and the template is the only optional one: [Listmonk settings](/public-api/providers/listmonk). |
+| Connect flow | One step, three fields typed into the **Add Provider** modal. She checks them with a basic auth call to `/api/settings`. |
+| Automations | None on this network. |
+| Publish rate | One hundred campaigns at a time. |
+
+Two details about the body she builds. The **Preview** text becomes the hidden preheader of the email, the line most clients show next to the subject, padded so the rest of your HTML does not leak into that preview. **Select Template** offers a **Default** entry, and choosing it sends the campaign without a template id so Listmonk falls back to its own default. The campaign name in Listmonk is your subject line, slugified.
+
+<Info>
+**The `LISTMONK_` environment variables are not this channel.** `LISTMONK_DOMAIN`, `LISTMONK_USER`, `LISTMONK_API_KEY`, `LISTMONK_LIST_ID` and `LISTMONK_WELCOME_TEMPLATE_ID` appear in the [Configuration Reference](/configuration/reference) under newsletter providers, and they belong to a different subsystem: the product newsletter that subscribes new PostQueen users and sends them a welcome email. Setting them does nothing for this channel, and leaving them empty takes nothing away from it. **The Listmonk channel needs no environment variables.** Your instance address and login live with the channel, encrypted, and nowhere else.
+</Info>
+
+## Connect Listmonk
+
+<Steps>
+  <Step title="Create an API user in Listmonk">
+    Open your Listmonk admin, go to **Admin** and then **Users**, and create a user of the API type. Listmonk shows you the token once, at creation, so copy it before you leave the page. That token is what you paste as the password further down.
+
+    Give the user access to the parts of the API she calls: the settings endpoint she checks the login against, your lists and your templates for the two dropdowns, and campaigns for creating and starting the send.
+  </Step>
+
+  <Step title="Open Add Channel and pick Listmonk">
+    In PostQueen, click **Add Channel** and select **Listmonk**. A modal titled **Add Provider** opens with three fields, and you stay inside PostQueen the whole time.
+  </Step>
+
+  <Step title="Fill in the three fields">
+    Each label below is exactly what the modal shows you.
+
+    | Field | What to paste | Where it comes from |
+    |---|---|---|
+    | **URL** | The base address of your Listmonk, protocol included, such as `https://mail.example.com` | The address you open the Listmonk admin at, cut back to the host. Leave off `/admin` and any trailing slash, because she appends `/api/...` to whatever you type. |
+    | **Username** | The name of the API user, exactly as you created it | The **Admin** then **Users** screen in Listmonk. |
+    | **Password** | The API token for that user | The token Listmonk showed you when the API user was created. If you did not copy it, delete the user and make a new one. |
+  </Step>
+
+  <Step title="Press Connect">
+    She calls `/api/settings` with those credentials as basic auth. The channel then takes its name from your Listmonk site name and its picture from your Listmonk logo, so a channel that appears with your newsletter branding is the sign it worked.
+  </Step>
+
+  <Step title="Write the campaign">
+    Choose the Listmonk channel in the editor and fill in the settings. **Subject** is the email subject line, **Preview** is the preheader, **Select List** is the audience and **Select Template** is optional. Then write the email itself in the HTML editor.
+
+    Publishing creates the campaign and starts it at once, so treat the schedule time in PostQueen as the send time.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+### "Invalid credentials" when connecting
+
+The call to `/api/settings` did not come back with a settings payload. Check the three fields in this order: the **URL** resolves and serves Listmonk, the API user is spelled the way Listmonk has it, and the token is the one from that user. A user without access to the settings endpoint fails here even though the name and token are right.
+
+### The list dropdown does not appear
+
+**Select List** and **Select Template** render nothing at all when the call behind them comes back empty. That is an empty account or an API user without access to those endpoints, not a broken editor. Create a list in Listmonk, or widen the user's access, then reopen the post.
+
+### The email went out the moment the post published
+
+That is the connector working as built. Listmonk campaigns are created and set to running in one publish, so the PostQueen schedule is the send schedule. If you want a campaign sitting in Listmonk for review, build that one by hand in Listmonk.
+
+### Listmonk on localhost or a private address
+
+The field accepts `localhost`, an IP address and a port, so the form lets you type it. The backend is stricter: requests resolving to loopback, private or link-local addresses are blocked before they leave. On a deployment where PostQueen and Listmonk share a trusted private network, set `DISABLE_SSRF_PROTECTION=true`, which is documented beside the setting in `.env.example`.

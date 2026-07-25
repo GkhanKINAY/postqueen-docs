@@ -1,0 +1,167 @@
+---
+title: A post did not go out
+description: 'The four states, the red badge on the calendar, how many times she tries, and how to get the post out'
+---
+
+Nine in the morning was the plan. It is half past ten, someone has asked where the post is, and the cell on your calendar has a red ring around it. Nothing is waiting on your approval, because there is no approval step: whatever is scheduled goes out at its minute. So something else happened, and this page is how you find out what.
+
+Work through it in order. State first, then the message, then the channel, then the way back.
+
+## Which state is it in
+
+Start by asking what she thinks happened, because the answer is one short word. Every post is in exactly one of four states.
+
+| State | What it means | Where you see it |
+| --- | --- | --- |
+| `DRAFT` | It keeps a date but was never queued. She will not publish it, today or ever, until you move it into the queue. | **Draft** tab in list view, and a `Draft:` prefix on the card |
+| `QUEUE` | Scheduled. It goes out at its time with no further word from you. | **Scheduled** tab in list view |
+| `PUBLISHED` | It went out, and the link back to the live post is stored against it. | **Published** tab, and the statistics icon on the card |
+| `ERROR` | A publish attempt came back with a failure. | Red ring and a red `!` on the calendar card |
+
+Two of those look like trouble and are not. A post sitting in `DRAFT` was never queued, so there was no run to miss. The date on it is only where the card sits on your calendar. A post still in `QUEUE` with its time behind it has not failed either: she has simply not reached it yet, and the sweep below usually picks it up within the hour.
+
+## What the calendar shows when publishing fails
+
+Open the week the post belonged to. A failed post is loud on purpose: the whole card gets a red outline, and a small red `!` badge sits on its top left corner. Hover the badge and a tooltip appears.
+
+Most of the time that tooltip reads *An error occurred while publishing this post*. That is the fallback. The calendar payload is trimmed hard to keep the grid fast, and the stored error text is not one of the fields it carries, so the badge tells you that something failed without telling you what. The real message is kept elsewhere, and the next section is where to find it.
+
+<Note>
+There is no **Failed** tab in list view. The **All** tab does include failed posts, but every tab except **Published** is filtered to now and later, so yesterday's failure will not appear in the list at all. Go to the calendar and step back to the day.
+
+Scripting it instead? Both `postqueen posts:list` and `GET /public/v1/posts` return each post's state, though neither carries the error text.
+</Note>
+
+## How many times she tries
+
+Two layers of retry sit under one red card, and they are worth knowing before you retry by hand.
+
+The publish step itself gets three attempts, two minutes apart, with a flat interval rather than a growing one. No single attempt is allowed to run longer than ten minutes. Around that, the publishing workflow makes up to five passes over the same post. Fifteen attempts is the ceiling for one scheduled post. The wall-clock window depends on how long the platform takes to answer each time, bounded by that ten minute cap.
+
+Two failures skip the passes and stop at once:
+
+- The platform rejected the content itself. She stops, marks the post failed, and sends you a notification with the platform's own words in it.
+- The channel token could not be refreshed. She stops and marks the post failed, and the channel disconnects itself. That one has its own section below.
+
+She marks the post `ERROR` on the *first* failed pass, not the last. So a red card does not always mean she has given up: a later pass that succeeds flips the same post to `PUBLISHED` and stores the release link. Give it a few minutes before you retry a fresh failure by hand.
+
+### The hourly sweep
+
+Once an hour she looks for posts that are still in `QUEUE` with a publish time in the last two days, on channels that are connected and enabled, and starts the publishing workflow for each one. This is the safety net for a post that never ran at all, after a restart or an outage.
+
+It only picks up posts still in `QUEUE`. A post already marked `ERROR` is never swept, and neither is anything on a channel that needs reconnecting. Past those two days, nothing is picked up automatically.
+
+## Where the platform's message is kept
+
+She keeps the failure in two places when a publish attempt comes back badly.
+
+The post itself carries an `error` field with the message, as text or as the JSON the platform returned. Alongside it, a row goes into the errors table with the message, the platform identifier and the post records she was working from at the moment it failed, stamped with the time. That row is written when she has both the error and those records in hand, which is the case for real platform rejections.
+
+<Note>
+That third column stores her own post rows, the content and settings as she held them, not the payload she put on the wire. Nothing anywhere keeps a copy of the outbound request body, so if you came here looking for the exact JSON a platform rejected, it is not saved.
+</Note>
+
+Four of those messages are hers rather than the platform's:
+
+| Message | What it means |
+| --- | --- |
+| `Refresh channel needed` | The channel was already flagged as disconnected before her attempt. Reconnect it. |
+| `Channel disabled` | The channel is switched off. Enable it and schedule again. |
+| `Already posted` | The post was not in the queue when the workflow reached it. Usually a duplicate run. |
+| `No Post` | The post was gone by the time the workflow woke up, deleted or outside the organization. On an instance with billing turned on, an organization with no active subscription reads the same way, so every scheduled item lands here at once. |
+
+Anything else came from the network you were posting to.
+
+### Reading it
+
+Three routes, depending on who you are and what failed.
+
+1. **Notifications.** When a channel needs reconnecting, when a channel is disabled, and when the platform rejected the content, she writes a notification and emails it. The rejection notice carries the platform's own message on the end of the line. A plain network failure gets no notification, only the red card.
+2. **The Debug JSON.** An account marked super admin gets one extra icon on the strip across the top of a post card. It opens a small dialog with **Copy post id** and **Copy Debug JSON**. The JSON carries the post content, the media and the platform settings, plus a `_debug` block with the state, the error and every errors row for that post, each with its message, its platform and the stored post records from the moment it failed.
+3. **The database.** Running her yourself, you have both the `error` column on the post and the errors table. Query them directly.
+
+<Note>
+The Debug JSON includes your post content, your media paths and your platform settings. Read it before pasting it into a public issue.
+</Note>
+
+## The quiet one: the channel disconnected itself
+
+This is the failure nobody searches for, because it does not look like a posting problem at all.
+
+Networks that expire their tokens get a small workflow of their own per channel, which sleeps until the expiry and then refreshes. Tokens also get rejected mid-flight, and when that happens during a publish she tries the refresh right there and posts again.
+
+When the refresh comes back empty, three things happen together. She flags the channel as needing a refresh, disconnects it, and writes a notice that names the network: *Could not refresh your linkedin channel*. That one lands in your notifications and in your inbox, and it tells you to go back and connect the channel again. The notice is sent twice, once with the cause and once without, so two copies in your inbox mean one broken channel rather than two.
+
+After that the channel is quietly out of the game:
+
+- Any post reaching its time on that channel goes straight to failed with `Refresh channel needed`, and you get a notification saying she could not post because you need to reconnect it.
+- The hourly sweep skips that channel entirely.
+- The token refresh workflow returns immediately instead of sleeping until the next expiry.
+
+One dead token can therefore take out a week of scheduled posts without a single crash anywhere. In the left sidebar that channel's avatar carries the same red `!`, with a tooltip reading *Channel disconnected, click to reconnect.* Click the avatar, or open the three dots menu next to the channel and pick **Reconnect channel**, then walk the connect flow again. The posts do not resume on their own: reschedule each one.
+
+If the reconnect itself throws an error rather than a dead token, [OAuth and channel connect errors](/troubleshooting/oauth-connect) has the message-by-message list.
+
+## Getting the post out
+
+Pick whichever surface you are already in. All three do the same thing underneath: put the post back in the queue, terminate any publishing workflow still running for it, and start a fresh one.
+
+<Warning>
+A retried post keeps its stored date. If that date is in the past, she does not wait: the workflow sees the time has gone and publishes immediately. Move the date first when you want a different moment.
+</Warning>
+
+### From the calendar
+
+Drag the card onto a cell in the future. Nothing asks you to confirm. A failed post drops straight through: she writes the new date, flips the post back to the queue, drops the stored release link and starts the publishing workflow again for the time you chose.
+
+The **What do you want to do?** prompt you may have seen on other cards does not appear here. That one is for a post that already went out, or one still sitting in the queue with its moment behind it. A failed post is neither, so the drag is the whole interaction.
+
+### From the CLI
+
+```bash
+postqueen posts:status <post-id> --status schedule
+```
+
+Need the id? `postqueen posts:list` prints it, and in the app the **Preview Post** icon opens the post at `/p/<post-id>`, so the id is sitting in the URL.
+
+Going the other way, `--status draft` pulls a scheduled post out of the queue and terminates the running workflow, which is how you stop a post without deleting it.
+
+### From the API
+
+```bash
+curl -X PUT "https://api.postqueen.ai/public/v1/posts/POST_ID/status" \
+  -H "Authorization: your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{"status":"schedule"}'
+```
+
+The response comes back as `{ "id": "...", "state": "QUEUE" }`. The endpoint takes `draft` and `schedule` and nothing else, so there is no way to mark a post published or failed from the outside. Self-hosting? Swap the host for `{NEXT_PUBLIC_BACKEND_URL}/public/v1`.
+
+Full reference: [Change Post Status](/public-api/posts/change-status).
+
+## When it is the platform saying no
+
+Retrying an unchanged post against a platform that rejected it gets you the same rejection three times. Read the message first.
+
+Length limits, media rules and required settings are all network-specific, and each provider page carries that network's real error strings alongside the settings she sends. Reddit wants a subreddit and sometimes a flair. YouTube and TikTok have their own upload rules. Start on the page for your network, fix the post, then retry it.
+
+## Still stuck
+
+Write it down while it is fresh, and put these four things in the message:
+
+- The post id, from the Preview URL or from `posts:list`.
+- The channel and the exact time the post was meant to go out.
+- What the badge tooltip said, word for word.
+- The Debug JSON, when your account can copy it.
+
+<CardGroup cols={3}>
+  <Card title="Your provider's page" icon="plug" href="/providers/overview">
+    Platform-specific rejections, settings and limits, network by network
+  </Card>
+  <Card title="Reconnecting a channel" icon="link" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and fetch failed during the connect flow
+  </Card>
+  <Card title="Support" icon="life-ring" href="/support">
+    How to write a report that gets a fast answer
+  </Card>
+</CardGroup>

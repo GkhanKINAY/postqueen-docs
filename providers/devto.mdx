@@ -1,0 +1,89 @@
+---
+title: Dev.to
+description: 'How to add Dev.to to PostQueen'
+icon: /images/channels/devto.svg
+---
+
+<img src="/images/channels/devto.svg" alt="Dev.to" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+## What she can post to Dev.to
+
+You finish the article in the editor, give it a title and a few tags, and hand it to her. Dev.to takes the whole thing at once: title, Markdown body, cover picture. Nothing waits in a staging area on the far side. The moment her schedule fires, the article is live at the URL she reports back.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    100,000 characters. The editor is Markdown, so code fences and headings survive the trip.
+  </Card>
+  <Card title="Media" icon="image">
+    One cover picture, chosen in the post settings. Pictures inside the article body travel as Markdown links rather than uploads.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    One article, with a title and up to four tags. A canonical link and an organization to publish under are optional.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Dev.to is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `title` is required and needs at least two characters. Tags cap at four. Cover picture, canonical link and organization are optional: [Dev.to settings](/public-api/providers/devto). |
+| Connect flow | One step, inside the app. You paste a DEV Community API key into a modal titled **Add Provider**. There is no developer app, no redirect URI and no environment variable. |
+| Automations | None on this network. |
+| Publish rate | Three posts at a time. |
+
+<Warning>
+Things worth knowing before the first article goes out:
+
+- **Every article publishes on arrival.** She sends `published: true` on every request, so Dev.to has no draft state on this connector. If you want to sit on a piece, keep it as a draft inside PostQueen and schedule it when you are ready.
+- **She sends the first block only.** The composer still offers **Add comment** underneath the article, and Dev.to receives the first block. Anything below it goes nowhere.
+- **The organization picker is built from your history.** She reads the organizations attached to articles you have already published, so a fresh account sees no picker at all.
+
+Errors she reports back to you, in her own words:
+
+- **"Canonical URL already exists"** when Dev.to answers `Canonical url has already been taken`, which means another article already claims that canonical link.
+- **"Invalid credentials"** when the key does not answer at `https://dev.to/api/users/me`.
+</Warning>
+
+## Set up Dev.to
+
+<Steps>
+  <Step title="Generate a DEV Community API key">
+    Open your Dev.to [settings](https://dev.to/settings), click **Extensions** in the left column and scroll to **DEV Community API Keys** at the bottom of the page.
+
+    Type a description you will recognize later, `PostQueen` does the job, then click **Generate API Key**. The key appears in the list below. Copy it now, because it is the only string PostQueen asks for.
+
+    Forem, the software behind Dev.to, describes the same key in its [API reference](https://developers.forem.com/api/): *"The `api-key` header must be set to the API key for the user."*
+  </Step>
+
+  <Step title="Add Dev.to as a channel">
+    In PostQueen, click **Add Channel** and pick **Dev.to**. A modal titled **Add Provider** opens with a single field:
+
+    | Field | Type | What to paste |
+    |---|---|---|
+    | **API key** | Password | The DEV Community API key you just generated. At least three characters, or the form refuses it. |
+
+    Press **Connect**. She calls `https://dev.to/api/users/me` with the key, and the channel lands on your dashboard carrying your Dev.to name and avatar.
+  </Step>
+
+  <Step title="Write the first article">
+    Open a new post, select the Dev.to channel and fill the settings panel on the right:
+
+    - **Title**: required, at least two characters.
+    - **Canonical Link**: optional. Point it at the original if the piece lives somewhere else first.
+    - **Cover picture**: optional, one image.
+    - **Select organization**: optional, and only shown when she found organizations on your account.
+    - **Tags (Maximum 4)**: optional, drawn from the Dev.to tag list.
+
+    Schedule it. Autopilot takes it from there, and the article goes out at the time you set.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+- **"API key is invalid"** in the connect modal: the field rejects anything under three characters. Paste the full key.
+- **"Invalid credentials"** after pressing Connect: Dev.to did not recognize the key. Regenerate it under Settings, then Extensions, then DEV Community API Keys, and paste the new one.
+- **"Canonical URL already exists"**: the canonical link you set is already attached to another Dev.to article. Change it or clear the field.
+- **No organization picker**: she builds that list from organizations on your existing articles. Publish once under the organization from Dev.to itself, then reopen the post so she reads the list again.

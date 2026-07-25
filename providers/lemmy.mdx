@@ -1,0 +1,104 @@
+---
+title: Lemmy
+description: 'How to add Lemmy to your system'
+icon: /images/channels/lemmy.svg
+---
+
+<img src="/images/channels/lemmy.svg" alt="Lemmy" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+Nothing has to be registered before you start. Lemmy has no developer app, no client id and no redirect URI in this connector, and no key of yours goes into the `.env` file. You click **Lemmy** in **Add Channel**, a small form opens, and you type the three things your instance already knows about you.
+
+## What she can post to Lemmy
+
+A Lemmy post lives inside a community and carries a title of its own. Whatever you write in the editor becomes the body, the title comes from the post settings, and picking two communities sends the same body into both.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    10,000 characters in the body of the post.
+  </Card>
+  <Card title="Media" icon="image">
+    One image, sent as the cover of the post. She takes the first file attached and ignores the rest, and the file has to be a `.png`, a `.jpg` or a `.gif`.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A titled post in one community or several, then comments threaded under every one of them.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Lemmy is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | A `subreddit` array, one entry per community. Each entry needs the community and a **Title** of at least two characters, and takes an optional **URL** for link posts: [Lemmy settings](/public-api/providers/lemmy). |
+| Connect flow | One step, three fields typed into the **Add Provider** modal. No OAuth round trip and no application to create. |
+| Automations | None on this network. |
+| Publish rate | Three posts at a time, because most instances run modest limits. |
+
+<Warning>
+The media check looks for `png`, `jpg` or `gif` in the file path, and the fourth accepted spelling is `jpef`, which is a typo for `jpeg`. So a file ending in **.jpeg is refused** and comes back as **"You can set only one picture for a cover"**. Rename the file to `.jpg` and it goes through.
+</Warning>
+
+## Before you connect
+
+<Warning>
+**An account with two factor authentication turned on cannot connect.** The login call carries your name and your password and nothing else, so there is no second factor for her to send and Lemmy turns the request down.
+
+How that surfaces depends on your instance. She turns a rejection into **"Invalid credentials"** only when Lemmy answers with a 401, and some instances answer a missing second factor with a 400 instead. In that case the modal can close on a channel that looks connected and then fails on its first scheduled post. Either way the fix is the same: use an account without 2FA.
+</Warning>
+
+Two more things worth knowing before you type anything in:
+
+- **Your password is used again on every publish.** She does not keep a long-lived session. Each post, each comment and each community search logs in again with the credentials you saved. Change your Lemmy password later and the scheduled posts start failing without anyone telling you, so come back here and reconnect the channel whenever you rotate it.
+- **The instance has to be reachable from the internet.** The backend blocks requests that resolve to loopback, private or link-local addresses, so a Lemmy on `localhost` or on a private LAN address fails to connect. Self-hosters who run both sides on the same private network can set `DISABLE_SSRF_PROTECTION=true`, which is documented next to the setting in `.env.example`.
+
+## Connect Lemmy
+
+<Steps>
+  <Step title="Open Add Channel and pick Lemmy">
+    In PostQueen, click **Add Channel** and select **Lemmy**. A modal titled **Add Provider** opens with three fields, and there is no redirect out to the platform.
+  </Step>
+
+  <Step title="Fill in the three fields">
+    Each label below is exactly what the modal shows you.
+
+    | Field | What to paste | Where it comes from |
+    |---|---|---|
+    | **Service** | The base address of your instance, protocol included, such as `https://lemmy.world` | The address bar when you are logged in to Lemmy, cut back to the host. The field arrives already filled with `https://lemmy.world`, so replace it if you are on another instance. It must be a full `http://` or `https://` URL. |
+    | **Identifier** | Your account name, at least three characters | The name in your own profile link, `https://your-instance/u/name`. Lemmy accepts the email address on the account here as well, since the login takes either one. |
+    | **Password** | The password you log in to Lemmy with, at least three characters | Your account password. Lemmy issues no personal access token for this, so there is nothing else to paste. |
+  </Step>
+
+  <Step title="Press Connect">
+    She signs in to your instance, reads your profile back and creates the channel with your display name and your avatar. If the sign-in fails you land back on the modal with **"Invalid credentials"**.
+  </Step>
+
+  <Step title="Pick a community when you write">
+    Open the post editor, choose the Lemmy channel and click **Add Community**. Type a word into **Search Community** and she queries your instance for active communities that match, so the list you get is the one your instance returns.
+
+    Choose a result and two more fields appear. **Title** is required and becomes the headline of the post. **URL** is optional and turns it into a link post. Add a second community and the same body goes out again with its own title.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+### "Invalid credentials"
+
+Three different causes end up behind the same message.
+
+1. The name or the password is wrong. Sign in to the instance in a browser with exactly the same pair.
+2. The account has two factor authentication turned on and your instance answered with a 401. The connector cannot answer a second factor at all, so see [Before you connect](#before-you-connect) for the case where the same account connects and then fails at publish time instead.
+3. **Service** points somewhere she cannot reach. Check the protocol, drop any trailing path, and confirm the host resolves publicly.
+
+### Scheduled posts stopped going out and nothing changed in PostQueen
+
+The Lemmy password changed. Every publish logs in again with the stored pair, so a rotated password breaks the channel from the platform side. Reconnect the channel with the new password.
+
+### "You can set only one picture for a cover"
+
+The first file attached to the post matches none of the accepted spellings. In practice it is a `.jpeg` file, because the accepted list carries `jpef` where `jpeg` was meant. Save the file as `.jpg` and attach it again.
+
+### The instance is on your own network
+
+Requests to loopback and private ranges are blocked before they leave the backend. Either publish the instance on a public hostname or set `DISABLE_SSRF_PROTECTION=true` on a deployment where both sides sit on a trusted private network.

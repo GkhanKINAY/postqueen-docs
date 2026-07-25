@@ -1,0 +1,87 @@
+---
+title: Nostr
+description: 'How to add Nostr to your system'
+icon: /images/channels/nostr.svg
+---
+
+<img src="/images/channels/nostr.svg" alt="Nostr" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+One field connects this channel, and the whole page comes down to what you put in it. **Paste the raw hexadecimal private key, not the `nsec1` form.** She reads the value two characters at a time as hex bytes and derives your public key from that, so an `nsec1` string is never decoded and never turns into your identity. Sixty four hex characters is what you want. If your client only ever shows you `nsec1`, convert it to hex before you come back here.
+
+There is no developer app behind this one, no client id and no environment variable. You click **Nostr** in **Add Channel**, paste the key, and she signs your notes locally from then on.
+
+## What she can post to Nostr
+
+A note is a note. There is no title, no album, no settings block to fill in, and nothing to choose before you publish.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    100,000 characters per note.
+  </Card>
+  <Card title="Media" icon="image">
+    Not uploaded. Each file you attach is appended to the end of the note as a link, which is how images usually travel on Nostr anyway.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A kind 1 text note, then further notes threaded underneath it as replies.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Ten connectors report numbers back to her, and Nostr is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | Nothing beyond `__type`. There is no settings panel for Nostr in the editor: [Nostr settings](/public-api/providers/nostr). |
+| Connect flow | One step, one field typed into the **Add Provider** modal. Your key is signed into the channel token and never sent to a relay. |
+| Automations | None on this network. |
+| Publish rate | Five notes at a time. |
+
+### The relays are fixed
+
+She publishes every note to the same five relays, one after another, and the list is compiled into the connector rather than read from a setting. You cannot add your own, and a relay that is down is skipped without an error.
+
+- `wss://nos.lol`
+- `wss://relay.damus.io`
+- `wss://relay.snort.social`
+- `wss://temp.iris.to`
+- `wss://vault.iris.to`
+
+Those same five are where she looks for your profile at connect time.
+
+## Connect Nostr
+
+<Steps>
+  <Step title="Get your private key in hex">
+    Open the client you already use and find the export for the secret key in hex form. The hint that appears when you hover **Nostr** in the channel list points at [iris.to](https://iris.to) as one place to read it.
+
+    What you are after is a string of hexadecimal characters. If what you have starts with `nsec1`, it is the bech32 form and it will not work here, so run it through an `nsec` to hex conversion first.
+
+    <Warning>
+    This is the key that controls your Nostr identity, not a scoped token you can revoke. Anyone holding it can post as you forever. Treat the value the way you treat a wallet seed phrase.
+    </Warning>
+  </Step>
+
+  <Step title="Open Add Channel and pick Nostr">
+    In PostQueen, click **Add Channel** and select **Nostr**. A modal titled **Add Provider** opens with a single password field labeled **Nostr private key**.
+  </Step>
+
+  <Step title="Paste the key and press Connect">
+    She derives your public key from the hex you pasted, then asks the five relays for your profile event and builds the channel from it. Your display name and your avatar come from that profile.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+### The channel is called "No Name"
+
+No profile event came back from those five relays, so she fell back to the placeholder, and the username reads `nousername`. This is expected rather than broken, and the channel posts perfectly well as it is. It happens when your profile lives on relays outside the fixed five, or when the relay that has it did not answer in time. Publishing your profile to one of the five relays above and reconnecting the channel is what fixes the name.
+
+### "Invalid credentials"
+
+The value did not turn into a usable key. Nine times out of ten it is an `nsec1` string, because the connector reads whatever you paste as hex rather than decoding bech32. Convert the key to hex and try again.
+
+### The link on a published note points at the wrong note
+
+The note itself is published correctly. The link she stores is `https://primal.net/e/` plus an event id she picks up by subscribing to your notes on each relay, and the first note the relay hands back is not always the one just sent. Trust your own client over that link when they disagree.

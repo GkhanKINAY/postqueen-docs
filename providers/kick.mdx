@@ -1,0 +1,86 @@
+---
+title: Kick
+description: 'How to add Kick to your system'
+icon: /images/channels/kick.svg
+---
+
+<img src="/images/channels/kick.svg" alt="Kick" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Snippet file="never-share.mdx" />
+
+<Warning>
+Kick here is a chat connector, not a feed. What she sends arrives as a chat message in your own Kick channel. Media never rides along, and anything past 500 characters is cut before it leaves. If you are connecting Kick expecting a post that sits on a profile, this is not that.
+</Warning>
+
+## What she can post to Kick
+
+You go live in ten minutes and you want chat to already say so. Write the line, put it on the calendar, and at the minute you picked she sends it into your channel as you.
+
+<CardGroup cols={4}>
+  <Card title="Character limit" icon="text-width">
+    500 characters. Longer text is cut, not refused
+  </Card>
+  <Card title="Media" icon="photo-film">
+    None. Kick chat takes text only, so anything you attach is left behind
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Chat message, plus replies chained under it
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None
+  </Card>
+</CardGroup>
+
+The message always goes to the channel that owns the connection, so this is your own chat and not somebody else's. She runs three Kick jobs side by side. Kick chat gives back no permalink, so the link on a sent post opens your channel page rather than the message itself.
+
+| | |
+|---|---|
+| **Post settings** | None. The settings block carries `__type` and nothing else, shown in the [Kick settings reference](/public-api/providers/kick) |
+| **Connect flow** | One step. She reads your Kick user once the authorization round trip finishes, and that user id becomes the channel she writes into |
+| **Automations** | None. Comments go out as replies threaded on the chat message |
+
+<Steps>
+  <Step title="Create an OAuth app on Kick">
+    Sign in to Kick and create an OAuth application. You need its client id and its secret, plus the redirect URI from the next step.
+
+    She asks for three scopes, so grant all of them:
+
+```
+chat:write
+user:read
+channel:read
+```
+
+    Kick uses OAuth 2.1, which means PKCE. She generates the code verifier and the S256 challenge for you, and the whole exchange runs against `id.kick.com`.
+  </Step>
+
+  <Step title="Configure the OAuth2 Redirect URI">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Kick OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/kick`
+    - Local development: `http://localhost:4200/integrations/social/kick`
+    - Docker: `http://localhost:5000/integrations/social/kick`
+  </Step>
+
+  <Step title="Set environment variables">
+    Copy the client id and the secret from your Kick app into your `.env` file.
+
+```env
+KICK_CLIENT_ID=""
+KICK_SECRET=""
+```
+
+    <Warning>
+    The second variable is `KICK_SECRET`, not `KICK_CLIENT_SECRET`. Naming it the long way is the single most common reason a Kick connection fails on the first try.
+    </Warning>
+  </Step>
+
+  <Step title="Add the Kick channel">
+    Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+
+    In the web interface click **Add Channel** and pick **Kick**. Kick asks you to authorize, and the channel appears once you accept.
+
+    Add Channel does not check whether the two variables are set, so a missing or misspelled key shows up as a broken authorization page on the Kick side rather than a helpful message in PostQueen.
+  </Step>
+</Steps>
