@@ -1,6 +1,6 @@
 ---
 title: Claude Desktop
-description: 'Connect Claude Desktop to the PostQueen MCP server'
+description: 'Connect Claude Desktop to PostQueen over MCP'
 ---
 
 Claude Desktop reaches her two ways: as a **custom connector** added in the app's settings, or through the **`mcp-remote` bridge** in `claude_desktop_config.json`.
@@ -40,7 +40,7 @@ At the time of writing, Anthropic's help center lists custom connectors as avail
 </Steps>
 
 <Note>
-With custom connectors, Claude reaches your MCP server from Anthropic's cloud infrastructure, not from your machine. The server must be reachable over the public internet. `api.postqueen.ai` is publicly reachable, so Option A works there. A self-hosted instance behind a VPN or on your LAN will not connect this way; use Option B instead.
+With custom connectors, Claude reaches PostQueen from Anthropic's cloud infrastructure, not from your machine, so the URL has to be reachable over the public internet. `api.postqueen.ai` is, so Option A works there. A self-hosted instance behind a VPN or on your LAN will not connect this way; use Option B instead.
 </Note>
 
 ## Option B: `mcp-remote` Bridge (Config File)
