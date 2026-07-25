@@ -1,0 +1,83 @@
+---
+title: Settings
+description: 'Every tab, what lives in it, and why some of them are missing for you'
+---
+
+Settings is one page with a row of tabs, and which tabs you see depends on your plan and your
+role. That is the part that confuses people: a tab named in a guide can be genuinely absent from
+your own screen, and nothing explains why.
+
+This page is the map. Each tab can be linked to directly with `?tab=`, which is how the rest of
+these docs send you to a specific one.
+
+## The tabs
+
+| Tab | What is in it | You see it when |
+| --- | --- | --- |
+| **Global Settings** | Defaults that apply across your posts, including whether she offers to shorten links | Always |
+| **Language** | The interface language | Always |
+| **Teams** | Invite people into your organization and set what they can do | Your plan includes team members, **and** you are an organization admin |
+| **Webhooks** | URLs she calls when a post publishes or fails | Your plan includes webhooks |
+| **Auto Post** | RSS feeds that turn new articles into scheduled posts on their own | Your plan includes auto posting |
+| **Sets** | Saved groups of channels, so you stop reselecting the same five | Any plan above Free |
+| **Signatures** | Blocks of text appended to posts, per channel | Any plan above Free |
+| **Developers** | Your public API key, and OAuth apps you build | Your plan includes the public API, **and** you are an organization admin |
+| **Approved Apps** | Third-party apps you have authorized against your account | Always |
+
+<Note>
+**Self-hosting with billing off?** Every plan gate above passes, because your account reports
+itself as ULTIMATE when no Stripe keys are set. So you see all of them.
+[Plans and limits](/using/plans-and-limits) has the rule.
+</Note>
+
+## Why a tab is missing
+
+Two different reasons, and they are worth telling apart before you go looking for a bug.
+
+**Your plan does not include it.** Webhooks, Auto Post, Sets, Signatures and Developers are each
+gated on a plan feature. The tab is simply not rendered.
+
+**Your role is not admin.** Teams and Developers additionally require you to be an **ADMIN** or
+**SUPERADMIN** in the organization. This one catches people out, because a plan can include the
+feature while your own account still cannot open it. Those two tabs call admin-only endpoints the
+moment they mount, so showing them to a regular member would produce an error rather than a page.
+
+If a teammate can see a tab and you cannot, role is the likely difference rather than billing.
+
+## Linking straight to a tab
+
+Append `?tab=` and the tab's key:
+
+```
+https://app.postqueen.ai/settings?tab=api
+https://app.postqueen.ai/settings?tab=teams
+https://app.postqueen.ai/settings?tab=autopost
+```
+
+The keys are `global_settings`, `language`, `teams`, `webhooks`, `autopost`, `sets`,
+`signatures`, `api` and `approved_apps`. Note that the Developers tab is `api`, not
+`developers`. An unrecognised or unavailable key falls back to Global Settings rather than
+erroring.
+
+## Where to go for each
+
+<CardGroup cols={2}>
+  <Card title="Your API key" icon="key" href="/public-api/introduction">
+    Developers tab. The key the CLI, MCP and the public API all use
+  </Card>
+  <Card title="Teams" icon="users" href="/using/teams-and-collaboration">
+    Who you invite, and what each role can do
+  </Card>
+  <Card title="Auto Post from a feed" icon="rss" href="/automation/rss-autopost">
+    One check takes one item, which is the thing to know before setting it up
+  </Card>
+  <Card title="Webhooks" icon="bolt" href="/automation/webhooks">
+    What she sends, and what happens when your endpoint is slow
+  </Card>
+  <Card title="Sets and signatures" icon="bookmark" href="/using/reusable-content">
+    Saved channel groups and the text appended to posts
+  </Card>
+  <Card title="Notifications" icon="bell" href="/using/notifications">
+    What she tells you about, and where it arrives
+  </Card>
+</CardGroup>
