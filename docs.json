@@ -21,8 +21,10 @@
   "icons": {
     "library": "fontawesome"
   },
-  "search": {
-    "prompt": "Search channels, the API, self-hosting…"
+  "feedback": {
+    "thumbsRating": false,
+    "suggestEdit": true,
+    "raiseIssue": true
   },
   "navigation": {
     "tabs": [
