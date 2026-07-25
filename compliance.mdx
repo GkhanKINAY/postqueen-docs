@@ -10,15 +10,15 @@ Before you connect a real account, you want to know what she does with the keys 
 - **Open source and self-hostable.** She is an open-source social media scheduler that posts to 30+ networks, from X and LinkedIn to Mastodon and Discord. Run her on your own infrastructure and read every line of the code that touches your accounts.
 - **Official OAuth flows where the platform offers them.** Most networks connect through the platform's own OAuth screen: you log in on the platform's site, approve the requested scopes, and the platform issues the token. PostQueen receives only the scopes you approve.
 - **API-based publishing and analytics.** Posts and analytics go through each platform's publishing and analytics APIs. PostQueen has no headless-browser automation and does not crawl or scrape content from social platforms.
-- **Credentials only where OAuth is not available.** A few networks offer no OAuth for third-party schedulers. For those, she asks for the credential the platform issues for API access, such as a Bluesky app password, a WordPress application password or a Nostr key. It is stored encrypted and used only for that channel.
+- **Credentials only where OAuth is not available.** A few networks offer no OAuth for third-party schedulers. For most of them she asks for the credential the platform issues for API access, such as a Bluesky app password, a WordPress application password or a Nostr key. Two go further: Lemmy and Listmonk sign in with the account's own username and password, because that is what those instances accept. Each is used only for that channel.
 - **One cookie-based exception.** Skool has no public API, so it connects through the [PostQueen Chrome extension](/configuration/chrome-extension) using your own browser session. This method is opt-in, documented, and carries its own terms-of-service warning.
-- **Encrypted token storage.** Like any scheduler, PostQueen stores the tokens and credentials for the channels you connect. They are encrypted at rest and used only to publish and fetch analytics on your behalf.
+- **Credential storage, stated precisely.** Anything you type in yourself is encrypted with AES-256 before it reaches the database: the credentials above, the Skool session cookie, your organization's API key and the client secrets of any OAuth app you register. Tokens the platform issues through an OAuth flow are stored as the platform returned them, so for those the database is the security boundary. Encrypt the volume and keep access to it narrow.
 
 ## What this means for you
 
 - If you connect an OAuth-based account on the hosted service, the token is issued by the platform through its own OAuth screen, with only the scopes you approve.
-- If you self-host, you control where tokens and post content live. See [Configuration reference](/configuration/reference) for storage and encryption settings, and [OAuth configuration](/configuration/oauth) for setting up your own provider credentials.
-- If you build integrations on top of PostQueen, use the [Public API](/public-api/introduction) or [MCP server](/mcp/introduction). Both go through the same authenticated flows and respect the same platform limits.
+- If you self-host, you control where tokens and post content live, and the point above about the database being the boundary is yours to act on. See [Configuration reference](/configuration/reference) for storage settings and for `ENCRYPTION_KEY`, and [OAuth configuration](/configuration/oauth) for setting up your own provider credentials.
+- If you build integrations on top of PostQueen, use the [Public API](/public-api/introduction) or [MCP](/mcp/introduction). Both go through the same authenticated flows and respect the same platform limits.
 
 ## Reporting a concern
 

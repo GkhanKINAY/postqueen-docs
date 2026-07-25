@@ -66,7 +66,7 @@ Warp connects to remote MCP servers by URL, so she plugs straight into the termi
     Replace `YOUR_API_KEY` with the key you revealed in the PostQueen app.
   </Step>
   <Step title="Start the server">
-    The server appears in the list with a **Start** / **Stop** control. Start it, and Warp discovers her [10 tools](/mcp/tools). A server that was running when you closed Warp starts again on the next launch; one you stopped stays stopped.
+    The server appears in the list with a **Start** / **Stop** control. Start it, and Warp discovers her [11 tools](/mcp/tools). A server that was running when you closed Warp starts again on the next launch; one you stopped stays stopped.
   </Step>
 </Steps>
 
@@ -212,7 +212,7 @@ URL: https://api.postqueen.ai/mcp
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Both forms use the same key and give you the same 10 tools. Pick whichever your client takes more cleanly.
+Both forms use the same key and give you the same 11 tools. Pick whichever your client takes more cleanly.
 
 ### Self-Hosted
 
@@ -287,7 +287,7 @@ Your channel names come back, because the agent reached for her `integrationList
     Confirm your client is using the streamable HTTP transport rather than stdio, that it kept the trailing key segment in the URL, and that nothing on your network blocks `api.postqueen.ai`. On self-hosted setups, check that the reverse proxy forwards `/mcp` and does not buffer streaming responses.
   </Accordion>
   <Accordion title="Tools appear but every call errors">
-    That combination means the endpoint is right but the key was rejected. Regenerate the key in **Settings > Developers > Public API** and update the config, remembering that the Bearer form needs the `Bearer ` prefix while the URL form does not.
+    That combination means the endpoint is right but the key was rejected. Regenerate the key in **Settings > Developers > Public API** and update the config, remembering that the URL form carries the key in the path while the Bearer form carries it in the `Authorization` header. The `Bearer ` prefix itself is stripped if present, so either spelling of that header works and a missing prefix is never the cause.
   </Accordion>
 </AccordionGroup>
 
@@ -295,7 +295,7 @@ Your channel names come back, because the agent reached for her `integrationList
 
 <CardGroup cols={2}>
   <Card title="MCP Tools" icon="wrench" href="/mcp/tools">
-    See what all 10 tools can do
+    See what all 11 tools can do
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     Real prompts and the tool calls they trigger

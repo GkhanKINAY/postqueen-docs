@@ -8,7 +8,8 @@ Fetch a remote URL and store the result as a PostQueen media asset. Useful when 
 ## Requirements for the source URL
 
 - Must be reachable from the PostQueen backend (publicly resolvable HTTPS, no auth required).
-- Detected MIME type must be in the allowlist documented on [Upload File](/public-api/uploads/upload-file).
+- The URL path, ignoring any query string, must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. This is checked before the fetch, so AVIF, BMP and TIFF cannot be pulled from a URL at all even though [Upload File](/public-api/uploads/upload-file) accepts them.
+- The downloaded bytes are then sniffed and must also land in that same allowlist.
 - PostQueen performs an [SSRF-safe fetch](https://github.com/nodejs/undici): private IP ranges, link-local addresses, and `localhost` are rejected.
 
 ## Example

@@ -7,7 +7,7 @@ description: 'Warp, Cline and Windsurf each reach her over MCP with a single URL
 
 You are in a terminal, or in a side panel next to your code, or halfway through a Cascade conversation. Whichever of the three it is, she arrives the same way: one URL, no local process and no wrapper package, and the agent you already had open can put posts on your calendar.
 
-Warp, Cline and Windsurf all speak MCP over streamable HTTP, so each one discovers her [10 tools](/mcp/tools) on connect and reads their schemas before it calls anything. The tools cover discovery, media and posting. They do not list, delete or reschedule posts that already exist, and none of them returns analytics, so that work stays on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+Warp, Cline and Windsurf all speak MCP over streamable HTTP, so each one discovers her [11 tools](/mcp/tools) on connect and reads their schemas before it calls anything. The tools cover discovery, media and posting. They do not list, delete or reschedule posts that already exist, and none of them returns analytics, so that work stays on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
 
 <Note>
 All three need your PostQueen API key. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
@@ -29,7 +29,7 @@ The deploy just finished in the window you are still looking at. Warp's agent re
     Click **+ Add** and choose **Streamable HTTP or SSE Server (URL)**, not **CLI Server (Command)**, which is for local executables. Warp takes a `url` and an optional `headers` object. Both forms, with the key in the path or in a Bearer header: [Warp config](/mcp/clients/other-clients#warp).
   </Step>
   <Step title="Start the server">
-    She appears in the list with a **Start** and **Stop** control. Start her, and Warp discovers the 10 tools. A server that was running when you closed Warp starts again on the next launch, and one you stopped stays stopped.
+    She appears in the list with a **Start** and **Stop** control. Start her, and Warp discovers the 11 tools. A server that was running when you closed Warp starts again on the next launch, and one you stopped stays stopped.
   </Step>
 </Steps>
 
@@ -142,7 +142,7 @@ Anything scheduled needs nothing more from you. It is visible on the calendar wh
     Every config block for the three, plus the generic shape for anything else.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 10 tools these agents discover on connect, with every parameter.
+    All 11 tools these agents discover on connect, with every parameter.
   </Card>
   <Card title="MCP examples" icon="lightbulb" href="/mcp/examples">
     Real prompts and the tool calls each one triggers.

@@ -90,7 +90,21 @@ Edit `apps/extension/manifest.json` and add your domain:
 
 Then rebuild the extension and load it as an unpacked extension in Chrome.
 
-The manifest field is only half of it. The service worker builds its own allowed-origin list from `FRONTEND_URL` at build time (`apps/extension/src/background.ts`), and anything outside that list is answered with `Unauthorized origin`. Set `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` in the repo-root `.env` before building, and confirm with the app team which build entry point compiles them in, since the current `pnpm build` script does not.
+The manifest field is only half of it. The extension compiles its own allowed-origin list from
+`FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` at build time, and any page outside that list is
+answered with `Unauthorized origin`.
+
+<Warning>
+**The build script does not read the repository's `.env`.** The watch build used during
+development does, the production `pnpm build` does not, so building without passing the values
+produces an extension that only trusts localhost. Pass them on the command line:
+
+```bash
+FRONTEND_URL="https://postqueen.example.com" \
+NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api" \
+pnpm build
+```
+</Warning>
 
 ## Troubleshooting
 

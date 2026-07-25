@@ -3,7 +3,7 @@ title: Make
 description: 'Build PostQueen scenarios in Make with the HTTP module, plus webhooks in the other direction'
 ---
 
-A Make scenario can put posts on your PostQueen calendar today. It calls the same public API as the [CLI](/cli/introduction), the [MCP server](/mcp/introduction) and the [n8n node](/automation/n8n), so anything a scenario creates lands on the same calendar where you review everything else. She publishes it on time from there.
+A Make scenario can put posts on your PostQueen calendar today. It calls the same public API as the [CLI](/cli/introduction), [MCP](/mcp/introduction) and the [n8n node](/automation/n8n), so anything a scenario creates lands on the same calendar where you review everything else. She publishes it on time from there.
 
 <Note>
 A native PostQueen app for Make is coming soon. Until it lands, the HTTP module covers the same ground: scheduling, drafts and publishing right away. Scenarios you build now stay valid, because they talk to the public API directly.
@@ -67,7 +67,7 @@ The body is the same one the [Create Post](/public-api/posts/create) reference d
 | Field | What it controls |
 | --- | --- |
 | `type` | `schedule` for a timed post, `now` to publish immediately, `draft` to park it on the calendar for review. |
-| `date` | ISO 8601 publish time in UTC, and it has to be in the future. Read when `type` is `schedule`. |
+| `date` | ISO 8601 publish time in UTC. Read when `type` is `schedule`. Nothing checks that it is in the future, so a past date is accepted and the post goes out on the next pass. |
 | `posts[].integration.id` | The channel that receives the post. [Find your integration IDs](#find-your-integration-ids). |
 | `posts[].value[]` | One entry per post. Adding entries builds a thread on platforms that support threading. |
 | `posts[].settings.__type` | The provider key, such as `x`, `linkedin` or `bluesky`. Required fields per provider are listed in [Create Post](/public-api/posts/create). |

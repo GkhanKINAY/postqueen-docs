@@ -1,0 +1,348 @@
+---
+title: Deploy to a server
+description: 'From an empty virtual machine to PostQueen running on your own domain with HTTPS'
+---
+
+This guide takes you from nothing to a working PostQueen on your own domain. It assumes no
+prior server experience. Every command is written out, and every value you need to change is
+shown before and after.
+
+Set aside about thirty minutes. Most of that is waiting for downloads.
+
+<Note>
+Want to look around first without renting anything? [Try her locally](/installation/quickstart-local)
+runs the same software on your own machine in five minutes.
+</Note>
+
+## What you need
+
+Three things, and the guide helps you get all of them:
+
+1. **A small server.** Any provider that rents Linux virtual machines works. Pick Ubuntu 24.04.
+   Two vCPUs and 4 GB of RAM is a comfortable starting point. 2 GB will run, but it is tight
+   once the scheduler is busy.
+2. **A domain name**, or a subdomain of one you already own. She needs a real name to get an
+   HTTPS certificate, so an IP address alone is not enough.
+3. **A terminal.** macOS and Linux have one built in. On Windows use PowerShell or
+   Windows Terminal.
+
+## Step by step
+
+<Steps>
+  <Step title="Create the server">
+    Order a virtual machine running **Ubuntu 24.04**. When it is ready your provider gives you
+    a public IP address that looks like `203.0.113.42`, and either a password or an SSH key.
+
+    Write the IP address down. You need it in the next two steps.
+  </Step>
+
+  <Step title="Point your domain at it">
+    In whichever service manages your domain, add an **A record**:
+
+    | Field | Value |
+    | --- | --- |
+    | Type | `A` |
+    | Name | `postqueen` (or `@` to use the bare domain) |
+    | Value | your server's IP address |
+    | TTL | leave the default |
+
+    That gives you `postqueen.example.com`. Throughout the rest of this guide, replace
+    `postqueen.example.com` with whatever you actually chose.
+
+    DNS changes take a few minutes to spread. You can check from your own machine:
+
+    ```bash
+    dig +short postqueen.example.com
+    ```
+
+    When that prints your server's IP address, you are ready. Do this now, because the
+    certificate step later will fail if the name does not resolve yet.
+  </Step>
+
+  <Step title="Connect to the server">
+    ```bash
+    ssh root@203.0.113.42
+    ```
+
+    Use your own IP address. If your provider gave you a different username, such as `ubuntu`,
+    use that instead. The first time you connect it asks whether you trust the host; answer
+    `yes`.
+
+    Everything from here runs on the server, not on your own machine.
+  </Step>
+
+  <Step title="Install Docker">
+    Docker's own install script handles this in one go:
+
+    ```bash
+    curl -fsSL https://get.docker.com | sh
+    ```
+
+    Confirm it worked:
+
+    ```bash
+    docker --version
+    docker compose version
+    ```
+
+    Both should print a version number.
+  </Step>
+
+  <Step title="Close the doors you are not using">
+    Only web traffic and your own SSH session should be able to reach this machine.
+
+    ```bash
+    ufw allow OpenSSH
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+    ufw --force enable
+    ```
+
+    <Warning>
+    Allow `OpenSSH` before enabling the firewall. If you enable it first you will lock yourself
+    out of your own server and have to recover through your provider's console.
+    </Warning>
+
+    Notice that port 4007 is **not** on that list, and should not be. PostQueen listens on 4007
+    locally, and the reverse proxy you set up later is the only thing that talks to her. The
+    outside world only ever sees 443.
+  </Step>
+
+  <Step title="Download PostQueen">
+    ```bash
+    git clone https://github.com/GkhanKINAY/postqueen-docker-compose
+    cd postqueen-docker-compose
+    ```
+
+    <Note>
+    Stay in this folder for the rest of the guide. It holds `docker-compose.yaml`, which is the
+    single file that describes the whole install, along with the `dynamicconfig` folder that
+    the scheduler reads at startup.
+    </Note>
+  </Step>
+
+  <Step title="Generate a signing key">
+    This one value protects every login session. Generate a random one and keep the output:
+
+    ```bash
+    openssl rand -hex 32
+    ```
+
+    It prints a long line of letters and numbers. Copy it somewhere safe, you need it in the
+    next step.
+
+    <Warning>
+    Set this once and never change it casually. Changing it later signs everyone out, and
+    because it is also the fallback key for encrypting stored channel credentials, changing it
+    can disconnect every channel you have connected. If you want to be able to rotate it later,
+    set `ENCRYPTION_KEY` to its own separate value now, and see
+    [Configuration Reference](/configuration/reference).
+    </Warning>
+  </Step>
+
+  <Step title="Edit five settings">
+    Open the file:
+
+    ```bash
+    nano docker-compose.yaml
+    ```
+
+    <Note>
+    `nano` is a plain text editor that runs in the terminal. Arrow keys move around, typing
+    edits. When you are finished, press `Ctrl+O` then `Enter` to save, and `Ctrl+X` to quit.
+    </Note>
+
+    Near the top you will find a block that starts with `environment:`. Five lines in it need
+    your values. Everything else in the file can stay exactly as it is.
+
+    **What ships in the file:**
+
+    ```yaml
+    services:
+      postqueen:
+        image: ghcr.io/gkhankinay/postqueen-app:latest
+        environment:
+          MAIN_URL: 'http://localhost:4007'
+          FRONTEND_URL: 'http://localhost:4007'
+          NEXT_PUBLIC_BACKEND_URL: 'http://localhost:4007/api'
+          JWT_SECRET: 'random string that is unique to every install - just type random characters here!'
+    ```
+
+    **What you change it to:**
+
+    ```yaml
+    services:
+      postqueen:
+        image: ghcr.io/gkhankinay/postqueen-app:v3.0.4
+        environment:
+          MAIN_URL: 'https://postqueen.example.com'
+          FRONTEND_URL: 'https://postqueen.example.com'
+          NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
+          JWT_SECRET: 'the long random string you generated in the previous step'
+    ```
+
+    Line by line:
+
+    | Setting | What to put there |
+    | --- | --- |
+    | `image` | Swap `latest` for a specific version from the [releases page](https://github.com/GkhanKINAY/postqueen-app/releases). Pinning means an upgrade happens when you decide, not the next time a container restarts. |
+    | `MAIN_URL` | Your full address, with `https://` and no trailing slash. |
+    | `FRONTEND_URL` | The same address again. |
+    | `NEXT_PUBLIC_BACKEND_URL` | The same address **plus `/api`**. That suffix is not a typo, see the note below. |
+    | `JWT_SECRET` | The random string you just generated. |
+
+    <Warning>
+    **No trailing slashes.** `https://postqueen.example.com/` with a slash on the end will be
+    reported as a configuration issue in the log and can break sign-in. Leave the slash off.
+    </Warning>
+
+    <Note>
+    **Why `/api`?** Everything reaches her through one address. Inside the container a small
+    proxy sends anything starting with `/api` to the backend and everything else to the web
+    interface. So the browser is told the backend lives at `yourdomain/api`, and there is no
+    second port or second hostname to set up.
+    </Note>
+
+    Leave `BACKEND_INTERNAL_URL` as `http://localhost:3000`. That one is not about your domain
+    at all, it is how the web interface talks to the backend inside the same container, and
+    pointing it at your public address will break things.
+
+    Save and exit: `Ctrl+O`, `Enter`, `Ctrl+X`.
+  </Step>
+
+  <Step title="Start her">
+    ```bash
+    docker compose up -d
+    ```
+
+    First run downloads several gigabytes of images, so give it a few minutes. When it finishes
+    you will see each container reported as started or healthy.
+
+    Watch her come up:
+
+    ```bash
+    docker compose logs -f postqueen
+    ```
+
+    You are waiting for:
+
+    ```
+    postqueen  | Backend started successfully on port 3000
+    ```
+
+    Press `Ctrl+C` to stop watching.
+
+    <Note>
+    **Read the lines just after that one.** She checks her own configuration at the end of
+    startup and prints anything suspicious as `Configuration issue`. She does not refuse to
+    start when something is wrong, so a running container is not by itself proof that the
+    settings are right. If you see those warnings, fix them now rather than wondering later
+    why sign-in fails.
+    </Note>
+
+    Check she is answering locally before you put a proxy in front of her:
+
+    ```bash
+    curl -I http://localhost:4007
+    ```
+
+    An `HTTP/1.1 200 OK` means she is up.
+  </Step>
+
+  <Step title="Add your domain and HTTPS">
+    She is running, but only on the server itself. The last piece is a reverse proxy, which
+    accepts HTTPS on port 443, gets a certificate for your domain automatically, and passes
+    requests to port 4007.
+
+    [Domain and HTTPS](/installation/domain-and-https) explains what that means and why she
+    needs it. If you want the short version, Caddy does the whole job in three lines:
+    [Caddy](/reverse-proxies/caddy).
+
+    Come back here when `https://postqueen.example.com` loads in your browser.
+  </Step>
+
+  <Step title="Create your account and close the door">
+    Open `https://postqueen.example.com` and sign up. The first account is yours and owns the
+    install.
+
+    Then stop anyone else from signing up. Open `docker-compose.yaml` again and change:
+
+    ```yaml
+    DISABLE_REGISTRATION: 'true'
+    ```
+
+    Apply it:
+
+    ```bash
+    docker compose down && docker compose up -d
+    ```
+
+    <Warning>
+    Changed settings only take effect after `docker compose down` followed by `up`. A plain
+    `restart` reuses the old container with the old values, which is a common source of "I
+    changed it and nothing happened".
+    </Warning>
+
+    Existing accounts, including yours, can still sign in normally. This only closes new
+    sign-ups. You can still invite teammates from inside the app.
+  </Step>
+</Steps>
+
+## You are done
+
+She is live on your domain, over HTTPS, and closed to strangers. Three things are worth doing
+soon rather than eventually.
+
+<CardGroup cols={2}>
+  <Card title="Set up email" icon="envelope" href="/configuration/emails">
+    Without it, password resets quietly do nothing. This is the most common regret.
+  </Card>
+  <Card title="Back up your data" icon="box-archive" href="/installation/backups-and-upgrades">
+    Which volumes hold data you cannot rebuild, and how to restore one
+  </Card>
+  <Card title="Connect your channels" icon="plug" href="/providers/overview">
+    Each network needs its own app keys, created by you
+  </Card>
+  <Card title="Sort out media storage" icon="cloud-arrow-up" href="/configuration/uploads">
+    Local disk is fine to start with. Know the tradeoff before you grow.
+  </Card>
+</CardGroup>
+
+## If something is not right
+
+<AccordionGroup>
+  <Accordion title="The site does not load at all">
+    Work outwards. `curl -I http://localhost:4007` on the server tells you whether she is up at
+    all. If that works but the domain does not, the problem is the reverse proxy or DNS, not
+    PostQueen. Check that `dig +short postqueen.example.com` returns your server's IP.
+  </Accordion>
+
+  <Accordion title="Sign-in fails or immediately signs me out">
+    Almost always a URL mismatch. `FRONTEND_URL` has to be character for character the address
+    in your browser's bar, including `https://` and with no trailing slash. She builds her
+    allowed-origin list from it, so a mismatch means the browser is refused. Search the log for
+    it:
+
+    ```bash
+    docker compose logs postqueen | grep -i "configuration issue"
+    ```
+  </Accordion>
+
+  <Accordion title="Connecting a social channel fails">
+    Every network builds its return address from `FRONTEND_URL`, so if that value is wrong or
+    was changed after you registered the app, the redirect will not match what the network has
+    on file. [OAuth connect errors](/troubleshooting/oauth-connect) covers the specific
+    messages.
+  </Accordion>
+
+  <Accordion title="Containers restart in a loop">
+    Usually memory. Check with `docker stats`, and `docker compose logs postqueen` for the
+    reason it died. The Temporal stack alone wants around 1 GB, so 2 GB total leaves very
+    little headroom.
+  </Accordion>
+
+  <Accordion title="Everyone was signed out after a restart">
+    `JWT_SECRET` changed. It signs every session, so a new value invalidates all of them. Set
+    it once and keep it. [Self-host troubleshooting](/troubleshooting/self-host) has more.
+  </Accordion>
+</AccordionGroup>

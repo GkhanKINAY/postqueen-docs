@@ -3,6 +3,10 @@ title: System Requirements
 description: 'Hardware, services and network requirements for self-hosting PostQueen'
 ---
 
+The numbers behind an install: how much machine she needs, which services, which ports, and
+what has to be reachable. If you are here to get her running rather than to size a server,
+[Self-Hosting Overview](/installation/overview) points you at the right guide.
+
 ## Hardware
 
 Recommended starting point for a small team (≤ 20 users):
@@ -36,7 +40,10 @@ The canonical self-host setup is the official Docker Compose repo:
   Pre-wired PostQueen + Postgres + Redis + Temporal. The fastest way to a working install.
 </Card>
 
-Would you rather build from source or run Kubernetes? Every install route: [Docker Compose](/installation/docker-compose), [Docker](/installation/docker) and [Kubernetes / Helm](/installation/kubernetes-helm).
+Walkthroughs for it: [Try her locally](/installation/quickstart-local) on your own machine, or
+[Deploy to a server](/installation/production) for a real install on your own domain. Building
+from source or running Kubernetes instead? See
+[Development Environment](/installation/development) and [Helm](/installation/kubernetes-helm).
 
 ## Required services
 
@@ -66,11 +73,12 @@ externally, point PostQueen at them via `DATABASE_URL`, `REDIS_URL`, and
 
 ## Filesystem
 
-If `STORAGE_PROVIDER=local`, set `UPLOAD_DIRECTORY` to a host path and
-mount that path into the backend container. The frontend serves the
-same files through `/uploads/:path*`. Storage options: [Uploads & storage](/configuration/uploads).
+Uploaded media needs somewhere that survives a container being replaced. On the official image
+that is a volume mounted at `/uploads`, which the Compose file already sets up for you. Budget
+disk for it, since video adds up quickly.
 
-If you would rather offload media: configure [Cloudflare R2](/configuration/r2).
+The choice between the local disk and object storage, and how to set either up, is on
+[Uploads and Storage](/configuration/uploads).
 
 ## Outbound network
 
@@ -86,12 +94,14 @@ can reach:
 - the Mastodon instance you configure via `MASTODON_URL`
 - any other provider you intend to use
 
-If your environment requires a proxy, set `HTTPS_PROXY` and `HTTP_PROXY`
-on the backend.
+There is no proxy support. `HTTPS_PROXY` and `HTTP_PROXY` are not read anywhere,
+and provider calls go out through a dispatcher that would ignore them regardless.
+Behind a corporate egress proxy you need a transparent proxy or an allowlist at
+the network layer.
 
 ## Inbound network
 
 The frontend talks to the backend from the browser, so
 `NEXT_PUBLIC_BACKEND_URL` must be **reachable from your users' browsers**,
-not just from the frontend SSR server. A reverse proxy in front of both
-ports is the typical setup. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
+not just from the frontend SSR server. A reverse proxy in front of her is the typical setup:
+[Domain and HTTPS](/installation/domain-and-https).

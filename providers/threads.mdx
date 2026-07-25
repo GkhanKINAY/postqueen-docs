@@ -10,7 +10,7 @@ icon: /images/channels/threads.svg
 
 ## What she can post to Threads
 
-Five hundred characters, no settings panel, nothing to configure. Threads is the shortest hop between a written thought and a published one, and she can keep replying to her own post to build the thread out.
+Five hundred characters, and one setting: a thread finisher you can switch on to append a closing post automatically. Threads is the shortest hop between a written thought and a published one, and she can keep replying to her own post to build the thread out.
 
 <CardGroup cols={2}>
   <Card title="Character limit" icon="text-width">
@@ -93,7 +93,7 @@ Threads requires the `THREADS_APP_ID` and `THREADS_APP_SECRET` environment varia
     **Your Threads OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/threads`
     - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/threads`
-    - Docker: `https://redirectmeto.com/http://localhost:5000/integrations/social/threads`
+    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/threads`
 
     <Warning>
     Threads will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to Threads, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on Threads with a redirect mismatch.

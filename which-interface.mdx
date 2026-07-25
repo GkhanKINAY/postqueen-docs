@@ -14,7 +14,7 @@ One more thing they share: the create-post endpoint is capped per organization p
 | Route | Install effort | Authentication | What it can reach | Who it suits |
 |---|---|---|---|---|
 | **[CLI](/cli/introduction)** | `npm install -g postqueen`, plus `npx skills add GkhanKINAY/postqueen-agent` if an assistant will drive it | `POSTQUEEN_API_KEY` in your shell. There is an OAuth2 device flow too, but it needs an auth server you run yourself | **16 commands** covering channels, posts and analytics. Media uploads included, video generation not | Anyone at home in a shell, a CI job, a coding agent |
-| **[MCP](/mcp/introduction)** | Nothing for most clients, just one URL. Claude Desktop reaches it through the `mcp-remote` bridge | API key as a Bearer token on `/mcp`, or the key in the URL at `/mcp/:apiKey`. OAuth tokens starting with `pos_` work on the Bearer form only | **10 tools**: channel discovery, scheduling, media generation. Upload from a URL too. No analytics, and no listing or deleting posts | Claude, ChatGPT or Cursor users who would rather ask than type flags |
+| **[MCP](/mcp/introduction)** | Nothing for most clients, just one URL. Claude Desktop reaches it through the `mcp-remote` bridge | API key as a Bearer token on `/mcp`, or the key in the URL at `/mcp/:apiKey`. OAuth tokens starting with `pos_` work on the Bearer form only | **11 tools**: channel discovery, scheduling, media generation. Upload from a URL too. No analytics, and no listing or deleting posts | Claude, ChatGPT or Cursor users who would rather ask than type flags |
 | **[Public API](/public-api/introduction)** | Nothing. Your key is the whole setup | Your key in the `Authorization` header, with no `Bearer` prefix. Or an OAuth2 token starting with `pos_` | **22 key-authenticated operations**, plus the two OAuth2 endpoints. The widest surface of the four. Channel connection, notifications and slot finding live only here | Your own code, and anyone building a product for other PostQueen users |
 | **[n8n, Zapier, Make](/automation/overview)** | The `n8n-nodes-postqueen` community node in n8n. Nothing to install in Zapier or Make, where you build the request yourself | The n8n credential stores your key and host. In Zapier and Make you set `Authorization: YOUR_API_KEY` yourself | **Seven ready-made operations** in the n8n node. Zapier and Make reach whatever you write against the API | Teams already living in a workflow tool, with no appetite for code |
 
@@ -30,7 +30,7 @@ Every command and flag: [Command Reference](/cli/command-reference).
 
 You want to describe the post rather than write the call. "Schedule a post to X for tomorrow at 10am" is the whole interaction, and the client picks the tools on its own: one to find your channels, one to read what X accepts, one to schedule.
 
-Point your client at a single URL and 10 tools arrive with their schemas. Among the four routes, AI image generation appears only here. The gaps are worth knowing before you commit: no tool reads analytics, and none lists or deletes an existing post. When you need those, keep the CLI installed alongside.
+Point your client at a single URL and 11 tools arrive with their schemas. Among the four routes, AI image generation appears only here. The gaps are worth knowing before you commit: no tool reads analytics, and none lists or deletes an existing post. When you need those, keep the CLI installed alongside.
 
 Copy-paste configuration for your client: [Client Setup](/mcp/setup).
 
@@ -55,7 +55,7 @@ She can also take the first step herself, with no outside tool at all. [RSS Auto
     Install it globally, export your key, and 16 commands are one line away.
   </Card>
   <Card title="MCP" icon="plug" href="/mcp/setup">
-    One URL for your client, and 10 tools arrive with their schemas.
+    One URL for your client, and 11 tools arrive with their schemas.
   </Card>
   <Card title="Public API" icon="code" href="/public-api/introduction">
     REST for your own code, with your API key as the only setup.

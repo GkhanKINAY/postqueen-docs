@@ -7,16 +7,22 @@ MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they c
 
 That means you can connect Claude, Cursor or any MCP-compatible client to your PostQueen account and ask her to run your social media in plain language. Setup for your client: [Client Setup](/mcp/setup).
 
+<Note>
+**You do not have to run or install anything.** In the protocol's own words PostQueen is the
+"server" and your AI client is the "client", but she is already running at a URL. Setup is
+pasting that URL into your client, and for most of them it is a single command.
+</Note>
+
 <img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
 
 ## How It Works
 
-Point a client at one URL and your agent gets **10 tools** it can call. It reads their schemas, then calls them on your behalf.
+Point a client at one URL and your agent gets **11 tools** it can call. It reads their schemas, then calls them on your behalf.
 
 ```mermaid
 sequenceDiagram
     participant Agent as AI Agent
-    participant MCP as PostQueen MCP Server
+    participant MCP as PostQueen MCP endpoint
     participant PostQueen as PostQueen Backend
 
     Agent->>MCP: Connect with API key / OAuth token
@@ -44,7 +50,7 @@ sequenceDiagram
 
 ## Authentication
 
-There are two ways to authenticate with the MCP server:
+There are two ways to authenticate:
 
 ### API Key
 

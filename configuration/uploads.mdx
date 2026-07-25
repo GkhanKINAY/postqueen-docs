@@ -21,17 +21,34 @@ Set the path where PostQueen should write:
 ```env
 STORAGE_PROVIDER="local"
 UPLOAD_DIRECTORY="/data/postqueen/uploads"
-NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY="/uploads"
+NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY="uploads"
 ```
 
-- `UPLOAD_DIRECTORY`: where the backend writes files on disk.
-- `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY`: the URL prefix the frontend
-  uses to reference those files. Default `/uploads`.
+- `UPLOAD_DIRECTORY`: the directory files are written to on disk.
+- `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY`: the URL path segment used to
+  reference those files, **with no leading slash**. Default `uploads`.
+  It is joined after a slash that is already there, so writing
+  `/uploads` gives you a double slash in every media URL.
 
-The Next.js frontend rewrites `/uploads/:path*` to `/api/uploads/:path*`
-on the backend (only active when `STORAGE_PROVIDER=local`), so the
-public URL stays `/uploads/...` while the actual file is served from
-the backend.
+Set `STORAGE_PROVIDER` explicitly. Writing falls back to `local`, but
+the rewrite that serves the files tests for the literal string `local`,
+so an unset value uploads happily and then 404s every image.
+
+### Who actually serves the files
+
+Not the backend, which is the part most people get wrong when they
+mount the volume.
+
+On the official image, nginx serves `/uploads/` straight off the
+container filesystem, from the hard-coded path `/uploads`. Running from
+source, Next.js rewrites `/uploads/:path*` to its own
+`/api/uploads/:path*` route handler, which reads `UPLOAD_DIRECTORY`
+from the frontend process's own disk.
+
+Either way the **frontend** is what reads the directory. Mount the
+volume where the frontend can see it, and on the official image leave
+`UPLOAD_DIRECTORY` at `/uploads`, because that is the path nginx is
+compiled to serve.
 
 ### Docker volume mount
 
@@ -43,7 +60,7 @@ services:
     environment:
       STORAGE_PROVIDER: "local"
       UPLOAD_DIRECTORY: "/uploads"
-      NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY: "/uploads"
+      NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY: "uploads"
     volumes:
       - postqueen-uploads:/uploads
 
@@ -76,9 +93,16 @@ CLOUDFLARE_ACCOUNT_ID="…"
 CLOUDFLARE_ACCESS_KEY="…"
 CLOUDFLARE_SECRET_ACCESS_KEY="…"
 CLOUDFLARE_BUCKETNAME="…"
-CLOUDFLARE_BUCKET_URL="https://your-bucket-url.r2.cloudflarestorage.com/"
+CLOUDFLARE_BUCKET_URL="https://pub-your-hash.r2.dev"
 CLOUDFLARE_REGION="auto"
+# Only if you created the bucket with a jurisdiction, e.g. "eu"
+CLOUDFLARE_JURISDICTION=""
 ```
+
+`CLOUDFLARE_BUCKET_URL` is the address browsers and social networks fetch
+from, so it must be the bucket's public URL — the r2.dev one or a custom
+domain — rather than the `…r2.cloudflarestorage.com` S3 endpoint, which
+serves nothing without a signature.
 
 R2 gives you public HTTPS URLs out of the box, so the TikTok caveat
 above does not apply.

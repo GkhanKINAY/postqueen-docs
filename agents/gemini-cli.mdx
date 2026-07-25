@@ -1,15 +1,15 @@
 ---
 title: 'Gemini CLI'
-description: 'One command connects Gemini CLI to her hosted MCP server, and the terminal you already have open can put finished posts on your calendar'
+description: 'One command connects Gemini CLI to her over MCP, and the terminal you already have open can put finished posts on your calendar'
 ---
 
 ## Working with her in the terminal
 
 The release is cut, the terminal is still open, and the only thing standing between you and the announcement is a browser tab you do not want to open. One line of setup later, Gemini CLI can see your channels, ask each one what it accepts and write the posts onto your calendar without you leaving the prompt.
 
-Gemini CLI reads MCP servers from its `settings.json`, and she is a hosted server, so nothing new runs on your machine. On connect it discovers her [10 tools](/mcp/tools) and reads their schemas, which is why you never type a tool call by hand.
+Gemini CLI reads MCP servers from its `settings.json`, and she is already hosted at a URL, so nothing new runs on your machine. On connect it discovers her [11 tools](/mcp/tools) and reads their schemas, which is why you never type a tool call by hand.
 
-Those 10 tools cover discovery, media and posting. They do not list, delete or reschedule posts that already exist, and there is no analytics tool among them. Both of those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the [`postqueen` CLI](/cli/introduction), which Gemini CLI can run as a shell command like any other.
+Those 11 tools cover discovery, media and posting. They do not list, delete or reschedule posts that already exist, and there is no analytics tool among them. Both of those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the [`postqueen` CLI](/cli/introduction), which Gemini CLI can run as a shell command like any other.
 
 ## Set up
 
@@ -39,7 +39,7 @@ Those 10 tools cover discovery, media and posting. They do not list, delete or r
     /mcp
     ```
 
-    It lists configured servers with their connection status and discovered tools, and `postqueen` should show as connected with 10 tools. Then ask:
+    It lists configured servers with their connection status and discovered tools, and `postqueen` should show as connected with 11 tools. Then ask:
 
     > *"List my connected social media accounts."*
 
@@ -125,7 +125,7 @@ Everything you scheduled needs nothing further from you. It sits on the calendar
     The `settings.json` block, the Bearer variant and self-hosted URLs.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 10 tools Gemini discovers on connect, with every parameter.
+    All 11 tools Gemini discovers on connect, with every parameter.
   </Card>
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
     The `postqueen` CLI, for the work MCP does not cover.

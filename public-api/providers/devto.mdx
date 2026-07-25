@@ -20,7 +20,7 @@ Dev.to is a community platform for developers. When posting articles, you can se
   "canonical": "https://original-url.com/article",
   "organization": "org-id",
   "tags": [
-    { "value": "javascript", "label": "javascript" }
+    { "value": 6, "label": "javascript" }
   ]
 }
 ```
@@ -37,7 +37,7 @@ Dev.to is a community platform for developers. When posting articles, you can se
 | `canonical` | string | ❌ | Original URL for SEO |
 | `organization` | string | ❌ | Organization ID |
 | `tags` | array | ❌ | Up to 4 tags |
-| `tags[].value` | string | ✅ | Tag identifier |
+| `tags[].value` | number | ✅ | Numeric Dev.to tag id. Get it from the `tags` provider tool; a tag name here is refused |
 | `tags[].label` | string | ✅ | Tag display name |
 
 ## Example
@@ -63,10 +63,10 @@ Dev.to is a community platform for developers. When posting articles, you can se
         "__type": "devto",
         "title": "10 JavaScript Tips for Better Code",
         "tags": [
-          { "value": "javascript", "label": "javascript" },
-          { "value": "webdev", "label": "webdev" },
-          { "value": "tutorial", "label": "tutorial" },
-          { "value": "beginners", "label": "beginners" }
+          { "value": 6, "label": "javascript" },
+          { "value": 24, "label": "webdev" },
+          { "value": 122, "label": "tutorial" },
+          { "value": 73, "label": "beginners" }
         ]
       }
     }

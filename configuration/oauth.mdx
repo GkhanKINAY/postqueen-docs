@@ -3,11 +3,26 @@ title: OIDC Configuration
 description: 'How to configure OIDC for PostQueen'
 ---
 
+Point PostQueen at your own identity provider, so people sign in with the account they already
+have rather than a new password here. This is worth doing if your organisation already runs
+single sign-on, and is not needed otherwise.
+
+<Note>
+This is about signing **into** PostQueen. Connecting social networks so she can post to them is
+a different thing entirely: see [Providers](/providers/overview).
+</Note>
+
+## Before you start
+
 <Warning>
-**Warning:** In the current implementation, enabling an OIDC provider disables GitHub and Google sign-in.
+**Two things to know before you start.**
+
+Your OIDC provider replaces the Google button, and the Farcaster and wallet buttons with it. It does not replace GitHub, because GitHub sign-in and OIDC can never appear together in the first place: GitHub renders only when `IS_GENERAL` is unset, and OIDC renders only when it is set.
+
+Which means `IS_GENERAL` has to be set for any of this to appear. Configure every variable below without it and the login page will look exactly as it did before, GitHub button and all. Nothing on this page will have taken effect.
 </Warning>
 
-If you want to use OAuth/OIDC, please follow the instructions below.
+## Setup
 
 We will use [Authentik](https://goauthentik.io/) as an OIDC provider example, with base URL `https://authentik.example.com`
 

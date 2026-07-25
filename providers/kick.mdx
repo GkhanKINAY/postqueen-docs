@@ -9,7 +9,7 @@ icon: /images/channels/kick.svg
 <Snippet file="never-share.mdx" />
 
 <Warning>
-Kick here is a chat connector, not a feed. What she sends arrives as a chat message in your own Kick channel. Media never rides along, and anything past 500 characters is cut before it leaves. If you are connecting Kick expecting a post that sits on a profile, this is not that.
+Kick here is a chat connector, not a feed. What she sends arrives as a chat message in your own Kick channel. Media never rides along, and anything past 500 characters is refused when you save it rather than trimmed. If you are connecting Kick expecting a post that sits on a profile, this is not that.
 </Warning>
 
 ## What she can post to Kick
@@ -18,7 +18,7 @@ You go live in ten minutes and you want chat to already say so. Write the line, 
 
 <CardGroup cols={2}>
   <Card title="Character limit" icon="text-width">
-    500 characters. Longer text is cut, not refused
+    500 characters. A longer post is refused when you save it, not trimmed
   </Card>
   <Card title="Media" icon="photo-film">
     None. Kick chat takes text only, so anything you attach is left behind
@@ -60,7 +60,7 @@ channel:read
     **Your Kick OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/kick`
     - Local development: `http://localhost:4200/integrations/social/kick`
-    - Docker: `http://localhost:5000/integrations/social/kick`
+    - Docker: `http://localhost:4007/integrations/social/kick`
   </Step>
 
   <Step title="Set environment variables">

@@ -1,14 +1,159 @@
 ---
 title: Dev Container
-description: 'Install PostQueen using Dev Container'
+description: 'Contribute to PostQueen without installing Node, pnpm or a database yourself'
 ---
 
-<Snippet file="earlydoc.mdx" />
+A dev container is a development environment described in the repository itself. Your editor
+reads that description, builds a container with the right Node version and the right tools, and
+opens the code inside it. You get a working setup without installing anything on your own
+machine beyond Docker and an editor.
 
-<Snippet file="installation-recommended-options.mdx" />
+This is the same environment as [Development Environment](/installation/development), set up
+for you instead of by you. Pick whichever you prefer.
 
-```bash
-npm install -g @devcontainers/cli
-devcontainer up
-```
+<Note>
+This is for **changing** PostQueen, not for running her. To self-host, use
+[Docker Compose](/installation/docker-compose).
+</Note>
 
+## What you get
+
+The container brings up its own PostgreSQL, Redis and Temporal, and installs dependencies and
+the database schema on first start. Nothing is published to your host except the app itself, so
+it runs happily alongside an existing PostQueen install on the same machine.
+
+| Inside the container | Purpose |
+| --- | --- |
+| Node 22 and pnpm | Matching the versions the repository requires |
+| PostgreSQL 17 | Your data |
+| Redis 7 | Caching and rate limits |
+| Temporal, with Elasticsearch | Scheduling posts |
+
+<Note>
+**Give Docker at least 5 GB.** The backend's watch build and Temporal's Elasticsearch are both
+hungry, and on less the build gets killed part way through. In Docker Desktop the setting is
+under **Settings → Resources**. If you are also running a PostQueen install on the same machine,
+stop it first or raise the limit further.
+</Note>
+
+## Set it up
+
+<Tabs>
+  <Tab title="VS Code">
+    <Steps>
+      <Step title="Install what you need">
+        [Docker Desktop](https://www.docker.com/products/docker-desktop/) and
+        [VS Code](https://code.visualstudio.com/), plus the
+        [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+        extension.
+      </Step>
+
+      <Step title="Clone and open">
+        ```bash
+        git clone https://github.com/GkhanKINAY/postqueen-app.git
+        code postqueen-app
+        ```
+      </Step>
+
+      <Step title="Reopen in the container">
+        VS Code offers **Reopen in Container** in the corner. If you miss it, open the command
+        palette and run **Dev Containers: Reopen in Container**.
+
+        The first build takes a few minutes. It pulls images, installs dependencies and creates
+        the database schema, and you can watch it in the terminal panel.
+      </Step>
+
+      <Step title="Run her">
+        In the container's terminal:
+
+        ```bash
+        pnpm run dev-backend
+        ```
+
+        Open **http://localhost:4200**. VS Code forwards the port for you.
+
+        <Note>
+        `dev-backend` runs the frontend and backend, which is what you want most of the time.
+        `pnpm run dev` adds the browser extension build on top.
+        </Note>
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Command line">
+    <Steps>
+      <Step title="Install the CLI">
+        ```bash
+        npm install -g @devcontainers/cli
+        ```
+      </Step>
+
+      <Step title="Bring it up">
+        ```bash
+        git clone https://github.com/GkhanKINAY/postqueen-app.git
+        devcontainer up --workspace-folder postqueen-app
+        ```
+
+        First run takes a few minutes. It finishes with `Ready.` once dependencies are installed
+        and the schema is in place.
+      </Step>
+
+      <Step title="Run her">
+        ```bash
+        devcontainer exec --workspace-folder postqueen-app pnpm run dev-backend
+        ```
+
+        Then open **http://localhost:4200**.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Good to know
+
+<AccordionGroup>
+  <Accordion title="It will not clash with a PostQueen you already run">
+    The container's database, Redis and Temporal are private to it. They have generated names
+    and publish nothing to your host, so an existing Docker Compose install keeps running
+    untouched on port 4007.
+  </Accordion>
+
+  <Accordion title="What happens to your .env">
+    On first start, if there is no `.env`, one is created from `.env.example` with the database
+    addresses rewritten to the container's service names.
+
+    An existing `.env` is left alone. It cannot break the container either, because the
+    connection strings and the URL variables are set in the container's own environment, and
+    the dev scripts load `.env` without overriding what is already there. So a file tuned to
+    your host, for example one pointing `NEXT_PUBLIC_BACKEND_URL` at a proxy, keeps working on
+    your host and is ignored in here.
+  </Accordion>
+
+  <Accordion title="Rebuilding from scratch">
+    Use **Dev Containers: Rebuild Container** in VS Code, or from the command line:
+
+    ```bash
+    devcontainer up --workspace-folder postqueen-app --remove-existing-container
+    ```
+
+    That re-runs the whole first-start sequence. Plain `devcontainer up` reuses the existing
+    container and skips it.
+  </Accordion>
+
+  <Accordion title="Where the setup lives">
+    `.devcontainer/devcontainer.json`, `.devcontainer/docker-compose.yml` and
+    `.devcontainer/post-create.sh` in the app repository. Edit them if you want different tools,
+    then rebuild.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Add a provider" icon="plug" href="/configuration/create-provider">
+    What a new social network needs on the backend and the frontend
+  </Card>
+  <Card title="Developer guide" icon="code" href="/developer-guide">
+    How the codebase is organised and how to contribute
+  </Card>
+</CardGroup>

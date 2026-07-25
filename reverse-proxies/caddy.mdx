@@ -1,30 +1,149 @@
 ---
 title: Caddy
-description: 'Configure Caddy as a reverse proxy for PostQueen'
+description: 'Put PostQueen on your domain with HTTPS, using Caddy'
 ---
 
-This page briefly explains how to use Caddy to reverse proxy PostQueen. A configuration file example is below;
+Caddy is the shortest path from "she runs on port 4007" to "she is live at
+`https://postqueen.example.com`". It gets your certificate from Let's Encrypt on its own and
+renews it without being asked, so there is nothing to schedule and nothing to remember.
 
-## Example Caddyfile
+If you are not sure what a reverse proxy is or why you need one,
+[Domain and HTTPS](/installation/domain-and-https) explains it first.
+
+## Before you start
+
+Two things have to be true:
+
+- Your domain's **A record** points at this server. Check with `dig +short postqueen.example.com`.
+- Ports **80 and 443** are open. Caddy needs 80 to prove it owns the domain, even though your
+  visitors only ever use 443.
+
+## Set it up
+
+<Steps>
+  <Step title="Install Caddy">
+    On Ubuntu or Debian:
+
+    ```bash
+    sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+    sudo apt update && sudo apt install caddy
+    ```
+
+    Other systems are covered on [Caddy's install page](https://caddyserver.com/docs/install).
+  </Step>
+
+  <Step title="Write the configuration">
+    ```bash
+    sudo nano /etc/caddy/Caddyfile
+    ```
+
+    Replace everything in the file with this, using your own domain:
+
+    ```caddy
+    postqueen.example.com {
+        reverse_proxy localhost:4007
+    }
+    ```
+
+    That is the whole configuration. Caddy sees a real domain name, so it requests a
+    certificate automatically the first time someone visits.
+
+    <Note>
+    **Why 4007?** Inside the container she listens on port 5000, and the Compose file publishes
+    that as 4007 on the host. If you installed her with
+    [Docker on its own](/installation/docker) rather than Compose, she is on `localhost:5000`
+    and that is the number to use here instead.
+    </Note>
+
+    Save with `Ctrl+O`, `Enter`, then `Ctrl+X`.
+  </Step>
+
+  <Step title="Reload Caddy">
+    ```bash
+    sudo systemctl reload caddy
+    ```
+
+    Watch it get the certificate:
+
+    ```bash
+    sudo journalctl -u caddy -f
+    ```
+
+    A line containing `certificate obtained successfully` means you are done. Press `Ctrl+C` to
+    stop watching.
+  </Step>
+
+  <Step title="Tell PostQueen her address">
+    The proxy now works, but she still thinks she lives on `localhost`. In your
+    `docker-compose.yaml`:
+
+    ```yaml
+    MAIN_URL: 'https://postqueen.example.com'
+    FRONTEND_URL: 'https://postqueen.example.com'
+    NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
+    ```
+
+    Keep the `/api` on the last one, and leave no trailing slashes. Then apply it:
+
+    ```bash
+    docker compose down && docker compose up -d
+    ```
+  </Step>
+
+  <Step title="Check it">
+    From your own machine:
+
+    ```bash
+    curl -I https://postqueen.example.com
+    ```
+
+    `HTTP/2 200` means the certificate, the proxy and PostQueen are all working. Open the
+    address in a browser and sign in.
+  </Step>
+</Steps>
+
+## Testing on a private network
+
+If the name is not reachable from the public internet, for example on a home network, Caddy
+cannot use Let's Encrypt. It can issue its own certificate instead:
 
 ```caddy
-postqueen.example.com {
-        reverse_proxy * localhost:5000
-        tls internal
+postqueen.example.lan {
+    reverse_proxy localhost:4007
+    tls internal
 }
 ```
 
-In this example, we have a single port for PostQueen, port 5000, which is the internal proxy built into the Docker container images. The `tls internal` directive is used to enable internal TLS for secure communication.
+Browsers will not trust that certificate until you install Caddy's local authority on each
+machine, which [Caddy's documentation](https://caddyserver.com/docs/automatic-https#local-https)
+covers. For anything public, leave `tls internal` out and let it use Let's Encrypt.
 
-You will need to install the certificate into your browser with this configuration. If you are hosting on a public domain, Caddy allows you to use LetsEncrypt for automatic certificate management. For more information, refer to the [Caddy documentation](https://caddyserver.com/docs/).
+## If it does not work
 
-## PostQueen configuration
+<AccordionGroup>
+  <Accordion title="Caddy will not get a certificate">
+    Almost always DNS or a blocked port. `dig +short postqueen.example.com` has to return this
+    server's IP, and port 80 has to be reachable from the internet. `sudo journalctl -u caddy -n 50`
+    usually names the reason outright.
+  </Accordion>
 
-To ensure that PostQueen works correctly behind a reverse proxy, you may need to adjust its configuration in your .env file / environment variables. The following variables should be set to the correct values:
+  <Accordion title="502 Bad Gateway">
+    Caddy is fine, PostQueen is not answering. Check her directly on the server with
+    `curl -I http://localhost:4007`. If that fails too, `docker compose logs postqueen` is
+    where to look.
+  </Accordion>
 
-```bash
-MAIN_URL="https://postqueen.example.com"
-FRONTEND_URL="https://postqueen.example.com"
-NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api"
-```
+  <Accordion title="The page loads but sign-in does not stick">
+    `FRONTEND_URL` does not match the address in the browser bar. It has to be identical,
+    including `https://` and without a trailing slash, because her allowed-origin list is built
+    from it.
+  </Accordion>
 
+  <Accordion title="Uploading a large image fails">
+    Caddy does not limit request size by default, so this is usually PostQueen's own 50 MB
+    limit on posts. [Uploads and Storage](/configuration/uploads) covers uploading larger media
+    properly.
+  </Accordion>
+</AccordionGroup>

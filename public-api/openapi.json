@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PostQueen Public API",
-    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from PostQueen Settings.\n\n## Rate Limits\n\nThere is a limit of **30 requests per hour**.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (30+)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram, Kick, Twitch\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Medium, Dev.to, Hashnode, WordPress, Moltbook\n\n**Business:** Google My Business (GMB), Listmonk (newsletters), Whop, Skool",
+    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from PostQueen Settings.\n\n## Rate Limits\n\nThe create-post endpoint is capped per organization per hour. With `API_LIMIT` unset the ceiling is **90 requests per hour**; the shipped Compose files and PostQueen Cloud both set it to **30**. No other endpoint is throttled.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (34)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram, Kick, Twitch\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Medium, Dev.to, Hashnode, WordPress, Moltbook\n\n**Business:** Google My Business (GMB), Listmonk (newsletters), Whop, Skool",
     "license": {
       "name": "MIT"
     },
@@ -18,7 +18,7 @@
       "description": "Self-hosted",
       "variables": {
         "host": {
-          "default": "localhost:5000",
+          "default": "localhost:4007",
           "description": "Your PostQueen instance domain"
         }
       }
@@ -2417,38 +2417,40 @@
             "type": "string",
             "description": "Provider identifier",
             "enum": [
-              "x",
-              "linkedin",
-              "linkedin-page",
+              "bluesky",
+              "devto",
+              "discord",
+              "dribbble",
               "facebook",
+              "gmb",
+              "hashnode",
               "instagram",
               "instagram-standalone",
-              "threads",
-              "bluesky",
-              "mastodon",
-              "wrapcast",
-              "nostr",
-              "vk",
-              "youtube",
-              "tiktok",
-              "reddit",
+              "kick",
               "lemmy",
-              "discord",
+              "linkedin",
+              "linkedin-page",
+              "listmonk",
+              "mastodon",
+              "medium",
+              "mewe",
+              "moltbook",
+              "nostr",
+              "pinterest",
+              "reddit",
+              "skool",
               "slack",
               "telegram",
-              "kick",
+              "threads",
+              "tiktok",
+              "tumblr",
               "twitch",
-              "pinterest",
-              "dribbble",
-              "medium",
-              "devto",
-              "hashnode",
+              "vk",
+              "whop",
               "wordpress",
-              "gmb",
-              "listmonk",
-              "moltbook",
-              "skool",
-              "whop"
+              "wrapcast",
+              "x",
+              "youtube"
             ]
           },
           "picture": {
@@ -2498,31 +2500,41 @@
           },
           "name": {
             "type": "string",
-            "description": "File name"
+            "description": "Stored file name"
+          },
+          "originalName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The name the file was uploaded under"
           },
           "path": {
             "type": "string",
-            "description": "File URL"
+            "description": "Public URL of the file. This is the value to send as an attachment"
           },
-          "organizationId": {
-            "type": "string"
+          "thumbnail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Thumbnail URL, set for video"
           },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time"
+          "alt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Alt text, when one was set"
           }
         },
         "example": {
           "id": "e639003b-f727-4a1e-87bd-74a2c48ae41e",
           "name": "image.png",
+          "originalName": "launch-banner.png",
           "path": "https://uploads.postqueen.ai/image.png",
-          "organizationId": "85460a39-6329-4cf4-a252-187ce89a3480",
-          "createdAt": "2024-12-14T08:18:54.274Z",
-          "updatedAt": "2024-12-14T08:18:54.274Z"
+          "thumbnail": null,
+          "alt": null
         }
       },
       "PostsResponse": {
@@ -2578,6 +2590,43 @@
                 "type": "string"
               }
             }
+          },
+          "releaseId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Provider-side post id. Required by PUT /posts/{id}/release-id"
+          },
+          "intervalInDays": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Repeat interval. Set when the post recurs"
+          },
+          "group": {
+            "type": "string",
+            "description": "Group id shared by every channel in one publish. Required by DELETE /posts/group/{group}"
+          },
+          "creationMethod": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How the post was created"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Tags attached to the post"
+          },
+          "actualDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Present only on the expanded occurrences of a recurring post: the date of the original"
           }
         }
       },
@@ -2596,9 +2645,10 @@
             "enum": [
               "draft",
               "schedule",
-              "now"
+              "now",
+              "update"
             ],
-            "description": "Post type"
+            "description": "Post type. `update` rewrites an existing post without starting a publishing workflow."
           },
           "date": {
             "type": "string",
@@ -2735,6 +2785,12 @@
               },
               {
                 "$ref": "#/components/schemas/EmptySettings"
+              },
+              {
+                "$ref": "#/components/schemas/MeweSettings"
+              },
+              {
+                "$ref": "#/components/schemas/TumblrSettings"
               }
             ],
             "description": "Provider-specific settings"
@@ -2760,6 +2816,11 @@
             "items": {
               "$ref": "#/components/schemas/Media"
             }
+          },
+          "delay": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Minutes to wait before this entry of a thread goes out. Optional"
           }
         }
       },
@@ -2822,6 +2883,14 @@
           "community": {
             "type": "string",
             "description": "X Community URL (format: https://x.com/i/communities/123)"
+          },
+          "made_with_ai": {
+            "type": "boolean",
+            "description": "Label the post as AI-generated"
+          },
+          "paid_partnership": {
+            "type": "boolean",
+            "description": "Label the post as a paid partnership"
           }
         }
       },
@@ -3072,10 +3141,9 @@
                       "enum": [
                         "self",
                         "link",
-                        "image",
-                        "video"
+                        "media"
                       ],
-                      "description": "Post type"
+                      "description": "Post type. `media` is the only value that attaches an uploaded file; `image`, `video` and `videogif` set a Reddit kind without ever sending the file."
                     },
                     "url": {
                       "type": "string",
@@ -3347,7 +3415,8 @@
         "required": [
           "__type",
           "title",
-          "tags"
+          "tags",
+          "publication"
         ],
         "properties": {
           "__type": {
@@ -3415,6 +3484,30 @@
           "type": {
             "type": "string",
             "description": "Post type (depends on WordPress setup)"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Categories to file the post under"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Tags to attach"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "publish",
+              "draft",
+              "pending",
+              "private"
+            ],
+            "description": "State the post lands in on WordPress. Defaults to publish"
           }
         }
       },
@@ -3493,7 +3586,7 @@
           "callToActionUrl": {
             "type": "string",
             "format": "uri",
-            "description": "URL for CTA (required if callToActionType is set)"
+            "description": "URL for the CTA button. Genuinely optional: set callToActionType without it and the request still succeeds, with the button silently left off the post."
           },
           "eventTitle": {
             "type": "string",
@@ -3870,6 +3963,62 @@
           "title": {
             "type": "string",
             "description": "Post title"
+          }
+        }
+      },
+      "MeweSettings": {
+        "type": "object",
+        "required": [
+          "__type",
+          "group"
+        ],
+        "properties": {
+          "__type": {
+            "type": "string",
+            "enum": [
+              "mewe"
+            ]
+          },
+          "group": {
+            "type": "string",
+            "description": "Group id, from the `groups` provider tool"
+          },
+          "postType": {
+            "type": "string",
+            "description": "Post type accepted by the group"
+          }
+        }
+      },
+      "TumblrSettings": {
+        "type": "object",
+        "required": [
+          "__type"
+        ],
+        "properties": {
+          "__type": {
+            "type": "string",
+            "enum": [
+              "tumblr"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional post title"
+          },
+          "link": {
+            "type": "string",
+            "description": "Optional link"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "description": "Optional source URL"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Optional tags"
           }
         }
       }

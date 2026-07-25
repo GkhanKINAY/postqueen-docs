@@ -23,7 +23,7 @@ When creating a shot on Dribbble, use the following settings schema:
 |-------|------|----------|-------------|
 | `__type` | `string` | Yes | Must be `dribbble` |
 | `title` | `string` | Yes | Shot title (min 1 character) |
-| `team` | `string` | No | Team URL (if posting for a team) |
+| `team` | `string` | No | Accepted and validated, but not used when publishing |
 
 ### `title`
 
@@ -31,7 +31,7 @@ Required title for your Dribbble shot. This is displayed prominently on your sho
 
 ### `team`
 
-Optional team URL. If you are part of a Dribbble team and want to post on behalf of the team, give the team URL.
+Validated as a URL if you send it, and then ignored. The publish path never reads it, so the shot is always created on the authenticated Dribbble account. Posting on behalf of a team is not supported through the API today.
 
 ---
 

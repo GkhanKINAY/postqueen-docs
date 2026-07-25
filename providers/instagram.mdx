@@ -123,7 +123,7 @@ If you have a Facebook Business page that is linked to your Instagram account, y
     **Your Instagram OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/instagram`
     - Local development: `http://localhost:4200/integrations/social/instagram`
-    - Docker: `http://localhost:5000/integrations/social/instagram`
+    - Docker: `http://localhost:4007/integrations/social/instagram`
   </Step>
 
   <Step title="Set up permissions">
@@ -190,7 +190,7 @@ The permissions are not the ones listed above. Instagram asks for its own four h
     **Your Instagram Standalone OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/instagram-standalone`
     - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/instagram-standalone`
-    - Docker: `https://redirectmeto.com/http://localhost:5000/integrations/social/instagram-standalone`
+    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/instagram-standalone`
 
     <Warning>
     Instagram will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to Instagram, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on Instagram with a redirect mismatch.

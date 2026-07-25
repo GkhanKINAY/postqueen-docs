@@ -1,0 +1,146 @@
+---
+title: Abuse Protection and Rate Limits
+description: 'Sign-in rate limiting, Cloudflare Turnstile, passwordless login and the API hourly cap'
+---
+
+The endpoints anyone can reach without signing in, sign-in, sign-up, password reset and one-time
+codes, are rate limited out of the box. You do not have to configure anything for that to work.
+This page is for when you want to tighten it, loosen it, or add a captcha.
+
+## What is already on
+
+Rate limiting needs no configuration and no secret. Each protected action is counted twice, once
+per email address and once per IP address, over a rolling window. Whichever ceiling is hit first
+starts refusing requests.
+
+| Action | Per email | Per IP |
+| --- | --- | --- |
+| Requesting a one-time code | 5 | 30 |
+| Verifying a one-time code | 10 | 60 |
+| Signing in | 20 | 60 |
+| Registering | 5 | 20 |
+| Password reset | 5 | 20 |
+
+The window is 15 minutes.
+
+<Note>
+The sign-in limits are deliberately loose. They exist to stop credential stuffing and mail
+bombing, not to punish someone mistyping their password, and a shared office connection should
+never reach the IP ceiling in normal use.
+</Note>
+
+### Where the counters live
+
+If `REDIS_URL` is set, which it is in every standard install, counters live in Redis and are
+shared across every backend instance. Without it she falls back to counting inside a single
+process, which is correct for one instance and wrong the moment you run two. She says which one
+she chose in the startup log:
+
+```
+Abuse guard using Redis counters (shared across instances)
+```
+
+## Changing the limits
+
+Every number above can be overridden. Times are in milliseconds, counts are per window.
+
+```env
+GUARD_WINDOW_MS=900000
+
+GUARD_OTP_REQUEST_EMAIL=5
+GUARD_OTP_REQUEST_IP=30
+GUARD_OTP_VERIFY_EMAIL=10
+GUARD_OTP_VERIFY_IP=60
+GUARD_LOGIN_EMAIL=20
+GUARD_LOGIN_IP=60
+GUARD_REGISTER_EMAIL=5
+GUARD_REGISTER_IP=20
+GUARD_FORGOT_EMAIL=5
+GUARD_FORGOT_IP=20
+```
+
+Setting any one of them to `0` disables that dimension. For example `GUARD_LOGIN_IP=0` stops
+counting sign-in attempts per IP while still counting them per email address.
+
+<Warning>
+A value that is not a whole number falls back to the default rather than failing, so a typo
+leaves the original limit in place silently. If you change one, confirm the new behaviour rather
+than assuming it took.
+</Warning>
+
+## Adding a captcha
+
+Cloudflare Turnstile can be required before an action goes through. It is off unless you
+configure it.
+
+<Steps>
+  <Step title="Create a Turnstile widget">
+    In the Cloudflare dashboard, under Turnstile, add a widget for your domain. You get a site
+    key and a secret key.
+  </Step>
+
+  <Step title="Set both keys">
+    ```env
+    TURNSTILE_SITE_KEY=your-site-key
+    TURNSTILE_SECRET=your-secret-key
+    ```
+
+    <Warning>
+    **Both, or neither.** The site key alone renders the widget in the browser, but with no
+    secret there is nothing to check the answer against, so it is decorative. Verification only
+    engages when `TURNSTILE_SECRET` is set.
+    </Warning>
+  </Step>
+
+  <Step title="Choose which actions it guards">
+    By default only one-time code requests require a captcha. Change that with a comma separated
+    list:
+
+    ```env
+    GUARD_CAPTCHA_ACTIONS=otp_request,register,forgot
+    ```
+
+    The names you can use are `otp_request`, `otp_verify`, `login`, `register` and `forgot`.
+  </Step>
+</Steps>
+
+## Passwordless sign-in
+
+Instead of a password, she can mail a one-time code:
+
+```env
+PASSWORDLESS_LOGIN=true
+```
+
+This one is compared against the literal string `true`, so any other value leaves it off.
+
+<Warning>
+It needs working email. With no provider configured the code is never delivered and nobody can
+sign in. Set up [Email Notifications](/configuration/emails) first.
+</Warning>
+
+The one-time code endpoints are the most attractive ones to abuse, which is why they carry the
+tightest limits above and are the default target for the captcha.
+
+## The public API hourly cap
+
+Separate from all of the above, post creation through the public API is capped per hour. It
+defaults to 90 requests per hour and is set with:
+
+```env
+API_LIMIT=30
+```
+
+This only applies to the API, not to posting from the web interface. See
+[Public API](/public-api/introduction) for what counts against it.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Close sign-ups" icon="user-lock" href="/configuration/reference">
+    `DISABLE_REGISTRATION` stops new accounts entirely, which beats rate limiting them
+  </Card>
+  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
+    Needed for passwordless sign-in and password resets
+  </Card>
+</CardGroup>

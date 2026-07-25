@@ -41,31 +41,36 @@ postqueen posts:create \
 ### Post with Flair
 
 ```bash
-# 1. Get available flairs
-postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"programming"}'
+# 1. Get available flairs. The subreddit goes in as the /r/ path, not the bare name
+postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"/r/programming"}'
 
-# 2. Post with a flair
+# 2. Post with a flair. Take the id from .output.flairs[] in step 1
 postqueen posts:create \
   -c "My post content" \
   -s "2025-01-15T10:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"Post Title","type":"text","flair":{"id":"flair-id","name":"Discussion"}}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"text","is_flair_required":true,"flair":{"id":"abc123","name":"Discussion"}}}]}' \
   -i "reddit-id"
 ```
+
+`is_flair_required` is not optional. Leave it out and the call is refused before the post is created. Say `false` when the subreddit does not need a flair, and drop the `flair` object with it.
 
 ### Scripted Workflow
 
 ```bash
 #!/bin/bash
 REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
-FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" restrictions -d '{"subreddit":"programming"}' | tail -n +2)
-FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output[0].id')
+FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" restrictions -d '{"subreddit":"/r/programming"}' | tail -n +2)
+FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output.flairs[0].id')
+FLAIR_NAME=$(echo "$FLAIRS" | jq -r '.output.flairs[0].name')
 
 postqueen posts:create \
   -c "Automated Reddit post" \
   -s "2025-01-15T10:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"programming\",\"title\":\"Post Title\",\"type\":\"text\",\"flair\":{\"id\":\"$FLAIR_ID\"}}}]}" \
+  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"text\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"$FLAIR_NAME\"}}}]}" \
   -i "$REDDIT_ID"
 ```
+
+`restrictions` answers with an object, not a list: `.output.flairs[]` holds the flairs, and `.output.is_flair_required` tells you whether the subreddit insists on one. A flair you send needs both its `id` and its `name`.
 
 ## YouTube
 
@@ -91,9 +96,11 @@ postqueen posts:create \
   -c "Check this out! #fyp" \
   -m "$VIDEO_URL" \
   -s "2025-01-15T10:00:00Z" \
-  --settings '{"privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true}' \
+  --settings '{"content_posting_method":"DIRECT_POST","privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false}' \
   -i "tiktok-id"
 ```
+
+TikTok is the strictest settings block in the CLI. Seven of these fields are required and there are no defaults, so a shorter object is refused rather than filled in: `content_posting_method`, `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle` and `brand_organic_toggle`. Only `video_made_with_ai` is optional.
 
 TikTok applies these settings only when `content_posting_method` is `"DIRECT_POST"`, with `"UPLOAD"` (send to the TikTok app inbox instead of publishing) every setting except the post content is silently discarded. `duet` and `stitch` apply to video posts only.
 

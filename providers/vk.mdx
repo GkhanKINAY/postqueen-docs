@@ -58,7 +58,7 @@ video
     **Your VK OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/vk`
     - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/vk`
-    - Docker: `https://redirectmeto.com/http://localhost:5000/integrations/social/vk`
+    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/vk`
 
     <Warning>
     VK will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to VK, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on VK with a redirect mismatch.

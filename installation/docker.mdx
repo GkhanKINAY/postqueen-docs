@@ -3,6 +3,13 @@ title: Docker
 description: 'Install PostQueen using Docker standalone'
 ---
 
+This runs the PostQueen container on its own, with nothing else. You supply PostgreSQL, Redis
+and Temporal yourself, and you wire them together yourself.
+
+Pick this only if you already run those three somewhere and want just the app. If that is not
+you, [Docker Compose](/installation/docker-compose) starts all four together and is the
+supported path.
+
 <Snippet file="installation-recommended-options.mdx" />
 
 <Snippet file="installation-pre-reqs.mdx" />
@@ -19,11 +26,14 @@ Mounting that file inside the container does not work. Nothing in the image read
 
 ## Create the container
 
-One command creates the container. Point `--env-file` at your own file, and have Postgres and Redis running first.
+One command creates the container. Before you run it, have Postgres, Redis **and Temporal** running: Temporal is not optional, and even outbound email is dispatched through it.
+
+Note the `--network`. Without it the container lands on the default bridge, where container names do not resolve, so a `DATABASE_URL` or `REDIS_URL` written against a service name fails to connect with nothing on screen to explain why. Use the network your database and Redis are already on.
 
 ```bash
 docker create --name postqueen \
   --env-file ./postqueen.env \
+  --network postqueen-network \
   -v postqueen-uploads:/uploads/ \
   -p 5000:5000 \
   ghcr.io/gkhankinay/postqueen-app:latest
@@ -35,20 +45,30 @@ Then start her and watch the first minute:
 docker start postqueen && docker logs -f postqueen
 ```
 
+## Check it worked
+
+You are waiting for `Backend started successfully on port 3000`, and then for the lines just
+after it. She reports configuration problems there and keeps running anyway, so a container
+that is up is not proof the settings are right:
+
+```bash
+docker logs postqueen | grep -i "configuration issue"
+```
+
+Then confirm she answers:
+
+```bash
+curl -I http://localhost:5000
+```
+
+<Note>
+**This path uses port 5000, not 4007.** The command above maps `-p 5000:5000`, so she is on
+`localhost:5000` on your host. Docker Compose publishes the same container port as 4007
+instead, which is why the reverse proxy pages mostly talk about 4007. Point your proxy at
+whichever host port you actually mapped.
+</Note>
+
 ## Next Steps
 
-<CardGroup cols={2}>
-  <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
-    Store media on Cloudflare R2 instead of the local disk
-  </Card>
-  <Card title="Architecture" icon="diagram-project" href="/howitworks">
-    The services behind a post, and what each one does
-  </Card>
-  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
-    Wire up Resend or SMTP so the people you invite get their mail
-  </Card>
-  <Card title="Providers" icon="plug" href="/providers/overview">
-    Connect LinkedIn, X and Reddit with your own app keys
-  </Card>
-</CardGroup>
+<Snippet file="next-steps-selfhost.mdx" />
 

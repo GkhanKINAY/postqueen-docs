@@ -37,6 +37,8 @@ Your own site is the one channel nobody can take away from you, and she treats i
 <Warning>
 **Your site has to be reachable from the internet.** Outbound calls run through an SSRF guard that resolves the host and refuses private addresses, so a WordPress on `localhost`, on a Docker network or on an internal VPC address never answers. Self-hosters who genuinely run PostQueen and WordPress side by side on a private network can opt out with `DISABLE_SSRF_PROTECTION=true`. It stays on by default.
 
+That opt-out only takes you so far, because the URL field itself is stricter than the guard. It requires a dotted hostname and rejects a port, so `http://192.168.1.50` is accepted while `http://localhost:8080`, a bare Docker service name and `https://example.com:8443` are all refused before the guard is ever consulted.
+
 **Status is a post state, not a queue.** The **Status** field defaults to Publish, with Draft, Pending and Private sitting beside it. Choose Draft and she still sends the piece on schedule. It simply arrives in your WordPress drafts rather than on the front page.
 
 **She sends the first block only.** The composer offers **Add comment** underneath the post, and WordPress receives the first block.

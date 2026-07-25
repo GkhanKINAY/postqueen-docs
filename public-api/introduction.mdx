@@ -73,11 +73,11 @@ The rate limit is one global value for the whole instance, and it is the same on
 |---|---|
 | `400 Bad Request` | The request body or path parameter is malformed (wrong shape, unknown enum, missing required field). |
 | `401 Unauthorized` | `Authorization` header is missing or the API key is unrecognized. |
-| `403 Forbidden` | The API key is valid but does not own the resource (e.g. you tried to delete a post in another organization). |
+| `402 Payment Required` | Your plan is out of monthly posts or channels. |
 | `404 Not Found` | The endpoint does not exist, or the path parameter (integration ID, post ID) was correct format but no row matched. |
-| `413 Payload Too Large` | Your request body exceeded 50 MB on `/posts`, usually because images were base64-inlined instead of pre-uploaded. See [Uploads troubleshooting](/troubleshooting/uploads). |
+| `413 Payload Too Large` | Your request body exceeded the default JSON limit of roughly 100 kB. The 50 MB limit you may have read about is on the internal routes the web UI uses, not on this one, so inlining a single base64 image is enough to trip it. Upload first and send the returned `path`. See [Uploads troubleshooting](/troubleshooting/uploads). |
 | `429 Too Many Requests` | You exceeded `API_LIMIT` per hour on the create-post endpoint. |
-| `5xx` | Server error: retry with exponential backoff. |
+| `5xx` | Server error: retry with exponential backoff. Also what you get when you name a row belonging to another organization: it is invisible rather than forbidden, so the handler fails on the empty result. There is no `403` on this API. |
 
 For `DELETE` endpoints, you can treat `404` as already deleted: the row is gone either way, so it is safe to ignore. A `500` *can* mean the same thing today because of a [known issue](/troubleshooting/known-issues) where a missing post ID surfaces as 500 instead of 404, but only if the error matches that specific signature. Treat other `500` responses as real server errors: log them, retry with exponential backoff, and do not swallow them quietly.
 
@@ -114,7 +114,7 @@ Let the app write the JSON for you. It is the same composer you use to schedule 
 
 ## Supported Platforms
 
-She posts to 30+ networks, and each one has its own settings schema. Every post you send carries a `settings` object, and that object needs a `__type` field naming the provider.
+She posts to 30+ networks, and each one has its own settings schema. Every post you send carries a `settings` object. It usually names the provider in a `__type` field, though the server overwrites that field with the provider of the channel you addressed, so what has to match your channel is the **shape** of the settings, not the string you put in `__type`. Channels whose provider needs no settings can send an empty object.
 
 ### Platforms with custom settings
 
@@ -130,7 +130,7 @@ She posts to 30+ networks, and each one has its own settings schema. Every post 
     | Instagram Standalone | `instagram-standalone` | `post_type`, `collaborators` |
     | Warpcast (Farcaster) | `wrapcast` | `subreddit[]` (channels) |
 
-    The Farcaster identifier is spelled `wrapcast` (not `warpcast`); the API rejects any other spelling.
+    The Farcaster identifier is spelled `wrapcast`, not `warpcast`. That is what `GET /integrations` returns and what the settings schema is keyed on. On `POST /posts` the server replaces whatever you put in `__type` with the connected channel's own identifier, so a wrong spelling is not rejected, it is simply ignored.
   </Tab>
   <Tab title="Video">
     | Platform | `__type` | Key settings |

@@ -51,8 +51,7 @@ TikTok will also not allow http:// for your app redirect URI, so you will need t
 </Note>
 
 <Warning>
-**NOTE:** TikTok fetches media via pull_from_url. Your media files must be publicly reachable over HTTPS; localhost or private routes (e.g., /uploads) will fail. 
-Serve your uploads through a reverse proxy (e.g., [Caddy](/reverse-proxies/caddy)) or use object storage/CDN such as [Cloudflare R2](/configuration/r2) with public access.
+**NOTE:** Photo posts are the ones TikTok pulls from a URL, so for those your media has to be publicly reachable over HTTPS; localhost or private routes such as `/uploads` will fail. Serve your uploads through a reverse proxy (e.g. [Caddy](/reverse-proxies/caddy)) or object storage such as [Cloudflare R2](/configuration/r2) with public access. Videos are streamed up by PostQueen itself, so a private path works for those.
 
 Ensure the media domain is listed under your TikTok developer account's verified sites.
 </Warning>
@@ -62,7 +61,7 @@ TikTok approval is not the final step for Direct Post access. TikTok allows unau
 
 If your API client has not passed this audit, TikTok also limits Direct Post usage to up to 5 users posting in a 24-hour window, and those user accounts must be private at the time of posting. See TikTok's [Direct Post API developer guidelines](https://developers.tiktok.com/doc/content-sharing-guidelines#direct_post_api_-_developer_guidelines) for the current requirements.
 
-In practice this means: before your TikTok developer app passes audit, the `privacy_level` setting for posts is forced to **SELF_ONLY** (private) regardless of what you choose in PostQueen. Once your app is audited, all privacy levels become available.
+In practice this means: before your TikTok developer app passes audit, TikTok accepts nothing but **SELF_ONLY** (private). PostQueen does not downgrade it for you, it sends the level you picked, so anything else comes back as a failed post reading `App not approved for public posting, contact support`. Set `SELF_ONLY` yourself until the audit clears, then every level becomes available.
 </Warning>
 
 <Warning>
@@ -83,7 +82,7 @@ In practice this means: before your TikTok developer app passes audit, the `priv
     **Your TikTok OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/tiktok`
     - Local development (HTTPS required): `https://localhost:4200/integrations/social/tiktok`
-    - Docker (HTTPS required): `https://localhost:5000/integrations/social/tiktok`
+    - Docker (HTTPS required): `https://localhost:4007/integrations/social/tiktok`
 
     <Warning>
     Serve your local instance over HTTPS and set `FRONTEND_URL` to match. Leave it on plain `http` and she wraps the callback through `redirectmeto.com` before sending it, which makes the literal string TikTok receives `https://redirectmeto.com/http://localhost:4200/integrations/social/tiktok`. Register whichever of the two your `FRONTEND_URL` actually produces, because a mismatch stops the login on TikTok.
@@ -105,12 +104,13 @@ In practice this means: before your TikTok developer app passes audit, the `priv
   </Step>
 
   <Step title="Add scopes">
-    Add the following scopes:
+    Add all six. The connect is refused if any one of them is missing, and `video.create` is not one of them:
     - user.info.basic
-    - video.create
-    - video.publish
-    - video.upload
     - user.info.profile
+    - user.info.stats
+    - video.list
+    - video.upload
+    - video.publish
   </Step>
 
   <Step title="Copy your client secret to environment variables">

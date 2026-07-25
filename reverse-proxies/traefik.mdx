@@ -3,9 +3,20 @@ title: Traefik + Docker Compose
 description: 'Configure Traefik as a reverse proxy for PostQueen'
 ---
 
-<Snippet file="earlydoc.mdx" />
+Traefik is configured with labels on the container rather than a separate config file, which
+makes it a natural fit if you already run it in front of your other containers. If you do not,
+[Caddy](/reverse-proxies/caddy) is less work for the same result.
 
-This is a very popular configuration to get an easy reverse proxy up and running with Traefik and Docker Compose.
+If you are not sure what a reverse proxy is or why she needs one,
+[Domain and HTTPS](/installation/domain-and-https) explains it first.
+
+<Note>
+**Traefik uses port 5000, and that is correct here.** Everywhere else in these guides the
+number is 4007, because that is where Docker Compose publishes her on the host. Traefik does
+not go through the host, it reaches the container directly over the Docker network, so it uses
+the port she actually listens on inside the container, which is 5000. Both numbers are right,
+for different routes to the same place.
+</Note>
 
 ## Add Traefik to your Docker Compose file
 
@@ -18,6 +29,10 @@ services:
     ##
 
     labels:
+      # Required. The Traefik service below runs with exposedbydefault=false,
+      # so without this line Traefik ignores the container entirely and the
+      # four labels underneath never become a router.
+      - "traefik.enable=true"
       # Router for main PostQueen entrypoint (on port 5000)
       - "traefik.http.routers.postqueen.rule=Host(`postqueen.example.com`)"  # Replace with your domain
       - "traefik.http.services.postqueen.loadbalancer.server.port=5000"  # Internal port for postqueen
@@ -42,4 +57,36 @@ services:
     networks:
       - postqueen-network
 ```
+
+<Note>
+Because Traefik reaches her over the Docker network, the `ports:` mapping on the PostQueen
+service is no longer needed and is worth removing. Leaving it in place publishes her on host
+port 4007 as well, which bypasses your proxy and your HTTPS.
+</Note>
+
+## Tell PostQueen her address
+
+Routing alone is not enough. She also has to know the address people use, because sign-in
+origins and every social network's return address are built from it. In the same
+`docker-compose.yaml`, on the `postqueen` service:
+
+```yaml
+    environment:
+      MAIN_URL: 'https://postqueen.example.com'
+      FRONTEND_URL: 'https://postqueen.example.com'
+      NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
+```
+
+Keep the `/api` suffix, and leave no trailing slashes. Apply it with
+`docker compose down && docker compose up -d`.
+
+## Check it
+
+```bash
+curl -I https://postqueen.example.com
+```
+
+`HTTP/2 200` means the router, the certificate and PostQueen are all working. If you get a 404
+from Traefik instead, the usual cause is a missing `traefik.enable=true` label, since the
+service above runs with `exposedbydefault=false`.
 

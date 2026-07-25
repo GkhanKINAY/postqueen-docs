@@ -21,11 +21,14 @@ it twice, you will see one of these:
 
 ## Login API returns 404 or 204
 
-When you are not logged in, calls like `GET /api/health` or
-`GET /auth/me` return `204` or `404` by design. That is how the frontend
-detects "no session." It is not an error.
+Neither `/api/health` nor `/auth/me` exists. If you went looking for them
+because something suggested they were a health signal, that is why they 404.
 
-If you are already logged in and still see 404 on these endpoints, check
+What the frontend actually uses to decide "no session" is the `auth` cookie in
+middleware, plus `GET /user/self`, which comes back empty when you are not
+signed in. That is the call to watch in your network tab.
+
+If you are logged in and `/user/self` still 404s, check
 that `NEXT_PUBLIC_BACKEND_URL` matches the URL your browser is using to
 talk to the backend (mismatched protocols/ports break the session cookie).
 
@@ -33,6 +36,19 @@ talk to the backend (mismatched protocols/ports break the session cookie).
 
 `JWT_SECRET` controls signing for session tokens. If you regenerate it,
 every existing session becomes invalid.
+
+<Warning>
+Everyone logging in again is the mild half of what happens. Unless you have set
+`ENCRYPTION_KEY`, this same value also encrypts every channel's access token,
+refresh token, provider credentials and saved cookies. Rotating it in that state
+leaves those rows undecryptable, and every connected channel has to be
+reconnected by hand.
+
+If you rotated it and your channels have gone dark, put the old value back. That
+is the whole recovery. Then set `ENCRYPTION_KEY` to that old value before
+rotating anything, which separates the two jobs and makes `JWT_SECRET` safe to
+change. See the [Configuration Reference](/configuration/reference#encryption-key).
+</Warning>
 
 **Fix:** set `JWT_SECRET` once during initial deployment and never
 rotate it lightly. Store it in a secret manager such as Doppler or

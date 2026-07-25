@@ -88,7 +88,9 @@ The call to `/api/settings` did not come back with a settings payload. Check the
 
 ### The list dropdown does not appear
 
-**Select List** and **Select Template** render nothing at all when the call behind them comes back empty. That is an empty account or an API user without access to those endpoints, not a broken editor. Create a list in Listmonk, or widen the user's access, then reopen the post.
+**Select List** renders nothing when the call behind it comes back empty, which means an empty account or an API user without access rather than a broken editor. Create a list in Listmonk, or widen the user's access, then reopen the post.
+
+**Select Template** is different: PostQueen always prepends a `Default` entry, so a successful call can never come back empty. An empty template dropdown means the call to Listmonk failed outright. Check the URL and the credentials.
 
 ### The email went out the moment the post published
 
