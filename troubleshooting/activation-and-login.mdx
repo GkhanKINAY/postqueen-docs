@@ -39,10 +39,14 @@ every existing session becomes invalid.
 
 <Warning>
 Everyone logging in again is the mild half of what happens. Unless you have set
-`ENCRYPTION_KEY`, this same value also encrypts every channel's access token,
-refresh token, provider credentials and saved cookies. Rotating it in that state
-leaves those rows undecryptable, and every connected channel has to be
-reconnected by hand.
+`ENCRYPTION_KEY`, this same value also encrypts your API keys, the OAuth client
+secrets PostQueen issues, saved provider credentials and cookie logins such as
+Skool. Rotating it in that state leaves those rows undecryptable, and every
+connection that depends on them has to be set up again by hand.
+
+Channels connected through a normal OAuth flow are the exception: their access
+and refresh tokens are stored as the network returned them, so they survive the
+rotation.
 
 If you rotated it and your channels have gone dark, put the old value back. That
 is the whole recovery. Then set `ENCRYPTION_KEY` to that old value before

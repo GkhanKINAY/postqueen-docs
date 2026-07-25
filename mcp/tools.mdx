@@ -119,7 +119,7 @@ Each item in `socialPost`:
 |-------|------|----------|-------------|
 | `integrationId` | string | Yes | Integration ID from `integrationList` |
 | `isPremium` | boolean | Yes | Whether the user has premium |
-| `date` | string | Yes | UTC datetime (e.g., `2025-01-15T10:00:00.000Z`) |
+| `date` | string | Yes | UTC datetime (e.g., `2026-08-01T09:00:00.000Z`) |
 | `shortLink` | boolean | Yes | Whether to shorten links in the post |
 | `type` | string | Yes | `draft`, `schedule`, or `now` |
 | `postsAndComments` | array | Yes | The post content and optional comments |
@@ -304,7 +304,7 @@ It takes one parameter, `message`, a plain-language request. Behind it sits the 
 |-----------|------|----------|-------------|
 | `message` | string | Yes | What you want her to do, in your own words |
 
-Two things follow from that. It can write to your calendar, so treat it with the same care as `schedulePost`. And because she plans the steps herself, you get less control over exactly which tools run than you would calling them directly.
+Two things follow from that. It can write to your calendar, so treat it with the same care as `integrationSchedulePostTool`. And because she plans the steps herself, you get less control over exactly which tools run than you would calling them directly.
 
 ## What these tools cannot do
 

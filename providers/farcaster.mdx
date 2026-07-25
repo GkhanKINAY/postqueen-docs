@@ -50,6 +50,13 @@ Two naming quirks worth knowing. The `__type` on the API is spelled `wrapcast`, 
 <Steps>
   <Step title="Create a Neynar app">
     Go to the [Neynar dashboard](https://dev.neynar.com) and create a new app. You will get a **Client ID** and a **Secret Key**.
+
+    <Note>
+    **There is no redirect URI to set here**, which is why this page has no callback block while
+    every other OAuth network does. Farcaster sign-in goes through Neynar's widget, so PostQueen
+    hands it the client ID directly rather than building a callback path for the network to
+    return to.
+    </Note>
   </Step>
 
   <Step title="Add credentials to your environment">

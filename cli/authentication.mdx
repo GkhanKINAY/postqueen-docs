@@ -13,11 +13,19 @@ Get your key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings*
 export POSTQUEEN_API_KEY=your_api_key_here
 ```
 
-If you run a self-hosted PostQueen instance, also point the CLI at your own API:
+If you run a self-hosted PostQueen instance, also point the CLI at your own backend, the same
+value as `NEXT_PUBLIC_BACKEND_URL`. The CLI appends `/public/v1/...` to whatever you set, and
+most single-domain setups serve the backend under `/api`:
 
 ```bash
-export POSTQUEEN_API_URL=https://api.postqueen.example.com
+export POSTQUEEN_API_URL=https://postqueen.example.com/api
 ```
+
+<Warning>
+Leave the `/api` off and every command comes back `404`, because the request lands on the web
+interface instead of the backend. If you are unsure which shape your install has, check
+`NEXT_PUBLIC_BACKEND_URL` in your `docker-compose.yaml` and use exactly that.
+</Warning>
 
 Verify that the key works:
 

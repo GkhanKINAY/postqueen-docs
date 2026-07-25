@@ -10,7 +10,7 @@ description: 'Ready-to-use examples for posting to specific platforms'
 ```bash
 postqueen posts:create \
   -c "Hello Twitter!" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   -i "twitter-id"
 ```
 
@@ -21,7 +21,7 @@ postqueen posts:create \
   -c "Thread 1/3: Introduction" \
   -c "Thread 2/3: Main point" \
   -c "Thread 3/3: Conclusion" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   -d 2 \
   -i "twitter-id"
 ```
@@ -31,7 +31,7 @@ postqueen posts:create \
 ```bash
 postqueen posts:create \
   -c "Only people I follow can reply to this" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"who_can_reply_post":"following"}' \
   -i "twitter-id"
 ```
@@ -47,7 +47,7 @@ postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"/r/progr
 # 2. Post with a flair. Take the id from .output.flairs[] in step 1
 postqueen posts:create \
   -c "My post content" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"text","is_flair_required":true,"flair":{"id":"abc123","name":"Discussion"}}}]}' \
   -i "reddit-id"
 ```
@@ -65,7 +65,7 @@ FLAIR_NAME=$(echo "$FLAIRS" | jq -r '.output.flairs[0].name')
 
 postqueen posts:create \
   -c "Automated Reddit post" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"text\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"$FLAIR_NAME\"}}}]}" \
   -i "$REDDIT_ID"
 ```
@@ -81,7 +81,7 @@ VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 postqueen posts:create \
   -c "Video description here" \
   -m "$VIDEO_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"title":"My Video Title","type":"public","tags":[{"value":"tech","label":"Tech"}]}' \
   -i "youtube-id"
 ```
@@ -95,7 +95,7 @@ VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 postqueen posts:create \
   -c "Check this out! #fyp" \
   -m "$VIDEO_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"content_posting_method":"DIRECT_POST","privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false}' \
   -i "tiktok-id"
 ```
@@ -114,7 +114,7 @@ IMAGE_URL=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
 postqueen posts:create \
   -c "Beautiful day! #photography" \
   -m "$IMAGE_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"post_type":"post"}' \
   -i "instagram-id"
 ```
@@ -125,7 +125,7 @@ postqueen posts:create \
 postqueen posts:create \
   -c "Story content" \
   -m "$IMAGE_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"post_type":"story"}' \
   -i "instagram-id"
 ```
@@ -138,7 +138,7 @@ A single video with `post_type: "post"` is published as a Reel:
 postqueen posts:create \
   -c "Reel caption" \
   -m "$VIDEO_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"post_type":"post"}' \
   -i "instagram-id"
 ```
@@ -156,7 +156,7 @@ AUDIO_ID=$(postqueen integrations:trigger instagram-id audioSearch \
 postqueen posts:create \
   -c "Reel with trending audio" \
   -m "$VIDEO_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings "{\"post_type\":\"post\",\"audio\":{\"id\":\"$AUDIO_ID\",\"audio_volume\":80,\"video_volume\":20}}" \
   -i "instagram-id"
 ```
@@ -166,7 +166,7 @@ postqueen posts:create \
 ```bash
 postqueen posts:create \
   -c "Professional update on LinkedIn" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   -i "linkedin-id"
 ```
 
@@ -176,7 +176,7 @@ postqueen posts:create \
 postqueen posts:create \
   -c "Check out these slides!" \
   -m "https://uploads.postqueen.ai/image1.jpg,https://uploads.postqueen.ai/image2.jpg,https://uploads.postqueen.ai/image3.jpg" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"post_as_images_carousel":true}' \
   -i "linkedin-id"
 ```
@@ -187,7 +187,7 @@ postqueen posts:create \
 postqueen posts:create \
   -c "Pin description" \
   -m "$IMAGE_URL" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"board":"board-id","title":"Pin Title","link":"https://example.com"}' \
   -i "pinterest-id"
 ```
@@ -197,7 +197,7 @@ postqueen posts:create \
 ```bash
 postqueen posts:create \
   -c "Message to Discord" \
-  -s "2025-01-15T10:00:00Z" \
+  -s "2026-08-01T09:00:00Z" \
   --settings '{"channel":"channel-id"}' \
   -i "discord-id"
 ```
@@ -208,7 +208,7 @@ Schedule multiple posts across different dates:
 
 ```bash
 #!/bin/bash
-DATES=("2025-01-14T09:00:00Z" "2025-01-15T09:00:00Z" "2025-01-16T09:00:00Z")
+DATES=("2026-08-01T09:00:00Z" "2026-08-02T09:00:00Z" "2026-08-03T09:00:00Z")
 CONTENT=("Monday motivation" "Tuesday tips" "Wednesday wisdom")
 
 for i in "${!DATES[@]}"; do

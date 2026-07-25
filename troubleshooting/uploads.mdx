@@ -47,8 +47,15 @@ through the public API.
 
 ## "PayloadTooLargeError" when creating a post
 
-You sent a request body larger than 50 MB to `POST /public/v1/posts`,
-almost always because you inlined image data instead of uploading first.
+Your request body to `POST /public/v1/posts` was over the limit, almost always because you
+inlined image data instead of uploading first.
+
+<Note>
+The threshold here is the framework default of roughly **100 kB**, not 50 MB. The 50 MB limit
+applies only to `/posts` and `/copilot/*`, the internal routes the web interface uses, and the
+public API path does not start with either. One inlined image clears 100 kB easily, which is why
+this arrives sooner than people expect.
+</Note>
 
 **Fix:** upload media via `/public/v1/upload` (or `/public/v1/upload-from-url`),
 then reference the returned `id` and `path` in the post body's

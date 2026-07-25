@@ -79,9 +79,20 @@ Threads requires the `THREADS_APP_ID` and `THREADS_APP_SECRET` environment varia
   <Step title="Configure API access">
     On the app dashboard, Select "Access the Threads API" to begin customizing the API access.
 
-    Add the "threads_content_publish" and "threads_basic" (automatically selected) to your app.
+    Add all four of these. `threads_basic` is selected for you; the other three are not:
+
+    - `threads_basic`
+    - `threads_content_publish`
+    - `threads_manage_replies`
+    - `threads_manage_insights`
 
     ![Configure API access](/images/providers/threads/threads_access.png)
+
+    <Warning>
+    Threads is the one network where a missing scope does not stop the connect. The channel
+    appears, looks healthy, and then replies and analytics fail later with no obvious cause. Add
+    all four now rather than finding out which one you skipped a week from now.
+    </Warning>
   </Step>
 
   <Step title="Set threads API settings">
