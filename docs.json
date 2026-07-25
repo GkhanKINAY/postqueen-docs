@@ -118,6 +118,26 @@
             ]
           },
           {
+            "group": "Connect over MCP",
+            "icon": "network-wired",
+            "pages": [
+              "mcp/introduction",
+              "mcp/setup",
+              "mcp/clients/claude-code",
+              "mcp/clients/claude-desktop",
+              "mcp/clients/claude-app",
+              "mcp/clients/chatgpt",
+              "mcp/clients/cursor",
+              "mcp/clients/codex",
+              "mcp/clients/gemini-cli",
+              "mcp/clients/other-clients",
+              "mcp/tools",
+              "mcp/examples",
+              "mcp/limits-and-troubleshooting",
+              "mcp/self-hosting"
+            ]
+          },
+          {
             "group": "Talk to her",
             "icon": "comment-dots",
             "pages": [
@@ -130,33 +150,6 @@
               "agents/cursor",
               "agents/codex",
               "agents/gemini-cli"
-            ]
-          },
-          {
-            "group": "Connect over MCP",
-            "icon": "network-wired",
-            "pages": [
-              "mcp/introduction",
-              "mcp/setup",
-              {
-                "group": "Set up your client",
-                "icon": "laptop-code",
-                "expanded": false,
-                "pages": [
-                  "mcp/clients/claude-code",
-                  "mcp/clients/claude-desktop",
-                  "mcp/clients/claude-app",
-                  "mcp/clients/chatgpt",
-                  "mcp/clients/cursor",
-                  "mcp/clients/codex",
-                  "mcp/clients/gemini-cli",
-                  "mcp/clients/other-clients"
-                ]
-              },
-              "mcp/tools",
-              "mcp/examples",
-              "mcp/limits-and-troubleshooting",
-              "mcp/self-hosting"
             ]
           }
         ]

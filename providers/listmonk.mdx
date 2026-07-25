@@ -104,3 +104,5 @@ That is the connector working as built. Listmonk campaigns are created and set t
 ### Listmonk on localhost or a private address
 
 The field accepts `localhost`, an IP address and a port, so the form lets you type it. The backend is stricter: requests resolving to loopback, private or link-local addresses are blocked before they leave. On a deployment where PostQueen and Listmonk share a trusted private network, set `DISABLE_SSRF_PROTECTION=true`, which is documented beside the setting in `.env.example`.
+
+<Snippet file="next-steps-provider.mdx" />
