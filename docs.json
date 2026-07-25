@@ -66,7 +66,6 @@
               {
                 "group": "Social networks",
                 "icon": "share-nodes",
-                "expanded": false,
                 "pages": [
                   "providers/instagram",
                   "providers/facebook",
@@ -89,7 +88,6 @@
               {
                 "group": "Video and streaming",
                 "icon": "video",
-                "expanded": false,
                 "pages": [
                   "providers/youtube",
                   "providers/twitch",
@@ -99,7 +97,6 @@
               {
                 "group": "Communities and chat",
                 "icon": "comments",
-                "expanded": false,
                 "pages": [
                   "providers/reddit",
                   "providers/lemmy",
@@ -114,7 +111,6 @@
               {
                 "group": "Publishing and business",
                 "icon": "newspaper",
-                "expanded": false,
                 "pages": [
                   "providers/wordpress",
                   "providers/medium",
@@ -131,6 +127,30 @@
             "icon": "credit-card",
             "pages": [
               "using/plans-and-limits"
+            ]
+          },
+          {
+            "group": "Help",
+            "icon": "life-ring",
+            "pages": [
+              "support",
+              "faq",
+              {
+                "group": "Troubleshooting",
+                "icon": "wrench",
+                "expanded": false,
+                "pages": [
+                  "troubleshooting/overview",
+                  "troubleshooting/post-failed",
+                  "troubleshooting/oauth-connect",
+                  "troubleshooting/uploads",
+                  "troubleshooting/activation-and-login",
+                  "troubleshooting/billing",
+                  "troubleshooting/channel-limits",
+                  "troubleshooting/known-issues"
+                ]
+              },
+              "compliance"
             ]
           }
         ]
@@ -229,7 +249,7 @@
         ]
       },
       {
-        "tab": "Developer Guide",
+        "tab": "CLI & SDK",
         "icon": "terminal",
         "groups": [
           {
@@ -260,23 +280,6 @@
             "icon": "cube",
             "pages": [
               "public-api/sdk"
-            ]
-          },
-          {
-            "group": "Build on PostQueen",
-            "icon": "key",
-            "pages": [
-              "public-api/oauth",
-              "public-api/oauth/authorize",
-              "public-api/oauth/token"
-            ]
-          },
-          {
-            "group": "Extend PostQueen",
-            "icon": "puzzle-piece",
-            "pages": [
-              "configuration/create-provider",
-              "developer-guide"
             ]
           }
         ]
@@ -416,6 +419,15 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Build on PostQueen",
+            "icon": "key",
+            "pages": [
+              "public-api/oauth",
+              "public-api/oauth/authorize",
+              "public-api/oauth/token"
+            ]
           }
         ]
       },
@@ -483,40 +495,13 @@
               "installation/development",
               "installation/devcontainer"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "Help & Support",
-        "icon": "life-ring",
-        "groups": [
-          {
-            "group": "Support",
-            "icon": "headset",
-            "pages": [
-              "support",
-              "faq"
-            ]
           },
           {
-            "group": "Troubleshooting",
-            "icon": "wrench",
+            "group": "Extend PostQueen",
+            "icon": "puzzle-piece",
             "pages": [
-              "troubleshooting/overview",
-              "troubleshooting/post-failed",
-              "troubleshooting/oauth-connect",
-              "troubleshooting/uploads",
-              "troubleshooting/activation-and-login",
-              "troubleshooting/billing",
-              "troubleshooting/channel-limits",
-              "troubleshooting/known-issues"
-            ]
-          },
-          {
-            "group": "Policies",
-            "icon": "scale-balanced",
-            "pages": [
-              "compliance"
+              "configuration/create-provider",
+              "developer-guide"
             ]
           }
         ]
