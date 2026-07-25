@@ -66,11 +66,13 @@ The URL the **frontend SSR server** uses to reach the backend from inside your n
 
 ### `DISABLE_REGISTRATION`
 
-Set to `true` to allow only a single user signup and then disable the sign-up page. Useful for self-host where you want full control.
+Set to `true` and only the first account can be created. After that, sign-up is refused. Useful for self-host where you want full control.
 
-<Warning>
-This also disables OIDC / OAuth sign-in.
-</Warning>
+It gates **account creation only**, never signing in. Everyone who already has an account keeps logging in normally, because the check is reached only on the branch that would create a new user.
+
+<Note>
+One exception is worth knowing before you rely on this. Your own OIDC provider is **exempt**: a person who signs in through it for the first time still gets an account, even with this set. GitHub and Google are not exempt. So if your goal is to close the door completely, close it at your identity provider as well.
+</Note>
 
 ### `API_LIMIT`
 
@@ -142,8 +144,8 @@ See also: [Email configuration](/configuration/emails).
 
 | Variable | Purpose |
 |---|---|
-| `EMAIL_PROVIDER` | `resend` (default) or `nodemailer`. |
-| `RESEND_API_KEY` | Resend API key, required when `EMAIL_PROVIDER=resend`. Presence of this variable also gates whether user activation is required (set → required; unset → users are auto-activated). |
+| `EMAIL_PROVIDER` | `resend` or `nodemailer`. There is no default: leave it unset and the install sends no email at all. |
+| `RESEND_API_KEY` | Resend API key, required when `EMAIL_PROVIDER=resend`. |
 | `EMAIL_HOST` | SMTP host, required when `EMAIL_PROVIDER=nodemailer`. |
 | `EMAIL_PORT` | SMTP port. |
 | `EMAIL_USER` | SMTP user. |
@@ -151,6 +153,12 @@ See also: [Email configuration](/configuration/emails).
 | `EMAIL_SECURE` | `true` for SMTPS / implicit TLS. |
 | `EMAIL_FROM_ADDRESS` | From-address used on all outgoing email. |
 | `EMAIL_FROM_NAME` | From-name used on all outgoing email. |
+
+<Warning>
+`EMAIL_PROVIDER` decides more than email. It also decides whether a new email-and-password account has to be activated before it can be used: with a provider named, the account is created inactive and waits for the activation link, and with none named it is active immediately.
+
+The trap is naming a provider you have not finished configuring. `EMAIL_PROVIDER=resend` with no `RESEND_API_KEY` counts as a provider, so every new signup is created inactive, the activation mail fails quietly, and nobody can get in. Either configure the provider fully or leave `EMAIL_PROVIDER` unset. The key on its own changes nothing.
+</Warning>
 
 ---
 
@@ -280,7 +288,7 @@ a rebuild before they take effect.
 | `NEXT_PUBLIC_POLOTNO` | Polotno API key for the image editor. |
 | `NEXT_PUBLIC_VERSION` | Version string shown in the footer. |
 | `NEXT_PUBLIC_APP_VERSION` | Mobile/web version label. |
-| `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | When set, overrides `NEXT_PUBLIC_BACKEND_URL` at runtime. Useful for tunnel-based dev. |
+| `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | Narrower than the name suggests. It replaces `NEXT_PUBLIC_BACKEND_URL` in one place only: the `token_endpoint` the MCP server advertises in its OAuth discovery document. Set it when your MCP clients have to reach that endpoint at a different address, such as through a tunnel. Nothing else in the app reads it. |
 
 ---
 
@@ -333,6 +341,7 @@ or not it has a row in this table.
 | Kick | `KICK_CLIENT_ID`, `KICK_SECRET` | [/providers/kick](/providers/kick) |
 | VK | `VK_ID` | [/providers/vk](/providers/vk) |
 | Whop | `WHOP_CLIENT_ID` | [/providers/whop](/providers/whop) |
+| Tumblr | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | No guide yet, see [/providers/overview](/providers/overview) |
 | GitHub (sign-in) | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | [/configuration/oauth](/configuration/oauth) |
 
 <Note>
