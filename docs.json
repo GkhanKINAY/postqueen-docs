@@ -220,13 +220,6 @@
         "icon": "terminal",
         "groups": [
           {
-            "group": "Getting Started",
-            "icon": "compass",
-            "pages": [
-              "developer/overview"
-            ]
-          },
-          {
             "group": "Command line",
             "icon": "terminal",
             "pages": [
@@ -522,6 +515,10 @@
     {
       "source": "/configuration/docker",
       "destination": "/installation/docker-compose"
+    },
+    {
+      "source": "/developer/overview",
+      "destination": "/which-interface"
     }
   ],
   "logo": {

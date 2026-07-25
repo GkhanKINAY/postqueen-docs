@@ -45,42 +45,33 @@ flowchart LR;
 
 ```
 
-Her own three:
+| Service | What it does | Hers? |
+|---|---|---|
+| **Frontend** | The calendar, editor and analytics screens. None of it lives in your browser; every screen comes from the backend | yes |
+| **Backend** | Her brain. Writes everything down and hands anything slow to Temporal | yes |
+| **Orchestrator** | Runs those workflows when their moment arrives | yes |
+| **Temporal** | Holds the clock, retries failures, refreshes platform tokens | no |
+| **Redis** | Caching and queues | no |
+| **SQL database** | All your data. Postgres is the usual choice | no |
+| **Storage** | Your media files. Local disk by default, or [Cloudflare R2](/configuration/r2) | no |
 
-- [Frontend](#frontend)
-- [Backend](#backend)
-- [Orchestrator](#orchestrator)
+<AccordionGroup>
+  <Accordion title="What the orchestrator actually runs" icon="gears">
+    Temporal workflows took over the jobs that used to run on cron and worker processes:
 
-The four that back them up:
+    - Posting scheduled content to the platforms
+    - Refreshing platform tokens
+    - Sending digest and notification emails
+    - Checking for missing posts and auto-posting
+    - Tracking posting streaks
+  </Accordion>
 
-- [Temporal](#temporal), which runs the schedule.
-- **Redis**, for caching and queues.
-- **SQL Database**, which stores all the data. Postgres is the usual choice, and other SQL databases can work too.
-- **Storage**, which holds your media files. The default is the local file system, and Cloudflare R2 or another S3-compatible store can take over.
+  <Accordion title="Why Temporal and not a cron job" icon="clock">
+    Schedule a post three weeks out, restart the server twice in between, and it still fires on the right minute.
 
-### Frontend
-
-You drag a post from Tuesday to Thursday and it sticks. The calendar, the editor and the analytics screens are the part you touch, and none of it lives in your browser. Everything on those screens comes from the backend, whether you are scheduling a post, reading your numbers or adding someone to your team.
-
-### Backend
-
-A post you save at 2 PM is written down before the toast finishes fading. This is her brain, and it coordinates all the work. Anything slow goes to Temporal as a workflow: publishing a post, sending an email, refreshing a platform token. Everything else it writes down in the SQL database, usually Postgres.
-
-### Orchestrator
-
-A post you set for Thursday at 9 AM sits here until Thursday at 9 AM. Its Temporal workflows took over the jobs that used to run on cron and worker processes:
-
-- Posting scheduled content to social media platforms.
-- Refreshing tokens from different social media platforms.
-- Sending digest and notification emails.
-- Checking for missing posts and auto-posting.
-- Tracking user posting streaks.
-
-### Temporal
-
-Schedule a post three weeks out, restart the server twice in between, and it still fires on the right minute. Temporal is a durable workflow execution engine, and that is what you get from it:
-
-- **Reliable scheduling**: Workflows run at the right time with automatic retries on failure.
-- **Task queues**: Each social platform gets its own task queue for concurrency control.
-- **Workflow visibility**: A built-in UI for monitoring and debugging workflow execution.
-- **Durable state**: Workflow state is persisted, so workflows pick up where they left off after a restart.
+    - **Durable state.** Workflow state is persisted, so a workflow picks up where it left off after a restart
+    - **Retries.** A failure is retried rather than dropped
+    - **Task queues.** Each platform gets its own, for concurrency control
+    - **Visibility.** A built-in UI for watching and debugging runs
+  </Accordion>
+</AccordionGroup>
