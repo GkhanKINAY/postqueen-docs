@@ -72,7 +72,7 @@ This also disables OIDC / OAuth sign-in.
 
 ### `API_LIMIT`
 
-Per-hour limit on the public-API create-post endpoint. Defaults to `90`. PostQueen Cloud uses `100`. Channel and post quotas are tiered separately by plan.
+Per-hour limit on the public-API create-post endpoint. Defaults to `90`. Channel and post quotas are tiered separately by plan.
 
 ### `RUN_CRON`
 
@@ -84,11 +84,11 @@ Comma-separated allowlist of domains for `/public/v1/upload-from-url`. If set, o
 
 ### `DISALLOW_PLUS`
 
-When set, blocks the upgrade UI elements pointing to paid plans. Used for self-host deployments that do not want to surface cloud-only billing.
+When set, registration refuses any email address containing a `+`. It exists to stop one person opening account after account with plus-addressed aliases. It has no effect on OAuth sign-in, and none on the interface. Leave it unset unless you are running open signups, because plus addressing is something real people use.
 
 ### `IS_GENERAL`
 
-Switches the frontend between routes available to the open-source build (`/launches`) and the hosted build (`/analytics`). Set to `"true"` on self-host. Leave unset on PostQueen Cloud.
+Switches the frontend between routes available to the open-source build (`/launches`) and the hosted build (`/analytics`). Set to `"true"` on self-host.
 
 ### `DISABLE_IMAGE_COMPRESSION`
 
@@ -254,29 +254,19 @@ LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
 | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key. |
 | `STRIPE_SECRET_KEY` | Stripe secret key. |
 | `STRIPE_SIGNING_KEY` | Stripe webhook signing key for subscription events. |
-| `STRIPE_DISCOUNT_ID` | Default Stripe discount applied to new subscriptions. |
 
 ---
 
-## Analytics & tracking (frontend)
+## Analytics & error tracking
 
-All of these are optional. Frontend reads `NEXT_PUBLIC_*` at build time.
+Every one of these is optional, and a self-hosted install runs perfectly well with none of
+them set. Product analytics and error reporting are wired up for the usual vendors, so if you
+already pay for one you can point PostQueen at it. The variable names live beside their
+neighbours in [`.env.example`](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example),
+which is the file to copy from when you want one of them on.
 
-| Variable | Purpose |
-|---|---|
-| `NEXT_PUBLIC_SENTRY_DSN` | Frontend Sentry DSN. |
-| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container ID. |
-| `NEXT_PUBLIC_FACEBOOK_PIXEL` | Facebook Pixel ID. |
-| `FACEBOOK_PIXEL_ACCESS_TOKEN` | Server-side Pixel Conversions API token. |
-| `NEXT_PUBLIC_POSTHOG_HOST` | PostHog host (e.g. `https://us.posthog.com`). |
-| `NEXT_PUBLIC_POSTHOG_KEY` | PostHog project API key. |
-| `NEXT_PUBLIC_TRACKING_TRIAL` | When set, turns on trial-funnel tracking events. |
-| `DATAFAST_API_KEY` | Datafast analytics API key. |
-| `DATAFAST_WEBSITE_ID` | Datafast website ID. |
-| `SENTRY_AUTH_TOKEN` | Build-time Sentry token for sourcemap upload. |
-| `SENTRY_ORG` | Sentry org slug. |
-| `SENTRY_PROJECT` | Sentry project slug. |
-| `SENTRY_SPOTLIGHT` | Enable Sentry Spotlight in dev. |
+Frontend values are read at build time, so a `NEXT_PUBLIC_` change needs a rebuild rather
+than a restart.
 
 ---
 
