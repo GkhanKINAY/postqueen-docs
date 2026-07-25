@@ -6,25 +6,82 @@ icon: 'gear'
 
 PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick the client you work in and you are two minutes from your first tool call. Already know your way around an MCP config? The endpoint is all you need.
 
-## The address to paste
+## Connect your client
 
-Two ways to connect, one key behind both. Put the key straight in the URL for the quickest setup: one line pasted and your client is talking to her. Keeping keys out of config files? Send the same key as a bearer token in the header.
+<Info>
+**Get your key first.** In [app.postqueen.ai](https://app.postqueen.ai), open **Settings ›
+Developers › Public API** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
+</Info>
 
 <Tabs>
-  <Tab title="API Key in URL">
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Add `--scope user` to make her available in every project. Full options:
+    [Claude Code](/mcp/clients/claude-code).
+  </Tab>
+
+  <Tab title="Cursor">
+    ```json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+        }
+      }
+    }
+    ```
+
+    Into `.cursor/mcp.json`, or use the Settings UI: [Cursor](/mcp/clients/cursor).
+  </Tab>
+
+  <Tab title="Codex">
+    ```bash
+    codex mcp add postqueen --url https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Written to `~/.codex/config.toml`: [Codex](/mcp/clients/codex).
+  </Tab>
+
+  <Tab title="Gemini CLI">
+    ```bash
+    gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Add `--scope user` for every project: [Gemini CLI](/mcp/clients/gemini-cli).
+  </Tab>
+
+  <Tab title="Claude & ChatGPT">
+    No file to edit. Both take the URL in their connector screen:
+
     ```
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
+
+    Step by step: [Claude Desktop](/mcp/clients/claude-desktop),
+    [Claude web and mobile](/mcp/clients/claude-app), [ChatGPT](/mcp/clients/chatgpt).
   </Tab>
-  <Tab title="Bearer Token">
+
+  <Tab title="Any other client">
+    ```json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "serverUrl": "https://api.postqueen.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer ${env:POSTQUEEN_API_KEY}"
+          }
+        }
+      }
+    }
     ```
-    URL: https://api.postqueen.ai/mcp
-    Authorization: Bearer YOUR_API_KEY
-    ```
+
+    The header form keeps the key out of the file. Warp, Cline and Windsurf:
+    [Other clients](/mcp/clients/other-clients).
   </Tab>
 </Tabs>
-
-Your API key lives in the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**.
 
 <Warning>
 The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
