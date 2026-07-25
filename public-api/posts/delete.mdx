@@ -3,3 +3,24 @@ title: 'Delete Post'
 openapi: 'DELETE /posts/{id}'
 ---
 
+<Warning>
+**A post that does not exist comes back as `500`, not `404`.** The handler looks the post up and
+then reads its group without checking it found one, so a missing id throws rather than returning
+a not-found.
+
+If you are writing a client that treats "already deleted" as success, match on that `500` here
+instead of a `404`. Other `500`s from this endpoint are real failures, so do not swallow the
+status code generally.
+</Warning>
+
+Deleting is by post id, and it removes the **group** that post belongs to. A group is one
+channel's post together with its thread items or comments, so deleting the first tweet in a
+thread removes the whole thread. It does not touch the same content scheduled to your other
+channels: each channel in a create call gets its own group.
+
+Deletion is a soft delete, and any scheduled work still pending for that post is cancelled with
+it. What has already published on the network stays there; this removes it from your calendar
+rather than reaching into the platform.
+
+To clear several at once, [Delete by Group](/public-api/posts/delete-by-group) takes a group id
+directly.

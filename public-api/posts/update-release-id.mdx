@@ -2,3 +2,17 @@
 title: 'Update Release ID'
 openapi: 'PUT /posts/{id}/release-id'
 ---
+
+This reconnects a post that already exists on a network to its entry on your calendar, so her
+analytics can find it. Pair it with [Missing Content](/public-api/posts/missing-content), which
+lists what the provider has that she has not matched up yet.
+
+<Warning>
+**Validation failures surface as `500`, not `400`.** A malformed body reaches the handler before
+anything rejects it cleanly, so you get a server error rather than a message naming the field
+that was wrong. Validate on your side first.
+</Warning>
+
+The release id is whatever the network calls its own published item: a tweet id on X, a media id
+on Instagram, a video id on YouTube. [Missing Content](/public-api/posts/missing-content) returns
+them in the shape each provider uses, so taking the value straight from there avoids guessing.

@@ -2,3 +2,33 @@
 title: 'Connect Channel (OAuth)'
 openapi: 'GET /social/{integration}'
 ---
+
+This returns the URL to send a person to. It does not connect anything on its own, because the
+network shows a consent screen to a human and then redirects back. There is no headless way to
+add a channel, and that is the network's rule rather than ours.
+
+## Two ways this returns 400
+
+Both arrive before any request reaches the network, so they are quick to tell apart from a real
+OAuth failure.
+
+| Message | What it means |
+| --- | --- |
+| `Integration not allowed` | The `{integration}` value is not one she can connect this way. Check the spelling against the identifiers in [Provider Tools](/public-api/integrations/provider-tools); they are lowercase and not always the display name |
+| `This integration requires an external URL and is not supported via the public API` | The network needs you to say *where* it lives before it can start, which this endpoint has no way to ask for |
+
+That second one catches people out, so it is worth naming: **Mastodon and other self-hosted
+networks are not connectable through this endpoint.** They need an instance URL, and the only
+place that asks for one is **Add Channel** in the app.
+
+## Refreshing an existing channel
+
+Pass `?refresh=<integration-id>` and the flow reconnects that channel instead of adding a new
+one. Use it when a channel has gone red because the network expired its token rather than because
+someone revoked access.
+
+## After the redirect
+
+The person lands back on your `FRONTEND_URL`, and the channel appears in
+[List Channels](/public-api/integrations/list). That is the check worth polling for, since this
+endpoint only ever hands out a URL.
