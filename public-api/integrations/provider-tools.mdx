@@ -1,0 +1,163 @@
+---
+title: 'Provider Tools'
+description: 'Every helper tool each network exposes, what it takes and what it gives back'
+---
+
+Some networks need a value you cannot know in advance: which board to pin to, which
+subreddit flair is allowed, which Discord channel to post in. Provider tools fetch those
+values from the network on your behalf, so you can fill in post settings without asking
+the person to copy an id out of a web UI.
+
+Call them three ways, all reaching the same code:
+
+<CodeGroup>
+```bash CLI
+postqueen integrations:trigger <integration-id> <tool> -d '{"key":"value"}'
+```
+
+```bash API
+curl -X POST https://api.postqueen.ai/public/v1/integration-trigger/<integration-id> \
+  -H "Authorization: <your-api-key>" \
+  -H "Content-Type: application/json" \
+  -d '{"methodName": "<tool>", "data": {"key": "value"}}'
+```
+
+```json MCP
+{
+  "integrationId": "<integration-id>",
+  "methodName": "<tool>",
+  "dataSchema": [{ "key": "key", "value": "value" }]
+}
+```
+</CodeGroup>
+
+<Note>
+This page is the catalogue. For the live list on one specific channel, including the
+parameter schema, call the [settings endpoint](/public-api/integrations/settings): it
+returns a `tools` array built from the same source as the tables below.
+</Note>
+
+Networks not listed here expose no tools. That includes LinkedIn, YouTube, X, Facebook,
+Threads, TikTok, Telegram, Mastodon, Bluesky, Nostr, VK, Kick, Tumblr, Moltbook and
+Google Business Profile: everything they need comes from the post settings themselves.
+
+## Dev.to
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `tags` | none | Every Dev.to tag, as `{ value, label }`. Note the shape: `value` is the tag id and `label` its name, unlike the `{ id, name }` most tools use. |
+| `organizations` | none | Organizations you can publish under, as `{ id, name, username }`. |
+
+## Discord
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `channels` | none | Channels in the connected server, as `{ id, name }`. Pass the id as the `channel` setting. |
+
+## Dribbble
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `teams` | none | Teams you belong to, as `{ id, name }`. |
+
+## Farcaster
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `subreddits` | `word` | Farcaster channels matching the search, as `{ id, title, name }`. The name is inherited from the Reddit-shaped tool it was copied from; it searches Farcaster channels, not subreddits. |
+
+## Hashnode
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `tagsList` | none | The full Hashnode tag catalogue, 975 entries, as `{ name, slug, objectID }` with a `logo` on some. This one is a fixed list compiled into PostQueen, so it answers instantly and never fails. |
+| `publications` | none | Publications you can post to, as `{ id, name }`. |
+
+## Instagram
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `audioSearch` | `q`, `type` | Audio tracks you can attach to a Reel, as `{ id, title }`. Leave `q` empty for trending audio. `type` is `music` (default) or `original_sound`. Facebook Business-linked channels only. |
+
+## Lemmy
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `subreddits` | `word` | Lemmy communities matching the keyword, as `{ id, title, name }`. |
+
+## Listmonk
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `list` | none | Mailing lists on your Listmonk instance, as `{ id, name }`. |
+| `templates` | none | Email templates, as `{ id, name }`. A synthetic `{ id: 0, name: "Default" }` is prepended so there is always something to select. |
+
+## Medium
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `publications` | none | Medium's publication objects, passed through exactly as Medium returns them. This is the one tool whose output is not normalised, so read the fields you need from [Medium's API response](https://github.com/Medium/medium-api-docs). |
+
+## MeWe
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `groups` | none | Groups you can post to, as `{ id, name }`. |
+
+## Pinterest
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `boards` | none | Your boards, as `{ id, name }`. Pass the id as the `board` setting. |
+
+## Reddit
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `subreddits` | `word` | Public subreddits matching the keyword, as `{ id, title, name }`. **`name` is the `/r/…` path, not the bare name**, and that is the form `restrictions` and the `subreddit` setting expect. |
+| `restrictions` | `subreddit` | An object, not a list: `{ subreddit, allow, is_flair_required, flairs }`. `allow` says which post types that subreddit accepts, `is_flair_required` whether you must pick one, and `flairs` is `{ id, name }` where the name is the flair text. Pass `subreddit` as `/r/[name]`. |
+
+## Skool
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `groups` | none | Groups you can post to, as `{ id, name }`. |
+| `label` | `id` | Post labels for one group, as `{ id, name }`. Pass the group id from `groups`. Groups with no labels return a single `{ id: "none", name: "Default Label" }`. |
+
+## Slack
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `channels` | none | Channels the PostQueen app can post to, as `{ id, name }`. |
+
+## Whop
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `companies` | none | Companies you administer, as `{ id, name }`. |
+| `experiences` | `id` | Forums inside one company, as `{ id, name }`. Pass the company id from `companies`; without it the call returns an empty list. |
+
+## WordPress
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `postTypes` | none | Post types your site exposes, as `{ id, name }`, where the id is the REST base such as `posts` or `pages`. |
+| `categoriesList` | none | Categories, as `{ id, name }`. |
+| `tagsList` | none | Tags, as `{ id, name }`. |
+
+## Chaining tools
+
+Two tools take an id that another tool produces. Call them in order:
+
+```bash
+# Whop: pick the company first, then its forums
+COMPANY=$(postqueen integrations:trigger whop-id companies | tail -n +2 | jq -r '.output[0].id')
+postqueen integrations:trigger whop-id experiences -d "{\"id\":\"$COMPANY\"}"
+
+# Skool: pick the group first, then its labels
+GROUP=$(postqueen integrations:trigger skool-id groups | tail -n +2 | jq -r '.output[0].id')
+postqueen integrations:trigger skool-id label -d "{\"id\":\"$GROUP\"}"
+```
+
+Reddit works the same way in spirit: search with `subreddits`, then pass the `name` you
+get back to `restrictions` to learn whether a flair is required before you schedule.

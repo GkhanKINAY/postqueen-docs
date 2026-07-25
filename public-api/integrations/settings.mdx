@@ -2,3 +2,8 @@
 title: 'Get Settings & Tools'
 openapi: 'GET /integration-settings/{id}'
 ---
+
+The `tools` array in the response lists the helper tools this channel offers, each with
+the `methodName` to pass to [Trigger a Tool](/public-api/integrations/trigger) and its
+parameter schema. To see what every network offers without connecting one first, read
+[Provider Tools](/public-api/integrations/provider-tools).

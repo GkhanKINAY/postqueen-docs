@@ -19,7 +19,7 @@ Inside, it is a playbook rather than a manual page:
 
 - **Two hard rules up top.** Authenticate before anything, and put every media file through `postqueen upload` first. Raw filesystem paths and external URLs are rejected by the publishing pipeline, and most providers only accept a PostQueen-verified URL.
 - **A seven-step core workflow.** It runs from authenticate through discover and post to analyze, ending with the fix for a missing release ID when analytics comes back `{"missing": true}`.
-- **Worked patterns.** Fetching Reddit flairs and YouTube playlists, building a thread, scheduling a week in a loop.
+- **Worked patterns.** Fetching Reddit flairs and Pinterest boards, building a thread, scheduling a week in a loop.
 - **A gotchas list.** ISO 8601 dates are required, JSON goes in single quotes, character limits come from `integrations:settings`.
 
 ## Two routes in

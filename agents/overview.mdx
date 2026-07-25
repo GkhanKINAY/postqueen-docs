@@ -84,7 +84,7 @@ npx skills add GkhanKINAY/postqueen-agent
 What lands is her `SKILL.md`, a playbook that teaches your agent how she works before it runs a single command. It registers under the name `postqueen` and declares `Bash(postqueen:*)` as the only tool it needs. After reading it, the agent knows:
 
 - **Discovery.** `integrations:list` returns every connected channel with its integration ID, and `integrations:settings` shows what each channel accepts.
-- **Dynamic data.** `integrations:trigger` fetches values that cannot be hardcoded, like subreddit flairs, YouTube playlists or LinkedIn company pages.
+- **Dynamic data.** `integrations:trigger` fetches values that cannot be hardcoded, like subreddit flairs, Pinterest boards or Discord channels. The full list is in [Provider Tools](/public-api/integrations/provider-tools).
 - **Posting.** `posts:create` takes content, a required ISO 8601 date and integration IDs, with `--settings` for platform specifics and `--json` for full campaigns.
 - **Media rules.** Every file goes through `postqueen upload` first, and only the returned URL belongs in `-m`. Media has to live on a PostQueen domain, and the API rejects the request otherwise.
 

@@ -28,7 +28,7 @@ Failures are just as easy to detect. A command that succeeds exits with code `0`
 
 One exception: `auth:status` is a human-readable report rather than a JSON command. It exits `0` whether or not the key is valid, so read its output for the `✅ Credentials are valid` line rather than branching on the exit code.
 
-Discovery closes the loop. `integrations:settings` reports what a channel accepts, including character limits and required fields, and `integrations:trigger` fetches values that cannot be hardcoded such as subreddit flairs or YouTube playlists. An agent that has met a channel for the first time can still post to it correctly, because it asks her instead of assuming.
+Discovery closes the loop. `integrations:settings` reports what a channel accepts, including character limits and required fields, and `integrations:trigger` fetches values that cannot be hardcoded such as subreddit flairs or Pinterest boards. An agent that has met a channel for the first time can still post to it correctly, because it asks her instead of assuming.
 
 ## 👑 One command teaches your agent
 

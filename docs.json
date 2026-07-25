@@ -277,6 +277,7 @@
               "public-api/integrations/connect",
               "public-api/integrations/settings",
               "public-api/integrations/trigger",
+              "public-api/integrations/provider-tools",
               "public-api/integrations/delete",
               "public-api/integrations/is-connected",
               "public-api/integrations/find-slot"
