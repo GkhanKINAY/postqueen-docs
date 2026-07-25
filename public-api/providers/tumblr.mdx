@@ -1,0 +1,54 @@
+---
+title: Tumblr Settings
+description: 'API settings for posting to Tumblr'
+---
+
+Creating the OAuth app and connecting a blog: [Tumblr provider guide](/providers/tumblr).
+
+## Settings Schema
+
+Every field is optional, so the settings object can be `__type` alone:
+
+```json
+{
+  "settings": {
+    "__type": "tumblr",
+    "title": "My Post Title",
+    "link": "https://example.com",
+    "sourceUrl": "https://example.com/original",
+    "tags": "launch, product, news"
+  }
+}
+```
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `__type` | `string` | Yes | Must be `tumblr` |
+| `title` | `string` | No | Post title, 1 to 4096 characters |
+| `link` | `string` | No | A URL the post points at. Must be a valid URL if sent |
+| `sourceUrl` | `string` | No | Attribution URL for reblogged or quoted material. Must be a valid URL if sent |
+| `tags` | `string` | No | Up to 4096 characters |
+
+### `tags`
+
+<Warning>
+**`tags` is a plain string here, not an array.** Tumblr takes a comma-separated string, which is
+what PostQueen passes straight through. This differs from the top-level `tags` array on the post
+body, which is PostQueen's own labelling and unrelated to Tumblr's.
+</Warning>
+
+```json
+{ "tags": "launch, product, news" }
+```
+
+### Media
+
+Up to 30 images, or exactly one video. A video cannot be mixed with images.
+
+Content over roughly 4,000 characters is split into several Tumblr text blocks on the way out,
+divided on blank lines. That is Tumblr's own limit for one block; the post still reads as one
+piece. Alt text set on an image is carried through.
+
+The post's character ceiling is 32,768.

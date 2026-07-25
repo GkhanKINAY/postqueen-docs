@@ -301,8 +301,8 @@ ships with one). The scheduling architecture: [How PostQueen works](/howitworks)
 
 ## Short-link providers
 
-If a PostQueen user configures short-link replacement, PostQueen proxies link
-shortening through one of the configured providers. Pick one set.
+Pick one set. If more than one is configured the first in this order wins silently, and the choice
+is made once at startup. Setup walkthrough: [Short Links](/configuration/short-links).
 
 ### Dub.co
 
@@ -463,7 +463,7 @@ or not it has a row in this table.
 | Kick | `KICK_CLIENT_ID`, `KICK_SECRET` | [/providers/kick](/providers/kick) |
 | VK | `VK_ID` | [/providers/vk](/providers/vk) |
 | Whop | `WHOP_CLIENT_ID` | [/providers/whop](/providers/whop) |
-| Tumblr | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | No guide yet, see [/providers/overview](/providers/overview) |
+| Tumblr | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | [/providers/tumblr](/providers/tumblr) |
 | GitHub (sign-in) | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | [/configuration/oauth](/configuration/oauth) |
 
 <Note>

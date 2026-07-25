@@ -85,6 +85,7 @@
               "configuration/r2",
               "configuration/oauth",
               "configuration/rate-limits",
+              "configuration/short-links",
               "configuration/polotno",
               "configuration/chrome-extension"
             ]
@@ -111,6 +112,7 @@
               "providers/instagram",
               "providers/facebook",
               "providers/threads",
+              "providers/tumblr",
               "providers/tiktok",
               "providers/youtube",
               "providers/twitch",
@@ -353,6 +355,7 @@
               "public-api/providers/instagram",
               "public-api/providers/instagram-standalone",
               "public-api/providers/threads",
+              "public-api/providers/tumblr",
               "public-api/providers/bluesky",
               "public-api/providers/mastodon",
               "public-api/providers/warpcast",
