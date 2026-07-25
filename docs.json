@@ -28,6 +28,7 @@
           {
             "group": "Using PostQueen",
             "pages": [
+              "using/connect-a-channel",
               "using/calendar",
               "using/writing-a-post",
               "using/threads",
