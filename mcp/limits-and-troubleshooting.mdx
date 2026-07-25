@@ -79,11 +79,7 @@ Source for both: `libraries/nestjs-libraries/src/chat/start.mcp.ts` in the app r
 
 Self-hosting, or sitting behind your own gateway? Her MCP transport is streamable HTTP. The connection stays open and the response arrives in chunks. Put something in front of her that buffers the whole response or drops `Transfer-Encoding: chunked`, and the client hangs on connect with no tool list and no error worth reading.
 
-<Warning>
-The Simple Config on [Nginx](/reverse-proxies/nginx) has no `proxy_http_version 1.1;` line. An HTTP/1.0 upstream cannot send a chunked response, so that config serves the app fine and quietly breaks MCP. Add the directive, and turn response buffering off for the MCP paths.
-</Warning>
-
-Your proxy needs to forward `/mcp` and `/mcp/:apiKey` to the backend, keep HTTP/1.1 upstream, and leave the response unbuffered. On a self-hosted instance the backend usually sits under `/api`, so the paths are `/api/mcp` and `/api/mcp/:apiKey`. Working configs: [Caddy](/reverse-proxies/caddy), [Nginx](/reverse-proxies/nginx), [Traefik](/reverse-proxies/traefik).
+The Nginx configuration most people copy is missing the one directive this needs, which is why it serves the app perfectly and breaks MCP alone. Working blocks for all three proxies, and a `curl` that tells you which part is at fault, are on [MCP on a self-hosted install](/mcp/self-hosting).
 
 ### After you rotate your API key
 

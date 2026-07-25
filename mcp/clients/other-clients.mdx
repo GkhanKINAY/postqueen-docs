@@ -15,7 +15,7 @@ Your API key can post to every account you have connected, so treat it like a pa
 
 <CardGroup cols={3}>
   <Card title="Warp" icon="/images/brand/icon-warp.svg" href="#warp">
-    Add a URL server in the terminal agent settings.
+    Paste her URL into the terminal agent settings.
   </Card>
   <Card title="Cline" icon="/images/brand/icon-cline.svg" href="#cline">
     Add a remote server in the panel, or edit the JSON.
@@ -33,7 +33,7 @@ Warp connects to remote MCP servers by URL, so she plugs straight into the termi
   <Step title="Open the MCP servers page">
     Go to **Settings**, then **Agents**, then **MCP servers**. You can also search for `Open MCP Servers` in the Command Palette.
   </Step>
-  <Step title="Add a URL server">
+  <Step title="Paste her URL">
     Click **+ Add** and choose **Streamable HTTP or SSE Server (URL)**, not **CLI Server (Command)**, which is for local executables.
   </Step>
   <Step title="Fill in the config">
@@ -224,7 +224,7 @@ https://postqueen.example.com/api/mcp/YOUR_API_KEY
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
 
 ### Stdio-Only Clients
 

@@ -107,6 +107,37 @@ serves nothing without a signature.
 R2 gives you public HTTPS URLs out of the box, so the TikTok caveat
 above does not apply.
 
+### When uploads fail with a CORS error
+
+With R2, the browser uploads to the bucket directly using a URL the backend
+signs for it. That signature covers the URL's query parameters, so if anything
+alters the request between the browser and R2 — a privacy extension stripping
+what it takes for tracking parameters, a corporate proxy — the signature no
+longer matches and R2 answers `403`.
+
+R2 leaves CORS headers off its error responses, so the browser cannot read that
+`403` and reports it as:
+
+```
+blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present
+```
+
+which points at CORS while the actual cause is elsewhere. The tell is that the
+backend's own requests all succeed: `create-multipart-upload` and `sign-part`
+return `200`, then `abort-multipart-upload` follows after a few retries.
+
+Setting `UPLOAD_VIA_SERVER=true` sidesteps it. Files are posted to the backend,
+which writes them to R2 itself, so nothing between the browser and the bucket
+can invalidate anything. Uploads are spooled to disk rather than held in memory
+and deleted once stored, so a large video does not become a memory spike.
+
+```env
+UPLOAD_VIA_SERVER="true"
+```
+
+The trade is bandwidth: every upload now travels through your server twice
+instead of going straight to storage.
+
 ## Public-API uploads
 
 Both `/public/v1/upload` and `/public/v1/upload-from-url` write through

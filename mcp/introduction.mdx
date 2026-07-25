@@ -120,7 +120,7 @@ PostQueen API keys do not auto-rotate, but if you regenerate one in Settings > D
 
 ### Self-hosted: how do I reach the MCP endpoint?
 
-Your backend already serves it. The endpoint sits at `/mcp` (Bearer auth) and `/mcp/:apiKey` (key in URL). Your reverse proxy must forward these paths to the backend and support streaming HTTP (`Transfer-Encoding: chunked`). Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
+Your backend already serves it. The endpoint sits at `/mcp` (Bearer auth) and `/mcp/:apiKey` (key in URL). Your reverse proxy has to forward these paths and stream the response rather than buffering it: [MCP on a self-hosted install](/mcp/self-hosting).
 
 ### Can MCP read or reply to comments?
 

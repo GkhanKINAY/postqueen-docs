@@ -1,82 +1,30 @@
 ---
 title: Examples
-description: 'Common workflows when using PostQueen through MCP'
+description: 'The flows where an agent has to discover something before it can post'
 ---
 
-You never type these. You say what you want in plain language, your agent makes the calls, and she puts the result on your calendar.
+You never type any of this. You say what you want in plain language, your agent makes the calls,
+and she puts the result on your calendar.
 
-## Schedule a Post to X
+So this page is not a list of things to copy. It is the handful of flows where the agent cannot go
+straight to posting, because it has to ask her a question first: which channel, which audio track,
+which voice. Those are the ones worth understanding, because when they go wrong the symptom is an
+agent that says it posted and a calendar that disagrees.
 
-A typical flow to schedule a post to X (Twitter):
+For the ordinary case, where she just writes and schedules, the sequence is in
+[Introduction](/mcp/introduction). Every tool and its parameters: [Tools](/mcp/tools).
 
-<Steps>
-  <Step title="List integrations">
-    The agent calls `integrationList` and finds your X account:
+## Discord: pick a channel first
 
-    ```json
-    {
-      "output": [
-        {
-          "id": "abc123",
-          "name": "My X Account",
-          "picture": "https://...",
-          "platform": "x"
-        }
-      ]
-    }
-    ```
-  </Step>
-  <Step title="Get platform schema">
-    The agent calls `integrationSchema` with `platform: "x"` to learn the rules:
-
-    ```json
-    {
-      "output": {
-        "rules": "...",
-        "maxLength": 280,
-        "settings": { ... },
-        "tools": []
-      }
-    }
-    ```
-  </Step>
-  <Step title="Schedule the post">
-    The agent calls `integrationSchedulePostTool`:
-
-    ```json
-    {
-      "socialPost": [
-        {
-          "integrationId": "abc123",
-          "isPremium": false,
-          "date": "2026-08-01T09:00:00.000Z",
-          "shortLink": false,
-          "type": "schedule",
-          "postsAndComments": [
-            {
-              "content": "<p>Excited to announce our new feature!</p>",
-              "attachments": []
-            }
-          ],
-          "settings": [
-            { "key": "who_can_reply_post", "value": "everyone" }
-          ]
-        }
-      ]
-    }
-    ```
-  </Step>
-</Steps>
-
-## Post to Discord with Channel Selection
-
-Platforms like Discord require selecting a channel first:
+Discord will not accept a post without a channel id, and the ids are not something you know. The
+agent discovers them.
 
 <Steps>
   <Step title="Get the schema">
-    The agent calls `integrationSchema` with `platform: "discord"` and discovers a tool to list channels.
+    The agent calls `integrationSchema` with `platform: "discord"` and sees that this channel
+    offers a tool for listing channels.
   </Step>
-  <Step title="List channels">
+  <Step title="List the channels">
     The agent calls `triggerTool`:
 
     ```json
@@ -87,11 +35,10 @@ Platforms like Discord require selecting a channel first:
     }
     ```
 
-    Returns available channels with their IDs.
+    Back comes every channel the PostQueen bot can post to, as `{ id, name }`. A channel missing
+    from that list is a permissions question on the Discord side, not a PostQueen one.
   </Step>
-  <Step title="Schedule the post">
-    The agent includes the channel ID in settings:
-
+  <Step title="Schedule with the channel id">
     ```json
     {
       "socialPost": [
@@ -102,14 +49,9 @@ Platforms like Discord require selecting a channel first:
           "shortLink": false,
           "type": "now",
           "postsAndComments": [
-            {
-              "content": "<p>Hello Discord!</p>",
-              "attachments": []
-            }
+            { "content": "<p>Hello Discord!</p>", "attachments": [] }
           ],
-          "settings": [
-            { "key": "channel", "value": "channel-id-here" }
-          ]
+          "settings": [{ "key": "channel", "value": "channel-id-here" }]
         }
       ]
     }
@@ -117,14 +59,16 @@ Platforms like Discord require selecting a channel first:
   </Step>
 </Steps>
 
-## Schedule an Instagram Reel with Trending Audio
+Pinterest works the same way with a `boards` tool, and Reddit with `restrictions` for flairs. The
+pattern is always schema, then tool, then settings.
 
-Instagram (Facebook Business-linked) offers an `audioSearch` tool for finding
-music or original sounds to attach to a Reel:
+## Instagram: attach a trending audio track to a Reel
+
+Instagram offers an `audioSearch` tool for finding music or original sounds.
 
 <Steps>
   <Step title="Search for audio">
-    The agent calls `triggerTool` (an empty `q` returns trending audio):
+    An empty `q` returns trending audio:
 
     ```json
     {
@@ -136,8 +80,6 @@ music or original sounds to attach to a Reel:
       ]
     }
     ```
-
-    Returns audio assets with their IDs:
 
     ```json
     {
@@ -154,8 +96,8 @@ music or original sounds to attach to a Reel:
     ```
   </Step>
   <Step title="Schedule the Reel">
-    The agent includes the chosen audio in settings. The post must be a single
-    video with `post_type: "post"`:
+    A Reel is a single video with `post_type: "post"`. The two volume numbers mix the track
+    against the video's own audio:
 
     ```json
     {
@@ -184,55 +126,22 @@ music or original sounds to attach to a Reel:
 </Steps>
 
 <Note>
-Audio is not available on `instagram-standalone` channels, because the Instagram
-Audio API requires Facebook Login.
+Audio is not available on `instagram-standalone` channels, because the Instagram Audio API
+requires Facebook Login. If the tool is missing from the schema, that is why.
 </Note>
 
-## Post with an AI-Generated Image
+## Video: three questions before one video
+
+Video is the longest discovery chain in the tool set, because the agent has to find out which
+generator exists, then what that generator accepts, before it can ask for anything.
 
 <Steps>
-  <Step title="Generate the image">
-    The agent calls `generateImageTool`:
-
-    ```json
-    {
-      "prompt": "A futuristic city skyline at sunset, digital art style"
-    }
-    ```
-
-    Returns:
-
-    ```json
-    {
-      "id": "img-456",
-      "path": "https://uploads.postqueen.ai/generated-image.png"
-    }
-    ```
+  <Step title="Which generators are available">
+    `generateVideoOptions` returns them. Which ones appear depends on the keys the install has.
   </Step>
-  <Step title="Schedule with the image">
-    The agent includes the image URL in attachments:
-
-    ```json
-    {
-      "postsAndComments": [
-        {
-          "content": "<p>The future is here</p>",
-          "attachments": ["https://uploads.postqueen.ai/generated-image.png"]
-        }
-      ]
-    }
-    ```
-  </Step>
-</Steps>
-
-## Generate a Video and Post
-
-<Steps>
-  <Step title="Check video options">
-    The agent calls `generateVideoOptions` to see available generators.
-  </Step>
-  <Step title="Get voice options">
-    For Image Text Slides, the agent calls `videoFunctionTool`:
+  <Step title="What does this generator accept">
+    Each generator has its own parameters. For Image Text Slides, the voices come from
+    `videoFunctionTool`:
 
     ```json
     {
@@ -240,11 +149,10 @@ Audio API requires Facebook Login.
       "functionName": "loadVoices"
     }
     ```
-
-    Returns a list of available voices with their IDs.
   </Step>
-  <Step title="Generate the video">
-    The agent calls `generateVideoTool`:
+  <Step title="Generate">
+    `generateVideoTool` takes the generator's `identifier`, an `output` shape and whatever
+    `customParams` that generator declared:
 
     ```json
     {
@@ -257,131 +165,38 @@ Audio API requires Facebook Login.
     }
     ```
 
-    Returns the video URL.
-  </Step>
-  <Step title="Schedule with the video">
-    The agent uses the video URL as an attachment when calling `integrationSchedulePostTool`.
+    The returned URL goes into `attachments` on the post, exactly like an uploaded file.
   </Step>
 </Steps>
 
-## Create an X Thread
+An AI image is the short version of the same idea: `generateImageTool` takes a prompt and returns
+a `path`, which becomes an attachment.
 
-To create a thread on X, add multiple items to `postsAndComments`:
+## One array, two meanings
 
-```json
-{
-  "socialPost": [
-    {
-      "integrationId": "x-123",
-      "isPremium": false,
-      "date": "2026-08-01T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [
-        {
-          "content": "<p>Thread: 5 things I learned this week</p>",
-          "attachments": []
-        },
-        {
-          "content": "<p>1. Consistency beats intensity</p>",
-          "attachments": []
-        },
-        {
-          "content": "<p>2. Start before you're ready</p>",
-          "attachments": []
-        }
-      ],
-      "settings": [
-        { "key": "who_can_reply_post", "value": "everyone" }
-      ]
-    }
-  ]
-}
-```
+`postsAndComments` holds more than one item when you want more than one message. What that means
+depends on the network:
 
-## Post to LinkedIn with a Comment
-
-For LinkedIn, the first item in `postsAndComments` is the post and the rest are comments:
+- **On X**, the items are a thread. The first is the tweet, the rest are replies to it.
+- **On LinkedIn**, the first item is the post and the rest are comments underneath it.
 
 ```json
-{
-  "socialPost": [
-    {
-      "integrationId": "linkedin-123",
-      "isPremium": false,
-      "date": "2026-08-01T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [
-        {
-          "content": "<p>We just launched something big!</p>",
-          "attachments": []
-        },
-        {
-          "content": "<p>Check it out at example.com</p>",
-          "attachments": []
-        }
-      ],
-      "settings": []
-    }
-  ]
-}
+"postsAndComments": [
+  { "content": "<p>We just launched something big!</p>", "attachments": [] },
+  { "content": "<p>Check it out at example.com</p>", "attachments": [] }
+]
 ```
 
-## Bulk Schedule
+Same shape, and the network decides what it becomes. Bulk scheduling is the other axis: more
+entries in `socialPost`, each with its own `integrationId` and `date`.
 
-Schedule 5 posts across different days:
+## Next steps
 
-```json
-{
-  "socialPost": [
-    {
-      "integrationId": "x-123",
-      "isPremium": false,
-      "date": "2026-08-01T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [{ "content": "<p>Monday motivation</p>", "attachments": [] }],
-      "settings": [{ "key": "who_can_reply_post", "value": "everyone" }]
-    },
-    {
-      "integrationId": "x-123",
-      "isPremium": false,
-      "date": "2026-08-02T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [{ "content": "<p>Tuesday tip</p>", "attachments": [] }],
-      "settings": [{ "key": "who_can_reply_post", "value": "everyone" }]
-    },
-    {
-      "integrationId": "x-123",
-      "isPremium": false,
-      "date": "2026-08-01T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [{ "content": "<p>Midweek thoughts</p>", "attachments": [] }],
-      "settings": [{ "key": "who_can_reply_post", "value": "everyone" }]
-    },
-    {
-      "integrationId": "x-123",
-      "isPremium": false,
-      "date": "2026-08-04T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [{ "content": "<p>Thursday throwback</p>", "attachments": [] }],
-      "settings": [{ "key": "who_can_reply_post", "value": "everyone" }]
-    },
-    {
-      "integrationId": "x-123",
-      "isPremium": false,
-      "date": "2026-08-05T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [{ "content": "<p>Friday wrap-up</p>", "attachments": [] }],
-      "settings": [{ "key": "who_can_reply_post", "value": "everyone" }]
-    }
-  ]
-}
-```
-
-Each item in the `socialPost` array is an independent post with its own date, content, and settings.
+<CardGroup cols={2}>
+  <Card title="Tools" icon="wrench" href="/mcp/tools">
+    Every tool and every parameter it accepts
+  </Card>
+  <Card title="Limits" icon="circle-minus" href="/mcp/limits-and-troubleshooting">
+    What the tools cannot reach, and where those things live
+  </Card>
+</CardGroup>

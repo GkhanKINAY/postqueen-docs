@@ -16,22 +16,13 @@ Two routes, and you can take either. MCP is the native one here: Cursor's agent 
     Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Both routes below use this one key. Treat it like a password, since it grants full access to your account.
   </Step>
   <Step title="Route A: connect over MCP">
-    Cursor reads MCP servers from `.cursor/mcp.json` in a project root, or from `~/.cursor/mcp.json` for every project. Add her hosted server there:
-
-    ```json .cursor/mcp.json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
-        }
-      }
-    }
-    ```
-
-    The Settings UI walkthrough, the Authorization-header variant and self-hosted URLs are all on the [Cursor MCP page](/mcp/clients/cursor).
+    One entry in `~/.cursor/mcp.json` and her tools appear in every project. The file, the
+    Settings UI route, the header variant and self-hosted URLs are all on
+    [Cursor over MCP](/mcp/clients/cursor).
 
     <Warning>
-    A project-level `.cursor/mcp.json` carries your key into the repo. Add it to `.gitignore`, or keep the server in `~/.cursor/mcp.json` and leave the project clean. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+    Put it in `~/.cursor/mcp.json` rather than the project's own `.cursor/mcp.json`, or your API
+    key travels into the repository with it.
     </Warning>
   </Step>
   <Step title="Route B: install the CLI and her skill">
@@ -154,7 +145,7 @@ She runs on your terms. A post you schedule goes out at its time without another
     Yes. PostQueen connects 30+ networks, so the same brief can become posts for every channel you have connected, each one adapted to what that channel accepts.
   </Accordion>
   <Accordion title="Does the integration cost extra?">
-    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.
+    <Snippet file="agent-plan-limits.mdx" />
   </Accordion>
 </AccordionGroup>
 

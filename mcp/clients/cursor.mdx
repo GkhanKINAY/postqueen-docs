@@ -16,7 +16,7 @@ You need your PostQueen API key first. In the app at [app.postqueen.ai](https://
     Open the **Customize** page from the Cursor sidebar, which is where you install and remove MCP servers.
   </Step>
   <Step title="Add the PostQueen server">
-    Add a server named `postqueen` with the streamable HTTP URL. Cursor opens an `mcp.json` file for you to edit:
+    Add an entry named `postqueen` with the streamable HTTP URL. Cursor opens an `mcp.json` file for you to edit:
 
     ```json
     {
@@ -94,7 +94,7 @@ On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PU
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy).
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
 
 ## Verify
 

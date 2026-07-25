@@ -1,0 +1,127 @@
+---
+title: MCP on a self-hosted install
+description: 'The URL to use, and the one proxy setting that breaks MCP while leaving the app fine'
+---
+
+MCP works on a self-hosted PostQueen with no extra service and no extra configuration in the app.
+Her backend already serves the endpoint. What you do need is a reverse proxy that passes the
+connection through without buffering it, and that is where self-hosters lose an afternoon.
+
+## Your URL
+
+Replace `https://api.postqueen.ai` with whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append
+the MCP path:
+
+```
+https://postqueen.example.com/api/mcp/YOUR_API_KEY
+```
+
+Most single-domain installs serve the backend under `/api`, so the MCP path lands at `/api/mcp`.
+If your `NEXT_PUBLIC_BACKEND_URL` is a separate hostname, use that instead and the path is just
+`/mcp`.
+
+Both endpoint forms work exactly as they do on the hosted service:
+
+| Endpoint | Auth |
+| --- | --- |
+| `<backend>/mcp` | `Authorization: Bearer YOUR_API_KEY`. API keys and `pos_` OAuth tokens both work |
+| `<backend>/mcp/YOUR_API_KEY` | The key in the path. API keys only |
+
+## The proxy setting that matters
+
+Her MCP transport is **streamable HTTP**: the connection stays open and the response arrives in
+chunks. A proxy that buffers the whole response, or that talks HTTP/1.0 upstream and so cannot
+receive a chunked one, breaks this while leaving every other page working perfectly.
+
+The symptom is unhelpful. The client connects, reports no error, and lists no tools.
+
+<Warning>
+**The Simple Config on the [Nginx](/reverse-proxies/nginx) page has no `proxy_http_version 1.1;`
+line.** An HTTP/1.0 upstream cannot send a chunked response, so that configuration serves the app
+correctly and quietly breaks MCP. If you used it, this is almost certainly your problem.
+</Warning>
+
+<Tabs>
+  <Tab title="Nginx">
+    Add these inside the `location /` block, or in a dedicated location for the MCP paths:
+
+    ```nginx
+    location / {
+        proxy_pass http://localhost:4007;
+        proxy_http_version 1.1;          # required: HTTP/1.0 cannot chunk
+        proxy_buffering off;             # required: no holding the response
+        proxy_cache off;
+        proxy_read_timeout 3600s;        # streams stay open
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Connection "";
+    }
+    ```
+
+    The Secure config on the Nginx page already carries `proxy_http_version 1.1;`. It still needs
+    `proxy_buffering off;` adding.
+  </Tab>
+
+  <Tab title="Caddy">
+    Nothing to add. Caddy speaks HTTP/1.1 upstream and streams by default, so the three-line
+    Caddyfile on the [Caddy](/reverse-proxies/caddy) page already works for MCP.
+  </Tab>
+
+  <Tab title="Traefik">
+    Nothing to add for streaming. Traefik does not buffer responses unless you attach a
+    `buffering` middleware, so leave that off the router that serves PostQueen.
+  </Tab>
+</Tabs>
+
+## Check it from outside
+
+From your own machine, not the server:
+
+```bash
+curl -i -X POST https://postqueen.example.com/api/mcp \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+A healthy install answers with the tool list. What you get instead tells you where the problem is:
+
+| What comes back | What it means |
+| --- | --- |
+| The tool list | Working. Point your client at the same URL |
+| `401 Missing Authorization header` | The header did not survive the proxy |
+| `401 Invalid API Key or OAuth token` | The key is wrong or was revoked |
+| `400 Invalid API Key` | You are on the URL form, or you pasted a `pos_` OAuth token into it. The path form only accepts API keys |
+| A 404 page from the web interface | The `/mcp` path is not being forwarded to the backend |
+| Nothing, and the request hangs | Buffering. See the proxy section above |
+
+<Note>
+Responses on these routes are plain text rather than JSON, so some clients show them as a bare
+"server error" with the real message only in a log. Read the raw response before changing config.
+</Note>
+
+## One thing that is not a check
+
+Both endpoint forms answer `OPTIONS` with a `200` and permissive CORS headers **before any key is
+checked**. A browser-based client that reports a successful connection has therefore proved
+nothing. The first real call is the one that tells you.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Connect your client" icon="plug" href="/mcp/setup">
+    Now that the URL works, point your client at it
+  </Card>
+  <Card title="Limits and troubleshooting" icon="circle-minus" href="/mcp/limits-and-troubleshooting">
+    What the tools cannot reach, and the rest of the failure modes
+  </Card>
+  <Card title="Domain and HTTPS" icon="lock" href="/installation/domain-and-https">
+    Setting up the reverse proxy in the first place
+  </Card>
+  <Card title="Configuration reference" icon="sliders" href="/configuration/reference">
+    `MCP_URL` and the other endpoints she advertises
+  </Card>
+</CardGroup>

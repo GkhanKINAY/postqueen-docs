@@ -13,43 +13,25 @@ Those 11 tools cover discovery, media and posting. They do not list, delete or r
 
 ## Set up
 
-<Steps>
-  <Step title="Grab your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Treat it like a password, since it grants full access to your account.
-  </Step>
-  <Step title="Add her server">
-    One command registers her, with the key in the URL path:
+One command, and the terminal you already have open can post:
 
-    ```bash
-    gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
-    ```
+```bash
+gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
 
-    By default that writes the entry into the current project's `.gemini/settings.json`. Pass `--scope user` to write it into `~/.gemini/settings.json` instead, so every project finds her.
+Your key comes from the app at [app.postqueen.ai](https://app.postqueen.ai), under
+**Settings > Developers > Public API**. Then run `/mcp` inside Gemini CLI: `postqueen` should
+show as connected with 11 tools.
 
-    The `settings.json` block to paste by hand, the `Authorization` header variant and self-hosted URLs are all on the [Gemini CLI MCP page](/mcp/clients/gemini-cli).
+<Card title="Full setup: Gemini CLI over MCP" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
+  Scope options, the `settings.json` block, the header variant, self-hosted URLs, and why an entry
+  written with `url` instead of `httpUrl` connects to nothing
+</Card>
 
-    <Warning>
-    A project-level `.gemini/settings.json` carries your key into the repo. Keep it out of version control, or use `--scope user` and leave the project clean. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
-    </Warning>
-  </Step>
-  <Step title="Verify the connection">
-    Start Gemini CLI and run the built-in slash command:
-
-    ```
-    /mcp
-    ```
-
-    It lists configured servers with their connection status and discovered tools, and `postqueen` should show as connected with 11 tools. Then ask:
-
-    > *"List my connected social media accounts."*
-
-    Your channel names come back, because Gemini reached for her `integrationList` tool.
-  </Step>
-</Steps>
-
-<Note>
-Gemini CLI uses `httpUrl` for streamable HTTP servers. The `url` key is reserved for SSE servers, and she does not speak SSE, so an entry written with `url` connects to nothing.
-</Note>
+<Warning>
+A project-level `.gemini/settings.json` carries your key into the repo. Use `--scope user` to
+write it to `~/.gemini/settings.json` instead and leave the project clean.
+</Warning>
 
 ## 👑 Two posts about the release you just cut
 
@@ -114,7 +96,7 @@ Everything you scheduled needs nothing further from you. It sits on the calendar
     Yes. It runs shell commands, and every `postqueen` command takes flags and prints JSON, so nothing has to be scraped off the screen. The CLI is the wider surface of the two, and the one to reach for when you want listing, status changes or analytics. Installation and the full command set: [CLI introduction](/cli/introduction).
   </Accordion>
   <Accordion title="Does the integration cost extra?">
-    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan.
+    <Snippet file="agent-plan-limits.mdx" />
   </Accordion>
 </AccordionGroup>
 

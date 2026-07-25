@@ -19,36 +19,25 @@ This is the chat surface. Claude Code, Anthropic's terminal tool, connects a dif
 
 ## Set up
 
-<Steps>
-  <Step title="Grab your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Copy it.
-  </Step>
-  <Step title="Add her as a custom connector">
-    On [claude.ai](https://claude.ai), open **Settings**, then **Connectors** (direct link: `claude.ai/settings/connectors`). In Claude Desktop, the same page sits under **Settings > Connectors**. Click **Add custom connector**, name it `PostQueen`, and paste her endpoint with your key in the path:
+On [claude.ai](https://claude.ai), open **Settings**, then **Connectors**, and add a custom
+connector pointing at:
 
-    ```
-    https://api.postqueen.ai/mcp/YOUR_API_KEY
-    ```
+```
+https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
 
-    Leave the OAuth fields under advanced settings empty, because the key in the URL is the authentication. The connector form takes a URL and has no field for an `Authorization` header, which is why the key rides in the path here rather than in a Bearer header.
+Then toggle **PostQueen** on from the tools menu in a chat and ask her to list your connected
+accounts. Your channel names come back.
 
-    Full walkthroughs, plus the desktop config-file route: [Claude Desktop](/mcp/clients/claude-desktop) and [Claude web and mobile](/mcp/clients/claude-app).
+<Card title="Full setup: Claude web and mobile" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude-app">
+  Every field on the connector form, what to leave empty and why, plus
+  [Claude Desktop](/mcp/clients/claude-desktop) for the config-file route
+</Card>
 
-    <Warning>
-    That URL contains your API key, which makes the URL itself a secret. Anyone holding it can post from every account you have connected, so keep it out of screenshots and shared screens. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
-    </Warning>
-  </Step>
-  <Step title="Turn her on in a chat">
-    In a new chat, open the tools menu in the message box and toggle the **PostQueen** connector on. The first time Claude calls one of her tools it asks for your permission.
-  </Step>
-  <Step title="Verify the connection">
-    Ask:
-
-    > *"List my connected social media accounts."*
-
-    Your channel names come back, because Claude reached for her `integrationList` tool. If nothing comes back, check that the key was pasted in full inside the URL and that the connector is toggled on for that chat.
-  </Step>
-</Steps>
+<Warning>
+That URL contains your API key, which makes the URL itself a secret. Anyone holding it can post
+from every account you have connected, so keep it out of screenshots and shared screens.
+</Warning>
 
 ## On your phone
 
@@ -113,7 +102,7 @@ A plain `"url"` entry in `claude_desktop_config.json` does not work. That file o
     Not from the chat. There is no analytics tool in the MCP set, and no tool for listing or deleting posts either. Those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the `postqueen` CLI, which carries `posts:list`, `posts:delete` and `analytics:platform`.
   </Accordion>
   <Accordion title="Does the connector cost extra?">
-    No. Agent access uses the same API key and the same plan limits as your regular PostQueen account, on any plan. Claude's own plan rules still apply, including the single custom connector on the Free plan.
+    <Snippet file="agent-plan-limits.mdx" /> Claude's own plan rules still apply, including the single custom connector on the Free plan.
   </Accordion>
 </AccordionGroup>
 

@@ -118,7 +118,7 @@ https://postqueen.example.com/api/mcp/YOUR_API_KEY
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy must forward the `/mcp` paths to the backend and support streaming HTTP. Proxy configuration: [Reverse Proxies](/reverse-proxies/caddy). For Option A the server must also be reachable from the public internet; if it is not, Option B works because the bridge runs on your machine.
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting). For Option A the server must also be reachable from the public internet; if it is not, Option B works because the bridge runs on your machine.
 
 ## Verify
 
