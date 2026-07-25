@@ -105,7 +105,7 @@ Then the post editor opens with the hook sitting on top of the first post, the p
 Short formats aim for around 200 characters so they fit X. Thread formats always come back as at least two posts. She writes no hashtags and tends to end on a call to action.
 
 <Note>
-**Self-hosting and cannot find the sparkle button?** Nothing is broken. That button appears only when your plan includes AI **and** billing is switched on, and billing is switched on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. An install with no Stripe keys is unlimited in every other way, yet the button stays hidden. The chat in the Agent tab is not affected and works with no Stripe keys at all.
+**Self-hosting and cannot find the sparkle button?** That one is deliberate. Every click runs a research step, a writing step and an image step, and each of those is a paid model call on somebody's key. So the button appears only when your plan includes AI **and** billing is switched on, which happens when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. An install with no Stripe keys is unlimited in every other way. The chat in the Agent tab is not gated like this: give it an `OPENAI_API_KEY` and she answers there with no Stripe keys at all.
 </Note>
 
 ## What she needs to run
