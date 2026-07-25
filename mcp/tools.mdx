@@ -3,7 +3,7 @@ title: Tools Reference
 description: 'Complete reference for all PostQueen MCP tools'
 ---
 
-These are the 10 tools she answers over MCP, with every parameter and every field she sends back. Your agent reads these schemas on connect, so you never call one by hand.
+These are the eleven tools she answers over MCP, with every parameter and every field she sends back. Your agent reads these schemas on connect, so you never call one by hand.
 
 ## integrationList
 
@@ -23,7 +23,8 @@ List all connected social media accounts (channels) for your organization.
 | `name` | string | Display name of the account |
 | `picture` | string | Profile picture URL |
 | `platform` | string | Platform identifier (e.g., `x`, `linkedin`, `facebook`) |
-| `customer` | object | The group (customer) this channel belongs to, as `{ id, name }`; omitted if the channel is not assigned to a group |
+
+Four fields and no more. The tool builds a richer row internally, but its declared output schema trims anything else before it leaves, so a channel's group, its disabled flag and its profile never reach your client. Read those from [`GET /integrations`](/public-api/integrations/list) instead.
 
 ---
 
@@ -293,6 +294,18 @@ Each item in `customParams`:
 
 Use the returned `url` in the `attachments` array when scheduling a post. Whatever your agent schedules with these tools lands on the calendar she publishes from, so you can still open it and change your mind.
 
-## What these ten tools cannot do
+## `ask_postqueen`
 
-Some jobs have no tool here and need the CLI or the API alongside. Reading analytics is one. Listing or deleting an existing post is another. [Limits and Troubleshooting](/mcp/limits-and-troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach her at all.
+The eleventh tool is not one of the ten above and does not look like them. Your client will discover it anyway, so it is worth knowing what it is.
+
+It takes one parameter, `message`, a plain-language request. Behind it sits the same assistant you talk to in the app, running server-side with the same tools listed above and the same access to your calendar. So "ask her to schedule a launch post for Thursday" is a single call rather than a sequence your own agent has to plan.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `message` | string | Yes | What you want her to do, in your own words |
+
+Two things follow from that. It can write to your calendar, so treat it with the same care as `schedulePost`. And because she plans the steps herself, you get less control over exactly which tools run than you would calling them directly.
+
+## What these tools cannot do
+
+Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Reading analytics is one. Listing or deleting an existing post is another. [Limits and Troubleshooting](/mcp/limits-and-troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach her at all.

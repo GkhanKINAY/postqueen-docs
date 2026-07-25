@@ -29,7 +29,8 @@ Your instance sets the house rules and she works inside them. Five hundred chara
 
 | Area | Detail |
 |---|---|
-| Post settings | Nothing beyond `__type`. The instance a post lands on comes from the connected channel, not from the settings block: [Mastodon settings](/public-api/providers/mastodon). |
+| Post settings | Nothing beyond `__type`: [Mastodon settings](/public-api/providers/mastodon). |
+| Which instance | Every Mastodon post lands on the single instance named in `MASTODON_URL`. It is read per install, not per channel, so connecting accounts on two different instances is not supported. |
 | Connect flow | One step, OAuth2 against the instance in `MASTODON_URL`, with the scopes `write:statuses`, `profile` and `write:media`. |
 | Automations | None on this network. |
 | Publish rate | Five posts at a time, since Mastodon instances are usually generous. |

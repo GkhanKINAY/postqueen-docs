@@ -76,11 +76,13 @@ Those same five are where she looks for your profile at connect time.
 
 ### The channel is called "No Name"
 
-No profile event came back from those five relays, so she fell back to the placeholder, and the username reads `nousername`. This is expected rather than broken, and the channel posts perfectly well as it is. It happens when your profile lives on relays outside the fixed five, or when the relay that has it did not answer in time. Publishing your profile to one of the five relays above and reconnecting the channel is what fixes the name.
+No profile event came back from those five relays, so she fell back to the placeholder, and the username reads `nousername`. This is the name lookup falling back, not a broken connection. It happens when your profile lives on relays outside the fixed five, or when the relay that has it did not answer in time. Publishing your profile to one of the five relays above and reconnecting the channel is what fixes the name.
 
 ### "Invalid credentials"
 
-The value did not turn into a usable key. Nine times out of ten it is an `nsec1` string, because the connector reads whatever you paste as hex rather than decoding bech32. Convert the key to hex and try again.
+The value did not turn into a usable key at all.
+
+Worth knowing: an `nsec1` string does **not** produce this message. The connector reads whatever you paste as hex rather than decoding bech32, and an `nsec1` survives that reading as a different, valid-looking key. So it connects, under a public key that is not yours, usually showing up as a "No Name" channel. If that is what you are looking at, disconnect it and reconnect with the hex form of your key.
 
 ### The link on a published note points at the wrong note
 

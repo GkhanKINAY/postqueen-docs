@@ -104,7 +104,7 @@ X_API_SECRET=""
 
 ## Optional environment variables
 
-- `X_URL`: override the X API base URL (e.g. for self-hosted X-compatible APIs).
+- `X_URL`: override the base used to build the X OAuth **callback**, which becomes `<X_URL>/integrations/social/x`. Defaults to `FRONTEND_URL`. It does not change which X API PostQueen talks to, and setting it to anything your registered callback does not match will break the connect.
 - `DISABLE_X_ANALYTICS=true`: skip the analytics fetch on the X channel page. Useful if your X plan does not include analytics access and the failed call is noisy.
 - `STRIP_LINKS_FROM_X_POSTS=true`: automatically remove URLs from post text before publishing. Some accounts see better reach with no links; this enforces it globally.
 

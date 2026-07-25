@@ -9,7 +9,7 @@ icon: /images/channels/twitch.svg
 <Snippet file="never-share.mdx" />
 
 <Warning>
-Twitch here is a chat connector, not a feed. She writes into your own channel chat, media never rides along, and anything past 500 characters is cut before it leaves.
+Twitch here is a chat connector, not a feed. She writes into your own channel chat, media never rides along, and anything past 500 characters is refused when you save it rather than trimmed.
 </Warning>
 
 ## What she can post to Twitch
@@ -18,7 +18,7 @@ The stream starts at eight and you would rather not type the same reminder every
 
 <CardGroup cols={4}>
   <Card title="Character limit" icon="text-width">
-    500 characters. Longer text is cut, not refused
+    500 characters. A longer post is refused when you save it, not trimmed
   </Card>
   <Card title="Media" icon="photo-film">
     None. Twitch chat takes text only, so anything you attach is left behind

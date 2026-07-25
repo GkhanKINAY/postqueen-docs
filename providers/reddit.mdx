@@ -33,7 +33,7 @@ Ten of her connectors report numbers back to the Analytics page. Reddit is not o
 |---|---|
 | **Post settings** | `subreddit`, an array where every entry carries its own `subreddit`, `title` and `type`, plus `url` and `flair`. Full schema in the [Reddit settings reference](/public-api/providers/reddit) |
 | **Connect flow** | One step. You authorize the Reddit app, and the editor then searches subreddits live, reading back each one's flairs and what it will accept |
-| **Automations** | None. Comments post as replies on the submission |
+| **Automations** | None. Comments post as replies on the submission when it targets a single subreddit. Address several at once and the comment fails, because the submission ids are joined into one string that Reddit cannot resolve |
 
 <Warning>
 Reddit turns some posts back before she calls the API:
