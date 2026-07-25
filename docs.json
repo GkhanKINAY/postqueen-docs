@@ -261,6 +261,7 @@
           {
             "group": "Reference",
             "pages": [
+              "cli/limits",
               "cli/command-reference",
               "cli/platform-examples",
               "cli/troubleshooting"

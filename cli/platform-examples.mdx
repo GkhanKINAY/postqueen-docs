@@ -1,20 +1,80 @@
 ---
 title: Platform Examples
-description: 'Ready-to-use examples for posting to specific platforms'
+description: 'A working command for every network, with the settings each one insists on'
+---
+
+Every network wants something slightly different. X wants to know who may reply, Reddit wants a
+flair decision even when the answer is no, TikTok wants eight fields and refuses a shorter object.
+This page has a command you can paste for each of them, and says what that network will reject you
+for.
+
+Every example here is ready to run once you have swapped in your own channel id. Nothing on this
+page is a sketch.
+
+<Warning>
+**These commands publish.** `-s` takes a real date, and nothing checks that it is in the future:
+a date in the past is accepted and the post goes out on the next pass. The examples use a date a
+week out. If you want to try one safely, add `-t draft` and it lands on your calendar without
+being sent.
+</Warning>
+
+## First, your channel ids
+
+Every command below ends with `-i` and a channel id. That id is not the network name and not the
+handle, it is the id PostQueen gave the channel when you connected it. Get the list once:
+
+```bash
+postqueen integrations:list
+```
+
+```json
+[
+  { "id": "c7f3a91e-4b2d-4f8a-9e11-2a6b5c0d7e83", "name": "@yourhandle", "identifier": "x" },
+  { "id": "18d40b6c-9a77-4c31-b5e2-77f9de104ab2", "name": "Your Page", "identifier": "linkedin" }
+]
+```
+
+The `identifier` tells you which network it is. To pull one straight into a variable:
+
+```bash
+X_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="x") | .id')
+```
+
+Throughout this page, replace `x-id`, `reddit-id` and the rest with the real values.
+
+<Note>
+Not sure what a network accepts? `postqueen integrations:settings <channel-id>` prints its rules,
+character limit and settings schema. [Integrations](/cli/integrations) shows the output.
+</Note>
+
+## Checking it worked
+
+After any command on this page:
+
+```bash
+postqueen posts:list
+```
+
+Your new post is in the list with a `state`. `QUEUE` means it is waiting for its time, `PUBLISHED`
+means it has gone out, `ERROR` means the network refused it. If you see `ERROR`, the reason is on
+the post, and [Troubleshooting](/cli/troubleshooting) covers the common ones.
+
 ---
 
 ## X (Twitter)
 
-### Simple Post
+### Simple post
 
 ```bash
 postqueen posts:create \
-  -c "Hello Twitter!" \
+  -c "Hello from the terminal" \
   -s "2026-08-01T09:00:00Z" \
-  -i "twitter-id"
+  -i "x-id"
 ```
 
 ### Thread
+
+Repeat `-c` once per tweet. `-d` is the delay in **minutes** between them.
 
 ```bash
 postqueen posts:create \
@@ -23,22 +83,27 @@ postqueen posts:create \
   -c "Thread 3/3: Conclusion" \
   -s "2026-08-01T09:00:00Z" \
   -d 2 \
-  -i "twitter-id"
+  -i "x-id"
 ```
 
-### With Reply Controls
+### Reply controls
 
 ```bash
 postqueen posts:create \
   -c "Only people I follow can reply to this" \
   -s "2026-08-01T09:00:00Z" \
   --settings '{"who_can_reply_post":"following"}' \
-  -i "twitter-id"
+  -i "x-id"
 ```
+
+`who_can_reply_post` takes one of `everyone`, `following`, `mentionedUsers`, `subscribers` or
+`verified`. Leave the setting out and X applies its own default.
+
+---
 
 ## Reddit
 
-### Post with Flair
+### Post with a flair
 
 ```bash
 # 1. Get available flairs. The subreddit goes in as the /r/ path, not the bare name
@@ -52,9 +117,14 @@ postqueen posts:create \
   -i "reddit-id"
 ```
 
-`is_flair_required` is not optional. Leave it out and the call is refused before the post is created. Say `false` when the subreddit does not need a flair, and drop the `flair` object with it.
+`is_flair_required` is not optional. Leave it out and the call is refused before the post is
+created. Say `false` when the subreddit does not need a flair, and drop the `flair` object with it.
 
-### Scripted Workflow
+`restrictions` answers with an object, not a list: `.output.flairs[]` holds the flairs, and
+`.output.is_flair_required` tells you whether the subreddit insists on one. A flair you send needs
+both its `id` and its `name`.
+
+### Scripted
 
 ```bash
 #!/bin/bash
@@ -70,7 +140,13 @@ postqueen posts:create \
   -i "$REDDIT_ID"
 ```
 
-`restrictions` answers with an object, not a list: `.output.flairs[]` holds the flairs, and `.output.is_flair_required` tells you whether the subreddit insists on one. A flair you send needs both its `id` and its `name`.
+<Note>
+One post can target several subreddits: `subreddit` is an array. The comment feature is the
+exception, it only works when you target a single subreddit.
+[Reddit](/providers/reddit) explains why.
+</Note>
+
+---
 
 ## YouTube
 
@@ -86,6 +162,19 @@ postqueen posts:create \
   -i "youtube-id"
 ```
 
+`title` and `type` are both required and neither has a default. `type` must be exactly `public`,
+`private` or `unlisted`.
+
+<Warning>
+**Tags share a 500-character budget**, counted across all of them together rather than per tag.
+A tag containing a space costs two extra characters, because YouTube wraps it in quotes. Go over
+and the whole post is refused with "The maximum allowed is 500 characters in total for all tags."
+</Warning>
+
+`selfDeclaredMadeForKids` (`yes` or `no`) and `thumbnail` are optional.
+
+---
+
 ## TikTok
 
 ```bash
@@ -100,9 +189,22 @@ postqueen posts:create \
   -i "tiktok-id"
 ```
 
-TikTok is the strictest settings block in the CLI. Seven of these fields are required and there are no defaults, so a shorter object is refused rather than filled in: `content_posting_method`, `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle` and `brand_organic_toggle`. Only `video_made_with_ai` is optional.
+TikTok is the strictest settings block in the CLI. Eight of these fields are required and there
+are no defaults, so a shorter object is refused rather than filled in: `content_posting_method`,
+`privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle` and
+`brand_organic_toggle`. Only `title` and `video_made_with_ai` are optional.
 
-TikTok applies these settings only when `content_posting_method` is `"DIRECT_POST"`, with `"UPLOAD"` (send to the TikTok app inbox instead of publishing) every setting except the post content is silently discarded. `duet` and `stitch` apply to video posts only.
+TikTok applies these settings only when `content_posting_method` is `"DIRECT_POST"`. With
+`"UPLOAD"`, which sends the video to the TikTok app inbox instead of publishing it, every setting
+except the post content is silently discarded. `duet` and `stitch` apply to video posts only.
+
+<Note>
+An unapproved TikTok app can only post privately. If your posts come back with
+`App not approved for public posting, contact support`, that is TikTok's audit gate rather than
+anything in this command. [TikTok](/providers/tiktok) covers it.
+</Note>
+
+---
 
 ## Instagram
 
@@ -143,7 +245,7 @@ postqueen posts:create \
   -i "instagram-id"
 ```
 
-### Reel with Audio
+### Reel with audio
 
 Search the Instagram audio catalog and attach a track to the Reel
 (Facebook Business-linked channels only, and an empty `q` returns trending audio):
@@ -161,6 +263,14 @@ postqueen posts:create \
   -i "instagram-id"
 ```
 
+<Note>
+Instagram fetches your media from a URL rather than accepting the file from PostQueen, so
+`/uploads` has to be reachable over public HTTPS. On a laptop install it will not be, and the post
+fails. [Uploads and Storage](/configuration/uploads) explains the options.
+</Note>
+
+---
+
 ## LinkedIn
 
 ```bash
@@ -170,20 +280,30 @@ postqueen posts:create \
   -i "linkedin-id"
 ```
 
-### Image Carousel
+Every LinkedIn setting is optional, so the plain command above works as it is.
+
+### Image carousel
 
 ```bash
 postqueen posts:create \
   -c "Check out these slides!" \
   -m "https://uploads.postqueen.ai/image1.jpg,https://uploads.postqueen.ai/image2.jpg,https://uploads.postqueen.ai/image3.jpg" \
   -s "2026-08-01T09:00:00Z" \
-  --settings '{"post_as_images_carousel":true}' \
+  --settings '{"post_as_images_carousel":true,"carousel_name":"Q3 highlights"}' \
   -i "linkedin-id"
 ```
+
+`post_as_images_carousel` turns the images into a document carousel; `carousel_name` is the title
+shown on it. Both are optional, and without the first one the images post as an ordinary gallery.
+
+---
 
 ## Pinterest
 
 ```bash
+# Boards are addressed by id, so look yours up first
+postqueen integrations:trigger pinterest-id boards
+
 postqueen posts:create \
   -c "Pin description" \
   -m "$IMAGE_URL" \
@@ -192,9 +312,23 @@ postqueen posts:create \
   -i "pinterest-id"
 ```
 
+<Warning>
+**`board` is required and must be the board's id**, not its name. Sending the name is the usual
+reason a Pinterest post is rejected with "Board is required" even though you clearly set one. The
+`boards` trigger above returns `{ id, name }` pairs.
+</Warning>
+
+`title` caps at 100 characters. `link` has to be a valid URL if you send it. Both are optional,
+as is `dominant_color`.
+
+---
+
 ## Discord
 
 ```bash
+# Channels are addressed by id too
+postqueen integrations:trigger discord-id channels
+
 postqueen posts:create \
   -c "Message to Discord" \
   -s "2026-08-01T09:00:00Z" \
@@ -202,9 +336,15 @@ postqueen posts:create \
   -i "discord-id"
 ```
 
-## Batch Scheduling
+`channel` is required and is an id, not the `#name` you see in the sidebar. The `channels` trigger
+lists the ones the PostQueen bot can post to; a channel missing from that list is a permissions
+question on the Discord side.
 
-Schedule multiple posts across different dates:
+---
+
+## Batch scheduling
+
+Schedule several posts across different dates:
 
 ```bash
 #!/bin/bash
@@ -215,11 +355,11 @@ for i in "${!DATES[@]}"; do
   postqueen posts:create \
     -c "${CONTENT[$i]}" \
     -s "${DATES[$i]}" \
-    -i "twitter-id"
+    -i "x-id"
 done
 ```
 
-## Multi-Platform Campaign
+## Multi-platform campaign
 
 Post different content per platform in one command using a JSON file:
 
@@ -256,4 +396,22 @@ Example `campaign.json`:
 }
 ```
 
-The full field reference for this file is in [Managing Posts](/cli/managing-posts#complex-posts-with-json).
+Every entry in `posts` needs its own `integration.id`, drafts included. The full field reference
+for this file is in [Managing Posts](/cli/managing-posts#complex-posts-with-json).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What the CLI cannot do" icon="circle-minus" href="/cli/limits">
+    The gaps, and which surface covers each one
+  </Card>
+  <Card title="Command reference" icon="terminal" href="/cli/command-reference">
+    Every command and flag, including the two that mean different things
+  </Card>
+  <Card title="Troubleshooting" icon="life-ring" href="/cli/troubleshooting">
+    What the errors mean and how to clear them
+  </Card>
+  <Card title="Provider setup" icon="plug" href="/providers/overview">
+    Creating the OAuth app each network needs
+  </Card>
+</CardGroup>

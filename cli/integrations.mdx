@@ -57,15 +57,53 @@ Each platform has its own settings schema with character limits, required fields
 postqueen integrations:settings <integration-id>
 ```
 
-The response tells you:
-- What fields are available (title, privacy level, subreddit)
-- Which fields are required
-- Character limits and validation rules
-- Available dynamic tools you can trigger
+Four things come back, wrapped in an `output` object. Here is a Pinterest channel:
+
+```json
+{
+  "output": {
+    "rules": "Pinterest requires at least one media, if posting a video, you must have two attachment, one for video, one for the cover picture, When posting a video, there can be only one, if posting images, there can be maximum 5",
+    "maxLength": 500,
+    "settings": {
+      "type": "object",
+      "properties": {
+        "board": { "type": "string", "description": "board must be an id" },
+        "title": { "type": "string", "maxLength": 100 },
+        "link": { "type": "string", "format": "url" },
+        "dominant_color": { "type": "string" }
+      },
+      "required": ["board"]
+    },
+    "tools": [
+      { "methodName": "boards", "description": "List of boards", "dataSchema": [] }
+    ]
+  }
+}
+```
+
+<Note>
+`settings` is a JSON Schema document, generated from that provider's own validation rules, so
+required fields are listed in a `required` array rather than flagged on each property. The block
+above is abridged; a real response carries every constraint the network enforces.
+</Note>
+
+| Field | What it is |
+| --- | --- |
+| `rules` | The network's own constraints in plain language |
+| `maxLength` | Character limit for the post content. For channels where a verified account gets more room, this is already the number that applies to yours |
+| `settings` | The schema for `--settings`: which fields exist, which are required, and what each accepts. Channels with nothing to configure return the string `No additional settings required` instead of an object |
+| `tools` | Helper tools this channel offers. Pass `methodName` to `integrations:trigger`. An empty array means this network has none |
 
 <Tip>
-Always check `integrations:settings` before posting to a new platform to understand what settings are available.
+Run this before posting to a network for the first time. It is faster than reading a provider page,
+and it answers the question that actually blocks you: which fields will be refused if you leave
+them out.
 </Tip>
+
+<Note>
+[Provider Tools](/public-api/integrations/provider-tools) lists every tool each network offers
+without needing a connected channel to ask.
+</Note>
 
 ## Triggering Tools
 

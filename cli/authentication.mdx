@@ -30,12 +30,21 @@ interface instead of the backend. If you are unsure which shape your install has
 Verify that the key works:
 
 ```bash
-# Check current auth status (verifies credentials against the API)
-postqueen auth:status
-
-# Or list your connected channels directly
 postqueen integrations:list
 ```
+
+Your channels come back as JSON. That is the check that matters, because it is the first command
+that actually reaches the API.
+
+```bash
+postqueen auth:status
+```
+
+<Note>
+`auth:status` reports which credentials the CLI found and which API URL it will use. It does not
+contact the server, so it will happily report a key that has been revoked. Treat it as "what am I
+configured with", not "does this still work".
+</Note>
 
 Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same Settings screen.
 
