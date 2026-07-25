@@ -4,102 +4,92 @@ description: 'Common problems specific to running PostQueen yourself'
 icon: 'server'
 ---
 
-## `pnpm` heap out of memory during install
+The things that catch people out on their own install. Find your symptom and open it.
 
-The PostQueen monorepo is large enough that the default Node heap can
-overflow during `pnpm install` on small VMs.
+<AccordionGroup>
+  <Accordion title="pnpm runs out of heap during install" icon="memory">
+    The monorepo is large enough to overflow the default Node heap on a small VM.
 
-**Fix**
+    ```bash
+    NODE_OPTIONS="--max-old-space-size=4096" pnpm install
+    ```
 
-```bash
-NODE_OPTIONS="--max-old-space-size=4096" pnpm install
-```
+    <Warning>
+    Do not set the heap above the VM's actual memory. That trades an OOM in Node for being killed
+    by the kernel. On a 2 GB box, build the image elsewhere and deploy the artifact.
+    [System requirements](/installation/system-requirements) has the minimums.
+    </Warning>
+  </Accordion>
 
-If 4 GB is still not enough and your host has the RAM to spare, raise it
-to `--max-old-space-size=8192`. Do not set the heap higher than your VM's
-available memory. That just trades OOM in Node for OOM-killed by the
-kernel. If you are stuck on a 2 GB VM, build the image elsewhere and
-deploy the prebuilt artifact instead. See
-[System requirements](/installation/system-requirements) for minimum RAM.
+  <Accordion title="postgres ECONNREFUSED" icon="database">
+    The backend cannot reach Postgres.
 
-## `postgres ECONNREFUSED`
+    | Check | What to look for |
+    |---|---|
+    | `DATABASE_URL` host | `localhost` fails from a container without host networking. Use the service name, `postgres` |
+    | Postgres is up | `docker compose logs postgres` shows *database system is ready to accept connections* |
+    | Port mapping | Exposed only on the Docker network is fine. External `psql` will not work, the backend will |
+  </Accordion>
 
-Backend cannot reach Postgres.
+  <Accordion title="Default ports, and which one to open" icon="plug">
+    | How you run her | Ports |
+    |---|---|
+    | Official image `ghcr.io/gkhankinay/postqueen-app` | One port, `5000`. The shipped compose maps it to `4007:5000`, so you reach her at `http://localhost:4007/` |
+    | From source, `pnpm dev` | Frontend `4200`, backend `3000` (override with `PORT`). Put a [reverse proxy](/reverse-proxies/caddy) in front for one URL |
 
-**Checklist**
+    Temporal listens on `7233`, and its UI on `8080`, either way.
+  </Accordion>
 
-1. `DATABASE_URL` host: is it `localhost` when the backend is in a
-   container that does not share host networking? Use the service name
-   (`postgres`) or the container IP instead.
-2. Postgres ready? `docker compose logs postgres` should show
-   `database system is ready to accept connections`.
-3. Port mapping: if you exposed Postgres only on the Docker network,
-   external `psql` will not work but the backend will. That is fine.
+  <Accordion title="Email is not sending" icon="envelope">
+    She sends no email at all unless `EMAIL_PROVIDER` is exactly `resend` or `nodemailer`. Unset
+    means the no-op provider.
 
-## "Hide a provider from the UI"
+    <Warning>
+    Check this before anything else, because it also decides activation. `EMAIL_PROVIDER=resend`
+    with no `RESEND_API_KEY` still counts as a provider, so new signups are created **inactive** and
+    wait for a mail that can never arrive.
+    </Warning>
 
-There is no env-var-based way to hide a provider from the frontend
-today. The only way to do it is to set the per-organization `disabled`
-field on the Integration row in the database after you connect a
-channel. We are tracking the request. See the GitHub issues tagged
-`enhancement`.
+    With no provider configured at all she auto-activates users instead, so signup still works.
+    SMTP setup and the full variable list: [Email configuration](/configuration/emails).
+  </Accordion>
 
-## Default ports
+  <Accordion title="Mounting the uploads volume" icon="folder">
+    With `STORAGE_PROVIDER=local`, point `UPLOAD_DIRECTORY` at the path she should write to, mount
+    it into the container, and set `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` so the frontend knows where
+    the files are served from. Next rewrites `/uploads/:path*` to `/api/uploads/:path*` when local
+    storage is active.
 
-It depends on how you are running her.
+    Running more than one container? Share the volume across all of them, or move to
+    [Cloudflare R2](/configuration/r2). Detail: [Uploads and storage](/configuration/uploads).
+  </Accordion>
 
-**Official Docker image** (`ghcr.io/gkhankinay/postqueen-app`): the
-container bundles frontend + backend and listens on a single port `5000`.
-The official compose maps that to host `4007:5000`, so you reach PostQueen
-at `http://localhost:4007/`.
+  <Accordion title="Can I deploy on Vercel?" icon="triangle-exclamation">
+    **Frontend, yes.** It is a standard Next.js app.
 
-**Running from source** (`pnpm dev` / `pnpm start`): frontend listens
-on `4200`, backend on `3000` (overridable via `PORT`). Connect a reverse
-proxy in front to give your users a single URL. See
-[Reverse Proxies](/reverse-proxies/caddy).
+    **Backend, no.** It is a NestJS server that also embeds a Temporal worker, so it needs a
+    long-running Node host: Fly.io, Render, Railway, a VM, a Kubernetes pod. Serverless functions
+    will not work.
+  </Accordion>
 
-Temporal listens on `7233` (gRPC) and the Temporal UI on `8080` in
-either mode.
+  <Accordion title="Hiding a provider from the interface" icon="eye-slash">
+    There is no environment variable for this today. The only way is to set the per-organization
+    `disabled` field on the Integration row in the database after connecting the channel.
+  </Accordion>
 
-## Mounting the uploads volume
+  <Accordion title="Temporal is not reachable" icon="clock">
+    She schedules every post through Temporal, so the backend must reach the Temporal frontend at
+    `TEMPORAL_ADDRESS`. If it cannot, posts are accepted and never publish.
+  </Accordion>
+</AccordionGroup>
 
-If `STORAGE_PROVIDER=local`, point `UPLOAD_DIRECTORY` at the path PostQueen
-should write to, mount that path into your container, and also set
-`NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` so the frontend knows where the
-files are served from. The Next.js config rewrites `/uploads/:path*` to
-`/api/uploads/:path*` when local storage is active. See
-[Uploads & storage](/configuration/uploads).
+## Next steps
 
-For multi-container deployments, either share the same volume across all
-containers that need to read or write, or move to [Cloudflare R2](/configuration/r2).
-
-## Can I deploy PostQueen on Vercel?
-
-**Frontend:** yes, it is a standard Next.js app and deploys cleanly to
-Vercel.
-
-**Backend:** no. The PostQueen backend is a NestJS server that also embeds
-a Temporal worker. It needs a long-running Node host (Fly.io, Render,
-Railway, a VM, a Kubernetes pod, etc.). Serverless functions will not
-work.
-
-## Email is not sending
-
-PostQueen sends no email at all unless `EMAIL_PROVIDER` is set to exactly
-`resend` or `nodemailer`. There is no default: unset means the no-op provider.
-
-Check that first, because it also decides activation. `EMAIL_PROVIDER=resend`
-with no `RESEND_API_KEY` still counts as a provider, so new signups are created
-inactive and wait for a mail that can never arrive. To use SMTP instead, set
-`EMAIL_PROVIDER=nodemailer` and set `EMAIL_HOST`, `EMAIL_PORT`,
-`EMAIL_USER`, `EMAIL_PASS`, `EMAIL_SECURE`. Full setup:
-[Email configuration](/configuration/emails).
-
-If no email provider is configured, user activation emails will not go
-out, but PostQueen auto-activates users in that mode, so signup still
-works.
-
-## Temporal is not reachable
-
-PostQueen schedules posts through Temporal. The backend
-needs to reach the Temporal frontend on `TEMPORAL_ADDRESS`.
+<CardGroup cols={2}>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every environment variable she reads
+  </Card>
+  <Card title="Domain and HTTPS" icon="lock" href="/installation/domain-and-https">
+    The reverse proxy step, done with you
+  </Card>
+</CardGroup>

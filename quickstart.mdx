@@ -4,27 +4,16 @@ description: 'From nothing to a scheduled post, on one page'
 icon: 'rocket'
 ---
 
-In about five minutes you will have a channel connected and a post sitting on your calendar with a
-time on it. No approval step, no reminder to come back and click. She sends it whether your laptop
-is open or not.
+Three steps and your first post is on the calendar with a time on it. She sends it whether your
+laptop is open or not.
 
-## Overview
-
-<Steps>
-  <Step title="Get PostQueen running">
-    Sign up on the cloud, or start her on your own machine.
-  </Step>
-  <Step title="Connect your first channel">
-    One social account, so a post has somewhere to go.
-  </Step>
-  <Step title="Write it and put it on the calendar">
-    The composer, the channel row, and the three ways a post leaves it.
-  </Step>
-</Steps>
+<Frame>
+  <img src="/images/brand/calendar.svg" alt="A week of scheduled posts across several connected channels on the PostQueen calendar" />
+</Frame>
 
 <Tip>
-**Estimated time:** about 5 minutes on PostQueen Cloud. Self-hosting adds the install itself, which
-is 10 to 15 minutes on a fresh server, plus an OAuth app per network you want.
+**About 5 minutes** on PostQueen Cloud. Self-hosting adds the install itself, which is 10 to 15
+minutes on a fresh server, plus an OAuth app for each network you want.
 </Tip>
 
 ## 1. Get PostQueen running
@@ -204,57 +193,11 @@ it means it. Nothing is written down until you press one of those three.
 time, open it to edit, or delete it, right up until it goes out.
 </Check>
 
-## 👑 That is the whole loop
-
-She posts it at the time you set, with no further confirmation from you. That is the autopilot half.
-
-The other half is that she runs on your terms: everything is visible on the calendar before it
-publishes, so you can change or cancel it, and a draft stays unscheduled until you decide.
-
-<Frame caption="A week of posts across your channels, with AI generation and drag to reschedule">
-  <img src="/images/brand/calendar.svg" alt="The PostQueen calendar showing a week of scheduled posts across several connected channels" />
-</Frame>
-
 <Note>
 There is no approver in PostQueen, no approve step and no reject button. A draft is simply a post
-that has not been handed to the scheduler yet. It sits on the calendar at its date with *Draft:* in
-front of it until you open it and press **Schedule**.
+that has not been handed to the scheduler yet, and it sits on the calendar with *Draft:* in front of
+it until you press **Schedule**.
 </Note>
-
-## Talk to her instead
-
-Now that a channel is connected, you can stop opening the app for this. PostQueen answers any agent
-that can run a skill or call an MCP tool.
-
-<Frame caption="One voice note, and she generates the visual and schedules the posts">
-  <img src="/images/brand/chat-agent.svg" alt="A chat conversation where a voice note becomes a scheduled post with generated artwork" />
-</Frame>
-
-<Info>
-**You need an API key first.** In the app, open **Settings › Developers › Public API** and click
-**Reveal**. The Developers tab needs you to be an organization admin, and on the cloud a plan that
-includes the public API.
-</Info>
-
-Install the skill and hand your agent the key:
-
-```bash
-npx skills add GkhanKINAY/postqueen-agent
-export POSTQUEEN_API_KEY="your-api-key"
-```
-
-Or connect Claude Code straight to her over MCP:
-
-```bash
-claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
-
-Ask your agent to list your connected channels. The one you added above comes back.
-
-<Warning>
-That URL contains your API key, so treat it like a password. There is a header form that keeps the
-key out of the URL: [MCP setup](/mcp/setup).
-</Warning>
 
 ## If something is not right
 

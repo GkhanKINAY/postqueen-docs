@@ -125,30 +125,6 @@
             "pages": [
               "using/plans-and-limits"
             ]
-          },
-          {
-            "group": "Help",
-            "icon": "life-ring",
-            "pages": [
-              "support",
-              "faq",
-              {
-                "group": "Troubleshooting",
-                "icon": "wrench",
-                "expanded": false,
-                "pages": [
-                  "troubleshooting/overview",
-                  "troubleshooting/post-failed",
-                  "troubleshooting/oauth-connect",
-                  "troubleshooting/uploads",
-                  "troubleshooting/activation-and-login",
-                  "troubleshooting/billing",
-                  "troubleshooting/channel-limits",
-                  "troubleshooting/known-issues"
-                ]
-              },
-              "compliance"
-            ]
           }
         ]
       },
@@ -499,6 +475,41 @@
             "pages": [
               "configuration/create-provider",
               "developer-guide"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Help & Support",
+        "icon": "circle-question",
+        "groups": [
+          {
+            "group": "Support",
+            "icon": "headset",
+            "pages": [
+              "support",
+              "faq"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "icon": "wrench",
+            "pages": [
+              "troubleshooting/overview",
+              "troubleshooting/post-failed",
+              "troubleshooting/oauth-connect",
+              "troubleshooting/uploads",
+              "troubleshooting/activation-and-login",
+              "troubleshooting/billing",
+              "troubleshooting/channel-limits",
+              "troubleshooting/known-issues"
+            ]
+          },
+          {
+            "group": "Policies",
+            "icon": "scale-balanced",
+            "pages": [
+              "compliance"
             ]
           }
         ]
