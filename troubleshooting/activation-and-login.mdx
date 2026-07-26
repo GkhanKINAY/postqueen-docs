@@ -4,70 +4,82 @@ description: 'Expired activation links, "jwt malformed", and login API responses
 icon: 'right-to-bracket'
 ---
 
-## Activation link does not work
+Find your symptom and open it.
 
-Activation links are short-lived JWTs. If you click an old one, or click
-it twice, you will see one of these:
+<AccordionGroup>
+  <Accordion title="The activation link does not work" icon="envelope-open-text">
+    Activation links are short-lived JWTs, so an old link or a second click gives you one of these:
 
-- `jwt malformed`: the link is corrupted or truncated (a mail client
-  inserted a line break, or you copied only part of the URL).
-- `jwt expired` / abort error on `/auth/activate`: the link has
-  passed its lifetime.
+    | Message | Cause |
+    |---|---|
+    | `jwt malformed` | The link is corrupted or truncated, usually a line break inserted by a mail client, or a partial copy |
+    | `jwt expired` | The link passed its lifetime |
 
-**Fix**
+    <Steps>
+      <Step title="Request a new activation email">
+        From the login page.
+      </Step>
+      <Step title="Copy the link, do not retype it">
+        And open it in the browser you signed up in.
+      </Step>
+    </Steps>
+  </Accordion>
 
-1. Request a new activation email from the login page.
-2. Copy the link directly from the email rather than typing it.
-3. Open it in the same browser you originally signed up in.
+  <Accordion title="The login API returns 404 or 204" icon="circle-question">
+    Neither `/api/health` nor `/auth/me` exists, so if something sent you looking for them, that is
+    why they 404.
 
-## Login API returns 404 or 204
+    What the frontend actually uses is the `auth` cookie in middleware plus `GET /user/self`, which
+    comes back empty when you are not signed in. That is the call to watch in the network tab.
 
-Neither `/api/health` nor `/auth/me` exists. If you went looking for them
-because something suggested they were a health signal, that is why they 404.
+    Signed in and `/user/self` still 404s? `NEXT_PUBLIC_BACKEND_URL` does not match the URL your
+    browser is using. A mismatched protocol or port breaks the session cookie.
+  </Accordion>
 
-What the frontend actually uses to decide "no session" is the `auth` cookie in
-middleware, plus `GET /user/self`, which comes back empty when you are not
-signed in. That is the call to watch in your network tab.
+  <Accordion title="Self-host: everyone is logged out after a restart" icon="key">
+    `JWT_SECRET` signs session tokens, so regenerating it invalidates every existing session.
 
-If you are logged in and `/user/self` still 404s, check
-that `NEXT_PUBLIC_BACKEND_URL` matches the URL your browser is using to
-talk to the backend (mismatched protocols/ports break the session cookie).
+    <Warning>
+    **Everyone signing in again is the mild half.** Unless you have set `ENCRYPTION_KEY`, this same
+    value also encrypts your API keys, the OAuth client secrets she issues, saved provider
+    credentials and cookie logins such as Skool. Rotating it in that state leaves those rows
+    undecryptable, and every connection depending on them has to be set up again by hand.
 
-## Self-host: everyone is logged out after a restart
+    Channels connected through a normal OAuth flow survive: their tokens are stored as the network
+    returned them.
 
-`JWT_SECRET` controls signing for session tokens. If you regenerate it,
-every existing session becomes invalid.
+    **Already rotated and your channels have gone dark? Put the old value back.** That is the whole
+    recovery. Then set `ENCRYPTION_KEY` to that old value before rotating anything, which separates
+    the two jobs. [Configuration reference](/configuration/reference#encryption-key).
+    </Warning>
 
-<Warning>
-Everyone logging in again is the mild half of what happens. Unless you have set
-`ENCRYPTION_KEY`, this same value also encrypts your API keys, the OAuth client
-secrets PostQueen issues, saved provider credentials and cookie logins such as
-Skool. Rotating it in that state leaves those rows undecryptable, and every
-connection that depends on them has to be set up again by hand.
+    Set `JWT_SECRET` once at first deployment. Keep it in a secret manager, a Docker or Kubernetes
+    secret, or an untracked `.env` on the host. **Never commit it**, including to a private deploy
+    repo: anyone with repo access then holds the signing key for every session token she has ever
+    issued.
+  </Accordion>
 
-Channels connected through a normal OAuth flow are the exception: their access
-and refresh tokens are stored as the network returned them, so they survive the
-rotation.
+  <Accordion title="Self-host: Origin not allowed" icon="ban">
+    The backend builds its CORS allowlist from `FRONTEND_URL`, plus `MAIN_URL` if set. Reach her on
+    a hostname or port outside that list and the call is rejected.
 
-If you rotated it and your channels have gone dark, put the old value back. That
-is the whole recovery. Then set `ENCRYPTION_KEY` to that old value before
-rotating anything, which separates the two jobs and makes `JWT_SECRET` safe to
-change. See the [Configuration Reference](/configuration/reference#encryption-key).
-</Warning>
+    Make `FRONTEND_URL` match the URL you use in the browser exactly, protocol and port included.
+  </Accordion>
+</AccordionGroup>
 
-**Fix:** set `JWT_SECRET` once during initial deployment and never
-rotate it lightly. Store it in a secret manager such as Doppler or
-1Password, in a Docker or Kubernetes secret, or in an untracked `.env`
-file on the host. **Do not commit it to version
-control.** That includes "private" deploy repos, since anyone with
-repo access ends up with the signing key for every session token PostQueen
-has ever issued.
+## Next steps
 
-## Self-host: "Origin not allowed" on launches
-
-The backend's CORS allowlist is built from `FRONTEND_URL` (and
-`MAIN_URL` if set). If you access PostQueen on a hostname or port not in
-that list, the backend rejects the call.
-
-**Fix:** make sure `FRONTEND_URL` exactly matches the URL you are using
-in the browser, including protocol and port.
+<CardGroup cols={2}>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads, including the two above
+  </Card>
+  <Card title="Email configuration" icon="envelope" href="/configuration/emails">
+    Why an activation mail may never have been sent
+  </Card>
+  <Card title="Domain and HTTPS" icon="lock" href="/installation/domain-and-https">
+    Getting the URLs and the cookie domain right
+  </Card>
+  <Card title="Still stuck?" icon="headset" href="/support">
+    What to put in a report so the first reply is the useful one
+  </Card>
+</CardGroup>

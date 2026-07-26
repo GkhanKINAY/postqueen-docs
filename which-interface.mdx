@@ -4,11 +4,21 @@ description: 'The CLI, MCP, the public API or an automation platform: four ways 
 icon: 'signs-post'
 ---
 
-The calendar looks right and the app does everything you need, but the work does not start there. It starts in a terminal. It starts in a chat window, in a nightly script, on an n8n canvas somebody built two years ago. You want her where the work already happens.
+Four routes run her from outside the app, and all four end in the same place: a post on your
+calendar. They ride the same [Public API](/public-api/introduction), so the result never depends on
+which one you picked.
 
-Four routes take her there, and every one of them ends in the same place: a post on your calendar. All four sit on the same [Public API](/public-api/introduction), so the result never depends on which one you picked. Whatever lands on that calendar goes out at the time you set. A post created as a draft keeps its date and does nothing until you publish it, so a draft you retry weeks later can fire the moment you move it, because that stored date is already behind you.
+<Warning>
+**The create-post cap is shared too.** One instance-wide `API_LIMIT` per organization per hour,
+identical on every plan. Cloud and the shipped Compose files set it to 30; unset on your own
+instance it sits at 90. A chatty source reaches it faster than you expect, whichever route it came
+in on.
+</Warning>
 
-One more thing they share: the create-post endpoint is capped per organization per hour, and the cap is a single instance-wide `API_LIMIT` that is identical on every plan. PostQueen Cloud and the shipped Compose files both set it to 30. Leave it unset on your own instance and it sits at 90. A chatty source reaches it faster than you would expect, whichever route it came in on.
+<Note>
+A draft keeps the date you gave it and does nothing until you publish it. Publish one weeks later
+and it can fire immediately, because that stored date is already behind you.
+</Note>
 
 ## The four at a glance
 
@@ -21,35 +31,82 @@ One more thing they share: the create-post endpoint is capped per organization p
 
 ## Pick the CLI when
 
-You are already in a terminal and the fastest thing you can do is type. Run `postqueen integrations:list`, copy the channel ID you want, and `posts:create` puts the post on the calendar. Almost every command prints JSON after a one-line header, so a shell script or a CI job can read the answer. The [Scripting and CI](/cli/command-reference#scripting-and-ci) section names the handful that print plain text instead.
+You are already in a terminal. Run `postqueen integrations:list`, copy the channel ID you want, and
+`posts:create` puts the post on the calendar. Almost every command prints JSON after a one-line
+header, so a shell script or a CI job can read the answer. The
+[Scripting and CI](/cli/command-reference#scripting-and-ci) section names the handful that print
+plain text instead.
 
-It is also the route an AI agent drives best, because the skill teaches your assistant the flags before it runs anything. Reading your numbers back is part of the deal here: `analytics:platform` and `analytics:post` have no equivalent in the MCP tool set or the n8n node, though the API carries them too. One thing is missing: the CLI does not generate video.
+It is also the route an AI agent drives best, because the skill teaches your assistant the flags
+before it runs anything. Your numbers come back here too: `analytics:platform` and `analytics:post`
+have no equivalent in the MCP tool set or the n8n node, though the API carries them.
+
+<Info>
+One thing is missing: the CLI does not generate video.
+</Info>
 
 Every command and flag: [Command Reference](/cli/command-reference).
 
 ## Pick MCP when
 
-You want to describe the post rather than write the call. "Schedule a post to X for tomorrow at 10am" is the whole interaction, and the client picks the tools on its own: one to find your channels, one to read what X accepts, one to schedule.
+You want to describe the post rather than write the call. "Schedule a post to X for tomorrow at
+10am" is the whole interaction, and the client picks the tools on its own: one to find your
+channels, one to read what X accepts, one to schedule.
 
-Point your client at a single URL and 11 tools arrive with their schemas. Among the four routes, AI image generation appears only here. The gaps are worth knowing before you commit: no tool reads analytics, and none lists or deletes an existing post. When you need those, keep the CLI installed alongside.
+Point your client at a single URL and 11 tools arrive with their schemas. Among the four routes, AI
+image generation appears only here.
+
+<Warning>
+No tool reads analytics, and none lists or deletes an existing post. When you need those, keep the
+CLI installed alongside.
+</Warning>
 
 Copy-paste configuration for your client: [Client Setup](/mcp/setup).
 
 ## Pick the public API when
 
-You are writing the code yourself, or you need something the other three never carry. This is the widest surface of the four, and the layer they all ride on. Several of its 22 key-authenticated operations stop right here and appear in no other route. Connecting a new channel over OAuth, deleting one, finding the next open slot are all in that group. So are notifications and deleting a whole post group at once.
+You are writing the code yourself, or you need something the other three never carry. This is the
+widest surface of the four, and the layer they all ride on. Several of its 22 key-authenticated
+operations stop right here.
 
-Building for other PostQueen users? [OAuth2](/public-api/oauth) gives you tokens that act on their behalf, so nobody hands over an API key. Working in Node? [`@postqueen/node`](/public-api/sdk) is a typed client where every method maps to one endpoint.
+| Only on the public API | Endpoint |
+|---|---|
+| Connect a new channel over OAuth | [Connect Channel (OAuth)](/public-api/integrations/connect) |
+| Delete a channel | [Delete Channel](/public-api/integrations/delete) |
+| Find the next open slot | [Find Available Slot](/public-api/integrations/find-slot) |
+| Read your notifications | [List Notifications](/public-api/notifications/list) |
+| Delete a whole post group at once | [Delete Post by Group](/public-api/posts/delete-by-group) |
+
+<Tip>
+Building for other PostQueen users? [OAuth2](/public-api/oauth) gives you tokens that act on their
+behalf, so nobody hands over an API key. Working in Node? [`@postqueen/node`](/public-api/sdk) is a
+typed client where every method maps to one endpoint.
+</Tip>
 
 ## Pick n8n, Zapier or Make when
 
-The trigger is not yours to build. A row appears in a sheet a client keeps filling in, an article goes live, a Monday timer fires. Your tool already knows about all of that, and the only missing step is the post at the end.
+The trigger is not yours to build: a row in a sheet a client keeps filling in, an article going
+live, a Monday timer. Your tool already knows about all of that, and the only missing step is the
+post at the end.
 
-**n8n** asks the least, because seven operations are waiting on the canvas, from scheduling a post to generating a video with AI. There is no PostQueen trigger node, so the run starts with something of n8n's own. **Zapier** has no native app yet, so **Webhooks by Zapier** and its **Custom Request** action cover the same ground. Check your plan first: Zapier lists that app on Professional, Team and Enterprise, so a Free account cannot reach her that way. **Make** is the same story with the **HTTP** app and its **Make a request** module.
+| Tool | What you build with | Worth knowing first |
+|---|---|---|
+| **[n8n](/automation/n8n)** | Seven operations waiting on the canvas, from scheduling a post to generating a video with AI | There is no PostQueen trigger node, so the run starts with something of n8n's own |
+| **[Zapier](/automation/zapier)** | **Webhooks by Zapier** and its **Custom Request** action, since there is no native app yet | Zapier lists that app on Professional, Team and Enterprise, so a Free account cannot reach her that way |
+| **[Make](/automation/make)** | The **HTTP** app and its **Make a request** module | The same story as Zapier: no native app, so you write the request yourself |
 
-She can also take the first step herself, with no outside tool at all. [RSS AutoPost](/automation/rss-autopost) reads a feed hourly and drafts the newest item, and [webhooks](/automation/webhooks) call your endpoint the moment a post goes live.
+She can also take the first step herself, with no outside tool at all.
 
-## Start here
+<CardGroup cols={2}>
+  <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
+    She reads a feed hourly and drafts the newest item for you.
+  </Card>
+  <Card title="Webhooks" icon="satellite-dish" href="/automation/webhooks">
+    She calls your endpoint the moment a post goes live.
+  </Card>
+</CardGroup>
+
+## Next steps
 
 <CardGroup cols={2}>
   <Card title="CLI" icon="terminal" href="/cli/introduction">

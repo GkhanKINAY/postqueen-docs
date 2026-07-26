@@ -4,19 +4,25 @@ description: 'Running PostQueen behind ngrok or a reverse proxy with WebSocket s
 icon: 'bolt'
 ---
 
+Path routing for split deployments, HTTPS tunnels in development, and why some OAuth redirects
+travel through `redirectmeto`.
+
 ## Production reverse proxy
 
-How you reverse-proxy depends on how you are running PostQueen:
+How you reverse-proxy depends on how you are running PostQueen.
 
-- **Official Docker image** (`ghcr.io/gkhankinay/postqueen-app`): frontend
-  and backend are bundled inside one container and exposed on a single
-  port (`5000` internally; the official compose maps it to host `4007`).
-  Your reverse proxy only needs to forward one upstream. On this image
-  you rarely need anything beyond standard HTTPS termination.
-- **Source / multi-container deployments** (`pnpm dev`, `pnpm start`,
-  or splitting frontend and backend into separate containers): frontend
-  runs on `4200`, backend on `3000`, and you need to route the paths
-  below correctly.
+<Tabs>
+  <Tab title="Official Docker image">
+    On `ghcr.io/gkhankinay/postqueen-app`, frontend and backend are bundled inside one container
+    and exposed on a single port (`5000` internally; the official compose maps it to host
+    `4007`). Your reverse proxy only needs to forward one upstream. On this image you rarely
+    need anything beyond standard HTTPS termination.
+  </Tab>
+  <Tab title="Source or split containers">
+    With `pnpm dev`, `pnpm start`, or frontend and backend in separate containers, the frontend
+    runs on `4200` and the backend on `3000`. Route the paths in the table below correctly.
+  </Tab>
+</Tabs>
 
 For the split setup, forward:
 
@@ -30,64 +36,113 @@ For the split setup, forward:
 | `/.well-known/oauth-protected-resource`, `/.well-known/oauth-authorization-server` | Backend `:3000` | MCP OAuth discovery. Miss these and a client's discovery step 404s before it ever connects. |
 | `/webhooks/*` | Backend `:3000` | Inbound webhook callbacks from providers (Stripe, social platforms). |
 
-<Note>
-The two rows people get wrong are the first two. `/auth` and `/integrations` look like backend concerns and are not: they are directories under `apps/frontend/src/app/(app)/`. Sending them to the backend leaves you with no login page and an OAuth callback that 404s on every channel you try to connect. The browser does reach the backend's own `/auth` and `/integrations` controllers, but it does so through `NEXT_PUBLIC_BACKEND_URL`, which on the bundled image is `<host>/api`.
-</Note>
+<Warning>
+The two rows people get wrong are the first two. `/auth` and `/integrations` look like backend
+concerns and are not: they are directories under `apps/frontend/src/app/(app)/`. Sending them to
+the backend leaves you with no login page and an OAuth callback that 404s on every channel you
+try to connect. The browser does reach the backend's own `/auth` and `/integrations`
+controllers, but it does so through `NEXT_PUBLIC_BACKEND_URL`, which on the bundled image is
+`<host>/api`.
+</Warning>
 
-Worked examples: [Caddy](/reverse-proxies/caddy),
-[Nginx](/reverse-proxies/nginx), and [Traefik](/reverse-proxies/traefik).
+Worked examples:
+
+<CardGroup cols={3}>
+  <Card title="Caddy" icon="shield" href="/reverse-proxies/caddy">
+    Certificates without being asked.
+  </Card>
+  <Card title="Nginx" icon="server" href="/reverse-proxies/nginx">
+    More configuration, full control.
+  </Card>
+  <Card title="Traefik" icon="route" href="/reverse-proxies/traefik">
+    Labels on the container.
+  </Card>
+</CardGroup>
 
 ## Dev behind ngrok / Cloudflared
 
-Running `next dev` behind an HTTPS tunnel needs three things:
+Running `next dev` behind an HTTPS tunnel needs three things.
 
-**1. Bind to all interfaces**
+<Steps>
+  <Step title="Bind to all interfaces">
+    ```bash
+    pnpm dev # binds 0.0.0.0:4200 by default in this repo
+    # or explicitly
+    pnpm --filter postqueen-frontend exec next dev -p 4200 -H 0.0.0.0
+    ```
+  </Step>
 
-```bash
-pnpm dev # binds 0.0.0.0:4200 by default in this repo
-# or explicitly
-pnpm --filter postqueen-frontend exec next dev -p 4200 -H 0.0.0.0
-```
+  <Step title="Allow the tunnel host in next.config">
+    Add your tunnel hostname to the `allowedDevOrigins` field in
+    `apps/frontend/next.config.js` (introduced in Next.js 15.x).
 
-**2. Allow the tunnel host in `next.config`**
+    ```js
+    const nextConfig = {
+      allowedDevOrigins: ['your-subdomain.ngrok-free.app'],
+      // …
+    };
+    ```
 
-Add your tunnel hostname to the `allowedDevOrigins` field in
-`apps/frontend/next.config.js` (introduced in Next.js 15.x). Without
-this, Next.js refuses HMR connections coming through the tunnel.
+    <Info>
+    Without this, Next.js refuses HMR connections coming through the tunnel.
+    </Info>
+  </Step>
 
-```js
-const nextConfig = {
-  allowedDevOrigins: ['your-subdomain.ngrok-free.app'],
-  // …
-};
-```
+  <Step title="Let WebSockets reach the dev server">
+    Most tunnels support WSS out of the box. If you have put your own reverse proxy in front of
+    the tunnel, ensure `Upgrade` and `Connection` headers pass through.
 
-**3. WebSockets must reach the dev server**
+    <Warning>
+    Without them the HMR client disconnects every few seconds.
+    </Warning>
+  </Step>
+</Steps>
 
-Most tunnels support WSS out of the box. If you have put your own
-reverse proxy in front of the tunnel, ensure `Upgrade` and `Connection`
-headers pass through. Without them the HMR client disconnects every
-few seconds.
+<Check>
+Open the tunnel URL, edit a file, and the change appears without a manual refresh. HMR is
+reaching the dev server.
+</Check>
 
 ## `redirectmeto`: why OAuth redirects sometimes go through a third party
 
-When `FRONTEND_URL` is plain HTTP, several social providers
-(Slack, TikTok, Threads, VK, Instagram standalone) refuse to register
-your redirect URI. PostQueen works around this by wrapping the redirect
-through `https://redirectmeto.com/`:
+<Info>
+When `FRONTEND_URL` is plain HTTP, several social providers (Slack, TikTok, Threads, VK,
+Instagram standalone) refuse to register your redirect URI.
+</Info>
+
+PostQueen works around this by wrapping the redirect through `https://redirectmeto.com/`:
 
 ```
 https://redirectmeto.com/http://localhost:4200/integrations/social/slack
 ```
 
-The browser hits `redirectmeto`, which serves an HTTPS page that
-immediately redirects to the HTTP target, satisfying the provider's
-HTTPS-only validation without needing your dev environment to have a
-TLS cert.
+The browser hits `redirectmeto`, which serves an HTTPS page that immediately redirects to the
+HTTP target, satisfying the provider's HTTPS-only validation without needing your dev
+environment to have a TLS cert.
 
-**You only see this in dev.** Once `FRONTEND_URL` is HTTPS, PostQueen
-skips `redirectmeto` entirely and uses your URL directly.
+<Note>
+**You only see this in dev.** Once `FRONTEND_URL` is HTTPS, PostQueen skips `redirectmeto`
+entirely and uses your URL directly.
+</Note>
 
-If you do not want `redirectmeto` in the middle even in dev, terminate
-TLS at your tunnel (ngrok and Cloudflared both do this by default) and
-set `FRONTEND_URL` to the `https://` tunnel URL.
+<Tip>
+To keep `redirectmeto` out of the middle even in dev, terminate TLS at your tunnel (ngrok and
+Cloudflared both do this by default) and set `FRONTEND_URL` to the `https://` tunnel URL.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Domain and HTTPS" icon="lock" href="/installation/domain-and-https">
+    What a reverse proxy is, and which one to choose.
+  </Card>
+  <Card title="Development environment" icon="code" href="/installation/development">
+    Run her from source with hot reload.
+  </Card>
+  <Card title="Channel connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, `invalid_grant`, and fetch failures.
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every environment variable, including the URL trio.
+  </Card>
+</CardGroup>

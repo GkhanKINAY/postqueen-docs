@@ -4,26 +4,30 @@ description: 'How to get started developing with PostQueen'
 icon: 'code-branch'
 ---
 
-Want to work on her internals? Start here: how the codebase is organized, and the commands that run it on your machine.
+Where her code lives, how the monorepo is organised, and the commands that run it on your machine.
 
-## Set up your development environment
+<Info>
+**Toolchain.** Node.js 22.x (`>=22.12.0 <23.0.0`) and pnpm 10.6.1, both declared in the repository root `package.json`. The pnpm version comes from the `packageManager` field.
+</Info>
 
-Follow [How to set up your development environment](/installation/development) to install prerequisites and get the stack running locally.
-
-Requirements from the repository root `package.json`:
-
-* Node.js 22.x (`>=22.12.0 <23.0.0`)
-* pnpm 10.6.1 (declared via the `packageManager` field)
-
-## Architecture overview
-
-Before writing code, read the [architecture overview](/howitworks). It explains how the services fit together and how a post travels from the editor to a connected network.
+<CardGroup cols={2}>
+  <Card title="Set up your machine" icon="code" href="/installation/development">
+    Install the prerequisites and get the stack running locally.
+  </Card>
+  <Card title="Architecture overview" icon="diagram-project" href="/howitworks">
+    Read this before writing code: how the services fit together, and how a post travels from the editor to a connected network.
+  </Card>
+</CardGroup>
 
 ## Repository overview
 
 PostQueen is open source. The application source code lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app).
 
-The repository is a monorepo built on [pnpm workspaces](https://pnpm.io/workspaces). The workspace globs in `pnpm-workspace.yaml` are `apps/*` and `libraries/*`. A single `.env` file at the repository root is shared by all apps, which keeps local development and deployment configuration in one place. Copy `.env.example` to `.env` to start.
+It is a monorepo built on [pnpm workspaces](https://pnpm.io/workspaces). The workspace globs in `pnpm-workspace.yaml` are `apps/*` and `libraries/*`.
+
+<Note>
+A single `.env` file at the repository root is shared by all apps, which keeps local development and deployment configuration in one place. Copy `.env.example` to `.env` to start.
+</Note>
 
 ### Apps
 
@@ -36,31 +40,66 @@ The repository is a monorepo built on [pnpm workspaces](https://pnpm.io/workspac
 | `apps/extension` | Chrome extension |
 | `apps/sdk` | Source of the [`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) SDK |
 
-Shared code lives under `libraries/`, including the NestJS libraries used by the backend and orchestrator and the shared React components used by the frontend.
+Shared code lives under `libraries/`: the NestJS libraries used by the backend and orchestrator, and the shared React components used by the frontend.
 
 ### Database
 
-The backend uses [Prisma](https://www.prisma.io/) as the ORM with [PostgreSQL](https://www.postgresql.org/) as the database. The schema lives at `libraries/nestjs-libraries/src/database/prisma/schema.prisma`.
+The backend uses [Prisma](https://www.prisma.io/) as the ORM with [PostgreSQL](https://www.postgresql.org/) as the database. The schema lives here:
+
+```
+libraries/nestjs-libraries/src/database/prisma/schema.prisma
+```
 
 ### Scheduling and background work
 
-She keeps the schedule in Temporal. When Thursday at 9 AM arrives, the workflow the orchestrator app registered wakes and she posts. Redis caches and queues; it never holds a schedule.
+She keeps the schedule in Temporal. When Thursday at 9 AM arrives, the workflow the orchestrator app registered wakes and she posts.
+
+<Note>
+Redis caches and queues. It never holds a schedule.
+</Note>
 
 ## Common commands
 
-All commands run from the repository root with pnpm. The main scripts in `package.json` are:
+All commands run from the repository root with pnpm. The main scripts in `package.json`:
 
-* `pnpm run dev` - starts the frontend, backend and orchestrator in parallel, together with the extension
-* `pnpm run prisma-generate` - generates the Prisma client (also runs automatically after `pnpm install`)
-* `pnpm run prisma-db-push` - pushes the Prisma schema to the database
-* `pnpm run build` - builds the frontend, backend, and orchestrator
+| Command | What it does |
+| --- | --- |
+| `pnpm run dev` | Starts the frontend, backend and orchestrator in parallel, together with the extension |
+| `pnpm run prisma-generate` | Generates the Prisma client. It also runs automatically after `pnpm install` |
+| `pnpm run prisma-db-push` | Pushes the Prisma schema to the database |
+| `pnpm run build` | Builds the frontend, backend, and orchestrator |
 
 Useful narrower scripts:
 
-* `pnpm run dev:frontend`, `pnpm run dev:backend`, `pnpm run dev:orchestrator` - run a single app in dev mode
-* `pnpm run dev:docker` - starts local infrastructure from `docker-compose.dev.yaml`
-* `pnpm run test` - runs the Jest test suite
+| Command | What it does |
+| --- | --- |
+| `pnpm run dev:frontend` | Runs the frontend on its own in dev mode |
+| `pnpm run dev:backend` | Runs the backend on its own in dev mode |
+| `pnpm run dev:orchestrator` | Runs the orchestrator on its own in dev mode |
+| `pnpm run dev:docker` | Starts local infrastructure from `docker-compose.dev.yaml` |
+| `pnpm run test` | Runs the Jest test suite |
 
-## Contributors guide
+<Check>
+With `pnpm run dev` running and no errors in the output, the frontend, backend and orchestrator are all up together. You are ready to change her.
+</Check>
+
+## Contributing
 
 The [contributors guide](https://github.com/GkhanKINAY/postqueen-app/blob/main/CONTRIBUTING.md) lives in the main repository. It covers how to contribute, including the expected format for pull requests.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Add a provider" icon="plug" href="/configuration/create-provider">
+    What a new network needs on the backend and on the frontend.
+  </Card>
+  <Card title="Configuration reference" icon="sliders" href="/configuration/reference">
+    Every environment variable she reads, and what it changes.
+  </Card>
+  <Card title="Dev Container" icon="box" href="/installation/devcontainer">
+    The same environment inside a container, with Node, pnpm and the databases already in place.
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    The REST surface your code and her agents both call.
+  </Card>
+</CardGroup>

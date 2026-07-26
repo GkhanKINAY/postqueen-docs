@@ -4,11 +4,15 @@ description: 'Your whole week on one screen, in four views, with every post one 
 icon: 'calendar'
 ---
 
-Coffee, laptop, and the week is already laid out. Tuesday at nine on LinkedIn. Wednesday at noon on Instagram. A draft parked on Friday, saved and never scheduled, sitting there until you publish it.
+Everything already scheduled goes out at the minute it says, with nothing on this screen waiting on you. The calendar is where you come to change your mind: move a post to a better time, start one in an empty slot, or check what is actually coming up.
 
-Nothing on this screen is waiting on you. Whatever is scheduled goes out at the minute it says. The calendar is simply where you come when you want to change your mind.
+<Info>
+Every time you see here is drawn in your timezone, taken from your saved setting or guessed from your browser.
+</Info>
 
-Every time you see here is drawn in your timezone, taken from your saved setting or guessed from your browser. Twelve hour or twenty-four comes from a saved preference and, when there is none, from whether your browser language is `en-US`. Day view labels its rows through your interface language instead, so those can read twelve hour even when the rest of the grid does not.
+<Accordion title="Twelve hour or twenty-four" icon="clock">
+  The format comes from a saved preference and, when there is none, from whether your browser language is `en-US`. Day view labels its rows through your interface language instead, so those rows can read twelve hour even when the rest of the grid does not.
+</Accordion>
 
 ## Four ways to look at it
 
@@ -23,42 +27,49 @@ Two small button groups sit in the toolbar above the grid. One switches between 
 
 In Day, Week and Month the **Today** button snaps the range back to now without changing the view. In List that same corner of the toolbar turns into **Page 1 of 4** with arrows either side, because the list is not bound to a date range at all.
 
-A calendar cell shows three posts and then stops. When there are more, a **+ Show more (4)** line appears at the bottom of the cell, and **- Show less** folds it back. Hours that have already passed carry a diagonal stripe and the cards inside them turn gray: no new post starts there, and nothing can be dropped there either.
+A calendar cell shows three posts and then stops. When there are more, a **+ Show more (4)** line appears at the bottom of the cell, and **- Show less** folds it back.
 
-### Day
+<Warning>
+Hours that have already passed carry a diagonal stripe and the cards inside them turn grey. No new post starts there, and nothing can be dropped there either.
+</Warning>
 
-Day view does not draw an empty twenty-four hour column. It draws only the times that mean something to you: every time you already have a post that day, and every posting time set on your channels. Each of those gets a labeled row.
+<AccordionGroup>
+  <Accordion title="Day" icon="calendar-day">
+    Day view does not draw an empty twenty-four hour column. It draws only the times that mean something to you: every time you already have a post that day, and every posting time set on your channels. Each of those gets a labelled row.
 
-Hover an empty row and the avatars of the channels for that slot light up. Click, and the editor opens on that time.
+    Hover an empty row and the avatars of the channels for that slot light up. Click, and the editor opens on that time.
+  </Accordion>
+  <Accordion title="Week" icon="calendar-week">
+    Monday to Sunday across the top, twenty-four hourly rows down the side. Today's column carries a small dot next to its date so your eye finds it without reading.
+  </Accordion>
+  <Accordion title="Month" icon="calendar">
+    Six full weeks of squares, always starting on a Monday, with the day number in the corner of each one. Six weeks means the edges of the grid carry a few days from the month before and the month after.
+  </Accordion>
+  <Accordion title="List" icon="list">
+    No grid, no date range, just posts in order under a date heading, each row showing its time on the right. This is the view for the question "what is actually coming up", and it is the only view with a state filter.
 
-### Week
-
-Monday to Sunday across the top, twenty-four hourly rows down the side. Today's column carries a small dot next to its date so your eye finds it without reading.
-
-### Month
-
-Six full weeks of squares, always starting on a Monday, with the day number in the corner of each one. Six weeks means the edges of the grid carry a few days from the month before and the month after.
-
-### List
-
-No grid, no date range, just posts in order under a date heading, each row showing its time on the right. This is the view for the question "what is actually coming up", and it is the only view with a state filter.
-
-The Day, Week and Month group leaves the toolbar while you are in here, since none of the three means anything to a list. The calendar icon on the other group is how you come back.
+    The Day, Week and Month group leaves the toolbar while you are in here, since none of the three means anything to a list. The calendar icon on the other group is how you come back.
+  </Accordion>
+</AccordionGroup>
 
 ## Moving a post to a new time
 
-Tuesday at nine turned out to be a bad idea. Pick the card up, drop it on Thursday at eleven, done.
-
 Every post card is draggable and every calendar cell is a drop target, as long as that cell is not in the past. The drop sends `PUT /posts/:id/date` with the new time and one of two actions.
 
-Most of the time she just moves it. But if the post already went out, or it was queued for a time that has since passed, she stops and asks: **What do you want to do?**
+<Check>
+Most of the time she just moves it. The card lands on its new date and there is nothing else to press.
+</Check>
+
+If the post already went out, or it was queued for a time that has since passed, she stops and asks: **What do you want to do?**
 
 | Button | What she does |
 | --- | --- |
 | Reschedule the post | Moves the date and puts the post back in the queue. A draft stays a draft. The stored release link is cleared and the publishing workflow starts again for the new time. |
 | Just update the post details | Moves the date and nothing else. The state stays exactly as it is, and nothing is queued. |
 
-Closing that dialog cancels the move and the card stays where it was.
+<Warning>
+Closing that dialog cancels the move. The card stays where it was.
+</Warning>
 
 <Note>
 Set a post to repeat and it appears on every recurrence inside the range you are looking at. Drag any one of them and the whole series moves, because each occurrence is drawn forward from the post's own date.
@@ -68,7 +79,7 @@ Set a post to repeat and it appears on every recurrence inside the range you are
 
 ### Customers
 
-Running an agency? Group your channels under a customer and a small person icon joins the toolbar. It shows up only when your channels span more than one customer, so a single-brand account never sees it.
+Group your channels under a [customer](/using/customers) and a small person icon joins the toolbar. It shows up only when your channels span more than one customer, so a single-brand account never sees it.
 
 Open it and you get a **Customers** list. Pick one and both the calendar and the list narrow to that customer's channels, with a *Customer socials selected* toast to confirm it. The choice rides along in the URL as `customer=`.
 
@@ -85,13 +96,17 @@ The four tabs next to the page arrows decide which posts the list is willing to 
 
 Everything except **Published** is filtered to now and later, so the list is a forward-looking screen by default. **Published** drops that limit and reaches back, which makes it the tab you open to review what shipped.
 
+<Note>
 Nothing matching? She says so in plain words rather than showing an empty page: *No upcoming posts scheduled*, *No draft posts*, *No published posts*.
+</Note>
 
+<Warning>
 Repeating posts and the follow-up parts of a thread are left out of the list on purpose. Those live on the calendar, under the post they belong to.
+</Warning>
 
 ## The strip on a post card
 
-Every card is two pieces. A thin colored strip on top, and the post underneath it: the channel avatar with its platform badge in the corner, a `Draft:` prefix when the post is a draft, and one line of the content.
+Every card is two pieces. A thin coloured strip on top, and the post underneath it: the channel avatar with its platform badge in the corner, a `Draft:` prefix when the post is a draft, and one line of the content.
 
 Click the body of the card and the editor opens on that post. Hover the strip and the tag names give way to a row of icons.
 
@@ -102,17 +117,27 @@ Click the body of the card and the editor opens on that post. Hover the strip an
 | Post Statistics | Opens the numbers for that one post: analytics over 7, 30 or 90 days, plus a short-link table with the clicks each link earned. |
 | Delete Post | Asks *Are you sure you want to delete post?* first, then removes that post and every part of its thread. |
 
+<Note>
 The chart icon is only there when there is something to chart. A post that has not gone out yet does not show it, and on X it is hidden as well when the install has X analytics turned off. When she has the post but not the link back to the published version, the same icon opens **Connect Post** instead, where you pick the matching post from the platform, and she goes straight to the statistics once you save.
+</Note>
 
-A failed post is hard to miss: the whole card gets a red outline and a red `!` badge in the corner, and hovering that badge shows the error the platform sent back.
+<Warning>
+A failed post is hard to miss: the whole card gets a red outline and a red `!` badge in the corner. Hover that badge to read the error the platform sent back.
+</Warning>
 
+<Note>
 Super admins get one extra icon on the strip, which opens a small dialog with two buttons: **Copy post id** and **Copy Debug JSON**.
+</Note>
 
 ## Tags
 
-Tags are color, not filing. Give one a name and a color when you create it, attach it to a post from the tag picker at the bottom of the editor, and the strip across the top of that card takes the color of its first tag. Every tag name on the post is written across that strip, so a glance at the week tells you which campaign is which.
+Tags are colour, not filing. Give one a name and a colour when you create it, attach it to a post from the tag picker at the bottom of the editor, and the strip across the top of that card takes the colour of its first tag. Every tag name on the post is written across that strip, so a glance at the week tells you which campaign is which.
 
-The picker lists every tag in your workspace, each with a checkbox. **Add New Tag** at the bottom opens a Name field and a color picker. The small red cross next to an unselected tag deletes it for the whole workspace, and she confirms by name before she does.
+The picker lists every tag in your workspace, each with a checkbox. **Add New Tag** at the bottom opens a Name field and a colour picker.
+
+<Warning>
+The small red cross next to an unselected tag deletes it for the whole workspace, not only for this post. She confirms by name before she does.
+</Warning>
 
 <Note>
 Tags paint the calendar. They do not change what it shows: the calendar filters on dates and customers, and the list adds state on top of that.
@@ -122,18 +147,26 @@ Tags paint the calendar. They do not change what it shows: the calendar filters 
 
 Click any empty space in a cell that is not in the past and the editor opens on that time. In Week and Month a `+` appears under your cursor first. In Day the channel avatars appear instead.
 
-A few things happen around that click:
+A few things happen around that click.
 
-- Click the current hour and the editor opens at ten minutes from now, not on the hour that is already half spent.
-- A day in Month view carries no hour of its own, so she picks one and puts it in the date field for you to change.
-- If you keep sets, she asks **Select a Set** first, and **Continue without set** is always one of the answers.
-- If you have a default signature and did not pick a set, the editor opens with the signature already in the body.
+| Where you clicked | What she does about it |
+| --- | --- |
+| The current hour | Opens the editor at ten minutes from now, not on the hour that is already half spent |
+| A day in Month view | A day carries no hour of its own, so she picks one and puts it in the date field for you to change |
+| Anywhere, if you keep [sets](/using/reusable-content) | Asks **Select a Set** first, and **Continue without set** is always one of the answers |
+| Anywhere, with a default signature and no set picked | Opens the editor with the signature already in the body |
 
+<Info>
 No channels connected yet? That same click sends you to the connect flow instead, which is the only thing worth doing on an empty calendar.
+</Info>
 
 ## Where you left off
 
-The view you last chose is remembered, so the calendar opens the way you left it. The range you are looking at lives in the URL as `startDate`, `endDate` and `display`, with `customer` on the end when one is selected. Bookmark a week and it comes back as that week.
+The view you last chose is remembered, so the calendar opens the way you left it. The range you are looking at lives in the URL as `startDate`, `endDate` and `display`, with `customer` on the end when one is selected.
+
+<Tip>
+Bookmark a week and it comes back as that week.
+</Tip>
 
 ## Keep going
 
@@ -146,5 +179,22 @@ The view you last chose is remembered, so the calendar opens the way you left it
   </Card>
   <Card title="Public API" icon="code" href="/public-api/introduction">
     Read and write the calendar from your own scripts
+  </Card>
+</CardGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Writing a post" icon="pen-to-square" href="/using/writing-a-post">
+    The composer, per-channel versions and the three ways a post leaves it
+  </Card>
+  <Card title="Posting times" icon="clock" href="/using/posting-times">
+    Set the slots once and she takes the next one still empty
+  </Card>
+  <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
+    The red badge, the four states, and how to get it out
+  </Card>
+  <Card title="Tags and saved sets" icon="rotate" href="/using/reusable-content">
+    Colour a month of posts so it reads at a glance
   </Card>
 </CardGroup>

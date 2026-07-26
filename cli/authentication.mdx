@@ -4,38 +4,51 @@ description: 'Authenticate the PostQueen CLI with an API key, or self-host the o
 icon: 'key'
 ---
 
-## API Key (Recommended)
-
 One key and the CLI is talking to your account. Every command works with it, and it is the route to take on the hosted service.
 
-Get your key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings**, go to **Developers > Public API**, and click **Reveal**. Then export it:
+## API Key (Recommended)
 
-```bash
-export POSTQUEEN_API_KEY=your_api_key_here
-```
+<Steps>
+  <Step title="Copy your key" icon="key">
+    Open [app.postqueen.ai](https://app.postqueen.ai), go to **Settings > Developers > Public API**, and click **Reveal**.
+  </Step>
+  <Step title="Export it" icon="terminal">
+    ```bash
+    export POSTQUEEN_API_KEY=your_api_key_here
+    ```
+  </Step>
+  <Step title="Point at your own backend, if you self-host" icon="server">
+    Use the same value as `NEXT_PUBLIC_BACKEND_URL`. The CLI appends `/public/v1/...` to whatever you set, and most single-domain setups serve the backend under `/api`:
 
-If you run a self-hosted PostQueen instance, also point the CLI at your own backend, the same
-value as `NEXT_PUBLIC_BACKEND_URL`. The CLI appends `/public/v1/...` to whatever you set, and
-most single-domain setups serve the backend under `/api`:
+    ```bash
+    export POSTQUEEN_API_URL=https://postqueen.example.com/api
+    ```
 
-```bash
-export POSTQUEEN_API_URL=https://postqueen.example.com/api
-```
+    <Warning>
+    Leave the `/api` off and every command comes back `404`, because the request lands on the web
+    interface instead of the backend. If you are unsure which shape your install has, check
+    `NEXT_PUBLIC_BACKEND_URL` in your `docker-compose.yaml` and use exactly that.
+    </Warning>
+  </Step>
+  <Step title="Prove it works" icon="circle-check">
+    This is the first command that actually reaches the API:
+
+    ```bash
+    postqueen integrations:list
+    ```
+
+    <Check>
+    Your connected channels come back as JSON. The key works, the URL is right, and every other
+    command will reach her.
+    </Check>
+  </Step>
+</Steps>
 
 <Warning>
-Leave the `/api` off and every command comes back `404`, because the request lands on the web
-interface instead of the backend. If you are unsure which shape your install has, check
-`NEXT_PUBLIC_BACKEND_URL` in your `docker-compose.yaml` and use exactly that.
+Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same Settings screen.
 </Warning>
 
-Verify that the key works:
-
-```bash
-postqueen integrations:list
-```
-
-Your channels come back as JSON. That is the check that matters, because it is the first command
-that actually reaches the API.
+### What `auth:status` Tells You
 
 ```bash
 postqueen auth:status
@@ -44,21 +57,9 @@ postqueen auth:status
 <Note>
 `auth:status` reports which credentials the CLI found and which API URL it will use. It does not
 contact the server, so it will happily report a key that has been revoked. Treat it as "what am I
-configured with", not "does this still work".
+configured with", not "does this still work". The only real proof is a command that reaches the
+API, such as `integrations:list`.
 </Note>
-
-Because `auth:status` never contacts the server, the only real proof is a command that does:
-
-```bash
-postqueen integrations:list
-```
-
-<Check>
-Your connected channels come back as JSON. The key works, the URL is right, and every other
-command will reach her.
-</Check>
-
-Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same Settings screen.
 
 ## Environment Variables
 
@@ -82,9 +83,13 @@ The CLI also ships an OAuth2 device flow:
 postqueen auth:login
 ```
 
-`auth:login` requires an auth server to mediate the flow, and PostQueen does not currently host one. The default `cli-auth.postqueen.ai` endpoint is not available, so running the command without your own auth server will fail. Use an API key instead; every command behaves the same either way.
+<Warning>
+`auth:login` requires an auth server to mediate the flow, and PostQueen does not currently host
+one. The default `cli-auth.postqueen.ai` endpoint is not available, so running the command without
+your own auth server will fail. Use an API key instead; every command behaves the same either way.
+</Warning>
 
-If you want the device flow anyway, for example to hand out short-lived CLI access without sharing API keys, you can self-host the auth server, and the setup is written out in full from here on.
+Self-host the auth server if you want the device flow anyway, for example to hand out short-lived CLI access without sharing API keys.
 
 When a reachable auth server is configured, `auth:login`:
 
@@ -100,16 +105,15 @@ postqueen auth:status
 postqueen auth:logout
 ```
 
-### Self-Hosting the Auth Server
+## Self-Hosting the Auth Server
 
 The auth server holds the OAuth app secret and mediates the device flow, so you can authenticate without client credentials of your own.
 
-#### Prerequisites
+<Info>
+Prerequisites: Node.js >= 18 and PostgreSQL.
+</Info>
 
-- Node.js >= 18
-- PostgreSQL
-
-#### How It Works
+<Accordion title="How the device flow works, end to end" icon="diagram-project">
 
 ```
 CLI                        Auth Server                    PostQueen
@@ -129,69 +133,73 @@ CLI                        Auth Server                    PostQueen
  |<-- access_token ------------|                           |
 ```
 
-#### 1. Clone the Repository
+</Accordion>
 
-The auth server lives in the [postqueen-agent](https://github.com/GkhanKINAY/postqueen-agent) repository:
+<Steps>
+  <Step title="Clone the repository" icon="github">
+    The auth server lives in the [postqueen-agent](https://github.com/GkhanKINAY/postqueen-agent) repository:
 
-```bash
-git clone https://github.com/GkhanKINAY/postqueen-agent.git
-cd postqueen-agent/server
-```
+    ```bash
+    git clone https://github.com/GkhanKINAY/postqueen-agent.git
+    cd postqueen-agent/server
+    ```
+  </Step>
+  <Step title="Create an OAuth app in PostQueen" icon="lock">
+    Go to **PostQueen Settings > Developer > OAuth Apps** and create a new app. Set the callback URL to:
 
-#### 2. Create an OAuth App in PostQueen
+    ```
+    https://auth.postqueen.example.com/device/callback
+    ```
+  </Step>
+  <Step title="Set up Postgres" icon="database">
+    Create a database. The server auto-creates the `device_requests` table on startup. Rows are deleted after the CLI retrieves the token, or on next access once expired (15 minutes).
+  </Step>
+  <Step title="Configure environment" icon="sliders">
+    ```bash
+    export DATABASE_URL="postgresql://user:password@localhost:5432/postqueen_auth"
+    export POSTQUEEN_OAUTH_CLIENT_ID="pca_xxx"
+    export POSTQUEEN_OAUTH_CLIENT_SECRET="pcs_xxx"
+    export SERVER_URL="https://auth.postqueen.example.com"
+    ```
 
-Go to **PostQueen Settings > Developer > OAuth Apps** and create a new app. Set the callback URL to:
+    | Variable | Required | Default | Description |
+    |----------|----------|---------|-------------|
+    | `DATABASE_URL` | Yes | - | Postgres connection string |
+    | `POSTQUEEN_OAUTH_CLIENT_ID` | Yes | - | OAuth app client ID from PostQueen |
+    | `POSTQUEEN_OAUTH_CLIENT_SECRET` | Yes | - | OAuth app client secret from PostQueen |
+    | `PORT` | No | `3111` | Server port |
+    | `SERVER_URL` | No | `http://localhost:{PORT}` | Public URL of this server |
+    | `POSTQUEEN_FRONTEND_URL` | No | `https://app.postqueen.ai` | PostQueen frontend URL for OAuth redirects |
+    | `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | PostQueen API URL for token exchange |
+  </Step>
+  <Step title="Run the server" icon="play">
+    ```bash
+    pnpm install
 
-```
-https://auth.postqueen.example.com/device/callback
-```
+    # Development
+    pnpm dev
 
-#### 3. Set Up Postgres
+    # Production
+    pnpm build
+    pnpm start:prod
+    ```
+  </Step>
+  <Step title="Point the CLI at your server" icon="terminal">
+    ```bash
+    export POSTQUEEN_AUTH_SERVER="https://auth.postqueen.example.com"
+    postqueen auth:login
+    ```
 
-Create a database. The server auto-creates the `device_requests` table on startup. Rows are deleted after the CLI retrieves the token, or on next access once expired (15 minutes).
+    You can also pass the URL per invocation with the `--auth-server` flag on `auth:login`.
 
-#### 4. Configure Environment
+    <Check>
+    A one-time code appears in your terminal and your browser opens to authorize. Credentials land
+    in `~/.postqueen/credentials.json`.
+    </Check>
+  </Step>
+</Steps>
 
-```bash
-export DATABASE_URL="postgresql://user:password@localhost:5432/postqueen_auth"
-export POSTQUEEN_OAUTH_CLIENT_ID="pca_xxx"
-export POSTQUEEN_OAUTH_CLIENT_SECRET="pcs_xxx"
-export SERVER_URL="https://auth.postqueen.example.com"
-```
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DATABASE_URL` | Yes | - | Postgres connection string |
-| `POSTQUEEN_OAUTH_CLIENT_ID` | Yes | - | OAuth app client ID from PostQueen |
-| `POSTQUEEN_OAUTH_CLIENT_SECRET` | Yes | - | OAuth app client secret from PostQueen |
-| `PORT` | No | `3111` | Server port |
-| `SERVER_URL` | No | `http://localhost:{PORT}` | Public URL of this server |
-| `POSTQUEEN_FRONTEND_URL` | No | `https://app.postqueen.ai` | PostQueen frontend URL for OAuth redirects |
-| `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | PostQueen API URL for token exchange |
-
-#### 5. Run the Server
-
-```bash
-pnpm install
-
-# Development
-pnpm dev
-
-# Production
-pnpm build
-pnpm start:prod
-```
-
-#### 6. Point the CLI to Your Server
-
-```bash
-export POSTQUEEN_AUTH_SERVER="https://auth.postqueen.example.com"
-postqueen auth:login
-```
-
-You can also pass the URL per invocation with the `--auth-server` flag on `auth:login`.
-
-#### Server Endpoints
+### Server Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -202,8 +210,27 @@ You can also pass the URL per invocation with the `--auth-server` flag on `auth:
 | `POST` | `/device/token` | CLI polls this with `{"device_code": "..."}`. Returns `authorization_pending` until the user completes auth, then returns the token. |
 | `GET` | `/health` | Health check. Returns `{"status": "ok"}`. |
 
-#### Deployment
+### Deployment
 
 Any platform that runs Node.js and can connect to Postgres works, such as Railway, Fly.io, or a plain VPS.
 
+<Tip>
 The server is stateless beyond Postgres, so it scales horizontally. Run multiple instances behind a load balancer if needed.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Schedule your first post" icon="paper-plane" href="/cli/managing-posts">
+    Channels, threads and drafts, in one command.
+  </Card>
+  <Card title="Find your channel IDs" icon="plug" href="/cli/integrations">
+    What is connected, what each network accepts, and the tools it offers.
+  </Card>
+  <Card title="Every flag" icon="terminal" href="/cli/command-reference">
+    The full reference, including which commands print plain text.
+  </Card>
+  <Card title="OAuth2 for your own app" icon="lock" href="/public-api/oauth">
+    The authorization code flow, for apps acting on behalf of other users.
+  </Card>
+</CardGroup>

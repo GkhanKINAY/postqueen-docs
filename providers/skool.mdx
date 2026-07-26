@@ -11,12 +11,15 @@ icon: /images/channels/skool.svg
 Skool is a **cookie-based** integration that uses the PostQueen browser extension to connect. Unlike OAuth-based providers, Skool authentication works by extracting session cookies from your browser.
 
 <Warning>
-**Two things have to be true before you can connect Skool at all**, and neither is optional:
+**Three things have to be true before you can connect Skool at all**, and none is optional:
 
 - **Chrome or a Chromium browser.** The connect flow reaches the extension through Chrome's own
   messaging API, which does not exist in Firefox or Safari. There is no fallback.
-- **The extension installed, and `EXTENSION_ID` set** on your instance. Without the variable the
-  connect stops with *Extension Not Found* before anything reaches Skool.
+- **The PostQueen extension installed.** It is not on the Chrome Web Store yet, so you build it from
+  source and load it unpacked.
+- **`EXTENSION_ID` set on the instance to that build's ID.** It is a server variable, and each
+  unpacked build has its own ID, so this needs an instance you administer. Without a match the
+  connect stops at *Extension Not Found* before anything reaches Skool.
 
 Setting the extension up: [Chrome Extension](/configuration/chrome-extension).
 </Warning>
@@ -109,3 +112,5 @@ The channel is in the left sidebar with its avatar and name. That is the whole c
 - **"You can't post to this channel"**: You must be an admin or have sufficient permissions in the Skool group.
 - **"Cannot post to this label"**: The selected label may have restrictions. Try a different label or the default.
 - **Session expires**: If your session expires, reconnect the integration. The extension will attempt to refresh cookies automatically every 24 hours.
+
+<Snippet file="next-steps-provider.mdx" />

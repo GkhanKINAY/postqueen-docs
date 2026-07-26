@@ -1,0 +1,84 @@
+---
+title: 'Tumblr setup'
+description: 'Register the Tumblr application and give PostQueen its keys'
+icon: /images/channels/tumblr.png
+---
+
+Register the application on Tumblr, check the two scopes it asks for, and put the consumer key and secret in your environment.
+
+## Set up Tumblr
+
+<Steps>
+  <Step title="Register an application">
+    Go to [Tumblr's application registry](https://www.tumblr.com/oauth/apps) and click
+    **Register application**. Fill in the name, description and the two URL fields Tumblr asks
+    for; only the callback below has to be exact.
+  </Step>
+
+  <Step title="Set the callback URL">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Tumblr OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/tumblr`
+    - Local development: `http://localhost:4200/integrations/social/tumblr`
+    - Docker: `http://localhost:4007/integrations/social/tumblr`
+  </Step>
+
+  <Step title="Check the permissions">
+    PostQueen asks for two scopes, and the connect is refused if either is missing:
+
+    ```
+    write
+    offline_access
+    ```
+
+    `offline_access` is the one worth checking. Without it Tumblr issues a token that cannot be
+    refreshed, so the channel connects and then goes quiet when that token expires.
+  </Step>
+
+  <Step title="Set environment variables">
+    Copy the OAuth consumer key and secret from your application page.
+
+```env
+TUMBLR_CLIENT_ID=""
+TUMBLR_CLIENT_SECRET=""
+```
+  </Step>
+
+  <Step title="Restart and add the Tumblr channel">
+    <Snippet file="restart-and-add-channel.mdx" />
+
+    <Note>
+    Tumblr adds a second screen after you authorize: a list of the blogs on your account, with
+    the primary one marked. Pick the blog this channel should post to. One PostQueen channel is
+    one blog, so connect again to add another.
+    </Note>
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="The channel connects and then stops working after a while">
+    Almost certainly a missing `offline_access` scope on the application. Without it there is no
+    refresh token, so posting works until the first token expires and then fails. Add the scope
+    and reconnect the channel.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Tumblr" icon="/images/channels/tumblr.png" href="/providers/tumblr">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

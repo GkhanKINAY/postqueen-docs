@@ -35,56 +35,12 @@ Everything lands on your personal wall. There is no group target and no communit
 | **Connect flow** | One step with PKCE. VK returns a device id alongside the code, and she keeps it next to the refresh token so the channel can renew itself later |
 | **Automations** | None. Comments post as comments on the same wall post |
 
-<Steps>
-  <Step title="Create an app in the VK developer portal">
-    Sign in to VK and create an application in the developer portal. She uses the VK ID authorization flow, which runs against `id.vk.com`, and she asks for these scopes:
+## Self-hosting
 
-```
-vkid.personal_info
-email
-wall
-status
-docs
-photos
-video
-```
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up VK on your own instance](/installation/providers/vk).
+</Info>
 
-    `wall` is the one that lets her post, and `photos` and `video` are what the uploads need.
-  </Step>
-
-  <Step title="Configure the OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your VK OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/vk`
-    - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/vk`
-    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/vk`
-
-    <Warning>
-    VK will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to VK, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on VK with a redirect mismatch.
-    </Warning>
-  </Step>
-
-  <Step title="Set the environment variable">
-    VK issues no client secret for this flow, so there is exactly one value to set.
-
-```env
-VK_ID=""
-```
-
-    That is the application id from your VK app. She sends it on the authorization request, on the token exchange and on every wall call, so it stays in use for the life of the channel.
-  </Step>
-
-  <Step title="Add the VK channel">
-    Restart PostQueen so the new variable is read. With Docker Compose, run `docker compose down` and then `docker compose up`.
-
-    In the web interface click **Add Channel** and pick **VK**, then accept the request on the VK side.
-
-    Add Channel does not check whether `VK_ID` is set, so a missing value shows up as a broken authorization page on the VK side rather than a helpful message in PostQueen.
-  </Step>
-</Steps>
-
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
-
+<Snippet file="next-steps-provider.mdx" />

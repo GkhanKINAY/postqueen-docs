@@ -41,81 +41,12 @@ Files are sorted by what they are, not by what you meant. Images go out as photo
 Attach more than ten files and she sends them as several media groups back to back. Only the first group carries your text.
 </Warning>
 
-<Warning>
-PostQueen talks to Telegram using long-polling (`getUpdates`). Telegram allows only **one** connected process per bot token at a time. If you run PostQueen against the same `TELEGRAM_TOKEN` from two places (e.g. self-hosted plus cloud, or two self-hosted instances), each instance will continuously kick the other off and you will see `409 Conflict: terminated by other getUpdates` errors in the logs.
+## Self-hosting
 
-Use one bot token per PostQueen deployment. If you need Telegram on multiple environments, create a separate bot for each.
-</Warning>
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up Telegram on your own instance](/installation/providers/telegram).
+</Info>
 
-<Steps>
-  <Step title="Create a Telegram Bot">
-    1. Open Telegram and message [@BotFather](https://t.me/botfather).
-    2. Click Start
-    3. Click Menu
-       - Click "Create a new bot"
-       - Enter a name for your bot (e.g., `MyPostQueenBot`).
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-name-bot.png" alt="Name Bot" />
-    </Frame>
-       
-       - Choose a unique username ending with "bot" (e.g., `MyPostQueenBot_bot`).
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-unique-username.png" alt="Unique Bot Name" />
-    </Frame>
-
-    Once your bot is created, **BotFather** will give you an **API Token**. Keep it safe. You will need it later.
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-bot-token.png" alt="Bot Token" />
-    </Frame>
-  </Step>
-
-  <Step title="Configure Bot Group Permissions (optional but recommended)">
-    1. Click on "Menu"
-    2. Click on "Edit your bots"
-    3. Select your bot
-    4. Click on "Bot Settings"
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-bot-settings.png" alt="Bot Settings" />
-    </Frame>
-
-    5. Click on "Group Privacy"
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-group-privacy.png" alt="Group Privacy" />
-    </Frame>
-
-    6. If "Privacy mode" is enabled, turn it off (it is enabled by default)
-  </Step>
-
-  <Step title="Add Your Bot to Telegram Groups or Channels">
-    1. Navigate to your group/channel
-    2. Add your bot to your group/channel
-    3. The bot requires these permissions to work with PostQueen:
-       - access to messages, so the bot can read messages sent in the group/channel
-       - Send Text Messages, so the bot can send messages
-       - Send Media, so the bot can send media
-
-    <Info>
-    While not strictly required, making your bot an `admin` is **recommended**. It will give the bot all the permissions needed and make the setup easier and faster.
-    </Info>
-  </Step>
-
-  <Step title="Add Bot Token to Your Application">
-    In your `.env` file, add the **Telegram Bot Name** (Without the @) and the **Telegram Bot API Token** that you received from **BotFather** in Step 1:
-
-```env
-TELEGRAM_BOT_NAME="MyPostQueenBot_bot"
-TELEGRAM_TOKEN="MyPostQueenBot token"
-```
-
-    You should be able to connect your group/channel to PostQueen now!
-  </Step>
-  <Step title="Restart and add the Telegram channel">
-    <Snippet file="restart-and-add-channel.mdx" />
-  </Step>
-</Steps>
-
+<Snippet file="next-steps-provider.mdx" />

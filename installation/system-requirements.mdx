@@ -4,9 +4,14 @@ description: 'Hardware, services and network requirements for self-hosting PostQ
 icon: 'microchip'
 ---
 
-The numbers behind an install: how much machine she needs, which services, which ports, and
-what has to be reachable. If you are here to get her running rather than to size a server,
+Four vCPU, 8 GB of RAM and 50 GB of disk is the recommended starting point for a team of up to
+20 people. She also needs PostgreSQL, Redis and Temporal. The rest of this page is the detail:
+exact floors, default ports, and what has to be reachable through your firewall.
+
+<Info>
+Here to get her running rather than to size a server?
 [Self-Hosting Overview](/installation/overview) points you at the right guide.
+</Info>
 
 ## Hardware
 
@@ -18,37 +23,40 @@ Recommended starting point for a small team (≤ 20 users):
 | RAM | 2 GB (all-in-one, light use) | 8 GB |
 | Disk | 20 GB | 50 GB + persistent volume for uploads |
 
-The official Docker Compose has been tested on a 2 GB / 2 vCPU Ubuntu
-VM running everything on one host (see [Docker Compose](/installation/docker-compose)).
-That works for a single-user install with occasional posting, but
-leaves no headroom. Once you have multiple users, scheduled
-workflows, or external Postgres/Redis on the same host, plan for
-**4 GB or more**.
+<Warning>
+The official Docker Compose has been tested on a 2 GB / 2 vCPU Ubuntu VM running everything on
+one host (see [Docker Compose](/installation/docker-compose)). That works for a single-user
+install with occasional posting, but leaves no headroom. Once you have multiple users,
+scheduled workflows, or external Postgres/Redis on the same host, plan for **4 GB or more**.
+</Warning>
 
-The build step (`pnpm install` / `pnpm build` from source) is the most
-memory-hungry part and can OOM on 2 GB VMs. Bump the Node heap if it
-fails:
+<Accordion title="Building from source runs out of memory first">
+The build step (`pnpm install` / `pnpm build` from source) is the most memory-hungry part and
+can OOM on 2 GB VMs. Bump the Node heap if it fails:
 
 ```bash
 NODE_OPTIONS="--max-old-space-size=4096" pnpm install
 ```
+</Accordion>
 
 ## Recommended install path
 
-The canonical self-host setup is the official Docker Compose repo:
+The canonical self-host setup is the official Docker Compose repo.
 
 <Card title="postqueen-docker-compose" icon="docker" href="https://github.com/GkhanKINAY/postqueen-docker-compose">
   Pre-wired PostQueen + Postgres + Redis + Temporal. The fastest way to a working install.
 </Card>
 
-Walkthroughs for it: [Try her locally](/installation/quickstart-local) on your own machine, or
-[Deploy to a server](/installation/production) for a real install on your own domain. Building
-from source or running Kubernetes instead? See
-[Development Environment](/installation/development) and [Helm](/installation/kubernetes-helm).
+| Your situation | Guide |
+|---|---|
+| Looking around on your own machine | [Try her locally](/installation/quickstart-local) |
+| A real install on your own domain | [Deploy to a server](/installation/production) |
+| Building from source | [Development Environment](/installation/development) |
+| Running Kubernetes instead | [Helm](/installation/kubernetes-helm) |
 
 ## Required services
 
-PostQueen needs four external services:
+Three are required. The fourth is optional, because local disk works.
 
 | Service | Minimum version |
 |---|---|
@@ -57,10 +65,11 @@ PostQueen needs four external services:
 | Temporal | bundled with official docker-compose; required |
 | Object storage | Optional: local filesystem works (`STORAGE_PROVIDER=local`), Cloudflare R2 supported (`STORAGE_PROVIDER=cloudflare`) |
 
-The official [docker-compose](https://github.com/GkhanKINAY/postqueen-docker-compose)
-ships Postgres, Redis, and Temporal pre-wired. If you are running them
-externally, point PostQueen at them via `DATABASE_URL`, `REDIS_URL`, and
-`TEMPORAL_ADDRESS`.
+<Note>
+The official [docker-compose](https://github.com/GkhanKINAY/postqueen-docker-compose) ships
+Postgres, Redis, and Temporal pre-wired. If you are running them externally, point PostQueen at
+them via `DATABASE_URL`, `REDIS_URL`, and `TEMPORAL_ADDRESS`.
+</Note>
 
 ## Default ports
 
@@ -78,14 +87,15 @@ Uploaded media needs somewhere that survives a container being replaced. On the 
 that is a volume mounted at `/uploads`, which the Compose file already sets up for you. Budget
 disk for it, since video adds up quickly.
 
+<Tip>
 The choice between the local disk and object storage, and how to set either up, is on
 [Uploads and Storage](/configuration/uploads).
+</Tip>
 
 ## Outbound network
 
-PostQueen initiates outbound HTTPS to every social provider you connect.
-Strict egress firewalls **will** break OAuth. Make sure the backend
-can reach:
+PostQueen initiates outbound HTTPS to every social provider you connect. Strict egress firewalls
+**will** break OAuth. Make sure the backend can reach:
 
 - `api.twitter.com`, `upload.twitter.com`
 - `graph.facebook.com`, `graph.instagram.com`, `graph.threads.net`
@@ -95,14 +105,35 @@ can reach:
 - the Mastodon instance you configure via `MASTODON_URL`
 - any other provider you intend to use
 
-There is no proxy support. `HTTPS_PROXY` and `HTTP_PROXY` are not read anywhere,
-and provider calls go out through a dispatcher that would ignore them regardless.
-Behind a corporate egress proxy you need a transparent proxy or an allowlist at
-the network layer.
+<Warning>
+There is no proxy support. `HTTPS_PROXY` and `HTTP_PROXY` are not read anywhere, and provider
+calls go out through a dispatcher that would ignore them regardless. Behind a corporate egress
+proxy you need a transparent proxy or an allowlist at the network layer.
+</Warning>
 
 ## Inbound network
 
-The frontend talks to the backend from the browser, so
-`NEXT_PUBLIC_BACKEND_URL` must be **reachable from your users' browsers**,
-not just from the frontend SSR server. A reverse proxy in front of her is the typical setup:
+The frontend talks to the backend from the browser, so `NEXT_PUBLIC_BACKEND_URL` must be
+**reachable from your users' browsers**, not just from the frontend SSR server.
+
+<Info>
+A reverse proxy in front of her is the typical setup:
 [Domain and HTTPS](/installation/domain-and-https).
+</Info>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Try her locally" icon="laptop" href="/installation/quickstart-local">
+    The whole stack on your own machine in about five minutes
+  </Card>
+  <Card title="Deploy to a server" icon="server" href="/installation/production">
+    An empty virtual machine to your own domain, with HTTPS
+  </Card>
+  <Card title="Configuration reference" icon="gear" href="/configuration/reference">
+    Every setting she reads, and what happens when you leave one out
+  </Card>
+  <Card title="Backups and upgrades" icon="box-archive" href="/installation/backups-and-upgrades">
+    Which volumes hold data you cannot rebuild, and how to restore one
+  </Card>
+</CardGroup>

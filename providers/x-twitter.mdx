@@ -44,79 +44,6 @@ What X sends back when a post will not fly:
 - **The video you are trying to post is longer than 2 minutes, which is not allowed for this account.**
 </Warning>
 
-X is a bit different.
-
-They created an oAuth2 flow, but it works only with Twitter v2 API.
-But in order to upload pictures to X, you need to use the old Twitter v1 API.
-So you are going to use the normal oAuth1 flow for that (that supports Twitter v2 also 🤷🏻‍).
-
-<Steps>
-  <Step title="Create a new app">
-    Head over the [Twitter developers page](https://developer.twitter.com/en/portal/dashboard) and create a new app.
-    Click to sign-up for a new free account
-
-    <Frame>
-      <img src="/images/providers/x/x-001.png" alt="The X developer portal dashboard, with the sign-up link for a new free account" />
-    </Frame>
-  </Step>
-
-  <Step title="Edit application settings">
-    Click to edit the application settings
-    
-    <Frame>
-      <img src="/images/providers/x/x-002.png" alt="The app overview in the X developer portal, with the settings edit control highlighted" />
-    </Frame>
-  </Step>
-
-  <Step title="Set up authentication flow">
-    Click to set up an authentication flow
-    
-    <Frame>
-      <img src="/images/providers/x/x-003.png" alt="The user authentication settings screen, where App Permission, Type of App and the callback URL are set" />
-    </Frame>
-
-    - In the App Permission set it to `Read and Write`
-    - In the Type of App set it to `Native App`
-    - In the App Info set the `Callback URI / Redirect URL`
-
-    <Warning>
-    You must select `Native App` for OAuth 1.0a to work correctly. Selecting `Web App, Automated App or Bot` will cause authentication to fail with error code 32.
-    </Warning>
-  </Step>
-
-  <Step title="Configure OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your X OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/x`
-    - Local development: `http://localhost:4200/integrations/social/x`
-    - Docker: `http://localhost:4007/integrations/social/x`
-    - If X requires HTTPS for localhost: `https://redirectmeto.com/http://localhost:4200/integrations/social/x`
-  </Step>
-
-  <Step title="Copy your API keys">
-    Save it and go to "Keys and Tokens" tab.
-    
-    Click on "Regenerate" inside "Consumer Keys" and copy the `API Key` and `API Key Secret`.
-    
-    Open .env file and add the following:
-
-```env
-X_API_KEY=""
-X_API_SECRET=""
-```
-  </Step>
-  <Step title="Restart and add the X channel">
-    <Snippet file="restart-and-add-channel.mdx" />
-  </Step>
-</Steps>
-
-## Optional environment variables
-
-- `X_URL`: override the base used to build the X OAuth **callback**, which becomes `<X_URL>/integrations/social/x`. Defaults to `FRONTEND_URL`. It does not change which X API PostQueen talks to, and setting it to anything your registered callback does not match will break the connect.
-- `DISABLE_X_ANALYTICS=true`: skip the analytics fetch on the X channel page. Useful if your X plan does not include analytics access and the failed call is noisy.
-- `STRIP_LINKS_FROM_X_POSTS=true`: automatically remove URLs from post text before publishing. Some accounts see better reach with no links; this enforces it globally.
-
 ## Post Settings
 
 When creating a post for X, you can configure the following options:
@@ -126,4 +53,12 @@ When creating a post for X, you can configure the following options:
 - **Made with AI**: Mark your post as containing AI-generated content. When enabled, the post will be labeled accordingly on X.
 - **Paid partnership**: Mark your post as a paid promotion. When enabled, the post will be labeled as a paid partnership on X.
 
+## Self-hosting
 
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up X (Twitter) on your own instance](/installation/providers/x-twitter).
+</Info>
+
+<Snippet file="next-steps-provider.mdx" />

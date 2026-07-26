@@ -4,11 +4,14 @@ description: 'Why an AI agent can drive her without guesswork: flag-driven comma
 icon: 'lightbulb'
 ---
 
-Plenty of tools assume a person with a mouse on the other end, and an agent ends up fighting them. Her command line was shaped the other way around, for something that reads flags and parses output. That happens to be what your assistant does best.
+Her command line was shaped for something that reads flags and parses output, not for a person with
+a mouse. That happens to be what your assistant does best.
 
 ## No prompts, no screen-scraping
 
-Your agent writes the whole call up front, positional arguments and flags on one line, and sends it. Nothing pauses halfway to wait for a keystroke. A run that fires at four in the morning, with nobody awake to answer a prompt, still gets to the end.
+Your agent writes the whole call up front, positional arguments and flags on one line, and sends it.
+Nothing pauses halfway to wait for a keystroke. A run that fires at four in the morning, with nobody
+awake to answer a prompt, still gets to the end.
 
 <Frame>
   <img src="/images/brand/terminal-claude.svg" alt="An agent composes the whole postqueen command up front, flags and all, then reads the JSON that comes back" />
@@ -21,17 +24,35 @@ postqueen posts:create \
   -i "your-integration-id"
 ```
 
-Your agent gets JSON back, behind a single human-readable header line, so it reads a field by name instead of guessing at wording on a screen. Drop the header with `tail -n +2` before piping into `jq`:
+Your agent gets JSON back, behind a single human-readable header line, so it reads a field by name
+instead of guessing at wording on a screen. Drop the header with `tail -n +2` before piping into
+`jq`:
 
 ```bash
 REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
 ```
 
-Failures are just as easy to detect. A command that succeeds exits with code `0`, a command that fails exits with `1` and puts a readable message on stderr, so a script or an agent loop can branch on the result without parsing prose.
+Failures are just as easy to detect, so a script or an agent loop can branch on the result without
+parsing prose.
 
-One exception: `auth:status` is a human-readable report rather than a JSON command. It exits `0` whether or not the key is valid, so read its output for the `✅ Credentials are valid` line rather than branching on the exit code.
+| Outcome | Exit code | Where the answer goes |
+|---|---|---|
+| Success | `0` | JSON on stdout, behind the one-line header |
+| Failure | `1` | A readable message on stderr |
 
-Discovery closes the loop. `integrations:settings` reports what a channel accepts, including character limits and required fields, and `integrations:trigger` fetches values that cannot be hardcoded such as subreddit flairs or Pinterest boards. An agent that has met a channel for the first time can still post to it correctly, because it asks her instead of assuming.
+<Warning>
+`auth:status` is the one exception. It is a human-readable report rather than a JSON command, and it
+exits `0` whether or not the key is valid. Read its output for the `✅ Credentials are valid` line
+rather than branching on the exit code.
+</Warning>
+
+Discovery closes the loop. An agent that has met a channel for the first time can still post to it
+correctly, because it asks her instead of assuming.
+
+| Command | What it answers |
+|---|---|
+| `integrations:settings` | What a channel accepts, including character limits and required fields |
+| `integrations:trigger` | Values that cannot be hardcoded, such as subreddit flairs or Pinterest boards |
 
 ## 👑 One command teaches your agent
 
@@ -41,19 +62,33 @@ If your agent supports the `skills` registry, a single command hands it her whol
 npx skills add GkhanKINAY/postqueen-agent
 ```
 
-What lands is her `SKILL.md`. It registers under the name `postqueen`, declares `Bash(postqueen:*)` as the only tool it needs, and opens with the npm install line, so an agent that finds the CLI missing can put it in place before doing anything else.
+What lands is her `SKILL.md`:
 
-Nobody has to point at it. Your agent picks the skill up on its own when the task looks like posting work, and arrives already knowing the discovery flow, the flags on `posts:create` and the media rule it has to respect. You do not paste command syntax into a chat window to get started.
+| In the file | What it says |
+|---|---|
+| Name | It registers as `postqueen` |
+| Tools | `Bash(postqueen:*)`, the only one it needs |
+| First line | The npm install command, so an agent that finds the CLI missing can put it in place before doing anything else |
 
-The skill is plain Markdown over a plain CLI, so no model has an advantage. Claude and GPT read the same file as Gemini or an open-source model on your own machine, and they all type the same commands. If a thing can run a shell command, it can run your social media.
+Nobody has to point at it. Your agent picks the skill up on its own when the task looks like posting
+work, and arrives already knowing the discovery flow, the flags on `posts:create` and the media rule
+it has to respect. You do not paste command syntax into a chat window to get started.
+
+<Note>
+The skill is plain Markdown over a plain CLI, so no model has an advantage. Claude and GPT read the
+same file as Gemini or an open-source model on your own machine, and they all type the same
+commands. If a thing can run a shell command, it can run your social media.
+</Note>
 
 <Tip>
-Prefer tool calls to shell commands? Connect over MCP and you get the same capabilities as 11 tools, with no local install. Setup: [MCP setup](/mcp/setup).
+Prefer tool calls to shell commands? Connect over MCP and you get the same capabilities as 11 tools,
+with no local install. Setup: [MCP setup](/mcp/setup).
 </Tip>
 
 ## Two hard rules
 
-Her skill file leads with these two, because almost every failed agent run traces back to one of them.
+Her skill file leads with these two, because almost every failed agent run traces back to one of
+them.
 
 <Warning>
 **Rule 1: authenticate first.** Commands fail without valid credentials. Export your key before anything else, then confirm with `postqueen auth:status`.
@@ -85,7 +120,8 @@ postqueen posts:create \
 
 ## The core workflow
 
-Every agent session follows the same seven beats, whether it is a coding assistant on your laptop or a job that wakes up at four in the morning.
+Every agent session follows the same seven beats, whether it is a coding assistant on your laptop or
+a job that wakes up at four in the morning.
 
 <Steps>
   <Step title="Authenticate">
@@ -95,6 +131,10 @@ Every agent session follows the same seven beats, whether it is a coding assista
     export POSTQUEEN_API_KEY=your_api_key
     postqueen auth:status
     ```
+
+    <Check>
+    `✅ Credentials are valid` in that output means the key works and the rest of the loop can run.
+    </Check>
   </Step>
   <Step title="Discover">
     List the connected channels and read what each one accepts.
@@ -147,18 +187,22 @@ Every agent session follows the same seven beats, whether it is a coding assista
   </Step>
 </Steps>
 
-That is the whole loop. An agent that follows it runs your calendar on its own, and every step it takes stays a normal command with a result you can read.
+That is the whole loop. An agent that follows it runs your calendar on its own, and every step it
+takes stays a normal command with a result you can read.
 
-## Hand it the keys
+## Next steps
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="Agents overview" icon="robot" href="/agents/overview">
-    The three ways in and a setup guide for each agent she works with
+    The three ways in and a setup guide for each agent she works with.
+  </Card>
+  <Card title="Install the skill" icon="download" href="/agents/skill-install">
+    The API key, the CLI, self-hosted setup, and what goes wrong with each fix.
   </Card>
   <Card title="Command reference" icon="terminal" href="/cli/command-reference">
-    Every command and flag, with the exact syntax an agent needs
+    Every command and flag, with the exact syntax an agent needs.
   </Card>
   <Card title="MCP setup" icon="plug" href="/mcp/setup">
-    Connect an MCP client to her 11 hosted tools in one line
+    Connect an MCP client to her 11 hosted tools in one line.
   </Card>
 </CardGroup>

@@ -1,14 +1,16 @@
 ---
 title: OpenAI Codex
 description: 'Connect the OpenAI Codex CLI to PostQueen over MCP'
-icon: 'code'
+icon: /images/brand/icon-codex.svg
 ---
 
 The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it talks to her directly, with no local bridge process. Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
 
-## Add via CLI
+<Info>
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
+</Info>
 
-Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings > Developers > Public API**, click **Reveal**), then run:
+## Add via CLI
 
 ```bash
 codex mcp add postqueen --url https://api.postqueen.ai/mcp/YOUR_API_KEY
@@ -16,48 +18,62 @@ codex mcp add postqueen --url https://api.postqueen.ai/mcp/YOUR_API_KEY
 
 Replace `YOUR_API_KEY` with your actual key. Codex writes the entry to `~/.codex/config.toml`, and all 11 PostQueen tools are available in every session from then on.
 
-## Config File Alternative
+## The two forms
 
-The same registration, written by hand in `~/.codex/config.toml`:
+Both authenticate with the same key. They differ in where that key ends up.
 
-```toml ~/.codex/config.toml
-[mcp_servers.postqueen]
-url = "https://api.postqueen.ai/mcp/YOUR_API_KEY"
-```
+| Form | Endpoint | Where the key lives |
+|------|----------|---------------------|
+| Key in the URL | `https://api.postqueen.ai/mcp/YOUR_API_KEY` | `~/.codex/config.toml`, in plain text |
+| Bearer token | `https://api.postqueen.ai/mcp` | `POSTQUEEN_API_KEY` in the environment |
+
+<Tabs>
+  <Tab title="Key in the URL">
+    The same registration `codex mcp add` writes, done by hand:
+
+    ```toml ~/.codex/config.toml
+    [mcp_servers.postqueen]
+    url = "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+    ```
+  </Tab>
+  <Tab title="Bearer token">
+    To keep the key out of the URL, and out of `config.toml` entirely, point Codex at the bare `/mcp` endpoint and reference the key through an environment variable:
+
+    ```toml ~/.codex/config.toml
+    [mcp_servers.postqueen]
+    url = "https://api.postqueen.ai/mcp"
+    bearer_token_env_var = "POSTQUEEN_API_KEY"
+    ```
+
+    Or via the CLI:
+
+    ```bash
+    codex mcp add postqueen --url https://api.postqueen.ai/mcp --bearer-token-env-var POSTQUEEN_API_KEY
+    ```
+
+    Codex reads `POSTQUEEN_API_KEY` from its environment and sends it as `Authorization: Bearer YOUR_API_KEY` on every request, so export it in your shell profile:
+
+    ```bash
+    export POSTQUEEN_API_KEY="your-key-here"
+    ```
+  </Tab>
+</Tabs>
 
 <Note>
 Syntax per the official [Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp?surface=cli): a streamable HTTP server entry takes a `url`, while stdio servers take `command`/`args` instead. If your Codex version predates `codex mcp add --url` support, editing `config.toml` directly works on every version.
 </Note>
 
-## Bearer Variant
-
-To keep the key out of the URL (and out of `config.toml` entirely), point Codex at the bare `/mcp` endpoint and reference the key through an environment variable:
-
-```toml ~/.codex/config.toml
-[mcp_servers.postqueen]
-url = "https://api.postqueen.ai/mcp"
-bearer_token_env_var = "POSTQUEEN_API_KEY"
-```
-
-Or via the CLI:
-
-```bash
-codex mcp add postqueen --url https://api.postqueen.ai/mcp --bearer-token-env-var POSTQUEEN_API_KEY
-```
-
-Codex reads `POSTQUEEN_API_KEY` from its environment and sends it as `Authorization: Bearer YOUR_API_KEY` on every request, so export it in your shell profile:
-
-```bash
-export POSTQUEEN_API_KEY="your-key-here"
-```
-
 <Warning>
-Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plaintext file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plain text file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
-## Self-Hosted
+## Self-hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`.
+
+<Info>
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
+</Info>
 
 ## Verify
 
@@ -65,4 +81,23 @@ Run `codex mcp list` to confirm the `postqueen` entry is registered, then ask Co
 
 > "List my connected social media accounts"
 
-Your channel names come back, because the agent reached for her `integrationList` tool.
+<Check>
+Your channel names come back, because the agent reached for her `integrationList` tool. She is connected in every session from here.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Tools reference" icon="screwdriver-wrench" href="/mcp/tools">
+    Every parameter of the 11 tools your agent just discovered
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    The flows where she has to look something up before she can post
+  </Card>
+  <Card title="Limits and troubleshooting" icon="gauge" href="/mcp/limits-and-troubleshooting">
+    What MCP cannot reach, and what a bad key looks like
+  </Card>
+  <Card title="Self-hosted MCP" icon="server" href="/mcp/self-hosting">
+    The URL to use, and the proxy setting that breaks it quietly
+  </Card>
+</CardGroup>

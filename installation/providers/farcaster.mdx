@@ -1,0 +1,65 @@
+---
+title: 'Farcaster setup'
+description: 'Register the Farcaster application and give PostQueen its keys'
+icon: /images/channels/warpcast.svg
+---
+
+Farcaster sign-in runs through Neynar, so the application you register is a Neynar app and the keys you copy back are Neynar's.
+
+<Note>
+PostQueen uses [Neynar](https://neynar.com) as the Farcaster API provider.
+You need a Neynar developer account to obtain the API credentials below.
+</Note>
+
+## Set up Farcaster
+
+<Steps>
+  <Step title="Create a Neynar app">
+    Go to the [Neynar dashboard](https://dev.neynar.com) and create a new app. You will get a **Client ID** and a **Secret Key**.
+
+    <Note>
+    **There is no redirect URI to set here**, which is why this page has no callback block while
+    every other OAuth network does. Farcaster sign-in goes through Neynar's widget, so PostQueen
+    hands it the client ID directly rather than building a callback path for the network to
+    return to.
+    </Note>
+  </Step>
+
+  <Step title="Add credentials to your environment">
+    Add the following to your `.env` file:
+
+```env
+NEYNAR_CLIENT_ID="your-neynar-client-id"
+NEYNAR_SECRET_KEY="your-neynar-secret-key"
+```
+  </Step>
+
+  <Step title="Restart PostQueen">
+    Stop PostQueen if it is running and start it again so the new environment variables are picked up.
+  </Step>
+
+  <Step title="Add the channel">
+    In the PostQueen web interface, click **Add Channel**, select **Farcaster**, and complete the Neynar login flow. Your Farcaster account will appear in the channel list.
+  </Step>
+</Steps>
+
+<Check>
+The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Farcaster" icon="/images/channels/warpcast.svg" href="/providers/farcaster">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

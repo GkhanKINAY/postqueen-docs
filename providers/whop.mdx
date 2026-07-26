@@ -44,69 +44,13 @@ The company and forum pickers read the first 50 of each, so a very large Whop ac
 A large attachment can hold a post back: if Whop has not finished processing the file after roughly nine minutes, she stops with **"File upload timed out"** rather than publishing a post with a broken attachment.
 </Warning>
 
-## Set up Whop
+## Self-hosting
 
-<Steps>
-  <Step title="Create a Whop OAuth Application">
-    Go to the [Whop Developer Portal](https://dash.whop.com/settings/developer) and create a new application.
-
-    Grant it all six scopes:
-
-    ```
-    openid
-    profile
-    email
-    forum:post:create
-    forum:read
-    company:basic:read
-    ```
-
-    <Warning>
-    **Whop is the one network where a missing scope does not stop the connect.** Unlike every
-    other OAuth channel here, the scopes are not verified when you connect, so the channel appears
-    and looks healthy. You find out later, when a post fails and asks you to reconnect with the
-    required permissions. Grant all six now.
-    </Warning>
-  </Step>
-
-  <Step title="Get and set your Client ID">
-    Copy the **Client ID** from your Whop application settings and add it to your `.env` file:
-
-```env
-WHOP_CLIENT_ID="your_client_id"
-```
-  </Step>
-
-  <Step title="Add a Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Whop OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/whop`
-    - Local development: `http://localhost:4200/integrations/social/whop`
-    - Docker: `http://localhost:4007/integrations/social/whop`
-
-    Add this redirect URI in your Whop application settings.
-  </Step>
-
-  <Step title="Add Whop as a Channel in PostQueen">
-    Go to the PostQueen web interface, click **Add Channel**, and select **Whop**. You will be redirected to Whop to authorize the connection.
-  </Step>
-
-  <Step title="Create a Post">
-    When creating a post for Whop, you will need to configure:
-
-    - **Company**: Select which Whop company to post under.
-    - **Forum**: Select the forum (experience) to post in.
-    - **Title**: An optional title for your forum post.
-
-    The post content supports **Markdown** formatting. You can also attach files to your post.
-  </Step>
-</Steps>
-
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
-
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up Whop on your own instance](/installation/providers/whop).
+</Info>
 
 ## Features
 
@@ -123,3 +67,5 @@ The channel is in the left sidebar with its avatar and name. That is the whole c
 - **"Forum or experience not found"**: The selected forum may have been deleted or you no longer have access to it. Select a different forum.
 - **No companies appear**: Make sure your Whop account owns or manages at least one company.
 - **No forums appear**: The selected company must have at least one forum experience created. Set up a forum in your Whop company dashboard first.
+
+<Snippet file="next-steps-provider.mdx" />

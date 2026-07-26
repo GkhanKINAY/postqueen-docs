@@ -5,10 +5,7 @@ icon: 'laptop'
 ---
 
 This is the fastest way to see PostQueen working. Everything runs on your own machine, nothing
-is exposed to the internet, and when you are done one command removes all of it.
-
-If you already know you want her on a server for real use, skip this page and go to
-[Deploy to a server](/installation/production) instead.
+is exposed to the internet, and one command removes all of it when you are finished.
 
 <Warning>
 **This is not a production install.** It runs over plain HTTP with the placeholder signing key
@@ -17,10 +14,12 @@ public address. When you are ready for that, follow
 [Deploy to a server](/installation/production).
 </Warning>
 
-## Before you start
+<Info>
+**Before you start.** You need Docker, and about 4 GB of free memory. Docker Desktop covers
+macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
+</Info>
 
-You need Docker, and about 4 GB of free memory. Docker Desktop covers macOS and Windows, and
-on Linux you want Docker Engine with the Compose plugin.
+## Install and run
 
 <Steps>
   <Step title="Install Docker">
@@ -119,8 +118,10 @@ on Linux you want Docker Engine with the Compose plugin.
     fresh install, not a broken one.
     </Check>
 
-    If you would like to watch the scheduler do its work, the Temporal dashboard is at
-    **http://localhost:8080**. It is optional and you can happily ignore it.
+    <Tip>
+    To watch the scheduler do its work, the Temporal dashboard is at **http://localhost:8080**.
+    It is optional and you can happily ignore it.
+    </Tip>
   </Step>
 </Steps>
 
@@ -153,18 +154,17 @@ on Linux you want Docker Engine with the Compose plugin.
   </Accordion>
 </AccordionGroup>
 
-## Stopping and starting again
+## Stopping, starting and removing
 
-```bash
-docker compose stop          # pause her, keep everything
-docker compose start         # bring her back
-docker compose down          # remove the containers, keep your data
-```
+| Command | What it does |
+|---|---|
+| `docker compose stop` | Pauses her, keeps everything |
+| `docker compose start` | Brings her back |
+| `docker compose down` | Removes the containers, keeps your data |
+| `docker compose down -v` | Removes the containers **and** the volumes |
 
 Your posts, accounts and uploads live in Docker volumes, so `down` followed by `up -d` picks up
 exactly where you left off.
-
-## Removing her completely
 
 When you are finished experimenting:
 
@@ -177,9 +177,9 @@ The `-v` deletes the volumes, which means the database and every uploaded file. 
 undo. Leave `-v` off if you might want your test data back.
 </Warning>
 
-## What next
+## Next steps
 
-You have a working PostQueen, connected to nothing. Two directions from here:
+You have a working PostQueen, connected to nothing.
 
 <CardGroup cols={2}>
   <Card title="Put her on a server" icon="server" href="/installation/production">
@@ -187,5 +187,11 @@ You have a working PostQueen, connected to nothing. Two directions from here:
   </Card>
   <Card title="Connect a channel" icon="plug" href="/providers/overview">
     Bring your own app keys and try a real post
+  </Card>
+  <Card title="Write your first post" icon="pen-to-square" href="/using/writing-a-post">
+    The editor, per-channel settings, and what happens when you schedule
+  </Card>
+  <Card title="Self-host troubleshooting" icon="wrench" href="/troubleshooting/self-host">
+    The failures that come up most often, and what fixes them
   </Card>
 </CardGroup>

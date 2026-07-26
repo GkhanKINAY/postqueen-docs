@@ -4,27 +4,84 @@ description: 'Connect your AI client to PostQueen over MCP'
 icon: 'gear'
 ---
 
-PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client can connect to her with a single URL. Pick the client you work in and you are two minutes from your first tool call. Already know your way around an MCP config? The endpoint is all you need.
+PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client connects to her with a single URL. Pick the client you work in below, or take the endpoint straight to your own config.
 
-## The address to paste
+## Add her to your client
 
-Two ways to connect, one key behind both. Put the key straight in the URL for the quickest setup: one line pasted and your client is talking to her. Keeping keys out of config files? Send the same key as a bearer token in the header.
+<Info>
+**Get your key first.** In [app.postqueen.ai](https://app.postqueen.ai), open **Settings ›
+Developers › Public API** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
+</Info>
 
 <Tabs>
-  <Tab title="API Key in URL">
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Add `--scope user` to make her available in every project. Full options:
+    [Claude Code](/mcp/clients/claude-code).
+  </Tab>
+
+  <Tab title="Cursor">
+    ```json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+        }
+      }
+    }
+    ```
+
+    Into `.cursor/mcp.json`, or use the Settings UI: [Cursor](/mcp/clients/cursor).
+  </Tab>
+
+  <Tab title="Codex">
+    ```bash
+    codex mcp add postqueen --url https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Written to `~/.codex/config.toml`: [Codex](/mcp/clients/codex).
+  </Tab>
+
+  <Tab title="Gemini CLI">
+    ```bash
+    gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Add `--scope user` for every project: [Gemini CLI](/mcp/clients/gemini-cli).
+  </Tab>
+
+  <Tab title="Claude & ChatGPT">
+    No file to edit. Both take the URL in their connector screen:
+
     ```
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
+
+    Step by step: [Claude Desktop](/mcp/clients/claude-desktop),
+    [Claude web and mobile](/mcp/clients/claude-app), [ChatGPT](/mcp/clients/chatgpt).
   </Tab>
-  <Tab title="Bearer Token">
+
+  <Tab title="Any other client">
+    ```json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "serverUrl": "https://api.postqueen.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer ${env:POSTQUEEN_API_KEY}"
+          }
+        }
+      }
+    }
     ```
-    URL: https://api.postqueen.ai/mcp
-    Authorization: Bearer YOUR_API_KEY
-    ```
+
+    The header form keeps the key out of the file. Warp, Cline and Windsurf:
+    [Other clients](/mcp/clients/other-clients).
   </Tab>
 </Tabs>
-
-Your API key lives in the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**.
 
 <Warning>
 The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
@@ -61,15 +118,19 @@ The connector URL contains your API key, and that key can post to every channel 
 
 ## Self-hosted
 
-Self-hosting? Replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
+Replace `https://api.postqueen.ai` with whatever your `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`:
 
 ```
 https://postqueen.example.com/api/mcp/YOUR_API_KEY
 ```
 
-Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
+Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`.
 
-Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
+<Warning>
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering
+it. The configuration, and the Nginx setting that silently breaks this, are on
+[MCP on a self-hosted install](/mcp/self-hosting).
+</Warning>
 
 ## Verify
 
@@ -77,8 +138,7 @@ Once connected, ask your AI agent:
 
 > "List my connected social media accounts"
 
-Your channel names come back, because the agent reached for her `integrationList` tool. From here
-on, scheduling a post is something your assistant simply knows how to do.
+Your channel names come back, because the agent reached for her `integrationList` tool.
 
 <Check>
 **Your assistant is connected.** It can see your channels and it can put a post on your calendar.
@@ -121,3 +181,20 @@ Nothing else to install.
     conversation. PostQueen keys never rotate on their own.
   </Accordion>
 </AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Tools Reference" icon="screwdriver-wrench" href="/mcp/tools">
+    Every parameter and every field the eleven tools send back
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    Discord channels, video voices, and the flows that need a lookup first
+  </Card>
+  <Card title="Limits and troubleshooting" icon="gauge-high" href="/mcp/limits-and-troubleshooting">
+    What MCP cannot reach, and what a bad key looks like
+  </Card>
+  <Card title="MCP on a self-hosted install" icon="server" href="/mcp/self-hosting">
+    Your own URL, and the proxy setting that breaks the stream
+  </Card>
+</CardGroup>

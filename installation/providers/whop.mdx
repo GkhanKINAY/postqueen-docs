@@ -1,0 +1,85 @@
+---
+title: 'Whop setup'
+description: 'Register the Whop application and give PostQueen its keys'
+icon: /images/channels/whop.svg
+---
+
+Register your own Whop OAuth application, put its client id in your environment, and connect the channel.
+
+<Steps>
+  <Step title="Create a Whop OAuth Application">
+    Go to the [Whop Developer Portal](https://dash.whop.com/settings/developer) and create a new application.
+
+    Grant it all six scopes:
+
+    ```
+    openid
+    profile
+    email
+    forum:post:create
+    forum:read
+    company:basic:read
+    ```
+
+    <Warning>
+    **Whop is the one network where a missing scope does not stop the connect.** Unlike every
+    other OAuth channel here, the scopes are not verified when you connect, so the channel appears
+    and looks healthy. You find out later, when a post fails and asks you to reconnect with the
+    required permissions. Grant all six now.
+    </Warning>
+  </Step>
+
+  <Step title="Get and set your Client ID">
+    Copy the **Client ID** from your Whop application settings and add it to your `.env` file:
+
+```env
+WHOP_CLIENT_ID="your_client_id"
+```
+  </Step>
+
+  <Step title="Add a Redirect URI">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Whop OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/whop`
+    - Local development: `http://localhost:4200/integrations/social/whop`
+    - Docker: `http://localhost:4007/integrations/social/whop`
+
+    Add this redirect URI in your Whop application settings.
+  </Step>
+
+  <Step title="Add Whop as a Channel in PostQueen">
+    Go to the PostQueen web interface, click **Add Channel**, and select **Whop**. You will be redirected to Whop to authorize the connection.
+  </Step>
+
+  <Step title="Create a Post">
+    When creating a post for Whop, you will need to configure:
+
+    - **Company**: Select which Whop company to post under.
+    - **Forum**: Select the forum (experience) to post in.
+    - **Title**: An optional title for your forum post.
+
+    The post content supports **Markdown** formatting. You can also attach files to your post.
+  </Step>
+</Steps>
+
+<Check>
+The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Whop" icon="/images/channels/whop.svg" href="/providers/whop">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

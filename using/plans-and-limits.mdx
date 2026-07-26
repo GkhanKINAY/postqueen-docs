@@ -4,7 +4,7 @@ description: 'What each plan unlocks, where the counters actually sit, and why a
 icon: 'credit-card'
 ---
 
-Five channels connect on a Tuesday afternoon and nobody asks you for anything. On STANDARD, the sixth one stops you. That is the whole shape of it: PostQueen counts a handful of things, and your plan sets how high each count is allowed to go.
+PostQueen counts a handful of things, and your plan sets how high each count is allowed to go. Connect five channels on STANDARD and nobody asks you for anything. The sixth one stops you.
 
 What follows is what the code checks, not what a landing page promises. For what a plan costs today, go to [postqueen.ai/pricing](https://postqueen.ai/pricing), because prices move and this page is about what you get, not what you pay.
 
@@ -18,9 +18,13 @@ What follows is what the code checks, not what a landing page promises. For what
 | **PRO** | 30 | 1,000,000 | Yes | 300 | 30 | 30 | Yes |
 | **ULTIMATE** | 100 | 1,000,000 | Yes | 500 | 60 | 10,000 | Yes |
 
+<Note>
 A million posts a month is the literal number in the source, and the billing screen prints anything above ten thousand as **Unlimited**. Read it as unlimited and stop thinking about it.
+</Note>
 
+<Info>
 FREE is not a plan you work in. It is the state an organization sits in before it has a subscription, which is why every number on that row is zero. On PostQueen Cloud an organization in that state shows its admins the plan picker where the calendar would be, and everyone else a line telling them to ask an admin, so the counters never come up.
+</Info>
 
 ## Where each counter actually sits
 
@@ -28,13 +32,17 @@ FREE is not a plan you work in. It is the state an organization sits in before i
 
 A channel is one connected account. The check runs at connect time and counts only the channels that are currently working: anything flagged as needing a reconnect is not counted against you, and reconnecting a channel you already own skips the check entirely, so a token refresh never costs you a slot.
 
+<Note>
 Moving down a plan does not delete anything. Enough channels are switched off to bring you back to the new number, they keep their history, and disabling one lets you switch another back on. Team members follow the same logic: dropping to a plan without team members disables every member below superadmin rather than removing them.
+</Note>
 
 ### Posts per month
 
 The month is your month. The count runs from the day your subscription started, rolled forward a whole month at a time, so a subscription that began on the 14th resets on the 14th. What counts is a post whose publish date is on or after the start of the current period and whose state is queued or published, so a draft sitting on your calendar costs you nothing until you schedule it.
 
+<Warning>
 That window has a floor and no ceiling. Queue something for six months out and it counts against this month the moment you schedule it.
+</Warning>
 
 ### Team members
 
@@ -42,9 +50,15 @@ This one is a yes or no, not a seat count. On a plan that includes it you invite
 
 ### AI images and AI videos
 
-Both are monthly credits, counted from the same subscription anniversary as posts. Generating one image spends one image credit, generating one video spends one video credit, and the counters run independently. Run out of image credits and the two entry points behave differently. **AI Image** in the composer simply produces nothing. Only the **AI Img** tab inside the picture editor tells you and opens billing.
+Both are monthly credits, counted from the same subscription anniversary as posts. Generating one image spends one image credit, generating one video spends one video credit, and the counters run independently.
 
+<Warning>
+Run out of image credits and the two entry points behave differently. **AI Image** in the composer simply produces nothing. Only the **AI Img** tab inside the picture editor tells you and opens billing.
+</Warning>
+
+<Info>
 The **AI Img** tab inside the picture editor is a separate switch: it shows up on TEAM and above, so a STANDARD organization has image credits but not that tab. **Generate** is the button you press once you are inside it.
+</Info>
 
 ### Webhooks
 
@@ -52,13 +66,17 @@ A straight ceiling on how many webhook endpoints the organization can have regis
 
 ### Public API
 
-Available from STANDARD upward. Two things have to be true for a call to work: the organization needs a subscription on record, and you need the key. The key lives in **Settings > Developers**, and that tab appears for organization admins on a plan that includes the API. Without a subscription the API answers `401` with `No subscription found`, whichever authentication you use.
+Available from STANDARD upward. Two things have to be true for a call to work: the organization needs a subscription on record, and you need the key. The key lives in **Settings > Developers**, and that tab appears for organization admins on a plan that includes the API.
+
+<Warning>
+Without a subscription the API answers `401` with `No subscription found`, whichever authentication you use.
+</Warning>
 
 Building on it? Start at the [API Overview](/public-api/introduction).
 
 ## What else moves with the plan
 
-Numbers are not the only thing a tier decides. A few parts of Settings appear or stay hidden based on the plan alone:
+Numbers are not the only thing a tier decides. A few parts of Settings appear or stay hidden based on the plan alone.
 
 | Interface piece | Appears when |
 |---|---|
@@ -71,9 +89,17 @@ Numbers are not the only thing a tier decides. A few parts of Settings appear or
 
 ## Self-hosting: billing off, limits off
 
-Here is the rule that matters most if you run PostQueen yourself. Billing is only on when **both** `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. Set neither and billing is off. Set only one of the two and billing is still off, deliberately, because a half-configured install used to land in a state that was neither self-hosted nor paying.
+Here is the rule that matters most if you run PostQueen yourself. Billing is only on when **both** `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set.
 
-With billing off, none of the tables above apply:
+<Warning>
+Set only one of the two and billing is still off, deliberately, because a half-configured install used to land in a state that was neither self-hosted nor paying.
+</Warning>
+
+<Check>
+Set neither key and billing is off, which means none of the tables above apply to your install.
+</Check>
+
+With billing off:
 
 - Every permission check short-circuits and grants what was asked for, without evaluating a quota. No channel ceiling, no monthly post count, no webhook limit.
 - Your own account reports itself as **ULTIMATE** with 10,000 channels, which is what makes every tier-gated tab in Settings show up.
@@ -86,16 +112,26 @@ This is by design, not a loophole. Omitting the Stripe keys is the supported way
 
 ### What stays hidden when billing is off
 
-Billing being off also removes the parts of the interface that only make sense when there is something to pay for. On a self-hosted install with no Stripe keys, these are not rendered at all:
+Billing being off also removes the parts of the interface that only make sense when there is something to pay for. On a self-hosted install with no Stripe keys, these are not rendered at all.
 
-- **Billing** in the left rail, and the **Upgrade** shortcut underneath it.
-- The plan picker that would otherwise take over the whole screen for an organization with no subscription.
-- The **Affiliate** and **UGC** entries in the rail.
-- The browser extension link in the top bar.
-- The wallet sign-in option on the sign in and sign up screens.
-- The **Generate Posts** wizard, the icon button beside New Post in the channel sidebar.
+| Not rendered | Where it would otherwise sit |
+|---|---|
+| **Billing**, and the **Upgrade** shortcut underneath it | The left rail |
+| The plan picker | Over the whole screen, for an organization with no subscription |
+| The **Affiliate** and **UGC** entries | The left rail |
+| The browser extension link | The top bar |
+| The wallet sign-in option | The sign in and sign up screens |
+| The **Generate Posts** wizard | The icon button beside New Post in the channel sidebar |
 
-The Generate Posts one is worth knowing before you go hunting for it. That wizard is hidden on a billing-free install even though the AI behind it works fine, so on a self-hosted box you reach the same ground through the chat agent in the app chrome or the assistant inside the composer. The [public API](/public-api/introduction) is not a third route here. It will schedule posts you have already written, but it has no endpoint that generates the copy for you.
+<Warning>
+The **Generate Posts** wizard is worth knowing about before you go hunting for it. It is hidden on a billing-free install even though the AI behind it works fine, so on a self-hosted box you reach the same ground through the chat agent in the app chrome or the assistant inside the composer.
+</Warning>
+
+<Note>
+The [public API](/public-api/introduction) is not a third route here. It will schedule posts you have already written, but it has no endpoint that generates the copy for you.
+</Note>
+
+## Keep going
 
 <CardGroup cols={3}>
   <Card title="Configuration Reference" icon="sliders" href="/configuration/reference">
@@ -106,5 +142,22 @@ The Generate Posts one is worth knowing before you go hunting for it. That wizar
   </Card>
   <Card title="Webhooks" icon="webhook" href="/automation/webhooks">
     She calls your endpoint the moment a post goes live, up to your plan's count.
+  </Card>
+</CardGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Billing trouble" icon="credit-card" href="/troubleshooting/billing">
+    Charges, blockers and the private-window trap
+  </Card>
+  <Card title="Channel limits" icon="gauge" href="/troubleshooting/channel-limits">
+    What to do at the cap
+  </Card>
+  <Card title="Self-hosting" icon="server" href="/installation/overview">
+    Run her yourself and set your own ceilings
+  </Card>
+  <Card title="Support" icon="headset" href="/support">
+    Billing questions go to a person
   </Card>
 </CardGroup>

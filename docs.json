@@ -60,63 +60,39 @@
             "icon": "plug",
             "pages": [
               "providers/overview",
-              {
-                "group": "Social networks",
-                "icon": "share-nodes",
-                "pages": [
-                  "providers/instagram",
-                  "providers/facebook",
-                  "providers/threads",
-                  "providers/x-twitter",
-                  "providers/linkedin",
-                  "providers/linkedin-page",
-                  "providers/tiktok",
-                  "providers/pinterest",
-                  "providers/bluesky",
-                  "providers/mastodon",
-                  "providers/farcaster",
-                  "providers/nostr",
-                  "providers/vk",
-                  "providers/mewe",
-                  "providers/tumblr",
-                  "providers/dribbble"
-                ]
-              },
-              {
-                "group": "Video and streaming",
-                "icon": "video",
-                "pages": [
-                  "providers/youtube",
-                  "providers/twitch",
-                  "providers/kick"
-                ]
-              },
-              {
-                "group": "Communities and chat",
-                "icon": "comments",
-                "pages": [
-                  "providers/reddit",
-                  "providers/lemmy",
-                  "providers/discord",
-                  "providers/slack",
-                  "providers/telegram",
-                  "providers/whop",
-                  "providers/skool",
-                  "providers/moltbook"
-                ]
-              },
-              {
-                "group": "Publishing and business",
-                "icon": "newspaper",
-                "pages": [
-                  "providers/wordpress",
-                  "providers/medium",
-                  "providers/devto",
-                  "providers/hashnode",
-                  "providers/listmonk",
-                  "providers/google-my-business"
-                ]
-              }
+              "providers/instagram",
+              "providers/facebook",
+              "providers/threads",
+              "providers/x-twitter",
+              "providers/linkedin",
+              "providers/linkedin-page",
+              "providers/tiktok",
+              "providers/pinterest",
+              "providers/bluesky",
+              "providers/mastodon",
+              "providers/farcaster",
+              "providers/nostr",
+              "providers/vk",
+              "providers/mewe",
+              "providers/tumblr",
+              "providers/dribbble",
+              "providers/youtube",
+              "providers/twitch",
+              "providers/kick",
+              "providers/reddit",
+              "providers/lemmy",
+              "providers/discord",
+              "providers/slack",
+              "providers/telegram",
+              "providers/whop",
+              "providers/skool",
+              "providers/moltbook",
+              "providers/wordpress",
+              "providers/medium",
+              "providers/devto",
+              "providers/hashnode",
+              "providers/listmonk",
+              "providers/google-my-business"
             ]
           },
           {
@@ -142,6 +118,26 @@
             ]
           },
           {
+            "group": "Connect over MCP",
+            "icon": "network-wired",
+            "pages": [
+              "mcp/introduction",
+              "mcp/setup",
+              "mcp/clients/claude-code",
+              "mcp/clients/claude-desktop",
+              "mcp/clients/claude-app",
+              "mcp/clients/chatgpt",
+              "mcp/clients/cursor",
+              "mcp/clients/codex",
+              "mcp/clients/gemini-cli",
+              "mcp/clients/other-clients",
+              "mcp/tools",
+              "mcp/examples",
+              "mcp/limits-and-troubleshooting",
+              "mcp/self-hosting"
+            ]
+          },
+          {
             "group": "Talk to her",
             "icon": "comment-dots",
             "pages": [
@@ -154,33 +150,6 @@
               "agents/cursor",
               "agents/codex",
               "agents/gemini-cli"
-            ]
-          },
-          {
-            "group": "Connect over MCP",
-            "icon": "network-wired",
-            "pages": [
-              "mcp/introduction",
-              "mcp/setup",
-              {
-                "group": "Set up your client",
-                "icon": "laptop-code",
-                "expanded": false,
-                "pages": [
-                  "mcp/clients/claude-code",
-                  "mcp/clients/claude-desktop",
-                  "mcp/clients/claude-app",
-                  "mcp/clients/chatgpt",
-                  "mcp/clients/cursor",
-                  "mcp/clients/codex",
-                  "mcp/clients/gemini-cli",
-                  "mcp/clients/other-clients"
-                ]
-              },
-              "mcp/tools",
-              "mcp/examples",
-              "mcp/limits-and-troubleshooting",
-              "mcp/self-hosting"
             ]
           }
         ]
@@ -439,6 +408,36 @@
             ]
           },
           {
+            "group": "Connect your channels",
+            "icon": "plug",
+            "expanded": false,
+            "pages": [
+              "installation/providers/instagram",
+              "installation/providers/facebook",
+              "installation/providers/threads",
+              "installation/providers/x-twitter",
+              "installation/providers/linkedin",
+              "installation/providers/linkedin-page",
+              "installation/providers/tiktok",
+              "installation/providers/pinterest",
+              "installation/providers/mastodon",
+              "installation/providers/farcaster",
+              "installation/providers/vk",
+              "installation/providers/mewe",
+              "installation/providers/tumblr",
+              "installation/providers/dribbble",
+              "installation/providers/youtube",
+              "installation/providers/twitch",
+              "installation/providers/kick",
+              "installation/providers/reddit",
+              "installation/providers/discord",
+              "installation/providers/slack",
+              "installation/providers/telegram",
+              "installation/providers/whop",
+              "installation/providers/google-my-business"
+            ]
+          },
+          {
             "group": "Operations",
             "icon": "box-archive",
             "pages": [
@@ -501,7 +500,19 @@
           }
         ]
       }
-    ]
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/GkhanKINAY/postqueen-app"
+        },
+        {
+          "anchor": "Register to the cloud",
+          "href": "https://postqueen.ai"
+        }
+      ]
+    }
   },
   "redirects": [
     {
@@ -529,22 +540,14 @@
   "navbar": {
     "links": [
       {
-        "label": "GitHub",
-        "href": "https://github.com/GkhanKINAY/postqueen-app"
-      },
-      {
         "label": "Support",
         "href": "/support"
-      },
-      {
-        "label": "Open the app",
-        "href": "https://app.postqueen.ai"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Start free for 7 days",
-      "href": "https://postqueen.ai"
+      "label": "Dashboard",
+      "href": "https://app.postqueen.ai"
     }
   },
   "contextual": {
@@ -575,59 +578,6 @@
     "socials": {
       "github": "https://github.com/GkhanKINAY/postqueen-app",
       "website": "https://postqueen.ai"
-    },
-    "links": [
-      {
-        "header": "Product",
-        "items": [
-          {
-            "label": "Website",
-            "href": "https://postqueen.ai"
-          },
-          {
-            "label": "Pricing",
-            "href": "https://postqueen.ai/pricing"
-          },
-          {
-            "label": "Open the app",
-            "href": "https://app.postqueen.ai"
-          }
-        ]
-      },
-      {
-        "header": "Developers",
-        "items": [
-          {
-            "label": "Agents",
-            "href": "/agents/overview"
-          },
-          {
-            "label": "MCP",
-            "href": "/mcp/introduction"
-          },
-          {
-            "label": "CLI",
-            "href": "/cli/introduction"
-          },
-          {
-            "label": "API",
-            "href": "/public-api/introduction"
-          }
-        ]
-      },
-      {
-        "header": "Community",
-        "items": [
-          {
-            "label": "GitHub",
-            "href": "https://github.com/GkhanKINAY/postqueen-app"
-          },
-          {
-            "label": "Support",
-            "href": "/support"
-          }
-        ]
-      }
-    ]
+    }
   }
 }

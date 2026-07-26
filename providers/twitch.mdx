@@ -43,55 +43,6 @@ She waits two seconds before every write, on the post and on each comment, and s
 Announcements are quieter than normal messages in one specific way. Twitch answers an announcement with no message id, so she stores a placeholder and nothing links back to it in chat. She does not read that answer for a failure either, which means an announcement Twitch turned down still records as posted. Watch your first announcement land in your own chat before you trust a run of them. A normal chat message returns a real id and a real sent flag, so it reports honestly.
 </Note>
 
-<Steps>
-  <Step title="Register an app in the Twitch developer console">
-    Sign in to the Twitch developer console and register a new application. You need the client id and the client secret from it, and the redirect URL from the next step.
-
-    She asks for three scopes:
-
-```
-user:write:chat
-user:read:chat
-moderator:manage:announcements
-```
-
-    The third one is the one the announcement mode needs. Grant all three at registration, because adding a scope later means reconnecting the channel.
-  </Step>
-
-  <Step title="Configure the OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Twitch OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/twitch`
-    - Local development: `http://localhost:4200/integrations/social/twitch`
-    - Docker: `http://localhost:4007/integrations/social/twitch`
-  </Step>
-
-  <Step title="Set environment variables">
-    Copy both values into your `.env` file.
-
-```env
-TWITCH_CLIENT_ID=""
-TWITCH_CLIENT_SECRET=""
-```
-
-    The client id stays in use long after the connection is made. She sends it as the `Client-Id` header on every Twitch API call, so a channel that connected fine will still stop working if you clear that variable later.
-  </Step>
-
-  <Step title="Add the Twitch channel">
-    Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down` and then `docker compose up`.
-
-    In the web interface click **Add Channel** and pick **Twitch**, then authorize on the Twitch side.
-
-    Add Channel does not check whether the two variables are set, so a missing key shows up as a broken authorization page on the Twitch side rather than a helpful message in PostQueen.
-  </Step>
-</Steps>
-
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
-
-
 ## Post settings
 
 Open the settings bar on a Twitch post and one select is waiting for you. A second one appears once you change your mind about the first.
@@ -109,3 +60,13 @@ Open the settings bar on a Twitch post and one select is waiting for you. A seco
 | Purple | `purple` |
 
 Leave both alone and she sends a normal chat message in the default color.
+
+## Self-hosting
+
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up Twitch on your own instance](/installation/providers/twitch).
+</Info>
+
+<Snippet file="next-steps-provider.mdx" />

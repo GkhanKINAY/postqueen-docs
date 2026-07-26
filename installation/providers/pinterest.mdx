@@ -1,0 +1,81 @@
+---
+title: 'Pinterest setup'
+description: 'Register the Pinterest application and give PostQueen its keys'
+icon: /images/channels/pinterest.svg
+---
+
+<img src="/images/channels/pinterest.svg" alt="Pinterest" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+On your own instance the Pinterest app is yours: create it in the Pinterest developer dashboard, wait for approval, then put its app id and secret in your environment.
+
+<Steps>
+  <Step title="Create Pinterest App">
+    Head to [Pinterest Developer Dashboard](https://developers.pinterest.com/apps/) and create your App. Fill out all required Information and wait on the App to get approved.
+
+    Request these five scopes. The connect is refused if any one of them is missing:
+
+    ```
+    boards:read
+    boards:write
+    pins:read
+    pins:write
+    user_accounts:read
+    ```
+
+    <Note>
+    Pinterest reviews apps before granting full access, and a new app starts with trial access
+    that covers fewer scopes than it eventually will. If the connect refuses a scope you clearly
+    requested, check whether the app is still in trial rather than assuming a typo.
+    </Note>
+  </Step>
+
+  <Step title="Copy the App ID and Secret">
+    Copy the App ID at "App id" and the Secret Key at "App secret key"
+    
+    <Frame>
+      <img src="/images/providers/pinterest/pinterest-002.png" alt="Copy App ID and Secret" />
+    </Frame>
+  </Step>
+
+  <Step title="Configure Redirect URI">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Pinterest OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/pinterest`
+    - Local development: `http://localhost:4200/integrations/social/pinterest`
+    - Docker: `http://localhost:4007/integrations/social/pinterest`
+    
+    <Frame>
+      <img src="/images/providers/pinterest/pinterest-001.png" alt="Setup of Redirect URIs" />
+    </Frame>
+  </Step>
+
+  <Step title="Add environment variables">
+```env
+PINTEREST_CLIENT_ID=""
+PINTEREST_CLIENT_SECRET=""
+```
+
+    You should now be able to add the Pinterest Provider to your User / Team Account.
+  </Step>
+  <Step title="Restart and add the Pinterest channel">
+    <Snippet file="restart-and-add-channel.mdx" />
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Pinterest" icon="/images/channels/pinterest.svg" href="/providers/pinterest">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>
