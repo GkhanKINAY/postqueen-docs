@@ -4,23 +4,37 @@ description: 'One library for every file, two engines that generate a video, and
 icon: 'image'
 ---
 
-The photo came off your phone this morning. The logo has been on nine posts already. The video was made on Tuesday while you were on a call. All three sit in the same grid, and the composer reaches into that grid without ever sending you to another tab.
+Every file this organization owns sits in one grid: what you upload, what she generates, and what you build on the design canvas. The composer reaches into that grid without ever sending you to another tab.
 
 ## The library
 
-**Media** in the left menu opens the whole shelf. Every file this organization owns, newest first, eighteen to a page, with the pager underneath once there is more than one page.
+**Media** in the left menu opens the whole shelf. Every file, newest first, eighteen to a page, with the pager underneath once there is more than one page.
 
-The same grid opens inside the composer when you press **Insert Media**, with one difference that matters. In the composer a click picks the file, and a numbered purple ring tells you what order the attachments will land in. On the Media page a click does nothing, because no post is waiting for it.
+The same grid opens inside the composer when you press **Insert Media**, with one difference that matters.
 
-Hover a tile and two controls appear. The expand icon in the middle opens the file at full size. The small circle in the corner deletes it, after asking *Are you sure you want to delete the image?*
+| Where you are | What a click on a tile does |
+|---|---|
+| The Media page | Nothing, because no post is waiting for it |
+| The composer, after **Insert Media** | Picks the file, and a numbered purple ring tells you what order the attachments will land in |
 
+Hover a tile and two controls appear.
+
+| Control | What it does |
+|---|---|
+| The expand icon in the middle | Opens the file at full size |
+| The small circle in the corner | Deletes it, after asking *Are you sure you want to delete the image?* |
+
+<Note>
 That delete is soft. The row is flagged, the grid stops showing it, and the file itself stays where it was written. A post that already carries it goes out exactly as you left it.
+</Note>
 
 ### Getting files in
 
 Press **Upload** and pick files, or drag them straight onto the grid, which answers with *Drag n drop some files here*. Empty, the page tells you the same thing: *You don't have any media yet*.
 
+<Warning>
 Try to drop more files while an upload is still running and she stops you with *Upload current in progress, please wait and then try again*. Nothing queues halfway.
+</Warning>
 
 | Rule | Value |
 |---|---|
@@ -31,22 +45,27 @@ Try to drop more files while an upload is still running and she stops you with *
 | One video | 1 GB |
 | Image resizing | Fitted inside 1000 x 1000 pixels before upload, GIFs left untouched |
 
-The two type rows differ because the picker is permissive and the check happens on the way in.
-Hand it something outside the second list and it is refused after you choose it, not before.
+<Note>
+The two type rows differ because the picker is permissive and the check happens on the way in. Hand it something outside the second list and it is refused after you choose it, not before.
+</Note>
 
 The resize is on by default and it is why a 12 megapixel phone photo arrives as a small file. Self-hosters who want the original pixels can turn it off with `DISABLE_IMAGE_COMPRESSION`.
 
-<Note>
+<Warning>
 Turning compression off has a consequence on local disk storage. The backend checks every file it writes itself, and it caps images at 10 MB there, so an install storing files locally can start refusing large photos once nothing is shrinking them first. On Cloudflare R2 the browser uploads to the bucket directly and that cap never applies. See [Uploads and storage](/configuration/uploads).
-</Note>
+</Warning>
 
+<Info>
 Third place files come from: **Import**, next to Upload. That button only appears once your install has a media service connected, and it opens *Import From* so you can browse that service and pull files across. Full walkthrough on [Third-party integrations](/using/third-party-integrations).
+</Info>
 
 ### Finding one again
 
 The search box sits above the grid and matches the name the file arrived with, ignoring case, filtering as you type. Clear it and the whole shelf comes back. Nothing matched reads *No media matches your search*.
 
+<Warning>
 One honest limit: an AI image or an AI video arrives without an original name, so search will not find it. Those you find at the front of the grid, which is where the newest thing always is.
+</Warning>
 
 ### Alt text and video covers
 
@@ -59,28 +78,49 @@ This one lives in the composer rather than the library. Hover an attachment thum
 
 The frame you pick is stored as a timestamp as well as a picture, and Instagram uses that timestamp to set the cover on a video or a reel. **Clear Thumbnail** puts it back to whatever the platform would have chosen.
 
+<Check>
 Press **Save Changes** and the attachment on your post updates in place.
+</Check>
 
 ## AI images
 
-**AI Image** sits in the attachments row under the editor, on any plan that includes AI. Press it and one small window opens: a prompt box reading *Describe the image you want to generate*, and a row of styles.
+<Info>
+**AI Image** sits in the attachments row under the editor, on any plan that includes AI.
+</Info>
+
+Press it and one small window opens: a prompt box reading *Describe the image you want to generate*, and a row of styles.
 
 | Styles |
 |---|
 | Realistic, Cartoon, Anime, Fantasy, Abstract, Pixel Art, Sketch |
 | Watercolor, Minimalist, Cyberpunk, Monochromatic, Surreal, Pop Art, Fantasy Realism |
 
-The box starts empty on purpose. She does not borrow the text of your post, so what you describe is what gets drawn.
+<Steps>
+  <Step title="Describe it yourself">
+    The box starts empty on purpose. She does not borrow the text of your post, so what you describe is what gets drawn.
+  </Step>
+  <Step title="Press Generate">
+    The window closes while she works. The composer buttons lock for the duration, which is deliberate, because nothing should schedule mid-generation.
+  </Step>
+  <Step title="She writes the brief first">
+    What you typed goes to a writing model, which turns your one line and your chosen style into a long render brief, and the image model draws from that.
+  </Step>
+  <Step title="It arrives attached">
+    The finished square image is saved into your library and attached to the post in one move.
+  </Step>
+</Steps>
 
-Press **Generate** and the window closes while she works. The composer buttons lock for the duration, which is deliberate, because nothing should schedule mid-generation. What you typed goes to a writing model first, which turns your one line and your chosen style into a long render brief, and the image model draws from that. The finished square image is saved into your library and attached to the post in one move.
-
+<Warning>
 One image credit per generation. Run the counter to zero and the generation simply does not happen, so check [Plans and limits](/using/plans-and-limits) if a press seems to do nothing.
+</Warning>
 
 ## AI video
 
-**AI Video** sits next to AI Image, and it is the one button on this page that can be missing entirely. It renders only when your install has at least one video engine configured. Two ship today, they need different keys, and they make very different things.
+<Info>
+**AI Video** sits next to AI Image, and it is the one button on this page that can be missing entirely. It renders only when your install has at least one video engine configured.
+</Info>
 
-### The two engines
+Two engines ship today, they need different keys, and they make very different things.
 
 | Engine | What comes out | Keys the install needs | Inside a trial |
 |---|---|---|---|
@@ -89,7 +129,9 @@ One image credit per generation. Run the counter to zero and the generation simp
 
 Burned in means exactly that. The subtitles are rendered into the pixels, centered, so they survive every platform that plays a video without captions.
 
+<Note>
 With both engines configured you get a *Choose a video type* list first. With one, she takes you straight into its form.
+</Note>
 
 ### Filling in the form
 
@@ -100,21 +142,42 @@ Two orientation buttons sit at the top of every engine, and vertical is already 
 | **Vertical (Stories, Reels)** | 9:16 |
 | **Horizontal (Normal Post)** | 16:9 |
 
-Veo3 asks for a **Prompt** of at least five characters, and takes up to three reference images from your media library underneath it. Pick a video by accident and she drops it from the selection, because that field is images only.
+<AccordionGroup>
+  <Accordion title="Veo3 wants a prompt and up to three images" icon="video">
+    Veo3 asks for a **Prompt** of at least five characters, and takes up to three reference images from your media library underneath it. Pick a video by accident and she drops it from the selection, because that field is images only.
+  </Accordion>
+  <Accordion title="Image Text Slides wants one thing, the voice" icon="microphone">
+    The list comes back live from ElevenLabs with a **Play** button beside each name, so you can hear one before you commit, and the first voice is chosen for you. From there she writes the slides, draws a picture for each one, narrates them in your voice, stitches the whole thing together with half-second fades, then burns the subtitles on.
+  </Accordion>
+</AccordionGroup>
 
-Image Text Slides asks for one thing: the voice. The list comes back live from ElevenLabs with a **Play** button beside each name, so you can hear one before you commit, and the first voice is chosen for you. From there she writes the slides, draws a picture for each one, narrates them in your voice, stitches the whole thing together with half-second fades, then burns the subtitles on.
+The window header counts your remaining video credits while you work, and a generation spends one.
 
-The window header counts your remaining video credits while you work, and a generation spends one. Miss a required field and the form tells you *Please fill all required fields* rather than spending anything.
+<Note>
+Miss a required field and the form tells you *Please fill all required fields* rather than spending anything.
+</Note>
 
+<Warning>
 Videos take real minutes, not seconds. The composer stays locked the whole time, and the clip attaches itself to the post the moment it lands in your library.
+</Warning>
 
 ## The design editor
 
 Sometimes you do not need a photo, you need a quote card with your colors on it. **Design Media**, also in the attachments row and on the same plans as AI Image, opens a full canvas over the composer: a side panel of templates, text and shapes on the left, a toolbar across the top, zoom controls at the bottom.
 
-A fresh page opens at 540 x 675 pixels, which is a portrait shape that survives most feeds. Build the thing, then press **Use this media**. She flattens the canvas to a PNG, uploads it, and drops it onto the post. Every export lands in your library as `media.png`, so a busy month leaves you a stack of them.
+A fresh page opens at 540 x 675 pixels, which is a portrait shape that survives most feeds.
 
-On plans that include the image generator there is one extra tab in that side panel, marked **AI Img**. Type a prompt, press **Generate**, and the result appears as a thumbnail you can click. Click it with nothing selected and it lands on the canvas at its own size. Click it with an image element selected and it replaces that element's picture instead, which is the fastest way to fill a template you already like. Your remaining credits sit next to the heading, and at zero the button relabels itself to send you to billing.
+<Check>
+Build the thing, then press **Use this media**. She flattens the canvas to a PNG, uploads it, and drops it onto the post.
+</Check>
+
+<Note>
+Every export lands in your library as `media.png`, so a busy month leaves you a stack of them.
+</Note>
+
+<Accordion title="The AI Img tab, on plans that include the image generator" icon="wand-magic-sparkles">
+There is one extra tab in that side panel, marked **AI Img**. Type a prompt, press **Generate**, and the result appears as a thumbnail you can click. Click it with nothing selected and it lands on the canvas at its own size. Click it with an image element selected and it replaces that element's picture instead, which is the fastest way to fill a template you already like. Your remaining credits sit next to the heading, and at zero the button relabels itself to send you to billing.
+</Accordion>
 
 <Note>
 Running PostQueen yourself? The editor is the Polotno SDK and it wants one key, `NEXT_PUBLIC_POLOTNO`. Leave it unset and the canvas still opens, in a demo mode that is not fit for production. Setup and licensing live on [Image and video editing](/configuration/polotno).
@@ -122,11 +185,20 @@ Running PostQueen yourself? The editor is the Polotno SDK and it wants one key, 
 
 ## Where the files actually live
 
-Every upload, every generated frame and every design export goes through the same storage setting. Local disk keeps them on the server and serves them back under `/uploads`. Cloudflare R2 puts them in a bucket with public HTTPS URLs.
+Every upload, every generated frame and every design export goes through the same storage setting.
 
-That choice is not only about disk space. Instagram fetches your media by URL rather than accepting an upload, and TikTok does the same for photo posts, so those files have to be reachable from the public internet for the post to publish at all. TikTok video is the other way around: she uploads it to TikTok in chunks from the server. [Uploads and storage](/configuration/uploads) walks through both backends and the trap in the middle.
+| Backend | Where the files go |
+|---|---|
+| Local disk | Kept on the server and served back under `/uploads` |
+| Cloudflare R2 | A bucket with public HTTPS URLs |
 
-## Where to go next
+<Warning>
+That choice is not only about disk space. Instagram fetches your media by URL rather than accepting an upload, and TikTok does the same for photo posts, so those files have to be reachable from the public internet for the post to publish at all. TikTok video is the other way around: she uploads it to TikTok in chunks from the server.
+</Warning>
+
+[Uploads and storage](/configuration/uploads) walks through both backends and the trap in the middle.
+
+## Related
 
 <CardGroup cols={3}>
   <Card title="Uploads and storage" icon="database" href="/configuration/uploads">
@@ -137,5 +209,22 @@ That choice is not only about disk space. Instagram fetches your media by URL ra
   </Card>
   <Card title="Writing a post" icon="pen-nib" href="/using/writing-a-post">
     Where every one of these buttons sits, and the three ways a post leaves the composer
+  </Card>
+</CardGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Plans and limits" icon="credit-card" href="/using/plans-and-limits">
+    Where image and video credits come from, and what happens at zero
+  </Card>
+  <Card title="Third-party integrations" icon="puzzle-piece" href="/using/third-party-integrations">
+    The Import button, and the services that fill it
+  </Card>
+  <Card title="When an upload fails" icon="triangle-exclamation" href="/troubleshooting/uploads">
+    Payload limits, refused file types, and the video failures behind them
+  </Card>
+  <Card title="Upload from your own tooling" icon="code" href="/public-api/uploads/upload-file">
+    The same library, one API call away
   </Card>
 </CardGroup>

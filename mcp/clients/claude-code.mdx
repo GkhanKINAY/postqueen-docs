@@ -6,19 +6,29 @@ icon: /images/brand/icon-claude-code.svg
 
 Claude Code connects to her over streamable HTTP with a single `claude mcp add` command, and her 11 tools are there in the terminal you already have open.
 
-## Add via CLI
+<Info>
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
+</Info>
 
-Grab your API key from [app.postqueen.ai](https://app.postqueen.ai) (**Settings > Developers > Public API**, click **Reveal**), then run:
+## Add via CLI
 
 ```bash
 claude mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Replace `YOUR_API_KEY` with your actual key. By default this registers the server for you in the current project. Add `--scope user` to make PostQueen available in every project on your machine, or `--scope project` to share it with the repo through a checked-in `.mcp.json`.
+Replace `YOUR_API_KEY` with your actual key.
 
-## Project Config Alternative
+## Pick a scope
 
-To share the server with everyone working in a repository, declare it in a `.mcp.json` file at the project root (the same file `claude mcp add --scope project` writes). Claude Code expands `${VAR}` environment variables there, so this form is the one that is safe to commit:
+| Flag | Where she is registered |
+|------|-------------------------|
+| none (default) | For you, in the current project |
+| `--scope user` | For you, in every project on your machine |
+| `--scope project` | For the whole repo, through a checked-in `.mcp.json` |
+
+## Project config alternative
+
+To share the server with everyone working in a repository, declare it in a `.mcp.json` file at the project root, the same file `claude mcp add --scope project` writes. Claude Code expands `${VAR}` environment variables there, so this form is the one that is safe to commit:
 
 ```json .mcp.json
 {
@@ -37,7 +47,7 @@ Everyone working in the repo exports their own `POSTQUEEN_API_KEY`, and no key e
 Format per the official [Claude Code MCP documentation](https://code.claude.com/docs/en/mcp).
 </Note>
 
-## Bearer Variant
+## Bearer variant
 
 If you prefer to keep the key out of the URL, use the bare `/mcp` endpoint with an Authorization header:
 
@@ -49,9 +59,13 @@ claude mcp add --transport http postqueen https://api.postqueen.ai/mcp --header 
 Your API key grants full access to your PostQueen workspace: treat it like a password, and use the `${POSTQUEEN_API_KEY}` form above in any `.mcp.json` you check in. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
-## Self-Hosted
+## Self-hosted
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL` in either form, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`.
+
+<Info>
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
+</Info>
 
 ## Verify
 
@@ -59,4 +73,27 @@ Ask Claude Code:
 
 > "List my connected social media accounts"
 
+<Check>
 Your channel names come back, because the agent reached for her `integrationList` tool. `claude mcp list` confirms the server shows as connected.
+</Check>
+
+<Tip>
+Her skill teaches Claude Code the `postqueen` CLI as well, which reaches the analytics and the post edits MCP has no tool for. Both routes can run side by side: see [Claude Code as an agent](/agents/claude-code).
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Tools reference" icon="screwdriver-wrench" href="/mcp/tools">
+    Every parameter of the 11 tools Claude Code just discovered
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    The flows where she has to look something up before she can post
+  </Card>
+  <Card title="Limits and troubleshooting" icon="gauge" href="/mcp/limits-and-troubleshooting">
+    What MCP cannot reach, and what a bad key looks like
+  </Card>
+  <Card title="Claude Code as an agent" icon="terminal" href="/agents/claude-code">
+    Her skill, the CLI, and a launch post written from a repo
+  </Card>
+</CardGroup>

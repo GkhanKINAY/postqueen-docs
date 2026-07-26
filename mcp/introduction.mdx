@@ -4,9 +4,7 @@ description: 'Connect AI agents to PostQueen using the Model Context Protocol (M
 icon: 'circle-info'
 ---
 
-MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they can list your integrations, schedule posts, and generate images and videos through a standardized tool-calling interface.
-
-That means you can connect Claude, Cursor or any MCP-compatible client to your PostQueen account and ask her to run your social media in plain language. Setup for your client: [Client Setup](/mcp/setup).
+MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they can list your integrations, schedule posts, and generate images and videos through a standardized tool-calling interface. Connect Claude, Cursor or any MCP-compatible client to your PostQueen account and ask her to run your social media in plain language.
 
 <Note>
 **You do not have to run or install anything.** In the protocol's own words PostQueen is the
@@ -18,7 +16,7 @@ pasting that URL into your client, and for most of them it is a single command.
   <img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
 </Frame>
 
-## How It Works
+## How it works
 
 Point a client at one URL and your agent gets **11 tools** it can call. It reads their schemas, then calls them on your behalf.
 
@@ -36,7 +34,7 @@ sequenceDiagram
     MCP-->>Agent: Tool response
 ```
 
-## Available Tools
+## Available tools
 
 | Tool | Description |
 |------|-------------|
@@ -59,21 +57,27 @@ tools itself or hand the whole job to her. That is why pages about the assistant
 pages about MCP say eleven.
 </Note>
 
+Every parameter and every field each tool sends back: [Tools Reference](/mcp/tools).
+
 ## Authentication
 
-There are two ways to authenticate:
+There are two ways to authenticate.
 
-### API Key
-
-Get your API key from **Settings > Developers > Public API** in PostQueen. Use it directly in the MCP endpoint URL or as a Bearer token.
-
-### OAuth Token
-
-Building an app for other PostQueen users? Use [OAuth2](/public-api/oauth) to obtain tokens. OAuth tokens start with `pos_` and work like API keys when sent as a Bearer token on `/mcp`. The `/mcp/:apiKey` URL form accepts API keys only.
+<CardGroup cols={2}>
+  <Card title="API key" icon="key">
+    Get your API key from **Settings > Developers > Public API** in PostQueen. Use it directly in
+    the MCP endpoint URL or as a Bearer token.
+  </Card>
+  <Card title="OAuth token" icon="shield-halved">
+    Building an app for other PostQueen users? Use [OAuth2](/public-api/oauth) to obtain tokens.
+    OAuth tokens start with `pos_` and work like API keys when sent as a Bearer token on `/mcp`.
+    The `/mcp/:apiKey` URL form accepts API keys only.
+  </Card>
+</CardGroup>
 
 ## Connecting
 
-The server accepts two endpoint forms. Copy-paste configuration for your client: [Client Setup](/mcp/setup).
+The server accepts two endpoint forms. Copy-paste configuration for your client: [Connect your client](/mcp/setup).
 
 <Tabs>
   <Tab title="Bearer Token">
@@ -99,32 +103,75 @@ The server accepts two endpoint forms. Copy-paste configuration for your client:
 For self-hosted instances, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`.
 </Note>
 
-## Quick Example
+## Quick example
 
-You ask for one post and three tool calls go by before you look up:
-
-1. **Agent calls `integrationList`** to see your connected accounts (X, LinkedIn, and so on)
-2. **Agent calls `integrationSchema`** with `platform: "x"` to learn X's character limits, settings, and rules
-3. **Agent calls `integrationSchedulePostTool`** to schedule your post in the correct format
-
-All of this happens automatically when you tell your AI agent something like:
+Tell your AI agent something like:
 
 > "Schedule a post to X for tomorrow at 10am: Excited to announce our new feature!"
 
+Three tool calls go by before you look up.
+
+<Steps>
+  <Step title="Read your channels">
+    The agent calls `integrationList` to see your connected accounts (X, LinkedIn, and so on).
+  </Step>
+  <Step title="Read the platform rules">
+    The agent calls `integrationSchema` with `platform: "x"` to learn X's character limits,
+    settings, and rules.
+  </Step>
+  <Step title="Schedule the post">
+    The agent calls `integrationSchedulePostTool` to schedule your post in the correct format.
+  </Step>
+</Steps>
+
+<Check>
+**That is the whole loop.** All of this happens automatically: you wrote one sentence, and the
+post is on your calendar in the format X expects.
+</Check>
+
 ## FAQ
 
-### Do I need an OpenAI key to use PostQueen MCP?
+<AccordionGroup>
+  <Accordion title="Do I need an OpenAI key to use PostQueen MCP?">
+    No key is needed for reasoning: your MCP client (Claude, Cursor and others) brings the model.
+    But `generateImageTool` and the video tools run her own generation pipeline on the server, so
+    a self-hosted backend needs `OPENAI_API_KEY` (and any video provider keys) for those specific
+    tools. The other tools work without it.
+  </Accordion>
 
-No key is needed for reasoning: your MCP client (Claude, Cursor and others) brings the model. But `generateImageTool` and the video tools run her own generation pipeline on the server, so a self-hosted backend needs `OPENAI_API_KEY` (and any video provider keys) for those specific tools. The other tools work without it.
+  <Accordion title="What happens when my API key expires or is rotated?">
+    PostQueen API keys do not auto-rotate, but if you regenerate one in Settings > Developers >
+    Public API, every MCP client using the old key stops working until you update its config.
+    Update the URL or the `Authorization` header in your client config and reconnect.
+  </Accordion>
 
-### What happens when my API key expires or is rotated?
+  <Accordion title="Self-hosted: how do I reach the MCP endpoint?">
+    Your backend already serves it. The endpoint sits at `/mcp` (Bearer auth) and `/mcp/:apiKey`
+    (key in URL). Your reverse proxy has to forward these paths and stream the response rather
+    than buffering it: [MCP on a self-hosted install](/mcp/self-hosting).
+  </Accordion>
 
-PostQueen API keys do not auto-rotate, but if you regenerate one in Settings > Developers > Public API, every MCP client using the old key stops working until you update its config. Update the URL or the `Authorization` header in your client config and reconnect.
+  <Accordion title="Can MCP read or reply to comments?">
+    Not today. The current tool set is read-only on integrations and write-only on posts and
+    media: there is no `getComments` or `replyToComment` tool. She does not read incoming
+    comments. The closest feature is [Auto Actions](/using/auto-actions), which can repost your
+    own post or add a follow-up comment on it once it crosses the like milestone you set.
+  </Accordion>
+</AccordionGroup>
 
-### Self-hosted: how do I reach the MCP endpoint?
+## Next steps
 
-Your backend already serves it. The endpoint sits at `/mcp` (Bearer auth) and `/mcp/:apiKey` (key in URL). Your reverse proxy has to forward these paths and stream the response rather than buffering it: [MCP on a self-hosted install](/mcp/self-hosting).
-
-### Can MCP read or reply to comments?
-
-Not today. The current tool set is read-only on integrations and write-only on posts and media: there is no `getComments` or `replyToComment` tool. She does not read incoming comments. The closest feature is Auto Actions, which can repost your own post or add a follow-up comment on it once it crosses the like milestone you set.
+<CardGroup cols={2}>
+  <Card title="Connect your client" icon="plug" href="/mcp/setup">
+    The URL for Claude, Cursor, Codex, ChatGPT and the rest
+  </Card>
+  <Card title="Tools Reference" icon="screwdriver-wrench" href="/mcp/tools">
+    Every parameter and every field the eleven tools send back
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    The flows where an agent has to discover something before it can post
+  </Card>
+  <Card title="Limits and troubleshooting" icon="gauge-high" href="/mcp/limits-and-troubleshooting">
+    What the tools cannot reach, and what a bad key looks like
+  </Card>
+</CardGroup>

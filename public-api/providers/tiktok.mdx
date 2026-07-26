@@ -3,11 +3,11 @@ title: TikTok Settings
 description: 'API settings for posting to TikTok'
 ---
 
+Every TikTok post carries a settings block, and `content_posting_method` is the field that matters most: it decides whether the post publishes or lands in the account's app inbox.
+
 Creating the OAuth app and connecting a channel: [TikTok setup guide](/providers/tiktok).
 
 ## Settings Schema
-
-When uploading a video to TikTok, use the following settings schema:
 
 ```json
 {
@@ -27,6 +27,10 @@ When uploading a video to TikTok, use the following settings schema:
 }
 ```
 
+<Warning>
+**Important:** TikTok requires media files to be publicly accessible via HTTPS. Local files or private URLs will fail. Use [Cloudflare R2](/configuration/r2) or similar storage with public access.
+</Warning>
+
 ## Fields
 
 | Field | Type | Required | Description |
@@ -43,11 +47,13 @@ When uploading a video to TikTok, use the following settings schema:
 | `video_made_with_ai` | `boolean` | No | AI-generated content disclosure. Video posts only; `DIRECT_POST` only |
 | `content_posting_method` | `string` | Yes | `DIRECT_POST` publishes straight away; `UPLOAD` sends it to the TikTok app inbox |
 
-**`DIRECT_POST` only**: TikTok applies the setting only when `content_posting_method` is
-`DIRECT_POST`. With `UPLOAD` the field is still required by the PostQueen API, but TikTok silently
-discards it. **Video posts only**: TikTok's photo posts have no duet, stitch, or AI-generated
-label, so these settings are discarded when the post is a picture. **Photo posts only**:
-`autoAddMusic` has no effect on videos.
+### What the qualifiers mean
+
+| Qualifier | What it means |
+|-----------|---------------|
+| `DIRECT_POST` only | TikTok applies the setting only when `content_posting_method` is `DIRECT_POST`. With `UPLOAD` the field is still required by the PostQueen API, but TikTok silently discards it |
+| Video posts only | TikTok's photo posts have no duet, stitch, or AI-generated label, so these settings are discarded when the post is a picture |
+| Photo posts only | `autoAddMusic` has no effect on videos |
 
 ### `privacy_level`
 
@@ -72,6 +78,10 @@ label, so these settings are discarded when the post is a picture. **Photo posts
 | `DIRECT_POST` | Publishes the post to TikTok. **Use this unless the user explicitly wants to review the post in the TikTok app first.** |
 | `UPLOAD` | Does **not** publish. Sends the media to the account's TikTok app inbox, where the user must manually finish and publish it within 24 hours or it is discarded. TikTok keeps only the title/content in this mode, every other setting is silently discarded. |
 
+<Check>
+`DIRECT_POST` is the mode that finishes the job. Nobody has to open the TikTok app afterwards.
+</Check>
+
 <Warning>
 A post created with `UPLOAD` is reported as **successfully published** by the PostQueen API, because the upload to TikTok did succeed. It will not appear on the TikTok profile until the account owner opens the TikTok app, finds the draft in their inbox, and publishes it manually. Choose `UPLOAD` only when that manual step is what the user asked for.
 </Warning>
@@ -80,7 +90,10 @@ A post created with `UPLOAD` is reported as **successfully published** by the Po
 
 ## Complete Example
 
-### Public Video with Interactions Enabled
+<Tabs>
+  <Tab title="Public video">
+
+Interactions enabled, published straight away.
 
 ```json
 {
@@ -122,7 +135,8 @@ A post created with `UPLOAD` is reported as **successfully published** by the Po
 }
 ```
 
-### Branded Content Video
+  </Tab>
+  <Tab title="Branded content">
 
 ```json
 {
@@ -142,7 +156,8 @@ A post created with `UPLOAD` is reported as **successfully published** by the Po
 }
 ```
 
-### AI-Generated Content
+  </Tab>
+  <Tab title="AI-generated">
 
 ```json
 {
@@ -162,7 +177,10 @@ A post created with `UPLOAD` is reported as **successfully published** by the Po
 }
 ```
 
-### Private Video (visible only to you)
+  </Tab>
+  <Tab title="Private">
+
+Visible only to you.
 
 ```json
 {
@@ -181,12 +199,24 @@ A post created with `UPLOAD` is reported as **successfully published** by the Po
 }
 ```
 
-This publishes a video that only the account owner can see. To send the media to the account's
-TikTok app inbox instead of publishing, use `content_posting_method: "UPLOAD"`, but TikTok then
-keeps only the title/content: every other setting above is still required by the API, yet
-silently discarded, as [`content_posting_method`](#content_posting_method) explains.
+This publishes a video that only the account owner can see. To send the media to the account's TikTok app inbox instead of publishing, switch to [`content_posting_method: "UPLOAD"`](#content_posting_method), which keeps only the title/content.
 
-<Warning>
-**Important:** TikTok requires media files to be publicly accessible via HTTPS. Local files or private URLs will fail. Use [Cloudflare R2](/configuration/r2) or similar storage with public access.
-</Warning>
+  </Tab>
+</Tabs>
 
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Connect the channel" icon="plug" href="/providers/tiktok">
+    Create the OAuth app and link the TikTok account.
+  </Card>
+  <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">
+    The create endpoint, field by field, with a worked request.
+  </Card>
+  <Card title="Get media on HTTPS" icon="cloud-arrow-up" href="/public-api/uploads/upload-from-url">
+    Pull a remote file into storage so TikTok can reach it.
+  </Card>
+  <Card title="When nothing appears" icon="triangle-exclamation" href="/troubleshooting/post-failed">
+    Work out why a post that reported success is not on the profile.
+  </Card>
+</CardGroup>

@@ -37,9 +37,11 @@ parameter schema, call the [settings endpoint](/public-api/integrations/settings
 returns a `tools` array built from the same source as the tables below.
 </Note>
 
+<Info>
 Networks not listed here expose no tools. That includes LinkedIn, YouTube, X, Facebook,
 Threads, TikTok, Telegram, Mastodon, Bluesky, Nostr, VK, Kick, Tumblr, Moltbook and
 Google Business Profile: everything they need comes from the post settings themselves.
+</Info>
 
 ## Dev.to
 
@@ -161,3 +163,25 @@ postqueen integrations:trigger skool-id label -d "{\"id\":\"$GROUP\"}"
 
 Reddit works the same way in spirit: search with `subreddits`, then pass the `name` you
 get back to `restrictions` to learn whether a flair is required before you schedule.
+
+<Check>
+When the second call returns, you are holding the ids the post settings ask for, so nobody has to
+copy a value out of a web UI.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Call a tool" icon="bolt" href="/public-api/integrations/trigger">
+    `POST /integration-trigger/{id}`, the endpoint behind every example here.
+  </Card>
+  <Card title="Ask one channel directly" icon="sliders" href="/public-api/integrations/settings">
+    The live `tools` array for a connected channel, parameter schema included.
+  </Card>
+  <Card title="Use the values in a post" icon="reddit" href="/public-api/providers/reddit">
+    Where a subreddit and its flair go once you have fetched them.
+  </Card>
+  <Card title="Run tools from the CLI" icon="terminal" href="/cli/integrations">
+    `integrations:trigger`, plus the commands around it.
+  </Card>
+</CardGroup>

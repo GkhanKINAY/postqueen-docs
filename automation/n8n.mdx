@@ -4,7 +4,10 @@ description: 'Install the n8n-nodes-postqueen community node and let your workfl
 icon: 'diagram-project'
 ---
 
-The n8n node is where PostQueen works while you sleep. Wire her into a workflow once and she keeps going without you: a new blog post becomes a scheduled promotion, a morning timer becomes a fresh video, a quiet calendar becomes a Slack ping. The node talks to the same public API as the [CLI](/cli/introduction) and [MCP](/mcp/introduction), so everything a workflow schedules lands on the same calendar you already review.
+The n8n node puts seven PostQueen operations on your canvas, from scheduling a post to generating a
+video with AI. It talks to the same public API as the [CLI](/cli/introduction) and
+[MCP](/mcp/introduction), so everything a workflow schedules lands on the same calendar you already
+review.
 
 <Frame>
   <img src="/images/brand/flow-everywhere.svg" alt="One content source, every channel: an n8n workflow fans a post out through PostQueen" />
@@ -12,50 +15,55 @@ The n8n node is where PostQueen works while you sleep. Wire her into a workflow 
 
 ## Install
 
+<Info>
 The node requires n8n running on Node.js 20.15 or newer.
+</Info>
 
-### n8n UI (recommended)
+<Tabs>
+  <Tab title="n8n UI (recommended)">
+    1. Open **Settings**.
+    2. Choose **Community Nodes**.
+    3. Click **Install**.
+    4. Enter `n8n-nodes-postqueen` as the npm package name.
+    5. Click **Install** again to confirm.
 
-1. Open **Settings**.
-2. Choose **Community Nodes**.
-3. Click **Install**.
-4. Enter `n8n-nodes-postqueen` as the npm package name.
-5. Click **Install** again to confirm.
+    <Frame>
+      <img src="/images/brand/community-node.png" alt="n8n Community Nodes install dialog with n8n-nodes-postqueen entered as the package name" />
+    </Frame>
+  </Tab>
 
-<Frame>
-  <img src="/images/brand/community-node.png" alt="n8n Community Nodes install dialog with n8n-nodes-postqueen entered as the package name" />
-</Frame>
+  <Tab title="npm (manual, non-Docker)">
+    Go to your n8n installation folder, usually `~/.n8n`. If there is no `custom` folder, create one
+    with a `package.json`, then install the package:
 
-### npm (manual, non-Docker)
+    ```bash
+    mkdir -p ~/.n8n/custom
+    cd ~/.n8n/custom
+    npm init -y
+    npm install n8n-nodes-postqueen
+    ```
+  </Tab>
 
-Go to your n8n installation folder, usually `~/.n8n`. If there is no `custom` folder, create one with a `package.json`, then install the package:
+  <Tab title="Docker">
+    Create a folder on your host machine for custom nodes and install the package there:
 
-```bash
-mkdir -p ~/.n8n/custom
-cd ~/.n8n/custom
-npm init -y
-npm install n8n-nodes-postqueen
-```
+    ```bash
+    mkdir -p ~/n8n-custom-nodes
+    cd ~/n8n-custom-nodes
+    npm init -y
+    npm install n8n-nodes-postqueen
+    ```
 
-### Docker
+    Then mount that folder into the container and point n8n at it with `N8N_CUSTOM_EXTENSIONS`:
 
-Create a folder on your host machine for custom nodes and install the package there:
-
-```bash
-mkdir -p ~/n8n-custom-nodes
-cd ~/n8n-custom-nodes
-npm init -y
-npm install n8n-nodes-postqueen
-```
-
-Then mount that folder into the container and point n8n at it with `N8N_CUSTOM_EXTENSIONS`:
-
-```bash
-docker run -d --name n8n \
-  -v ~/n8n-custom-nodes:/home/node/n8n-custom-nodes \
-  -e N8N_CUSTOM_EXTENSIONS="/home/node/n8n-custom-nodes" \
-  -p 5678:5678 n8nio/n8n
-```
+    ```bash
+    docker run -d --name n8n \
+      -v ~/n8n-custom-nodes:/home/node/n8n-custom-nodes \
+      -e N8N_CUSTOM_EXTENSIONS="/home/node/n8n-custom-nodes" \
+      -p 5678:5678 n8nio/n8n
+    ```
+  </Tab>
+</Tabs>
 
 ## Credentials
 
@@ -66,7 +74,8 @@ Two fields and the node is talking to your account:
 | **API Key** | Your PostQueen Public API key. In [app.postqueen.ai](https://app.postqueen.ai), open Settings > Developers > Public API and hit Reveal. |
 | **Host** | Base URL of the PostQueen API. Defaults to `https://api.postqueen.ai` (cloud). |
 
-Create a new **PostQueen API** credential in n8n, paste your key, and set the host if you self-host. n8n validates the credential against a live endpoint when you save, so a typo shows up immediately.
+Create a new **PostQueen API** credential in n8n, paste your key, and set the host if you self-host.
+n8n validates the credential against a live endpoint when you save, so a typo shows up immediately.
 
 <Warning>
 Self-hosting? The **Host** value must end with `/api`, for example `https://postqueen.example.com/api`. Without that suffix the node cannot reach your instance's API.
@@ -75,8 +84,12 @@ Self-hosting? The **Host** value must end with `/api`, for example `https://post
 ### Check it before you build anything
 
 Drop a **PostQueen** node into a blank workflow, choose **Get Channels**, and execute the node on
-its own. Your connected channels come back as JSON with their ids. Doing this first separates a
-credential problem from a workflow problem, which is much harder to tell apart later.
+its own.
+
+<Check>
+Your connected channels come back as JSON with their ids. Doing this first separates a credential
+problem from a workflow problem, which is much harder to tell apart later.
+</Check>
 
 <AccordionGroup>
   <Accordion title="Get Channels returns nothing, or an auth error">
@@ -111,7 +124,19 @@ Seven operations cover everything the node can do:
 | **Upload File** | Upload a file (image or video) from a binary property. |
 | **Video Function** | Run a video helper function, such as loading available voices. |
 
-**Generate Video** starts with a **Video Type**, for example `image-text-slides` or `veo3`. Then pick an **Output Format**: `vertical` or `horizontal`. **Custom Parameters** are optional key/value pairs such as `prompt`, `voice` or `images`. Need the list of voices? Run **Video Function** with the function name `loadVoices` and the identifier of the video type you plan to use, such as `image-text-slides`. Both fields are required on that operation.
+### Fields on Generate Video
+
+| Field | What to put in it |
+| --- | --- |
+| **Video Type** | The type to render, for example `image-text-slides` or `veo3`. |
+| **Output Format** | `vertical` or `horizontal`. |
+| **Custom Parameters** | Optional key/value pairs such as `prompt`, `voice` or `images`. |
+
+<Info>
+Need the list of voices? Run **Video Function** with the function name `loadVoices` and the
+identifier of the video type you plan to use, such as `image-text-slides`. Both fields are required
+on that operation.
+</Info>
 
 <Note>
 There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule trigger, an RSS feed, or a webhook. Form submissions work too. Any of them can start a workflow that ends with a new post on your calendar.
@@ -119,48 +144,76 @@ There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule tr
 
 ## Workflow ideas
 
-**Blog on autopilot.** An RSS trigger watches your blog, an AI node writes a caption for each new article, and **Create Post** schedules it to every channel you have connected. You publish the article and walk away: she carries it out to every feed while you write the next one.
+**Blog on autopilot.** An RSS trigger watches your blog, an AI node writes a caption for each new
+article, and **Create Post** schedules it to every channel you have connected. You publish the
+article and walk away: she carries it out to every feed while you write the next one.
 
 <Frame>
   <img src="/images/brand/n8n-flow.svg" alt="An RSS trigger, an AI caption, then Create Post: your blog promotes itself" />
 </Frame>
 
-**A video channel that grows overnight.** A daily Schedule trigger runs **Generate Video** with your prompt, as `veo3` or `image-text-slides`, vertical or horizontal. Add a voiceover if you want one. **Create Post** then queues the finished video to your channel, so a new upload is waiting every morning whether you opened your laptop or not. Video generation is not something the `postqueen` CLI offers, so this node is where you reach for it without writing code.
+**A video channel that grows overnight.** A daily Schedule trigger runs **Generate Video** with your
+prompt, as `veo3` or `image-text-slides`, vertical or horizontal. Add a voiceover if you want one.
+**Create Post** then queues the finished video to your channel, so a new upload is waiting every
+morning whether you opened your laptop or not. Video generation is not something the `postqueen` CLI
+offers, so this node is where you reach for it without writing code.
 
 <Frame>
   <img src="/images/brand/flow-youtube.svg" alt="A daily schedule, Generate Video, then Create Post: a channel that fills itself overnight" />
 </Frame>
 
-**One clip, three short-form feeds.** A new video lands in Drive, Dropbox or S3, **Upload File** brings it in, and a single **Create Post** schedules it to TikTok, Instagram and YouTube together. Upload first and pass the returned path into the post: those three networks only accept media from trusted domains, so linking a raw external URL will not work.
+**One clip, three short-form feeds.** A new video lands in Drive, Dropbox or S3, **Upload File**
+brings it in, and a single **Create Post** schedules it to TikTok, Instagram and YouTube together.
+
+<Warning>
+Upload first and pass the returned path into the post. Those three networks only accept media from
+trusted domains, so linking a raw external URL will not work.
+</Warning>
 
 <Frame>
   <img src="/images/brand/flow-clips.svg" alt="A new video file, Upload File, then one Create Post for TikTok, Reels and Shorts" />
 </Frame>
 
-**Queue guard.** Every Monday, **Get Posts** pulls the next seven days of your calendar. If the queue looks thin, a Slack message tells you before your followers notice a gap.
+**Queue guard.** Every Monday, **Get Posts** pulls the next seven days of your calendar. If the
+queue looks thin, a Slack message tells you before your followers notice a gap.
 
 <Frame>
   <img src="/images/brand/flow-guard.svg" alt="Monday check: if the week ahead looks empty, a Slack message reaches you first" />
 </Frame>
 
-She runs on your terms. Leave her alone and she is a true autopilot: whatever lands on the calendar goes out on time without another word from you. Want a closer look first? Everything is visible on the calendar before it publishes, and setting **Create Post** to draft saves the post without scheduling it, so it stays there until you publish it.
+She runs on your terms. Leave her alone and she is a true autopilot: whatever lands on the calendar
+goes out on time without another word from you.
 
-## Links
+<Tip>
+Want a closer look first? Everything is visible on the calendar before it publishes, and setting
+**Create Post** to draft saves the post without scheduling it, so it stays there until you publish
+it.
+</Tip>
 
-<CardGroup cols={3}>
+## Source and releases
+
+<CardGroup cols={2}>
   <Card title="postqueen-n8n on GitHub" icon="github" href="https://github.com/GkhanKINAY/postqueen-n8n">
     The node's source, plus ready-made versions of every workflow here.
   </Card>
   <Card title="n8n-nodes-postqueen on npm" icon="npm" href="https://www.npmjs.com/package/n8n-nodes-postqueen">
     The package page with versions and release notes.
   </Card>
+</CardGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
   <Card title="Public API" icon="code" href="/public-api/introduction">
     The API this node calls, if you want to go beyond the node.
+  </Card>
+  <Card title="Create Post" icon="paper-plane" href="/public-api/posts/create">
+    Every field of the create-post request body, with per-provider settings.
   </Card>
   <Card title="Zapier" icon="bolt" href="/automation/zapier">
     Using another automation tool? The same recipes work in Zapier.
   </Card>
-  <Card title="Make" icon="diagram-project" href="/automation/make">
+  <Card title="Make" icon="puzzle-piece" href="/automation/make">
     Prefer Make? It calls the same API and the same ideas carry over.
   </Card>
 </CardGroup>

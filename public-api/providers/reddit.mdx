@@ -3,11 +3,11 @@ title: Reddit Settings
 description: 'API settings for posting to Reddit'
 ---
 
+A Reddit post is defined by the `subreddit` array. Each entry names one subreddit, the title to post under, and the post type.
+
 Creating the OAuth app and connecting a channel: [Reddit setup guide](/providers/reddit).
 
 ## Settings Schema
-
-When creating a post for Reddit, use the following settings schema:
 
 ```json
 {
@@ -49,13 +49,21 @@ Each item in the `subreddit` array contains a `value` object with:
 | `is_flair_required` | `boolean` | Yes | Whether flair is required |
 | `flair` | `object` | Conditional | Flair object (required if `is_flair_required` is true) |
 
+<Check>
+That is the whole schema. `__type`, one entry in `subreddit`, and a title of at least two characters make a valid Reddit post.
+</Check>
+
 ### `type` (Post Type)
 
 | Value | Description |
 |-------|-------------|
 | `self` | Text post (uses content from post value) |
 | `link` | Link post (requires `url` field) |
-| `media` | Image or video post. Upload the file first and attach exactly one media item; PostQueen picks image or video from the extension |
+| `media` | Image or video post |
+
+<Warning>
+A `media` post takes exactly one media item, and you have to upload the file before you attach it. PostQueen picks image or video from the extension.
+</Warning>
 
 ### Flair Object
 
@@ -74,7 +82,8 @@ Required when `is_flair_required` is `true`:
 
 ## Complete Example
 
-### Text Post (Self Post)
+<Tabs>
+  <Tab title="Text post">
 
 ```json
 {
@@ -113,7 +122,8 @@ Required when `is_flair_required` is `true`:
 }
 ```
 
-### Link Post
+  </Tab>
+  <Tab title="Link post">
 
 ```json
 {
@@ -152,7 +162,8 @@ Required when `is_flair_required` is `true`:
 }
 ```
 
-### Post with Required Flair
+  </Tab>
+  <Tab title="Required flair">
 
 ```json
 {
@@ -194,7 +205,8 @@ Required when `is_flair_required` is `true`:
 }
 ```
 
-### Cross-post to Multiple Subreddits
+  </Tab>
+  <Tab title="Multiple subreddits">
 
 ```json
 {
@@ -226,7 +238,26 @@ Required when `is_flair_required` is `true`:
 }
 ```
 
-<Note>
-**Tip:** You can post to multiple subreddits simultaneously by adding multiple objects to the `subreddit` array.
-</Note>
+  </Tab>
+</Tabs>
 
+<Tip>
+You can post to multiple subreddits simultaneously by adding multiple objects to the `subreddit` array.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Connect the channel" icon="plug" href="/providers/reddit">
+    Create the OAuth app and link the Reddit account.
+  </Card>
+  <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">
+    The create endpoint, field by field, with a worked request.
+  </Card>
+  <Card title="Upload media first" icon="image" href="/public-api/uploads/upload-file">
+    What a `media` post needs before you can attach it.
+  </Card>
+  <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
+    Work out why a post did not reach the subreddit.
+  </Card>
+</CardGroup>

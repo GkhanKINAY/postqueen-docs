@@ -4,7 +4,7 @@ description: 'Say more than one post can hold, and let her publish the parts in 
 icon: 'link'
 ---
 
-Some ideas need room. You write them in parts, she publishes the first part as your post, and every part after it attaches to the one that came before.
+Write your post in parts. She publishes the first part, then attaches every part after it to the one that came before.
 
 On X that reads as a thread. On LinkedIn it reads as a comment sitting under your post. You write it the same way for both, and she works out the difference at publish time.
 
@@ -28,21 +28,25 @@ The wording on the add button follows the channel you are editing.
 | A single channel configured for posts | Add post in a thread |
 | A single channel configured for comments | Add comment |
 
-<Note>
+<Warning>
 The label comes from the channel's own configuration and is a hint, not a promise. Reddit and VK read as **Add post in a thread** while the network stores the extra parts as comments. The tables further down are the authority on what actually lands.
-</Note>
+</Warning>
 
 ### Media on a part
 
 Every part carries its own attachments. Insert media from the toolbar, drop files onto the block, or paste them straight in.
 
+<Info>
 One upload session caps at 1 GB. Go over and she stops you with *Upload size limit exceeded. Maximum 1 GB per upload session.*
+</Info>
 
+<Warning>
 Three channels take media on the first part only: Instagram, Twitch and Kick. On those, the later parts lose the insert-media button, and dropping or pasting a file into them does nothing at all.
+</Warning>
 
 ### Spacing the parts out
 
-Running a slow burn instead of a wall of text? Every part after the first can wait before it publishes. The wait starts the moment the part before it lands, so five minutes means five minutes of quiet, then the next one.
+Every part after the first can wait before it publishes. The wait starts the moment the part before it lands, so five minutes means five minutes of quiet, then the next one.
 
 | Setting | Value |
 |---|---|
@@ -50,9 +54,17 @@ Running a slow burn instead of a wall of text? Every part after the first can wa
 | Custom | Any whole number of minutes |
 | Remove delay | Publishes right after the previous part |
 
+<Tip>
+Delays turn a wall of text into a slow burn. Without one, each part lands straight after the part before it.
+</Tip>
+
 ## What each network does with the extra parts
 
+<Info>
 She publishes the first part, waits for the network to hand back an id, then walks the rest one at a time. Each part is attached to what came before it. What that attachment *means* is the network's business, not hers.
+</Info>
+
+Every network has [its own page](/providers/overview) with the detail.
 
 ### Networks that build a thread
 
@@ -73,12 +85,6 @@ Each part points at the previous one, so the whole run hangs together as a singl
 | Skool | Comments under the post, each one nested on the part before |
 | Moltbook | Comments under the post, each one nested on the part before |
 
-### Discord
-
-Discord sits on its own. The second part opens a thread on your original message and lands inside it. Every part after that goes back into the channel as a separate message, because the thread is created on the first extra part only and the ones that follow are not routed into it.
-
-Two parts on Discord read the way you expect. Three or more do not, so keep a Discord run to a post and one follow-up.
-
 ### Networks that hang the parts off the post
 
 Here every extra part attaches to the original post rather than to the part before it, so you get a flat run of comments instead of a chain.
@@ -92,37 +98,66 @@ Here every extra part attaches to the original post rather than to the part befo
 | Lemmy | Comments on the post, repeated for every community you posted to |
 | VK | Comments on the wall post |
 
+### Discord
+
+<Warning>
+Discord sits on its own. The second part opens a thread on your original message and lands inside it. Every part after that goes back into the channel as a separate message, because the thread is created on the first extra part only and the ones that follow are not routed into it.
+
+Two parts on Discord read the way you expect. Three or more do not, so keep a Discord run to a post and one follow-up.
+</Warning>
+
 ### Chat channels
 
-Twitch and Kick are live chat rather than a feed. The first part is a chat message, and every part after it is another message replying to the last. On Twitch a part can go out as an announcement instead, depending on the message type you picked in the channel settings.
+Twitch and Kick are live chat rather than a feed. The first part is a chat message, and every part after it is another message replying to the last.
+
+<Note>
+On Twitch a part can go out as an announcement instead, depending on the message type you picked in the channel settings.
+</Note>
 
 ### Networks that take the first part and nothing else
 
-Some networks have no comment or reply of their own for her to use. On five of them the editor knows it and never offers you the button, so what you write is what goes out:
+Some networks have no comment or reply of their own for her to use.
 
-- Pinterest
-- Tumblr
-- YouTube
-- TikTok
-- MeWe
+<AccordionGroup>
+  <Accordion title="Five where the button is never offered" icon="circle-minus">
+    The editor knows there is nowhere to put a second part, so what you write is what goes out.
+
+    - Pinterest
+    - Tumblr
+    - YouTube
+    - TikTok
+    - MeWe
+  </Accordion>
+  <Accordion title="Seven where the button is there anyway" icon="triangle-exclamation">
+    - Dev.to
+    - Dribbble
+    - Google My Business
+    - Hashnode
+    - Listmonk
+    - Medium
+    - WordPress
+  </Accordion>
+</AccordionGroup>
 
 <Warning>
-Seven more will let you add a part in the editor even though the network has nowhere to put it. Only the first part is published, so keep everything that matters on part one:
-
-- Dev.to
-- Dribbble
-- Google My Business
-- Hashnode
-- Listmonk
-- Medium
-- WordPress
+Those seven will let you add a part in the editor even though the network has nowhere to put it. Only the first part is published, so keep everything that matters on part one.
 </Warning>
 
 ## Breaking a long piece into parts
 
-You wrote the whole thing in one block, and now it needs to be a thread. That is still your call to make: read it back, find the places where one thought ends and the next begins, and cut there.
+You wrote the whole thing in one block, and now it needs to be a thread. Where the cuts go is still your call to make.
 
-Add a part, move the text across, and use the up and down arrows if the order comes out wrong. Changed your mind about a part? The trash icon takes it out one at a time, asking *Are you sure you want to delete this post?* before it does.
+<Steps>
+  <Step title="Find the seams">
+    Read it back and mark the places where one thought ends and the next begins.
+  </Step>
+  <Step title="Add a part and move the text across">
+    One part per thought, cut at the seam you marked.
+  </Step>
+  <Step title="Fix the order">
+    The up and down arrows move a part earlier or later if the run comes out wrong.
+  </Step>
+</Steps>
 
 <Tip>
 The character badge at the end of the attachments row counts while you type, so you can see a part cross its channel limit before you commit to the break.
@@ -138,23 +173,17 @@ Every part is validated on its own, not just the first one.
 | Part fits the channel limit | Scheduled posts only | *post is too long, please fix it* |
 | Channel settings are complete | Scheduled posts only | The specific settings error for that channel |
 
-A part counts as filled if it has text **or** an image, so an image-only part is fine. On X she counts the way X counts, weighting the characters exactly as the network does.
+<Check>
+A part counts as filled if it has text **or** an image, so an image-only part passes the content check.
+</Check>
 
+<Note>
+On X she counts the way X counts, weighting the characters exactly as the network does.
+</Note>
+
+<Info>
 Drafts skip the length and settings checks, which is what makes a draft a useful place to park a long thread you are still cutting down. Promote it and the checks run.
-
-## Related
-
-<CardGroup cols={3}>
-  <Card title="Create Post API" icon="code" href="/public-api/posts/create">
-    Build a multi-part post from your own tooling
-  </Card>
-  <Card title="Managing Posts from the CLI" icon="terminal" href="/cli/managing-posts">
-    Pass `-c` more than once to thread from your terminal
-  </Card>
-  <Card title="Networks" icon="share-nodes" href="/providers/overview">
-    What each channel accepts, one page each
-  </Card>
-</CardGroup>
+</Info>
 
 ## Next steps
 
@@ -162,11 +191,11 @@ Drafts skip the length and settings checks, which is what makes a draft a useful
   <Card title="Writing a post" icon="pen-to-square" href="/using/writing-a-post">
     The composer that builds the chain
   </Card>
-  <Card title="Your channels" icon="plug" href="/providers/overview">
-    Which networks accept a thread, and how long
+  <Card title="Create Post API" icon="code" href="/public-api/posts/create">
+    Build a multi-part post from your own tooling
   </Card>
   <Card title="Threads from a script" icon="terminal" href="/cli/managing-posts">
-    The same chain in one command
+    Pass `-c` more than once to thread from your terminal
   </Card>
   <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
     What happens to the rest of a chain

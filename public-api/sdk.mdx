@@ -1,9 +1,10 @@
 ---
 title: Node.js SDK
 description: '@postqueen/node: a typed Node.js client for the PostQueen Public API'
+icon: 'node-js'
 ---
 
-[`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) is a thin, typed wrapper over the [Public API](/public-api/introduction): every method maps 1:1 to a REST endpoint, and all but `deletePost()` return the parsed JSON response.
+[`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) is a thin, typed wrapper over the [Public API](/public-api/introduction). Every method maps 1:1 to a REST endpoint.
 
 ## Installation
 
@@ -44,6 +45,10 @@ await postqueen.post({
 });
 ```
 
+<Check>
+`integrations()` coming back with your channels means the key is valid and the client is pointed at the right host.
+</Check>
+
 ## Constructor
 
 ```typescript
@@ -61,7 +66,19 @@ Self-hosted instances pass their own backend URL, either through the second cons
 const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!, 'https://postqueen.example.com/api');
 ```
 
+<Tip>
+Set `POSTQUEEN_API_URL` once in the environment and every `new PostQueen(...)` in your codebase needs only the key.
+</Tip>
+
 ## Methods
+
+| Method | Endpoint | Returns |
+|---|---|---|
+| `integrations()` | `GET /public/v1/integrations` | Parsed JSON |
+| `post(dto)` | `POST /public/v1/posts` | Parsed JSON |
+| `postList(filters)` | `GET /public/v1/posts` | Parsed JSON |
+| `upload(file, extension)` | `POST /public/v1/upload` | Parsed JSON |
+| `deletePost(id)` | `DELETE /public/v1/posts/{id}` | The raw `fetch` `Response` |
 
 ### `integrations()`
 
@@ -127,7 +144,9 @@ const posts = await postqueen.postList({
 | `file` | `Buffer` | Raw file bytes. |
 | `extension` | `string` | File extension used to derive the MIME type: `png`, `jpg`, `jpeg`, or `gif`. Anything else falls back to `image/jpeg`. |
 
-Upload media first, then reference the returned object in `value[].image` when creating the post:
+<Info>
+Media must be uploaded before posting. `post()` expects hosted media objects in `value[].image`, not raw files or base64, so upload first and pass the returned object straight through.
+</Info>
 
 ```typescript
 import { readFile } from 'fs/promises';
@@ -156,16 +175,17 @@ await postqueen.post({
 await postqueen.deletePost('post-id');
 ```
 
-## Notes
+## Limits and error handling
 
-<Note>
+<Info>
 The create-post endpoint is rate limited to **30 requests per hour**. Batch multiple channels into a single `post()` call instead of one call per channel.
-</Note>
+</Info>
 
-- Except for `deletePost()`, methods return the parsed JSON body as-is; the SDK does not throw on HTTP error statuses. Check the response for an error payload if a call misbehaves.
-- Media must be uploaded before posting: `post()` expects hosted media objects in `value[].image`, not raw files or base64.
+<Warning>
+Except for `deletePost()`, methods return the parsed JSON body as-is, and the SDK does not throw on HTTP error statuses. Check the response for an error payload if a call misbehaves.
+</Warning>
 
-## Learn more
+## Next steps
 
 <CardGroup cols={2}>
   <Card title="API Overview" icon="book" href="/public-api/introduction">
@@ -173,5 +193,11 @@ The create-post endpoint is rate limited to **30 requests per hour**. Batch mult
   </Card>
   <Card title="Create Post" icon="paper-plane" href="/public-api/posts/create">
     Full request schema and per-platform settings
+  </Card>
+  <Card title="List channels" icon="plug" href="/public-api/integrations/list">
+    The endpoint behind `integrations()`, and the id every post needs
+  </Card>
+  <Card title="Upload media" icon="image" href="/public-api/uploads/upload-file">
+    The multipart endpoint behind `upload()`, field by field
   </Card>
 </CardGroup>

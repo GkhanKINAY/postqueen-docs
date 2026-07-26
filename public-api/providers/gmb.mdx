@@ -3,11 +3,9 @@ title: 'Google My Business Settings'
 description: 'Provider settings for Google My Business posts'
 ---
 
+Google My Business (GMB) posts appear on your Google Business Profile. There are three shapes, and `topicType` picks which one: a standard update, an event, or an offer.
+
 Creating the OAuth app and connecting a channel: [Google My Business setup guide](/providers/google-my-business).
-
-## Overview
-
-Google My Business (GMB) allows you to create posts that appear on your Google Business Profile. You can create standard updates, events, or offers.
 
 ## Settings Schema
 
@@ -35,7 +33,7 @@ Google My Business (GMB) allows you to create posts that appear on your Google B
 | `__type` | string | ✅ | Must be `"gmb"` |
 | `topicType` | string | ❌ | Post type: `STANDARD`, `EVENT`, or `OFFER` |
 | `callToActionType` | string | ❌ | CTA button type |
-| `callToActionUrl` | string | ❌ | URL for the CTA button. Genuinely optional: set `callToActionType` without it and the request still succeeds, with the button quietly left off the post |
+| `callToActionUrl` | string | ❌ | URL for the CTA button |
 | `eventTitle` | string | ❌ | Event name (required for EVENT type) |
 | `eventStartDate` | string | ❌ | Event start date |
 | `eventEndDate` | string | ❌ | Event end date |
@@ -45,20 +43,31 @@ Google My Business (GMB) allows you to create posts that appear on your Google B
 | `offerRedeemUrl` | string | ❌ | Redemption URL |
 | `offerTerms` | string | ❌ | Offer terms and conditions |
 
+<Warning>
+`callToActionUrl` is genuinely optional. Set `callToActionType` without it and the request still succeeds, with the button quietly left off the post.
+</Warning>
+
 ### Call-to-Action Types
 
-- `NONE` - No button
-- `BOOK` - Book now
-- `ORDER` - Order online
-- `SHOP` - Shop now
-- `LEARN_MORE` - Learn more
-- `SIGN_UP` - Sign up
-- `GET_OFFER` - Get offer
-- `CALL` - Call
+| Value | Button |
+|-------|--------|
+| `NONE` | No button |
+| `BOOK` | Book now |
+| `ORDER` | Order online |
+| `SHOP` | Shop now |
+| `LEARN_MORE` | Learn more |
+| `SIGN_UP` | Sign up |
+| `GET_OFFER` | Get offer |
+| `CALL` | Call |
+
+<Info>
+Event posts require date and time information.
+</Info>
 
 ## Examples
 
-### Standard Post
+<Tabs>
+  <Tab title="Standard">
 
 ```json
 {
@@ -71,7 +80,8 @@ Google My Business (GMB) allows you to create posts that appear on your Google B
 }
 ```
 
-### Event Post
+  </Tab>
+  <Tab title="Event">
 
 ```json
 {
@@ -89,7 +99,8 @@ Google My Business (GMB) allows you to create posts that appear on your Google B
 }
 ```
 
-### Offer Post
+  </Tab>
+  <Tab title="Offer">
 
 ```json
 {
@@ -104,6 +115,13 @@ Google My Business (GMB) allows you to create posts that appear on your Google B
   }
 }
 ```
+
+  </Tab>
+</Tabs>
+
+<Note>
+Offer posts can include coupon codes, which gives you something to track against.
+</Note>
 
 ## Full Example
 
@@ -142,10 +160,27 @@ Google My Business (GMB) allows you to create posts that appear on your Google B
 }
 ```
 
-## Notes
+<Check>
+Once the post publishes, it appears on your Google Business Profile in Search and in Maps.
+</Check>
 
-- GMB posts appear on your Google Business Profile in Search and Maps
-- Images are highly recommended for better engagement
-- Event posts require date/time information
-- Offer posts can include coupon codes for tracking
+<Tip>
+Images are highly recommended for better engagement.
+</Tip>
 
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Connect the channel" icon="plug" href="/providers/google-my-business">
+    Create the OAuth app and link your Business Profile.
+  </Card>
+  <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">
+    The create endpoint, field by field, with a worked request.
+  </Card>
+  <Card title="Upload the image" icon="image" href="/public-api/uploads/upload-file">
+    Get media onto a public URL before you reference it.
+  </Card>
+  <Card title="Find your integration id" icon="list" href="/public-api/integrations/list">
+    Every connected channel, with the id this request needs.
+  </Card>
+</CardGroup>

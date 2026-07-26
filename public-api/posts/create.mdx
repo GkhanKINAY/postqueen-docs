@@ -7,7 +7,7 @@ openapi: 'POST /posts'
 
 The top-level `type` field controls when (and whether) the post is published:
 
-| Value | Behavior |
+| Value | Behaviour |
 |---|---|
 | `"now"` | Publish immediately. `date` is ignored. |
 | `"schedule"` | Publish at the time given in `date` (ISO 8601). |
@@ -16,19 +16,21 @@ The top-level `type` field controls when (and whether) the post is published:
 Drafts are how you stage content via the API without committing to a publish time, useful for content review workflows or pre-filling a calendar from an external CMS.
 
 <Note>
-  `posts` is required for every `type`, drafts included. Each entry must include an `integration.id`, or the request returns `400 Bad Request` with the message `All posts must have an integration id`. A draft still has to be attached to at least one channel — there is no way to create a channel-less draft via the API.
+  `posts` is required for every `type`, drafts included. Each entry must include an `integration.id`, or the request returns `400 Bad Request` with the message `All posts must have an integration id`. A draft still has to be attached to at least one channel. There is no way to create a channel-less draft via the API.
 </Note>
 
 ## Duplicating a post
 
 There is no dedicated duplicate / clone endpoint. To copy an existing post, fetch it with `GET /posts` and submit the content as a new `POST /posts` request.
 
-Before re-submitting, strip the server-managed fields from the fetched object. Re-sending them either causes validation errors or, worse, accidentally updates the original. At minimum drop:
+<Warning>
+Strip the server-managed fields from the fetched object before you re-submit. Re-sending them either causes validation errors or, worse, accidentally updates the original. At minimum drop:
 
 - `id` and any nested post IDs
 - `createdAt`, `updatedAt`, and any other timestamps
 - `state` / `status` / `releaseId` (these are assigned by the scheduler)
 - Anything else the API did not ask you for when you originally created the post
+</Warning>
 
 Then set a fresh `type` (`now`, `schedule`, or `draft`) and `date`, and `POST` the cleaned object.
 
@@ -61,7 +63,7 @@ When creating posts, each social media platform requires different settings. The
     | YouTube | `youtube` | `title`, `type` |
     | TikTok | `tiktok` | `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle`, `content_posting_method` |
 
-    TikTok honors these settings only when `content_posting_method` is `DIRECT_POST`, with `UPLOAD` it keeps only the post content/title. `duet`, `stitch`, and `video_made_with_ai` apply to video posts only; `autoAddMusic` to photo posts only. Every field: [TikTok settings](/public-api/providers/tiktok).
+    TikTok honours these settings only when `content_posting_method` is `DIRECT_POST`, with `UPLOAD` it keeps only the post content/title. `duet`, `stitch`, and `video_made_with_ai` apply to video posts only; `autoAddMusic` to photo posts only. Every field: [TikTok settings](/public-api/providers/tiktok).
   </Tab>
   <Tab title="Community Platforms">
     | Platform | `__type` | Required Settings |
@@ -134,5 +136,27 @@ curl -X POST "https://api.postqueen.ai/public/v1/upload" \
 # 2. put the returned id and path in the post body's image array
 ```
 
+<Check>
+Once the upload has returned an id and a path, reference those two values instead of the file
+itself and the post body stays inside the 100 kB limit.
+</Check>
+
 [Upload a File](/public-api/uploads/upload-file) lists the accepted types, and
 [Upload from URL](/public-api/uploads/upload-from-url) does the same for media already on the web.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Every provider setting" icon="code" href="/public-api/providers/x">
+    The full schema each platform accepts, with a worked example.
+  </Card>
+  <Card title="Find your channel IDs" icon="plug" href="/public-api/integrations/list">
+    Every connected channel, with the `integration.id` each post entry needs.
+  </Card>
+  <Card title="Upload media first" icon="image" href="/public-api/uploads/upload-file">
+    The accepted file types, and the id and path you reference back here.
+  </Card>
+  <Card title="Read posts back" icon="list" href="/public-api/posts/list">
+    `GET /posts`, which is also step one of duplicating one.
+  </Card>
+</CardGroup>

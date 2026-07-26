@@ -4,13 +4,17 @@ description: 'What the 11 MCP tools cannot reach, and what to do when the connec
 icon: 'gauge'
 ---
 
-Your agent plans a launch week and schedules every post in one breath. Then you ask it to show you what is on next Tuesday, and it comes back with nothing. Nothing broke. The tools she answers over MCP are built to make things: they read your channels and their rules, then create posts and media. Everything that reads back, edits later or touches a connection lives on the [Public API](/public-api/introduction) and the [CLI](/cli/introduction) instead.
+The tools she answers over MCP are built to make things: they read your channels and their rules, then create posts and media. Everything that reads back, edits later or touches a connection lives on the [Public API](/public-api/introduction) and the [CLI](/cli/introduction) instead.
 
-Read this before you build on MCP, not after.
+<Info>
+**No MCP tool lists an existing post, deletes one, or returns analytics.** Ask your agent what is
+on next Tuesday and it comes back with nothing. Nothing is broken. Read this page before you
+build on MCP, not after.
+</Info>
 
 ## What the tools cannot reach
 
-You have a working connector and an agent that schedules beautifully. Then you ask for last month's numbers, or for that Thursday post to be pulled back. Here is where each of those actually lives.
+### Posts, drafts and analytics
 
 | What you want | Over MCP | Where it lives instead |
 |---------------|----------|------------------------|
@@ -20,39 +24,75 @@ You have a working connector and an agent that schedules beautifully. Then you a
 | Move a post between draft and schedule | `integrationSchedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |
 | Read analytics | No tool returns metrics | [`GET /analytics/{integration}`](/public-api/analytics/platform) and [`GET /analytics/post/{postId}`](/public-api/analytics/post), or `postqueen analytics:platform <id>` |
 | See what published and what failed | No notification tool | [`GET /notifications`](/public-api/notifications/list), 100 per page, newest first |
+| Reconnect a published post so its analytics work | No tool | [`GET /posts/{id}/missing`](/public-api/posts/missing-content) then [`PUT /posts/{id}/release-id`](/public-api/posts/update-release-id) |
+
+### Channels, media and comments
+
+| What you want | Over MCP | Where it lives instead |
+|---------------|----------|------------------------|
 | Confirm your key still reaches her | No tool | [`GET /is-connected`](/public-api/integrations/is-connected) |
 | Find the next open slot on a channel | No tool | [`GET /find-slot/{id}`](/public-api/integrations/find-slot) |
 | Connect a new channel | No tool | [`GET /social/{integration}`](/public-api/integrations/connect) for the OAuth URL, or the app |
 | Remove a channel | No tool | [`DELETE /integrations/{id}`](/public-api/integrations/delete), or the app |
 | Upload a file from your disk | `uploadFromUrlTool` takes a public URL only | [`POST /upload`](/public-api/uploads/upload-file), or `postqueen upload <file>` |
-| Reconnect a published post so its analytics work | No tool | [`GET /posts/{id}/missing`](/public-api/posts/missing-content) then [`PUT /posts/{id}/release-id`](/public-api/posts/update-release-id) |
 | Read or reply to comments | No tool | No interface today. See the FAQ on [Introduction](/mcp/introduction) |
 
 Three of these deserve a longer sentence.
 
 ### A draft stays a draft until you move it
 
-`integrationSchedulePostTool` accepts `draft`, `schedule` or `now` as the `type`. Draft is a post state, and a draft is simply not scheduled. Whatever your agent schedules goes out at its time. Whatever it saves as a draft keeps its date and does nothing until you publish it, and the move from draft to schedule is `PUT /posts/{id}/status` or `postqueen posts:status`. There is no MCP tool for that step.
+`integrationSchedulePostTool` accepts `draft`, `schedule` or `now` as the `type`.
+
+| `type` | What happens |
+| --- | --- |
+| `draft` | The post keeps its date and does nothing until you publish it. Draft is a post state, and a draft is simply not scheduled |
+| `schedule` | The post goes out at its time |
+| `now` | The post is published immediately |
+
+The move from draft to schedule is [`PUT /posts/{id}/status`](/public-api/posts/change-status) or `postqueen posts:status`. There is no MCP tool for that step.
 
 ### Her channel list over MCP does not say which channels are switched off
 
-`integrationList` returns four fields per channel and no more: `id`, `name`, `picture` and `platform`. The tool builds a richer row than that internally, then the declared output schema trims it on the way out, so `disabled` and the owning group both fall off before your client sees them.
+`integrationList` returns four fields per channel and no more. The tool builds a richer row than that internally, then the declared output schema trims it on the way out.
 
-The Public API returns the full row for the same channels. [`GET /integrations`](/public-api/integrations/list) carries `disabled`, `profile` and `customer` alongside the four you already have. So an agent working only through MCP cannot tell a live channel from a disabled one, and will happily schedule to a channel that will not publish. If that matters to your build, read the channel list from the API and pass the IDs to your agent.
+| Field | `integrationList` over MCP | [`GET /integrations`](/public-api/integrations/list) |
+| --- | --- | --- |
+| `id`, `name`, `picture`, `platform` | Returned | Returned |
+| `disabled` | Trimmed off before your client sees it | Returned |
+| `profile` | Trimmed off | Returned |
+| `customer` (the owning group) | Trimmed off | Returned |
 
-Groups are not a dead end on MCP, they just work from the other direction. `integrationList` takes an optional `group` id as an input and filters the list down to that group, and the ids come from the `groupList` tool. Your agent can therefore ask for one group's channels, even though it cannot read the group back off any channel.
+<Warning>
+An agent working only through MCP cannot tell a live channel from a disabled one, and will
+happily schedule to a channel that will not publish. If that matters to your build, read the
+channel list from the API and pass the IDs to your agent.
+</Warning>
+
+<Tip>
+Groups are not a dead end on MCP, they just work from the other direction. `integrationList`
+takes an optional `group` id as an input and filters the list down to that group, and the ids
+come from the `groupList` tool. Your agent can therefore ask for one group's channels, even
+though it cannot read the group back off any channel.
+</Tip>
 
 ### Media has to be reachable before she can attach it
 
-`uploadFromUrlTool` pulls a public URL into your media library and returns a hosted `path`. That covers a link your agent found. It does not cover a file sitting on your machine, because MCP carries no file body. Local files go through `POST /upload` or `postqueen upload`.
+`uploadFromUrlTool` pulls a public URL into your media library and returns a hosted `path`. That covers a link your agent found. It does not cover a file sitting on your machine, because MCP carries no file body.
+
+| Where the media is | How it gets in |
+| --- | --- |
+| A public URL | `uploadFromUrlTool` over MCP |
+| A file on your machine | [`POST /upload`](/public-api/uploads/upload-file), or `postqueen upload` |
 
 <Note>
-One thing runs the other way. `generateImageTool` is MCP only: there is no image generation endpoint in the Public API reference. Video generation exists on both, as `generateVideoTool` and [`POST /generate-video`](/public-api/video/generate).
+One thing runs the other way. `generateImageTool` is MCP only: there is no image generation
+endpoint in the Public API reference. Video generation exists on both, as `generateVideoTool` and
+[`POST /generate-video`](/public-api/video/generate).
 </Note>
 
 ## When the connection misbehaves
 
-Your client says it cannot reach her, or it connects and the tool list comes back empty. Almost always it is the endpoint form, a stale key or a proxy in the middle. Now and then it is a transport your client chose on its own.
+Almost always it is the endpoint form, a stale key or a proxy in the middle. Now and then it is a transport your client chose on its own.
 
 ### The two supported endpoints, and what a bad key looks like
 
@@ -64,23 +104,40 @@ She answers MCP on two forms. They fail differently, and the difference tells yo
 | `https://api.postqueen.ai/mcp/YOUR_API_KEY` | The key in the path. API keys only | `400 Invalid API Key` |
 
 <Tip>
-The status code is the fastest diagnosis you have. A `401` means you are on the Bearer form. A `400` means you are on the URL form, and it also means an OAuth token was pasted there: the URL form looks the key up as an API key and never as a `pos_` token, so a valid OAuth token still comes back `400 Invalid API Key`.
+The status code is the fastest diagnosis you have. A `401` means you are on the Bearer form. A
+`400` means you are on the URL form, and it also means an OAuth token was pasted there: the URL
+form looks the key up as an API key and never as a `pos_` token, so a valid OAuth token still
+comes back `400 Invalid API Key`.
 </Tip>
 
-Both responses are plain text, not JSON, so some clients surface them as a bare "server error" with the message buried in a log. Check the raw response before you start changing config.
+<Note>
+Both responses are plain text, not JSON, so some clients surface them as a bare "server error"
+with the message buried in a log. Check the raw response before you start changing config.
+</Note>
 
-Two more things worth knowing about these routes:
+<Warning>
+**Preflight always succeeds.** Both forms answer `OPTIONS` with a `200` and permissive CORS
+headers before any key is checked, so a browser-based client that "connects" has proved nothing
+yet. The first real call is the one that tells you.
+</Warning>
 
-- Preflight always succeeds. Both forms answer `OPTIONS` with a `200` and permissive CORS headers before any key is checked, so a browser-based client that "connects" has proved nothing yet. The first real call is the one that tells you.
-- You do not need to set an `Accept` header. She rewrites it to `application/json, text/event-stream` on every request, which is why clients that send the wrong one still work.
+<Note>
+**You do not need to set an `Accept` header.** She rewrites it to `application/json,
+text/event-stream` on every request, which is why clients that send the wrong one still work.
+</Note>
 
 Source for both: `libraries/nestjs-libraries/src/chat/start.mcp.ts` in the app repo.
 
 ### A proxy that buffers breaks the stream
 
-Self-hosting, or sitting behind your own gateway? Her MCP transport is streamable HTTP. The connection stays open and the response arrives in chunks. Put something in front of her that buffers the whole response or drops `Transfer-Encoding: chunked`, and the client hangs on connect with no tool list and no error worth reading.
+Her MCP transport is streamable HTTP: the connection stays open and the response arrives in chunks. Put something in front of her that buffers the whole response or drops `Transfer-Encoding: chunked`, and the client hangs on connect with no tool list and no error worth reading.
 
-The Nginx configuration most people copy is missing the one directive this needs, which is why it serves the app perfectly and breaks MCP alone. Working blocks for all three proxies, and a `curl` that tells you which part is at fault, are on [MCP on a self-hosted install](/mcp/self-hosting).
+<Warning>
+The Nginx configuration most people copy is missing the one directive this needs, which is why it
+serves the app perfectly and breaks MCP alone. Working blocks for all three proxies, and a `curl`
+that tells you which part is at fault, are on
+[MCP on a self-hosted install](/mcp/self-hosting).
+</Warning>
 
 ### After you rotate your API key
 
@@ -97,22 +154,33 @@ Regenerating the key in **Settings > Developers > Public API** takes the old one
     Most clients read MCP config at startup. Restart the client or toggle the connector off and on so it opens a fresh session. She issues a new session ID per connection, so nothing carries over from the old key.
   </Step>
   <Step title="Confirm">
-    Ask your agent to list your connected accounts. Channel names coming back means `integrationList` ran with the new key.
+    Ask your agent to list your connected accounts.
+
+    <Check>
+      Channel names coming back means `integrationList` ran with the new key.
+    </Check>
   </Step>
 </Steps>
 
-Old key still in place? You will see exactly the failures above: `401 Invalid API Key or OAuth token` on `/mcp`, and `400 Invalid API Key` on `/mcp/YOUR_API_KEY`.
+<Note>
+Old key still in place? You will see exactly the failures above: `401 Invalid API Key or OAuth
+token` on `/mcp`, and `400 Invalid API Key` on `/mcp/YOUR_API_KEY`.
+</Note>
 
 ### Transports you may notice, and should not build on
 
-Poke at the server and you will find more than the two endpoints above. They are real, they answer, and none of them are documented as a supported path:
+Poke at the server and you will find more than the two endpoints above. They are real, they answer, and none of them are documented as a supported path.
 
-- **`/mcp-oauth`**, an MCP endpoint guarded by OAuth bearer-token middleware rather than a plain key check. It answers `401` with a JSON body, for example `{"error": "invalid_token", "error_description": "Could not resolve organization"}`.
-- **`/.well-known/oauth-protected-resource` and `/.well-known/oauth-authorization-server`**, the OAuth discovery documents that point at the same `/oauth/authorize` and `/oauth/token` endpoints described in [OAuth2 Authentication](/public-api/oauth). Some clients fetch these on their own during connect.
-- **`/sse/:apiKey` paired with `/message/:apiKey`**, the legacy Server-Sent Events transport that predates streamable HTTP. API keys only, and a bad one returns the same `400 Invalid API Key`.
+| Path | What it is |
+| --- | --- |
+| `/mcp-oauth` | An MCP endpoint guarded by OAuth bearer-token middleware rather than a plain key check. It answers `401` with a JSON body, for example `{"error": "invalid_token", "error_description": "Could not resolve organization"}` |
+| `/.well-known/oauth-protected-resource` and `/.well-known/oauth-authorization-server` | The OAuth discovery documents that point at the same `/oauth/authorize` and `/oauth/token` endpoints described in [OAuth2 Authentication](/public-api/oauth). Some clients fetch these on their own during connect |
+| `/sse/:apiKey` paired with `/message/:apiKey` | The legacy Server-Sent Events transport that predates streamable HTTP. API keys only, and a bad one returns the same `400 Invalid API Key` |
 
 <Warning>
-Build on `/mcp` or `/mcp/YOUR_API_KEY`. The rest carry no compatibility promise, no documentation and no support, and a client that silently falls back to the legacy SSE pair is a client to reconfigure rather than a setup to keep.
+Build on `/mcp` or `/mcp/YOUR_API_KEY`. The rest carry no compatibility promise, no documentation
+and no support, and a client that silently falls back to the legacy SSE pair is a client to
+reconfigure rather than a setup to keep.
 </Warning>
 
 ## Next steps

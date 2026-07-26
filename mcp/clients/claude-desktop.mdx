@@ -6,27 +6,36 @@ icon: /images/brand/icon-claude.svg
 
 Claude Desktop reaches her two ways: as a **custom connector** added in the app's settings, or through the **`mcp-remote` bridge** in `claude_desktop_config.json`.
 
+| Route | Pick it when | Needs |
+|-------|--------------|-------|
+| **A. Custom connector** | Her URL is reachable over the public internet, as `api.postqueen.ai` is | Nothing installed |
+| **B. `mcp-remote` bridge** | Your instance sits on a LAN or behind a VPN, or you prefer the config file | [Node.js](https://nodejs.org/) on your machine |
+
 <Note>
 A plain `"url"` entry in `claude_desktop_config.json` does **not** work. Claude Desktop's config file only launches local stdio servers with `command` and `args`. Remote HTTP servers are a separate mechanism ([MCP docs](https://modelcontextprotocol.io/docs/develop/connect-local-servers), [Claude Help Center](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)). Use one of the two routes below.
 </Note>
 
-## Before You Start
+## Before you start
 
+<Info>
 Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**.
+</Info>
 
 <Warning>
 Your API key can post to every account you have connected. Treat it like a password: anyone who sees your connector URL or config file can publish as you. Do not screenshot it and do not commit it. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
 </Warning>
 
-## Option A: Custom Connector (Recommended)
+## Option A: custom connector (recommended)
 
+<Info>
 At the time of writing, Anthropic's help center lists custom connectors as available across Claude plans, with the Free plan limited to a single custom connector. On Team and Enterprise plans, an organization Owner may need to add the connector in the organization's settings before members can connect it. Availability and UI naming shift over time. If you do not see the option, check Anthropic's [connectors help article](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
+</Info>
 
 <Steps>
-  <Step title="Open Connector Settings">
+  <Step title="Open connector settings">
     In Claude Desktop, open **Settings**, then **Connectors**.
   </Step>
-  <Step title="Add a Custom Connector">
+  <Step title="Add a custom connector">
     Click **Add custom connector** and paste the PostQueen endpoint with your API key in the path:
 
     ```
@@ -40,16 +49,16 @@ At the time of writing, Anthropic's help center lists custom connectors as avail
   </Step>
 </Steps>
 
-<Note>
+<Warning>
 With custom connectors, Claude reaches PostQueen from Anthropic's cloud infrastructure, not from your machine, so the URL has to be reachable over the public internet. `api.postqueen.ai` is, so Option A works there. A self-hosted instance behind a VPN or on your LAN will not connect this way; use Option B instead.
-</Note>
+</Warning>
 
-## Option B: `mcp-remote` Bridge (Config File)
+## Option B: `mcp-remote` bridge (config file)
 
-If you prefer the config file, or your self-hosted server is not publicly reachable, run the [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge locally. It launches on your machine and forwards Claude Desktop's stdio traffic to PostQueen over HTTP. Requires [Node.js](https://nodejs.org/).
+The [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) bridge launches on your machine and forwards Claude Desktop's stdio traffic to PostQueen over HTTP. Requires [Node.js](https://nodejs.org/).
 
 <Steps>
-  <Step title="Open the Config File">
+  <Step title="Open the config file">
     In Claude Desktop, open **Settings**, go to the **Developer** tab, and click **Edit Config**. The file lives at:
 
     <Tabs>
@@ -65,51 +74,56 @@ If you prefer the config file, or your self-hosted server is not publicly reacha
       </Tab>
     </Tabs>
   </Step>
-  <Step title="Add the PostQueen Server">
-    Add PostQueen to the `mcpServers` block:
+  <Step title="Add the PostQueen server">
+    Add PostQueen to the `mcpServers` block. Both forms authenticate with the same key.
 
-    ```json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "mcp-remote",
-            "https://api.postqueen.ai/mcp/YOUR_API_KEY"
-          ]
+    <Tabs>
+      <Tab title="Key in the URL">
+        ```json
+        {
+          "mcpServers": {
+            "postqueen": {
+              "command": "npx",
+              "args": [
+                "-y",
+                "mcp-remote",
+                "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+              ]
+            }
+          }
         }
-      }
-    }
-    ```
-
-    Prefer keeping the key out of the URL? Use the Bearer form instead:
-
-    ```json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "mcp-remote",
-            "https://api.postqueen.ai/mcp",
-            "--header",
-            "Authorization: Bearer YOUR_API_KEY"
-          ]
+        ```
+      </Tab>
+      <Tab title="Bearer token">
+        ```json
+        {
+          "mcpServers": {
+            "postqueen": {
+              "command": "npx",
+              "args": [
+                "-y",
+                "mcp-remote",
+                "https://api.postqueen.ai/mcp",
+                "--header",
+                "Authorization: Bearer YOUR_API_KEY"
+              ]
+            }
+          }
         }
-      }
-    }
-    ```
+        ```
+      </Tab>
+    </Tabs>
 
-    On Windows, some clients mangle the space inside the header value. If the Bearer form fails there, use `"--header", "Authorization:${AUTH_HEADER}"` with `"env": { "AUTH_HEADER": "Bearer YOUR_API_KEY" }`, or fall back to the key-in-path URL.
+    <Warning>
+      On Windows, some clients mangle the space inside the header value. If the Bearer form fails there, use `"--header", "Authorization:${AUTH_HEADER}"` with `"env": { "AUTH_HEADER": "Bearer YOUR_API_KEY" }`, or fall back to the key-in-path URL.
+    </Warning>
   </Step>
   <Step title="Restart Claude Desktop">
     Quit Claude Desktop completely and reopen it, because the config is only read at launch. PostQueen shows up under the connectors indicator in the conversation input box.
   </Step>
 </Steps>
 
-## Self-Hosted
+## Self-hosted
 
 On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
 
@@ -119,7 +133,11 @@ https://postqueen.example.com/api/mcp/YOUR_API_KEY
 
 Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
 
-Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting). For Option A the server must also be reachable from the public internet; if it is not, Option B works because the bridge runs on your machine.
+<Info>
+Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/mcp/self-hosting).
+</Info>
+
+For Option A the server must also be reachable from the public internet; if it is not, Option B works because the bridge runs on your machine.
 
 ## Verify
 
@@ -127,7 +145,9 @@ Start a new conversation and ask:
 
 > "List my connected social media accounts"
 
-If everything is wired up, Claude calls the `integrationList` tool and returns your connected accounts.
+<Check>
+Claude calls the `integrationList` tool and returns your connected accounts. She is wired up.
+</Check>
 
 <AccordionGroup>
   <Accordion title="PostQueen does not show up after a restart">
@@ -137,3 +157,20 @@ If everything is wired up, Claude calls the `integrationList` tool and returns y
     Check that the API key was pasted in full, with no whitespace. For Option B, Claude Desktop writes MCP logs to `~/Library/Logs/Claude/mcp*.log` on macOS and `%APPDATA%\Claude\logs` on Windows. Look for `mcp-server-postqueen.log`.
   </Accordion>
 </AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Tools reference" icon="screwdriver-wrench" href="/mcp/tools">
+    Every parameter of the 11 tools Claude just discovered
+  </Card>
+  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
+    The flows where she has to look something up before she can post
+  </Card>
+  <Card title="Limits and troubleshooting" icon="gauge" href="/mcp/limits-and-troubleshooting">
+    What MCP cannot reach, and what a bad key looks like
+  </Card>
+  <Card title="Claude web and mobile" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude-app">
+    The same connector, added on claude.ai instead
+  </Card>
+</CardGroup>

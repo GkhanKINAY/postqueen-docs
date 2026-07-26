@@ -3,13 +3,9 @@ title: OAuth2 Authentication
 description: 'Let users authorize your app to access PostQueen on their behalf'
 ---
 
-## What You Can Build
+OAuth2 lets you build third-party apps and agents that act on behalf of PostQueen users. Instead of asking users for their API key, your app redirects them to PostQueen where they approve access on a consent screen, and you receive a `pos_` access token. PostQueen supports the OAuth2 Authorization Code flow.
 
-OAuth2 lets you build third-party apps and agents that act on behalf of PostQueen users. After a user approves your app on a consent screen, you receive a `pos_` access token that works on the Public API: list their connected channels, create and schedule posts, and pull analytics for their accounts. Tokens stay valid until the user revokes them, which they can do at any time from **Settings > Approved Apps** in their dashboard.
-
-## Overview
-
-PostQueen supports OAuth2 Authorization Code flow, allowing you to build third-party applications that act on behalf of PostQueen users. Instead of asking users for their API key, your app redirects them to PostQueen where they approve access, and you receive a token to make API calls on their behalf.
+That token works on the Public API: list their connected channels, create and schedule posts, and pull analytics for their accounts.
 
 <Info>
 OAuth tokens work with all the same Public API endpoints as API keys. The only difference is how the token is obtained.
@@ -148,6 +144,10 @@ sequenceDiagram
     | `access_token` | The token to use for subsequent API calls |
     | `token_type` | Always `bearer` |
 
+    <Check>
+    An `access_token` in the response means the grant is complete. Store the token, not the code: the code is spent.
+    </Check>
+
     <Warning>
     The authorization code expires after **10 minutes** and can only be used once. If it expires, the user must go through the authorization flow again.
     </Warning>
@@ -187,14 +187,18 @@ Rotating the secret does **not** invalidate existing access tokens. Only new tok
 
 ### Delete Your App
 
+<Warning>
 Deleting your OAuth app will:
 - Revoke **all** access tokens issued to users
 - Remove the app from all users' Approved Apps list
 - This action cannot be undone
+</Warning>
 
 ---
 
 ## Full Example (Node.js)
+
+<Accordion title="Express app: redirect, callback, token exchange, first API call" icon="node-js">
 
 ```javascript
 const express = require('express');
@@ -263,6 +267,8 @@ app.get('/callback', async (req, res) => {
 app.listen(3000);
 ```
 
+</Accordion>
+
 ---
 
 ## Error Reference
@@ -273,3 +279,20 @@ app.listen(3000);
 | `invalid_grant` | Token exchange | Code is invalid, expired, or already used |
 | `unsupported_grant_type` | Token exchange | `grant_type` is not `authorization_code` |
 | `access_denied` | Callback | User denied the authorization request |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Check a client_id first" icon="user-check" href="/public-api/oauth/authorize">
+    `GET /oauth/authorize`, the call behind the consent screen.
+  </Card>
+  <Card title="Exchange the code" icon="key" href="/public-api/oauth/token">
+    `POST /oauth/token`, field by field, with its failure modes.
+  </Card>
+  <Card title="List the user's channels" icon="plug" href="/public-api/integrations/list">
+    The first call most apps make with a fresh `pos_` token.
+  </Card>
+  <Card title="Rate limits and errors" icon="code" href="/public-api/introduction">
+    Base URLs, the per-hour limit, and what each status code means.
+  </Card>
+</CardGroup>

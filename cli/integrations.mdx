@@ -4,7 +4,7 @@ description: 'Discover connected accounts, settings schemas, and dynamic tools'
 icon: 'plug'
 ---
 
-Every post has to name the channel it goes to, so this is where most sessions start: you ask her what is connected, and she answers with IDs.
+Every post has to name the channel it goes to. These commands give you the channel IDs, the settings schema each network enforces, and the helper tools it offers.
 
 ## Listing Integrations
 
@@ -14,17 +14,24 @@ List all connected social media accounts to get their IDs:
 postqueen integrations:list
 ```
 
-This returns a JSON array of integrations. Use `jq` to extract specific fields:
+<Check>
+A JSON array of your channels comes back. The `id` and `identifier` fields are what the rest of
+these commands take.
+</Check>
 
-```bash
-# Get just the IDs and platform names
+Use `jq` to extract specific fields:
+
+<CodeGroup>
+
+```bash Just the IDs and platforms
 postqueen integrations:list | tail -n +2 | jq '.[] | {id, identifier}'
 ```
 
-```bash
-# Find a specific platform
+```bash Find a specific platform
 postqueen integrations:list | tail -n +2 | jq '.[] | select(.identifier=="reddit")'
 ```
+
+</CodeGroup>
 
 ### Filtering by Group
 
@@ -58,7 +65,22 @@ Each platform has its own settings schema with character limits, required fields
 postqueen integrations:settings <integration-id>
 ```
 
-Four things come back, wrapped in an `output` object. Here is a Pinterest channel:
+<Tip>
+Run this before posting to a network for the first time. It is faster than reading a provider page,
+and it answers the question that actually blocks you: which fields will be refused if you leave
+them out.
+</Tip>
+
+Four things come back, wrapped in an `output` object:
+
+| Field | What it is |
+| --- | --- |
+| `rules` | The network's own constraints in plain language |
+| `maxLength` | Character limit for the post content. For channels where a verified account gets more room, this is already the number that applies to yours |
+| `settings` | The schema for `--settings`: which fields exist, which are required, and what each accepts. Channels with nothing to configure return the string `No additional settings required` instead of an object |
+| `tools` | Helper tools this channel offers. Pass `methodName` to `integrations:trigger`. An empty array means this network has none |
+
+<Accordion title="Example response for a Pinterest channel" icon="code">
 
 ```json
 {
@@ -88,27 +110,11 @@ required fields are listed in a `required` array rather than flagged on each pro
 above is abridged; a real response carries every constraint the network enforces.
 </Note>
 
-| Field | What it is |
-| --- | --- |
-| `rules` | The network's own constraints in plain language |
-| `maxLength` | Character limit for the post content. For channels where a verified account gets more room, this is already the number that applies to yours |
-| `settings` | The schema for `--settings`: which fields exist, which are required, and what each accepts. Channels with nothing to configure return the string `No additional settings required` instead of an object |
-| `tools` | Helper tools this channel offers. Pass `methodName` to `integrations:trigger`. An empty array means this network has none |
-
-<Tip>
-Run this before posting to a network for the first time. It is faster than reading a provider page,
-and it answers the question that actually blocks you: which fields will be refused if you leave
-them out.
-</Tip>
-
-<Note>
-[Provider Tools](/public-api/integrations/provider-tools) lists every tool each network offers
-without needing a connected channel to ask.
-</Note>
+</Accordion>
 
 ## Triggering Tools
 
-Some platforms offer dynamic tools, for example fetching Reddit flairs, Pinterest boards, or Discord channels. These return data you need when constructing platform-specific settings. Every tool each network offers, and what it gives back, is listed in [Provider Tools](/public-api/integrations/provider-tools).
+Some platforms offer dynamic tools, for example fetching Reddit flairs, Pinterest boards, or Discord channels. These return data you need when constructing platform-specific settings.
 
 ```bash
 postqueen integrations:trigger <integration-id> <method-name>
@@ -122,54 +128,112 @@ postqueen integrations:trigger <integration-id> <method-name> -d '{"key":"value"
 
 ### Examples
 
-**Get Reddit flairs and restrictions for a subreddit:**
+<AccordionGroup>
+
+<Accordion title="Reddit: flairs and restrictions for a subreddit" icon="reddit">
+
 ```bash
 postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"/r/programming"}'
 ```
 
-**Search subreddits by keyword:**
+</Accordion>
+
+<Accordion title="Reddit: search subreddits by keyword" icon="magnifying-glass">
+
 ```bash
 postqueen integrations:trigger reddit-id subreddits -d '{"word":"programming"}'
 ```
 
-**Get Discord channels:**
+</Accordion>
+
+<Accordion title="Discord: list channels" icon="discord">
+
 ```bash
 postqueen integrations:trigger discord-id channels
 ```
 
-**Get Whop companies:**
+</Accordion>
+
+<Accordion title="Whop: list companies" icon="building">
+
 ```bash
 postqueen integrations:trigger whop-id companies
 ```
 
-**Get Pinterest boards:**
+</Accordion>
+
+<Accordion title="Pinterest: list boards" icon="pinterest">
+
 ```bash
 postqueen integrations:trigger pinterest-id boards
 ```
 
-**Search Instagram audio for a Reel** (Facebook Business-linked channels only, empty `q` returns trending audio):
+</Accordion>
+
+<Accordion title="Instagram: search audio for a Reel" icon="instagram">
+
 ```bash
 postqueen integrations:trigger instagram-id audioSearch -d '{"q":"summer vibes","type":"music"}'
 ```
+
+<Warning>
+Facebook Business-linked channels only. An empty `q` returns trending audio.
+</Warning>
+</Accordion>
+
+</AccordionGroup>
+
+<Info>
+[Provider Tools](/public-api/integrations/provider-tools) lists every tool each network offers,
+and what it gives back, without needing a connected channel to ask.
+</Info>
 
 ## Discovery Workflow
 
 When working with a new platform, follow this workflow:
 
-```bash
-# 1. Find the integration ID
-INTEGRATION_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
+<Steps>
+  <Step title="Find the integration ID" icon="magnifying-glass">
+    ```bash
+    INTEGRATION_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
+    ```
+  </Step>
+  <Step title="Check what settings and tools are available" icon="sliders">
+    ```bash
+    postqueen integrations:settings "$INTEGRATION_ID"
+    ```
+  </Step>
+  <Step title="Use tools to fetch dynamic data" icon="wrench">
+    Flairs, boards, channels: whatever that network needs you to name.
 
-# 2. Check what settings and tools are available
-postqueen integrations:settings "$INTEGRATION_ID"
+    ```bash
+    postqueen integrations:trigger "$INTEGRATION_ID" restrictions -d '{"subreddit":"/r/programming"}'
+    ```
+  </Step>
+  <Step title="Create a post with the discovered settings" icon="paper-plane">
+    ```bash
+    postqueen posts:create \
+      -c "My post" \
+      -s "2026-08-01T09:00:00Z" \
+      --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"text","is_flair_required":false}}]}' \
+      -i "$INTEGRATION_ID"
+    ```
+  </Step>
+</Steps>
 
-# 3. Use tools to fetch dynamic data (e.g., flairs)
-postqueen integrations:trigger "$INTEGRATION_ID" restrictions -d '{"subreddit":"/r/programming"}'
+## Next steps
 
-# 4. Create a post with the discovered settings
-postqueen posts:create \
-  -c "My post" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"text","is_flair_required":false}}]}' \
-  -i "$INTEGRATION_ID"
-```
+<CardGroup cols={2}>
+  <Card title="Provider tools" icon="wrench" href="/public-api/integrations/provider-tools">
+    Every helper tool each network exposes, what it takes and what it gives back.
+  </Card>
+  <Card title="Ready-made commands" icon="grid-2" href="/cli/platform-examples">
+    A worked example per network, settings included.
+  </Card>
+  <Card title="Schedule the post" icon="calendar" href="/cli/managing-posts">
+    Threads, drafts, campaigns and the JSON file format.
+  </Card>
+  <Card title="The settings endpoint" icon="code" href="/public-api/integrations/settings">
+    The same schema over HTTP, without the CLI.
+  </Card>
+</CardGroup>

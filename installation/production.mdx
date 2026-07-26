@@ -4,11 +4,9 @@ description: 'From an empty virtual machine to PostQueen running on your own dom
 icon: 'server'
 ---
 
-This guide takes you from nothing to a working PostQueen on your own domain. It assumes no
-prior server experience. Every command is written out, and every value you need to change is
-shown before and after.
-
-Set aside about thirty minutes. Most of that is waiting for downloads.
+From an empty virtual machine to PostQueen running on your own domain, over HTTPS. No prior
+server experience is needed. Every command is written out, and every value you need to change
+is shown before and after. Set aside about thirty minutes, most of it waiting for downloads.
 
 <Tip>
 Want to look around first without renting anything? [Try her locally](/installation/quickstart-local)
@@ -17,15 +15,13 @@ runs the same software on your own machine in five minutes.
 
 ## What you need
 
-Three things, and the guide helps you get all of them:
+Three things, and the guide helps you get all of them.
 
-1. **A small server.** Any provider that rents Linux virtual machines works. Pick Ubuntu 24.04.
-   Two vCPUs and 4 GB of RAM is a comfortable starting point. 2 GB will run, but it is tight
-   once the scheduler is busy.
-2. **A domain name**, or a subdomain of one you already own. She needs a real name to get an
-   HTTPS certificate, so an IP address alone is not enough.
-3. **A terminal.** macOS and Linux have one built in. On Windows use PowerShell or
-   Windows Terminal.
+| What | Detail |
+| --- | --- |
+| **A small server** | Any provider that rents Linux virtual machines works. Pick Ubuntu 24.04. Two vCPUs and 4 GB of RAM is a comfortable starting point. 2 GB will run, but it is tight once the scheduler is busy. |
+| **A domain name** | Or a subdomain of one you already own. She needs a real name to get an HTTPS certificate, so an IP address alone is not enough. |
+| **A terminal** | macOS and Linux have one built in. On Windows use PowerShell or Windows Terminal. |
 
 ## Step by step
 
@@ -56,8 +52,10 @@ Three things, and the guide helps you get all of them:
     dig +short postqueen.example.com
     ```
 
-    When that prints your server's IP address, you are ready. Do this now, because the
-    certificate step later will fail if the name does not resolve yet.
+    <Check>
+    That prints your server's IP address. Do this now, because the certificate step later will
+    fail if the name does not resolve yet.
+    </Check>
   </Step>
 
   <Step title="Connect to the server">
@@ -107,9 +105,11 @@ Three things, and the guide helps you get all of them:
     out of your own server and have to recover through your provider's console.
     </Warning>
 
-    Notice that port 4007 is **not** on that list, and should not be. PostQueen listens on 4007
-    locally, and the reverse proxy you set up later is the only thing that talks to her. The
-    outside world only ever sees 443.
+    <Note>
+    Port 4007 is **not** on that list, and should not be. PostQueen listens on 4007 locally, and
+    the reverse proxy you set up later is the only thing that talks to her. The outside world
+    only ever sees 443.
+    </Note>
   </Step>
 
   <Step title="Download PostQueen">
@@ -207,9 +207,11 @@ Three things, and the guide helps you get all of them:
     second port or second hostname to set up.
     </Note>
 
+    <Warning>
     Leave `BACKEND_INTERNAL_URL` as `http://localhost:3000`. That one is not about your domain
     at all, it is how the web interface talks to the backend inside the same container, and
     pointing it at your public address will break things.
+    </Warning>
 
     Save and exit: `Ctrl+O`, `Enter`, `Ctrl+X`.
   </Step>
@@ -250,7 +252,9 @@ Three things, and the guide helps you get all of them:
     curl -I http://localhost:4007
     ```
 
+    <Check>
     An `HTTP/1.1 200 OK` means she is up.
+    </Check>
   </Step>
 
   <Step title="Add your domain and HTTPS">
@@ -287,30 +291,16 @@ Three things, and the guide helps you get all of them:
     changed it and nothing happened".
     </Warning>
 
+    <Note>
     Existing accounts, including yours, can still sign in normally. This only closes new
     sign-ups. You can still invite teammates from inside the app.
+    </Note>
   </Step>
 </Steps>
 
-## You are done
-
-She is live on your domain, over HTTPS, and closed to strangers. Three things are worth doing
-soon rather than eventually.
-
-<CardGroup cols={2}>
-  <Card title="Set up email" icon="envelope" href="/configuration/emails">
-    Without it, password resets quietly do nothing. This is the most common regret.
-  </Card>
-  <Card title="Back up your data" icon="box-archive" href="/installation/backups-and-upgrades">
-    Which volumes hold data you cannot rebuild, and how to restore one
-  </Card>
-  <Card title="Connect your channels" icon="plug" href="/providers/overview">
-    Each network needs its own app keys, created by you
-  </Card>
-  <Card title="Sort out media storage" icon="cloud-arrow-up" href="/configuration/uploads">
-    Local disk is fine to start with. Know the tradeoff before you grow.
-  </Card>
-</CardGroup>
+<Check>
+**She is live** on your domain, over HTTPS, and closed to strangers.
+</Check>
 
 ## If something is not right
 
@@ -350,3 +340,22 @@ soon rather than eventually.
     it once and keep it. [Self-host troubleshooting](/troubleshooting/self-host) has more.
   </Accordion>
 </AccordionGroup>
+
+## Next steps
+
+Worth doing soon rather than eventually.
+
+<CardGroup cols={2}>
+  <Card title="Set up email" icon="envelope" href="/configuration/emails">
+    Without it, password resets quietly do nothing. This is the most common regret.
+  </Card>
+  <Card title="Back up your data" icon="box-archive" href="/installation/backups-and-upgrades">
+    Which volumes hold data you cannot rebuild, and how to restore one
+  </Card>
+  <Card title="Connect your channels" icon="plug" href="/providers/overview">
+    Each network needs its own app keys, created by you
+  </Card>
+  <Card title="Sort out media storage" icon="cloud-arrow-up" href="/configuration/uploads">
+    Local disk is fine to start with. Know the tradeoff before you grow.
+  </Card>
+</CardGroup>

@@ -3,11 +3,15 @@ title: Instagram Settings
 description: 'API settings for posting to Instagram'
 ---
 
+Instagram posts use one settings block. `post_type` chooses a feed post or a Story. Collaborators, trial reels and Reel audio are optional additions on top.
+
 Creating the OAuth app and connecting a channel: [Instagram setup guide](/providers/instagram).
 
-## Settings Schema
+<Info>
+Use `__type: "instagram"` for Facebook Business-linked accounts and `__type: "instagram-standalone"` for standalone Instagram accounts. Both use the same settings schema, except `audio`, which is only available for Facebook Business-linked accounts.
+</Info>
 
-When creating a post for Instagram, use the following settings schema:
+## Settings Schema
 
 ```json
 {
@@ -24,10 +28,6 @@ When creating a post for Instagram, use the following settings schema:
   }
 }
 ```
-
-<Note>
-Use `__type: "instagram"` for Facebook Business-linked accounts and `__type: "instagram-standalone"` for standalone Instagram accounts. Both use the same settings schema, except `audio`, which is only available for Facebook Business-linked accounts.
-</Note>
 
 ## Fields
 
@@ -93,8 +93,9 @@ It is not supported on Stories, carousels or image posts, and not on
 | `audio_volume` | `number` | No | Volume of the attached audio, `0`-`100` (default `100`) |
 | `video_volume` | `number` | No | Volume of the original video audio, `0`-`100` (default `100`) |
 
-To find audio IDs, use the [trigger endpoint](/public-api/integrations/trigger)
-with the `audioSearch` tool:
+#### Finding an audio ID
+
+Use the [trigger endpoint](/public-api/integrations/trigger) with the `audioSearch` tool:
 
 ```bash
 curl -X POST https://api.postqueen.ai/public/v1/integration-trigger/{integrationId} \
@@ -109,7 +110,10 @@ curl -X POST https://api.postqueen.ai/public/v1/integration-trigger/{integration
 | `type` | `music` (royalty-free catalog) or `original_sound` (user-generated), defaults to `music` |
 
 The response contains `{ output: [{ id, title, artist, image, duration, previewUrl }] }`.
-Pass the chosen `id` into `settings.audio.id`.
+
+<Check>
+You now have an audio ID. Pass the chosen `id` into `settings.audio.id`.
+</Check>
 
 <Note>
 Only audio authorized for third-party use is returned, so the catalog can be
@@ -120,7 +124,8 @@ smaller than what you see in the Instagram app.
 
 ## Complete Example
 
-### Feed Post
+<Tabs>
+  <Tab title="Feed post">
 
 ```json
 {
@@ -155,7 +160,8 @@ smaller than what you see in the Instagram app.
 }
 ```
 
-### Story Post
+  </Tab>
+  <Tab title="Story">
 
 ```json
 {
@@ -188,7 +194,8 @@ smaller than what you see in the Instagram app.
 }
 ```
 
-### Collaborative Post
+  </Tab>
+  <Tab title="Collaborative">
 
 ```json
 {
@@ -224,7 +231,8 @@ smaller than what you see in the Instagram app.
 }
 ```
 
-### Reel with Audio
+  </Tab>
+  <Tab title="Reel with audio">
 
 Attach audio found with `audioSearch` to a single-video Reel:
 
@@ -264,7 +272,8 @@ Attach audio found with `audioSearch` to a single-video Reel:
 }
 ```
 
-### Carousel Post
+  </Tab>
+  <Tab title="Carousel">
 
 Create a carousel by adding multiple images:
 
@@ -298,3 +307,22 @@ Create a carousel by adding multiple images:
 }
 ```
 
+  </Tab>
+</Tabs>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Connect the channel" icon="plug" href="/providers/instagram">
+    Create the OAuth app and link the Instagram account.
+  </Card>
+  <Card title="Standalone accounts" icon="instagram" href="/public-api/providers/instagram-standalone">
+    The settings for channels connected without Facebook Business.
+  </Card>
+  <Card title="Search for audio" icon="bolt" href="/public-api/integrations/trigger">
+    The trigger endpoint behind `audioSearch` and the other provider tools.
+  </Card>
+  <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">
+    The create endpoint, field by field, with a worked request.
+  </Card>
+</CardGroup>
