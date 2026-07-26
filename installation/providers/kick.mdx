@@ -1,0 +1,74 @@
+---
+title: 'Kick setup'
+description: 'Register the Kick application and give PostQueen its keys'
+icon: /images/channels/kick.svg
+---
+
+Create an OAuth application on Kick and put its keys in your environment so your own instance can connect the channel.
+
+<Steps>
+  <Step title="Create an OAuth app on Kick">
+    Sign in to Kick and create an OAuth application. You need its client id and its secret, plus the redirect URI from the next step.
+
+    She asks for three scopes, so grant all of them:
+
+```
+chat:write
+user:read
+channel:read
+```
+
+    Kick uses OAuth 2.1, which means PKCE. She generates the code verifier and the S256 challenge for you, and the whole exchange runs against `id.kick.com`.
+  </Step>
+
+  <Step title="Configure the OAuth2 Redirect URI">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Kick OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/kick`
+    - Local development: `http://localhost:4200/integrations/social/kick`
+    - Docker: `http://localhost:4007/integrations/social/kick`
+  </Step>
+
+  <Step title="Set environment variables">
+    Copy the client id and the secret from your Kick app into your `.env` file.
+
+```env
+KICK_CLIENT_ID=""
+KICK_SECRET=""
+```
+
+    <Warning>
+    The second variable is `KICK_SECRET`, not `KICK_CLIENT_SECRET`. Naming it the long way is the single most common reason a Kick connection fails on the first try.
+    </Warning>
+  </Step>
+
+  <Step title="Add the Kick channel">
+    Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+
+    In the web interface click **Add Channel** and pick **Kick**. Kick asks you to authorize, and the channel appears once you accept.
+
+    Add Channel does not check whether the two variables are set, so a missing or misspelled key shows up as a broken authorization page on the Kick side rather than a helpful message in PostQueen.
+  </Step>
+</Steps>
+
+<Check>
+The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Kick" icon="/images/channels/kick.svg" href="/providers/kick">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

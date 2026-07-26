@@ -45,66 +45,18 @@ LinkedIn turns some combinations back before she calls the API:
 Two or more images plus the carousel setting become a PDF document share. That path has its own section further down this page.
 </Warning>
 
-<Snippet file="setup-is-selfhost-only.mdx" />
-
-<Steps>
-  <Step title="Create a new app">
-    Head over to [LinkedIn developers](https://www.linkedin.com/developers/apps) and create a new app.
-    
-    <Frame>
-      <img src="/images/providers/linkedin/linkedin-001.png" alt="LinkedIn" />
-    </Frame>
-  </Step>
-
-  <Step title="Verify your app">
-    Verify your app with LinkedIn
-    
-    <Frame>
-      <img src="/images/providers/linkedin/linkedin-004.png" alt="LinkedIn" />
-    </Frame>
-
-    You will need to follow the verification process to request the permissions this integration needs.
-  </Step>
-
-  <Step title="Add required products">
-    Fill in all the details, once created head over to Products and make sure you add all the required products:
-    - Share on LinkedIn
-    - Advertising API
-    - Sign in with LinkedIn using OpenID connect
-
-    <Warning>
-    It is important to request the Advertising API permissions and fill up the request form, or you will not have the ability to refresh your tokens.
-    </Warning>
-  </Step>
-
-  <Step title="Configure OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your LinkedIn Page OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/linkedin-page`
-    - Local development: `http://localhost:4200/integrations/social/linkedin-page`
-    - Docker: `http://localhost:4007/integrations/social/linkedin-page`
-  </Step>
-
-  <Step title="Copy your credentials">
-    Copy the created `Client ID` and `Client Secret` and add them to your `.env` file.
-
-```env
-LINKEDIN_CLIENT_ID=""
-LINKEDIN_CLIENT_SECRET=""
-```
-
-    You can find those under the Auth Tab of your LinkedIn App in the developer portal.
-  </Step>
-  <Step title="Restart and add the the LinkedIn Page channel">
-    <Snippet file="restart-and-add-channel.mdx" />
-  </Step>
-</Steps>
-
 ## Posting PDFs / document carousels
 
 Upload two or more images to a LinkedIn Page and she stitches them into a PDF carousel. LinkedIn is the only network where that works, and only through document-carousel posts. You never upload a PDF yourself: she builds it from your images and posts it as a LinkedIn document share.
 
 Nowhere else accepts it. The public-API upload endpoint rejects `application/pdf`.
+
+## Self-hosting
+
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up LinkedIn Page on your own instance](/installation/providers/linkedin-page).
+</Info>
 
 <Snippet file="next-steps-provider.mdx" />

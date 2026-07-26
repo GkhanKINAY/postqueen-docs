@@ -1,0 +1,141 @@
+---
+title: 'Facebook setup'
+description: 'Register the Facebook application and give PostQueen its keys'
+icon: /images/channels/facebook.svg
+---
+
+On your own instance the Meta app is yours: create it in Meta for Developers, then put its App ID and App Secret in your environment.
+
+<Warning>
+**NOTE:** Please be advised that Instagram and Facebook can use the same app (no need to create two separate apps)
+</Warning>
+
+<Steps>
+  <Step title="Create a new app">
+    Select a business portfolio, then create a [new app in Facebook developers](https://developers.facebook.com/apps/creation/).
+    
+    Please be advised that for public applications, you will need to verify your business.
+
+    <Frame>
+      <img src="/images/providers/facebook/Business-Portfolio.png" alt="Business Portfolio" />
+    </Frame>
+
+    <Frame>
+      <img src="/images/providers/facebook/Create-an-app.png" alt="Create app" />
+    </Frame>
+  </Step>
+
+  <Step title="Select app type">
+    Select "Other" and click next
+
+    <Frame>
+      <img src="/images/providers/facebook/Other-app-use-cases.png" alt="Other app use cases" />
+    </Frame>
+  </Step>
+
+  <Step title="Select business">
+    Then select business
+
+    <Frame>
+      <img src="/images/providers/facebook/facebook-select-business.png" alt="Business" />
+    </Frame>
+  </Step>
+
+  <Step title="Add details and create app">
+    Add all your details and click Create App
+
+    <Frame>
+      <img src="/images/providers/facebook/facebook-create-app-details.png" alt="Create app details" />
+    </Frame>
+  </Step>
+
+  <Step title="Set up Login with Facebook">
+    <Frame>
+      <img src="/images/providers/facebook/facebook-setup-login.png" alt="Setup Login with Facebook" />
+    </Frame>
+
+    Set up login for business
+  </Step>
+
+  <Step title="Configure redirect URI">
+    Set up a redirect URI back to the application
+    
+    <Frame>
+      <img src="/images/providers/facebook/facebook-redirect-uri.png" alt="Redirect URI" />
+    </Frame>
+
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Facebook OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/facebook`
+    - Local development: `http://localhost:4200/integrations/social/facebook`
+    - Docker: `http://localhost:4007/integrations/social/facebook`
+  </Step>
+
+  <Step title="Request advanced permissions">
+    <Frame>
+      <img src="/images/providers/facebook/facebook-advanced-permissions.png" alt="Advanced permissions" />
+    </Frame>
+
+    Go to advanced permission and request access for the following scopes:
+    - `pages_show_list`
+    - `business_management`
+    - `pages_manage_posts`
+    - `pages_manage_engagement`
+    - `pages_read_engagement`
+    - `read_insights`
+
+    <Note>
+    If your PostQueen install is for personal use only these advanced permissions are not required for PostQueen to function.
+    </Note>
+  </Step>
+
+  <Step title="Set app mode to Live">
+    Change the App Mode from 'Development' to 'Live'. If you do not do this then posts made via the API will display for yourself but will not be visible for other users.
+  </Step>
+
+  <Step title="Copy your credentials">
+    <Frame>
+      <img src="/images/providers/facebook/facebook-app-keys.png" alt="Keys" />
+    </Frame>
+
+    Go to basic permissions copy your App ID and App Secret and paste them in your `.env` file
+
+```env
+FACEBOOK_APP_ID="app id"
+FACEBOOK_APP_SECRET="app secret"
+```
+
+    Facebook should now be working!
+  </Step>
+  <Step title="Restart and add the Facebook channel">
+    <Snippet file="restart-and-add-channel.mdx" />
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+### Image is missing from the published post
+
+Check the **App Mode** of your Facebook app. In **Development** mode, posts with media are only visible to app developers/testers. Everyone else sees the post without the image. Switch the app to **Live** mode to make the image visible to all users.
+
+### Facebook posts work for you but not for other users
+
+Same root cause as above: the app is in Development mode. Only roles you have explicitly added (developers, testers, admins) can see content published via the API. Set the app to Live.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Facebook" icon="/images/channels/facebook.svg" href="/providers/facebook">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

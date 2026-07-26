@@ -1,0 +1,256 @@
+---
+title: 'Instagram setup'
+description: 'Register the Instagram application and give PostQueen its keys'
+icon: /images/channels/instagram.svg
+---
+
+On your own instance the Meta app is yours: register it in Meta for Developers, then put its keys in your environment.
+
+<Warning>
+**NOTE:** Please be advised that Instagram and Facebook can use the same app (no need to create two separate apps)
+</Warning>
+
+There are two ways to connect to an Instagram account: by using a Facebook Business or through a standalone flow that connects directly to an Instagram account. Both methods will require a [Meta for Developers account](https://developers.facebook.com/apps/).
+
+## Setting up Meta Application
+
+The following steps will guide you through the setup of a Meta application that can be used for connecting Instagram to PostQueen.
+
+<Steps>
+  <Step title="Create a new app">
+    Select a business portfolio, then create a [new app in Meta for developers](https://developers.facebook.com/apps/creation/).
+    
+    Please be advised that for public applications, you will need to verify your business.
+
+    <Frame>
+      <img src="/images/providers/facebook/Business-Portfolio.png" alt="Business Portfolio" />
+    </Frame>
+
+    <Frame>
+      <img src="/images/providers/facebook/Create-an-app.png" alt="Create app" />
+    </Frame>
+  </Step>
+
+  <Step title="Select app type">
+    Select "Other" and click next
+
+    <Frame>
+      <img src="/images/providers/facebook/Other-app-use-cases.png" alt="Other app use cases" />
+    </Frame>
+  </Step>
+
+  <Step title="Select business">
+    Then select business
+
+    <Frame>
+      <img src="/images/providers/facebook/facebook-select-business.png" alt="Select business" />
+    </Frame>
+  </Step>
+
+  <Step title="Add details and create app">
+    Add all your details and click Create App
+
+    <Frame>
+      <img src="/images/providers/facebook/facebook-create-app-details.png" alt="Create an app details page" />
+    </Frame>
+  </Step>
+</Steps>
+
+## Facebook Business Option
+
+If you have a Facebook Business page that is linked to your Instagram account, you can connect to it by setting up the Login for Business flow.
+
+<Steps>
+  <Step title="Set up Login for Business">
+    <Frame>
+      <img src="/images/providers/facebook/facebook-setup-login.png" alt="Set up login for business" />
+    </Frame>
+
+    Set up login for business
+  </Step>
+
+  <Step title="Set up Redirect URI">
+    Set up a redirect URI back to the application
+    
+    <Frame>
+      <img src="/images/providers/instagram/instagram-redirect-uri.png" alt="Valid OAuth Redirect URIs field in Client OAuth settings" />
+    </Frame>
+
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Instagram OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/instagram`
+    - Local development: `http://localhost:4200/integrations/social/instagram`
+    - Docker: `http://localhost:4007/integrations/social/instagram`
+  </Step>
+
+  <Step title="Set up permissions">
+    <Frame>
+      <img src="/images/providers/facebook/facebook-advanced-permissions.png" alt="Advanced permissions screen" />
+    </Frame>
+
+    Go to advanced permission and request access for the following scopes:
+    - `instagram_basic`
+    - `pages_show_list`
+    - `pages_read_engagement`
+    - `business_management`
+    - `instagram_content_publish`
+    - `instagram_manage_comments`
+    - `instagram_manage_insights`
+  </Step>
+
+  <Step title="Copy your credentials">
+    <Frame>
+      <img src="/images/providers/facebook/facebook-app-keys.png" alt="App ID and App Secret on the basic settings screen" />
+    </Frame>
+
+    Go to basic permissions copy your App ID and App Secret and paste them in your `.env` file
+
+```env
+FACEBOOK_APP_ID="app id"
+FACEBOOK_APP_SECRET="app secret"
+```
+
+    Instagram should now be working!
+  </Step>
+</Steps>
+
+
+## Instagram Standalone Option
+
+If you want to connect directly to your Instagram account without having to use a Facebook Business, use the standalone option. 
+
+<Warning>
+Please note that standalone option requires a professional Instagram account.
+</Warning>
+
+The permissions are not the ones listed above. Instagram asks for its own four here:
+
+- `instagram_business_basic`
+- `instagram_business_content_publish`
+- `instagram_business_manage_comments`
+- `instagram_business_manage_insights`
+
+<Steps>
+  <Step title="Set up Instagram">
+    <Frame>
+      <img src="/images/providers/instagram-standalone/instagram-standalone-001.png" alt="The Add products to your app section of the Meta app creation screen, with Instagram among the products" />
+    </Frame>
+
+    Set up Instagram.
+  </Step>
+
+  <Step title="Set up Instagram Business Login">
+    <Frame>
+      <img src="/images/providers/instagram-standalone/instagram-standalone-002.png" alt="Set up Instagram Business Login" />
+    </Frame>
+
+    Click on the button to set up Instagram Business Login
+  </Step>
+
+  <Step title="Set up Redirect URI">
+    <Frame>
+      <img src="/images/providers/instagram-standalone/instagram-standalone-003.png" alt="Set up redirect URI" />
+    </Frame>
+
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Instagram Standalone OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/instagram-standalone`
+    - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/instagram-standalone`
+    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/instagram-standalone`
+
+    <Warning>
+    Instagram will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to Instagram, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on Instagram with a redirect mismatch.
+
+    The Facebook Business flow above does not do this. It sends your `FRONTEND_URL` through unchanged, so those redirect URIs stay bare.
+    </Warning>
+  </Step>
+
+  <Step title="Copy Instagram App ID and Secret">
+    <Frame>
+      <img src="/images/providers/instagram-standalone/instagram-standalone-004.png" alt="Instagram App ID and Secret" />
+    </Frame>
+
+    From your Instagram API setup screen copy the Instagram App ID and Instagram App Secret and paste them in your `.env` file
+
+```env
+INSTAGRAM_APP_ID="app id"
+INSTAGRAM_APP_SECRET="app secret"
+```
+  </Step>
+
+  <Step title="Add Instagram Standalone channel in PostQueen Application">
+    Go to the PostQueen web interface, and click on the "Add Channel" button. Select "Instagram (Standalone)" from the list of available channels. You should be redirected to the Instagram login screen to authorize the application.
+
+    Approve all four permissions on that screen. If the granted list comes back short, she stops before the channel is created and says `Not enough scopes, when choosing a provider, please add all the scopes`.
+  </Step>
+</Steps>
+
+## Adding App Roles
+
+If you are having trouble connecting to your Instagram accounts, adding them as App Roles may help.
+
+<Steps>
+  <Step title="Go to the App Roles page">
+    <Frame>
+      <img src="/images/providers/instagram-standalone/Facebook-App-developpers-dashboard.png" alt="Facebook App developers dashboard" />
+    </Frame>
+  </Step>
+
+  <Step title="Add a role">
+    Click on "Add People"
+
+    <Frame>
+      <img src="/images/providers/instagram-standalone/App-Roles-page.png" alt="App Roles page" />
+    </Frame>
+  </Step>
+
+  <Step title="Add an Instagram Tester">
+    Select the "Instagram Tester" option, and type in the handles of all the Instagram accounts you would like to connect to. Then, click "Add".
+
+    <Frame>
+      <img src="/images/providers/instagram-standalone/Add-people-window.png" alt="Add people window" />
+    </Frame>
+  </Step>
+
+  <Step title="Accept the invitations">
+    Go to your Instagram account, and accept the tester invitation in the [Apps and Websites section of the profile settings](https://www.instagram.com/accounts/manage_access/).
+
+    <Frame>
+      <img src="/images/providers/instagram-standalone/Apps-and-Websites-section-of-the-profile-settings.png" alt="Apps and Websites section of the profile settings" />
+    </Frame>
+  </Step>
+</Steps>
+
+<Check>
+The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
+</Check>
+
+
+## Troubleshooting
+
+### "Insufficient developer role" error
+
+This means the Instagram account you are trying to connect has not been added as a tester on the Meta app. Walk through the [Adding App Roles](#adding-app-roles) section above for that exact account: add it as an Instagram Tester, then accept the invitation from within the Instagram app's settings.
+
+### Channel connects, but posts fail with permission errors
+
+The advanced permissions on the Meta app must be approved (or your account must be a developer/tester on the app). Submit the app for review with the required scopes. Until then, only roles you have added can publish.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Instagram" icon="/images/channels/instagram.svg" href="/providers/instagram">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

@@ -408,6 +408,36 @@
             ]
           },
           {
+            "group": "Connect your channels",
+            "icon": "plug",
+            "expanded": false,
+            "pages": [
+              "installation/providers/instagram",
+              "installation/providers/facebook",
+              "installation/providers/threads",
+              "installation/providers/x-twitter",
+              "installation/providers/linkedin",
+              "installation/providers/linkedin-page",
+              "installation/providers/tiktok",
+              "installation/providers/pinterest",
+              "installation/providers/mastodon",
+              "installation/providers/farcaster",
+              "installation/providers/vk",
+              "installation/providers/mewe",
+              "installation/providers/tumblr",
+              "installation/providers/dribbble",
+              "installation/providers/youtube",
+              "installation/providers/twitch",
+              "installation/providers/kick",
+              "installation/providers/reddit",
+              "installation/providers/discord",
+              "installation/providers/slack",
+              "installation/providers/telegram",
+              "installation/providers/whop",
+              "installation/providers/google-my-business"
+            ]
+          },
+          {
             "group": "Operations",
             "icon": "box-archive",
             "pages": [

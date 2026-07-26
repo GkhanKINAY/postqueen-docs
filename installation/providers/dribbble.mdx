@@ -1,0 +1,68 @@
+---
+title: 'Dribbble setup'
+description: 'Register the Dribbble application and give PostQueen its keys'
+icon: /images/channels/dribbble.svg
+---
+
+Register your own Dribbble application, put its client id and secret in your environment, and connect the channel.
+
+<Steps>
+  <Step title="Register your application">
+    [Register your application on Dribbble](https://dribbble.com/account/applications/new).
+
+    * **Name:** `MyPostQueenInstance`
+    * **Description:** `My PostQueen Instance`
+    * **Website:** `https://example.com`
+    * **Redirect URI:** your PostQueen callback URL, shown in the next step
+
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Dribbble OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/dribbble`
+    - Local development: `http://localhost:4200/integrations/social/dribbble`
+    - Docker: `http://localhost:4007/integrations/social/dribbble`
+
+    Two scopes are requested, and the connect is refused if either is missing:
+
+    ```
+    public
+    upload
+    ```
+  </Step>
+
+  <Step title="Copy your client secret to environment variables">
+    These can be found immediately after registering your application. These are both 64 characters long.
+
+```env
+DRIBBBLE_CLIENT_ID="1234..."
+DRIBBBLE_CLIENT_SECRET="5678..."
+```
+
+    Restart PostQueen with the updated environment variables
+  </Step>
+
+  <Step title="Add a Dribbble channel in the PostQueen web interface">
+    Go to the PostQueen web interface, and click on the "Add Channel" button. Select "Dribbble" from the list of available channels. You should be redirected to Dribbble to authorize the application.
+  </Step>
+</Steps>
+
+<Check>
+The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Dribbble" icon="/images/channels/dribbble.svg" href="/providers/dribbble">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

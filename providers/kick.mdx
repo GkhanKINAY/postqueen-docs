@@ -39,56 +39,12 @@ The message always goes to the channel that owns the connection, so this is your
 | **Connect flow** | One step. She reads your Kick user once the authorization round trip finishes, and that user id becomes the channel she writes into |
 | **Automations** | None. Comments go out as replies threaded on the chat message |
 
-<Snippet file="setup-is-selfhost-only.mdx" />
+## Self-hosting
 
-<Steps>
-  <Step title="Create an OAuth app on Kick">
-    Sign in to Kick and create an OAuth application. You need its client id and its secret, plus the redirect URI from the next step.
-
-    She asks for three scopes, so grant all of them:
-
-```
-chat:write
-user:read
-channel:read
-```
-
-    Kick uses OAuth 2.1, which means PKCE. She generates the code verifier and the S256 challenge for you, and the whole exchange runs against `id.kick.com`.
-  </Step>
-
-  <Step title="Configure the OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Kick OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/kick`
-    - Local development: `http://localhost:4200/integrations/social/kick`
-    - Docker: `http://localhost:4007/integrations/social/kick`
-  </Step>
-
-  <Step title="Set environment variables">
-    Copy the client id and the secret from your Kick app into your `.env` file.
-
-```env
-KICK_CLIENT_ID=""
-KICK_SECRET=""
-```
-
-    <Warning>
-    The second variable is `KICK_SECRET`, not `KICK_CLIENT_SECRET`. Naming it the long way is the single most common reason a Kick connection fails on the first try.
-    </Warning>
-  </Step>
-
-  <Step title="Add the Kick channel">
-    Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down` and then `docker compose up`.
-
-    In the web interface click **Add Channel** and pick **Kick**. Kick asks you to authorize, and the channel appears once you accept.
-
-    Add Channel does not check whether the two variables are set, so a missing or misspelled key shows up as a broken authorization page on the Kick side rather than a helpful message in PostQueen.
-  </Step>
-</Steps>
-
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up Kick on your own instance](/installation/providers/kick).
+</Info>
 
 <Snippet file="next-steps-provider.mdx" />

@@ -8,11 +8,6 @@ icon: /images/channels/warpcast.svg
 
 <Snippet file="never-share.mdx" />
 
-<Note>
-PostQueen uses [Neynar](https://neynar.com) as the Farcaster API provider.
-You need a Neynar developer account to obtain the API credentials below.
-</Note>
-
 ## What she can post to Farcaster
 
 Eight hundred characters and a picture is the whole shape of a cast. Name several channels and she sends the same cast into each one, then keeps the ids so your comments land in the right threads.
@@ -45,42 +40,12 @@ Attach a video and she stops before publishing with **"Can only accept images"**
 Two naming quirks worth knowing. The `__type` on the API is spelled `wrapcast`, and the connect slug is `farcaster`. When you cast into several channels at once, one cast is created per channel and the ids come back comma separated in a single response.
 </Warning>
 
-<Snippet file="setup-is-selfhost-only.mdx" />
+## Self-hosting
 
-## Set up Farcaster
-
-<Steps>
-  <Step title="Create a Neynar app">
-    Go to the [Neynar dashboard](https://dev.neynar.com) and create a new app. You will get a **Client ID** and a **Secret Key**.
-
-    <Note>
-    **There is no redirect URI to set here**, which is why this page has no callback block while
-    every other OAuth network does. Farcaster sign-in goes through Neynar's widget, so PostQueen
-    hands it the client ID directly rather than building a callback path for the network to
-    return to.
-    </Note>
-  </Step>
-
-  <Step title="Add credentials to your environment">
-    Add the following to your `.env` file:
-
-```env
-NEYNAR_CLIENT_ID="your-neynar-client-id"
-NEYNAR_SECRET_KEY="your-neynar-secret-key"
-```
-  </Step>
-
-  <Step title="Restart PostQueen">
-    Stop PostQueen if it is running and start it again so the new environment variables are picked up.
-  </Step>
-
-  <Step title="Add the channel">
-    In the PostQueen web interface, click **Add Channel**, select **Farcaster**, and complete the Neynar login flow. Your Farcaster account will appear in the channel list.
-  </Step>
-</Steps>
-
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up Farcaster on your own instance](/installation/providers/farcaster).
+</Info>
 
 <Snippet file="next-steps-provider.mdx" />

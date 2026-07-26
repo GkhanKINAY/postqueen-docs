@@ -1,0 +1,72 @@
+---
+title: 'Twitch setup'
+description: 'Register the Twitch application and give PostQueen its keys'
+icon: /images/channels/twitch.svg
+---
+
+Register an application in the Twitch developer console and put its keys in your environment so your own instance can connect the channel.
+
+<Steps>
+  <Step title="Register an app in the Twitch developer console">
+    Sign in to the Twitch developer console and register a new application. You need the client id and the client secret from it, and the redirect URL from the next step.
+
+    She asks for three scopes:
+
+```
+user:write:chat
+user:read:chat
+moderator:manage:announcements
+```
+
+    The third one is the one the announcement mode needs. Grant all three at registration, because adding a scope later means reconnecting the channel.
+  </Step>
+
+  <Step title="Configure the OAuth2 Redirect URI">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Twitch OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/twitch`
+    - Local development: `http://localhost:4200/integrations/social/twitch`
+    - Docker: `http://localhost:4007/integrations/social/twitch`
+  </Step>
+
+  <Step title="Set environment variables">
+    Copy both values into your `.env` file.
+
+```env
+TWITCH_CLIENT_ID=""
+TWITCH_CLIENT_SECRET=""
+```
+
+    The client id stays in use long after the connection is made. She sends it as the `Client-Id` header on every Twitch API call, so a channel that connected fine will still stop working if you clear that variable later.
+  </Step>
+
+  <Step title="Add the Twitch channel">
+    Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+
+    In the web interface click **Add Channel** and pick **Twitch**, then authorize on the Twitch side.
+
+    Add Channel does not check whether the two variables are set, so a missing key shows up as a broken authorization page on the Twitch side rather than a helpful message in PostQueen.
+  </Step>
+</Steps>
+
+<Check>
+The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Twitch" icon="/images/channels/twitch.svg" href="/providers/twitch">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

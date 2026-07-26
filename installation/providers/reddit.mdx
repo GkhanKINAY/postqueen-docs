@@ -1,0 +1,61 @@
+---
+title: 'Reddit setup'
+description: 'Register the Reddit application and give PostQueen its keys'
+icon: /images/channels/reddit.svg
+---
+
+On your own instance the Reddit app is yours: create it on Reddit Developers, then put its client id and secret in your environment.
+
+<Steps>
+  <Step title="Create an app on Reddit Developers">
+    Head over to [Reddit developers](https://www.reddit.com/prefs/apps) and click on **create a new app**.
+
+    * **Name:** `MyPostQueenInstance` (or whatever you like)
+    * **App type:** `web app`
+    * **Redirect URI:** your PostQueen callback URL, shown in the next step
+
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Reddit OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/reddit`
+    - Local development: `http://localhost:4200/integrations/social/reddit`
+    - Docker: `http://localhost:4007/integrations/social/reddit`
+
+    Reddit grants scopes at authorization rather than on the app form. PostQueen asks for four,
+    and the connect is refused if any is denied: `read`, `identity`, `submit` and `flair`.
+    `flair` is the one people are surprised by, and it is what makes flair selection work.
+  </Step>
+
+  <Step title="Set environment variables">
+    Copy the Reddit client id and client secret and add them to your `.env` file.
+
+    <Frame>
+      <img src="/images/providers/reddit/reddit-001.png" alt="Reddit" />
+    </Frame>
+
+```env
+REDDIT_CLIENT_ID=""
+REDDIT_CLIENT_SECRET=""
+```
+  </Step>
+  <Step title="Restart and add the Reddit channel">
+    <Snippet file="restart-and-add-channel.mdx" />
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Reddit" icon="/images/channels/reddit.svg" href="/providers/reddit">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

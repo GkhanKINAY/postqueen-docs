@@ -43,74 +43,12 @@ Where LinkedIn draws its lines:
 - **Comments can only contain text.** Media on a comment is dropped before it goes out.
 </Warning>
 
-<Snippet file="setup-is-selfhost-only.mdx" />
+## Self-hosting
 
-<Steps>
-  <Step title="Create a new app">
-    Head over to [LinkedIn developers](https://www.linkedin.com/developers/apps) and create a new app.
-    
-    <Frame>
-      <img src="/images/providers/linkedin/linkedin-001.png" alt="LinkedIn" />
-    </Frame>
-  </Step>
-
-  <Step title="Add required products">
-    Fill in all the details, then head over to **Products** and add all three:
-
-    - Share on LinkedIn
-    - Advertising API
-    - Sign in with LinkedIn using OpenID connect
-
-    <Frame>
-      <img src="/images/providers/linkedin/linkedin-002.png" alt="LinkedIn" />
-    </Frame>
-
-    Those three together grant the seven scopes PostQueen asks for, and the connect is refused if
-    any of them is missing:
-
-    ```
-    openid
-    profile
-    w_member_social
-    r_basicprofile
-    rw_organization_admin
-    w_organization_social
-    r_organization_social
-    ```
-
-    <Warning>
-    Request the Advertising API permissions and fill in its request form, or you will not be able
-    to refresh your tokens. That one is easy to skip because everything appears to work until the
-    first token expires.
-    </Warning>
-  </Step>
-
-  <Step title="Configure OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your LinkedIn OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/linkedin`
-    - Local development: `http://localhost:4200/integrations/social/linkedin`
-    - Docker: `http://localhost:4007/integrations/social/linkedin`
-
-    <Note>
-    If you are using the "LinkedIn Page" provider, replace `linkedin` with `linkedin-page` in the redirect URI.
-    </Note>
-  </Step>
-
-  <Step title="Copy your credentials">
-    Copy the created `Client ID` and `Client Secret` and add them to your `.env` file.
-
-```env
-LINKEDIN_CLIENT_ID=""
-LINKEDIN_CLIENT_SECRET=""
-```
-
-    You can find those under the Auth Tab of your LinkedIn App in the developer portal.
-  </Step>
-  <Step title="Restart and add the LinkedIn channel">
-    <Snippet file="restart-and-add-channel.mdx" />
-  </Step>
-</Steps>
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up LinkedIn on your own instance](/installation/providers/linkedin).
+</Info>
 
 <Snippet file="next-steps-provider.mdx" />

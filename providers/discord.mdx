@@ -45,80 +45,12 @@ If the bot cannot reach the channel you picked, the post comes back saying the b
 This integration requires that you have **Manage Server** permissions on the Discord server you want to integrate with.
 </Info>
 
-<Snippet file="setup-is-selfhost-only.mdx" />
+## Self-hosting
 
-<Steps>
-  <Step title="Create a Discord Application">
-    Login to Discord on the web, and then go to the [Discord Developer Portal](https://discord.com/developers/applications) and click on "New Application".
-    
-    <Frame>
-      <img src="/images/providers/discord/discord_create_app.png" alt="New Application" />
-    </Frame>
-  </Step>
-
-  <Step title="Add an App Icon">
-    <Frame>
-      <img src="/images/providers/discord/discord_add_app_icon.png" alt="App Icon" />
-    </Frame>
-
-    Upload the App Icon of your choice (1024x1024px max) and save your changes. If you do not do this, you will get 404 errors in logs when trying to add the Discord channel in the PostQueen web interface.
-  </Step>
-
-  <Step title="Get and set your Client ID and Client Secret">
-    You can find this in the **OAuth2** section of the Discord Developer Portal.
-
-    <Frame>
-      <img src="/images/providers/discord/discord_copy_keys.png" alt="Copy Keys" />
-    </Frame>
-
-    The authorization screen asks for three things: `identify`, `guilds` and `bot`. The first two
-    are verified on connect and refused if missing. `bot` is what installs the application into
-    your server, which is why the consent screen shows a server picker.
-
-    Set these in your .env file as follows;
-
-```env
-DISCORD_CLIENT_ID="your_client_id"
-DISCORD_CLIENT_SECRET="your_client_secret"
-```
-  </Step>
-
-  <Step title="Add a Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Discord OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/discord`
-    - Local development: `http://localhost:4200/integrations/social/discord`
-    - Docker: `http://localhost:4007/integrations/social/discord`
-
-    You can find this in the **OAuth2** section of the Discord Developer Portal.
-
-    <Frame>
-      <img src="/images/providers/discord/discord_redirect_uri.png" alt="Redirect URI" />
-    </Frame>
-  </Step>
-
-  <Step title="Create a Bot">
-    Navigate to the "Bot" section of the Discord Developer Portal. Fill out the bot details however you like, and then click "Reset Token".
-
-    With the token that is generated, set it in your .env file as follows;
-
-```env
-DISCORD_BOT_TOKEN_ID="your_bot_token"
-```
-
-    If you do not set this, you will get 404 errors when trying to add the Discord channel in the PostQueen web interface.
-
-    Stop PostQueen if it is running, and then start it using the .env file with the Discord details.
-  </Step>
-
-  <Step title="Add a Discord channel in the PostQueen web interface">
-    Go to the PostQueen web interface, and click on the "Add Channel" button, and then select "Discord". You should be redirected to Discord to login.
-  </Step>
-</Steps>
-
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up Discord on your own instance](/installation/providers/discord).
+</Info>
 
 <Snippet file="next-steps-provider.mdx" />

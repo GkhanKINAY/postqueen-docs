@@ -1,0 +1,75 @@
+---
+title: 'Slack setup'
+description: 'Register the Slack application and give PostQueen its keys'
+icon: /images/channels/slack.svg
+---
+
+On your own instance the Slack app is yours: create it, add the six bot scopes and the redirect URI, then put its client id and secret in your environment.
+
+<Steps>
+  <Step title="Create Slack App">
+    Head to [Slack Applications Dashboard](https://api.slack.com/apps) and select "From scratch", fill out all the required Information.
+  </Step>
+
+  <Step title="Set up OAuth Scopes and redirect URIs">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your Slack OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/slack`
+    - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/slack`
+    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/slack`
+
+    <Warning>
+    Slack will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to Slack, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on Slack with a redirect mismatch.
+    </Warning>
+
+    Head to Features > OAuth & Permissions
+    1. Add the redirect URI you copied from PostQueen
+    2. At Scopes > Bot Token Scopes, add all six of these Scopes:
+       - `chat:write`
+       - `channels:read`
+       - `users:read`
+       - `groups:read`
+       - `channels:join`
+       - `chat:write.customize`
+  </Step>
+
+  <Step title="Set an App Icon">
+    Head back to Settings > Basic Information > Display Information
+    
+    Now set an Icon that meets these Requirements:
+    1. It has to be a Square
+    2. It has to be 512px×512px to 2000px×2000px
+    
+    If you do not set an App Icon, PostQueen will not let you install the Integration.
+  </Step>
+
+  <Step title="Copy Client ID and Secret">
+    Head back to App Credentials, copy the Client ID and Secret and paste it to your Environment:
+
+```env
+SLACK_ID=""
+SLACK_SECRET=""
+```
+  </Step>
+  <Step title="Restart and add the Slack channel">
+    <Snippet file="restart-and-add-channel.mdx" />
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to Slack" icon="/images/channels/slack.svg" href="/providers/slack">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>

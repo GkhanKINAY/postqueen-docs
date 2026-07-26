@@ -18,8 +18,17 @@ Using cookies to interact with platforms may violate their terms of service. Use
 </Warning>
 
 <Note>
-The packaged PostQueen extension is coming soon to the Chrome Web Store. Until then, you build it from source. The same steps work for both cloud and self-hosted setups.
+The packaged PostQueen extension is coming soon to the Chrome Web Store. Until then, you build it
+from source.
 </Note>
+
+<Warning>
+**Until it is published, this needs an instance you administer.** `EXTENSION_ID` is read from the
+server environment, and every unpacked build gets its own ID, so the build in your browser has to
+be the one that instance was told about. On a hosted instance you do not control, your own build's
+ID will not match and the connect stops at *Extension Not Found* before anything reaches the
+network.
+</Warning>
 
 ## Installation
 

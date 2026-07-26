@@ -42,67 +42,9 @@ is Tumblr's own limit for a text block rather than ours. A post reads as one pie
 Alt text you set on an image is carried through.
 </Note>
 
-<Snippet file="setup-is-selfhost-only.mdx" />
-
-## Set up Tumblr
-
-<Steps>
-  <Step title="Register an application">
-    Go to [Tumblr's application registry](https://www.tumblr.com/oauth/apps) and click
-    **Register application**. Fill in the name, description and the two URL fields Tumblr asks
-    for; only the callback below has to be exact.
-  </Step>
-
-  <Step title="Set the callback URL">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Tumblr OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/tumblr`
-    - Local development: `http://localhost:4200/integrations/social/tumblr`
-    - Docker: `http://localhost:4007/integrations/social/tumblr`
-  </Step>
-
-  <Step title="Check the permissions">
-    PostQueen asks for two scopes, and the connect is refused if either is missing:
-
-    ```
-    write
-    offline_access
-    ```
-
-    `offline_access` is the one worth checking. Without it Tumblr issues a token that cannot be
-    refreshed, so the channel connects and then goes quiet when that token expires.
-  </Step>
-
-  <Step title="Set environment variables">
-    Copy the OAuth consumer key and secret from your application page.
-
-```env
-TUMBLR_CLIENT_ID=""
-TUMBLR_CLIENT_SECRET=""
-```
-  </Step>
-
-  <Step title="Restart and add the Tumblr channel">
-    <Snippet file="restart-and-add-channel.mdx" />
-
-    <Note>
-    Tumblr adds a second screen after you authorize: a list of the blogs on your account, with
-    the primary one marked. Pick the blog this channel should post to. One PostQueen channel is
-    one blog, so connect again to add another.
-    </Note>
-  </Step>
-</Steps>
-
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="The channel connects and then stops working after a while">
-    Almost certainly a missing `offline_access` scope on the application. Without it there is no
-    refresh token, so posting works until the first token expires and then fails. Add the scope
-    and reconnect the channel.
-  </Accordion>
-
   <Accordion title="Posts fail with a daily limit message">
     Tumblr caps how much one account can publish per day and answers with its own limit error.
     There is nothing to configure here; the posts resume the next day.
@@ -117,5 +59,13 @@ TUMBLR_CLIENT_SECRET=""
     One video per post, and it cannot be mixed with images. Up to 30 images is fine.
   </Accordion>
 </AccordionGroup>
+
+## Self-hosting
+
+<Info>
+On PostQueen Cloud this channel is ready: open **Add Channel** and pick it.
+Running your own instance? You register the application yourself:
+[Set up Tumblr on your own instance](/installation/providers/tumblr).
+</Info>
 
 <Snippet file="next-steps-provider.mdx" />

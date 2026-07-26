@@ -1,0 +1,77 @@
+---
+title: 'VK setup'
+description: 'Register the VK application and give PostQueen its keys'
+icon: /images/channels/vk.svg
+---
+
+On your own instance you register the VK application yourself and put its id in your environment.
+
+<Steps>
+  <Step title="Create an app in the VK developer portal">
+    Sign in to VK and create an application in the developer portal. She uses the VK ID authorization flow, which runs against `id.vk.com`, and she asks for these scopes:
+
+```
+vkid.personal_info
+email
+wall
+status
+docs
+photos
+video
+```
+
+    `wall` is the one that lets her post, and `photos` and `video` are what the uploads need.
+  </Step>
+
+  <Step title="Configure the OAuth2 Redirect URI">
+    <Snippet file="oauth2redirect.mdx" />
+
+    **Your VK OAuth2 Redirect URI:**
+    - Production: `https://postqueen.example.com/integrations/social/vk`
+    - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/vk`
+    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/vk`
+
+    <Warning>
+    VK will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to VK, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on VK with a redirect mismatch.
+    </Warning>
+  </Step>
+
+  <Step title="Set the environment variable">
+    VK issues no client secret for this flow, so there is exactly one value to set.
+
+```env
+VK_ID=""
+```
+
+    That is the application id from your VK app. She sends it on the authorization request, on the token exchange and on every wall call, so it stays in use for the life of the channel.
+  </Step>
+
+  <Step title="Add the VK channel">
+    Restart PostQueen so the new variable is read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+
+    In the web interface click **Add Channel** and pick **VK**, then accept the request on the VK side.
+
+    Add Channel does not check whether `VK_ID` is set, so a missing value shows up as a broken authorization page on the VK side rather than a helpful message in PostQueen.
+  </Step>
+</Steps>
+
+<Check>
+The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
+</Check>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="What she can post to VK" icon="/images/channels/vk.svg" href="/providers/vk">
+    Limits, post types and settings
+  </Card>
+  <Card title="Configuration reference" icon="list" href="/configuration/reference">
+    Every variable she reads
+  </Card>
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+    Invalid state, invalid_grant and the rest
+  </Card>
+  <Card title="Another channel" icon="plug" href="/providers/overview">
+    Every network, and what each one asks for
+  </Card>
+</CardGroup>
