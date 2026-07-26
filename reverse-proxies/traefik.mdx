@@ -94,8 +94,19 @@ Both numbers are right, for different routes to the same place.
     ```
 
     <Check>
-    `HTTP/2 200` means the router, the certificate and PostQueen are all working.
+    `HTTP/2 200` means the router and PostQueen are both working.
     </Check>
+
+    <Warning>
+    **This block does not get you a real certificate.** `tls=true` turns TLS on, but with no
+    certificate resolver configured Traefik serves its own self-signed default, so browsers warn
+    and `curl` needs `-k`. Add a resolver, usually ACME against Let's Encrypt, and name it on the
+    router with `traefik.http.routers.postqueen.tls.certresolver`. Traefik's own
+    [ACME documentation](https://doc.traefik.io/traefik/https/acme/) has the entrypoint and storage
+    settings that go with it.
+
+    [Caddy](/reverse-proxies/caddy) does this part for you, which is why it is the shorter path.
+    </Warning>
 
     <Warning>
     A 404 from Traefik instead is usually a missing `traefik.enable=true` label, since the
