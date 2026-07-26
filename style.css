@@ -1,0 +1,10 @@
+/* Frame draws a grey card behind every image: bg-gray-50/50 in light,
+   dark:bg-gray-800/25 in dark, plus p-2 of inset. Our illustrations already
+   carry their own panel and border, so the wrapper showed as a second, paler
+   box around the first one.
+   Dropping the fill and the inset keeps what Frame is actually for: zoom on
+   click, and a caption slot. */
+.frame {
+  background: transparent !important;
+  padding: 0 !important;
+}
