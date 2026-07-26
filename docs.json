@@ -504,12 +504,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "GitHub",
-          "href": "https://github.com/GkhanKINAY/postqueen-app"
+          "anchor": "Start free for 7 days",
+          "icon": "crown",
+          "href": "https://postqueen.ai"
         },
         {
-          "anchor": "Register to the cloud",
-          "href": "https://postqueen.ai"
+          "anchor": "GitHub",
+          "icon": "github",
+          "href": "https://github.com/GkhanKINAY/postqueen-app"
         }
       ]
     }
