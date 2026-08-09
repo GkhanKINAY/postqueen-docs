@@ -32,9 +32,9 @@ https://api.postqueen.ai/mcp/YOUR_API_KEY
 Then toggle **PostQueen** on from the tools menu in a chat and ask her to list your connected
 accounts. Your channel names come back.
 
-<Card title="Full setup: Claude web and mobile" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude-app">
-  Every field on the connector form, what to leave empty and why, plus
-  [Claude Desktop](/mcp/clients/claude-desktop) for the config-file route
+<Card title="Full setup: Claude" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude">
+  Every field on the connector form, what to leave empty and why, and the
+  `mcp-remote` bridge for an instance the public internet cannot reach
 </Card>
 
 <Warning>
@@ -80,7 +80,7 @@ Everything scheduled needs nothing further from you. It is visible on the calend
 
 On a self-hosted instance, swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY` tail. Most self-hosted setups serve the backend under `/api`, so the path sits at `/api/mcp`.
 
-One thing to plan for: Claude reaches your server from Anthropic's cloud rather than from your device, so a custom connector only works if the endpoint is reachable over the public internet on HTTPS. An instance behind a VPN or sitting on your LAN will not connect that way. Claude Desktop has a way around it, because the `mcp-remote` bridge in `claude_desktop_config.json` runs on your own machine: [Claude Desktop](/mcp/clients/claude-desktop).
+One thing to plan for: Claude reaches your server from Anthropic's cloud rather than from your device, so a custom connector only works if the endpoint is reachable over the public internet on HTTPS. An instance behind a VPN or sitting on your LAN will not connect that way. Claude Desktop has a way around it, because the `mcp-remote` bridge in `claude_desktop_config.json` runs on your own machine: [Claude Desktop](/mcp/clients/claude).
 
 <Warning>
 A plain `"url"` entry in `claude_desktop_config.json` does not work. That file only launches local stdio servers with `command` and `args`. Remote servers are the custom connector above, or the bridge.
@@ -114,11 +114,9 @@ A plain `"url"` entry in `claude_desktop_config.json` does not work. That file o
 ## Learn more
 
 <CardGroup cols={2}>
-  <Card title="Claude Desktop setup" icon="plug" href="/mcp/clients/claude-desktop">
-    The connector flow, the `mcp-remote` bridge and where the desktop logs live.
-  </Card>
-  <Card title="Claude web and mobile setup" icon="mobile" href="/mcp/clients/claude-app">
-    The claude.ai connector step by step, and how it reaches iOS and Android.
+  <Card title="Claude setup over MCP" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude">
+    The connector flow for web, desktop and phone, the `mcp-remote` bridge and
+    where the desktop logs live.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
     All 11 tools Claude gains once the connector is on, with every parameter.

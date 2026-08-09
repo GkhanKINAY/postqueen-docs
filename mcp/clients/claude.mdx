@@ -1,10 +1,15 @@
 ---
-title: Claude Desktop
-description: 'Connect Claude Desktop to PostQueen over MCP'
+title: Claude
+description: 'Connect claude.ai, Claude Desktop and the Claude mobile apps to PostQueen over MCP'
 icon: /images/brand/icon-claude.svg
 ---
 
-Claude Desktop reaches her two ways: as a **custom connector** added in the app's settings, or through the **`mcp-remote` bridge** in `claude_desktop_config.json`.
+One connector covers all three. Custom connectors belong to your Claude account rather than to a
+device, so adding PostQueen once on claude.ai or in Claude Desktop puts her in the web app, the
+desktop app and the iOS and Android apps at the same time. This page used to be two, one headed
+Claude Desktop and one headed Claude Web and Mobile, describing the same setup twice.
+
+There are two routes: a **custom connector** added in settings, or the **`mcp-remote` bridge** in `claude_desktop_config.json`.
 
 | Route | Pick it when | Needs |
 |-------|--------------|-------|
@@ -52,6 +57,21 @@ At the time of writing, Anthropic's help center lists custom connectors as avail
 <Warning>
 With custom connectors, Claude reaches PostQueen from Anthropic's cloud infrastructure, not from your machine, so the URL has to be reachable over the public internet. `api.postqueen.ai` is, so Option A works there. A self-hosted instance behind a VPN or on your LAN will not connect this way; use Option B instead.
 </Warning>
+
+## On your phone
+
+Connectors follow the account, not the device, so once PostQueen is added on the web or the
+desktop app she appears in the Claude apps on iOS and Android too. Enable her from the tools menu
+in a chat the same way. New custom connectors generally cannot be created from the mobile apps
+themselves: add them on the web or desktop first and they show up on your phone.
+
+## Plan availability
+
+At the time of writing, Anthropic's help center lists custom connectors as available across Claude
+plans, with the Free plan limited to a single custom connector. On Team and Enterprise plans an
+organization Owner may need to add the connector in the organization's settings before members can
+connect it. Availability and UI naming shift over time. If you do not see the option, check
+Anthropic's [connectors help article](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
 
 ## Option B: `mcp-remote` bridge (config file)
 
@@ -169,8 +189,5 @@ Claude calls the `integrationList` tool and returns your connected accounts. She
   </Card>
   <Card title="Limits and troubleshooting" icon="gauge" href="/mcp/limits-and-troubleshooting">
     What MCP cannot reach, and what a bad key looks like
-  </Card>
-  <Card title="Claude web and mobile" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude-app">
-    The same connector, added on claude.ai instead
   </Card>
 </CardGroup>

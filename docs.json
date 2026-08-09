@@ -124,8 +124,7 @@
               "mcp/introduction",
               "mcp/setup",
               "mcp/clients/claude-code",
-              "mcp/clients/claude-desktop",
-              "mcp/clients/claude-app",
+              "mcp/clients/claude",
               "mcp/clients/chatgpt",
               "mcp/clients/cursor",
               "mcp/clients/codex",
@@ -532,6 +531,14 @@
     {
       "source": "/developer/overview",
       "destination": "/which-interface"
+    },
+    {
+      "source": "/mcp/clients/claude-desktop",
+      "destination": "/mcp/clients/claude"
+    },
+    {
+      "source": "/mcp/clients/claude-app",
+      "destination": "/mcp/clients/claude"
     }
   ],
   "logo": {
