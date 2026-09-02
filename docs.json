@@ -411,7 +411,7 @@
         ]
       },
       {
-        "tab": "Automation",
+        "tab": "Agents",
         "groups": [
           {
             "group": "CLI",
