@@ -1,15 +1,15 @@
 ---
 title: Limits and Troubleshooting
-description: 'What the 11 MCP tools cannot reach, and what to do when the connection misbehaves'
+description: 'What the 14 MCP tools cannot reach, and what to do when the connection misbehaves'
 icon: 'gauge'
 ---
 
-The tools she answers over MCP are built to make things: they read your channels and their rules, then create posts and media. Everything that reads back, edits later or touches a connection lives on the [Public API](/public-api/introduction) and the [CLI](/cli/introduction) instead.
+The tools she answers over MCP are built to make things: they read your channels and their rules, then create posts and media. They can also list what is on the calendar and change a scheduled post's settings. Deleting, rescheduling, analytics and anything that touches a connection live on the [Public API](/public-api/introduction) and the [CLI](/cli/introduction) instead.
 
 <Info>
-**No MCP tool lists an existing post, deletes one, or returns analytics.** Ask your agent what is
-on next Tuesday and it comes back with nothing. Nothing is broken. Read this page before you
-build on MCP, not after.
+**No MCP tool deletes a post, moves one to a new time, or returns analytics.** Ask your agent to
+push Tuesday's post to Wednesday and it has no way to do it. Nothing is broken. Read this page
+before you build on MCP, not after.
 </Info>
 
 ## What the tools cannot reach
@@ -18,7 +18,7 @@ build on MCP, not after.
 
 | What you want | Over MCP | Where it lives instead |
 |---------------|----------|------------------------|
-| See what is already on the calendar | No tool lists posts | [`GET /posts`](/public-api/posts/list) with `startDate` and `endDate`, or `postqueen posts:list` |
+| Change a scheduled post's content or time | `postSettingsTool` changes settings only, never the content or the date | The calendar at [app.postqueen.ai](https://app.postqueen.ai) |
 | Delete a post | No tool deletes posts | [`DELETE /posts/{id}`](/public-api/posts/delete), or `postqueen posts:delete <id>` |
 | Delete every post in a group | No tool | [`DELETE /posts/group/{group}`](/public-api/posts/delete-by-group) |
 | Move a post between draft and schedule | `integrationSchedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |

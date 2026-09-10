@@ -18,7 +18,7 @@ pasting that URL into your client, and for most of them it is a single command.
 
 ## How it works
 
-Point a client at one URL and your agent gets **11 tools** it can call. It reads their schemas, then calls them on your behalf.
+Point a client at one URL and your agent gets **14 tools** it can call. It reads their schemas, then calls them on your behalf.
 
 ```mermaid
 sequenceDiagram
@@ -43,18 +43,21 @@ sequenceDiagram
 | `integrationSchema` | Get platform-specific posting rules and settings schema |
 | `triggerTool` | Execute platform-specific helpers (e.g., list Discord channels) |
 | `integrationSchedulePostTool` | Schedule, draft, or immediately publish posts |
+| `postsListTool` | List the posts scheduled between two dates, with their current settings |
+| `postSettingsTool` | Change the settings of a scheduled post or draft that has not gone out yet |
 | `generateImageTool` | Generate AI images for posts |
 | `generateVideoOptions` | List available video generation options |
 | `videoFunctionTool` | Get video generator settings (e.g., available voices) |
-| `generateVideoTool` | Generate videos for posts |
+| `generateVideoTool` | Start generating a video for a post |
+| `videoStatusTool` | Check whether that video is ready, and get its URL |
 | `uploadFromUrlTool` | Upload a remote image or video into your media library from a public URL |
 | `ask_postqueen` | Hand her the whole request in plain language and let her pick the steps |
 
 <Note>
-Ten of those are the same tools the in-app assistant runs. The eleventh, `ask_postqueen`, exists
+Thirteen of those are the same tools the in-app assistant runs. The fourteenth, `ask_postqueen`, exists
 only over MCP: your client is talking to her as an agent, so it can either drive the individual
-tools itself or hand the whole job to her. That is why pages about the assistant say ten and
-pages about MCP say eleven.
+tools itself or hand the whole job to her. That is why pages about the assistant say thirteen
+and pages about MCP say fourteen.
 </Note>
 
 Every parameter and every field each tool sends back: [Tools Reference](/mcp/tools).
@@ -166,7 +169,7 @@ post is on your calendar in the format X expects.
     The URL for Claude, Cursor, Codex, ChatGPT and the rest
   </Card>
   <Card title="Tools Reference" icon="screwdriver-wrench" href="/mcp/tools">
-    Every parameter and every field the eleven tools send back
+    Every parameter and every field the fourteen tools send back
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     The flows where an agent has to discover something before it can post

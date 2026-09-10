@@ -4,7 +4,7 @@ description: 'Complete reference for all PostQueen MCP tools'
 icon: 'screwdriver-wrench'
 ---
 
-These are the eleven tools she answers over MCP, with every parameter and every field she sends back. Your agent reads these schemas on connect, so you never call one by hand.
+These are the fourteen tools she answers over MCP, with every parameter and every field she sends back. Your agent reads these schemas on connect, so you never call one by hand.
 
 ## integrationList
 
@@ -178,6 +178,65 @@ If validation fails, returns `{ errors: string }` with details about what went w
 
 ---
 
+## postsListTool
+
+List the posts scheduled between two dates, whatever their state: scheduled, draft, published or failed. It reads the same posts as [List Posts](/public-api/posts/list), with the channel flattened into three fields instead of a nested object, and each item carries the post's current settings. To see everything upcoming, pass a wide window starting now.
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `startDate` | string | Yes | Start of the window, UTC (e.g., `2026-07-20T00:00:00`) |
+| `endDate` | string | Yes | End of the window, UTC (e.g., `2026-08-20T00:00:00`) |
+| `customer` | string | No | Group (customer) ID from `groupList`, to keep only that group's channels |
+
+**Returns:** `posts`, an array with one item per post:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Post ID (pass it to `postSettingsTool`) |
+| `publishDate` | string | UTC time the post is set for |
+| `state` | string | `QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR` |
+| `content` | string | The post content |
+| `settings` | object | The post's current platform settings |
+| `group` | string | Group ID shared by a post and its copies on other channels |
+| `integrationId` | string | ID of the channel the post goes to |
+| `platform` | string | Platform identifier (e.g., `x`, `linkedin`) |
+| `integrationName` | string | Display name of the channel |
+
+---
+
+## postSettingsTool
+
+Change the platform settings of a post that has not gone out yet: a scheduled post whose time is still ahead, or a draft. Only the settings change. The content and the publish date stay exactly as they are.
+
+The keys you pass are merged into the post's existing settings, so send only what should change. `integrationSchema` tells you which keys the platform has. A scheduled post is validated again with the merged settings, the same way a new post is.
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | string | Yes | Post ID, usually from `postsListTool` |
+| `settings` | array | Yes | The keys to change |
+
+Each item in `settings`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `key` | string | Setting name |
+| `value` | any | New value (prefer IDs over labels when available) |
+
+**Returns:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `postId` | string | The updated post ID |
+| `publishDate` | string | The post's publish date, unchanged |
+
+If the update is refused, returns `{ errors: string }` instead: the post was not found, it already published or failed, its time has passed, the id belongs to a comment rather than the main post, or the merged settings did not validate. The same operation over HTTP: [Update Post Settings](/public-api/posts/settings).
+
+---
+
 ## generateImageTool
 
 Generate an AI image to use as a post attachment.
@@ -194,6 +253,8 @@ Generate an AI image to use as a post attachment.
 |-------|------|-------------|
 | `id` | string | Media ID |
 | `path` | string | URL of the generated image |
+
+On failure, returns `{ error: string }` instead, for example when the account has no AI image credits left.
 
 Use the returned `path` in the `attachments` array when scheduling a post.
 
@@ -270,7 +331,7 @@ Execute helper functions for video generators. Use this to fetch required data b
 
 ## generateVideoTool
 
-Generate a video to use as a post attachment.
+Start generating a video to use as a post attachment. A video takes a few minutes, so this call only starts the job and hands back a `jobId`. `videoStatusTool` reports when it is ready.
 
 **Parameters:**
 
@@ -291,13 +352,36 @@ Each item in `customParams`:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `url` | string | URL of the generated video |
+| `jobId` | string | Pass it to `videoStatusTool` |
+
+On failure, returns `{ error: string }` instead, for example *No AI video credits are available on this account*. A job that fails to start does not use a video credit.
+
+---
+
+## videoStatusTool
+
+Check on a video started with `generateVideoTool`. While the status is `pending`, the tool asks your agent to wait about 30 seconds and call again.
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `jobId` | string | Yes | The `jobId` that `generateVideoTool` returned |
+
+**Returns:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `status` | string | `pending`, `completed` or `failed` |
+| `id` | string | Media ID, once the video exists |
+| `url` | string | URL of the finished video |
+| `error` | string | Why the job failed |
 
 Use the returned `url` in the `attachments` array when scheduling a post. Whatever your agent schedules with these tools lands on the calendar she publishes from, so you can still open it and change your mind.
 
 ## `ask_postqueen`
 
-The eleventh tool is not one of the ten above and does not look like them. Your client will discover it anyway, so it is worth knowing what it is.
+The fourteenth tool is not one of the thirteen above and does not look like them. Your client will discover it anyway, so it is worth knowing what it is.
 
 It takes one parameter, `message`, a plain-language request. Behind it sits the same assistant you talk to in the app, running server-side with the same tools listed above and the same access to your calendar. So "ask her to schedule a launch post for Thursday" is a single call rather than a sequence your own agent has to plan.
 
@@ -309,4 +393,4 @@ Two things follow from that. It can write to your calendar, so treat it with the
 
 ## What these tools cannot do
 
-Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Reading analytics is one. Listing or deleting an existing post is another. [Limits and Troubleshooting](/mcp/limits-and-troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach her at all.
+Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Reading analytics is one. Deleting a post is another, and so is moving one to a new time, because `postSettingsTool` changes settings and nothing else. [Limits and Troubleshooting](/mcp/limits-and-troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach her at all.

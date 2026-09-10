@@ -2633,6 +2633,14 @@
           "content": {
             "type": "string"
           },
+          "settings": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "The post's current platform settings, in the same shape used when creating the post. Keys depend on the channel's platform.",
+            "example": {
+              "who_can_reply_post": "everyone"
+            }
+          },
           "publishDate": {
             "type": "string",
             "format": "date-time"
