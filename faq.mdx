@@ -97,9 +97,9 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
   </Accordion>
 
   <Accordion title="Are there API limits?" icon="gauge-high">
-    30 requests per hour on create-post, with uploads counted in a separate allowance of the same size. Nothing else is capped by it. Schedule several posts in one request when you need throughput.
+    30 requests per hour on create-post. Uploads have an allowance of their own, 300 per hour. Nothing else is capped by them. Schedule several posts in one request when you need throughput.
 
-    Self-hosting? Raise or lower it with `API_LIMIT`.
+    Self-hosting? Raise or lower them with `API_LIMIT` and `UPLOAD_LIMIT`.
   </Accordion>
 </AccordionGroup>
 

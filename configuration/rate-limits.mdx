@@ -125,17 +125,26 @@ tightest limits above and are the default target for the captcha.
 
 ## The public API hourly cap
 
-Separate from all of the above, post creation through the public API is capped per hour, and so
-are uploads. It defaults to 90 requests per hour and is set with:
+Separate from all of the above, post creation through the public API is capped per hour, per
+organization. It defaults to 90 requests per hour and is set with:
 
 ```env
 API_LIMIT=30
 ```
 
-Posting from the web interface is not counted. Uploads are, in an hourly allowance of the same
-size kept apart from the posting one: `POST /public/v1/upload`, `/public/v1/upload-from-url` and
-the uploads you make in the app. See [Public API](/public-api/introduction) for what counts
-against it.
+Posting from the web interface is not counted.
+
+Uploads have an hourly allowance of their own, 300 per organization unless you change it. It
+covers `POST /public/v1/upload`, `/public/v1/upload-from-url` and the uploads you make in the app.
+Keeping it apart means choosing a folder of files in the media library never runs into the posting
+cap, while one account still cannot push unlimited files through the upload routes.
+
+```env
+UPLOAD_LIMIT=300
+```
+
+Before v3.5.2 uploads drew on `API_LIMIT` instead. See [Public API](/public-api/introduction) for
+what counts against each.
 
 ## Related
 

@@ -147,7 +147,11 @@ One exception is worth knowing before you rely on this. Your own OIDC provider i
 
 ### `API_LIMIT`
 
-Per-hour allowance, per organization, on the public-API create-post endpoint. Uploads draw on the same number in a bucket of their own, so a burst of them cannot use up the posting allowance: that covers `POST /public/v1/upload`, `/public/v1/upload-from-url` and the uploads you make in the app. Defaults to `90`, and the shipped `docker-compose.yaml` sets `30`, so raise it there if you drive PostQueen from scripts or upload in bulk. It is one number for the whole instance and the same on every plan: channel and post quotas are what plans tier.
+Per-hour allowance, per organization, on the public-API create-post endpoint. Defaults to `90`, and the shipped `docker-compose.yaml` sets `30`, so raise it there if you drive PostQueen from scripts. It is one number for the whole instance and the same on every plan: channel and post quotas are what plans tier. Uploads have their own allowance, `UPLOAD_LIMIT`.
+
+### `UPLOAD_LIMIT`
+
+Per-hour allowance, per organization, on uploads: `POST /public/v1/upload`, `/public/v1/upload-from-url` and the uploads you make in the app. Defaults to `300`. Before v3.5.2 uploads drew on `API_LIMIT` instead, so with the shipped `30`, choosing more than 30 files at once in the media library failed the rest.
 
 ### `RUN_CRON`
 
