@@ -82,6 +82,7 @@ provider's API and failed at the network level: DNS, TLS, or a refused connectio
     - A self-hosted Mastodon instance the backend cannot reach, through firewall or missing DNS
     - The GMB metrics endpoint blocked by egress filtering
     - A reverse proxy in front of PostQueen rewriting the outbound request
+    - `Error: Blocked IP` in the logs: the host resolved to a private address and the SSRF guard refused it. On a trusted private network, see [`DISABLE_SSRF_PROTECTION`](/configuration/reference#disable_ssrf_protection)
   </Accordion>
 </AccordionGroup>
 

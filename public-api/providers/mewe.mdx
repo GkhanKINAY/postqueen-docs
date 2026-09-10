@@ -1,0 +1,94 @@
+---
+title: MeWe Settings
+description: 'API settings for posting to MeWe'
+---
+
+Creating the app and connecting a channel: [MeWe setup guide](/installation/providers/mewe).
+
+## Settings Schema
+
+A MeWe post goes either to your own timeline or to one group you belong to:
+
+```json
+{
+  "settings": {
+    "__type": "mewe",
+    "postType": "timeline"
+  }
+}
+```
+
+## Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `__type` | `string` | Yes | Must be `mewe` |
+| `postType` | `string` | Yes | `timeline` or `group` |
+| `group` | `string` | When `postType` is `group` | The group's id, not its name |
+
+### `group`
+
+The field takes the group's **id**. The `groups` tool on the channel lists every group the account belongs to, as `id` and `name` pairs. Call it through [Trigger a Tool](/public-api/integrations/trigger) and copy the id you want. A post to a group with an empty `group` fails.
+
+### Media
+
+Photos only. A video file is dropped from the post rather than sent.
+
+## Examples
+
+### Post to your timeline
+
+```json
+{
+  "type": "now",
+  "date": "2024-12-14T10:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "your-mewe-integration-id"
+      },
+      "value": [
+        {
+          "content": "Hello from the PostQueen API!",
+          "image": []
+        }
+      ],
+      "settings": {
+        "__type": "mewe",
+        "postType": "timeline"
+      }
+    }
+  ]
+}
+```
+
+### Post to a group
+
+```json
+{
+  "type": "schedule",
+  "date": "2024-12-14T10:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "your-mewe-integration-id"
+      },
+      "value": [
+        {
+          "content": "Sharing this with the group",
+          "image": []
+        }
+      ],
+      "settings": {
+        "__type": "mewe",
+        "postType": "group",
+        "group": "your-group-id"
+      }
+    }
+  ]
+}
+```

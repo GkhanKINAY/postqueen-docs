@@ -36,6 +36,26 @@ On your own instance the LinkedIn app is yours: create it on LinkedIn Developers
     </Warning>
   </Step>
 
+  <Step title="Check the granted scopes">
+    Open the **Auth** tab of your app. Its **OAuth 2.0 scopes** list must show all seven scopes PostQueen asks for:
+
+    ```
+    openid
+    profile
+    w_member_social
+    r_basicprofile
+    rw_organization_admin
+    w_organization_social
+    r_organization_social
+    ```
+
+    The last four come from the Advertising API, `w_member_social` from Share on LinkedIn, and `openid` with `profile` from Sign in with LinkedIn.
+
+    <Warning>
+    A missing scope does not fail the LinkedIn login. LinkedIn hands back a token without it, and PostQueen then refuses the connection with *Not enough scopes, when choosing a provider, please add all the scopes*. When you see that message, this list is the first place to look.
+    </Warning>
+  </Step>
+
   <Step title="Configure OAuth2 Redirect URI">
     <Snippet file="oauth2redirect.mdx" />
 

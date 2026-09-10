@@ -39,6 +39,10 @@ On your own instance the LinkedIn app is yours: create it on LinkedIn Developers
     r_organization_social
     ```
 
+    The last four come from the Advertising API, `w_member_social` from Share on LinkedIn, and
+    `openid` with `profile` from Sign in with LinkedIn. So the organization scopes are needed for
+    this personal channel too, not only for LinkedIn Page: both use the same app and the same set.
+
     <Warning>
     Request the Advertising API permissions and fill in its request form, or you will not be able
     to refresh your tokens. That one is easy to skip because everything appears to work until the

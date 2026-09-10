@@ -7,7 +7,7 @@ Creating the OAuth app and connecting a channel: [WordPress setup guide](/provid
 
 ## Overview
 
-WordPress integration allows you to publish posts to your WordPress site. You can set the title, featured image, and post type.
+WordPress integration allows you to publish posts to your WordPress site. You can set the title, featured image, post type, status, categories and tags.
 
 ## Settings Schema
 
@@ -19,7 +19,10 @@ WordPress integration allows you to publish posts to your WordPress site. You ca
     "id": "image-id",
     "path": "https://uploads.postqueen.ai/featured.jpg"
   },
-  "type": "post"
+  "type": "post",
+  "categories": [12],
+  "tags": [45, 46],
+  "status": "publish"
 }
 ```
 
@@ -33,6 +36,22 @@ WordPress integration allows you to publish posts to your WordPress site. You ca
 | `main_image.id` | string | ✅ | Image ID |
 | `main_image.path` | string | ✅ | Image URL |
 | `type` | string | ✅ | Post type (depends on your WordPress setup) |
+| `categories` | number[] | ❌ | Category ids to file the post under |
+| `tags` | number[] | ❌ | Tag ids to apply |
+| `status` | string | ❌ | `publish` (the default), `draft`, `pending` or `private` |
+
+### `status`
+
+| Value | Description |
+|-------|-------------|
+| `publish` | Publish on schedule. Used when the field is left out |
+| `draft` | Still sent on schedule, but it lands in your WordPress drafts |
+| `pending` | Submitted for review |
+| `private` | Published, visible only to logged-in users with permission |
+
+### `categories` and `tags`
+
+Both take **numeric WordPress ids**, not names. The channel's `categoriesList` and `tagsList` tools return the first hundred of each from your site, as id and name pairs: call them through [Trigger a Tool](/public-api/integrations/trigger), or look the ids up in your WordPress admin.
 
 ## Example
 
@@ -68,4 +87,4 @@ WordPress integration allows you to publish posts to your WordPress site. You ca
 - The `type` field depends on your WordPress configuration (e.g., "post", "page", or custom post types)
 - Content can be HTML or Markdown depending on your WordPress setup
 - Featured images will be uploaded to your WordPress media library
-
+- The top-level `tags` array in the request body is PostQueen's own labelling. WordPress tags go in `settings.tags`

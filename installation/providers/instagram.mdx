@@ -31,8 +31,20 @@ The following steps will guide you through the setup of a Meta application that 
     </Frame>
   </Step>
 
+  <Step title="Show all use cases">
+    On the **Add use cases** screen, pick the **All** filter on the left.
+
+    <Frame>
+      <img src="/images/providers/facebook/All-use-cases.png" alt="Add use cases screen with the All filter selected" />
+    </Frame>
+  </Step>
+
   <Step title="Select app type">
-    Select "Other" and click next
+    Do not pick any of the use cases. Scroll to the bottom and, under **Looking for something else?**, select **Other** and click next.
+
+    <Warning>
+    An app created through a use case such as Facebook Login cannot request the permissions PostQueen needs, and adding the use case later does not rescue it. The consent screen then fails straight away with **Invalid Scopes** for every scope. If that is what you see, create a new app through **Other**.
+    </Warning>
 
     <Frame>
       <img src="/images/providers/facebook/Other-app-use-cases.png" alt="Other app use cases" />
