@@ -249,7 +249,8 @@
                   "public-api/posts/delete-by-group",
                   "public-api/posts/missing-content",
                   "public-api/posts/update-release-id",
-                  "public-api/posts/change-status"
+                  "public-api/posts/change-status",
+                  "public-api/posts/settings"
                 ],
                 "expanded": false
               },
@@ -308,6 +309,7 @@
                   "public-api/providers/nostr",
                   "public-api/providers/vk",
                   "public-api/providers/tumblr",
+                  "public-api/providers/mewe",
                   "public-api/providers/dribbble"
                 ]
               },

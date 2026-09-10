@@ -147,7 +147,7 @@ One exception is worth knowing before you rely on this. Your own OIDC provider i
 
 ### `API_LIMIT`
 
-Per-hour limit on the public-API create-post endpoint. Defaults to `90`. Channel and post quotas are tiered separately by plan.
+Per-hour allowance, per organization, on the public-API create-post endpoint. Uploads draw on the same number in a bucket of their own, so a burst of them cannot use up the posting allowance: that covers `POST /public/v1/upload`, `/public/v1/upload-from-url` and the uploads you make in the app. Defaults to `90`, and the shipped `docker-compose.yaml` sets `30`, so raise it there if you drive PostQueen from scripts or upload in bulk. It is one number for the whole instance and the same on every plan: channel and post quotas are what plans tier.
 
 ### `RUN_CRON`
 
@@ -167,11 +167,25 @@ Read that carefully before you switch it on, because it applies to **signing in 
 
 ### `IS_GENERAL`
 
-Switches the frontend between routes available to the open-source build (`/launches`) and the hosted build (`/analytics`). Set to `"true"` on self-host.
+The product-line switch, and the shipped compose file turns it on. It decides where `/` lands (`/launches`, the calendar, when set, and `/analytics` when not), which sign-in buttons appear (your own OIDC provider when `POSTQUEEN_GENERIC_OAUTH` is also set, Google otherwise, and GitHub when `IS_GENERAL` is unset), and a handful of labels and billing screens. Set it to `"true"`.
+
+<Warning>
+Despite the name, `IS_GENERAL` is **not** the switch between a hosted and a self-hosted install. Plans, limits and billing turn on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. Without them every workspace behaves as the top tier, whatever `IS_GENERAL` says.
+</Warning>
 
 ### `DISABLE_IMAGE_COMPRESSION`
 
 When truthy, the frontend skips client-side image compression on upload. Set this if you need pixel-exact originals at the cost of larger uploads.
+
+### `DISABLE_SSRF_PROTECTION`
+
+Every request the backend and the orchestrator send to a URL somebody could influence goes through an SSRF guard. That covers calls to a network's API, the self-hosted ones included (WordPress, Mastodon, Lemmy, Listmonk, a Bluesky PDS), the media she downloads before handing it to a network, outgoing webhooks and `/public/v1/upload-from-url`. The guard resolves the host and refuses loopback, private and link-local addresses. A refused request fails as `fetch failed`, with `Error: Blocked IP` in the backend or orchestrator logs.
+
+Set it to `true` to switch the guard off. Both the backend and the orchestrator read it, so set it wherever those two take their environment.
+
+<Warning>
+This switches the guard off for the whole instance, not for one provider. Only do it when PostQueen has to reach those services over a trusted private network (the same Docker network, a VPC, a home LAN) **and** everyone with an account on the instance is trusted: anyone who can submit a URL can then make the server fetch your internal services. When you can, fix DNS or routing instead, so the hostname resolves to an address the guard accepts.
+</Warning>
 
 ### `NOT_SECURED`
 
@@ -344,12 +358,10 @@ LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
 | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key. |
 | `STRIPE_SECRET_KEY` | Stripe secret key. |
 | `STRIPE_SIGNING_KEY` | Stripe webhook signing key for subscription events. |
-| `STRIPE_SIGNING_KEY_CONNECT` | Separate signing key for Stripe Connect webhooks, used by the marketplace payout flow. |
 | `STRIPE_DISCOUNT_ID` | A Stripe coupon ID offered as a win-back discount. Unset means no discount is ever applied. |
-| `FEE_AMOUNT` | Platform fee taken on marketplace transactions, as a fraction. `0.05` is five percent. |
 
 Payments are only relevant if you are running PostQueen as a commercial service. A private
-self-hosted install needs none of this, and leaving it unset simply means no billing.
+self-hosted install needs none of this, and leaving it unset simply means no billing. Billing switches on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set.
 
 ---
 
@@ -463,7 +475,7 @@ or not it has a row in this table.
 | Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | [/installation/providers/reddit](/installation/providers/reddit) |
 | Pinterest | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | [/installation/providers/pinterest](/installation/providers/pinterest) |
 | Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | [/installation/providers/discord](/installation/providers/discord) |
-| Slack | `SLACK_ID`, `SLACK_SECRET`, `SLACK_SIGNING_SECRET` | [/installation/providers/slack](/installation/providers/slack) |
+| Slack | `SLACK_ID`, `SLACK_SECRET` | [/installation/providers/slack](/installation/providers/slack) |
 | Telegram | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` | [/installation/providers/telegram](/installation/providers/telegram) |
 | Mastodon | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | [/installation/providers/mastodon](/installation/providers/mastodon) |
 | Dribbble | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | [/installation/providers/dribbble](/installation/providers/dribbble) |
@@ -527,9 +539,12 @@ hosting platform, or framework rather than set by hand.
 | `PORT` | Port the backend HTTP server binds to. Defaults to `3000`. |
 | `ORCHESTRATOR_PORT` | Port the orchestrator binds to. Defaults to `3002`. |
 | `PRISMA_MIGRATE` | Apply the schema with `prisma migrate deploy` instead of `db push`. Unset, empty, `false` or `0` keeps `db push`; any other value switches to migrations, so a typo errs toward the safer path. See [Backups and Upgrades](/installation/backups-and-upgrades) before switching an existing database. |
-| `NX_ADD_PLUGINS` | Set to `false` in the shipped configuration. A build-tooling flag, not something to change. |
 | `TZ` | Process timezone. The backend forces this to `UTC` on boot. |
 | `NODE_ENV` | Standard Node environment flag (`development` / `production`). Toggles dev-only behavior like sourcemaps. |
 | `NEXT_RUNTIME` | Set by Next.js (`nodejs` / `edge`) to select the instrumentation hook. Framework-injected. Do not set manually. |
 | `VERCEL_GIT_COMMIT_SHA` | Commit SHA used as the Sentry release tag on the frontend. Injected by Vercel. |
 | `GITHUB_SHA` | Fallback commit SHA for the Sentry release tag when not on Vercel. Injected by GitHub Actions. |
+
+### Leftovers you can delete
+
+The shipped `docker-compose.yaml` and `.env.example` still carry four variables that do nothing. PostQueen does not read `STRIPE_SIGNING_KEY_CONNECT`, `FEE_AMOUNT`, `SLACK_SIGNING_SECRET` or `NX_ADD_PLUGINS` at all, so setting them changes nothing and you can delete the lines.

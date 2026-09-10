@@ -7,14 +7,15 @@ Creating the OAuth app and connecting a channel: [Facebook setup guide](/install
 
 ## Overview
 
-Facebook integration allows you to post to Facebook pages. You can optionally include a link URL in your posts.
+Facebook integration allows you to post to Facebook pages. You can optionally include a link URL, publish a story instead of a feed post, or put a short text post on a background.
 
 ## Settings Schema
 
 ```json
 {
   "__type": "facebook",
-  "url": "https://example.com/my-article"
+  "url": "https://example.com/my-article",
+  "post_type": "post"
 }
 ```
 
@@ -24,6 +25,26 @@ Facebook integration allows you to post to Facebook pages. You can optionally in
 |----------|------|----------|-------------|
 | `__type` | string | ✅ | Must be `"facebook"` |
 | `url` | string | ❌ | Optional link URL to include in the post |
+| `post_type` | string | ❌ | `post` (the default) or `story` |
+| `text_format_preset_id` | string | ❌ | Background preset for a short text-only post |
+
+### `post_type`
+
+| Value | Description |
+|-------|-------------|
+| `post` | A normal Page post. The default |
+| `story` | A Facebook story. Needs at least one photo or video, and **each attachment goes out as its own story** |
+
+A story with no media is refused with *Story should have at least one media*.
+
+### `text_format_preset_id`
+
+A short text-only post can sit on a coloured or illustrated background. Pass the preset id to use one. Two conditions decide whether it shows, and when either fails the post still publishes, as plain text:
+
+- **Text only.** A post with a photo ignores the preset.
+- **130 characters at most.** Longer text drops the background.
+
+Facebook has no API for listing its presets, so PostQueen carries a fixed catalogue: the composer's background picker offers that set, and the ids themselves are listed in [`facebook.dto.ts`](https://github.com/GkhanKINAY/postqueen-app/blob/main/libraries/nestjs-libraries/src/dtos/posts/providers-settings/facebook.dto.ts).
 
 ## Examples
 
@@ -114,9 +135,41 @@ Facebook integration allows you to post to Facebook pages. You can optionally in
 }
 ```
 
+### Story
+
+```json
+{
+  "type": "schedule",
+  "date": "2024-12-14T10:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": {
+        "id": "your-facebook-integration-id"
+      },
+      "value": [
+        {
+          "content": "",
+          "image": [
+            {
+              "id": "img-123",
+              "path": "https://uploads.postqueen.ai/story.jpg"
+            }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "facebook",
+        "post_type": "story"
+      }
+    }
+  ]
+}
+```
+
 ## Notes
 
 - The `url` field is optional and creates a link preview in the post
 - If posting with images, Facebook will display them as attachments
 - Video uploads are also supported
-

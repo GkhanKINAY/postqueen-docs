@@ -1679,6 +1679,82 @@
         }
       }
     },
+    "/posts/{id}/settings": {
+      "put": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Update post settings",
+        "description": "Merges the keys you pass into the post's existing provider settings. Only those keys change: the content, the publish date and the post ids stay as they are.\n\nWorks on posts that have not been published yet, meaning a scheduled post (`QUEUE`) whose publish time is still ahead, or a draft. The merged settings go through the same validation as creating a post, except on a draft, where only the empty-content check runs.\n\nPass the id of the main post, not of a comment in its thread.",
+        "operationId": "updatePostSettings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Post ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "settings"
+                ],
+                "properties": {
+                  "settings": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Provider settings to merge into the post's existing settings. Only the keys you pass change. Keys depend on the channel's platform, and `__type` is always taken from the channel."
+                  }
+                }
+              },
+              "example": {
+                "settings": {
+                  "who_can_reply_post": "following"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post settings updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "postId": {
+                      "type": "string"
+                    },
+                    "publishDate": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "postId": "post-123",
+                  "publishDate": "2026-08-01T10:00:00"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The id belongs to a comment (pass the main post's id), the post was already published or failed, its publish time has passed, or the merged settings failed validation"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    },
     "/analytics/{integration}": {
       "get": {
         "tags": [

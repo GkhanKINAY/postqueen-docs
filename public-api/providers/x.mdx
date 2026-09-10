@@ -26,14 +26,18 @@ When creating a post for X (Twitter), use the following settings schema:
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `__type` | `string` | Yes | Must be `x` |
-| `who_can_reply_post` | `string` | Yes | Who can reply to the post |
+| `who_can_reply_post` | `string` | Yes, except on an article | Who can reply to the post |
 | `community` | `string` | No | X Community URL |
 | `made_with_ai` | `boolean` | No | Mark the post as containing AI-generated content. Defaults to `false` |
 | `paid_partnership` | `boolean` | No | Mark the post as a paid promotion. Defaults to `false` |
+| `post_type` | `string` | No | `post` (the default) or `article` |
+| `article_title` | `string` | When `post_type` is `article` | The article's title |
+| `article_status` | `string` | When `post_type` is `article` | `draft` or `published` |
+| `article_cover` | `object` | No | Cover image as `{ "id": "...", "path": "..." }`. Only read for an article |
 
 ### `who_can_reply_post`
 
-Controls who can reply to your post.
+Controls who can reply to your post. An article carries no reply setting, so the field is not required there.
 
 | Value | Description |
 |-------|-------------|
@@ -52,6 +56,13 @@ https://x.com/i/communities/1493446837214187523
 ```
 
 Leave empty or omit to post to your main timeline.
+
+### `post_type`
+
+| Value | Description |
+|-------|-------------|
+| `post` | A regular post, or a thread when `value` holds several items. The default |
+| `article` | A long-form X article, described below |
 
 ---
 
@@ -124,3 +135,28 @@ Create a thread by adding multiple items to the `value` array:
 }
 ```
 
+## Long-form articles
+
+Set `post_type` to `article` and she publishes an X article instead of a post. The content is then read as **HTML** rather than plain text, and these tags keep their formatting: `p`, `h1`, `h2`, `h3`, `ul`, `ol`, `li`, `strong`, `u`, `a`.
+
+```json
+{
+  "settings": {
+    "__type": "x",
+    "post_type": "article",
+    "article_title": "Why we rebuilt our scheduler",
+    "article_status": "published",
+    "article_cover": {
+      "id": "img-123",
+      "path": "https://uploads.postqueen.ai/cover.jpg"
+    }
+  }
+}
+```
+
+Four rules come with it:
+
+- The character limit rises to **100,000**.
+- Pictures only. A video in an article is refused with *X articles only support images*.
+- `article_status: "draft"` saves the article to your X drafts, and a draft cannot carry thread replies: *A draft article cannot have thread replies, remove them or publish the article*.
+- `article_title` and `article_status` are both required once `post_type` is `article`. Leaving either out is a validation error.

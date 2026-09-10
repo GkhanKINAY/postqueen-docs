@@ -75,6 +75,18 @@ The PostQueen backend needs network access to reach your Mastodon instance. If t
 1. From inside the backend container, run `curl -I https://mastodon.example.com/`. If that fails, fix DNS/egress before retrying.
 2. If you are behind a corporate proxy, set `HTTPS_PROXY` on the backend.
 3. Confirm `MASTODON_URL` exactly matches your instance (protocol included, no trailing slash issues).
+4. If the logs show `Error: Blocked IP`, the instance hostname resolved to a private address and the SSRF guard refused it. The next section covers the fix.
+
+### "fetch failed" when posting with media, while text posts go out
+
+Text posts publish, posts with a picture fail with `fetch failed`, and the orchestrator logs show `Error: Blocked IP`.
+
+**Cause:** before she uploads a picture to your instance, she downloads it from your own media URL, such as `https://postqueen.example.com/uploads/...`. When that hostname resolves to a private address from inside the container, which is common behind a home reverse proxy, split DNS or hairpin NAT, the SSRF guard refuses the download.
+
+**Fix**
+
+1. Make the media hostname resolve to a reachable address from inside the container, for example with a Docker network alias or a split-horizon DNS entry. The guard stays on.
+2. If that is not possible and every account on the instance is trusted, set `DISABLE_SSRF_PROTECTION=true` and restart. Read [its warning](/configuration/reference#disable_ssrf_protection) first: it switches the guard off for every request, not only Mastodon's.
 
 ## Next steps
 
