@@ -78,12 +78,12 @@ regenerate it and not before, so treat it as a password rather than a session.
 ## Rate Limits
 
 <Info>
-**30 requests per hour** limit applies only to the create post endpoint.
+**30 requests per hour** limit applies only to the create post endpoint. Uploads have a separate allowance of their own, 300 per hour.
 
 That is not a ceiling of 30 posts. Each call counts once no matter how much it carries, so put several posts in one request when you need volume.
 </Info>
 
-The rate limit is one global value for the whole instance, and it is the same on every subscription plan. Plans differ on channel counts and posts per month instead. Self-hosting? You set the per-hour limit with the `API_LIMIT` env var. The official Docker Compose sets `API_LIMIT: 30`; with the variable unset the backend defaults to 90 requests per hour. Full env var list: [Configuration Reference](/configuration/reference).
+The rate limit is one global value for the whole instance, and it is the same on every subscription plan. Plans differ on channel counts and posts per month instead. Self-hosting? You set the per-hour limit with the `API_LIMIT` env var, and the upload allowance with `UPLOAD_LIMIT` (default 300). The official Docker Compose sets `API_LIMIT: 30`; with the variable unset the backend defaults to 90 requests per hour. Full env var list: [Configuration Reference](/configuration/reference).
 
 ## Errors
 
@@ -94,7 +94,7 @@ The rate limit is one global value for the whole instance, and it is the same on
 | `402 Payment Required` | Your plan is out of monthly posts or channels. |
 | `404 Not Found` | The endpoint does not exist, or the path parameter (integration ID, post ID) was correct format but no row matched. |
 | `413 Payload Too Large` | Your request body exceeded the default JSON limit of roughly 100 kB. The 50 MB limit you may have read about is on the internal routes the web UI uses, not on this one, so inlining a single base64 image is enough to trip it. Upload first and send the returned `path`. See [Uploads troubleshooting](/troubleshooting/uploads). |
-| `429 Too Many Requests` | You exceeded `API_LIMIT` per hour on the create-post endpoint. |
+| `429 Too Many Requests` | You exceeded `API_LIMIT` per hour on the create-post endpoint, or `UPLOAD_LIMIT` on uploads, which are counted separately. |
 | `5xx` | Server error: retry with exponential backoff. Also what you get when you name a row belonging to another organization: it is invisible rather than forbidden, so the handler fails on the empty result. There is no `403` on this API. |
 
 For `DELETE` endpoints, you can treat `404` as already deleted: the row is gone either way, so it is safe to ignore. A `500` *can* mean the same thing today because of a [known issue](/troubleshooting/known-issues) where a missing post ID surfaces as 500 instead of 404, but only if the error matches that specific signature. Treat other `500` responses as real server errors: log them, retry with exponential backoff, and do not swallow them quietly.

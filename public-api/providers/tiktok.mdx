@@ -5,6 +5,8 @@ description: 'API settings for posting to TikTok'
 
 Every TikTok post carries a settings block, and `content_posting_method` is the field that matters most: it decides whether the post publishes or lands in the account's app inbox.
 
+The same schema serves both TikTok connections. A channel connected through TikTok Business takes `"__type": "tiktok-business"` and adds two optional fields of its own, [`music` and `location`](#tiktok-business).
+
 Creating the OAuth app and connecting a channel: [TikTok setup guide](/installation/providers/tiktok).
 
 ## Settings Schema
@@ -35,7 +37,7 @@ Creating the OAuth app and connecting a channel: [TikTok setup guide](/installat
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `tiktok` |
+| `__type` | `string` | Yes | `tiktok`, or `tiktok-business` for a channel connected through TikTok Business |
 | `title` | `string` | No | Video title (max 90 characters). The only setting TikTok keeps when `content_posting_method` is `UPLOAD` |
 | `privacy_level` | `string` | Yes | Who can view the video. `DIRECT_POST` only |
 | `duet` | `boolean` | Yes | Allow duets. Video posts only; `DIRECT_POST` only |
@@ -45,6 +47,8 @@ Creating the OAuth app and connecting a channel: [TikTok setup guide](/installat
 | `brand_content_toggle` | `boolean` | Yes | Branded content disclosure. `DIRECT_POST` only |
 | `brand_organic_toggle` | `boolean` | Yes | Organic branded content. `DIRECT_POST` only |
 | `video_made_with_ai` | `boolean` | No | AI-generated content disclosure. Video posts only; `DIRECT_POST` only |
+| `music` | `object` | No | TikTok Business only. A track from TikTok's commercial music list. `DIRECT_POST` only |
+| `location` | `object` | No | TikTok Business only. A location tag. `DIRECT_POST` only |
 | `content_posting_method` | `string` | Yes | `DIRECT_POST` publishes straight away; `UPLOAD` sends it to the TikTok app inbox |
 
 ### What the qualifiers mean
@@ -85,6 +89,33 @@ Creating the OAuth app and connecting a channel: [TikTok setup guide](/installat
 <Warning>
 A post created with `UPLOAD` is reported as **successfully published** by the PostQueen API, because the upload to TikTok did succeed. It will not appear on the TikTok profile until the account owner opens the TikTok app, finds the draft in their inbox, and publishes it manually. Choose `UPLOAD` only when that manual step is what the user asked for.
 </Warning>
+
+### TikTok Business
+
+A TikTok Business channel reads the same fields, with these differences:
+
+- `privacy_level` applies to photo posts only. The Business video endpoint has no privacy field, so a video publishes with the account's default visibility.
+- `autoAddMusic: "yes"` on a photo post attaches a random track from TikTok's commercial music list and overrides `music`. Send `"no"` when you want a specific track.
+- `music` and `location` exist only here. The standard TikTok connection ignores both.
+
+Find the values with the [`musicSearch` and `locationSearch` tools](/public-api/integrations/provider-tools#tiktok-business).
+
+`music`:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | Yes | The `id` returned by `musicSearch` |
+| `title`, `artist`, `image` | `string` | No | For display. Only the id is sent to TikTok |
+| `audio_volume` | `number` | No | Track volume, 0 to 100. Defaults to 50. Video posts only |
+| `video_volume` | `number` | No | Volume of the video's own sound, 0 to 100. Defaults to 50. Video posts only |
+
+`location`:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | Yes | The `id` returned by `locationSearch` |
+| `name` | `string` | Yes | The `name` returned by `locationSearch`, sent to TikTok with the id |
+| `address` | `string` | No | For display only |
 
 ---
 
@@ -200,6 +231,35 @@ Visible only to you.
 ```
 
 This publishes a video that only the account owner can see. To send the media to the account's TikTok app inbox instead of publishing, switch to [`content_posting_method: "UPLOAD"`](#content_posting_method), which keeps only the title/content.
+
+  </Tab>
+  <Tab title="TikTok Business">
+
+A photo post with a chosen track and a location tag.
+
+```json
+{
+  "settings": {
+    "__type": "tiktok-business",
+    "title": "Weekend at the market",
+    "privacy_level": "PUBLIC_TO_EVERYONE",
+    "duet": false,
+    "stitch": false,
+    "comment": true,
+    "autoAddMusic": "no",
+    "brand_content_toggle": false,
+    "brand_organic_toggle": false,
+    "content_posting_method": "DIRECT_POST",
+    "music": {
+      "id": "track-id-from-musicSearch"
+    },
+    "location": {
+      "id": "location-id-from-locationSearch",
+      "name": "Central Market"
+    }
+  }
+}
+```
 
   </Tab>
 </Tabs>

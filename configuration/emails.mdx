@@ -4,8 +4,8 @@ description: 'Send activation and password reset mail through Resend or your own
 icon: 'envelope'
 ---
 
-Someone signs up and an activation mail is waiting in their inbox. She sends it through Resend
-or through your own SMTP server, whichever you point her at.
+Someone asks for a password reset and the mail is waiting in their inbox. She sends it through
+Resend or through your own SMTP server, whichever you point her at.
 
 <Warning>
 **Set this up before you invite anyone.** Without a working provider, password resets report
@@ -15,13 +15,15 @@ most common thing self-hosters wish they had done on day one.
 
 ## What changes when you turn it on
 
-Configuring a provider also switches on account activation. From that point, everyone you
-invite has to click a link in their mail before they can sign in. Until then, new accounts are
-active immediately and no mail is sent at all.
+Account activation is a separate choice, made with `REQUIRE_EMAIL_ACTIVATION=true`. Set it and
+everyone who signs up with an email and password has to click a link in their mail before they
+can sign in. Leave it unset and new accounts are active immediately, provider or not, so password
+resets work without anyone waiting on an activation mail.
 
-That makes the half-configured state the worst one to be in: accounts get created inactive, and
-the mail that would let them in never arrives. Set the provider **and** its credentials, or set
-neither.
+Activation takes effect only once mail can actually go out: a provider, plus `EMAIL_FROM_ADDRESS`
+and `EMAIL_FROM_NAME`. With activation on, that makes the half-configured provider the worst state
+to be in: accounts get created inactive, and the mail that would let them in never arrives. Set
+the provider **and** its credentials, or leave activation off.
 
 ## Pick a provider
 
@@ -121,7 +123,8 @@ The examples above use `KEY=value`, which is the syntax for an env file. If you 
   </Accordion>
 
   <Accordion title="New accounts are stuck as inactive">
-    That is activation working while mail is not. Fix the provider, then have the person request
+    That is activation, switched on with `REQUIRE_EMAIL_ACTIVATION=true`, working while mail is
+    not. Fix the provider, then have the person request
     a new activation mail. Activation links are short lived, so an old one will not help.
   </Accordion>
 </AccordionGroup>

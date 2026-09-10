@@ -300,7 +300,7 @@ List all available video generation types and their required parameters.
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `type` | string | Video type identifier (e.g., `image-text-slides`, `veo3`) |
+| `type` | string | Video type identifier (e.g., `image-text-slides`, `seedance`) |
 | `output` | string | Supported orientations: `vertical\|horizontal` |
 | `tools` | array | Helper functions (call with `videoFunctionTool`) |
 | `customParams` | object | JSON schema of required parameters |
@@ -310,7 +310,7 @@ List all available video generation types and their required parameters.
 | Type | Description | Requirements |
 |------|-------------|-------------|
 | Image Text Slides | Slide-based videos with text-to-speech | `prompt`, `voice` (get voice ID via `videoFunctionTool`) |
-| Veo3 | AI-generated video with audio | `prompt`, `images` (required array, may be empty, max 3) |
+| Seedance 2.0 | AI-generated video with audio | `prompt`, `images` (required array, may be empty, max 3) |
 
 ---
 

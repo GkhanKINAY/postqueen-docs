@@ -4,7 +4,7 @@ description: 'What each plan unlocks, where the counters actually sit, and why a
 icon: 'credit-card'
 ---
 
-PostQueen counts a handful of things, and your plan sets how high each count is allowed to go. Connect five channels on STANDARD and nobody asks you for anything. The sixth one stops you.
+PostQueen counts a handful of things, and your plan sets how high each count is allowed to go. Connect five channels on Creator and nobody asks you for anything. The sixth one stops you.
 
 What follows is what the code checks, not what a landing page promises. For what a plan costs today, go to [postqueen.ai/pricing](https://postqueen.ai/pricing), because prices move and this page is about what you get, not what you pay.
 
@@ -13,13 +13,17 @@ What follows is what the code checks, not what a landing page promises. For what
 | Plan | Channels | Posts per month | Team members | AI images per month | AI videos per month | Webhooks | Public API |
 |---|---|---|---|---|---|---|---|
 | **FREE** | 0 | 0 | No | 0 | 0 | 0 | No |
-| **STANDARD** | 5 | 1,000,000 | No | 20 | 3 | 2 | Yes |
-| **TEAM** | 10 | 1,000,000 | Yes | 100 | 10 | 10 | Yes |
-| **PRO** | 30 | 1,000,000 | Yes | 300 | 30 | 30 | Yes |
-| **ULTIMATE** | 100 | 1,000,000 | Yes | 500 | 60 | 10,000 | Yes |
+| **Creator** | 5 | 1,000,000 | No | 20 | 3 | 2 | Yes |
+| **Growth** | 10 | 1,000,000 | Yes | 100 | 10 | 10 | Yes |
+| **Pro** | 30 | 1,000,000 | Yes | 300 | 30 | 30 | Yes |
+| **Ultimate** | 1,000,000 | 1,000,000 | Yes | 500 | 60 | 10,000 | Yes |
 
 <Note>
-A million posts a month is the literal number in the source, and the billing screen prints anything above ten thousand as **Unlimited**. Read it as unlimited and stop thinking about it.
+A million is the literal number in the source, for posts on every plan and for channels on Ultimate, and the billing screen prints anything above ten thousand as **Unlimited**. Read it as unlimited and stop thinking about it.
+</Note>
+
+<Note>
+The names above are the labels you see. Underneath, the API and the billing records call the four plans `CREATOR`, `GROWTH`, `PRO` and `AGENCY`, so Ultimate is `AGENCY`. A subscription bought before these plans existed can still carry one of the retired tiers, `STANDARD`, `TEAM` or `ULTIMATE`, and keeps the limits it was sold with.
 </Note>
 
 <Info>
@@ -57,16 +61,16 @@ Run out of image credits and the two entry points behave differently. **AI Image
 </Warning>
 
 <Info>
-The **AI Img** tab inside the picture editor is a separate switch: it shows up on TEAM and above, so a STANDARD organization has image credits but not that tab. **Generate** is the button you press once you are inside it.
+The **AI Img** tab inside the picture editor is a separate switch: it shows up on Growth and above, so a Creator organization has image credits but not that tab. **Generate** is the button you press once you are inside it.
 </Info>
 
 ### Webhooks
 
-A straight ceiling on how many webhook endpoints the organization can have registered at once. Creating one past the number in the table is refused. Two on STANDARD is genuinely two, and ULTIMATE's ten thousand is there so nobody ever meets the wall.
+A straight ceiling on how many webhook endpoints the organization can have registered at once. Creating one past the number in the table is refused. Two on Creator is genuinely two, and Ultimate's ten thousand is there so nobody ever meets the wall.
 
 ### Public API
 
-Available from STANDARD upward. Two things have to be true for a call to work: the organization needs a subscription on record, and you need the key. The key lives in **Settings > Developers**, and that tab appears for organization admins on a plan that includes the API.
+Available on every paid plan, from Creator upward. Two things have to be true for a call to work: the organization needs a subscription on record, and you need the key. The key lives in **Settings > Developers**, and that tab appears for organization admins on a plan that includes the API.
 
 <Warning>
 Without a subscription the API answers `401` with `No subscription found`, whichever authentication you use.
@@ -82,10 +86,10 @@ Numbers are not the only thing a tier decides. A few parts of Settings appear or
 |---|---|
 | **Teams** tab | The plan includes team members, and you are an organization admin |
 | **Webhooks** tab | The plan allows at least one webhook |
-| **Auto Post** tab | The plan includes Auto Post, which is TEAM and above |
+| **Auto Post** tab | The plan includes Auto Post, which every paid plan does |
 | **Sets** and **Signatures** tabs | Any plan other than FREE |
 | **Developers** tab | The plan includes the public API, and you are an organization admin |
-| **AI Img** tab in the picture editor | The plan includes the image generator, which is TEAM and above |
+| **AI Img** tab in the picture editor | The plan includes the image generator, which is Growth and above |
 
 ## Self-hosting: billing off, limits off
 
@@ -102,7 +106,7 @@ Set neither key and billing is off, which means none of the tables above apply t
 With billing off:
 
 - Every permission check short-circuits and grants what was asked for, without evaluating a quota. No channel ceiling, no monthly post count, no webhook limit.
-- Your own account reports itself as **ULTIMATE** with 10,000 channels, which is what makes every tier-gated tab in Settings show up.
+- Your own account reports itself as **AGENCY** with 10,000 channels, the tier the interface labels Ultimate, which is what makes every tier-gated tab in Settings show up.
 - The public API stops asking for a subscription. An API key or an OAuth token works on a fresh install with no billing configured at all.
 - AI image generation skips the credit check, and the picture editor stops asking the credits endpoint for a balance.
 
