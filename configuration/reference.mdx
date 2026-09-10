@@ -13,8 +13,8 @@ its old environment.
 **`NEXT_PUBLIC_` variables do not need a rebuild here.** That is the usual rule for a
 Next.js app, and it does not apply to this image. Her layouts are server rendered on every
 request and hand these values to the browser at runtime, so setting one in Compose and
-restarting is enough. The single genuine exception is `NEXT_PUBLIC_VERSION`, which is baked
-in when the image is built.
+restarting is enough. The single genuine exception is `NEXT_PUBLIC_APP_VERSION`, the version
+label she shows, which is baked in when the image is built.
 </Note>
 
 Start from the [example env file](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example)
@@ -125,9 +125,9 @@ backend's internal address, such as `http://backend:3000`.
 ## Application behavior
 
 <Warning>
-**Writing `false` turns most of these on.** Only five variables compare against the literal
+**Writing `false` turns most of these on.** Only seven variables compare against the literal
 string `true`: `DISABLE_REGISTRATION`, `PASSWORDLESS_LOGIN`, `DISABLE_SSRF_PROTECTION`,
-`TEMPORAL_TLS` and `EMAIL_SECURE`. Every other switch on this page is read as
+`TEMPORAL_TLS`, `EMAIL_SECURE`, `REQUIRE_EMAIL_ACTIVATION` and `UPLOAD_VIA_SERVER`. Every other switch on this page is read as
 `!!process.env.NAME`, and in JavaScript the string `"false"` is truthy.
 
 So for `IS_GENERAL`, `POSTQUEEN_GENERIC_OAUTH`, `DISABLE_IMAGE_COMPRESSION`, `RUN_CRON`
@@ -142,7 +142,7 @@ Set to `true` and only the first account can be created. After that, sign-up is 
 It gates **account creation only**, never signing in. Everyone who already has an account keeps logging in normally, because the check is reached only on the branch that would create a new user.
 
 <Note>
-One exception is worth knowing before you rely on this. Your own OIDC provider is **exempt**: a person who signs in through it for the first time still gets an account, even with this set. GitHub and Google are not exempt. So if your goal is to close the door completely, close it at your identity provider as well.
+One exception is worth knowing before you rely on this. Your own OIDC provider is **exempt**: a person who signs in through it for the first time still gets an account, even with this set. GitHub, Google and Apple are not exempt. So if your goal is to close the door completely, close it at your identity provider as well.
 </Note>
 
 ### `API_LIMIT`
@@ -167,7 +167,7 @@ Read that carefully before you switch it on, because it applies to **signing in 
 
 ### `IS_GENERAL`
 
-The product-line switch, and the shipped compose file turns it on. It decides where `/` lands (`/launches`, the calendar, when set, and `/analytics` when not), which sign-in buttons appear (your own OIDC provider when `POSTQUEEN_GENERIC_OAUTH` is also set, Google otherwise, and GitHub when `IS_GENERAL` is unset), and a handful of labels and billing screens. Set it to `"true"`.
+The product-line switch, and the shipped compose file turns it on. It decides where `/` lands (`/launches`, the calendar, when set, and `/analytics` when not), which sign-in buttons appear (your own OIDC provider when `POSTQUEEN_GENERIC_OAUTH` is also set, Google otherwise, joined by [Apple](#sign-in-with-apple) once it is configured, and GitHub when `IS_GENERAL` is unset), and a handful of labels and billing screens. Set it to `"true"`.
 
 <Warning>
 Despite the name, `IS_GENERAL` is **not** the switch between a hosted and a self-hosted install. Plans, limits and billing turn on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. Without them every workspace behaves as the top tier, whatever `IS_GENERAL` says.
@@ -243,11 +243,12 @@ See also: [Email configuration](/configuration/emails).
 | `EMAIL_SECURE` | `true` for SMTPS / implicit TLS. |
 | `EMAIL_FROM_ADDRESS` | From-address used on all outgoing email. |
 | `EMAIL_FROM_NAME` | From-name used on all outgoing email. |
+| `REQUIRE_EMAIL_ACTIVATION` | `true` makes a new email-and-password account wait for its activation link before it can sign in. Off unless set. |
 
 <Warning>
-`EMAIL_PROVIDER` decides more than email. It also decides whether a new email-and-password account has to be activated before it can be used: with a provider named, the account is created inactive and waits for the activation link, and with none named it is active immediately.
+Activation has a switch of its own. A new email-and-password account has to be activated before it can be used only when `REQUIRE_EMAIL_ACTIVATION` is `true` **and** the install can deliver mail, meaning `EMAIL_PROVIDER` names a provider and both `EMAIL_FROM_ADDRESS` and `EMAIL_FROM_NAME` are set. Short of either, the account is active immediately, so configuring a provider for password resets does not switch activation on by itself.
 
-The trap is naming a provider you have not finished configuring. `EMAIL_PROVIDER=resend` with no `RESEND_API_KEY` counts as a provider, so every new signup is created inactive, the activation mail fails quietly, and nobody can get in. Either configure the provider fully or leave `EMAIL_PROVIDER` unset. The key on its own changes nothing.
+The trap is turning activation on with a provider you have not finished configuring. `EMAIL_PROVIDER=resend` with no `RESEND_API_KEY` still counts as a provider, so every new signup is created inactive, the activation mail fails quietly, and nobody can get in. Either configure the provider fully or leave `REQUIRE_EMAIL_ACTIVATION` unset. Sign-ups through a provider such as Google or your own OIDC provider skip activation, because the provider has already vouched for the address.
 </Warning>
 
 ---
@@ -267,6 +268,30 @@ See also: [OAuth configuration](/configuration/oauth).
 | `POSTQUEEN_OAUTH_CLIENT_SECRET` | Client secret issued by the IdP. |
 | `NEXT_PUBLIC_POSTQUEEN_OAUTH_DISPLAY_NAME` | Label shown on the sign-in button. |
 | `NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL` | Icon shown on the sign-in button. |
+
+---
+
+## Sign in with Apple
+
+An Apple button joins Google on the sign-in and sign-up screens once `APPLE_CLIENT_ID` is set. It
+follows Google's rules: it shows only when `IS_GENERAL` is set, and your own OIDC provider
+replaces it.
+
+| Variable | Purpose |
+|---|---|
+| `APPLE_CLIENT_ID` | The Services ID you create for web sign-in in your Apple developer account. Setting it is what makes the button appear. |
+| `APPLE_TEAM_ID` | Your Apple developer Team ID. |
+| `APPLE_KEY_ID` | The ID of the Sign in with Apple private key. |
+| `APPLE_PRIVATE_KEY` | The contents of that `.p8` key. On a single line, write the line breaks as `\n` and she restores them. |
+| `APPLE_APP_BUNDLE_ID` | Optional. The bundle ID of a native iOS app of your own, accepted as a second audience so that app can sign people in with Apple too. Leave it unset for the web alone. |
+
+Set the first four together. The button renders on `APPLE_CLIENT_ID` alone, and with any of the
+other three missing the sign-in fails.
+
+On the Services ID, register `{NEXT_PUBLIC_BACKEND_URL}/auth/oauth/apple/redirect` as the return
+URL, for example `https://postqueen.example.com/api/auth/oauth/apple/redirect`. Apple posts the
+result there. With a backend URL that is not https she wraps it through `redirectmeto.com`, the
+same way the social networks' callbacks are wrapped, so register the wrapped form in that case.
 
 ---
 
@@ -295,6 +320,10 @@ ships with one). The scheduling architecture: [How PostQueen works](/howitworks)
 | `MCP_URL` | URL the frontend uses to advertise the MCP endpoint to clients. |
 | `AGENT_API_KEY` | Shared secret used by the agent runtime to call privileged endpoints. |
 | `BACKEND_URL` | Legacy alias for `NEXT_PUBLIC_BACKEND_URL` in a few server contexts. |
+| `MCP_ONLY` | Strips the backend down to the MCP endpoint and the OAuth routes MCP clients authorize through. Every other route, the web app's and the public API's alike, is left unregistered, so set it only on an instance that exists to serve MCP. Read as a truthy switch: remove the line to turn it off. |
+| `DCR_VERIFIED_DOMAINS` | Comma separated domains that clients registering themselves through `POST /oauth/register` may send people back to, which is how MCP clients sign up. With a list, an https redirect address has to be on a listed domain or a subdomain of one. Loopback addresses (`localhost`, `127.0.0.1`, `[::1]`) and app schemes such as `cursor://` are not checked against it, so local clients keep working. Unset, any https address registers. Addresses a browser would execute, such as `javascript:`, are refused either way. |
+| `OPENAI_OAUTH_CLIENT_ID` | The OAuth client ID of your ChatGPT connector. That client alone may ask for the `openid` and `email` scopes, and with it set her discovery document advertises `/oauth/userinfo`, which returns the signed-in user's ID, email, whether the email is verified, and name. ChatGPT Enterprise reads this to restrict a connector to the company's email domains. Unset, none of this is offered. |
+| `ENTERPRISE_SECRET` | Leave it unset unless you run a reseller integration built against it. It is the key for a handful of provisioning routes under `/enterprise` and for `/public/modify-subscription`, and while it is unset they refuse every request. If you do set it, give it a value of its own, never the one in `JWT_SECRET`. |
 
 ---
 
@@ -307,7 +336,7 @@ ships with one). The scheduling architecture: [How PostQueen works](/howitworks)
 | `ELEVENSLABS_API_KEY` | ElevenLabs API key for voice generation. |
 | `FAL_KEY` | fal.ai API key for image/video models. |
 | `TAVILY_API_KEY` | Tavily search API key used by the research tool. |
-| `KIEAI_API_KEY` | KieAI API key. |
+| `EVOLINK_API_KEY` | EvoLink API key. Setting it turns on the Seedance 2.0 engine in [AI video](/using/media-and-design#ai-video). |
 | `TRANSLOADIT_AUTH` | Transloadit auth key for video pipelines. |
 | `TRANSLOADIT_SECRET` | Transloadit signing secret. |
 | `TRANSLOADIT_TEMPLATE` | Transloadit template ID used by the video generator. |
@@ -357,11 +386,34 @@ LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
 |---|---|
 | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key. |
 | `STRIPE_SECRET_KEY` | Stripe secret key. |
-| `STRIPE_SIGNING_KEY` | Stripe webhook signing key for subscription events. |
+| `STRIPE_SIGNING_KEY` | Stripe webhook signing key for subscription events. Point the webhook at `{NEXT_PUBLIC_BACKEND_URL}/payment/stripe`. The older `{NEXT_PUBLIC_BACKEND_URL}/stripe` runs the same handler, so an endpoint registered there keeps working. |
 | `STRIPE_DISCOUNT_ID` | A Stripe coupon ID offered as a win-back discount. Unset means no discount is ever applied. |
 
 Payments are only relevant if you are running PostQueen as a commercial service. A private
 self-hosted install needs none of this, and leaving it unset simply means no billing. Billing switches on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set.
+
+### In-app purchases (RevenueCat)
+
+If you publish a mobile app of your own that sells subscriptions through the App Store or Google
+Play, she can take its subscription state from RevenueCat. Nothing here is needed for the web app.
+
+| Variable | Purpose |
+|---|---|
+| `REVENUECAT_WEBHOOK_SECRET` | The value RevenueCat sends in the webhook's `Authorization` header. It has to match exactly, and while it is unset every webhook is refused with `401`. |
+| `REVENUECAT_SECRET_KEY` | RevenueCat secret API key. On each webhook she asks RevenueCat for the subscriber's current state instead of trusting the event body, and without this key the webhook answers `400` with `RevenueCat is not configured`. |
+| `IN_APP_PURCHASE_REJECT_SANDBOX` | Set it and sandbox purchases are ignored, so a test purchase never grants a plan. Read as a truthy switch. |
+
+Point the RevenueCat webhook at `{NEXT_PUBLIC_BACKEND_URL}/payment/revenuecat`, then check two
+things in your app before the first real purchase:
+
+- The app user ID it hands RevenueCat is the PostQueen **organization** ID.
+- Every product ID ends in `<tier>.<period>` or `<tier>_<period>`, where the tier is `standard`,
+  `team`, `pro` or `ultimate` and the period is `monthly` or `yearly`, for example
+  `com.example.app.pro.yearly`. Any other product ID is refused.
+
+An organization is billed on one platform at a time. Once its subscription comes from a store, the
+web billing screens answer *Your subscription is managed on mobile*, and cancelling happens in the
+store as well. Deleting the PostQueen account does not cancel a store subscription.
 
 ---
 
@@ -386,6 +438,9 @@ Cosmetic links and addresses she shows in the interface. Every one is optional.
 | `AGENCY_NOTIFICATION_EMAIL` | Address notified about agency directory submissions. |
 | `EXTENSION_STORE_URL` | Where the "install the extension" button sends people. |
 | `ONBOARDING_VIDEO_URL` | Video embedded in the first-run experience. |
+| `SUPPORT_EMAIL` | Where **Contact support** and **Report a bug** in the Help menu address their mail. Defaults to `support@postqueen.ai`, so set it to an inbox you read. |
+| `CHANGELOG_URL` | Adds a **What's new** link to the Help menu. Unset, the entry is not shown. |
+| `COMMUNITY_URL` | Adds a **Community** link to the Help menu. Unset, the entry is not shown. |
 
 <Info>
 **`AFFILIATE_URL` points at your programme, not ours.** An **Affiliate** entry appears in the left
@@ -428,8 +483,7 @@ build the image yourself.
 | Variable | Purpose |
 |---|---|
 | `NEXT_PUBLIC_POLOTNO` | Polotno API key for the image editor. |
-| `NEXT_PUBLIC_VERSION` | Version string shown in the footer. |
-| `NEXT_PUBLIC_APP_VERSION` | Mobile/web version label. |
+| `NEXT_PUBLIC_APP_VERSION` | The version label shown beside the logo and in the Help menu, and added to the signature of support mail. Baked in when the image is built, and taken from the repository's `package.json` when unset, so set it only when you build your own image and want a different label. |
 | `CHATBASE_BOT_ID` and `CHATBASE_TOKEN` | The in-app support widget. It loads only when both are set, and the bot has to be one you own: its agent can offer the signed-in user a refund on their own subscription, behind a confirmation dialog showing the amount. Leave both unset and no widget loads. |
 | `DEV_BACKEND_PROXY` | Local development only. Makes the Next dev server proxy `/api` to a backend running elsewhere, such as a Compose stack on port 4007, so you can work on the frontend alone. Pair it with `NEXT_PUBLIC_BACKEND_URL="/api"`. Ignored in the built image. |
 | `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | Narrower than the name suggests. It replaces `NEXT_PUBLIC_BACKEND_URL` in one place only: the `token_endpoint` the MCP server advertises in its OAuth discovery document. Set it when your MCP clients have to reach that endpoint at a different address, such as through a tunnel. Nothing else in the app reads it. |
@@ -472,6 +526,7 @@ or not it has a row in this table.
 | YouTube | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` | [/installation/providers/youtube](/installation/providers/youtube) |
 | Google My Business | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET` | [/installation/providers/google-my-business](/installation/providers/google-my-business) |
 | TikTok | `TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET` | [/installation/providers/tiktok](/installation/providers/tiktok) |
+| TikTok Business | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` | [/installation/providers/tiktok](/installation/providers/tiktok) |
 | Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | [/installation/providers/reddit](/installation/providers/reddit) |
 | Pinterest | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | [/installation/providers/pinterest](/installation/providers/pinterest) |
 | Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | [/installation/providers/discord](/installation/providers/discord) |
@@ -487,6 +542,7 @@ or not it has a row in this table.
 | Whop | `WHOP_CLIENT_ID` | [/installation/providers/whop](/installation/providers/whop) |
 | Tumblr | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | [/installation/providers/tumblr](/installation/providers/tumblr) |
 | GitHub (sign-in) | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | [/configuration/oauth](/configuration/oauth) |
+| Apple (sign-in) | `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY`, `APPLE_APP_BUNDLE_ID` | [Sign in with Apple](#sign-in-with-apple) |
 
 <Note>
 Two variable names break the pattern and cost people an afternoon. Kick signs its
@@ -494,6 +550,21 @@ secret as `KICK_SECRET`, not `KICK_CLIENT_SECRET`. Dribbble spells its variables
 with three `b` characters, `DRIBBBLE_CLIENT_ID` and `DRIBBBLE_CLIENT_SECRET`, while
 the network itself is spelled with two.
 </Note>
+
+### Hiding a provider, or moving its channels to another
+
+Two variables change what Add Channel offers without touching any keys. Both take provider
+identifiers, the last part of the connect address, such as `tiktok` in `/integrations/social/tiktok`.
+
+| Variable | Purpose |
+|---|---|
+| `HIDDEN_PROVIDERS` | Comma separated identifiers to leave out of Add Channel, for example `tiktok,x`. Only the list changes: channels already connected on those providers are left as they are. |
+| `MIGRATE_PROVIDERS` | Comma separated `old:new` pairs, for example `tiktok:tiktok-business`. Reconnecting an `old` channel then runs the `new` provider's authorization and moves the channel across in place, keeping its ID, its scheduled posts and its settings. Connecting the same account through `new` from scratch adopts the existing channel rather than adding a duplicate. |
+
+The two are usually set together: hide the provider you are retiring, and existing channels move
+over on their next reconnect. A pair whose target is not a provider this install offers is ignored.
+Facebook, Instagram through Facebook, LinkedIn Page, YouTube, Google Business Profile and Tumblr
+cannot be a target, because they finish their connect differently.
 
 ---
 

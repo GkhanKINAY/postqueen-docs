@@ -61,6 +61,21 @@ Some settings also depend on the media type:
 - **Auto add music** applies to photos only.
 - Privacy level, comments, and the branded-content toggles apply to both videos and photos.
 
+## TikTok Business
+
+Add Channel can list TikTok twice. The second one connects the account through TikTok's Business API, and the difference shows up mostly in what a post can carry.
+
+| | TikTok | TikTok Business |
+|---|---|---|
+| **Caption** | 2,000 characters | 2,200 characters |
+| **Pictures per post** | One or more | Up to 35 |
+| **Music** | **Auto add music** lets TikTok choose, photos only | Pick a track from TikTok's commercial music list, for videos and photos. **Auto add music** on a photo picks one at random |
+| **Location tag** | No | Yes |
+| **Privacy level** | Videos and photos | Photos only. A video publishes with the account's default visibility |
+| **Analytics** | Account and each post | Account and each post |
+
+Music and the location tag apply only to **Post directly to TikTok**, like the other settings. Over the API they are the `music` and `location` fields in the [TikTok settings reference](/public-api/providers/tiktok), found with the `musicSearch` and `locationSearch` [provider tools](/public-api/integrations/provider-tools).
+
 ## Self-hosting
 
 <Info>

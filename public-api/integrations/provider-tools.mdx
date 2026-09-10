@@ -39,7 +39,7 @@ returns a `tools` array built from the same source as the tables below.
 
 <Info>
 Networks not listed here expose no tools. That includes LinkedIn, YouTube, X, Facebook,
-Threads, TikTok, Telegram, Mastodon, Bluesky, Nostr, VK, Kick, Tumblr, Moltbook and
+Threads, the standard TikTok connection, Telegram, Mastodon, Bluesky, Nostr, VK, Kick, Tumblr, Moltbook and
 Google Business Profile: everything they need comes from the post settings themselves.
 </Info>
 
@@ -131,6 +131,13 @@ Google Business Profile: everything they need comes from the post settings thems
 | Tool | Parameters | Returns |
 |---|---|---|
 | `channels` | none | Channels the PostQueen app can post to, as `{ id, name }`. |
+
+## TikTok Business
+
+| Tool | Parameters | Returns |
+|---|---|---|
+| `musicSearch` | `genre`, optional, for example POP, ROCK or ELECTRONIC | Tracks from TikTok's trending commercial music list, as `{ id, title, artist, image, duration, previewUrl }`, with `duration` in milliseconds. There is no text search, so filter the list yourself. Pass the id as `music.id` in the [post settings](/public-api/providers/tiktok). |
+| `locationSearch` | `q` | Location tags matching the search, as `{ id, name, address }`. An empty `q` returns an empty list. Pass `id` and `name` as the `location` setting. |
 
 ## Whop
 

@@ -125,15 +125,17 @@ tightest limits above and are the default target for the captcha.
 
 ## The public API hourly cap
 
-Separate from all of the above, post creation through the public API is capped per hour. It
-defaults to 90 requests per hour and is set with:
+Separate from all of the above, post creation through the public API is capped per hour, and so
+are uploads. It defaults to 90 requests per hour and is set with:
 
 ```env
 API_LIMIT=30
 ```
 
-This only applies to the API, not to posting from the web interface. See
-[Public API](/public-api/introduction) for what counts against it.
+Posting from the web interface is not counted. Uploads are, in an hourly allowance of the same
+size kept apart from the posting one: `POST /public/v1/upload`, `/public/v1/upload-from-url` and
+the uploads you make in the app. See [Public API](/public-api/introduction) for what counts
+against it.
 
 ## Related
 

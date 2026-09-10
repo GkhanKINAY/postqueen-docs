@@ -110,6 +110,18 @@ Both endpoint forms answer `OPTIONS` with a `200` and permissive CORS headers **
 checked**. A browser-based client that reports a successful connection has therefore proved
 nothing. The first real call is the one that tells you.
 
+## Settings you might add later
+
+MCP works without any of these. Each one changes a single thing:
+
+| Variable | What it changes |
+| --- | --- |
+| `DCR_VERIFIED_DOMAINS` | Limits which https addresses a self-registering client may send people back to. Clients on `localhost` or an app scheme such as `cursor://` are not affected |
+| `OPENAI_OAUTH_CLIENT_ID` | Lets one ChatGPT connector read the signed-in user's email, which ChatGPT Enterprise needs to restrict a connector by domain |
+| `MCP_ONLY` | Strips the backend down to MCP and its OAuth routes, for an instance that serves nothing else |
+
+Each is described in full in the [Configuration Reference](/configuration/reference).
+
 ## Next steps
 
 <CardGroup cols={2}>

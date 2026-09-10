@@ -15,7 +15,7 @@ these docs send you to a specific one.
 
 | Tab | What is in it | You see it when |
 | --- | --- | --- |
-| **Global Settings** | Defaults that apply across your posts, including whether she offers to shorten links | Always |
+| **Global Settings** | Defaults that apply across your posts, including whether she offers to shorten links, and the **Delete Account** button | Always |
 | **Language** | The interface language | Always |
 | **Teams** | Invite people into your organization and set what they can do | Your plan includes team members, **and** you are an organization admin |
 | **Webhooks** | URLs she calls when a post publishes or fails | Your plan includes webhooks |
@@ -27,7 +27,7 @@ these docs send you to a specific one.
 
 <Note>
 **Self-hosting with billing off?** Every plan gate above passes, because your account reports
-itself as ULTIMATE when no Stripe keys are set. So you see all of them.
+itself as AGENCY, the tier labelled Ultimate, when no Stripe keys are set. So you see all of them.
 [Plans and limits](/using/plans-and-limits) has the rule.
 </Note>
 
@@ -44,6 +44,28 @@ feature while your own account still cannot open it. Those two tabs call admin-o
 moment they mount, so showing them to a regular member would produce an error rather than a page.
 
 If a teammate can see a tab and you cannot, role is the likely difference rather than billing.
+
+## Deleting your account
+
+**Delete Account** sits at the bottom of **Global Settings**. On the Free tier the billing page
+offers the same button among its questions. She asks you to confirm once, and after that there is
+no undo.
+
+What goes, and what stays behind:
+
+- **Organizations you own** are deleted, together with their posts and channels.
+- **Organizations you only belong to** carry on. You are removed from their team.
+- **Your own account** is emptied rather than kept: your email address, password, name and profile
+  details are scrubbed, and you are signed out.
+
+Two things refuse the request:
+
+- **Other people in an organization you own.** Remove them first. Until you do, the answer is
+  *Please remove your team members before deleting your account*.
+- **Impersonation.** An admin viewing the app as you cannot delete your account for you.
+
+A paid subscription on an organization you own is cancelled first. If that cancellation fails,
+nothing is deleted, and you can try again.
 
 ## Linking straight to a tab
 

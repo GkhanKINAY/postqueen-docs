@@ -95,6 +95,60 @@ TIKTOK_CLIENT_SECRET=12345678901234567890123456789012
 The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
 </Check>
 
+## TikTok Business
+
+The second TikTok in Add Channel runs on an app of its own, registered for TikTok's Business API, with its own pair of keys. Set up either app, or both.
+
+<Steps>
+  <Step title="Register the redirect URI, trailing slash included">
+    TikTok accepts only Business redirect URLs that end in `/`, and she sends the same address on the token exchange, so a registered URI without the slash fails the login.
+
+    - Production: `https://postqueen.example.com/integrations/social/tiktok-business/`
+    - Local development (HTTPS required): `https://localhost:4200/integrations/social/tiktok-business/`
+    - Docker (HTTPS required): `https://localhost:4007/integrations/social/tiktok-business/`
+
+    The `redirectmeto.com` wrapping described above applies here too when `FRONTEND_URL` is plain `http`.
+  </Step>
+
+  <Step title="Add scopes">
+    Add all six. The connect is refused if any one of them is missing, and the list differs from the standard app's: `user.info.username` takes the place of `user.info.profile`.
+    - user.info.basic
+    - user.info.username
+    - user.info.stats
+    - video.list
+    - video.upload
+    - video.publish
+  </Step>
+
+  <Step title="Verify your media domain">
+    On this API TikTok fetches videos as well as photos from their URL, so all of your media has to be publicly reachable over HTTPS, and its domain has to be a verified URL property of the Business app. Until it is, every post fails with `The media domain is not a verified URL property of the TikTok app`.
+  </Step>
+
+  <Step title="Copy the keys to environment variables">
+```env
+TIKTOK_BUSINESS_CLIENT_ID=your-business-app-client-id
+TIKTOK_BUSINESS_CLIENT_SECRET=your-business-app-client-secret
+```
+
+    Restart PostQueen with the updated environment variables
+  </Step>
+</Steps>
+
+<Warning>
+TikTok caps how many users of an app can post in a day. On the Business app, reaching it fails the post with `TikTok daily user limit reached, please try again tomorrow`. The standard app treats the same cap differently: it disconnects the channel and asks for a reconnect.
+</Warning>
+
+### Moving channels from the standard app
+
+Set both of these and a standard TikTok channel moves to the Business app the next time it is reconnected, keeping its ID, scheduled posts and settings, while nobody can connect the old app in the meantime:
+
+```env
+MIGRATE_PROVIDERS=tiktok:tiktok-business
+HIDDEN_PROVIDERS=tiktok
+```
+
+A standard channel disconnected by the daily cap is a natural moment for it, because that reconnect is the one that moves it across. Both variables are described in the [Configuration Reference](/configuration/reference).
+
 ## Next steps
 
 <CardGroup cols={2}>
