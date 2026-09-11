@@ -220,6 +220,7 @@ See also: [Cloudflare R2](/configuration/r2) and [Uploads & Storage](/configurat
 | `STORAGE_PROVIDER` | `local` or `cloudflare`. **Set it explicitly.** Writing falls back to `local`, but the frontend rewrite that serves `/uploads/...` tests for the literal string `local`, so leaving it unset uploads your files successfully and then serves every one of them as a 404. |
 | `UPLOAD_DIRECTORY` | Filesystem path for `local` storage writes. |
 | `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` | The URL path segment for uploaded files, **with no leading slash**. Defaults to `uploads`. It is joined after a slash that is already there, so `/uploads` gives you `https://host//uploads/...`. |
+| `PREVIOUS_FRONTEND_URLS` | Addresses a `local`-storage instance used to run under, comma-separated and written in full. On boot, upload addresses stored under them are moved to the current `FRONTEND_URL`. See [Moving to a new address](/configuration/uploads#moving-to-a-new-address). |
 | `CLOUDFLARE_ACCOUNT_ID` | R2 account ID. |
 | `CLOUDFLARE_ACCESS_KEY` | R2 access key. |
 | `CLOUDFLARE_SECRET_ACCESS_KEY` | R2 secret access key. |
