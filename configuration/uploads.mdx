@@ -68,9 +68,38 @@ compiled to serve.
 Local storage saves each file's full address, `FRONTEND_URL` plus
 `/uploads/...`, in the database. Change `FRONTEND_URL` later (a new domain,
 `http` to `https`, another port) and the old addresses keep pointing at the old
-one: existing media stops loading and can no longer be published. Settle
-`FRONTEND_URL` before you upload, or rewrite the stored addresses after a move.
+one: existing media stops loading and can no longer be published. Move them as
+described below.
 </Warning>
+
+### Moving to a new address
+
+Put the address the instance used to run under in `PREVIOUS_FRONTEND_URLS`,
+next to the new `FRONTEND_URL`, and recreate the container. A plain restart
+keeps the old environment, so use `docker compose up -d`.
+
+```env
+FRONTEND_URL="https://postqueen.example.com"
+PREVIOUS_FRONTEND_URLS="http://localhost:4007"
+```
+
+On boot the backend moves every stored upload address under the old one to the
+new one: the media library, posts, drafts and channel avatars. The backend log
+says what it moved:
+
+```text
+[uploads] moved http://localhost:4007 to https://postqueen.example.com: Media.path 12, ...
+```
+
+- Moved more than once? List every earlier address, separated by commas.
+- Write each one in full, with `http://` or `https://`.
+- An address is skipped, with a warning in the log, when none of its newest
+  files exist under `UPLOAD_DIRECTORY`. Check that the uploads volume is mounted
+  there, then recreate the container again.
+- Leaving the variable set afterwards is safe: once moved, nothing matches.
+
+This covers local storage only. Cloudflare R2 addresses come from
+`CLOUDFLARE_BUCKET_URL` and are left alone.
 
 ### Docker volume mount
 
