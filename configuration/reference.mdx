@@ -155,7 +155,7 @@ Per-hour allowance, per organization, on uploads: `POST /public/v1/upload`, `/pu
 
 ### `RUN_CRON`
 
-When set, the backend process runs the scheduled-task workers. Leave unset on API-only instances when workers are deployed separately.
+When set, the backend process runs the scheduled-task workers. Leave unset on API-only instances when workers are deployed separately. Any non-empty value counts as set, `false` included, so remove the variable to turn it off.
 
 ### `RESTRICT_UPLOAD_DOMAINS`
 
@@ -442,7 +442,7 @@ Cosmetic links and addresses she shows in the interface. Every one is optional.
 | `AGENCY_NOTIFICATION_EMAIL` | Address notified about agency directory submissions. |
 | `EXTENSION_STORE_URL` | Where the "install the extension" button sends people. |
 | `ONBOARDING_VIDEO_URL` | Video embedded in the first-run experience. |
-| `SUPPORT_EMAIL` | Where **Contact support** and **Report a bug** in the Help menu address their mail. Defaults to `support@postqueen.ai`, so set it to an inbox you read. |
+| `SUPPORT_EMAIL` | Where **Contact support** and **Report a bug** in the Help menu address their mail. Unset on a self-hosted instance (no billing), the Help menu leaves those two rows out rather than mail anyone else; set it to an inbox you read to bring them back. |
 | `CHANGELOG_URL` | Adds a **What's new** link to the Help menu. Unset, the entry is not shown. |
 | `COMMUNITY_URL` | Adds a **Community** link to the Help menu. Unset, the entry is not shown. |
 
