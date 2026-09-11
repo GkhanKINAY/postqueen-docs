@@ -1,6 +1,6 @@
 ---
 title: Activation & Login
-description: 'Expired activation links, "jwt malformed", and login API responses'
+description: 'Expired activation links, password resets, and login API responses'
 icon: 'right-to-bracket'
 ---
 
@@ -8,12 +8,12 @@ Find your symptom and open it.
 
 <AccordionGroup>
   <Accordion title="The activation link does not work" icon="envelope-open-text">
-    Activation links are short-lived JWTs, so an old link or a second click gives you one of these:
+    An activation link works once and for seven days. The page says the link is no longer valid
+    when any of these is true:
 
-    | Message | Cause |
-    |---|---|
-    | `jwt malformed` | The link is corrupted or truncated, usually a line break inserted by a mail client, or a partial copy |
-    | `jwt expired` | The link passed its lifetime |
+    - It is more than seven days old.
+    - The account is already active, from an earlier click.
+    - The link arrived damaged, usually a line break inserted by a mail client, or a partial copy.
 
     <Steps>
       <Step title="Request a new activation email">
@@ -23,6 +23,13 @@ Find your symptom and open it.
         And open it in the browser you signed up in.
       </Step>
     </Steps>
+  </Accordion>
+
+  <Accordion title="Signed out everywhere after a password reset" icon="right-from-bracket">
+    That is deliberate. Resetting a password ends every session that existed before it, on every
+    device, so anyone else who held one is signed out too. Sign in again with the new password.
+
+    A reset link is valid for 20 minutes. A session lasts a year from the moment you sign in.
   </Accordion>
 
   <Accordion title="The login API returns 404 or 204" icon="circle-question">
