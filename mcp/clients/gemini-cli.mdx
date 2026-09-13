@@ -13,10 +13,10 @@ You need your PostQueen API key first. In [app.postqueen.ai](https://app.postque
 ## Add via CLI
 
 ```bash
-gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Replace `YOUR_API_KEY` with your actual key.
+Replace `YOUR_API_KEY` with your actual key. `--scope user` writes `~/.gemini/settings.json` so the key does not land in a project file. The default (no flag) writes `.gemini/settings.json` in the current project.
 
 | Scope | File it writes | Applies to |
 |-------|----------------|------------|
@@ -64,7 +64,7 @@ You can also edit `~/.gemini/settings.json` directly. Gemini CLI uses the `httpU
 </Tabs>
 
 <Note>
-Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers, and PostQueen does not use SSE). A project-level `.gemini/settings.json` uses the same format.
+Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers, and PostQueen does not use SSE). If an older `gemini mcp add` wrote `"url"` plus a type field, change that key to `httpUrl` or the connection fails. A project-level `.gemini/settings.json` uses the same format.
 </Note>
 
 <Warning>

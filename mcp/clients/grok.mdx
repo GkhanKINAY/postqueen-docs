@@ -6,7 +6,7 @@ icon: /images/brand/icon-grok.svg
 
 Grok on the web, iOS and Android can call remote MCP servers. Add PostQueen once at [grok.com/connectors](https://grok.com/connectors), and Grok can list your channels, generate media and schedule posts through her [14 MCP tools](/mcp/tools).
 
-Grok Bot uses the **same** connector. There is no Bot-only MCP URL: create the connector first, then enable it on the Bot under Plugins.
+Grok Bot can use the **same** connector. There is no Bot-only MCP URL: create the connector at grok.com/connectors first. If the Bot UI offers Plugins or Connectors, enable that same account connector there.
 
 <Info>
 You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
@@ -32,7 +32,7 @@ With this setup, your API key travels inside the connector URL, so the URL itsel
     Leave extra authentication empty: the key in the URL is the authentication. If your client prefers a header instead, point it at `https://api.postqueen.ai/mcp` with `Authorization: Bearer YOUR_API_KEY`.
   </Step>
   <Step title="Grok Bot (optional)">
-    Create the connector on grok.com/connectors first. Then open the Bot and enable that connector under **Settings → Plugins**. Asking the Bot to "add a custom server" still ends at the same URL.
+    Create the connector on grok.com/connectors first. If you use Grok Bot, enable that same account connector under the Bot’s **Plugins** or **Connectors** if the UI offers it. Asking the Bot to "add a custom server" still ends at the same URL.
   </Step>
   <Step title="Confirm">
     In a Grok chat, ask it to list your connected social media accounts. Your channel names come back when Grok calls `integrationList`.
@@ -44,7 +44,7 @@ Grok reaches PostQueen from xAI's infrastructure, not from your machine, so the 
 </Warning>
 
 <Note>
-On Grok Business and Enterprise, an admin may need to provision the connector before members can use it. Availability and menu names shift; if you do not see Custom, check [xAI's connectors docs](https://docs.x.ai/grok/connectors).
+On Grok Business and Enterprise, an admin must provision the connector in [console.x.ai](https://console.x.ai) (Grok Business → Connectors) before members can use it. Availability and menu names shift; if you do not see Custom, check [xAI's connectors docs](https://docs.x.ai/grok/connectors).
 </Note>
 
 ## Self-hosted

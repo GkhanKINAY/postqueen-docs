@@ -19,7 +19,7 @@ There are two routes in, and they solve different problems:
 
 ## Route 1: the connector
 
-ChatGPT reaches her over MCP. Turn on **Developer mode**, then add a plugin with one URL, and she becomes a tool the model can call:
+ChatGPT reaches her over MCP. Turn on **Developer mode** under **Settings → Apps → Advanced settings**, then create an app under **Settings → Apps → Create** with one URL, and she becomes a tool the model can call:
 
 ```
 https://api.postqueen.ai/mcp/YOUR_API_KEY
@@ -31,7 +31,7 @@ Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open 
 Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
-Custom connectors sit behind ChatGPT's developer mode, which OpenAI offers on the paid web plans. The full walkthrough covers the developer mode toggle, the connector form and enabling her per chat:
+Custom apps sit behind ChatGPT's developer mode, which OpenAI offers on the paid web plans. Plus and Pro can usually connect; OpenAI currently documents full write MCP (scheduling) for Business and Enterprise/Edu. The full walkthrough covers the developer mode toggle, the create-app form and enabling her per chat:
 
 <Card title="ChatGPT connector setup" icon="plug" href="/mcp/clients/chatgpt">
   Step by step, from the developer mode switch to your first tool call
@@ -115,7 +115,7 @@ She runs on your terms. Leave the schedule alone and she is a true autopilot: wh
     No. She works on her own through the dashboard, the CLI and the API. ChatGPT is one of several ways to reach her.
   </Accordion>
   <Accordion title="What can she actually do from a ChatGPT chat?">
-    Everything her 14 MCP tools cover. She can list your channels and read what each one accepts, and she can generate images, upload media and schedule posts across your 30+ networks.
+    Everything her 14 MCP tools cover, if your ChatGPT plan is allowed to call write tools. Listing channels is a read. Scheduling a post is a write (`schedulePostTool`). OpenAI currently documents full write MCP for Business and Enterprise/Edu; Plus and Pro may connect but only get read/fetch.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
     Yes. Ask for drafts and each post sits on your calendar unscheduled until you publish it there.

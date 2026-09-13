@@ -12,7 +12,7 @@ Sunday evening, phone in hand, and next week has nothing on the calendar yet. Yo
   <img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
 </Frame>
 
-Two surfaces, one connector. Claude Desktop takes her in **Settings > Connectors**, and claude.ai takes the same URL on the web. Connectors are tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
+Two surfaces, one connector. On claude.ai and Claude Desktop, open **Customize → Connectors** (Desktop may still say **Settings → Connectors**), then **+ → Add custom connector**. Connectors are tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
 
 What she brings into the chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts, with image and video generation in the same set. They can also read back what is already scheduled and change a scheduled post's settings. They do not delete a post or move it to a new time, and none of them returns analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
 
@@ -22,14 +22,13 @@ This is the chat surface. Claude Code, Anthropic's terminal tool, connects a dif
 
 ## Set up
 
-On [claude.ai](https://claude.ai), open **Settings**, then **Connectors**, and add a custom
-connector pointing at:
+On [claude.ai](https://claude.ai), open **Customize → Connectors**, click **+**, then **Add custom connector**, and paste:
 
 ```
 https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Then toggle **PostQueen** on from the tools menu in a chat and ask her to list your connected
+Then toggle **PostQueen** on from **+ → Connectors** in a chat and ask her to list your connected
 accounts. Your channel names come back.
 
 <Card title="Full setup: Claude" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude">

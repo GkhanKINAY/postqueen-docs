@@ -17,7 +17,7 @@ Those 14 tools cover discovery, media and posting, and they can read back what i
 One command, and the terminal you already have open can post:
 
 ```bash
-gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
 Your key comes from the app at [app.postqueen.ai](https://app.postqueen.ai), under
@@ -30,8 +30,7 @@ show as connected with 14 tools.
 </Card>
 
 <Warning>
-A project-level `.gemini/settings.json` carries your key into the repo. Use `--scope user` to
-write it to `~/.gemini/settings.json` instead and leave the project clean.
+`--scope user` writes `~/.gemini/settings.json`. Without that flag, Gemini CLI writes a project-level `.gemini/settings.json` that carries your key into the repo. Keep that file out of version control.
 </Warning>
 
 ## 👑 Two posts about the release you just cut

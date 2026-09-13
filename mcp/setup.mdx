@@ -34,7 +34,7 @@ API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
     }
     ```
 
-    Into `.cursor/mcp.json`, or use the Settings UI: [Cursor](/mcp/clients/cursor).
+    Into `.cursor/mcp.json` or `~/.cursor/mcp.json`, or use **Customize → MCP** / **Cursor Settings → Tools & MCP**: [Cursor](/mcp/clients/cursor).
   </Tab>
 
   <Tab title="Codex">
@@ -47,10 +47,10 @@ API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
 
   <Tab title="Gemini CLI">
     ```bash
-    gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
 
-    Add `--scope user` for every project: [Gemini CLI](/mcp/clients/gemini-cli).
+    Writes `~/.gemini/settings.json`. Use `httpUrl` if you hand-edit: [Gemini CLI](/mcp/clients/gemini-cli).
   </Tab>
 
   <Tab title="Claude, ChatGPT and Grok">
@@ -60,7 +60,7 @@ API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
 
-    Claude: **Settings → Connectors → Add custom connector**. ChatGPT: **Settings → Security and login → Developer mode**, then **Plugins / +**. Grok: [grok.com/connectors](https://grok.com/connectors) → Custom.
+    Claude: **Customize → Connectors → + → Add custom connector**. ChatGPT: **Settings → Apps → Advanced settings → Developer mode**, then **Settings → Apps → Create**. Grok: [grok.com/connectors](https://grok.com/connectors) → Custom.
 
     Step by step: [Claude](/mcp/clients/claude), [ChatGPT](/mcp/clients/chatgpt), [Grok](/mcp/clients/grok).
   </Tab>
