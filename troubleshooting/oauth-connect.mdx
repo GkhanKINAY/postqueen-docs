@@ -1,6 +1,6 @@
 ---
 title: OAuth & Channel Connect Errors
-description: 'Invalid state, invalid_grant, and fetch failed during the connect flow'
+description: 'Invalid state, invalid_grant, invalid_client, and fetch failed during the connect flow'
 icon: 'plug-circle-xmark'
 ---
 
@@ -11,8 +11,10 @@ parties, so any one of them can break it.
 |---|---|
 | **Invalid state** | [below](#invalid-state) |
 | **invalid_grant** | [below](#invalid-grant) |
+| **invalid_client** (Google login spinner / 500) | [Activation & login](/troubleshooting/activation-and-login#continue-with-google-reaches-consent-then-the-page-spins) |
 | **Failed to fetch** on connect | [below](#failed-to-fetch-fetch-failed-on-provider-connect) |
 | **Unsupported file type** | [below](#unsupported-file-type-during-connect) |
+| **Google access denied / app not verified** | [Activation & login](/troubleshooting/activation-and-login#continue-with-google-is-denied-or-only-some-accounts-get-in) |
 
 ## Invalid state
 
@@ -60,6 +62,7 @@ The code the provider returned was rejected when PostQueen exchanged it for a to
     - The same code was used twice, usually a double-click or a retry
     - The code expired. Most providers give you about 60 seconds
     - The redirect URI on the provider does not match the one PostQueen sends, character for character. A trailing slash counts
+    - Google `invalid_client` is a different error: the client id/secret pair is wrong. See [Activation & login](/troubleshooting/activation-and-login#continue-with-google-reaches-consent-then-the-page-spins)
   </Accordion>
 </AccordionGroup>
 

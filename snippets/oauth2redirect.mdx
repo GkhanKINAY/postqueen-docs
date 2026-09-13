@@ -1,4 +1,3 @@
 The OAuth2 Redirect URI is the location where the provider will redirect to after a successful login. This needs to be set to your PostQueen `FRONTEND_URL` + `/integrations/social/` + `{provider}`.
 
-You only need to set one OAuth2 Redirect URI when you are setting up your PostQueen app.
-
+Most networks need exactly one URI. Google is the exception: sign-in, YouTube and Google My Business can share one web client, and each path (`/youtube`, `/gmb`) has to be listed. Never add a trailing slash.

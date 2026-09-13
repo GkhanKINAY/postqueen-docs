@@ -171,7 +171,7 @@ Read that carefully before you switch it on, because it applies to **signing in 
 
 ### `IS_GENERAL`
 
-The product-line switch, and the shipped compose file turns it on. It decides where `/` lands (`/launches`, the calendar, when set, and `/analytics` when not), which sign-in buttons appear (your own OIDC provider when `POSTQUEEN_GENERIC_OAUTH` is also set, Google otherwise, joined by [Apple](#sign-in-with-apple) once it is configured, and GitHub when `IS_GENERAL` is unset), and a handful of labels and billing screens. Set it to `"true"`.
+The product-line switch, and the shipped compose file turns it on. It decides where `/` lands (`/launches`, the calendar, when set, and `/analytics` when not), which sign-in buttons appear (your own OIDC provider when `POSTQUEEN_GENERIC_OAUTH` is also set, [Google](#sign-in-with-google) otherwise, joined by [Apple](#sign-in-with-apple) once it is configured, and GitHub when `IS_GENERAL` is unset), and a handful of labels and billing screens. Set it to `"true"`. Google sign-in uses the YouTube OAuth client; there is no `GOOGLE_CLIENT_ID`.
 
 <Warning>
 Despite the name, `IS_GENERAL` is **not** the switch between a hosted and a self-hosted install. Plans, limits and billing turn on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. Without them every workspace behaves as the top tier, whatever `IS_GENERAL` says.
@@ -273,6 +273,31 @@ See also: [OAuth configuration](/configuration/oauth).
 | `POSTQUEEN_OAUTH_CLIENT_SECRET` | Client secret issued by the IdP. |
 | `NEXT_PUBLIC_POSTQUEEN_OAUTH_DISPLAY_NAME` | Label shown on the sign-in button. |
 | `NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL` | Icon shown on the sign-in button. |
+
+---
+
+## Sign in with Google
+
+There is no `GOOGLE_CLIENT_ID`. When `IS_GENERAL` is set and you have not switched on
+`POSTQUEEN_GENERIC_OAUTH`, the **Continue with Google** button uses the YouTube OAuth client:
+
+| Variable | Purpose |
+|---|---|
+| `YOUTUBE_CLIENT_ID` | Web client ID. Sign-in and YouTube connect both send this. |
+| `YOUTUBE_CLIENT_SECRET` | Matching secret. |
+
+Login asks only for `userinfo.profile` and `userinfo.email`, and comes back to
+`{FRONTEND_URL}/integrations/social/youtube`, the same redirect URI as connecting a YouTube
+channel. Create **one** web client and put that redirect on it; do not register a second Google
+login app. The walkthrough is [YouTube setup](/installation/providers/youtube).
+
+Unset or empty keys make the button still render (it follows `IS_GENERAL`), then fail when Google
+rejects the request. A wrong secret is worse: Google still shows consent (that step only needs the
+client id), then `/auth/oauth/GOOGLE/exists` returns 500 with `invalid_client`. Add a new secret on
+the same web client and recreate the container; a plain restart keeps the old value.
+
+GitHub sign-in is the other product line: it shows only when `IS_GENERAL` is
+unset, and uses `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`.
 
 ---
 
@@ -528,8 +553,8 @@ or not it has a row in this table.
 | Facebook / Instagram (FB) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | [/installation/providers/facebook](/installation/providers/facebook), [/installation/providers/instagram](/installation/providers/instagram) |
 | Instagram (Standalone) | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | [/installation/providers/instagram](/installation/providers/instagram) |
 | Threads | `THREADS_APP_ID`, `THREADS_APP_SECRET` | [/installation/providers/threads](/installation/providers/threads) |
-| YouTube | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` | [/installation/providers/youtube](/installation/providers/youtube) |
-| Google My Business | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET` | [/installation/providers/google-my-business](/installation/providers/google-my-business) |
+| YouTube (and Google sign-in) | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` | [/installation/providers/youtube](/installation/providers/youtube), [Sign in with Google](#sign-in-with-google) |
+| Google My Business | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET` (optional; falls back to the YouTube client) | [/installation/providers/google-my-business](/installation/providers/google-my-business) |
 | TikTok | `TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET` | [/installation/providers/tiktok](/installation/providers/tiktok) |
 | TikTok Business | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` | [/installation/providers/tiktok](/installation/providers/tiktok) |
 | Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | [/installation/providers/reddit](/installation/providers/reddit) |
