@@ -265,17 +265,12 @@ sudo systemctl reload nginx
 
   <Step title="Tell PostQueen her address">
     The proxy works now, but she still believes she lives on `localhost`, and she builds
-    sign-in origins and every social network's return address from these values. In your
-    `docker-compose.yaml`:
+    sign-in origins and every social network's return address from these values. Put them in
+    `.env`:
 
-    ```yaml
-    MAIN_URL: 'https://postqueen.example.com'
-    FRONTEND_URL: 'https://postqueen.example.com'
-    NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
-    ```
+    <Snippet file="compose-public-urls.mdx" />
 
-    Keep the `/api` suffix on the last one, and leave no trailing slashes on any of them. Then
-    apply the change:
+    Then apply the change:
 
     <Snippet file="restart-service.mdx" />
 

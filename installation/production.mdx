@@ -5,12 +5,14 @@ icon: 'server'
 ---
 
 From an empty virtual machine to PostQueen running on your own domain, over HTTPS. No prior
-server experience is needed. Every command is written out, and every value you need to change
-is shown before and after. Set aside about thirty minutes, most of it waiting for downloads.
+server experience is needed. Every command is written out. Set aside about thirty minutes, most
+of it waiting for downloads.
 
 <Tip>
 Want to look around first without renting anything? [Try her locally](/installation/quickstart-local)
-runs the same software on your own machine in five minutes.
+runs the same software on your own machine in five minutes. That path sets `NOT_SECURED=true`
+for HTTP login. This page does not: production is HTTPS, with `ENCRYPTION_KEY` set on first
+setup.
 </Tip>
 
 ## What you need
@@ -19,7 +21,7 @@ Three things, and the guide helps you get all of them.
 
 | What | Detail |
 | --- | --- |
-| **A small server** | Any provider that rents Linux virtual machines works. Pick Ubuntu 24.04. Two vCPUs and 4 GB of RAM is a comfortable starting point. 2 GB will run, but it is tight once the scheduler is busy. |
+| **A small server** | Any provider that rents Linux virtual machines works. Pick Ubuntu 24.04. Two vCPUs and **4 GB of RAM** is the starting point. Temporal plus Elasticsearch will OOM a 2 GB box. |
 | **A domain name** | Or a subdomain of one you already own. She needs a real name to get an HTTPS certificate, so an IP address alone is not enough. |
 | **A terminal** | macOS and Linux have one built in. On Windows use PowerShell or Windows Terminal. |
 
@@ -125,80 +127,39 @@ Three things, and the guide helps you get all of them.
     </Note>
   </Step>
 
-  <Step title="Generate a signing key">
-    This one value protects every login session. Generate a random one and keep the output:
+  <Step title="Write `.env` (JWT, encryption, public URLs)">
+    Compose loads a sibling `.env` and interpolates `${VAR:-default}` into the app service, so
+    this file is the production default path. Generate two keys and point her at your HTTPS
+    address. **Do not set `NOT_SECURED`.**
 
     ```bash
-    openssl rand -hex 32
+    printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nMAIN_URL=https://postqueen.example.com\nFRONTEND_URL=https://postqueen.example.com\nNEXT_PUBLIC_BACKEND_URL=https://postqueen.example.com/api\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
     ```
 
-    It prints a long line of letters and numbers. Copy it somewhere safe, you need it in the
-    next step.
+    Replace `postqueen.example.com` with your domain before you run it. No trailing slashes.
+    `NEXT_PUBLIC_BACKEND_URL` keeps `/api`.
 
     <Warning>
-    Set this once and never change it casually. Changing it later signs everyone out, and
-    because it is also the fallback key for encrypting stored channel credentials, changing it
-    can disconnect every channel you have connected. If you want to be able to rotate it later,
-    set `ENCRYPTION_KEY` to its own separate value now, and see
-    [Configuration Reference](/configuration/reference).
+    **`ENCRYPTION_KEY` is required on first production setup.** Unset, she falls back to
+    `JWT_SECRET` for encrypting stored secrets. That works until you rotate the signing key,
+    then every connected channel dies. Set a separate encryption key now, while the database
+    is empty. [Configuration Reference](/configuration/reference) covers later rotation with
+    `PREVIOUS_ENCRYPTION_KEY`.
     </Warning>
-  </Step>
-
-  <Step title="Edit five settings">
-    Open the file:
-
-    ```bash
-    nano docker-compose.yaml
-    ```
-
-    <Note>
-    `nano` is a plain text editor that runs in the terminal. Arrow keys move around, typing
-    edits. When you are finished, press `Ctrl+O` then `Enter` to save, and `Ctrl+X` to quit.
-    </Note>
-
-    Near the top you will find a block that starts with `environment:`. Five lines in it need
-    your values. Everything else in the file can stay exactly as it is.
-
-    **What ships in the file:**
-
-    ```yaml
-    services:
-      postqueen:
-        image: ghcr.io/gkhankinay/postqueen-app:latest
-        environment:
-          MAIN_URL: 'http://localhost:4007'
-          FRONTEND_URL: 'http://localhost:4007'
-          NEXT_PUBLIC_BACKEND_URL: 'http://localhost:4007/api'
-          JWT_SECRET: 'random string that is unique to every install - just type random characters here!'
-    ```
-
-    **What you change it to:**
-
-    ```yaml
-    services:
-      postqueen:
-        image: ghcr.io/gkhankinay/postqueen-app:v3.0.4
-        environment:
-          MAIN_URL: 'https://postqueen.example.com'
-          FRONTEND_URL: 'https://postqueen.example.com'
-          NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
-          JWT_SECRET: 'the long random string you generated in the previous step'
-    ```
-
-    Line by line:
-
-    | Setting | What to put there |
-    | --- | --- |
-    | `image` | Swap `latest` for a specific version from the [releases page](https://github.com/GkhanKINAY/postqueen-app/releases). Pinning means an upgrade happens when you decide, not the next time a container restarts. |
-    | `MAIN_URL` | Your full address, with `https://` and no trailing slash. |
-    | `FRONTEND_URL` | The same address again. |
-    | `NEXT_PUBLIC_BACKEND_URL` | The same address **plus `/api`**. That suffix is not a typo, see the note below. |
-    | `JWT_SECRET` | The random string you just generated. |
 
     <Warning>
-    **No trailing slashes.** `https://postqueen.example.com/` with a slash on the end will be
-    reported as a configuration issue in the log and can break sign-in. Leave the slash off.
+    Set `JWT_SECRET` and `ENCRYPTION_KEY` once and never change them casually. Changing
+    `JWT_SECRET` signs everyone out. Changing `ENCRYPTION_KEY` without
+    `PREVIOUS_ENCRYPTION_KEY` can disconnect channels.
     </Warning>
+
+    Optionally pin the image in `docker-compose.yaml` so `latest` does not move under you.
+    Swap `latest` for a tag from the
+    [releases page](https://github.com/GkhanKINAY/postqueen-app/releases):
+
+    ```yaml
+    image: ghcr.io/gkhankinay/postqueen-app:v3.5.9
+    ```
 
     <Note>
     **Why `/api`?** Everything reaches her through one address. Inside the container a small
@@ -208,12 +169,9 @@ Three things, and the guide helps you get all of them.
     </Note>
 
     <Warning>
-    Leave `BACKEND_INTERNAL_URL` as `http://localhost:3000`. That one is not about your domain
-    at all, it is how the web interface talks to the backend inside the same container, and
-    pointing it at your public address will break things.
+    Leave `BACKEND_INTERNAL_URL` as its default `http://localhost:3000`. That one is not about
+    your domain at all. Pointing it at your public address will break things.
     </Warning>
-
-    Save and exit: `Ctrl+O`, `Enter`, `Ctrl+X`.
   </Step>
 
   <Step title="Start her">
@@ -263,7 +221,8 @@ Three things, and the guide helps you get all of them.
     requests to port 4007.
 
     [Domain and HTTPS](/installation/domain-and-https) explains what that means and why she
-    needs it. If you want the short version, Caddy does the whole job in three lines:
+    needs it. The URL values already live in `.env` from the step above. If you want the short
+    version, Caddy does the whole job in three lines:
     [Caddy](/reverse-proxies/caddy).
 
     Come back here when `https://postqueen.example.com` loads in your browser.
@@ -273,10 +232,10 @@ Three things, and the guide helps you get all of them.
     Open `https://postqueen.example.com` and sign up. The first account is yours and owns the
     install.
 
-    Then stop anyone else from signing up. Open `docker-compose.yaml` again and change:
+    Then stop anyone else from signing up. Add this line to `.env`:
 
-    ```yaml
-    DISABLE_REGISTRATION: 'true'
+    ```env
+    DISABLE_REGISTRATION=true
     ```
 
     Apply it:
@@ -293,6 +252,15 @@ Three things, and the guide helps you get all of them.
 <Check>
 **She is live** on your domain, over HTTPS, and closed to strangers.
 </Check>
+
+## Connect a channel
+
+Most networks need a public HTTPS callback. Put the provider keys in the same `.env` (for
+example `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`), recreate the app container, then
+Add Channel. Per-network walkthroughs: [Providers](/providers/overview). Redirect URLs and
+HTTPS: [Domain and HTTPS](/installation/domain-and-https).
+
+<Snippet file="restart-service.mdx" />
 
 ## If something is not right
 
@@ -312,24 +280,27 @@ Three things, and the guide helps you get all of them.
     ```bash
     docker compose logs postqueen | grep -i "configuration issue"
     ```
+
+    Do not set `NOT_SECURED=true` to paper over this on a public server. Fix the URLs and the
+    proxy instead.
   </Accordion>
 
   <Accordion title="Connecting a social channel fails">
     Every network builds its return address from `FRONTEND_URL`, so if that value is wrong or
     was changed after you registered the app, the redirect will not match what the network has
-    on file. [OAuth connect errors](/troubleshooting/oauth-connect) covers the specific
-    messages.
+    on file. Keys belong in `.env`, then recreate the app container.
+    [OAuth connect errors](/troubleshooting/oauth-connect) covers the specific messages.
   </Accordion>
 
   <Accordion title="Containers restart in a loop">
     Usually memory. Check with `docker stats`, and `docker compose logs postqueen` for the
-    reason it died. The Temporal stack alone wants around 1 GB, so 2 GB total leaves very
-    little headroom.
+    reason it died. Temporal plus Elasticsearch want around 4 GB total. 2 GB is not enough.
   </Accordion>
 
   <Accordion title="Everyone was signed out after a restart">
     `JWT_SECRET` changed. It signs every session, so a new value invalidates all of them. Set
-    it once and keep it. [Self-host troubleshooting](/troubleshooting/self-host) has more.
+    it once and keep it. If `ENCRYPTION_KEY` was never set, changing `JWT_SECRET` can also
+    disconnect channels. [Self-host troubleshooting](/troubleshooting/self-host) has more.
   </Accordion>
 </AccordionGroup>
 

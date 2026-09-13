@@ -618,10 +618,9 @@
   "seo": {
     "metatags": {
       "og:site_name": "PostQueen Documentation",
-      "og:description": "Schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting.",
+      "og:description": "Agentic social media scheduler docs: schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting.",
       "twitter:card": "summary_large_image",
-      "twitter:title": "PostQueen Documentation",
-      "twitter:description": "Schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting."
+      "twitter:description": "Agentic social media scheduler docs: schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting."
     }
   },
   "footer": {

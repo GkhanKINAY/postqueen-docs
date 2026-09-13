@@ -11,6 +11,7 @@ keywords:
   - docker
   - compose
   - temporal
+  - agentic social media scheduler
 ---
 
 PostQueen is yours to run. Put her on your laptop to try her out, or on a small server so
@@ -81,8 +82,8 @@ is what each one is, so you can stop wondering.
 
 ## What she needs to run
 
-A small virtual machine is enough. Two vCPUs and 2 GB of RAM will run a single-person install,
-and 4 GB is more comfortable once a few people share it. The full numbers, including disk and
+A small virtual machine is enough. Two vCPUs and **4 GB of RAM** is the floor for Compose:
+Temporal plus Elasticsearch will OOM a 2 GB box. The full numbers, including disk and
 the outbound addresses she needs to reach, are on
 [System Requirements](/installation/system-requirements).
 

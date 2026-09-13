@@ -71,19 +71,9 @@ Both numbers are right, for different routes to the same place.
 
   <Step title="Tell PostQueen her address">
     Routing alone is not enough. She also has to know the address people use, because sign-in
-    origins and every social network's return address are built from it. In the same
-    `docker-compose.yaml`, on the `postqueen` service:
+    origins and every social network's return address are built from it. Put them in `.env`:
 
-    ```yaml
-        environment:
-          MAIN_URL: 'https://postqueen.example.com'
-          FRONTEND_URL: 'https://postqueen.example.com'
-          NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
-    ```
-
-    <Info>
-    Keep the `/api` suffix, and leave no trailing slashes.
-    </Info>
+    <Snippet file="compose-public-urls.mdx" />
 
     Apply it:
 

@@ -20,14 +20,13 @@ Recommended starting point for a small team (≤ 20 users):
 | Component | Supported floor | Recommended |
 |---|---|---|
 | CPU | 2 vCPU | 4 vCPU |
-| RAM | 2 GB (all-in-one, light use) | 8 GB |
+| RAM | 4 GB (Compose with Temporal + Elasticsearch) | 8 GB |
 | Disk | 20 GB | 50 GB + persistent volume for uploads |
 
 <Warning>
-The official Docker Compose has been tested on a 2 GB / 2 vCPU Ubuntu VM running everything on
-one host (see [Docker Compose](/installation/docker-compose)). That works for a single-user
-install with occasional posting, but leaves no headroom. Once you have multiple users,
-scheduled workflows, or external Postgres/Redis on the same host, plan for **4 GB or more**.
+The official Docker Compose stack includes Temporal and Elasticsearch. Plan for **4 GB of RAM
+or more** on one host (see [Docker Compose](/installation/docker-compose)). A 2 GB box will
+OOM during startup. 8 GB is the comfortable point once a few people share the calendar.
 </Warning>
 
 <Accordion title="Building from source runs out of memory first">

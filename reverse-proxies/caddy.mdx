@@ -77,16 +77,12 @@ Two things have to be true:
   </Step>
 
   <Step title="Tell PostQueen her address">
-    The proxy now works, but she still thinks she lives on `localhost`. In your
-    `docker-compose.yaml`:
+    The proxy now works, but she still thinks she lives on `localhost`. Put the public
+    address in `.env`:
 
-    ```yaml
-    MAIN_URL: 'https://postqueen.example.com'
-    FRONTEND_URL: 'https://postqueen.example.com'
-    NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
-    ```
+    <Snippet file="compose-public-urls.mdx" />
 
-    Keep the `/api` on the last one, and leave no trailing slashes. Then apply it:
+    Then apply it:
 
     <Snippet file="restart-service.mdx" />
   </Step>

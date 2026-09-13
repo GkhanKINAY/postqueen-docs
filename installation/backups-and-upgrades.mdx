@@ -150,7 +150,7 @@ docker compose logs -f postqueen
 Every release publishes twice, once under its version tag and once as `latest`. Pinning the version tag in your Compose file turns an upgrade into a deliberate edit rather than something `docker compose pull` decides for you:
 
 ```yaml
-image: ghcr.io/gkhankinay/postqueen-app:v3.0.4
+image: ghcr.io/gkhankinay/postqueen-app:v3.5.9
 ```
 
 ## The one flag that destroys everything
@@ -159,8 +159,9 @@ image: ghcr.io/gkhankinay/postqueen-app:v3.0.4
 `docker compose down -v` deletes the volumes along with the containers. Her
 database and your uploads go in that one command, with no prompt and no undo,
 and the scheduled posts sitting in Temporal go with them.
-Plain `docker compose down` leaves every volume where it is. That is the one you
-want for a restart, a variable change or an upgrade.
+Plain `docker compose down` leaves every volume where it is. That is the command
+for a backup window, not for a variable change. Env changes recreate one
+service: see [Applying a change](/installation/docker-compose#applying-a-change).
 </Warning>
 
 ## Next Steps

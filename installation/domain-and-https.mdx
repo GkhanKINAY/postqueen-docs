@@ -84,15 +84,9 @@ host, so it uses 5000 even under Compose.
 ## Tell her about her own address
 
 Setting up the proxy is only half of it. She also has to know what address people use, because
-she builds sign-in origins and every social network's return address from it. In
-`docker-compose.yaml`:
+she builds sign-in origins and every social network's return address from it.
 
-```yaml
-MAIN_URL: 'https://postqueen.example.com'
-FRONTEND_URL: 'https://postqueen.example.com'
-NEXT_PUBLIC_BACKEND_URL: 'https://postqueen.example.com/api'
-BACKEND_INTERNAL_URL: 'http://localhost:3000'
-```
+<Snippet file="compose-public-urls.mdx" />
 
 Three rules that cover nearly every problem people hit here:
 
@@ -103,7 +97,8 @@ Three rules that cover nearly every problem people hit here:
   how the web interface reaches the backend inside the same container, and changing it to your
   domain sends that traffic on a pointless round trip through the internet, if it works at all.
 
-Apply the change:
+If you followed [Deploy to a server](/installation/production), these three URLs are already
+in `.env`. Apply a change with a recreate, not a whole-stack teardown:
 
 <Snippet file="restart-service.mdx" />
 

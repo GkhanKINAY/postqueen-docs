@@ -58,7 +58,7 @@ the command above creates.
 ```yaml
 image:
   repository: ghcr.io/gkhankinay/postqueen-app
-  tag: "v3.0.4"
+  tag: "v3.5.9"
 
 secrets:
   JWT_SECRET: "generate-one-with-openssl-rand-hex-32"
@@ -105,7 +105,7 @@ handed to the container.
 
 <AccordionGroup>
   <Accordion title="The image tag needs its v prefix">
-    Published tags look like `v3.0.4`. When `image.tag` is empty the chart falls back to its
+    Published tags look like `v3.5.9`. When `image.tag` is empty the chart falls back to its
     `appVersion`, which carries no `v`, so it resolves to an image that does not exist and the
     pod sits in `ImagePullBackOff`. Write the tag out, with the `v`.
   </Accordion>
