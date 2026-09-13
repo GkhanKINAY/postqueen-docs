@@ -139,6 +139,32 @@ def main() -> int:
             if not snippet_path.is_file():
                 ERRORS.append(f"missing snippet {name} referenced from {rel}")
 
+    card_icon_re = re.compile(r"<Card\b[^>]*\bicon=[\"'](/[^\"']+)[\"']")
+    svg_size_re = re.compile(
+        r"""width=["'](\d+)["'][^>]*height=["'](\d+)["']|viewBox=["']0 0 (\d+) (\d+)["']"""
+    )
+    for mdx in sorted(ROOT.rglob("*.mdx")):
+        rel = mdx.relative_to(ROOT).as_posix()
+        if rel.startswith("snippets/"):
+            continue
+        for src in card_icon_re.findall(mdx.read_text()):
+            static = ROOT / src.lstrip("/")
+            if not static.is_file():
+                ERRORS.append(f"missing Card icon in {rel}: {src}")
+                continue
+            if static.suffix.lower() != ".svg":
+                continue
+            head = static.read_text(errors="replace")[:1200]
+            match = svg_size_re.search(head)
+            if not match:
+                continue
+            width = int(match.group(1) or match.group(3))
+            height = int(match.group(2) or match.group(4))
+            if width > 120 or height > 120:
+                ERRORS.append(
+                    f"banner used as Card icon in {rel}: {src} ({width}x{height})"
+                )
+
     checked_links: set[tuple[str, str]] = set()
     for mdx in sorted(ROOT.rglob("*.mdx")):
         rel = mdx.relative_to(ROOT).as_posix()
