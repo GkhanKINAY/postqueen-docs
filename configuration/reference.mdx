@@ -194,8 +194,13 @@ This switches the guard off for the whole instance, not for one provider. Only d
 
 ### `NOT_SECURED`
 
+Set `true` so login cookies work over plain HTTP (Safari, and hosts that are not treated as
+localhost). On Compose, put it in the sibling `.env`; the YAML does not set it for you.
+
 <Warning>
-Dev only. Never set in production: it disables security checks that exist for a reason.
+Dev and local HTTP only. Never set in production: it disables security checks that exist for
+a reason. Production uses HTTPS instead. See [Try her locally](/installation/quickstart-local)
+and [Domain and HTTPS](/installation/domain-and-https).
 </Warning>
 
 ### `MAIN_URL`

@@ -8,14 +8,15 @@ This is the fastest way to see PostQueen working. Everything runs on your own ma
 is exposed to the internet, and one command removes all of it when you are finished.
 
 <Warning>
-**This is not a production install.** It runs over plain HTTP with the placeholder signing key
-that ships in the file. It is perfect for looking around, and it is not something to put on a
-public address. When you are ready for that, follow
-[Deploy to a server](/installation/production).
+**This is not a production install.** It runs over plain HTTP with `NOT_SECURED=true` so the
+browser will store a login cookie. It is perfect for looking around, and it is not something
+to put on a public address. When you are ready for that, follow
+[Deploy to a server](/installation/production): drop `NOT_SECURED`, set `ENCRYPTION_KEY`, and
+put HTTPS in front.
 </Warning>
 
 <Info>
-**Before you start.** You need Docker, and about 4 GB of free memory. Docker Desktop covers
+**Before you start.** You need Docker, and about **4 GB** of free memory. Docker Desktop covers
 macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
 </Info>
 
@@ -40,24 +41,24 @@ macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
     above has the extra step for it.
   </Step>
 
-  <Step title="Get the Compose file">
+  <Step title="Clone, write `.env`, start her">
     ```bash
     git clone https://github.com/GkhanKINAY/postqueen-docker-compose
     cd postqueen-docker-compose
+    printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nNOT_SECURED=true\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env && docker compose up -d
     ```
 
     <Note>
     Do not skip the `cd`. Every command from here on runs inside that folder, because that is
-    where `docker-compose.yaml` lives. Cloning also gives you the `dynamicconfig` folder, which
-    Temporal reads on startup, so copying just the YAML out of this page would leave her
-    without it.
+    where `docker-compose.yaml` and `.env` live. Cloning also gives you the `dynamicconfig`
+    folder, which Temporal reads on startup, so copying just the YAML out of this page would
+    leave her without it.
     </Note>
-  </Step>
 
-  <Step title="Start her">
-    ```bash
-    docker compose up -d
-    ```
+    The sibling `.env` is how Compose is meant to be configured: the file loads it
+    (`env_file`) and interpolates `${VAR:-default}` into the app service.
+    `NOT_SECURED=true` is required for reliable HTTP login (Safari, and anything that is not
+    treated as localhost). Compose does not set that flag for you.
 
     <Frame>
       <img src="/images/brand/compose-up.svg" alt="docker compose up: the PostQueen stack starts and is ready on localhost 4007" />
@@ -125,6 +126,21 @@ macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
   </Step>
 </Steps>
 
+## Connect a channel from this laptop
+
+The empty calendar is as far as a purely local install goes for most Cloud networks. They
+want a public HTTPS redirect. Two pieces, in order:
+
+1. Put the provider keys in the same `.env` you just wrote (`LINKEDIN_CLIENT_ID` and
+   `LINKEDIN_CLIENT_SECRET`, and so on). Then recreate only the app container:
+
+   <Snippet file="restart-service.mdx" />
+
+2. If the network refuses `http://localhost:4007/integrations/social/...`, you need a domain
+   and HTTPS. That is the [production](/installation/production) path, bridged from here by
+   [Domain and HTTPS](/installation/domain-and-https). Per-network keys:
+   [Providers](/providers/overview).
+
 ## Common first-run problems
 
 <AccordionGroup>
@@ -132,6 +148,12 @@ macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
     Give her another minute. On a first boot she creates the database schema before the web
     interface answers. `docker compose logs -f postqueen` tells you where she is. If the log
     keeps repeating and restarting, jump to [Troubleshooting](/troubleshooting/overview).
+  </Accordion>
+
+  <Accordion title="I signed in and was bounced straight back">
+    Login cookies default to `Secure`. On plain HTTP, Safari and some non-localhost URLs
+    refuse them. Confirm `.env` contains `NOT_SECURED=true`, then recreate the app container
+    with the snippet above. Never set that flag on a server other people can reach.
   </Accordion>
 
   <Accordion title="A port is already in use">
@@ -142,7 +164,7 @@ macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
 
   <Accordion title="Containers keep restarting or get killed">
     That is almost always memory. The full stack, including Temporal and its Elasticsearch,
-    wants roughly 4 GB. In Docker Desktop, raise the memory limit under
+    wants roughly **4 GB**. In Docker Desktop, raise the memory limit under
     **Settings → Resources**.
   </Accordion>
 
@@ -160,15 +182,13 @@ macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
 |---|---|
 | `docker compose stop` | Pauses her, keeps everything |
 | `docker compose start` | Brings her back |
-| `docker compose down` | Removes the containers, keeps your data |
-| `docker compose down -v` | Removes the containers **and** the volumes |
+| Recreate the app service | Picks up `.env` changes. See [Applying a change](/installation/docker-compose#applying-a-change) |
 
-Your posts, accounts and uploads live in Docker volumes, so `down` followed by `up -d` picks up
-exactly where you left off. This table is for a machine that runs only this stack. On a shared
-host, never run a bare `docker compose down`. Recreate one service instead: see
-[Restart](/installation/docker-compose#applying-a-change).
+Changed environment variables need the app container recreated, not a whole-stack teardown:
 
-When you are finished experimenting:
+<Snippet file="restart-service.mdx" />
+
+When you are finished experimenting on a machine that runs **only** this stack:
 
 ```bash
 docker compose down -v
@@ -176,7 +196,8 @@ docker compose down -v
 
 <Warning>
 The `-v` deletes the volumes, which means the database and every uploaded file. There is no
-undo. Leave `-v` off if you might want your test data back.
+undo. Leave `-v` off if you might want your test data back. On a shared host, never run a
+bare `docker compose down`. Recreate one service instead.
 </Warning>
 
 ## Next steps

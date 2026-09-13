@@ -10,6 +10,7 @@ keywords:
   - temporal
   - redis
   - install
+  - agentic social media scheduler
 ---
 
 Docker Compose is the supported way to self-host PostQueen. One file describes her and the
@@ -21,6 +22,29 @@ change them. If you want to be walked through an install instead, use
 [Deploy to a server](/installation/production).
 
 <Snippet file="installation-pre-reqs.mdx" />
+
+## First three commands
+
+Clone the repository (it also carries the `dynamicconfig` folder Temporal mounts at startup),
+write a sibling `.env`, and start the stack:
+
+```bash
+git clone https://github.com/GkhanKINAY/postqueen-docker-compose
+cd postqueen-docker-compose
+printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nNOT_SECURED=true\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env && docker compose up -d
+```
+
+`NOT_SECURED=true` is for local HTTP login. Do not set it on a public server. Production drops
+that line, points `MAIN_URL` / `FRONTEND_URL` / `NEXT_PUBLIC_BACKEND_URL` at HTTPS, and puts a
+reverse proxy in front: [Deploy to a server](/installation/production).
+
+Open **http://localhost:4007** and register. Then add provider keys to `.env` and recreate the
+app container (see [Applying a change](#applying-a-change)).
+
+<Note>
+Clone the repository rather than copying the YAML out of this page. The file changes between
+releases, and Temporal will not start without `dynamicconfig`.
+</Note>
 
 ## What the stack contains
 
@@ -41,77 +65,47 @@ Temporal separately, they come with it.
 Only `postqueen` is published to your whole machine. Temporal's two ports are bound to
 `127.0.0.1`, so they are reachable from the server itself and not from the network.
 
-<Note>
-Clone the repository rather than copying the YAML out of this page. The repository also carries
-a `dynamicconfig` folder that Temporal mounts at startup, and the file changes between releases.
-</Note>
-
-```bash
-git clone https://github.com/GkhanKINAY/postqueen-docker-compose
-cd postqueen-docker-compose
-docker compose up -d
-```
+Plan for about **4 GB of RAM**. Temporal plus Elasticsearch will OOM a tight 2 GB box.
 
 ## Where configuration lives
 
-Everything is configured with environment variables, and they ship **inline in
-`docker-compose.yaml`**. Open the file, find the `environment:` block on the `postqueen`
-service, and edit values in place:
+Settings are environment variables on the `postqueen` service. The shipped
+[`docker-compose.yaml`](https://github.com/GkhanKINAY/postqueen-docker-compose/blob/main/docker-compose.yaml)
+does two things so a sibling `.env` reaches the container:
 
-```yaml
-services:
-  postqueen:
-    environment:
-      FRONTEND_URL: 'https://postqueen.example.com'
-      INSTAGRAM_APP_ID: '12345678901234567890'
-```
+1. **`env_file`** loads `.env` when that file exists (`required: false`, so a missing file is
+   fine). Keys that are not listed in the YAML, including `NOT_SECURED`, still inject this way.
+2. **`${VAR:-default}`** interpolates listed keys from `.env` (or `--env-file`) into
+   `environment:`. A value in `.env` is what the container gets, even for keys the YAML names.
 
-That is the default and it is all most people need. Note the YAML style: `KEY: 'value'` with a
-colon, not `KEY=value`.
-
-<Warning>
-**Dropping a `.env` file next to `docker-compose.yaml` does nothing on its own.** Compose reads
-such a file only to substitute `${VARIABLE}` placeholders inside the YAML, and this file
-contains no placeholders. The variables are never passed to the container. This catches people
-out regularly, because it is genuinely how Compose behaves elsewhere.
-</Warning>
-
-### Using a file instead
-
-If you would rather keep secrets out of the YAML, add an `env_file:` key yourself. Compose then
-does pass that file's contents to the container:
-
-```yaml
-services:
-  postqueen:
-    env_file:
-      - postqueen.env
-```
+That is the default path. Put secrets and URLs in `.env` next to the Compose file:
 
 ```env
 JWT_SECRET=your-long-random-string
+ENCRYPTION_KEY=another-long-random-string
+NOT_SECURED=true
 INSTAGRAM_APP_ID=12345678901234567890
 ```
 
-Note the syntax difference. Inside `docker-compose.yaml` it is `KEY: 'value'`. Inside an env
-file it is `KEY=value` with no quotes needed.
+Inside `.env` the syntax is `KEY=value` with no quotes needed.
 
-### Using both
+You can still edit the `environment:` block in the YAML if you prefer everything in one file.
+Note the YAML style: `KEY: 'value'` with a colon.
 
-You can, and the precedence matters:
+### Precedence
 
 <Note>
-**`environment:` wins over `env_file:`.** If the same variable appears in both, the value in
-the YAML is the one the container gets. Since the shipped file already pins many variables to
-literal values, including empty ones, a variable you set only in your env file will be ignored
-if the YAML also mentions it. Either delete the line from the YAML or set your value there.
+**A literal in `environment:` still wins over `env_file` for the same key.** The
+`${VAR:-default}` form is what lets a sibling `.env` fill that key instead of an empty or
+placeholder pin. Do not replace `${FRONTEND_URL:-http://localhost:4007}` with a hardcoded
+empty string if you want `.env` to keep working.
 </Note>
 
 ### What does not work
 
 <Warning>
 The Compose file mounts a `postqueen-config` volume at `/config`. **Nothing in the image reads
-it.** A file placed there is never opened. Use `environment:` or an `env_file:` key as above.
+it.** A file placed there is never opened. Use the sibling `.env` or the `environment:` block.
 </Warning>
 
 ## Applying a change
@@ -124,12 +118,14 @@ The full list of around 135 variables is in
 [Configuration Reference](/configuration/reference). These are the ones that matter for almost
 every install.
 
-| Variable | Shipped value | Change it to |
+| Variable | Shipped default | Change it to |
 | --- | --- | --- |
 | `JWT_SECRET` | a placeholder sentence | A long random string, from `openssl rand -hex 32`. Set once, then leave it. |
-| `MAIN_URL` | `http://localhost:4007` | Your public address |
+| `ENCRYPTION_KEY` | empty (falls back to `JWT_SECRET`) | A second long random string, set on first production setup so you can rotate JWT later without disconnecting channels. |
+| `MAIN_URL` | `http://localhost:4007` | Your public HTTPS address |
 | `FRONTEND_URL` | `http://localhost:4007` | The same public address |
 | `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:4007/api` | Your public address, keeping `/api` |
+| `NOT_SECURED` | unset | `true` for local HTTP login only. Never on a public server. |
 | `DISABLE_REGISTRATION` | `false` | `true`, once your own account exists |
 | `STORAGE_PROVIDER` | `local` | `cloudflare` if you use R2, see [Uploads](/configuration/uploads) |
 | `EMAIL_PROVIDER` | not set | `resend` or `nodemailer`, see [Email](/configuration/emails) |
@@ -160,13 +156,17 @@ commonly a trailing slash or a missing URL.
 
 ## Pinning a version
 
-The file ships with `image: ghcr.io/gkhankinay/postqueen-app:latest`. On a real install, change
-`latest` to a specific version from the
-[releases page](https://github.com/GkhanKINAY/postqueen-app/releases):
+The file ships with `image: ghcr.io/gkhankinay/postqueen-app:latest`. That tag moves. On a
+real install, pin a release from the
+[releases page](https://github.com/GkhanKINAY/postqueen-app/releases) so an upgrade happens
+when you decide, not the next time a container restarts:
 
 ```yaml
-image: ghcr.io/gkhankinay/postqueen-app:v3.0.4
+image: ghcr.io/gkhankinay/postqueen-app:v3.5.9
 ```
+
+`latest` is fine while you are looking around. Replace `v3.5.9` with whatever the releases
+page currently lists as Latest.
 
 <Warning>
 This matters more than usual here. She reconciles her database schema on **every** boot, so an
@@ -178,4 +178,3 @@ switch to migrations instead.
 ## Next Steps
 
 <Snippet file="next-steps-selfhost.mdx" />
-
