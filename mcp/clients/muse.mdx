@@ -1,0 +1,82 @@
+---
+title: Muse
+description: 'Connect Muse Code to PostQueen over streamable HTTP. The consumer Muse app does not take an MCP URL yet.'
+icon: /images/brand/icon-muse.svg
+---
+
+Two Muse products, two answers.
+
+**Muse Code** is Meta's coding agent. It already loads remote MCP servers from `~/.config/muse/settings.json` over streamable HTTP. That is the path that works today.
+
+**The Muse app** (the personal agent in the Muse app and WhatsApp) has Connectors, including custom connectors built from API details Muse walks you through. That is **not** a paste-an-MCP-URL flow. First-class MCP for the Muse app is coming soon. Do not paste the PostQueen MCP URL into Muse Settings → Connectors expecting it to work like Claude.
+
+<Info>
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+</Info>
+
+## Muse Code
+
+<Steps>
+  <Step title="Edit Muse Code settings">
+    Add this to `~/.config/muse/settings.json`. Restart Muse Code after saving.
+
+    ```json
+    {
+      "schema_version": 1,
+      "mcp_servers": {
+        "postqueen": {
+          "transport": "streamable_http",
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
+          "mode": "optional"
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Or pass the key as a header">
+    If you prefer a bare `/mcp` URL, put the key in `Authorization`:
+
+    ```json
+    {
+      "mcp_servers": {
+        "postqueen": {
+          "transport": "streamable_http",
+          "url": "https://api.postqueen.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer YOUR_API_KEY"
+          },
+          "mode": "optional"
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Confirm">
+    Ask Muse Code to list your PostQueen channels. Your account names come back when it calls `integrationList`.
+  </Step>
+</Steps>
+
+<Warning>
+Your API key grants full access to your PostQueen workspace: treat it like a password. Keep `~/.config/muse/settings.json` private. If the key leaks, regenerate it in **Settings → API Keys** and update the file.
+</Warning>
+
+## Muse app (coming soon)
+
+Settings → Connectors in the consumer Muse app can attach catalog apps (Gmail, calendar). Custom connectors there collect API information, not an MCP server URL. We will add paste-URL steps here when Meta ships that.
+
+Until then, use Muse Code above, or any other [MCP client](/mcp/clients/other-clients).
+
+## Self-hosted
+
+On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Your reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/mcp/self-hosting).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Talk to her from Muse" icon="/images/brand/icon-muse.svg" href="/agents/muse">
+    What works today in Muse Code, and what the Muse app is waiting on
+  </Card>
+  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
+    All 14 tools Muse Code discovers on connect
+  </Card>
+</CardGroup>

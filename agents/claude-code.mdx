@@ -30,7 +30,7 @@ Two routes lead to the same place. Her skill teaches Claude Code the `postqueen`
     What lands is her `SKILL.md`, registered under the name `postqueen` and declaring `Bash(postqueen:*)` as the only tool it needs. Claude Code picks it up on its own when a task looks like posting work, so it arrives already knowing the discovery flow, the flags on `posts:create` and the rule about media.
   </Step>
   <Step title="Export your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Export it in the shell you launch Claude Code from:
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Export it in the shell you launch Claude Code from:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
@@ -102,7 +102,7 @@ postqueen posts:list
 The post now sits on your calendar at [app.postqueen.ai](https://app.postqueen.ai). She runs on your terms: leave it there and she publishes it at nine tomorrow, on time, without another word from you. Want to look first? Add `-t draft` to the same command and the post lands on the calendar unscheduled, waiting until you publish it.
 
 <Tip>
-Over MCP the conversation is the same and only the plumbing changes. Claude Code calls `integrationList`, brings media in with `uploadFromUrlTool` when it has a public URL, then schedules with `integrationSchedulePostTool`. Each tool is documented in the [MCP tool reference](/mcp/tools).
+Over MCP the conversation is the same and only the plumbing changes. Claude Code calls `integrationList`, brings media in with `uploadFromUrlTool` when it has a public URL, then schedules with `schedulePostTool`. Each tool is documented in the [MCP tool reference](/mcp/tools).
 </Tip>
 
 ## FAQ

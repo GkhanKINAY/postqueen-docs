@@ -29,7 +29,7 @@ postqueen integrations:list | tail -n +2 | jq '.[].id'
 
 | Variable | Default | What it does |
 |----------|---------|--------------|
-| `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Settings > Developers > Public API**, then **Reveal**. |
+| `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Settings → API Keys**, then **Reveal**. |
 | `POSTQUEEN_API_URL` | `https://api.postqueen.ai` | API base. The CLI appends `/public/v1/...` to whatever you set. Running her yourself? Set this to your `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api`. |
 | `POSTQUEEN_AUTH_SERVER` | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only matters if you run your own; see [Authentication](/cli/authentication). |
 

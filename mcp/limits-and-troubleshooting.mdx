@@ -21,7 +21,7 @@ before you build on MCP, not after.
 | Change a scheduled post's content or time | `postSettingsTool` changes settings only, never the content or the date | The calendar at [app.postqueen.ai](https://app.postqueen.ai) |
 | Delete a post | No tool deletes posts | [`DELETE /posts/{id}`](/public-api/posts/delete), or `postqueen posts:delete <id>` |
 | Delete every post in a group | No tool | [`DELETE /posts/group/{group}`](/public-api/posts/delete-by-group) |
-| Move a post between draft and schedule | `integrationSchedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |
+| Move a post between draft and schedule | `schedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |
 | Read analytics | No tool returns metrics | [`GET /analytics/{integration}`](/public-api/analytics/platform) and [`GET /analytics/post/{postId}`](/public-api/analytics/post), or `postqueen analytics:platform <id>` |
 | See what published and what failed | No notification tool | [`GET /notifications`](/public-api/notifications/list), 100 per page, newest first |
 | Reconnect a published post so its analytics work | No tool | [`GET /posts/{id}/missing`](/public-api/posts/missing-content) then [`PUT /posts/{id}/release-id`](/public-api/posts/update-release-id) |
@@ -41,7 +41,7 @@ Three of these deserve a longer sentence.
 
 ### A draft stays a draft until you move it
 
-`integrationSchedulePostTool` accepts `draft`, `schedule` or `now` as the `type`.
+`schedulePostTool` accepts `draft`, `schedule` or `now` as the `type`.
 
 | `type` | What happens |
 | --- | --- |
@@ -141,7 +141,7 @@ that tells you which part is at fault, are on
 
 ### After you rotate your API key
 
-Regenerating the key in **Settings > Developers > Public API** takes the old one out immediately, and every client still holding it stops mid-conversation. PostQueen keys do not rotate on their own, so this only happens when you ask for it.
+Regenerating the key in **Settings → API Keys** takes the old one out immediately, and every client still holding it stops mid-conversation. PostQueen keys do not rotate on their own, so this only happens when you ask for it.
 
 <Steps>
   <Step title="Find every client that holds the key">

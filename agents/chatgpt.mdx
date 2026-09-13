@@ -19,16 +19,16 @@ There are two routes in, and they solve different problems:
 
 ## Route 1: the connector
 
-ChatGPT reaches her over MCP. You paste one URL under **Settings**, then **Connectors**, and she becomes a tool the model can call:
+ChatGPT reaches her over MCP. Turn on **Developer mode**, then add a plugin with one URL, and she becomes a tool the model can call:
 
 ```
 https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**.
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**.
 
 <Warning>
-Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
 Custom connectors sit behind ChatGPT's developer mode, which OpenAI offers on the paid web plans. The full walkthrough covers the developer mode toggle, the connector form and enabling her per chat:
@@ -102,7 +102,7 @@ You describe what you want, and she takes care of the rest:
 >
 > 2 posts scheduled: Instagram + X, Thursday 10:00 AM. Both are on your calendar if you want to tweak them first.
 
-Behind that one sentence sit two tools: `generateImageTool` produces each visual and hands back a hosted URL, then `integrationSchedulePostTool` writes the calendar entries. Bringing your own image from somewhere else? `uploadFromUrlTool` pulls it into her media library first, because attachments have to live on a PostQueen URL.
+Behind that one sentence sit two tools: `generateImageTool` produces each visual and hands back a hosted URL, then `schedulePostTool` writes the calendar entries. Bringing your own image from somewhere else? `uploadFromUrlTool` pulls it into her media library first, because attachments have to live on a PostQueen URL.
 
 ## Staying in control
 

@@ -33,10 +33,10 @@ sequenceDiagram
 
 <Steps>
   <Step title="Register Your OAuth App">
-    Go to **Settings > Developers > Apps** in your PostQueen dashboard and create an OAuth application.
+    Go to **Settings → Developers** in your PostQueen dashboard and create an OAuth application.
 
     <Note>
-    Each organization has one OAuth application. The Developers tab appears for organization admins on a plan that includes the public API.
+    Each organization has one OAuth application. Creating or rotating the client secret is an admin action on a plan that includes the public API. The API key itself lives on **Settings → API Keys**, which is a different tab.
     </Note>
 
     You will need:
@@ -179,7 +179,7 @@ sequenceDiagram
 
 ### Rotate Client Secret
 
-If your client secret is compromised, go to **Settings > Developers > Apps** and click **Rotate Secret**. This invalidates the old secret immediately, and any token exchange requests using the old secret will fail.
+If your client secret is compromised, go to **Settings → Developers** and click **Rotate Secret**. This invalidates the old secret immediately, and any token exchange requests using the old secret will fail.
 
 <Note>
 Rotating the secret does **not** invalidate existing access tokens. Only new token exchange requests require the new secret.

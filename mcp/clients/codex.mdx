@@ -7,7 +7,7 @@ icon: /images/brand/icon-codex.svg
 The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it talks to her directly, with no local bridge process. Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
 
 <Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
 </Info>
 
 ## Add via CLI
@@ -64,7 +64,7 @@ Syntax per the official [Codex MCP documentation](https://learn.chatgpt.com/docs
 </Note>
 
 <Warning>
-Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plain text file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plain text file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
 ## Self-hosted

@@ -1,0 +1,63 @@
+---
+title: Grok
+description: 'Ask Grok to schedule posts through PostQueen, on the web or from Grok Bot'
+icon: /images/brand/icon-grok.svg
+---
+
+## Working with her in Grok
+
+Grok is where a lot of drafts start. With PostQueen connected it is also where they ship: ask for two posts about the new menu and she writes the copy, generates the images and puts both on your calendar while you keep chatting.
+
+There is one connector, two surfaces:
+
+- **Grok on the web, iOS and Android.** Add PostQueen as a custom connector at [grok.com/connectors](https://grok.com/connectors).
+- **Grok Bot.** Enable that same connector under the Bot's Plugins. There is no second MCP URL.
+
+What she brings into the chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts. They do not delete a post or return analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+
+## Set up
+
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Then paste this URL as a custom connector:
+
+```
+https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+<Warning>
+Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+</Warning>
+
+The full walkthrough covers Grok Bot, Business admin provisioning, and self-hosted URLs:
+
+<Card title="Grok connector setup" icon="plug" href="/mcp/clients/grok">
+  Step by step, from grok.com/connectors to your first tool call
+</Card>
+
+Once she is on, ask Grok to list your connected channels. If it calls `integrationList` and hands back your accounts, you are connected.
+
+## 👑 A week planned from Grok
+
+> **You:** Plan five posts across next week for X and LinkedIn and schedule them for 9am each day.
+
+> **Grok:** Reading your channels and what each one accepts, then scheduling with PostQueen.
+
+> `integrationList` running...
+
+> `integrationSchema` running for x, linkedin...
+
+> `schedulePostTool` running...
+
+> 5 posts scheduled across X and LinkedIn, Monday to Friday at 9:00 AM. Every one is on your calendar if you want to change the wording.
+
+Want an image with a post? `generateImageTool` produces one. Not ready for one of them to publish? Ask for drafts, and the call carries `type` as `draft` instead of `schedule`.
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Grok setup over MCP" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok">
+    Custom connector, Grok Bot plugins, and why the URL must be public
+  </Card>
+  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
+    All 14 tools Grok gains once the connector is on
+  </Card>
+</CardGroup>

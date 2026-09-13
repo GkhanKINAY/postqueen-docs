@@ -22,7 +22,8 @@ these docs send you to a specific one.
 | **Auto Post** | RSS feeds that turn new articles into scheduled posts on their own | Your plan includes auto posting |
 | **Sets** | Saved groups of channels, so you stop reselecting the same five | Any plan above Free |
 | **Signatures** | Blocks of text appended to posts, per channel | Any plan above Free |
-| **Developers** | Your public API key, and OAuth apps you build | Your plan includes the public API, **and** you are an organization admin |
+| **API Keys** | The workspace public API key. Reveal, copy and rotate it here | The tab is visible to every member. Revealing or rotating the key is an admin action |
+| **Developers** | OAuth apps you build for other PostQueen users | Your plan includes the public API. Creating or rotating the client secret is an admin action |
 | **Approved Apps** | Third-party apps you have authorized against your account | Always |
 
 <Note>
@@ -35,15 +36,15 @@ itself as AGENCY, the tier labelled Ultimate, when no Stripe keys are set. So yo
 
 Two different reasons, and they are worth telling apart before you go looking for a bug.
 
-**Your plan does not include it.** Webhooks, Auto Post, Sets, Signatures and Developers are each
-gated on a plan feature. The tab is simply not rendered.
+**Your plan does not include it.** Webhooks, Auto Post, Sets, Signatures and Developers (OAuth)
+are each gated on a plan feature. The tab is simply not rendered.
 
-**Your role is not admin.** Teams and Developers additionally require you to be an **ADMIN** or
-**SUPERADMIN** in the organization. This one catches people out, because a plan can include the
-feature while your own account still cannot open it. Those two tabs call admin-only endpoints the
-moment they mount, so showing them to a regular member would produce an error rather than a page.
+**Your role is not admin.** Teams requires you to be an **ADMIN** or **SUPERADMIN** in the
+organization. API Keys and Developers still appear for members, but revealing the workspace key
+or creating an OAuth app is admin-only: a member sees the screen and a note to ask an admin,
+rather than an error.
 
-If a teammate can see a tab and you cannot, role is the likely difference rather than billing.
+If a teammate can reveal the API key and you cannot, role is the likely difference rather than billing.
 
 ## Deleting your account
 
@@ -78,15 +79,15 @@ https://app.postqueen.ai/settings?tab=autopost
 ```
 
 The keys are `global_settings`, `language`, `teams`, `webhooks`, `autopost`, `sets`,
-`signatures`, `api` and `approved_apps`. Note that the Developers tab is `api`, not
-`developers`. An unrecognised or unavailable key falls back to Global Settings rather than
-erroring.
+`signatures`, `api`, `developers` and `approved_apps`. **API Keys** is `api`. **Developers**
+(OAuth apps) is `developers`. An unrecognised or unavailable key falls back to Global Settings
+rather than erroring.
 
 ## Where to go for each
 
 <CardGroup cols={2}>
   <Card title="Your API key" icon="key" href="/public-api/introduction">
-    Developers tab. The key the CLI, MCP and the public API all use
+    API Keys tab. The key the CLI, MCP and the public API all use
   </Card>
   <Card title="Teams" icon="users" href="/using/teams-and-collaboration">
     Who you invite, and what each role can do

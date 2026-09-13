@@ -45,7 +45,7 @@ When you are stuck, the HTTP status is the fastest signal: `401` is authenticati
 | `Not authenticated.` | Same cause, reported by `auth:status`. | Same fix. |
 | `Credentials are expired or invalid. Please re-authenticate.` | `auth:status` got a `401` or `403` when verifying. | Rotate the key in the app and re-export it, or run `auth:login` again if you use the device flow. |
 | `API Error (401): {"msg":"No API Key found"}` | The `Authorization` header never reached the API. | Confirm the variable is exported in the shell that runs the command, not just set. |
-| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong, revoked, or has whitespace. | Re-copy it from **Settings > Developers > Public API**, then **Reveal**. |
+| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong, revoked, or has whitespace. | Re-copy it from **Settings → API Keys**, then **Reveal**. |
 | `API Error (401): {"msg":"No subscription found"}` | Billing is enabled on the instance and the organization has no active plan. | Activate a plan, or disable billing on your self-hosted instance. |
 | `Could not reach auth server at <url>` | `auth:login` could not contact the auth server. | The hosted `cli-auth.postqueen.ai` is not currently available. Use an API key, or [self-host the auth server](/cli/authentication). |
 | `Authorization expired. Please try again.` / `Authorization timed out. Please try again.` | Nobody completed the browser step before the device code expired. | Re-run `auth:login` and finish in the browser. |
