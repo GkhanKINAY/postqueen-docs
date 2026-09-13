@@ -82,7 +82,7 @@ GOOGLE_GMB_CLIENT_SECRET=""
 ```
 
     <Note>
-    These are the same credentials used for YouTube integration. If you have already configured YouTube, you do not need to add new environment variables - just ensure the GMB redirect URI is added to your existing OAuth credentials.
+    PostQueen reads `GOOGLE_GMB_CLIENT_ID` / `GOOGLE_GMB_CLIENT_SECRET` when they are set, otherwise it falls back to `YOUTUBE_CLIENT_ID` / `YOUTUBE_CLIENT_SECRET`. Sharing the YouTube web client is fine: add `{FRONTEND_URL}/integrations/social/gmb` to that client's redirect URIs and add `https://www.googleapis.com/auth/business.manage` on Data Access. You still need the Business Profile APIs enabled and Google's GMB access approval. A second OAuth client is optional, not required.
     </Note>
   </Step>
 

@@ -1,6 +1,14 @@
-Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down`
-and then `docker compose up -d`; a plain `restart` reuses the old container and its old
-environment.
+Restart PostQueen so the new variables are read. A plain `docker restart` or `docker compose restart`
+reuses the old container and its old environment.
+
+Recreate only the app service (the name in your compose file is usually `postqueen` or `backend`):
+
+```bash
+docker compose up -d --no-deps --force-recreate SERVICE
+```
+
+`docker compose down` then `up -d` also works on a machine that runs nothing else. On a shared host it
+stops every Compose service in the project. Do not use it there.
 
 Then open the web interface, click **Add Channel** in the left sidebar and pick this network. You
 are sent to its login to authorize PostQueen, and the channel appears in the sidebar once you

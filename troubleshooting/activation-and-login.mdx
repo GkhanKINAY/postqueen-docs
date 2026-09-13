@@ -66,6 +66,64 @@ Find your symptom and open it.
     issued.
   </Accordion>
 
+  <Accordion title="Continue with Google is denied, or only some accounts get in" icon="circle-exclamation">
+    Google sign-in uses the **YouTube** OAuth client (`YOUTUBE_CLIENT_ID` / `YOUTUBE_CLIENT_SECRET`).
+    There is no separate Google-login app. If that Google address already has a password or
+    email-code account, **Continue with Google** signs into that workspace instead of creating
+    another organization.
+
+    If Google shows **access denied**, **403**, or that the app is not verified:
+
+    - The OAuth app is still in **Testing**. Only Google accounts listed as test users can sign in
+      or connect YouTube. Add the person under Audience → Test users, or publish the app
+      (Audience → Publish app). Publishing is allowed before YouTube verification.
+    - After publish, **Continue with Google** (email/profile only) works for everyone. Connecting
+      YouTube still uses sensitive scopes: until Data Access verification finishes, Google shows
+      the unverified-app screen and keeps a 100-user cap on those scopes. That is not a reason to
+      stay in Testing if you want public login.
+    - The redirect URI must be exactly `{FRONTEND_URL}/integrations/social/youtube` with no
+      trailing slash, on **Authorized redirect URIs**. Login and YouTube connect share that path.
+
+    The walkthrough is [YouTube setup](/installation/providers/youtube).
+  </Accordion>
+
+  <Accordion title="Google and email created two accounts" icon="link">
+    One verified inbox is one account. If you registered with email (password or a
+    sign-in code) and later tap **Continue with Google** at the same address, you
+    land in that existing workspace. Google does not open a second organization.
+
+    The same is true the other way: a Google-only account signing in with an email
+    code uses that Google user. Registering a password at an address Google already
+    owns is refused as **Email already exists**.
+
+    Older builds looked up Google only by Google user id, so the same address could
+    exist twice (`LOCAL` and `GOOGLE`). Upgrade, then **Continue with Google** once
+    more so the Google id is stored on the email user. Password and OTP keep working.
+  </Accordion>
+
+  <Accordion title="Continue with Google reaches consent, then the page spins" icon="spinner">
+    Google accepted the client id. PostQueen then exchanges the code using `YOUTUBE_CLIENT_SECRET`.
+    If the backend log is `GaxiosError: invalid_client` against `https://oauth2.googleapis.com/token`,
+    the secret on disk does not match the client.
+
+    Copying the secret from anywhere except the create / **Add secret** dialog is how this happens.
+    Google will not show the full value again, only the last four characters.
+
+    <Steps>
+      <Step title="Add a new secret on the same web client">
+        Google Auth Platform → Clients → your web client → **Add secret**. Do not create a second
+        OAuth client.
+      </Step>
+      <Step title="Put it in env and recreate the container">
+        A plain restart keeps the old secret. Recreate the app service; see
+        [YouTube setup](/installation/providers/youtube).
+      </Step>
+      <Step title="Disable the old secret once login works">
+        Leave both enabled until the new one is confirmed.
+      </Step>
+    </Steps>
+  </Accordion>
+
   <Accordion title="Self-host: Origin not allowed" icon="ban">
     The backend builds its CORS allowlist from `FRONTEND_URL`, plus `MAIN_URL` if set. Reach her on
     a hostname or port outside that list and the call is rejected.
