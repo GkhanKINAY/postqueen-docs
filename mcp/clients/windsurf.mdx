@@ -1,0 +1,74 @@
+---
+title: Windsurf
+description: 'Connect Windsurf Cascade to PostQueen over MCP'
+icon: /images/brand/icon-windsurf.svg
+---
+
+Windsurf Cascade reads MCP servers from `~/.codeium/windsurf/mcp_config.json`. Remote HTTP uses **`serverUrl`** (`url` also works). That is not Cursor's `mcp.json`.
+
+This page is Cascade. The newer **Devin Local** agent (the default in new Windsurf tabs) configures MCP in Devin CLI files instead of `mcp_config.json`.
+
+<Info>
+You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+</Info>
+
+## Option A: Cascade UI
+
+<Steps>
+  <Step title="Open MCP settings">
+    In the Cascade panel, click **MCPs**, or open **Devin Settings → Cascade → MCP Servers**.
+  </Step>
+  <Step title="Add PostQueen">
+    PostQueen is not in the Windsurf marketplace. Edit the raw `mcp_config.json` and add the block below.
+  </Step>
+</Steps>
+
+## Option B: mcp_config.json
+
+<Tabs>
+  <Tab title="API key in URL">
+    ```json ~/.codeium/windsurf/mcp_config.json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "serverUrl": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Bearer token">
+    ```json ~/.codeium/windsurf/mcp_config.json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "serverUrl": "https://api.postqueen.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer ${env:POSTQUEEN_API_KEY}"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+Field name per [Windsurf Cascade MCP](https://docs.windsurf.com/windsurf/cascade/mcp): remote HTTP needs `serverUrl` or `url`. `${env:VAR_NAME}` interpolation works in `serverUrl`, `url`, and `headers`.
+</Note>
+
+<Warning>
+Your API key can post to every account you have connected. Keep `mcp_config.json` off shared screens. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+</Warning>
+
+## Self-hosted
+
+Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY` tail. Most self-hosted setups serve the backend under `/api`. The reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/mcp/self-hosting).
+
+## Verify
+
+In a Cascade chat, ask:
+
+> "List my connected social media accounts"
+
+Your channel names come back when Cascade calls `integrationList`. Toggle the `postqueen` tools on the MCP settings page if they stay off. Teams can allowlist servers by the key name in `mcp_config.json`; a missing allowlist entry looks like a broken URL.

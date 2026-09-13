@@ -1,0 +1,65 @@
+---
+title: Grok Bot
+description: 'Add PostQueen as a remote MCP server in Grok Bot chat. This is not grok.com/connectors.'
+icon: /images/brand/icon-grok.svg
+---
+
+Grok Bot is the cloud agent. It is not Grok chat at grok.com, it is not [Grok Build](/mcp/clients/grok-build), and it does not read connectors you added at [grok.com/connectors](https://grok.com/connectors). Cursor staff document adding a custom server **in the Bot chat**. PostQueen is not a Grok Bot marketplace plugin.
+
+The MCP URL is the same one Grok chat uses. The product and the setup are different.
+
+<Info>
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+</Info>
+
+<Warning>
+Your API key travels inside the connector URL, so the URL itself is a secret. Anyone who has it can post from your accounts. Do not screenshot the Bot chat while the URL is visible. If the key leaks, regenerate it in **Settings → API Keys** and add the new URL.
+</Warning>
+
+## Setup
+
+<Steps>
+  <Step title="Open Grok Bot">
+    Use Grok Bot, not grok.com and not Cursor IDE `mcp.json`. The Bot runs on a cloud computer. A server that only listens on localhost will not connect.
+  </Step>
+  <Step title="Ask it to add the MCP server">
+    In the Bot chat, send:
+
+    ```
+    Add this MCP server: https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Confirm the URL when the Bot asks. New tools show up from the next message.
+  </Step>
+  <Step title="Confirm">
+    Ask it to list your connected social media accounts. Your channel names come back when it calls `integrationList`.
+  </Step>
+</Steps>
+
+<Warning>
+Grok Bot reaches PostQueen from the cloud, not from your machine, so the URL has to be reachable over the public internet. `api.postqueen.ai` is. A self-hosted instance behind a VPN or on your LAN will not connect this way. Cursor IDE `mcp.json` does not appear in Grok Bot.
+</Warning>
+
+<Note>
+Teams inherit Cursor MCP allowlists. If a member sees a server disabled by a team admin, that is Cursor team policy, not a second PostQueen URL.
+</Note>
+
+For Grok on the web, iOS and Android, use the [Grok chat connector](/mcp/clients/grok) instead.
+
+## Self-hosted
+
+Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY` tail. Most self-hosted setups serve the backend under `/api`, so the path sits at `/api/mcp`. The reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/mcp/self-hosting). The Bot still needs that URL on the public internet.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Talk to her in Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
+    What to ask once the Bot has the server
+  </Card>
+  <Card title="Grok Build" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok-build">
+    Terminal agent. grok mcp add, not the Bot chat.
+  </Card>
+  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
+    All 14 tools, with every parameter
+  </Card>
+</CardGroup>
