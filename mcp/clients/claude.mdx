@@ -4,10 +4,14 @@ description: 'Connect claude.ai, Claude Desktop and the Claude mobile apps to Po
 icon: /images/brand/icon-claude.svg
 ---
 
+This is Anthropic's **chat** product: claude.ai, Claude Desktop, iOS and Android.
 One connector covers all three. Custom connectors belong to your Claude account rather than to a
 device, so adding PostQueen once on claude.ai or in Claude Desktop puts her in the web app, the
 desktop app and the iOS and Android apps at the same time. This page used to be two, one headed
 Claude Desktop and one headed Claude Web and Mobile, describing the same setup twice.
+
+Claude Code, the terminal and IDE agent, is a different product. Same split as ChatGPT vs Codex.
+Its install is [`claude mcp add`](/mcp/clients/claude-code), not Customize → Connectors.
 
 There are two routes: a **custom connector** added in settings, or the **`mcp-remote` bridge** in `claude_desktop_config.json`.
 
@@ -197,5 +201,8 @@ Claude calls the `integrationList` tool and returns your connected accounts. She
   </Card>
   <Card title="Limits and troubleshooting" icon="gauge" href="/mcp/limits-and-troubleshooting">
     What MCP cannot reach, and what a bad key looks like
+  </Card>
+  <Card title="Claude Code" icon="/images/brand/icon-claude-code.svg" href="/mcp/clients/claude-code">
+    Terminal and IDE agent. Different product: `claude mcp add`, not this connector
   </Card>
 </CardGroup>
