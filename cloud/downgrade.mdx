@@ -1,29 +1,14 @@
 ---
 title: Downgrade
 sidebarTitle: Downgrade
-description: 'Extra channels are switched off, not deleted. Scheduled posts stay. Disabled channels do not publish'
+description: 'Extra channels switch off, not deleted. Scheduled posts stay.'
 icon: 'arrow-down'
-tag: Cloud
 ---
 
 Moving to a smaller plan does not delete channels or scheduled posts.
 
-## Channels
+If you have more live channels than the new cap, the newest extras are **disabled**. They keep their history. They will not publish until you turn them back on. Upgrade, or free a slot with **Disable Channel** on something else, and they come back, oldest first.
 
-If you have more live channels than the new cap, the newest extras are **disabled** (`autoDisabledAt` is set). They keep their history. They will not publish until you turn them back on.
+Dropping to a plan without team members disables every member below superadmin. It does not remove them. Moving to FREE deactivates Auto Post; turn it back on after you subscribe again.
 
-The app tells you how many were switched off, and that you can upgrade or remove another channel to turn one back on.
-
-Upgrade, or free a slot with **Disable Channel** on something else, and auto-disabled channels come back, oldest disabled first.
-
-## Team
-
-Dropping to a plan without team members **disables** every member below superadmin. It does not remove them.
-
-## Auto Post
-
-Moving to FREE deactivates Auto Post crons. You turn them back on after you subscribe again.
-
-## Posts
-
-There is no code path that deletes scheduled posts on downgrade. Posts on a disabled channel stay on the calendar and will not go out until that channel is enabled.
+Posts on a disabled channel stay on the calendar and will not go out until that channel is enabled.
