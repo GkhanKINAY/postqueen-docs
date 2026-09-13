@@ -12,7 +12,7 @@ Sunday evening, phone in hand, and next week has nothing on the calendar yet. Yo
   <img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
 </Frame>
 
-Two surfaces, one connector. On claude.ai and Claude Desktop, open **Customize → Connectors** (Desktop may still say **Settings → Connectors**), then **+ → Add custom connector**. Connectors are tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
+Two surfaces, one **custom** connector. PostQueen is not in Anthropic's Connectors Directory, so Browse will not find her. On claude.ai and Claude Desktop, open **Customize → Connectors** (Desktop may still say **Settings → Connectors**), then **+ → Add custom connector**. Connectors are tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
 
 What she brings into the chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts, with image and video generation in the same set. They can also read back what is already scheduled and change a scheduled post's settings. They do not delete a post or move it to a new time, and none of them returns analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
 
@@ -21,6 +21,10 @@ This is the chat surface. Claude Code, Anthropic's terminal tool, connects a dif
 </Note>
 
 ## Set up
+
+<Warning>
+PostQueen is not listed in Anthropic's Connectors Directory. Searching **Browse connectors** on [claude.com/connectors](https://claude.com/connectors) will not find her. Add a **custom connector** with the MCP URL below.
+</Warning>
 
 On [claude.ai](https://claude.ai), open **Customize → Connectors**, click **+**, then **Add custom connector**, and paste:
 
