@@ -1,5 +1,6 @@
 ---
 title: Limits and Troubleshooting
+sidebarTitle: Limits
 description: 'What the 14 MCP tools cannot reach, and what to do when the connection misbehaves'
 icon: 'gauge'
 ---
@@ -21,7 +22,7 @@ before you build on MCP, not after.
 | Change a scheduled post's content or time | `postSettingsTool` changes settings only, never the content or the date | The calendar at [app.postqueen.ai](https://app.postqueen.ai) |
 | Delete a post | No tool deletes posts | [`DELETE /posts/{id}`](/public-api/posts/delete), or `postqueen posts:delete <id>` |
 | Delete every post in a group | No tool | [`DELETE /posts/group/{group}`](/public-api/posts/delete-by-group) |
-| Move a post between draft and schedule | `schedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |
+| Move a post between draft and schedule | `integrationSchedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |
 | Read analytics | No tool returns metrics | [`GET /analytics/{integration}`](/public-api/analytics/platform) and [`GET /analytics/post/{postId}`](/public-api/analytics/post), or `postqueen analytics:platform <id>` |
 | See what published and what failed | No notification tool | [`GET /notifications`](/public-api/notifications/list), 100 per page, newest first |
 | Reconnect a published post so its analytics work | No tool | [`GET /posts/{id}/missing`](/public-api/posts/missing-content) then [`PUT /posts/{id}/release-id`](/public-api/posts/update-release-id) |
@@ -41,7 +42,7 @@ Three of these deserve a longer sentence.
 
 ### A draft stays a draft until you move it
 
-`schedulePostTool` accepts `draft`, `schedule` or `now` as the `type`.
+`integrationSchedulePostTool` accepts `draft`, `schedule` or `now` as the `type`.
 
 | `type` | What happens |
 | --- | --- |
@@ -178,9 +179,10 @@ Poke at the server and you will find more than the two endpoints above. They are
 | `/sse/:apiKey` paired with `/message/:apiKey` | The legacy Server-Sent Events transport that predates streamable HTTP. API keys only, and a bad one returns the same `400 Invalid API Key` |
 
 <Warning>
-Build on `/mcp` or `/mcp/YOUR_API_KEY`. The rest carry no compatibility promise, no documentation
-and no support, and a client that silently falls back to the legacy SSE pair is a client to
-reconfigure rather than a setup to keep.
+Prefer `/mcp` or `/mcp/YOUR_API_KEY` over streamable HTTP. `/mcp-oauth*` is for directory OAuth
+clients and exposes a shorter tool set (see [Introduction](/mcp/introduction#how-many-tools-you-actually-get)).
+The SSE pair is still mounted and still serves the full 14-tool set, but it is the older
+transport: reconfigure a client that falls back to it unless that client cannot speak streamable HTTP.
 </Warning>
 
 ## Next steps

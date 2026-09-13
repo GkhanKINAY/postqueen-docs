@@ -1,0 +1,27 @@
+---
+title: Subscription
+sidebarTitle: Subscription
+description: 'Change plan on /billing, open the Stripe portal, cancel at period end'
+icon: 'file-invoice'
+tag: Cloud
+---
+
+**Billing** (`/billing`) is where admins change plan. It is on the left rail and in the user menu as **Billing & invoices**. It is not a Settings tab.
+
+## Change plan
+
+Pick a tier on that page. Stripe prorates. The same page starts checkout for a new subscription.
+
+## Card and invoices
+
+**Open billing portal** / **Payment method & invoices** creates a Stripe Customer Portal session and returns you to `/billing`. Portal options beyond that are Stripe Dashboard configuration, not extra PostQueen screens.
+
+## Cancel
+
+**Cancel** calls `POST /billing/cancel`. A normal paid subscription sets `cancel_at_period_end`, so you keep access until the period ends. Calling cancel again while that is scheduled **reactivates** the subscription.
+
+A founding deal that is still in its trail can revoke immediately to FREE instead of waiting for the period end.
+
+## Who can press the buttons
+
+Billing actions need an organisation admin. Everyone else sees Billing as someone else's job.

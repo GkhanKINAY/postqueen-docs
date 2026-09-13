@@ -164,7 +164,9 @@ macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
 | `docker compose down -v` | Removes the containers **and** the volumes |
 
 Your posts, accounts and uploads live in Docker volumes, so `down` followed by `up -d` picks up
-exactly where you left off.
+exactly where you left off. This table is for a machine that runs only this stack. On a shared
+host, never run a bare `docker compose down`. Recreate one service instead: see
+[Restart](/installation/docker-compose#applying-a-change).
 
 When you are finished experimenting:
 

@@ -42,9 +42,9 @@ TWITCH_CLIENT_SECRET=""
   </Step>
 
   <Step title="Add the Twitch channel">
-    Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+    Restart PostQueen so the new variables are read.
 
-    In the web interface click **Add Channel** and pick **Twitch**, then authorize on the Twitch side.
+    <Snippet file="restart-and-add-channel.mdx" />
 
     Add Channel does not check whether the two variables are set, so a missing key shows up as a broken authorization page on the Twitch side rather than a helpful message in PostQueen.
   </Step>

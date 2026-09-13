@@ -1,0 +1,40 @@
+---
+title: Concepts
+sidebarTitle: Concepts
+description: 'The names she uses: organisation, channel, customer, post group, Social Sets, tags'
+icon: 'book'
+---
+
+A few words in PostQueen mean something slightly different from everyday English. This page is the glossary. Where each of them lives on screen: [Where things live](/where-things-live).
+
+## Organisation
+
+The workspace. Billing, channels, tags, Social Sets and team members all belong to the organisation, not to one login. Invite someone and they share that workspace. The API and MCP call it an organization too.
+
+## Channel
+
+One connected social account she can post to. The code and the Public API call it an **integration**. **Add Channel** is how you create one. A channel that needs a reconnect still sits in the sidebar with a red `!`; it does not count against your plan's channel cap until it is working again.
+
+## Customer (group)
+
+A named bucket of channels, used when one workspace posts for more than one brand or client. The API and MCP call this a **group**. Filter the calendar by customer, and pass the group id to `integrationList` or `posts:list`.
+
+## Post group
+
+When one compose saves the same idea to several channels, those posts share a **group** id. Deleting by group (`DELETE /posts/group/{group}`, or the calendar delete that takes the whole thread) is how you remove every copy at once.
+
+## Social Sets
+
+The app label is **Social Sets**. Older docs said **Sets**. A Social Set is a saved composer: channels, per-channel settings, and the content that was in the editor. It lives at **Settings → Social Sets** (`/settings?tab=sets`) and in the more menu. Tags are not stored in a set.
+
+## Tags versus hashtags
+
+**Tags** are coloured labels on the calendar. They are not `#photography`. Social hashtags are just text you type in the post. Full split: [Tags and hashtags](/using/tags-and-hashtags).
+
+## Draft, scheduled, published, failed
+
+A **draft** is a post with a date that has not been handed to the scheduler. **Scheduled** (queued) goes out at that minute without asking again. There is no approver. **Published** already went out. **Failed** wears a red outline on the calendar.
+
+## Temporal, not a Redis queue
+
+Scheduling is [Temporal](/howitworks#temporal). Redis is cache and rate limiting. Self-hosting still requires Temporal; there is no optional queue mode.

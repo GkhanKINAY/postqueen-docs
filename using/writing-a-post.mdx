@@ -31,6 +31,12 @@ A second row shows up underneath, holding one item per selected channel and one 
 When your channels belong to more than one customer, a person icon appears at the end of the avatar row. Pick a customer from it and she selects every channel that customer owns, and drops the rest. With a single customer the icon never appears at all.
 </Accordion>
 
+## Mentions and editor modes
+
+Once a channel is in scope, type `@` and two or more characters. She asks that channel for mention suggestions and inserts a mention chip (`@label`) the platform understands.
+
+The editor itself follows the channel: **normal** (most networks), **markdown** (Dev.to, Discord, Hashnode, Medium, Whop) or **HTML** (X, Telegram, WordPress, Listmonk). No shipped connector uses an empty editor.
+
 ## One text, or one per channel
 
 The globe is where you land, and everything you type there goes out to every channel you picked. Splitting one channel off takes two clicks, and leaves two markers behind.
@@ -53,19 +59,7 @@ The globe is where you land, and everything you type there goes out to every cha
 
 ### The character badge
 
-At the end of the attachments row there is a small badge, and it counts while you type.
-
-In global mode the number on the right is the smallest limit you have not already passed. Write past a 280 character channel while a 3000 character one is also selected and the badge rolls over from `x/280` to `x/3000`.
-
-<Tip>
-Hover the badge for the breakdown: one line per channel, each with its own count and limit. Channels you split off read **Internal Edit** instead, because their limit now belongs to their own text.
-</Tip>
-
-The color is the part that tracks every channel. The badge turns red the moment any channel still following global is over its own limit, and it also turns red when the post has neither a character nor an image.
-
-<Warning>
-Red means links too. When a selected channel strips links out of posts and your text contains one, the badge names names: *Links will be removed from: ...*
-</Warning>
+Limits, the red link-strip warning, the short-link prompt and what she validates before save: [Links and validation](/using/composer/links-and-validation).
 
 ## What the preview shows
 
@@ -124,11 +118,7 @@ While an upload or a generation is running, the buttons at the bottom of the com
 
 ## Tags
 
-Bottom left of the composer bar, next to **Repeat Post Every...**. Tags are colored labels you attach to a post: pick them from the list, or press **Add New Tag** and give it a name and a color.
-
-<Tip>
-They are not decoration on the calendar. The first tag's color becomes the strip across the top of the post card, and the tag names are written into it, so a month of posts sorts itself by eye.
-</Tip>
+Bottom left of the composer bar, next to **Repeat Post Every...**. Tags are colored labels, not `#hashtags`. [Tags and hashtags](/using/tags-and-hashtags).
 
 ## Three ways out
 
@@ -168,16 +158,7 @@ There is no approver in PostQueen, no approve step and no reject button. Schedul
 
 ### What she checks before saving
 
-<Note>
-Validation runs on her server, not in your browser, so it cannot be talked around from the page.
-</Note>
-
-| What you press | What she checks |
-|---|---|
-| **Save as Draft** | At least one character or one image |
-| **Add to calendar** or **Post Now** | That, plus each channel's settings, each channel's length limit and each channel's own rules |
-
-The first failure stops the save, warns you with the channel named, and drops you on that channel so you can see what it wants.
+[Links and validation](/using/composer/links-and-validation) has the draft versus schedule checks.
 
 ## Repeat schedules
 
@@ -200,34 +181,14 @@ Also in the bottom bar: **Repeat Post Every...**. Pick an interval and the post 
 One post is stored, with the interval written on it. Your calendar draws every future occurrence from the first date onward, so you can see the rhythm before it happens. After each publish, her workflow sleeps the interval and publishes again.
 </Accordion>
 
-## The short link prompt
-
-Put a URL in your post and, on the way out, she asks once: *Do you want to shortlink the URLs? it will let you get statistics over clicks*. Say yes and the links go out shortened, with click statistics behind them.
-
-Whether she asks at all is a setting.
-
-| Shortlink preference | What happens |
-|---|---|
-| Ask every time | The prompt appears whenever your text carries a link. This is the default |
-| Always shortlink | Links are shortened without asking |
-| Never shortlink | No prompt and no shortening |
-
-<Note>
-Two things skip the question quietly. Channels that strip links out of posts are left out of the check, because a shortlink they delete helps nobody. And an install with no short link provider set up never asks in the first place.
-</Note>
-
-<Warning>
-Closing the composer asks *Are you sure you want to close this modal? (all data will be lost)*, and that is literal. Nothing is written down until you press **Save as Draft**, **Add to calendar** or **Post Now**.
-</Warning>
-
 ## Related
 
 <CardGroup cols={3}>
   <Card title="Per-platform settings" icon="sliders" href="/providers/overview">
     What each channel asks for inside that purple bar, one page per platform
   </Card>
-  <Card title="The same post from your terminal" icon="terminal" href="/cli/managing-posts">
-    Channels, threads and drafts, in one command
+  <Card title="Links and validation" icon="link" href="/using/composer/links-and-validation">
+    Character badge, short links, and what she checks before save
   </Card>
   <Card title="Ask her instead of typing it" icon="comments" href="/agents/overview">
     Hand the writing to a chat agent and let her fill the calendar

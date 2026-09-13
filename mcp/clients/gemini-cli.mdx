@@ -64,7 +64,7 @@ You can also edit `~/.gemini/settings.json` directly. Gemini CLI uses the `httpU
 </Tabs>
 
 <Note>
-Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers, and PostQueen does not use SSE). If an older `gemini mcp add` wrote `"url"` plus a type field, change that key to `httpUrl` or the connection fails. A project-level `.gemini/settings.json` uses the same format.
+Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers). PostQueen's preferred transport is streamable HTTP; a legacy SSE pair still exists at `/sse/:id` and `/message/:id`, but Gemini CLI should use `httpUrl`. If an older `gemini mcp add` wrote `"url"` plus a type field, change that key to `httpUrl` or the connection fails. A project-level `.gemini/settings.json` uses the same format.
 </Note>
 
 <Warning>

@@ -13,14 +13,14 @@ Read this before you build a pipeline on the CLI, not halfway through.
 
 ## What has no command
 
-The CLI reaches thirteen of the API's twenty-two endpoints. Here is everything it does not, and
+The CLI reaches fourteen of the API's twenty-two endpoints. Here is everything it does not, and
 where each one lives.
 
 | What you want | In the CLI | Where it lives instead |
 |---|---|---|
 | Connect a new channel | No command | [`GET /social/{integration}`](/public-api/integrations/connect) returns the OAuth URL, or use **Add Channel** in the app |
 | Remove a channel | No command | [`DELETE /integrations/{id}`](/public-api/integrations/delete), or the app |
-| Confirm your key still reaches her | `auth:status` reads local credentials only and never calls the server | [`GET /is-connected`](/public-api/integrations/is-connected), or just run `postqueen integrations:list` |
+| Confirm your key still reaches her | `auth:status` prints local credentials, then calls `GET /public/v1/integrations` and reports the channel count | [`GET /is-connected`](/public-api/integrations/is-connected), or `postqueen integrations:list` |
 | Find the next open slot on a channel | No command | [`GET /find-slot/{id}`](/public-api/integrations/find-slot) |
 | See what published and what failed | No command | [`GET /notifications`](/public-api/notifications/list), 100 per page, newest first |
 | Delete every post in a group | `posts:delete` takes one id at a time | [`DELETE /posts/group/{group}`](/public-api/posts/delete-by-group) |
@@ -36,11 +36,12 @@ Connecting means an OAuth round trip: the network shows a consent screen to a hu
 redirects back. `GET /social/{integration}` hands you the URL to send someone to, but somebody
 still has to click it. There is no headless path, and that is the network's rule rather than ours.
 
-### `auth:status` is not a health check
+### `auth:status` verifies the key
 
 It prints which credentials the CLI found, which method it will use and which API URL it will
-call. It makes no request, so a revoked key still looks fine. If you want a real check in a
-script, `postqueen integrations:list` fails loudly when the key is bad.
+call, then `GET /public/v1/integrations` to prove the key still works. A revoked key fails that
+call. The same integrations list is what `postqueen integrations:list` prints if you want the
+channels themselves.
 
 ### Analytics reach further here than anywhere else
 
@@ -62,10 +63,10 @@ Not a CLI gap, but worth knowing before you plan around it:
 
 <CardGroup cols={2}>
   <Card title="Public API" icon="code" href="/public-api/introduction">
-    Every endpoint, including the nine with no command
+    Every endpoint, including the eight with no command
   </Card>
   <Card title="Command reference" icon="terminal" href="/cli/command-reference">
-    The sixteen commands that do exist, with their flags
+    The seventeen commands that do exist, with their flags
   </Card>
   <Card title="MCP limits" icon="plug" href="/mcp/limits-and-troubleshooting">
     The same question answered for the MCP surface

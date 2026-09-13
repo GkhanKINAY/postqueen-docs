@@ -1,0 +1,59 @@
+---
+title: Links and validation
+sidebarTitle: Links
+description: 'Character badge, channels that strip links, short-link prompt, and what she checks before save'
+icon: 'link'
+---
+
+Extracted from the composer hub. Layout, channels and the three ways out: [Writing a post](/using/writing-a-post).
+
+## The character badge
+
+At the end of the attachments row a small badge counts while you type.
+
+In global mode the number on the right is the smallest limit you have not already passed. Write past a 280 character channel while a 3000 character one is also selected and the badge rolls over from `x/280` to `x/3000`.
+
+<Tip>
+Hover the badge for the breakdown: one line per channel, each with its own count and limit. Channels you split off read **Internal Edit** instead, because their limit now belongs to their own text.
+</Tip>
+
+The badge turns red the moment any channel still following global is over its own limit, and it also turns red when the post has neither a character nor an image.
+
+<Warning>
+Red means links too. When a selected channel strips links out of posts and your text contains one, the badge names names: *Links will be removed from: ...*
+</Warning>
+
+Per-network limits: [Providers overview](/providers/overview).
+
+## The short link prompt
+
+Put a URL in your post and, on the way out, she asks once: *Do you want to shortlink the URLs? it will let you get statistics over clicks*. Say yes and the links go out shortened, with click statistics behind them.
+
+Whether she asks at all is a setting on **Settings → Global Settings**.
+
+| Shortlink preference | What happens |
+|---|---|
+| Ask every time | The prompt appears whenever your text carries a link. This is the default |
+| Always shortlink | Links are shortened without asking |
+| Never shortlink | No prompt and no shortening |
+
+<Note>
+Two things skip the question quietly. Channels that strip links out of posts are left out of the check, because a shortlink they delete helps nobody. And an install with no short link provider set up never asks in the first place. Cloud has a provider. Self-host: [Short links](/configuration/short-links).
+</Note>
+
+## What she checks before saving
+
+<Note>
+Validation runs on her server, not in your browser, so it cannot be talked around from the page.
+</Note>
+
+| What you press | What she checks |
+|---|---|
+| **Save as Draft** | At least one character or one image |
+| **Add to calendar** or **Post Now** | That, plus each channel's settings, each channel's length limit and each channel's own rules |
+
+The first failure stops the save, warns you with the channel named, and drops you on that channel so you can see what it wants.
+
+<Warning>
+Closing the composer asks *Are you sure you want to close this modal? (all data will be lost)*, and that is literal. Nothing is written down until you press **Save as Draft**, **Add to calendar** or **Post Now**.
+</Warning>

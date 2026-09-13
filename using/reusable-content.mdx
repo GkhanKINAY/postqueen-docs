@@ -6,15 +6,15 @@ icon: 'rotate'
 
 Thursday morning. The same five channels, ticked one by one. The same closing line, typed for the four hundredth time. None of that needs your hands again.
 
-PostQueen keeps three small pieces of furniture for this. A **set** remembers who you post to and what you had written. A **signature** remembers how you sign off. A **tag** paints the calendar so a whole month reads at a glance.
+PostQueen keeps three small pieces of furniture for this. A **Social Set** remembers who you post to and what you had written. A **signature** remembers how you sign off. A **tag** paints the calendar so a whole month reads at a glance.
 
-## Sets
+## Social Sets
 
-A set is a saved composer. It holds the channels you ticked, the settings you chose on each one, and the content that was in the editor when you pressed save.
+A Social Set is a saved composer. It holds the channels you ticked, the settings you chose on each one, and the content that was in the editor when you pressed save. The more menu and the Settings tab both say **Social Sets**.
 
 ### Save one
 
-Open **Settings** and choose the **Sets** tab. The tab is deep-linkable, so `/settings?tab=sets` takes you straight there.
+Open **Settings** and choose the **Social Sets** tab. The tab is deep-linkable, so `/settings?tab=sets` takes you straight there.
 
 <Steps>
   <Step title="Press Add a set">
@@ -28,7 +28,7 @@ Open **Settings** and choose the **Sets** tab. The tab is deep-linkable, so `/se
   </Step>
 </Steps>
 
-The tab heading counts them for you, as in **Sets (3)**, and the newest sits at the top. **Edit** reopens the composer with everything loaded and the old name waiting in the name field, so saving over it updates that set in place instead of making a second one. **Delete** asks first, by name.
+The tab heading counts them for you, as in **Social Sets (3)**, and the newest sits at the top. **Edit** reopens the composer with everything loaded and the old name waiting in the name field, so saving over it updates that set in place instead of making a second one. **Delete** asks first, by name.
 
 ### Use one
 
@@ -98,7 +98,7 @@ A few edges worth knowing. The **×** only appears on tags you have not selected
 Tags survive an edit: reopen a tagged post and the picker comes back with the same rows checked.
 
 <Note>
-Tags travel over the API too. The create body carries a top-level `tags` array of `{ "value": "Launch", "label": "Launch" }` objects, and she matches the `label` against tags that already exist in your organization. A name she does not recognize is skipped rather than created, so make the tag in the app first. Sets and signatures stay inside the app.
+Tags travel over the API too. The create body carries a top-level `tags` array of `{ "value": "Launch", "label": "Launch" }` objects, and she matches the `label` against tags that already exist in your organization. A name she does not recognize is skipped rather than created, so make the tag in the app first. A soft-deleted tag can still attach by `label` over the API. Rename is `PUT /posts/tags/:id`; the picker has no rename. Full split: [Tags and hashtags](/using/tags-and-hashtags).
 </Note>
 
 ## Which plan sees what
@@ -107,7 +107,7 @@ All three belong to the organization rather than to you, so a teammate opening t
 
 | Feature | Where it lives | On the free plan |
 |---|---|---|
-| Sets | Settings, **Sets** tab | The tab is not listed |
+| Social Sets | Settings, **Social Sets** tab | The tab is not listed |
 | Signatures | Settings, **Signatures** tab | The tab is not listed |
 | Tags | The composer, bottom left | Always there |
 

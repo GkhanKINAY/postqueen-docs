@@ -2,6 +2,15 @@
 title: Introduction
 description: 'Connect AI agents to PostQueen using the Model Context Protocol (MCP)'
 icon: 'circle-info'
+tag: MCP
+keywords:
+  - postqueen
+  - mcp
+  - model context protocol
+  - claude
+  - cursor
+  - integrationSchedulePostTool
+  - ask_postqueen
 ---
 
 MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they can list your integrations, schedule posts, and generate images and videos through a standardized tool-calling interface. Connect Claude, Cursor or any MCP-compatible client to your PostQueen account and ask her to run your social media in plain language.
@@ -18,7 +27,7 @@ pasting that URL into your client, and for most of them it is a single command.
 
 ## How it works
 
-Point a client at one URL and your agent gets **14 tools** it can call. It reads their schemas, then calls them on your behalf.
+Point a client at `/mcp` (or `/mcp/:apiKey`) and your agent gets **14 tools** it can call. Other MCP paths expose a shorter set. It reads their schemas, then calls them on your behalf.
 
 ```mermaid
 sequenceDiagram
@@ -42,7 +51,7 @@ sequenceDiagram
 | `groupList` | List all groups (customers) for your organization |
 | `integrationSchema` | Get platform-specific posting rules and settings schema |
 | `triggerTool` | Execute platform-specific helpers (e.g., list Discord channels) |
-| `schedulePostTool` | Schedule, draft, or immediately publish posts. The wire name is `schedulePostTool`, not a class name |
+| `integrationSchedulePostTool` | Schedule, draft, or immediately publish posts. This is the MCP map key. The Mastra `id` is `schedulePostTool`; clients and error text use `integrationSchedulePostTool` |
 | `postsListTool` | List the posts scheduled between two dates, with their current settings |
 | `postSettingsTool` | Change the settings of a scheduled post or draft that has not gone out yet |
 | `generateImageTool` | Generate AI images for posts |
@@ -55,10 +64,23 @@ sequenceDiagram
 
 <Note>
 Thirteen of those are the same tools the in-app assistant runs. The fourteenth, `ask_postqueen`, exists
-only over MCP: your client is talking to her as an agent, so it can either drive the individual
+only on the direct MCP servers: your client is talking to her as an agent, so it can either drive the individual
 tools itself or hand the whole job to her. That is why pages about the assistant say thirteen
 and pages about MCP say fourteen.
 </Note>
+
+### How many tools you actually get
+
+The count depends on which URL you connected. Direct `/mcp` keeps the full set. Directory OAuth paths drop the agent, and Claude's directory path also hides five media and video tools.
+
+| Path | Tools | What is missing |
+|---|---|---|
+| `/mcp` and `/mcp/:apiKey` | **14** | Nothing. Thirteen tools plus `ask_postqueen` |
+| `/sse/:id` and `/message/:id` | **14** | Nothing. Same full set as `/mcp`. Legacy [SSE transport](/mcp/limits-and-troubleshooting#transports-you-may-notice-and-should-not-build-on); prefer streamable HTTP |
+| `/mcp-oauth` and `/mcp-oauth-dynamic` | **13** | No `ask_postqueen`. Directory reviews reject an annotation-less catch-all agent |
+| `/mcp-oauth-claude` | **8** | No `ask_postqueen`, and no `generateImageTool`, `generateVideoTool`, `videoStatusTool`, `generateVideoOptions`, or `videoFunctionTool` |
+
+Custom key-in-URL Claude or ChatGPT connectors that hit `/mcp/:apiKey` still see 14. The shorter lists apply to the OAuth directory endpoints, not to every Claude or ChatGPT setup.
 
 Every parameter and every field each tool sends back: [Tools Reference](/mcp/tools).
 
@@ -77,6 +99,8 @@ There are two ways to authenticate.
     The `/mcp/:apiKey` URL form accepts API keys only.
   </Card>
 </CardGroup>
+
+MCP OAuth itself uses the scopes **`mcp:read`** and **`mcp:write`**. The protected-resource URLs are `/mcp-oauth`, `/mcp-oauth-claude` and `/mcp-oauth-dynamic`. They share one authorization server at `/mcp-oauth`. When `OPENAI_OAUTH_CLIENT_ID` is set, the same server also advertises `openid` and `email`.
 
 ## Connecting
 
@@ -123,7 +147,7 @@ Three tool calls go by before you look up.
     settings, and rules.
   </Step>
   <Step title="Schedule the post">
-    The agent calls `schedulePostTool` to schedule your post in the correct format.
+    The agent calls `integrationSchedulePostTool` to schedule your post in the correct format.
   </Step>
 </Steps>
 

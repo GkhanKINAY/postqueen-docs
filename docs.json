@@ -31,6 +31,8 @@
               "introduction",
               "quickstart",
               "howitworks",
+              "concepts",
+              "where-things-live",
               "which-interface"
             ]
           },
@@ -41,6 +43,8 @@
               "using/connect-a-channel",
               "using/calendar",
               "using/writing-a-post",
+              "using/composer/links-and-validation",
+              "using/posts/actions-and-stats",
               "using/threads",
               "using/posting-times",
               "using/media-and-design",
@@ -48,6 +52,7 @@
               "using/auto-actions",
               "using/analytics",
               "using/reusable-content",
+              "using/tags-and-hashtags",
               "using/customers",
               "using/teams-and-collaboration",
               "using/third-party-integrations",
@@ -100,6 +105,25 @@
             "icon": "credit-card",
             "pages": [
               "using/plans-and-limits"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Cloud",
+        "icon": "cloud",
+        "groups": [
+          {
+            "group": "Billing",
+            "icon": "credit-card",
+            "pages": [
+              "cloud/overview",
+              "cloud/plans",
+              "cloud/trial",
+              "cloud/subscription",
+              "cloud/limits",
+              "cloud/downgrade",
+              "cloud/codes-and-offers"
             ]
           }
         ]
@@ -593,7 +617,11 @@
   },
   "seo": {
     "metatags": {
-      "og:site_name": "PostQueen Documentation"
+      "og:site_name": "PostQueen Documentation",
+      "og:description": "Schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting.",
+      "twitter:card": "summary_large_image",
+      "twitter:title": "PostQueen Documentation",
+      "twitter:description": "Schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting."
     }
   },
   "footer": {

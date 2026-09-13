@@ -281,15 +281,7 @@ Three things, and the guide helps you get all of them.
 
     Apply it:
 
-    ```bash
-    docker compose down && docker compose up -d
-    ```
-
-    <Warning>
-    Changed settings only take effect after `docker compose down` followed by `up`. A plain
-    `restart` reuses the old container with the old values, which is a common source of "I
-    changed it and nothing happened".
-    </Warning>
+    <Snippet file="restart-service.mdx" />
 
     <Note>
     Existing accounts, including yours, can still sign in normally. This only closes new

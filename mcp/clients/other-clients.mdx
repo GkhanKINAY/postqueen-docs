@@ -39,7 +39,7 @@ Most clients ask for a single endpoint. Put the API key in the path:
 https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-The config key differs by client. Check which one yours expects for **streamable HTTP** (PostQueen does not speak SSE):
+The config key differs by client. Check which one yours expects for **streamable HTTP** (preferred). A legacy SSE pair still exists at `/sse/:id` and `/message/:id`; do not pick SSE unless the client has no HTTP option:
 
 | Client | Field |
 | --- | --- |

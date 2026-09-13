@@ -1,0 +1,55 @@
+---
+title: Where things live
+sidebarTitle: Where things live
+description: 'The left rail, the more menu, and the screens that are reachable but not listed'
+icon: 'map'
+---
+
+The app is one chrome: a left rail, a header, and the page in the middle. This map matches the live menu. Capabilities that the redesign hid from the rail are still reachable; they just moved.
+
+## Left rail
+
+| Item | Path | What it is |
+|---|---|---|
+| **Calendar** | `/launches?display=week` | The grid. Day, week and month live here |
+| **Posts** | `/launches?display=list` | The same posts as a list |
+| **AI Copilot** | `/agents` | In-app assistant. Same tools as MCP minus `ask_postqueen` |
+| **Channels** | `/channels` | Connected accounts, **Add Channel**, **Automations** (Auto Actions) |
+| **Analytics** | `/analytics` | Reporting networks only |
+| **Media** | `/media` | Library, uploads, third-party import |
+
+**Billing** and **Settings** sit lower on the same rail.
+
+## More menu
+
+Opened from the rail overflow, not as their own top-level rows:
+
+| Item | Path |
+|---|---|
+| **Social Sets** | `/settings?tab=sets` |
+| **Signatures** | `/settings?tab=signatures` |
+| **Auto Post** | `/settings?tab=autopost` |
+| **Webhooks** | `/settings?tab=webhooks` |
+| **Integrations** | `/settings?tab=integrations` |
+
+HeyGen and Reel.Farm live under **Integrations**, not under channels.
+
+## Reachable, not on the rail
+
+| Item | Path | How you get there |
+|---|---|---|
+| **Auto-Plugs** | `/plugs` | **Channels → Automations**, or the URL. Same Auto Actions as [Auto Actions](/using/auto-actions) |
+| **Connections** | `/connections` | Public API / OAuth app catalog for developers |
+| **Affiliate** | external `AFFILIATE_URL` | User menu, when billing is on. Not a Settings row |
+
+## Header
+
+**Create Post** (Blank / AI) sits in the header on every route. With zero channels it opens **Add Channel** instead of the composer.
+
+## Settings tabs
+
+Settings is one page with a tab row. Which tabs you see depends on plan and role. The map: [Settings](/using/settings).
+
+## Cloud versus self-host chrome
+
+On Cloud, **Billing** is on the rail and in the user menu (**Billing & invoices**). Self-host with billing off hides Billing, Upgrade, Affiliate, the extension link and the Generate Posts wizard. Details: [Plans and limits](/using/plans-and-limits).

@@ -1,5 +1,6 @@
 ---
 title: Media and design
+sidebarTitle: Media
 description: 'One library for every file, two engines that generate a video, and a canvas that keeps you inside the post'
 icon: 'image'
 ---
@@ -120,12 +121,12 @@ One image credit per generation. Run the counter to zero and the generation simp
 **AI Video** sits next to AI Image, and it is the one button on this page that can be missing entirely. It renders only when your install has at least one video engine configured.
 </Info>
 
-Two engines ship today, they need different keys, and they make very different things.
+Two engines ship today. They need different provider keys on a self-hosted install (see [Configuration Reference](/configuration/reference)), and they make very different things.
 
-| Engine | What comes out | Keys the install needs | Inside a trial |
-|---|---|---|---|
-| **Seedance 2.0 (Audio + Video)** | One eight-second clip with sound at 720p, from your prompt and up to three reference images | `EVOLINK_API_KEY` | Refused, with *This video is not available in trial mode* |
-| **Image Text Slides** | A narrated slideshow of three to five slides, with the subtitles burned into the frames | `ELEVENSLABS_API_KEY`, `TRANSLOADIT_AUTH`, `TRANSLOADIT_SECRET`, `OPENAI_API_KEY`, `FAL_KEY` | Allowed |
+| Engine | What comes out | Inside a trial |
+|---|---|---|
+| **Seedance 2.0 (Audio + Video)** | One eight-second clip with sound at 720p, from your prompt and up to three reference images | Refused, with *This video is not available in trial mode* |
+| **Image Text Slides** | A narrated slideshow of three to five slides, with the subtitles burned into the frames | Allowed |
 
 Burned in means exactly that. The subtitles are rendered into the pixels, centered, so they survive every platform that plays a video without captions.
 

@@ -50,8 +50,8 @@ flowchart LR;
 | **Frontend** | The calendar, editor and analytics screens. None of it lives in your browser; every screen comes from the backend | yes |
 | **Backend** | Her brain. Writes everything down and hands anything slow to Temporal | yes |
 | **Orchestrator** | Runs those workflows when their moment arrives | yes |
-| **Temporal** | Holds the clock, retries failures, refreshes platform tokens | no |
-| **Redis** | Caching and queues | no |
+| **Temporal** | Holds the clock, retries failures, refreshes platform tokens. Required. There is no optional Redis-queue mode | no |
+| **Redis** | Caching and rate limiting | no |
 | **SQL database** | All your data. Postgres is the usual choice | no |
 | **Storage** | Your media files. Local disk by default, or [Cloudflare R2](/configuration/r2) | no |
 

@@ -8,7 +8,7 @@ icon: /images/channels/lemmy.svg
 
 <Snippet file="never-share.mdx" />
 
-Nothing has to be registered before you start. Lemmy has no developer app, no client id and no redirect URI in this connector, and no key of yours goes into the `.env` file. You click **Lemmy** in **Add Channel**, a small form opens, and you type the three things your instance already knows about you.
+Nothing has to be registered before you start. Lemmy has no developer app, no client id and no redirect URI in this connector. You click **Lemmy** in **Add Channel**, a small form opens, and you type the three things your instance already knows about you.
 
 ## What she can post to Lemmy
 
@@ -51,7 +51,7 @@ How that surfaces depends on your instance. She turns a rejection into **"Invali
 Two more things worth knowing before you type anything in:
 
 - **Your password is used again on every publish.** She does not keep a long-lived session. Each post, each comment and each community search logs in again with the credentials you saved. Change your Lemmy password later and the scheduled posts start failing without anyone telling you, so come back here and reconnect the channel whenever you rotate it.
-- **The instance has to be reachable from the internet.** The backend blocks requests that resolve to loopback, private or link-local addresses, so a Lemmy on `localhost` or on a private LAN address fails to connect. Self-hosters who run both sides on the same private network can set `DISABLE_SSRF_PROTECTION=true`, which is documented next to the setting in `.env.example`.
+- **The instance has to be reachable from the internet.** The backend blocks requests that resolve to loopback, private or link-local addresses, so a Lemmy on `localhost` or on a private LAN address fails to connect. Self-hosters who run both sides on the same private network can turn off that block: [Configuration Reference](/configuration/reference).
 
 ## Connect Lemmy
 

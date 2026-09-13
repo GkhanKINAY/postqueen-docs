@@ -44,7 +44,9 @@ KICK_SECRET=""
   </Step>
 
   <Step title="Add the Kick channel">
-    Restart PostQueen so the new variables are read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+    Restart PostQueen so the new variables are read.
+
+    <Snippet file="restart-and-add-channel.mdx" />
 
     In the web interface click **Add Channel** and pick **Kick**. Kick asks you to authorize, and the channel appears once you accept.
 

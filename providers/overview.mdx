@@ -2,15 +2,26 @@
 title: Providers Overview
 description: 'Every network PostQueen posts to, the ten that report analytics, and where each one is documented'
 icon: 'plug'
+keywords:
+  - postqueen
+  - platforms
+  - providers
+  - character limit
+  - channels
+  - instagram
+  - tiktok
+  - mastodon
 ---
 
-30+ networks, one calendar. She posts to all of them, and each one connects on its own terms: OAuth keys for most, a plain account login for Bluesky, the browser extension for Skool.
+30+ networks, one calendar. She posts to all of them, and each one connects on its own terms: an OAuth login for most, a credential form for Bluesky and WordPress, the browser extension for Skool.
 
-Nothing is connected by default, and every network is added the same way, from Add Channel. What changes is where the credential goes.
+Nothing is connected by default, and every network is added the same way, from **Add Channel**. What changes is whether the network sends you to its own login or asks you to paste a key in the form.
 
-Most networks want an OAuth app you register with the platform. Those keys go in your `.env` file, or into the environment some other way, and PostQueen reads them at boot. Change one and restart her before you expect it to take effect. Running docker compose? Run `docker compose down` and then `docker compose up` to rebuild the containers with the updated variables.
+<Info>
+On PostQueen Cloud the OAuth apps are already registered. A network missing from **Add Channel** is a [self-hosted](/installation/overview) concern: each platform needs an application you create yourself, then a restart. Walkthroughs live under [Connect your channels](/installation/providers/instagram).
+</Info>
 
-A smaller group asks for nothing in your `.env` file at all. Those take their credential straight in the connect form, so you paste an API key or a login there and you are done. Nothing to restart, nothing to redeploy. The card for each one below says which kind it is, and the [Configuration Reference](/configuration/reference) lists the ones that need no variable.
+A smaller group takes the credential in the connect form, so you paste an API key or a login there and you are done. The card for each one below says which kind it is.
 
 <Snippet file="never-share.mdx" />
 
@@ -174,46 +185,48 @@ One more, on purpose: set `DISABLE_X_ANALYTICS` and she stops asking X for numbe
 
 ## Which page covers which platform
 
-Thirty-four connectors ship in the box, and every one of them shows up in the Add Channel list. None of them is API-only, and none of them is hidden behind a flag. The table below is the whole map: where the key-by-key walkthrough lives, where the API settings schema lives, and which channels report analytics. Instagram and LinkedIn each appear twice because each one has two connectors with different rules. Instagram Standalone shares a page with Instagram, so its link drops you at the right section rather than a page of its own.
+Thirty-four connectors ship in the box, and every one of them shows up in the Add Channel list. None of them is API-only, and none of them is hidden behind a flag. Limits below are the code `maxLength` (X has extra verified and article ceilings). Connect is what **Add Channel** does in the Cloud app; OAuth app registration for self-host is a separate [install page](/installation/providers/instagram).
 
-| Platform | Connection guide | API settings | Analytics |
-|---|---|---|---|
-| Bluesky | [Guide](/providers/bluesky) | [Settings](/public-api/providers/bluesky) | No |
-| Dev.to | [Guide](/providers/devto) | [Settings](/public-api/providers/devto) | No |
-| Discord | [Guide](/providers/discord) | [Settings](/public-api/providers/discord) | No |
-| Dribbble | [Guide](/providers/dribbble) | [Settings](/public-api/providers/dribbble) | No |
-| Facebook | [Guide](/providers/facebook) | [Settings](/public-api/providers/facebook) | Yes |
-| Farcaster | [Guide](/providers/farcaster) | [Settings](/public-api/providers/warpcast) | No |
-| Google My Business | [Guide](/providers/google-my-business) | [Settings](/public-api/providers/gmb) | Yes |
-| Hashnode | [Guide](/providers/hashnode) | [Settings](/public-api/providers/hashnode) | No |
-| Instagram | [Guide](/providers/instagram) | [Settings](/public-api/providers/instagram) | Yes |
-| Instagram (Standalone) | [Guide](/installation/providers/instagram#instagram-standalone-option) | [Settings](/public-api/providers/instagram-standalone) | Yes |
-| Kick | [Guide](/providers/kick) | [Settings](/public-api/providers/kick) | No |
-| Lemmy | [Guide](/providers/lemmy) | [Settings](/public-api/providers/lemmy) | No |
-| LinkedIn | [Guide](/providers/linkedin) | [Settings](/public-api/providers/linkedin) | No |
-| LinkedIn Page | [Guide](/providers/linkedin-page) | [Settings](/public-api/providers/linkedin-page) | Yes |
-| Listmonk | [Guide](/providers/listmonk) | [Settings](/public-api/providers/listmonk) | No |
-| Mastodon | [Guide](/providers/mastodon) | [Settings](/public-api/providers/mastodon) | No |
-| Medium | [Guide](/providers/medium) | [Settings](/public-api/providers/medium) | No |
-| MeWe | [Guide](/providers/mewe) | No | No |
-| Moltbook | [Guide](/providers/moltbook) | [Settings](/public-api/providers/moltbook) | No |
-| Nostr | [Guide](/providers/nostr) | [Settings](/public-api/providers/nostr) | No |
-| Pinterest | [Guide](/providers/pinterest) | [Settings](/public-api/providers/pinterest) | Yes |
-| Reddit | [Guide](/providers/reddit) | [Settings](/public-api/providers/reddit) | No |
-| Skool | [Guide](/providers/skool) | [Settings](/public-api/providers/skool) | No |
-| Slack | [Guide](/providers/slack) | [Settings](/public-api/providers/slack) | No |
-| Telegram | [Guide](/providers/telegram) | [Settings](/public-api/providers/telegram) | No |
-| Threads | [Guide](/providers/threads) | [Settings](/public-api/providers/threads) | Yes |
-| TikTok | [Guide](/providers/tiktok) | [Settings](/public-api/providers/tiktok) | Yes |
-| Tumblr | [Guide](/providers/tumblr) | [Settings](/public-api/providers/tumblr) | No |
-| Twitch | [Guide](/providers/twitch) | [Settings](/public-api/providers/twitch) | No |
-| VK | [Guide](/providers/vk) | [Settings](/public-api/providers/vk) | No |
-| Whop | [Guide](/providers/whop) | [Settings](/public-api/providers/whop) | No |
-| WordPress | [Guide](/providers/wordpress) | [Settings](/public-api/providers/wordpress) | No |
-| X (Twitter) | [Guide](/providers/x-twitter) | [Settings](/public-api/providers/x) | Yes |
-| YouTube | [Guide](/providers/youtube) | [Settings](/public-api/providers/youtube) | Yes |
+| Platform | Limit | Connect | API `__type` | Guide | Analytics |
+|---|---|---|---|---|---|
+| Bluesky | 300 | App password in the form | `bluesky` | [Guide](/providers/bluesky) | No |
+| Dev.to | 100,000 | API key in the form | `devto` | [Guide](/providers/devto) | No |
+| Discord | 1,980 | Bot, then pick a server | `discord` | [Guide](/providers/discord) | No |
+| Dribbble | 40,000 | One-step OAuth | `dribbble` | [Guide](/providers/dribbble) | No |
+| Facebook | 63,206 | Auth, then pick a page | `facebook` | [Guide](/providers/facebook) | Yes |
+| Farcaster | 800 | Neynar | `wrapcast` | [Guide](/providers/farcaster) | No |
+| Google My Business | 1,500 | Auth, then pick a location | `gmb` | [Guide](/providers/google-my-business) | Yes |
+| Hashnode | 10,000 | PAT in the form | `hashnode` | [Guide](/providers/hashnode) | No |
+| Instagram | 2,200 | Meta, then pick an account | `instagram` | [Guide](/providers/instagram) | Yes |
+| Instagram (Standalone) | 2,200 | Standalone product connect | `instagram-standalone` | [Guide](/providers/instagram) | Yes |
+| Kick | 500 | One-step OAuth | `kick` | [Guide](/providers/kick) | No |
+| Lemmy | 10,000 | Instance URL, name, password | `lemmy` | [Guide](/providers/lemmy) | No |
+| LinkedIn | 3,000 | One-step OAuth | `linkedin` | [Guide](/providers/linkedin) | No |
+| LinkedIn Page | 3,000 | Auth, then pick a company page | `linkedin-page` | [Guide](/providers/linkedin-page) | Yes |
+| Listmonk | very large | URL, user, token in the form | `listmonk` | [Guide](/providers/listmonk) | No |
+| Mastodon | 500 | OAuth to the install instance | `mastodon` | [Guide](/providers/mastodon) | No |
+| Mastodon custom | 500 | **M. Instance**: paste the instance URL | `mastodon-custom` | [Guide](/providers/mastodon) | No |
+| Medium | 100,000 | Token in the form | `medium` | [Guide](/providers/medium) | No |
+| MeWe | 63,206 | One-step OAuth | `mewe` | [Guide](/providers/mewe) | No |
+| Moltbook | 300 | In-app | `moltbook` | [Guide](/providers/moltbook) | No |
+| Nostr | 100,000 | Hex key in the form | `nostr` | [Guide](/providers/nostr) | No |
+| Pinterest | 500 | One-step OAuth | `pinterest` | [Guide](/providers/pinterest) | Yes |
+| Reddit | 10,000 | One-step OAuth | `reddit` | [Guide](/providers/reddit) | No |
+| Skool | 5,000 | Chrome extension | `skool` | [Guide](/providers/skool) | No |
+| Slack | 400,000 | One-step OAuth | `slack` | [Guide](/providers/slack) | No |
+| Telegram | 4,096 | Add bot, paste in the form | `telegram` | [Guide](/providers/telegram) | No |
+| Threads | 500 | One-step OAuth | `threads` | [Guide](/providers/threads) | Yes |
+| TikTok | 2,000 | One-step OAuth | `tiktok` | [Guide](/providers/tiktok) | Yes |
+| TikTok Business | 2,200 | Business API app | `tiktok-business` | [Guide](/providers/tiktok) | Yes |
+| Tumblr | 32,768 | Auth, then pick a blog | `tumblr` | [Guide](/providers/tumblr) | No |
+| Twitch | 500 | One-step OAuth | `twitch` | [Guide](/providers/twitch) | No |
+| VK | 2,048 | One-step PKCE | `vk` | [Guide](/providers/vk) | No |
+| Whop | 50,000 | One-step OAuth PKCE | `whop` | [Guide](/providers/whop) | No |
+| WordPress | 100,000 | Domain, user, application password | `wordpress` | [Guide](/providers/wordpress) | No |
+| X (Twitter) | 280 / 4,000 verified / 100,000 article | One-step OAuth | `x` | [Guide](/providers/x-twitter) | Yes |
+| YouTube | 5,000 | Auth, then pick a channel | `youtube` | [Guide](/providers/youtube) | Yes |
 
-Every network she connects to now has a guide. MeWe is the one row still missing a settings page, so its post settings are listed with the others in the [Public API introduction](/public-api/introduction). Whatever each network asks for is also named in the [Configuration Reference](/configuration/reference).
+Settings schemas: [Public API providers](/public-api/providers/x). MeWe is the one row still missing a dedicated settings page; its post settings are listed in the [Public API introduction](/public-api/introduction). Self-host OAuth app keys: [Configuration Reference](/configuration/reference).
 
 ## Next steps
 
