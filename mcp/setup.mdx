@@ -45,6 +45,14 @@ API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
     Written to `~/.codex/config.toml`: [Codex](/mcp/clients/codex).
   </Tab>
 
+  <Tab title="Grok Build">
+    ```bash
+    grok mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    Writes `~/.grok/config.toml`. This is the terminal agent, not grok.com: [Grok Build](/mcp/clients/grok-build).
+  </Tab>
+
   <Tab title="Gemini CLI">
     ```bash
     gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
@@ -66,21 +74,13 @@ API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
   </Tab>
 
   <Tab title="Any other client">
-    ```json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "serverUrl": "https://api.postqueen.ai/mcp",
-          "headers": {
-            "Authorization": "Bearer ${env:POSTQUEEN_API_KEY}"
-          }
-        }
-      }
-    }
+    Field names differ. Cursor uses `mcpServers.url`. VS Code uses `servers` plus `"type": "http"`. Windsurf uses `serverUrl`. Zed uses `context_servers` plus a Bearer header.
+
+    ```
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
 
-    The header form keeps the key out of the file. Anything else:
-    [Other clients](/mcp/clients/other-clients).
+    Dedicated pages: [VS Code](/mcp/clients/vscode), [Windsurf](/mcp/clients/windsurf), [Zed](/mcp/clients/zed). Everything else: [Other clients](/mcp/clients/other-clients).
   </Tab>
 </Tabs>
 
@@ -106,8 +106,20 @@ The connector URL contains your API key, and that key can post to every channel 
   <Card title="Cursor" icon="/images/brand/icon-cursor.svg" href="/mcp/clients/cursor">
     One `.cursor/mcp.json` entry, or the Settings UI
   </Card>
+  <Card title="VS Code" icon="/images/brand/icon-vscode.svg" href="/mcp/clients/vscode">
+    `servers` plus `"type": "http"`, not Cursor `mcpServers`
+  </Card>
+  <Card title="Windsurf" icon="/images/brand/icon-windsurf.svg" href="/mcp/clients/windsurf">
+    Cascade `mcp_config.json` with `serverUrl`
+  </Card>
+  <Card title="Zed" icon="/images/brand/icon-zed.svg" href="/mcp/clients/zed">
+    `context_servers` plus a Bearer header
+  </Card>
   <Card title="Codex" icon="/images/brand/icon-codex.svg" href="/mcp/clients/codex">
     One block in `~/.codex/config.toml`, key in or out
+  </Card>
+  <Card title="Grok Build" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok-build">
+    One `grok mcp add` command, writes `~/.grok/config.toml`
   </Card>
   <Card title="Gemini CLI" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
     One `mcpServers` entry in your settings file

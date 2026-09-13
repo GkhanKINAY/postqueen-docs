@@ -43,11 +43,17 @@ The config key differs by client. Check which one yours expects for **streamable
 
 | Client | Field |
 | --- | --- |
-| Cursor, VS Code Copilot, Windsurf, Zed, Continue | `"url"` |
+| Cursor | `"url"` under `mcpServers` |
+| VS Code Copilot | `"url"` under `servers`, with `"type": "http"` |
+| Windsurf Cascade | `"serverUrl"` (or `"url"`) under `mcpServers` |
+| Zed | `"url"` under `context_servers`, plus an `Authorization` header |
+| Continue | `type: streamable-http` in YAML |
 | Gemini CLI | `"httpUrl"` (`url` is SSE and will not connect) |
 | Claude Desktop `claude_desktop_config.json` | Do **not** paste a plain `"url"`. Use a [custom connector](/mcp/clients/claude) or [`mcp-remote`](/mcp/clients/claude#option-b-mcp-remote-bridge-config-file) |
 
-Cursor / VS Code style:
+Dedicated pages: [VS Code](/mcp/clients/vscode), [Windsurf](/mcp/clients/windsurf), [Zed](/mcp/clients/zed). Cline, Continue, Goose, Warp, JetBrains AI Assistant, Raycast and GitHub Copilot CLI use this generic shape.
+
+Cursor style:
 
 ```json
 {
