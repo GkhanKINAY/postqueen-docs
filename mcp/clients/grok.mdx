@@ -1,12 +1,12 @@
 ---
 title: Grok
-description: 'Add PostQueen as a custom MCP connector in Grok, including Grok Bot'
+description: 'Add PostQueen as a custom MCP connector in Grok chat on the web, iOS and Android'
 icon: /images/brand/icon-grok.svg
 ---
 
-Grok on the web, iOS and Android can call remote MCP servers. Add PostQueen once at [grok.com/connectors](https://grok.com/connectors), and Grok can list your channels, generate media and schedule posts through her [14 MCP tools](/mcp/tools).
+Grok on the web, iOS and Android can call remote MCP servers. Add PostQueen at [grok.com/connectors](https://grok.com/connectors), and Grok can list your channels, generate media and schedule posts through her [14 MCP tools](/mcp/tools).
 
-Grok Bot can use the **same** connector. There is no Bot-only MCP URL: create the connector at grok.com/connectors first. If the Bot UI offers Plugins or Connectors, enable that same account connector there.
+This page is Grok chat only. [Grok Bot](/mcp/clients/grok-bot) is a different product. Connecting here does not install PostQueen on Grok Bot.
 
 <Info>
 You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
@@ -31,9 +31,6 @@ With this setup, your API key travels inside the connector URL, so the URL itsel
 
     Leave extra authentication empty: the key in the URL is the authentication. If your client prefers a header instead, point it at `https://api.postqueen.ai/mcp` with `Authorization: Bearer YOUR_API_KEY`.
   </Step>
-  <Step title="Grok Bot (optional)">
-    Create the connector on grok.com/connectors first. If you use Grok Bot, enable that same account connector under the Bot’s **Plugins** or **Connectors** if the UI offers it. Asking the Bot to "add a custom server" still ends at the same URL.
-  </Step>
   <Step title="Confirm">
     In a Grok chat, ask it to list your connected social media accounts. Your channel names come back when Grok calls `integrationList`.
   </Step>
@@ -55,7 +52,10 @@ Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY
 
 <CardGroup cols={2}>
   <Card title="Talk to her in Grok" icon="/images/brand/icon-grok.svg" href="/agents/grok">
-    What to ask once the connector is on, and how Grok Bot fits
+    What to ask once the connector is on
+  </Card>
+  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok-bot">
+    Cloud agent. Add the server in the Bot chat, not here.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
     All 14 tools Grok gains, with every parameter

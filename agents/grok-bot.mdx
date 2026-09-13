@@ -1,0 +1,60 @@
+---
+title: Grok Bot
+description: 'Ask Grok Bot to schedule posts through PostQueen. This is not grok.com chat.'
+icon: /images/brand/icon-grok.svg
+---
+
+## Working with her in Grok Bot
+
+Grok Bot is the cloud agent: named bots, memory, routines. Grok on grok.com is a different product. Connecting PostQueen at [grok.com/connectors](https://grok.com/connectors) does **not** install her on Grok Bot.
+
+Tell the Bot to add the remote MCP server. What she brings into that chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts. They do not delete a post or return analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+
+## Set up
+
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Then, in a Grok Bot chat:
+
+```
+Add this MCP server: https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+<Warning>
+Your API key travels inside that URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and add the new URL.
+</Warning>
+
+The full walkthrough covers public-HTTPS, Cursor `mcp.json` not syncing, and team allowlists:
+
+<Card title="Grok Bot MCP setup" icon="plug" href="/mcp/clients/grok-bot">
+  Step by step, from the Bot chat to your first tool call
+</Card>
+
+Once she is on, ask Grok Bot to list your connected channels. If it calls `integrationList` and hands back your accounts, you are connected.
+
+For Grok on the web and phone, see [Grok](/agents/grok).
+
+## 👑 A week planned from Grok Bot
+
+> **You:** Plan five posts across next week for X and LinkedIn and schedule them for 9am each day.
+
+> **Grok Bot:** Reading your channels and what each one accepts, then scheduling with PostQueen.
+
+> `integrationList` running...
+
+> `integrationSchema` running for x, linkedin...
+
+> `schedulePostTool` running...
+
+> 5 posts scheduled across X and LinkedIn, Monday to Friday at 9:00 AM. Every one is on your calendar if you want to change the wording.
+
+Want an image with a post? `generateImageTool` produces one. Not ready for one of them to publish? Ask for drafts, and the call carries `type` as `draft` instead of `schedule`.
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Grok Bot setup over MCP" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok-bot">
+    Add the server in the Bot chat. Not grok.com/connectors.
+  </Card>
+  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
+    All 14 tools Grok Bot gains once the server is on
+  </Card>
+</CardGroup>

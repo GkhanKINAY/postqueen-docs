@@ -1,6 +1,6 @@
 ---
 title: Grok
-description: 'Ask Grok to schedule posts through PostQueen, on the web or from Grok Bot'
+description: 'Ask Grok on the web or your phone to schedule posts through PostQueen'
 icon: /images/brand/icon-grok.svg
 ---
 
@@ -8,10 +8,9 @@ icon: /images/brand/icon-grok.svg
 
 Grok is where a lot of drafts start. With PostQueen connected it is also where they ship: ask for two posts about the new menu and she writes the copy, generates the images and puts both on your calendar while you keep chatting.
 
-There is one connector, two surfaces:
+This is Grok on the web, iOS and Android. Add PostQueen as a custom connector at [grok.com/connectors](https://grok.com/connectors) (web: **+ → Connectors**; iOS/Android: **Settings → Connectors**).
 
-- **Grok on the web, iOS and Android.** Add PostQueen as a custom connector at [grok.com/connectors](https://grok.com/connectors) (web: **+ → Connectors**; iOS/Android: **Settings → Connectors**).
-- **Grok Bot.** If the Bot offers Plugins or Connectors, enable that same account connector. There is no second MCP URL.
+[Grok Bot](/agents/grok-bot) is a different product. Connecting here does not install her on Grok Bot.
 
 What she brings into the chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts. They do not delete a post or return analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
 
@@ -27,7 +26,7 @@ https://api.postqueen.ai/mcp/YOUR_API_KEY
 Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
-The full walkthrough covers Grok Bot, Business admin provisioning, and self-hosted URLs:
+The full walkthrough covers Business admin provisioning and self-hosted URLs:
 
 <Card title="Grok connector setup" icon="plug" href="/mcp/clients/grok">
   Step by step, from grok.com/connectors to your first tool call
@@ -55,7 +54,10 @@ Want an image with a post? `generateImageTool` produces one. Not ready for one o
 
 <CardGroup cols={2}>
   <Card title="Grok setup over MCP" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok">
-    Custom connector, Grok Bot, and why the URL must be public
+    Custom connector at grok.com/connectors
+  </Card>
+  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
+    Cloud agent. Add the server in the Bot chat.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
     All 14 tools Grok gains once the connector is on
