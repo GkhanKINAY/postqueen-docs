@@ -1,13 +1,14 @@
 ---
 title: Configuration Reference
+sidebarTitle: Env vars
 description: 'Environment variables reference for PostQueen'
 icon: 'list'
 ---
 
 She reads everything she needs from environment variables. Change one and restart her
-before you expect it to take effect. Under Docker Compose that means
-`docker compose down` followed by `up`, because a plain restart reuses the container and
-its old environment.
+before you expect it to take effect.
+
+<Snippet file="restart-service.mdx" />
 
 <Note>
 **`NEXT_PUBLIC_` variables do not need a rebuild here.** That is the usual rule for a
@@ -47,7 +48,7 @@ DATABASE_URL="postgresql://postqueen-user:postqueen-password@localhost:5432/post
 
 ### `REDIS_URL` <sup>Required</sup>
 
-Redis connection string used for queues, rate limiting, and short-lived caches.
+Redis connection string used for rate limiting and short-lived caches. Scheduling lives in Temporal, not Redis.
 
 ```
 REDIS_URL="redis://localhost:6379"
@@ -265,7 +266,6 @@ See also: [OAuth configuration](/configuration/oauth).
 | Variable | Purpose |
 |---|---|
 | `POSTQUEEN_GENERIC_OAUTH` | `true` to enable a generic OIDC sign-in provider. |
-| `POSTQUEEN_OAUTH_URL` | Base URL of the identity provider. |
 | `POSTQUEEN_OAUTH_AUTH_URL` | Authorization endpoint. |
 | `POSTQUEEN_OAUTH_TOKEN_URL` | Token endpoint. |
 | `POSTQUEEN_OAUTH_USERINFO_URL` | UserInfo endpoint. |

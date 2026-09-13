@@ -53,8 +53,10 @@ work.
   <Step title="Restart PostQueen">
     PostQueen reads `NEXT_PUBLIC_POLOTNO` on the server for each
     request, so recreating the container picks up the new value:
-    run `docker compose down`, then `docker compose up -d`. Running
-    from source, restart the dev server.
+
+    <Snippet file="restart-service.mdx" />
+
+    Running from source, restart the dev server.
   </Step>
 </Steps>
 

@@ -75,8 +75,9 @@ described below.
 ### Moving to a new address
 
 Put the address the instance used to run under in `PREVIOUS_FRONTEND_URLS`,
-next to the new `FRONTEND_URL`, and recreate the container. A plain restart
-keeps the old environment, so use `docker compose up -d`.
+next to the new `FRONTEND_URL`, and recreate the container.
+
+<Snippet file="restart-service.mdx" />
 
 ```env
 FRONTEND_URL="https://postqueen.example.com"

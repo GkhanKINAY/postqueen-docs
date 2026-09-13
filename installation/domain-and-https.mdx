@@ -103,8 +103,9 @@ Three rules that cover nearly every problem people hit here:
   how the web interface reaches the backend inside the same container, and changing it to your
   domain sends that traffic on a pointless round trip through the internet, if it works at all.
 
-Apply the change with `docker compose down` and then `docker compose up -d`. A plain restart
-keeps the old values.
+Apply the change:
+
+<Snippet file="restart-service.mdx" />
 
 ## Check that it worked
 

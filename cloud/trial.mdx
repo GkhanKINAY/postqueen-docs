@@ -1,0 +1,25 @@
+---
+title: Trial
+sidebarTitle: Trial
+description: 'Seven free days on Cloud, what is locked, and what happens when the trial ends'
+icon: 'hourglass-start'
+tag: Cloud
+---
+
+Eligible Cloud organisations get a **7-day** trial (`trial_period_days: 7` on Stripe Checkout). The Billing button reads **Start 7 days free trial**.
+
+## While it is running
+
+Some providers stay locked until the trial ends. Hitting one returns you to a finish-trial dialog. Some video engines answer *This video is not available in trial mode*.
+
+Stripe may place a small temporary card authorization. That is a hold, not the plan charge.
+
+## Ending it
+
+| Path | What happens |
+|---|---|
+| You wait | Subscription leaves `trialing` and paid billing starts |
+| **End free trial** | Stripe `trial_end: now` if a trialing subscription exists |
+| You cancel before paid period | No plan charge. FAQ on Billing says you can cancel from settings without talking to a person |
+
+A founding lifetime purchase mid-trial can grant Pro now and capture $49 when the trial ends. [Codes and offers](/cloud/codes-and-offers).

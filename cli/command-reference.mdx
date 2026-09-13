@@ -83,6 +83,7 @@ postqueen integrations:trigger reddit-123 subreddits -d '{"word":"programming"}'
 | `postqueen posts:status <id>` | `-s, --status <draft\|schedule>` (required) | Moves a post between draft and schedule. `schedule` queues it for its stored date; `draft` pulls it back and terminates any running publishing workflow. |
 | `postqueen posts:missing <id>` | - | For a post whose release ID came back `missing`, lists recent content from the provider so you can identify the right item. |
 | `postqueen posts:connect <id>` | `--release-id <id>` (required) | Links a post to its published content by release ID, which unlocks post analytics. |
+| `postqueen posts:settings <id>` | `--settings <json>` (required) | Merges provider-specific settings onto a draft or unpublished scheduled post. Only the keys you pass change. Do not include `__type`. The same operation as [`PUT /posts/{id}/settings`](/public-api/posts/settings). |
 
 ### Flags for posts:create
 
@@ -154,6 +155,9 @@ postqueen posts:status post-123 --status schedule
 # Reconnect a published post so analytics work
 postqueen posts:missing post-123
 postqueen posts:connect post-123 --release-id "7321456789012345678"
+
+# Change provider settings on a draft or unpublished scheduled post
+postqueen posts:settings post-123 --settings '{"content_posting_method":"DIRECT_POST"}'
 ```
 
 ## Analytics
@@ -206,6 +210,7 @@ Every command is a thin wrapper over the [Public API](/public-api/introduction).
 | `posts:status` | `PUT` | `/public/v1/posts/:id/status` |
 | `posts:missing` | `GET` | `/public/v1/posts/:id/missing` |
 | `posts:connect` | `PUT` | `/public/v1/posts/:id/release-id` |
+| `posts:settings` | `PUT` | `/public/v1/posts/:id/settings` |
 | `integrations:list` | `GET` | `/public/v1/integrations` (optional `?group=`) |
 | `integrations:groups` | `GET` | `/public/v1/groups` |
 | `integrations:settings` | `GET` | `/public/v1/integration-settings/:id` |

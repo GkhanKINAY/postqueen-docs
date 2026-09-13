@@ -34,6 +34,10 @@ prefix. Check `docker volume ls` and use the exact names you see.
 
 Stop her first. Postgres writes to `postgres-volume` the whole time she is up, and a tar of a live data directory can catch a half-written page.
 
+<Warning>
+This is one of the few times you stop the whole Compose project. On a machine that runs only PostQueen, `docker compose down` is fine. On a shared host, stop only her services by name. Never run a bare `docker compose down` on a box that also runs other Compose projects.
+</Warning>
+
 ```
 docker compose down
 ```
@@ -146,7 +150,7 @@ docker compose logs -f postqueen
 Every release publishes twice, once under its version tag and once as `latest`. Pinning the version tag in your Compose file turns an upgrade into a deliberate edit rather than something `docker compose pull` decides for you:
 
 ```yaml
-image: ghcr.io/gkhankinay/postqueen-app:v3.0.2
+image: ghcr.io/gkhankinay/postqueen-app:v3.0.4
 ```
 
 ## The one flag that destroys everything

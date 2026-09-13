@@ -47,9 +47,9 @@ VK_ID=""
   </Step>
 
   <Step title="Add the VK channel">
-    Restart PostQueen so the new variable is read. With Docker Compose, run `docker compose down` and then `docker compose up`.
+    Restart PostQueen so the new variable is read.
 
-    In the web interface click **Add Channel** and pick **VK**, then accept the request on the VK side.
+    <Snippet file="restart-and-add-channel.mdx" />
 
     Add Channel does not check whether `VK_ID` is set, so a missing value shows up as a broken authorization page on the VK side rather than a helpful message in PostQueen.
   </Step>

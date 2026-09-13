@@ -3,6 +3,13 @@ title: Docker Compose
 description: 'The supported way to run PostQueen, and how to configure it'
 icon: 'docker'
 iconType: 'brands'
+keywords:
+  - postqueen
+  - docker compose
+  - self host
+  - temporal
+  - redis
+  - install
 ---
 
 Docker Compose is the supported way to self-host PostQueen. One file describes her and the
@@ -29,7 +36,7 @@ Temporal separately, they come with it.
 | `temporal-ui` | Dashboard for watching scheduled work | `127.0.0.1:8080` |
 | `temporal-postgresql` | Temporal's own database, not yours | container network only |
 | `temporal-elasticsearch` | Temporal's search index | container network only |
-| `temporal-admin-tools` | One-off maintenance commands for Temporal | not a service |
+| `temporal-admin-tools` | Optional Temporal CLI. Always defined in the public Compose file; hosted prod puts it behind a `tools` profile so it does not start | not required |
 
 Only `postqueen` is published to your whole machine. Temporal's two ports are bound to
 `127.0.0.1`, so they are reachable from the server itself and not from the network.
@@ -109,15 +116,7 @@ it.** A file placed there is never opened. Use `environment:` or an `env_file:` 
 
 ## Applying a change
 
-```bash
-docker compose down && docker compose up -d
-```
-
-<Warning>
-`docker compose restart` is not enough. It reuses the existing container, which still carries
-the old environment. Changed settings need the container recreated, which is what `down`
-followed by `up` does. Your data lives in volumes and survives this.
-</Warning>
+<Snippet file="restart-service.mdx" />
 
 ## The settings you are most likely to change
 

@@ -85,9 +85,7 @@ the provider **and** its credentials, or leave activation off.
   </Step>
 
   <Step title="Apply and test">
-    ```bash
-    docker compose down && docker compose up -d
-    ```
+    <Snippet file="restart-service.mdx" />
 
     Then use the password reset form with an address you can read. The mail should arrive within
     a minute. If it does not, the logs will say why:

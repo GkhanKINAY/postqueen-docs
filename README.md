@@ -125,6 +125,7 @@ This site is built with [Mintlify](https://mintlify.com):
 ```bash
 npm i -g mint     # install the Mintlify CLI
 mint dev          # serve the docs at http://localhost:3000
+python3 scripts/check-docs.py   # nav slugs + User Guide env/compose ban
 ```
 
 `docs.json` defines the navigation; every page is an `.mdx` file in this repo.

@@ -48,8 +48,10 @@ Two routes lead to the same place. Her skill teaches Claude Code the `postqueen`
     ```
 
     A JSON list of your connected channels means she is ready. If a command starts failing later,
-    `postqueen auth:status` shows which credentials the CLI is using, though it does not contact
-    the server, so this same command is the real test.
+    `postqueen auth:status` shows which credentials the CLI is using and then calls
+    `GET /public/v1/integrations` to prove they still work. This same `integrations:list`
+    command is the hard gate for scripts, because `auth:status` exits `0` even when it reports
+    that you are not authenticated.
   </Step>
   <Step title="Or connect over MCP">
     Prefer tool calls to shell commands? It is one `claude mcp add` line, and the scoping options,
@@ -102,7 +104,7 @@ postqueen posts:list
 The post now sits on your calendar at [app.postqueen.ai](https://app.postqueen.ai). She runs on your terms: leave it there and she publishes it at nine tomorrow, on time, without another word from you. Want to look first? Add `-t draft` to the same command and the post lands on the calendar unscheduled, waiting until you publish it.
 
 <Tip>
-Over MCP the conversation is the same and only the plumbing changes. Claude Code calls `integrationList`, brings media in with `uploadFromUrlTool` when it has a public URL, then schedules with `schedulePostTool`. Each tool is documented in the [MCP tool reference](/mcp/tools).
+Over MCP the conversation is the same and only the plumbing changes. Claude Code calls `integrationList`, brings media in with `uploadFromUrlTool` when it has a public URL, then schedules with `integrationSchedulePostTool`. Each tool is documented in the [MCP tool reference](/mcp/tools).
 </Tip>
 
 ## FAQ

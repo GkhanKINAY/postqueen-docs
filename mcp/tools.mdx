@@ -104,9 +104,11 @@ Each item in `dataSchema`:
 
 ---
 
-## schedulePostTool
+## integrationSchedulePostTool
 
 Schedule, draft, or immediately publish posts to social media platforms. This is the main tool for creating content.
+
+The name your client sees, and the name in validation errors ("try `integrationSchedulePostTool` again"), is **`integrationSchedulePostTool`**. That is the MCP map key (`name` on the tool class). The Mastra `id` is `schedulePostTool`. Call the wire name, not the Mastra id.
 
 **Parameters:**
 
@@ -389,7 +391,7 @@ It takes one parameter, `message`, a plain-language request. Behind it sits the 
 |-----------|------|----------|-------------|
 | `message` | string | Yes | What you want her to do, in your own words |
 
-Two things follow from that. It can write to your calendar, so treat it with the same care as `schedulePostTool`. And because she plans the steps herself, you get less control over exactly which tools run than you would calling them directly.
+Two things follow from that. It can write to your calendar, so treat it with the same care as `integrationSchedulePostTool`. And because she plans the steps herself, you get less control over exactly which tools run than you would calling them directly.
 
 ## What these tools cannot do
 

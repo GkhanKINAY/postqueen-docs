@@ -20,7 +20,7 @@ these docs send you to a specific one.
 | **Teams** | Invite people into your organization and set what they can do | Your plan includes team members, **and** you are an organization admin |
 | **Webhooks** | URLs she calls when a post publishes or fails | Your plan includes webhooks |
 | **Auto Post** | RSS feeds that turn new articles into scheduled posts on their own | Your plan includes auto posting |
-| **Sets** | Saved groups of channels, so you stop reselecting the same five | Any plan above Free |
+| **Social Sets** | Saved groups of channels, so you stop reselecting the same five | Any plan above Free |
 | **Signatures** | Blocks of text appended to posts, per channel | Any plan above Free |
 | **API Keys** | The workspace public API key. Reveal, copy and rotate it here | The tab is visible to every member. Revealing or rotating the key is an admin action |
 | **Developers** | OAuth apps you build for other PostQueen users | Your plan includes the public API. Creating or rotating the client secret is an admin action |
@@ -36,7 +36,7 @@ itself as AGENCY, the tier labelled Ultimate, when no Stripe keys are set. So yo
 
 Two different reasons, and they are worth telling apart before you go looking for a bug.
 
-**Your plan does not include it.** Webhooks, Auto Post, Sets, Signatures and Developers (OAuth)
+**Your plan does not include it.** Webhooks, Auto Post, Social Sets, Signatures and Developers (OAuth)
 are each gated on a plan feature. The tab is simply not rendered.
 
 **Your role is not admin.** Teams requires you to be an **ADMIN** or **SUPERADMIN** in the
@@ -99,7 +99,7 @@ rather than erroring.
     What she sends, and what happens when your endpoint is slow
   </Card>
   <Card title="Sets and signatures" icon="bookmark" href="/using/reusable-content">
-    Saved channel groups and the text appended to posts
+    Social Sets and the text appended to posts
   </Card>
   <Card title="Notifications" icon="bell" href="/using/notifications">
     What she tells you about, and where it arrives

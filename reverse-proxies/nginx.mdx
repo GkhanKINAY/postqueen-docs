@@ -277,9 +277,7 @@ sudo systemctl reload nginx
     Keep the `/api` suffix on the last one, and leave no trailing slashes on any of them. Then
     apply the change:
 
-    ```bash
-    docker compose down && docker compose up -d
-    ```
+    <Snippet file="restart-service.mdx" />
 
     <Warning>
     Skipping this step is the most common way to end up with a working padlock and a site you

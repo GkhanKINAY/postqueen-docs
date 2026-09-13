@@ -30,6 +30,8 @@ Two routes lead to the same place. MCP hands Grok Build her 14 hosted tools with
     ```
 
     The skill is a playbook. It does not install the CLI. Get the key from [app.postqueen.ai](https://app.postqueen.ai) under **Settings → API Keys**.
+
+    The repo also ships a Grok Build plugin (`.grok-plugin/plugin.json` and `.grok-plugin/marketplace.json`). Add the repo as a marketplace source; the identifier is `postqueen@postqueen-agent`. It loads the same skill and does not register an MCP server.
   </Step>
   <Step title="Verify">
     ```bash
@@ -51,7 +53,7 @@ Ask in plain words:
 
 > Schedule a launch post about dark mode for tomorrow at 9am on X and LinkedIn.
 
-It reads your channels with `integrationList`, then calls `schedulePostTool`. Want an image? Ask it to generate one. Not ready to publish? Ask for drafts.
+It reads your channels with `integrationList`, then calls `integrationSchedulePostTool`. Want an image? Ask it to generate one. Not ready to publish? Ask for drafts.
 
 Posts land on the calendar at [app.postqueen.ai](https://app.postqueen.ai). You can edit or delete them before they go out.
 

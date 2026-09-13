@@ -2,6 +2,14 @@
 title: Introduction
 description: 'Automate social media posting from the command line with the PostQueen CLI'
 icon: 'terminal'
+tag: CLI
+keywords:
+  - postqueen
+  - cli
+  - command line
+  - posts:create
+  - auth:status
+  - npm
 ---
 
 The PostQueen CLI puts her one command away in your terminal. Schedule a post to 30+ networks, upload the image that goes with it or pull last week's numbers, from a shell script, a CI job or an AI agent. Underneath it is the same [Public API](/public-api/introduction) the SDK and the n8n node run on. The data commands print JSON, so anything that can run a shell command can run your social media.
@@ -116,6 +124,7 @@ postqueen posts:create \
 | `posts:status <id>` | Switch a post between draft and schedule with `--status` |
 | `posts:missing <id>` | List available content from the provider for a post with a missing release ID |
 | `posts:connect <id>` | Connect a post to its published content with `--release-id` |
+| `posts:settings <id>` | Merge provider settings onto a draft or unpublished scheduled post with `--settings` |
 | `analytics:platform <id>` | Get analytics for a channel; `-d` sets days to look back (default 7) |
 | `analytics:post <id>` | Get analytics for a specific post; `-d` sets days to look back (default 7) |
 | `upload <file>` | Upload a media file and get back the URL to pass to `-m` |
@@ -144,6 +153,6 @@ Anything you can type here, an agent can run for you at six in the morning while
     The full reference, including which commands print plain text.
   </Card>
   <Card title="What it cannot do" icon="gauge" href="/cli/limits">
-    Thirteen of the API's twenty-two endpoints, and where the other nine live.
+    Fourteen of the API's twenty-two endpoints, and where the other eight live.
   </Card>
 </CardGroup>

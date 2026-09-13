@@ -69,11 +69,11 @@ You describe the week, and she takes care of the rest:
 >
 > `integrationSchema` running for x, linkedin...
 >
-> `schedulePostTool` running...
+> `integrationSchedulePostTool` running...
 >
 > 5 posts scheduled across X and LinkedIn, Monday to Friday at 9:00 AM. Every one is on your calendar if you want to change the wording.
 
-Three tools carry that. `integrationList` returns each connected channel with its integration ID. `integrationSchema` asks a platform what it expects and gets back its rules, its `maxLength` and its required settings, which is how the LinkedIn version arrives longer than the X one. Then `schedulePostTool` writes the calendar entries: five days means five items in the `socialPost` array, each with its own `date` and `integrationId`.
+Three tools carry that. `integrationList` returns each connected channel with its integration ID. `integrationSchema` asks a platform what it expects and gets back its rules, its `maxLength` and its required settings, which is how the LinkedIn version arrives longer than the X one. Then `integrationSchedulePostTool` writes the calendar entries: five days means five items in the `socialPost` array, each with its own `date` and `integrationId`.
 
 Want an image with a post? `generateImageTool` produces one and returns a hosted `path` for the `attachments` array. Bringing a picture from somewhere else? `uploadFromUrlTool` pulls it into her media library first, because attachments have to sit on a PostQueen URL.
 

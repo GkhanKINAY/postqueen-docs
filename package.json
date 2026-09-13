@@ -1,0 +1,8 @@
+{
+  "name": "postqueen-docs",
+  "private": true,
+  "description": "PostQueen documentation (Mintlify)",
+  "scripts": {
+    "check": "python3 scripts/check-docs.py"
+  }
+}

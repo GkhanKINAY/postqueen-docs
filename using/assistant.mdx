@@ -26,6 +26,10 @@ She does not guess the rules. Before she schedules anything she looks up that pl
 
 Running an agency? Ask her for your groups and she lists your customers, then narrows the channels down to the one you name.
 
+<Info>
+The in-app assistant is the same thirteen tools MCP exposes, minus `ask_postqueen`. Over MCP your client can drive those tools itself or hand the whole job to her. In the app you already *are* talking to her, so that fourteenth tool is not listed. [Agents overview](/agents/overview) and [MCP introduction](/mcp/introduction).
+</Info>
+
 ## What she can reach from the chat
 
 Thirteen tools sit behind the conversation. You never call them by name, but this is the honest list of what she can touch:
@@ -109,24 +113,19 @@ Then the post editor opens with the hook sitting on top of the first post, the p
 Short formats aim for around 200 characters so they fit X. Thread formats always come back as at least two posts. She writes no hashtags and tends to end on a call to action.
 
 <Note>
-**Self-hosting and cannot find the sparkle button?** That one is deliberate. Every click runs a research step, a writing step and an image step, and each of those is a paid model call on somebody's key. So the button appears only when your plan includes AI **and** billing is switched on, which happens when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. An install with no Stripe keys is unlimited in every other way. The chat in the Agent tab is not gated like this: give it an `OPENAI_API_KEY` and she answers there with no Stripe keys at all.
+**Self-hosting and cannot find the sparkle button?** That one is deliberate. Every click runs a research step, a writing step and an image step. The button appears only when your plan includes AI **and** billing is switched on. An install with billing off is unlimited in every other way. The chat in the Agent tab is not gated like this: give the install a writing model key (see [Configuration Reference](/configuration/reference)) and she answers there with billing off.
 </Note>
 
 ## What she needs to run
 
-| Setting | Why |
-| --- | --- |
-| `OPENAI_API_KEY` | Without it the chat answers `AI features are not configured on this installation.` |
-| `TAVILY_API_KEY` | The research step of Generate Posts searches the web through Tavily. With no key she writes from your brief alone |
-
-On postqueen.ai her chat belongs to the plans that include AI, so a free plan cannot open a conversation with her.
+On Cloud, chat belongs to the plans that include AI, so a free organization cannot open a conversation with her. Self-hosted installs need the writing and research keys named in the [Configuration Reference](/configuration/reference). Without a writing key the chat answers `AI features are not configured on this installation.` Without a research key, Generate Posts writes from your brief alone.
 
 ## When she does not answer
 
 <AccordionGroup>
   <Accordion title="The chat replies that AI features are not configured">
-    That is the literal message when `OPENAI_API_KEY` is unset on a self-hosted install. Set it,
-    recreate the container, and the chat answers. Nothing else is required for the chat: unlike
+    That is the literal message when the writing model key is unset on a self-hosted install. Set it,
+    recreate the container (see [Self-hosting](/installation/overview)), and the chat answers. Nothing else is required for the chat: unlike
     the sparkle button, it is not gated on billing.
   </Accordion>
 
