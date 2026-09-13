@@ -9,8 +9,8 @@ PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client connects
 ## Add her to your client
 
 <Info>
-**Get your key first.** In [app.postqueen.ai](https://app.postqueen.ai), open **Settings ›
-Developers › Public API** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
+**Get your key first.** In [app.postqueen.ai](https://app.postqueen.ai), open **Settings →
+API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
 </Info>
 
 <Tabs>
@@ -34,7 +34,7 @@ Developers › Public API** and click **Reveal**. Swap it for `YOUR_API_KEY` bel
     }
     ```
 
-    Into `.cursor/mcp.json`, or use the Settings UI: [Cursor](/mcp/clients/cursor).
+    Into `.cursor/mcp.json` or `~/.cursor/mcp.json`, or use **Customize → MCP** / **Cursor Settings → Tools & MCP**: [Cursor](/mcp/clients/cursor).
   </Tab>
 
   <Tab title="Codex">
@@ -47,20 +47,22 @@ Developers › Public API** and click **Reveal**. Swap it for `YOUR_API_KEY` bel
 
   <Tab title="Gemini CLI">
     ```bash
-    gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
 
-    Add `--scope user` for every project: [Gemini CLI](/mcp/clients/gemini-cli).
+    Writes `~/.gemini/settings.json`. Use `httpUrl` if you hand-edit: [Gemini CLI](/mcp/clients/gemini-cli).
   </Tab>
 
-  <Tab title="Claude & ChatGPT">
-    No file to edit. Both take the URL in their connector screen:
+  <Tab title="Claude, ChatGPT and Grok">
+    No file to edit. All three take the URL in their connector screen:
 
     ```
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
 
-    Step by step: [Claude](/mcp/clients/claude), [ChatGPT](/mcp/clients/chatgpt).
+    Claude: **Customize → Connectors → + → Add custom connector**. ChatGPT: **Settings → Apps → Advanced settings → Developer mode**, then **Settings → Apps → Create**. Grok: [grok.com/connectors](https://grok.com/connectors) → Custom.
+
+    Step by step: [Claude](/mcp/clients/claude), [ChatGPT](/mcp/clients/chatgpt), [Grok](/mcp/clients/grok).
   </Tab>
 
   <Tab title="Any other client">
@@ -83,7 +85,7 @@ Developers › Public API** and click **Reveal**. Swap it for `YOUR_API_KEY` bel
 </Tabs>
 
 <Warning>
-The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
 ## Pick your client
@@ -175,8 +177,7 @@ Nothing else to install.
   </Accordion>
 
   <Accordion title="It worked yesterday">
-    Check whether the API key was regenerated. Rotating it in **Settings > Developers > Public
-    API** takes the old one out immediately and every client still holding it stops mid
+    Check whether the API key was regenerated. Rotating it in **Settings → API Keys** takes the old one out immediately and every client still holding it stops mid
     conversation. PostQueen keys never rotate on their own.
   </Accordion>
 </AccordionGroup>

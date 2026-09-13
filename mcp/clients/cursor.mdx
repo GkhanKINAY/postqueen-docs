@@ -7,17 +7,19 @@ icon: /images/brand/icon-cursor.svg
 Cursor speaks MCP over streamable HTTP, so her server plugs in with a single URL. Once connected, Cursor's agent can list your channels, generate media and schedule posts without leaving the editor. Analytics is not among the tools, so that stays with the CLI or the API.
 
 <Info>
-You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
+You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
 </Info>
 
 ## Option A: Cursor UI
 
+Cursor's source of truth is an `mcp.json` file. The Customize page and Cursor Settings both write that file.
+
 <Steps>
-  <Step title="Open the Customize page">
-    Open the **Customize** page from the Cursor sidebar, which is where you install and remove MCP servers.
+  <Step title="Open MCP settings">
+    Open **Customize → MCP**, or **Cursor Settings → Tools & MCP**. Older Cursor builds call this **Tools & Integrations → MCP**.
   </Step>
   <Step title="Add the PostQueen server">
-    Add an entry named `postqueen` with the streamable HTTP URL. Cursor opens an `mcp.json` file for you to edit:
+    Add an entry named `postqueen` with the streamable HTTP URL. Cursor opens `mcp.json` for you to edit. The field is `"url"` — Cursor infers streamable HTTP from it:
 
     ```json
     {
@@ -32,7 +34,7 @@ You need your PostQueen API key first. In the app at [app.postqueen.ai](https://
     Replace `YOUR_API_KEY` with the key you revealed in the PostQueen app, then save the file.
   </Step>
   <Step title="Enable the server">
-    Back on the **Customize** page, make sure the `postqueen` server is enabled. Cursor connects and lists the server's 14 tools.
+    Back in **Customize → MCP** or **Tools & MCP**, make sure the `postqueen` server is enabled. Cursor connects and lists the server's 14 tools.
   </Step>
 </Steps>
 
@@ -76,7 +78,7 @@ A project-level file lets you scope the server to one repo.
 Both forms authenticate with the same API key; pick whichever fits your setup. See Cursor's own [MCP documentation](https://cursor.com/docs/mcp) for the full `mcp.json` reference.
 
 <Warning>
-Your API key is a secret. If you put it in a project-level `.cursor/mcp.json`, keep that file out of version control by adding it to `.gitignore`, since anyone with the key can post to your connected accounts. For personal setups, the global `~/.cursor/mcp.json` is the safer default. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+Your API key is a secret. If you put it in a project-level `.cursor/mcp.json`, keep that file out of version control by adding it to `.gitignore`, since anyone with the key can post to your connected accounts. For personal setups, the global `~/.cursor/mcp.json` is the safer default. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
 ## Self-Hosted
@@ -103,8 +105,8 @@ Open Cursor's chat in agent mode and ask:
 
 > "List my connected social media accounts"
 
-Your channel names come back, because the agent reached for her `integrationList` tool. If it fails, check that the `postqueen` server is enabled on the Customize page, that the API key was pasted in full, and that no firewall blocks `api.postqueen.ai`.
+Your channel names come back, because the agent reached for her `integrationList` tool. If it fails, check that the `postqueen` server is enabled under **Customize → MCP** or **Cursor Settings → Tools & MCP**, that `mcp.json` saved with a `"url"` field, that the API key was pasted in full, and that no firewall blocks `api.postqueen.ai`.
 
 <Tip>
-Cursor asks for approval before running MCP tools by default. Keep that on for `integrationSchedulePostTool` so you see each post before she puts it on the calendar.
+Cursor asks for approval before running MCP tools by default. Keep that on for `schedulePostTool` so you see each post before she puts it on the calendar.
 </Tip>

@@ -1,0 +1,54 @@
+---
+title: Muse
+description: 'Muse Code already talks to PostQueen over MCP. The consumer Muse app is coming soon.'
+icon: /images/brand/icon-muse.svg
+---
+
+## Two Muse products
+
+Meta ships Muse as a personal agent in the Muse app (and WhatsApp) and as **Muse Code**, a coding agent. They do not connect the same way.
+
+- **Muse Code** loads remote MCP servers from `~/.config/muse/settings.json` over streamable HTTP. Point it at PostQueen and her [14 MCP tools](/mcp/tools) show up. This works today.
+- **The Muse app** has Connectors, including custom connectors built from API details Muse walks you through. That is not a paste-an-MCP-URL flow. First-class MCP for the Muse app is coming soon.
+
+<Warning>
+Do not paste `https://api.postqueen.ai/mcp/YOUR_API_KEY` into Muse Settings → Connectors expecting it to work like Claude or Grok. It will not. Use Muse Code, or another MCP client, until Meta ships that.
+</Warning>
+
+## Muse Code
+
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Then add PostQueen to `~/.config/muse/settings.json`:
+
+```json
+{
+  "schema_version": 1,
+  "mcp_servers": {
+    "postqueen": {
+      "transport": "streamable_http",
+      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
+      "mode": "optional"
+    }
+  }
+}
+```
+
+Restart Muse Code after saving. Ask it to list your connected social media accounts.
+
+<Card title="Full setup: Muse Code over MCP" icon="/images/brand/icon-muse.svg" href="/mcp/clients/muse">
+  Header auth, self-hosted URLs, and what the Muse app does instead
+</Card>
+
+## Muse app
+
+Coming soon. When Meta lets you paste a remote MCP URL the way Claude and Grok do, the steps will live on [Muse over MCP](/mcp/clients/muse). Until then the honest path is Muse Code or [any other MCP client](/mcp/clients/other-clients).
+
+## Learn more
+
+<CardGroup cols={2}>
+  <Card title="Muse MCP setup" icon="/images/brand/icon-muse.svg" href="/mcp/clients/muse">
+    Muse Code settings.json, and why the consumer app is marked soon
+  </Card>
+  <Card title="Agents overview" icon="compass" href="/agents/overview">
+    Every way to put an agent in front of PostQueen
+  </Card>
+</CardGroup>

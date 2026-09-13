@@ -14,11 +14,11 @@ Two routes, and you can take either. MCP is the native one here: Cursor's agent 
 
 <Steps>
   <Step title="Grab your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings > Developers > Public API** and click **Reveal**. Both routes below use this one key. Treat it like a password, since it grants full access to your account.
+    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Both routes below use this one key. Treat it like a password, since it grants full access to your account.
   </Step>
   <Step title="Route A: connect over MCP">
     One entry in `~/.cursor/mcp.json` and her tools appear in every project. The file, the
-    Settings UI route, the header variant and self-hosted URLs are all on
+    Settings UI route (**Customize → MCP** or **Tools & MCP**), the header variant and self-hosted URLs are all on
     [Cursor over MCP](/mcp/clients/cursor).
 
     <Warning>
@@ -32,7 +32,7 @@ Two routes, and you can take either. MCP is the native one here: Cursor's agent 
     npx skills add GkhanKINAY/postqueen-agent
     ```
 
-    The skill is her `SKILL.md`, and it teaches the agent her command set before it runs anything. Then export the key in the shell Cursor's terminal inherits:
+    The skill is her `SKILL.md` playbook: it teaches the agent flags and patterns. It does not install the CLI — `npm install -g postqueen` is a separate step. Then export the key in the shell Cursor's terminal inherits:
 
     ```bash
     export POSTQUEEN_API_KEY="your-api-key"
@@ -140,7 +140,7 @@ She runs on your terms. A post you schedule goes out at its time without another
     Yes, and that is the point of running her here. Cursor's agent can read your changelog, your release notes or the diff itself, then turn them into posts shaped for each channel. You still see every draft on the calendar before anything reaches an audience.
   </Accordion>
   <Accordion title="Will it publish without asking me?">
-    Only if you set it up that way. Cursor asks for approval before running MCP tools by default, so keep that on for `integrationSchedulePostTool`. On the CLI side, `-t draft` saves each post to the calendar without scheduling it.
+    Only if you set it up that way. Cursor asks for approval before running MCP tools by default, so keep that on for `schedulePostTool`. On the CLI side, `-t draft` saves each post to the calendar without scheduling it.
   </Accordion>
   <Accordion title="Can one brief cover my other channels too?">
     Yes. PostQueen connects 30+ networks, so the same brief can become posts for every channel you have connected, each one adapted to what that channel accepts.

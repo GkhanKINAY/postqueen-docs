@@ -17,11 +17,11 @@ Those 14 tools cover discovery, media and posting, and they can read back what i
 One command, and the terminal you already have open can post:
 
 ```bash
-gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
 Your key comes from the app at [app.postqueen.ai](https://app.postqueen.ai), under
-**Settings > Developers > Public API**. Then run `/mcp` inside Gemini CLI: `postqueen` should
+**Settings → API Keys**. Then run `/mcp` inside Gemini CLI: `postqueen` should
 show as connected with 14 tools.
 
 <Card title="Full setup: Gemini CLI over MCP" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
@@ -30,8 +30,7 @@ show as connected with 14 tools.
 </Card>
 
 <Warning>
-A project-level `.gemini/settings.json` carries your key into the repo. Use `--scope user` to
-write it to `~/.gemini/settings.json` instead and leave the project clean.
+`--scope user` writes `~/.gemini/settings.json`. Without that flag, Gemini CLI writes a project-level `.gemini/settings.json` that carries your key into the repo. Keep that file out of version control.
 </Warning>
 
 ## 👑 Two posts about the release you just cut
@@ -45,7 +44,7 @@ Four calls carry that sentence to your calendar:
 1. `integrationList` returns every connected channel with its integration ID, so the agent knows which accounts exist before it writes anything.
 2. `integrationSchema` asks each platform what it expects and gets back its rules, its `maxLength` and its required settings. This is why the LinkedIn post does not arrive written to X's character limit.
 3. `generateImageTool` takes a prompt and returns an `id` with a hosted `path`. That `path` goes straight into `attachments`.
-4. `integrationSchedulePostTool` writes the calendar entries, one item in `socialPost` per post:
+4. `schedulePostTool` writes the calendar entries, one item in `socialPost` per post:
 
 ```json
 {

@@ -7,16 +7,16 @@ icon: /images/brand/icon-gemini-cli.svg
 Gemini CLI supports MCP servers over streamable HTTP through its `settings.json` configuration, so her 14 tools land in the terminal you already have open.
 
 <Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings > Developers > Public API** and click **Reveal**.
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
 </Info>
 
 ## Add via CLI
 
 ```bash
-gemini mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Replace `YOUR_API_KEY` with your actual key.
+Replace `YOUR_API_KEY` with your actual key. `--scope user` writes `~/.gemini/settings.json` so the key does not land in a project file. The default (no flag) writes `.gemini/settings.json` in the current project.
 
 | Scope | File it writes | Applies to |
 |-------|----------------|------------|
@@ -64,11 +64,11 @@ You can also edit `~/.gemini/settings.json` directly. Gemini CLI uses the `httpU
 </Tabs>
 
 <Note>
-Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers, and PostQueen does not use SSE). A project-level `.gemini/settings.json` uses the same format.
+Keys per the official [Gemini CLI MCP documentation](https://github.com/google-gemini/gemini-cli/blob/main/docs/tools/mcp-server.md): `httpUrl` is the streamable HTTP endpoint (`url` is reserved for SSE servers, and PostQueen does not use SSE). If an older `gemini mcp add` wrote `"url"` plus a type field, change that key to `httpUrl` or the connection fails. A project-level `.gemini/settings.json` uses the same format.
 </Note>
 
 <Warning>
-Your API key grants full access to your PostQueen workspace: treat it like a password. Since the bare `gemini mcp add` writes into the project's `.gemini/settings.json`, keep that file out of version control, and keep the user-level file private too. If the key leaks, regenerate it in **Settings > Developers > Public API** and update every client that uses it.
+Your API key grants full access to your PostQueen workspace: treat it like a password. Since the bare `gemini mcp add` writes into the project's `.gemini/settings.json`, keep that file out of version control, and keep the user-level file private too. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
 ## Self-hosted

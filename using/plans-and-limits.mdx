@@ -70,7 +70,7 @@ A straight ceiling on how many webhook endpoints the organization can have regis
 
 ### Public API
 
-Available on every paid plan, from Creator upward. Two things have to be true for a call to work: the organization needs a subscription on record, and you need the key. The key lives in **Settings > Developers**, and that tab appears for organization admins on a plan that includes the API.
+Available on every paid plan, from Creator upward. Two things have to be true for a call to work: the organization needs a subscription on record, and you need the key. The key lives in **Settings → API Keys**. The tab is visible to every member; revealing or rotating the key is an admin action.
 
 <Warning>
 Without a subscription the API answers `401` with `No subscription found`, whichever authentication you use.
@@ -88,7 +88,8 @@ Numbers are not the only thing a tier decides. A few parts of Settings appear or
 | **Webhooks** tab | The plan allows at least one webhook |
 | **Auto Post** tab | The plan includes Auto Post, which every paid plan does |
 | **Sets** and **Signatures** tabs | Any plan other than FREE |
-| **Developers** tab | The plan includes the public API, and you are an organization admin |
+| **API Keys** tab | Always, once onboarding is complete. Revealing or rotating the key is an admin action |
+| **Developers** tab | The plan includes the public API. Creating or rotating the OAuth client secret is an admin action |
 | **AI Img** tab in the picture editor | The plan includes the image generator, which is Growth and above |
 
 ## Self-hosting: billing off, limits off

@@ -33,7 +33,7 @@ postqueen --help
 
 ## Give your AI agent the skill
 
-If an AI assistant will be driving the CLI for you, install the PostQueen skill first. It hands the agent her full command set and the patterns behind it, so it gets the flags right the first time instead of guessing at them:
+If an AI assistant will be driving the CLI for you, install the PostQueen skill as well. The skill is a playbook (`SKILL.md`): it teaches the agent her flags and patterns so it gets commands right the first time. It does **not** install the CLI. You still need `npm install -g postqueen` from the step above.
 
 ```bash
 npx skills add GkhanKINAY/postqueen-agent
@@ -48,7 +48,7 @@ Prefer to wire it up by hand? Load the `SKILL.md` file directly from [github.com
 One key and the CLI is talking to your account. Getting it takes a minute:
 
 1. Open [app.postqueen.ai](https://app.postqueen.ai)
-2. Go to **Settings > Developers > Public API**
+2. Go to **Settings → API Keys**
 3. Click **Reveal** and copy your key
 
 Then export it:

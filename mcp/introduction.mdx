@@ -42,7 +42,7 @@ sequenceDiagram
 | `groupList` | List all groups (customers) for your organization |
 | `integrationSchema` | Get platform-specific posting rules and settings schema |
 | `triggerTool` | Execute platform-specific helpers (e.g., list Discord channels) |
-| `integrationSchedulePostTool` | Schedule, draft, or immediately publish posts |
+| `schedulePostTool` | Schedule, draft, or immediately publish posts. The wire name is `schedulePostTool`, not a class name |
 | `postsListTool` | List the posts scheduled between two dates, with their current settings |
 | `postSettingsTool` | Change the settings of a scheduled post or draft that has not gone out yet |
 | `generateImageTool` | Generate AI images for posts |
@@ -68,7 +68,7 @@ There are two ways to authenticate.
 
 <CardGroup cols={2}>
   <Card title="API key" icon="key">
-    Get your API key from **Settings > Developers > Public API** in PostQueen. Use it directly in
+    Get your API key from **Settings → API Keys**. Use it directly in
     the MCP endpoint URL or as a Bearer token.
   </Card>
   <Card title="OAuth token" icon="shield-halved">
@@ -123,7 +123,7 @@ Three tool calls go by before you look up.
     settings, and rules.
   </Step>
   <Step title="Schedule the post">
-    The agent calls `integrationSchedulePostTool` to schedule your post in the correct format.
+    The agent calls `schedulePostTool` to schedule your post in the correct format.
   </Step>
 </Steps>
 
@@ -143,8 +143,7 @@ post is on your calendar in the format X expects.
   </Accordion>
 
   <Accordion title="What happens when my API key expires or is rotated?">
-    PostQueen API keys do not auto-rotate, but if you regenerate one in Settings > Developers >
-    Public API, every MCP client using the old key stops working until you update its config.
+    PostQueen API keys do not auto-rotate, but if you regenerate one in Settings → API Keys, every MCP client using the old key stops working until you update its config.
     Update the URL or the `Authorization` header in your client config and reconnect.
   </Accordion>
 
