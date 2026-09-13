@@ -1,25 +1,12 @@
 ---
 title: Codes and offers
 sidebarTitle: Codes
-description: 'Checkout coupons, founding lifetime into Pro, cancel retention, Affiliate in the user menu'
+description: 'Checkout coupons, founding lifetime into Pro, Affiliate in the user menu'
 icon: 'ticket'
-tag: Cloud
 ---
 
-## Coupon at checkout
+Billing checkout asks **Have a coupon code?** Stripe promotion codes are allowed.
 
-Billing checkout asks **Have a coupon code?** Stripe promotion codes are allowed. Some codes can auto-apply via Stripe metadata.
+A one-time founding deal can grant **Pro**. That is not a fifth monthly plan. After it lands you are on Pro, next to Creator / Growth / Ultimate like anyone else. **Lifetime deal** can appear in the user menu when that offer is on.
 
-## Founding lifetime deal
-
-This is **not** a fifth monthly plan. Within 24 hours of registration (or while a trial is still running, for convert), a one-time **$49** charge can grant **Pro**. Routes: `/billing/lifetime`, checkout `POST /billing/lifetime-checkout`, code redeem `POST /billing/lifetime`. The user menu can show **Lifetime deal** when that flag is on.
-
-After that you are on Pro, not on a separate "lifetime" row next to Creator / Growth / Pro / Ultimate.
-
-## Cancel retention
-
-Leaving a paid plan can offer 50% off for three months (`/billing/apply-discount`), or a founding retention of half of $49 (`/billing/apply-lifetime-retention`).
-
-## Affiliate
-
-When `AFFILIATE_URL` is set, **Affiliate** is an external link in the **user menu**. It is not a Settings row and there is no in-app affiliate wallet.
+Leaving a paid plan can offer a retention discount. **Affiliate**, when it is configured, is an external link in the user menu. It is not a Settings row.
