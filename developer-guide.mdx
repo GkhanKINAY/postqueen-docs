@@ -55,7 +55,7 @@ libraries/nestjs-libraries/src/database/prisma/schema.prisma
 She keeps the schedule in Temporal. When Thursday at 9 AM arrives, the workflow the orchestrator app registered wakes and she posts.
 
 <Note>
-Redis caches and queues. It never holds a schedule.
+Redis is cache and rate limiting. It never holds a schedule.
 </Note>
 
 ## Common commands

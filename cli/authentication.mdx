@@ -55,10 +55,10 @@ postqueen auth:status
 ```
 
 <Note>
-`auth:status` reports which credentials the CLI found and which API URL it will use. It does not
-contact the server, so it will happily report a key that has been revoked. Treat it as "what am I
-configured with", not "does this still work". The only real proof is a command that reaches the
-API, such as `integrations:list`.
+`auth:status` prints which credentials the CLI found and which API URL it will use, then calls
+`GET /public/v1/integrations` to prove the key still works. A revoked key fails that call. It
+still exits `0` when it reports `Not authenticated.`, so scripts that need a hard gate should
+use `integrations:list` instead of the exit code.
 </Note>
 
 ## Environment Variables

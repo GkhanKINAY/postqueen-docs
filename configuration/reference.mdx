@@ -48,7 +48,7 @@ DATABASE_URL="postgresql://postqueen-user:postqueen-password@localhost:5432/post
 
 ### `REDIS_URL` <sup>Required</sup>
 
-Redis connection string used for queues, rate limiting, and short-lived caches.
+Redis connection string used for rate limiting and short-lived caches. Scheduling lives in Temporal, not Redis.
 
 ```
 REDIS_URL="redis://localhost:6379"

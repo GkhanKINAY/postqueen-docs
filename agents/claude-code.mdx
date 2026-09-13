@@ -48,8 +48,10 @@ Two routes lead to the same place. Her skill teaches Claude Code the `postqueen`
     ```
 
     A JSON list of your connected channels means she is ready. If a command starts failing later,
-    `postqueen auth:status` shows which credentials the CLI is using, though it does not contact
-    the server, so this same command is the real test.
+    `postqueen auth:status` shows which credentials the CLI is using and then calls
+    `GET /public/v1/integrations` to prove they still work. This same `integrations:list`
+    command is the hard gate for scripts, because `auth:status` exits `0` even when it reports
+    that you are not authenticated.
   </Step>
   <Step title="Or connect over MCP">
     Prefer tool calls to shell commands? It is one `claude mcp add` line, and the scoping options,
