@@ -16,6 +16,7 @@
  *   limits     -> cloud/limits.mdx
  *   platforms  -> general/platforms/overview.mdx
  *   analytics  -> general/analytics.mdx
+ *   post-analytics -> general/analytics.mdx
  *
  * Usage: node scripts/sync-facts.mjs [--check]
  */
@@ -208,6 +209,24 @@ function analyticsTable(providers) {
   return [head, rule, ...rows].join('\n');
 }
 
+function postAnalyticsTable(providers) {
+  // The two TikTok providers are both named "TikTok" (one as "Tiktok"), so
+  // label them the way the rest of the docs do.
+  const displayName = { tiktok: 'TikTok', 'tiktok-business': 'TikTok Business' };
+  const socialDir = 'libraries/nestjs-libraries/src/integrations/social';
+  const withPostAnalytics = readdirSync(join(appRoot, socialDir))
+    .filter((f) => f.endsWith('.provider.ts'))
+    .filter((f) => /^\s+async postAnalytics\(/m.test(app(join(socialDir, f))))
+    .map((f) => app(join(socialDir, f)).match(/^\s+(?:override\s+)?identifier\s*=\s*'([\w-]+)'/m)?.[1]);
+
+  const head = '| Platform |';
+  const rule = '|---|';
+  const rows = providers
+    .filter((p) => withPostAnalytics.includes(p.identifier))
+    .map((p) => `| ${displayName[p.identifier] || p.name} |`);
+  return [head, rule, ...rows].join('\n');
+}
+
 /* ------------------------------------------------------------------- writer */
 
 function applyRegion(file, region, content) {
@@ -241,7 +260,8 @@ if (process.argv.includes('--print')) {
   console.log(pricingTable(pricing), '\n');
   console.log(limitsTable(pricing), '\n');
   console.log(platformsTable(providers), '\n');
-  console.log(analyticsTable(providers));
+  console.log(analyticsTable(providers), '\n');
+  console.log(postAnalyticsTable(providers));
   process.exit(0);
 }
 
@@ -250,6 +270,7 @@ const results = [
   applyRegion('cloud/limits.mdx', 'limits', limitsTable(pricing)),
   applyRegion('general/platforms/overview.mdx', 'platforms', platformsTable(providers)),
   applyRegion('general/analytics.mdx', 'analytics', analyticsTable(providers)),
+  applyRegion('general/analytics.mdx', 'post-analytics', postAnalyticsTable(providers)),
 ];
 
 for (const r of results) console.log(`  ${r.status.padEnd(20)} ${r.file} [${r.region}]`);
