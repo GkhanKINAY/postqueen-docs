@@ -26,8 +26,8 @@ The things that catch people out on their own install. Find your symptom and ope
 
     | Check | What to look for |
     |---|---|
-    | `DATABASE_URL` host | `localhost` fails from a container without host networking. Use the service name, `postgres` |
-    | Postgres is up | `docker compose logs postgres` shows *database system is ready to accept connections* |
+    | `DATABASE_URL` host | `localhost` fails from a container without host networking. Use the service name, `postqueen-postgres` |
+    | Postgres is up | `docker compose logs postqueen-postgres` shows *database system is ready to accept connections* |
     | Port mapping | Exposed only on the Docker network is fine. External `psql` will not work, the backend will |
   </Accordion>
 

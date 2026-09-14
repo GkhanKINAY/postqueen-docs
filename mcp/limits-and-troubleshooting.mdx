@@ -36,7 +36,7 @@ before you build on MCP, not after.
 | Connect a new channel | No tool | [`GET /social/{integration}`](/public-api/integrations/connect) for the OAuth URL, or the app |
 | Remove a channel | No tool | [`DELETE /integrations/{id}`](/public-api/integrations/delete), or the app |
 | Upload a file from your disk | `uploadFromUrlTool` takes a public URL only | [`POST /upload`](/public-api/uploads/upload-file), or `postqueen upload <file>` |
-| Read or reply to comments | No tool | No interface today. See the FAQ on [Introduction](/mcp/introduction) |
+| Read or reply to comments | No tool | No interface today |
 
 Three of these deserve a longer sentence.
 
@@ -180,10 +180,31 @@ Poke at the server and you will find more than the two endpoints above. They are
 
 <Warning>
 Prefer `/mcp` or `/mcp/YOUR_API_KEY` over streamable HTTP. `/mcp-oauth*` is for directory OAuth
-clients and exposes a shorter tool set (see [Introduction](/mcp/introduction#how-many-tools-you-actually-get)).
+clients and exposes a shorter tool set (see [Tools Reference](/mcp/tools#how-many-tools-you-actually-get)).
 The SSE pair is still mounted and still serves the full 14-tool set, but it is the older
 transport: reconfigure a client that falls back to it unless that client cannot speak streamable HTTP.
 </Warning>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do I need an OpenAI key to use PostQueen MCP?">
+    No key is needed for reasoning: your MCP client (Claude, Cursor and others) brings the model.
+    But `generateImageTool` and the video tools run her own generation pipeline on the server, so
+    a self-hosted backend needs `OPENAI_API_KEY` (and any video provider keys) for those specific
+    tools. The other tools work without it.
+  </Accordion>
+  <Accordion title="What happens when my API key expires or is rotated?">
+    PostQueen API keys do not auto-rotate, but if you regenerate one in Settings → API Keys, every MCP client using the old key stops working until you update its config.
+    Update the URL or the `Authorization` header in your client config and reconnect.
+  </Accordion>
+  <Accordion title="Can MCP read or reply to comments?">
+    Not today. The current tool set is read-only on integrations and write-only on posts and
+    media: there is no `getComments` or `replyToComment` tool. The closest feature is
+    [Auto Actions](/using/auto-actions), which can repost your own post or add a follow-up comment
+    on it once it crosses the like milestone you set.
+  </Accordion>
+</AccordionGroup>
 
 ## Next steps
 

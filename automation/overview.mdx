@@ -2,7 +2,6 @@
 title: 'Automation Overview'
 description: 'Wire her into the stack you already run: n8n, Zapier and Make on the way in, webhooks and RSS AutoPost on the way out.'
 icon: 'flag'
-tag: Automation
 keywords:
   - n8n
   - zapier
@@ -12,15 +11,7 @@ keywords:
   - automation
 ---
 
-Your content rarely starts in PostQueen. It starts in a sheet a client fills in, in the post you
-publish on Friday, in a scenario you built two years ago. Five routes put her inside the tool you
-already run.
-
-<Frame>
-  <img src="/images/brand/flow-everywhere.svg" alt="Content from AI, an RSS feed or a spreadsheet reaches PostQueen through Create Post and is scheduled to every channel at once" />
-</Frame>
-
-## Pick your route
+Five routes put her inside the tool you already run. All five speak to the same [Public API](/public-api/introduction). One key from **Settings → API Keys**, sent as `Authorization: YOUR_API_KEY` with no `Bearer` prefix.
 
 <CardGroup cols={3}>
   <Card title="n8n" icon="/images/brand/icon-n8n.svg" href="/automation/n8n">
@@ -40,38 +31,8 @@ already run.
   </Card>
 </CardGroup>
 
-| | Direction | Needs a workflow tool |
-|---|---|---|
-| **n8n · Zapier · Make** | your tool calls her | yes |
-| **Webhooks** | she calls your stack | no |
-| **RSS AutoPost** | she moves on her own | no |
-
-## What all five share
-
-<Info>
-**One API key.** In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys**
-and click **Reveal**. Send it as `Authorization: YOUR_API_KEY`, with no `Bearer`
-prefix. The n8n credential sends it for you once saved.
-</Info>
-
-Everything here speaks to the [Public API](/public-api/introduction) that also sits behind the
-[CLI](/cli/introduction) and [MCP](/mcp/introduction), so the result never depends on the route.
+n8n, Zapier and Make call her. Webhooks go the other way. RSS AutoPost moves on her own.
 
 <Warning>
-The create-post endpoint allows **30 requests per hour**. A chatty trigger reaches that faster than
-you would expect, so filter or delay a busy source.
+The create-post endpoint allows **30 requests per hour** on Cloud and the shipped Compose files. A chatty trigger reaches that faster than you would expect.
 </Warning>
-
-## Self-hosting
-
-Your own domain changes the address and nothing else.
-
-| Where | Set it to |
-|---|---|
-| n8n credential **Host** | `https://postqueen.example.com/api` |
-| Zapier and Make base URL | `https://postqueen.example.com/api/public/v1` |
-| Hourly ceiling | the `API_LIMIT` environment variable |
-
-Webhooks and AutoPost live in your instance's own settings, and with billing switched off the plan
-checks are skipped, so both tabs are there. AutoPost calls OpenAI for captions and pictures, so set
-`OPENAI_API_KEY` before turning those on, or leave them off and run the feed with no AI key at all.

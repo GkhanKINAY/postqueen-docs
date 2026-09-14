@@ -2,7 +2,6 @@
 title: 'Agents Overview'
 description: 'Give any assistant that can run a command or call a tool hands on your calendar: install her skill, connect over MCP or call the public API.'
 icon: 'sparkles'
-tag: Agents
 keywords:
   - agents
   - grok bot
@@ -14,37 +13,15 @@ keywords:
   - chatgpt
 ---
 
-## Just talk to her
+Any assistant that can run a command or call a tool can put posts on your calendar. OpenClaw and Hermes live on your machine. Grok Bot is the cloud agent. Claude, ChatGPT and the rest connect over MCP.
 
-Message her the way you would message a colleague. She answers inside ChatGPT and the Claude app, reads your WhatsApp and Telegram messages through OpenClaw or Hermes, and she is one command away in your terminal. Tell her what you want the world to see, and she takes care of the rest: the words, the visual and the schedule.
+The calendar stays yours: everything is visible before it publishes. A draft is saved and never scheduled.
 
 <Frame>
   <img src="/images/brand/open-agents.svg" alt="Chat apps feed OpenClaw, a one-line brief feeds Hermes, both drive the postqueen CLI and posts land on the calendar" />
 </Frame>
 
-## She runs on your terms
-
-Leave her alone and she is a true autopilot: whatever lands on the calendar goes out on time without another word from you. Want a closer look first? Everything is visible on the calendar before it publishes, so you can edit or delete it, and a post created as a draft is saved but never scheduled, so it sits there until you publish it.
-
-## Three ways in
-
-Any assistant that can run a shell command or call a tool can run your socials. Pick the one your assistant already speaks:
-
-<CardGroup cols={3}>
-  <Card title="Agent skill + CLI" icon="terminal" href="/cli/introduction">
-    Install the skill and your agent drives the postqueen CLI, with clean JSON on every command
-  </Card>
-  <Card title="MCP" icon="plug" href="/mcp/setup">
-    Point Claude, ChatGPT or any MCP client at `/mcp` for 14 tools. Directory OAuth paths expose fewer. Same thirteen tools as the in-app assistant, plus `ask_postqueen` on direct `/mcp`
-  </Card>
-  <Card title="Public API" icon="code" href="/public-api/introduction">
-    REST for your own scripts and automations, with your API key as the only setup
-  </Card>
-</CardGroup>
-
-## 👑 Pick your agent
-
-Whichever one you already use, you can be scheduling posts from it in a few minutes.
+## Pick your agent
 
 <CardGroup cols={3}>
   <Card title="OpenClaw" icon="/images/brand/icon-openclaw.svg" href="/agents/openclaw">
@@ -53,6 +30,30 @@ Whichever one you already use, you can be scheduling posts from it in a few minu
   <Card title="Hermes" icon="/images/brand/icon-hermes.svg" href="/agents/hermes">
     Hand it one brief and it plans, writes and schedules your week over the CLI
   </Card>
+  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
+    Cloud agent. Tell the Bot to add the MCP server
+  </Card>
+</CardGroup>
+
+## Three ways in
+
+<CardGroup cols={3}>
+  <Card title="Agent skill + CLI" icon="terminal" href="/cli/introduction">
+    Install the skill and your agent drives the postqueen CLI, with clean JSON on every command
+  </Card>
+  <Card title="MCP" icon="plug" href="/mcp/setup">
+    Point any MCP client at `/mcp` for 14 tools. Directory OAuth paths expose fewer. Same thirteen tools as the in-app assistant, plus `ask_postqueen` on direct `/mcp`
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    REST for your own scripts and automations, with your API key as the only setup
+  </Card>
+</CardGroup>
+
+## Other clients
+
+These reach her over MCP (or the CLI skill) instead of as a bot product. [Muse Code](/agents/muse) works today; the Muse app does not take an MCP URL yet.
+
+<CardGroup cols={3}>
   <Card title="Claude" icon="/images/brand/icon-claude.svg" href="/agents/claude-apps">
     claude.ai, Desktop and mobile. One custom connector, not Claude Code
   </Card>
@@ -71,128 +72,41 @@ Whichever one you already use, you can be scheduling posts from it in a few minu
   <Card title="Grok" icon="/images/brand/icon-grok.svg" href="/agents/grok">
     Add her as a custom connector at grok.com/connectors
   </Card>
-  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Cloud agent. Tell the Bot to add the MCP server
-  </Card>
   <Card title="Grok Build" icon="/images/brand/icon-grok.svg" href="/agents/grok-build">
     Terminal coding agent. One grok mcp add command
   </Card>
-  <Card title="Muse" icon="/images/brand/icon-muse.svg" href="/agents/muse">
-    Muse Code over streamable HTTP today; the Muse app is coming soon
+  <Card title="Muse Code" icon="/images/brand/icon-muse.svg" href="/agents/muse">
+    Streamable HTTP today. The Muse app is not ready
   </Card>
-</CardGroup>
-
-Talking to her in a chat app instead? She answers in
-[WhatsApp, Telegram and the rest](/agents/chat-channels).
-
-Using something else? These reach her over MCP instead of the agent skill, so their setup lives
-with the MCP client guides:
-
-<CardGroup cols={2}>
+  <Card title="Chat apps" icon="mobile" href="/agents/chat-channels">
+    WhatsApp, Telegram and the rest, through OpenClaw or Hermes
+  </Card>
   <Card title="Gemini CLI" icon="/images/brand/icon-gemini-cli.svg" href="/agents/gemini-cli">
     One command in the terminal, and the release notes write themselves
   </Card>
   <Card title="VS Code" icon="/images/brand/icon-vscode.svg" href="/mcp/clients/vscode">
     Copilot Chat. servers plus type http, not Cursor mcpServers
   </Card>
-  <Card title="Windsurf" icon="/images/brand/icon-windsurf.svg" href="/mcp/clients/windsurf">
-    Cascade mcp_config.json with serverUrl
-  </Card>
-  <Card title="Zed" icon="/images/brand/icon-zed.svg" href="/mcp/clients/zed">
-    context_servers plus a Bearer header, or Zed starts OAuth
-  </Card>
   <Card title="Any MCP client" icon="/images/brand/icon-other-clients.svg" href="/mcp/clients/other-clients">
-    One URL, one header, and she is a tool the agent can call
+    One URL, one header, and she is a tool the agent can call. Also Windsurf and Zed
   </Card>
 </CardGroup>
 
 <Info>
-**Anything that runs a shell command.** A tool that can execute `postqueen` drives her without MCP
-and without anything to connect: install the CLI (`npm install -g postqueen`), optionally add the
-skill playbook, export your key, and it can schedule while you work. A cron job or a CI step
-qualifies on the same terms.
+**Anything that runs a shell command.** Install the CLI (`npm install -g postqueen`), optionally add the skill playbook, export your key, and it can schedule while you work. A cron job or a CI step qualifies on the same terms.
 </Info>
 
-Curious what makes her easy for an agent to drive? Read [Why agents love her](/agents/why-agents).
-
-## Install the skill
-
-One command installs her skill into any coding agent that supports the `skills` registry:
-
-```bash
-npx skills add GkhanKINAY/postqueen-agent
-```
-
-What lands is her `SKILL.md`, a playbook that teaches your agent how she works before it runs a
-single command. After reading it, the agent knows how to find your channels, ask each platform
-what it accepts, fetch things that cannot be hardcoded like subreddit flairs, and upload media
-the way she requires.
-
-<Card title="Install the skill, step by step" icon="download" href="/agents/skill-install">
-  The API key, the CLI, self-hosted setup, and a table of what goes wrong with each fix
-</Card>
-
-Every agent session then runs the same loop: authenticate, find your channels, prepare media,
-post, check the numbers. All seven steps with the command each one runs:
-[Why agents love her](/agents/why-agents).
-
-## Connect over MCP
-
-Prefer tool calls over shell commands? PostQueen speaks MCP at one URL she hosts, so an MCP client gets 14 tools to list your channels, upload media and schedule posts without installing anything.
-
-There is one URL and every client takes it a slightly different way: a single command in Claude
-Code, one JSON entry in Cursor, a connector form on claude.ai, a bridge in Claude Desktop.
-
 <CardGroup cols={2}>
-  <Card title="Connect your client" icon="plug" href="/mcp/setup">
-    The URL, both auth forms, and the steps for each client
+  <Card title="Install the skill" icon="download" href="/agents/skill-install">
+    `npx skills add GkhanKINAY/postqueen-agent` teaches the CLI before it runs a command
+  </Card>
+  <Card title="Connect over MCP" icon="plug" href="/mcp/setup">
+    One URL, 14 tools. Copy-paste for Claude, ChatGPT, Grok Bot and the rest
   </Card>
   <Card title="Every tool" icon="wrench" href="/mcp/tools">
     All 14, with the parameters each one takes
   </Card>
-</CardGroup>
-
-## From your chat apps
-
-Message her on WhatsApp or Telegram through OpenClaw or Hermes, and the same route brings her into Slack and Discord. Prefer the browser? [app.postqueen.ai](https://app.postqueen.ai) runs your whole calendar from your phone too. Setup: [OpenClaw](/agents/openclaw) and [Hermes](/agents/hermes).
-
-<Frame>
-  <img src="/images/brand/phone-agent.svg" alt="A phone chat: you ask her to push today's podcast to X and LinkedIn at 5pm and she answers that two posts are scheduled and waiting on your calendar" />
-</Frame>
-
-## Try saying
-
-Once she is connected, talk to her in plain words:
-
-> *"Plan a month of content for our coffee shop and fill the calendar."*
-
-> *"Take this photo of today's special and put it on Instagram at lunchtime."*
-
-> *"We just hit 10k followers, write a warm thank-you post for all our channels."*
-
-> *"Turn my latest YouTube video into posts for X, LinkedIn and Threads."*
-
-She turns any of those into scheduled posts across your channels, and the calendar stays yours to review.
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Install the skill" icon="download" href="/agents/skill-install">
-    One command teaches your assistant the whole CLI.
-  </Card>
-  <Card title="Connect over MCP" icon="network-wired" href="/mcp/setup">
-    Copy-paste configuration for Claude, ChatGPT, Cursor and the rest.
-  </Card>
-  <Card title="Chat from your phone" icon="mobile" href="/agents/openclaw">
-    WhatsApp and Telegram, through OpenClaw.
-  </Card>
-  <Card title="Why she suits agents" icon="lightbulb" href="/agents/why-agents">
-    What makes the calendar easy for an assistant to drive.
-  </Card>
-</CardGroup>
-
-<CardGroup cols={1}>
-  <Card title="No channel connected yet?" icon="rocket" href="/quickstart">
-    Start here. An agent needs somewhere to post before any of this helps.
+  <Card title="Why agents love her" icon="lightbulb" href="/agents/why-agents">
+    What makes the calendar easy for an assistant to drive
   </Card>
 </CardGroup>
