@@ -9,40 +9,58 @@ icon: /images/channels/tiktok.svg
 On your own instance the TikTok app is yours: register it on TikTok for Developers, then put its client id and secret in your environment.
 
 <Info>
-This integration requires that you have a TikTok developer account. It also requires that you have a public website, with https, and can upload files to that site to verify ownership.
+**PostQueen Cloud (`https://app.postqueen.ai`):** Forceplay OÜ registers **PostQueen** under [developers.tiktok.com/apps](https://developers.tiktok.com/apps). Cloud passes only `TIKTOK_CLIENT_ID` and `TIKTOK_CLIENT_SECRET` — no `TIKTOK_SANDBOX_*` variables. While the app is in **Sandbox** or before Production is **Live**, use the **Sandbox** client key/secret pair in deploy env; after Production goes Live, swap back to the Production pair. **TikTok Business** is a separate Add Channel card and separate app keys; Cloud’s production overlay does not expose `TIKTOK_BUSINESS_*` yet.
+</Info>
 
-TikTok will also not allow http:// for your app redirect URI, so you will need to be accessing PostQueen from HTTPS.
+<Info>
+TikTok for Developers has **no monthly developer fee**. App Review and the Direct Post Terms-of-Service audit are free. Ignore older guides that mention a ~$100/month TikTok developer charge.
+</Info>
+
+<Info>
+This integration requires a TikTok developer account (preferably under an **organization**, not a personal-only registration), a public **website** on HTTPS, and verified **URL properties** for your domains. TikTok will not allow `http://` for the Login Kit redirect URI, so you must reach PostQueen over HTTPS.
 </Info>
 
 <Warning>
 **NOTE:** Photo posts are the ones TikTok pulls from a URL, so for those your media has to be publicly reachable over HTTPS; localhost or private routes such as `/uploads` will fail. Serve your uploads through a reverse proxy (e.g. [Caddy](/reverse-proxies/caddy)) or object storage such as [Cloudflare R2](/configuration/r2) with public access. Videos are streamed up by PostQueen itself, so a private path works for those.
 
-Ensure the media domain is listed under your TikTok developer account's verified sites.
+On Cloud, public media is served from `https://app.postqueen.ai/api/uploads`. List **Domain** `postqueen.ai` and **Domain** `app.postqueen.ai` under URL properties (full path prefixes are not required for every field).
 </Warning>
 
 <Warning>
 TikTok approval is not the final step for Direct Post access. TikTok allows unaudited API clients to use the Direct Post API, but posts are restricted to private visibility until the API client completes TikTok's audit process for Terms of Service compliance.
 
-If your API client has not passed this audit, TikTok also limits Direct Post usage to up to 5 users posting in a 24-hour window, and those user accounts must be private at the time of posting. See TikTok's [Direct Post API developer guidelines](https://developers.tiktok.com/doc/content-sharing-guidelines#direct_post_api_-_developer_guidelines) for the current requirements.
+If your API client has not passed this audit, TikTok also limits Direct Post usage to up to 5 users posting in a 24-hour window, and those user accounts must be **private** at the time of posting. See TikTok's [Direct Post API developer guidelines](https://developers.tiktok.com/doc/content-sharing-guidelines#direct_post_api_-_developer_guidelines) for the current requirements.
+
+**Production Live ≠ public posting.** After App Review goes Live, customers can connect, but unaudited Direct Post still means **SELF_ONLY** until the separate Direct Post ToS audit clears.
 
 In practice this means: before your TikTok developer app passes audit, TikTok accepts nothing but **SELF_ONLY** (private). PostQueen does not downgrade it for you, it sends the level you picked, so anything else comes back as a failed post reading `App not approved for public posting, contact support`. Set `SELF_ONLY` yourself until the audit clears, then every level becomes available.
 </Warning>
 
 <Steps>
   <Step title="Create your app">
-    Go here: [https://developers.tiktok.com/apps](https://developers.tiktok.com/apps)
+    Open [https://developers.tiktok.com/apps](https://developers.tiktok.com/apps) → **Connect an app**. Register the app under your **organization** (e.g. Forceplay OÜ), not as a one-off individual app when you can avoid it.
 
-    <Frame>
-      <img src="/images/providers/tiktok/tiktok_create_app.png" alt="Create a new app" />
+    <Frame caption="Placeholder — Gökhan will replace with a current developers.tiktok.com screenshot.">
+      <img src="/images/providers/tiktok/tiktok_create_app.svg" alt="Placeholder for TikTok Connect an app screen" />
     </Frame>
 
-    * **App Name:** `MyPostQueen`
-    * **Redirect URI:** your PostQueen callback URL, shown in the next step
+    | Field | Value |
+    | --- | --- |
+    | App name | `PostQueen` (do not put “TikTok” in the app name) |
+    | Category | Business / content management (closest match) |
+    | App type | **Other** (permanent) |
+    | Platforms | **Web only** — do not tick iOS/Android/Desktop until you have live store URLs |
+    | Website | `https://postqueen.ai` — not `app.postqueen.ai` (login-only URLs fail review) |
+    | Privacy Policy | `https://postqueen.ai/privacy-policy` |
+    | Terms of Service | `https://postqueen.ai/terms-of-service` |
+
+    Privacy and Terms must be visible on the marketing site without hiding them behind a menu-only hamburger.
 
     <Snippet file="oauth2redirect.mdx" />
 
-    **Your TikTok OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/tiktok`
+    **Login Kit redirect (Web, no trailing slash):**
+    - PostQueen Cloud: `https://app.postqueen.ai/integrations/social/tiktok`
+    - Self-hosted production: `https://postqueen.example.com/integrations/social/tiktok`
     - Local development (HTTPS required): `https://localhost:4200/integrations/social/tiktok`
     - Docker (HTTPS required): `https://localhost:4007/integrations/social/tiktok`
 
@@ -51,43 +69,63 @@ In practice this means: before your TikTok developer app passes audit, TikTok ac
     </Warning>
   </Step>
 
-  <Step title="Set a TOS and Privacy Policy">
-    This needs to be on a public domain that you have access to, that is hosted on HTTPS. 
+  <Step title="Add products (only these two)">
+    Under **Add products**, enable:
 
-    Tick "Web" for your platforms.
+    1. **Login Kit** — Web redirect URI = the same string as above (one URI for the app).
+    2. **Content Posting API** — turn **Direct Post** **ON**.
+
+    Do **not** add Share Kit, Webhooks, Data Portability, Local Services, Ads, or Research API. Research API is a separate academic product, not “Sandbox vs Production”.
   </Step>
 
-  <Step title="Add apps">
-    Add the "Login Kit" and "Content Posting API" to your app.
+  <Step title="Add scopes (exactly six)">
+    Add **only** these scopes — not “add all”, and **not** `video.create`:
 
-    For "Login Kit", set the redirect URI to the same value you registered two steps back. It is one URI across the app, not a second one just for Login Kit.
+    - `user.info.basic`
+    - `user.info.profile`
+    - `user.info.stats`
+    - `video.list`
+    - `video.upload`
+    - `video.publish`
 
-    For Content posting API, enable "Direct Post".
+    The connect is refused if any one of them is missing. Extra scopes slow App Review because each must appear in your screencast.
   </Step>
 
-  <Step title="Add scopes">
-    Add all six. The connect is refused if any one of them is missing, and `video.create` is not one of them:
-    - user.info.basic
-    - user.info.profile
-    - user.info.stats
-    - video.list
-    - video.upload
-    - video.publish
+  <Step title="Sandbox vs Production">
+    The portal toggle is **Sandbox** and **Production**, not “research vs production app”.
+
+    - **Sandbox:** no App Review required; up to 10 **Target users** (private TikTok accounts work best for Direct Post tests). Create a sandbox (e.g. `postqueen-cloud`) and **clone from Production Draft** when you are ready to test. Sandbox **client key/secret often differ** from Production — store the pair that matches the mode you are testing in `TIKTOK_CLIENT_ID` / `TIKTOK_CLIENT_SECRET`.
+    - **Production:** Draft → Submit for review → Live. Your first review video must be recorded on **Sandbox** against real `https://app.postqueen.ai`, UI language **English**, showing consent for all six scopes. Do not describe PostQueen as an internal-only tool; write for customers connecting their own accounts.
+
+    Target users can take up to about an hour to appear after you add them.
   </Step>
 
-  <Step title="Copy your client secret to environment variables">
-    These can be found immediately after registering your application. The client ID is 16 characters long and the secret is 32 characters long.
+  <Step title="Verify URL properties">
+    In **Production** (and for Content Posting in Sandbox), open **URL properties** and verify:
+
+    - Domain `postqueen.ai` (website, Privacy, Terms)
+    - Domain `app.postqueen.ai` (media host; Cloud uploads live under `/api/uploads`)
+
+    Follow TikTok’s verification wizard (DNS, meta tag, or signature file). Unverified photo URLs fail with ownership errors.
+  </Step>
+
+  <Step title="Copy client key and secret to environment variables">
+    **Client key** → `TIKTOK_CLIENT_ID`. **Client secret** → `TIKTOK_CLIENT_SECRET`.
+
+    Production keys are often 16 / 32 characters; Sandbox keys can differ in length. There are no separate `TIKTOK_SANDBOX_*` env vars — swap the pair when you move from Sandbox testing to Production Live.
 
 ```env
-TIKTOK_CLIENT_ID=1234567890123456
-TIKTOK_CLIENT_SECRET=12345678901234567890123456789012
+TIKTOK_CLIENT_ID=your-client-key
+TIKTOK_CLIENT_SECRET=your-client-secret
 ```
 
-    Restart PostQueen with the updated environment variables
+    Restart PostQueen with the updated environment variables.
   </Step>
 
   <Step title="Add a TikTok channel in the PostQueen web interface">
-    Go to the PostQueen web interface, and click on the "Add Channel" button. Select "TikTok" from the list of available channels. You should be redirected to TikTok to authorize the application.
+    Go to the PostQueen web interface, and click on the "Add Channel" button. Select **TikTok** (not TikTok Business unless you completed that separate app). Authorize with a **Target user** account in Sandbox, or any user once Production is Live.
+
+    For unaudited Direct Post, pick **Self only** privacy and use a **private** TikTok account at post time.
   </Step>
 </Steps>
 
@@ -97,15 +135,18 @@ The channel is in the left sidebar with its avatar and name. That is the whole c
 
 ## TikTok Business
 
-The **TikTok Business** card in Add Channel runs on an app of its own, registered for TikTok's Business API, with its own pair of keys. Set up either app, or both.
+The **TikTok Business** card in Add Channel runs on an app of its own, registered for TikTok's Business API, with its own pair of keys. Set up either app, or both. PostQueen Cloud does not yet pass `TIKTOK_BUSINESS_CLIENT_ID` / `TIKTOK_BUSINESS_CLIENT_SECRET` in its production overlay; self-hosters can configure them today.
 
 <Steps>
   <Step title="Register the redirect URI, trailing slash included">
     TikTok accepts only Business redirect URLs that end in `/`, and she sends the same address on the token exchange, so a registered URI without the slash fails the login.
 
-    - Production: `https://postqueen.example.com/integrations/social/tiktok-business/`
+    - PostQueen Cloud: `https://app.postqueen.ai/integrations/social/tiktok-business/`
+    - Self-hosted production: `https://postqueen.example.com/integrations/social/tiktok-business/`
     - Local development (HTTPS required): `https://localhost:4200/integrations/social/tiktok-business/`
     - Docker (HTTPS required): `https://localhost:4007/integrations/social/tiktok-business/`
+
+    Standard TikTok Login Kit uses **no** trailing slash; Business uses **with** trailing slash. Do not mix them.
 
     The `redirectmeto.com` wrapping described above applies here too when `FRONTEND_URL` is plain `http`.
   </Step>

@@ -106,6 +106,34 @@ provider calls go out through a dispatcher that would ignore them anyway. You ne
 proxy or an allowlist at the network layer.
 </Warning>
 
+## X (Twitter): error 32 or usage-capped
+
+<AccordionGroup>
+  <Accordion title="Could not authenticate you (error 32)" icon="circle-question">
+    PostQueen uses **OAuth 1.0a**, not OAuth 2 Client ID/Secret. In [console.x.com](https://console.x.com) set **Type of App** to **Native App**, permission **Read and Write**, and callback exactly `https://app.postqueen.ai/integrations/social/x` on Cloud (**no trailing slash**). Put only Consumer Key/Secret in `X_API_KEY` / `X_API_SECRET`. On Cloud, leave `X_URL` unset.
+  </Accordion>
+  <Accordion title="402 / usage-capped on connect or post" icon="circle-question">
+    New X developer accounts need **pay-per-use API credits**; Free/Basic/Pro are not available for new sign-ups in 2026. Load credits in the portal Billing section before testing.
+  </Accordion>
+  <Accordion title="Trial workspace cannot connect X" icon="circle-question">
+    X is **trialLocked** in PostQueen: only **paid** workspaces can add the channel on Cloud.
+  </Accordion>
+</AccordionGroup>
+
+## TikTok: redirect mismatch or App not approved
+
+<AccordionGroup>
+  <Accordion title="Login fails after TikTok consent" icon="circle-question">
+    Compare the Login Kit redirect **character for character**. Standard TikTok: `https://app.postqueen.ai/integrations/social/tiktok` (**no** trailing slash). TikTok Business: `https://app.postqueen.ai/integrations/social/tiktok-business/` (**with** trailing slash). If you swapped Sandbox vs Production client keys, ensure `TIKTOK_CLIENT_ID` / `TIKTOK_CLIENT_SECRET` match the mode you are using.
+  </Accordion>
+  <Accordion title="App not approved for public posting" icon="circle-question">
+    Unaudited Direct Post allows **SELF_ONLY** on a **private** account only. Production **Live** does not by itself enable public visibility; that needs the separate Direct Post ToS audit. See [TikTok setup](/installation/providers/tiktok).
+  </Accordion>
+  <Accordion title="NotEnoughScopes on connect" icon="circle-question">
+    Enable exactly six scopes (`user.info.basic`, `user.info.profile`, `user.info.stats`, `video.list`, `video.upload`, `video.publish`). `video.create` is not used.
+  </Accordion>
+</AccordionGroup>
+
 ## Unsupported file type during connect
 
 TikTok and Instagram upload a profile avatar as part of attaching the channel, and an exotic source

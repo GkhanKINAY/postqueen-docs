@@ -6,67 +6,85 @@ icon: /images/channels/x.svg
 
 On your own instance the X app is yours: create it in the X developer portal, then put its API key and secret in your environment.
 
-X is a bit different.
+<Info>
+**PostQueen Cloud (`https://app.postqueen.ai`):** Forceplay OÜ already registers the app **PostQueen** at [console.x.com](https://console.x.com). You do not create another developer app for Cloud. Open **Add Channel → X** on a **paid** workspace (trial workspaces cannot connect X). You still need **pay-per-use API credits** on that X developer account before connect and posting work.
+</Info>
 
-They created an oAuth2 flow, but it works only with Twitter v2 API.
-But in order to upload pictures to X, you need to use the old Twitter v1 API.
-So you are going to use the normal oAuth1 flow for that (that supports Twitter v2 also 🤷🏻‍).
+PostQueen connects with **OAuth 1.0a** (three-legged). Tweets and media upload use X API v2 endpoints, but the login flow is OAuth 1, not OAuth 2 PKCE. Do not put OAuth 2 Client ID/Secret, a Bearer token, or your personal “Access Token for @…” into `X_API_KEY` / `X_API_SECRET`.
 
 <Steps>
-  <Step title="Create a new app">
-    Head over the [Twitter developers page](https://developer.twitter.com/en/portal/dashboard) and create a new app.
-    Click to sign-up for a new free account
+  <Step title="Open the X developer portal">
+    Sign in with the X account that will own the app, then open [console.x.com](https://console.x.com) (the old [developer.x.com portal](https://developer.x.com/en/portal/dashboard) redirects here).
 
-    <Frame>
-      <img src="/images/providers/x/x-001.png" alt="The X developer portal dashboard, with the sign-up link for a new free account" />
+    New developer accounts in 2026 no longer get Free, Basic, or Pro API plans. Load **pay-per-use credits** under Billing before you test connect or posting. The portal may still say “free account” in places; treat **credits** as the gate, not a Meta-style App Review.
+
+    <Frame caption="Placeholder — Gökhan will replace with a current console.x.com screenshot.">
+      <img src="/images/providers/x/x-001.svg" alt="Placeholder for the X developer portal dashboard" />
     </Frame>
   </Step>
 
-  <Step title="Edit application settings">
-    Click to edit the application settings
-    
-    <Frame>
-      <img src="/images/providers/x/x-002.png" alt="The app overview in the X developer portal, with the settings edit control highlighted" />
+  <Step title="Create the app">
+    Choose **New App** / **Create App**. Name it e.g. `PostQueen`.
+
+    Use case: a scheduling tool where each customer connects **their own** X account. Do not request DM or email permissions; PostQueen does not use them.
+
+    **Exhibit / X App Store** listing is optional. It is not required for Add Channel.
+
+    <Frame caption="Placeholder — Gökhan will replace with a current console.x.com screenshot.">
+      <img src="/images/providers/x/x-002.svg" alt="Placeholder for X app overview and settings" />
     </Frame>
   </Step>
 
-  <Step title="Set up authentication flow">
-    Click to set up an authentication flow
-    
-    <Frame>
-      <img src="/images/providers/x/x-003.png" alt="The user authentication settings screen, where App Permission, Type of App and the callback URL are set" />
+  <Step title="Set up user authentication (OAuth 1.0a)">
+    Open **User authentication** / **Set up** authentication for the app.
+
+    <Frame caption="Placeholder — Gökhan will replace with a current console.x.com screenshot.">
+      <img src="/images/providers/x/x-003.svg" alt="Placeholder for X user authentication settings" />
     </Frame>
 
-    - In the App Permission set it to `Read and Write`
-    - In the Type of App set it to `Native App`
-    - In the App Info set the `Callback URI / Redirect URL`
+    - **App permission:** `Read and Write` (Read only connects but cannot post).
+    - **Type of App:** `Native App`. PostQueen’s self-hosted docs and Cloud both rely on this for OAuth 1.
 
     <Warning>
-    You must select `Native App` for OAuth 1.0a to work correctly. Selecting `Web App, Automated App or Bot` will cause authentication to fail with error code 32.
+    You must select `Native App` for OAuth 1.0a to work correctly. Selecting `Web App, Automated App or Bot` causes authentication to fail with error code 32 (`Could not authenticate you`).
     </Warning>
+
+    - **Callback URI / Redirect URL** — exact string, **no trailing slash**, no `www`:
+
+    ```
+    https://app.postqueen.ai/integrations/social/x
+    ```
+
+    On your own domain, replace the host with your `FRONTEND_URL` host (see the next step).
+
+    - **Website URL:** `https://postqueen.ai` (marketing site, not the app login URL).
+    - If the portal also shows OAuth 2 fields, you may mirror the same callback there, but PostQueen **does not** use OAuth 2 Client ID/Secret from env.
   </Step>
 
-  <Step title="Configure OAuth2 Redirect URI">
+  <Step title="Register the callback on your domain">
     <Snippet file="oauth2redirect.mdx" />
 
-    **Your X OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/x`
+    The path is always `/integrations/social/x`. PostQueen uses OAuth 1.0a; the label “OAuth2 Redirect URI” in older portal copy is still the callback you must register.
+
+    **Callback URI (no trailing slash):**
+    - PostQueen Cloud: `https://app.postqueen.ai/integrations/social/x`
+    - Self-hosted production: `https://postqueen.example.com/integrations/social/x`
     - Local development: `http://localhost:4200/integrations/social/x`
     - Docker: `http://localhost:4007/integrations/social/x`
     - If X requires HTTPS for localhost: `https://redirectmeto.com/http://localhost:4200/integrations/social/x`
   </Step>
 
-  <Step title="Copy your API keys">
-    Save it and go to "Keys and Tokens" tab.
-    
-    Click on "Regenerate" inside "Consumer Keys" and copy the `API Key` and `API Key Secret`.
-    
-    Open .env file and add the following:
+  <Step title="Copy Consumer Keys">
+    Open **Keys and tokens** → **Consumer Keys**. On the new console the secret is hidden until you **Regenerate** on the Consumer Key row.
+
+    Copy **API Key** and **API Key Secret** into your environment. These are OAuth 1 **Consumer** credentials only.
 
 ```env
 X_API_KEY=""
 X_API_SECRET=""
 ```
+
+    Do **not** copy OAuth 2 Client ID/Secret, Bearer Token, or your own user Access Token into these variables.
   </Step>
   <Step title="Restart and add the X channel">
     <Snippet file="restart-and-add-channel.mdx" />
@@ -75,8 +93,8 @@ X_API_SECRET=""
 
 ## Optional environment variables
 
-- `X_URL`: override the base used to build the X OAuth **callback**, which becomes `<X_URL>/integrations/social/x`. Defaults to `FRONTEND_URL`. It does not change which X API PostQueen talks to, and setting it to anything your registered callback does not match will break the connect.
-- `DISABLE_X_ANALYTICS=true`: skip the analytics fetch on the X channel page. Useful if your X plan does not include analytics access and the failed call is noisy.
+- `X_URL`: override the base used to build the X OAuth **callback**, which becomes `<X_URL>/integrations/social/x`. Defaults to `FRONTEND_URL`. It does not change which X API PostQueen talks to, and setting it to anything your registered callback does not match will break the connect. **Do not set `X_URL` on PostQueen Cloud** — prod uses `FRONTEND_URL=https://app.postqueen.ai` only.
+- `DISABLE_X_ANALYTICS=true`: skip the analytics fetch on the X channel page. Useful if your X plan does not include analytics access and the failed call is noisy. Analytics and some automations consume **pay-per-use credits** when enabled.
 - `STRIP_LINKS_FROM_X_POSTS=true`: automatically remove URLs from post text before publishing. Some accounts see better reach with no links; this enforces it globally.
 
 ## Next steps
