@@ -49,12 +49,16 @@ Threads requires the `THREADS_APP_ID` and `THREADS_APP_SECRET` environment varia
   <Step title="Configure API access">
     On the app dashboard, Select "Access the Threads API" to begin customizing the API access.
 
+    Do not add these scopes to the Facebook + Instagram Business app, and do not mix Instagram Standalone (`instagram_business_*`) scopes here.
+
     Add all four of these. `threads_basic` is selected for you; the other three are not:
 
     - `threads_basic`
     - `threads_content_publish`
     - `threads_manage_replies`
     - `threads_manage_insights`
+
+    Do not add `threads_profile_discovery`. PostQueen does not request it.
 
     <Frame>
       <img src="/images/providers/threads/threads_access.png" alt="Configure API access" />

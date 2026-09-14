@@ -7,7 +7,7 @@ icon: /images/channels/instagram.svg
 On your own instance the Meta app is yours: register it in Meta for Developers, then put its keys in your environment.
 
 <Warning>
-**NOTE:** Please be advised that Instagram and Facebook can use the same app (no need to create two separate apps)
+**NOTE:** Please be advised that Instagram and Facebook can use the same app (no need to create two separate apps). Request the **union** of both providers' permissions on that shared app. Instagram Standalone is a separate app with its own four `instagram_business_*` scopes. Threads is a third app.
 </Warning>
 
 There are two ways to connect to an Instagram account: by using a Facebook Business or through a standalone flow that connects directly to an Instagram account. Both methods will require a [Meta for Developers account](https://developers.facebook.com/apps/).
@@ -101,14 +101,25 @@ If you have a Facebook Business page that is linked to your Instagram account, y
       <img src="/images/providers/facebook/facebook-advanced-permissions.png" alt="Advanced permissions screen" />
     </Frame>
 
+    Facebook Page and Instagram (Facebook Business) share this app. Request the **union** of both providers in one pass (10 unique), not only the Instagram list. The three Facebook-only scopes (`pages_manage_posts`, `pages_manage_engagement`, `read_insights`) are required on this same app if you also connect Facebook Page. Skip a required grant and she stops the channel with `Not enough scopes, when choosing a provider, please add all the scopes`.
+
     Go to advanced permission and request access for the following scopes:
-    - `instagram_basic`
     - `pages_show_list`
-    - `pages_read_engagement`
     - `business_management`
+    - `pages_manage_posts`
+    - `pages_manage_engagement`
+    - `pages_read_engagement`
+    - `read_insights`
+    - `instagram_basic`
     - `instagram_content_publish`
     - `instagram_manage_comments`
     - `instagram_manage_insights`
+
+    Do not add Instagram Standalone (`instagram_business_*`) or Threads (`threads_*`) scopes on this app. Those belong on separate Meta apps.
+
+    <Note>
+    Meta's dashboard may require `pages_read_user_content` as a dependency of `instagram_basic` or `pages_manage_engagement`. That is a dashboard dependency, not a scope PostQueen requests in code. Add it only if the dashboard blocks the request without it. Do not request `pages_messaging`, `instagram_manage_messages`, `pages_manage_metadata`, or ads permissions.
+    </Note>
   </Step>
 
   <Step title="Copy your credentials">
@@ -136,7 +147,7 @@ If you want to connect directly to your Instagram account without having to use 
 Please note that standalone option requires a professional Instagram account.
 </Warning>
 
-The permissions are not the ones listed above. Instagram asks for its own four here:
+The permissions are not the ones listed above. Instagram Standalone is a **separate** Meta app (Instagram Login), not the Facebook + Instagram Business app. Meta does not allow Facebook Login and Instagram Login on the same app. Request these four here, and do not mix them into the app above:
 
 - `instagram_business_basic`
 - `instagram_business_content_publish`
