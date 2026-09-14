@@ -46,7 +46,7 @@ The config key differs by client. Check which one yours expects for **streamable
 | Cursor | `"url"` under `mcpServers` |
 | VS Code Copilot | `"url"` under `servers`, with `"type": "http"` |
 | Windsurf Cascade | `"serverUrl"` (or `"url"`) under `mcpServers` |
-| Zed | `"url"` under `context_servers`, plus an `Authorization` header |
+| Zed | `"url"` under `context_servers`, plus an `Authorization` header (without it Zed starts OAuth, even if the key is in the URL) |
 | Continue | `type: streamable-http` in YAML |
 | Gemini CLI | `"httpUrl"` (`url` is SSE and will not connect) |
 | Claude Desktop `claude_desktop_config.json` | Do **not** paste a plain `"url"`. Use a [custom connector](/mcp/clients/claude) or [`mcp-remote`](/mcp/clients/claude#option-b-mcp-remote-bridge-config-file) |

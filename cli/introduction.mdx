@@ -2,7 +2,6 @@
 title: PostQueen CLI
 description: 'Automate social media posting from the command line with the PostQueen CLI'
 icon: 'terminal'
-tag: CLI
 keywords:
   - postqueen
   - cli
@@ -14,7 +13,7 @@ keywords:
   - mcp
 ---
 
-The PostQueen CLI puts her one command away in your terminal. Schedule a post to 30+ networks, upload the image that goes with it or pull last week's numbers, from a shell script, a CI job or an AI agent. Underneath it is the same [Public API](/public-api/introduction) the SDK and the n8n node run on. The data commands print JSON, so anything that can run a shell command can run your social media.
+The PostQueen CLI puts her one command away in your terminal. Schedule a post, upload the image that goes with it or pull last week's numbers, from a shell script, a CI job or an AI agent. Underneath it is the same [Public API](/public-api/introduction) the SDK and the n8n node run on. The data commands print JSON.
 
 <Frame>
   <img src="/images/brand/terminal-claude.svg" alt="Claude Code schedules two launch posts to X and LinkedIn with the postqueen CLI" />
@@ -35,114 +34,42 @@ The PostQueen CLI puts her one command away in your terminal. Schedule a post to
   </Tab>
 </Tabs>
 
-Verify the installation:
-
 ```bash
 postqueen --help
 ```
 
-## Give your AI agent the skill
-
-If an AI assistant will be driving the CLI for you, install the PostQueen skill as well. The skill is a playbook (`SKILL.md`): it teaches the agent her flags and patterns so it gets commands right the first time. It does **not** install the CLI. You still need `npm install -g postqueen` from the step above.
+If an AI assistant will drive it, also install the skill playbook. It does **not** install the CLI:
 
 ```bash
 npx skills add GkhanKINAY/postqueen-agent
 ```
 
-<Tip>
-Prefer to wire it up by hand? Load the `SKILL.md` file directly from [github.com/GkhanKINAY/postqueen-agent](https://github.com/GkhanKINAY/postqueen-agent).
-</Tip>
-
 ## Authentication
 
-One key and the CLI is talking to your account. Getting it takes a minute:
-
-1. Open [app.postqueen.ai](https://app.postqueen.ai)
-2. Go to **Settings → API Keys**
-3. Click **Reveal** and copy your key
-
-Then export it:
+In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys**, click **Reveal**, then:
 
 ```bash
 export POSTQUEEN_API_KEY=your_api_key_here
 ```
 
-<Tip>
-Add this to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) so it persists across sessions.
-</Tip>
-
-Keep the key secret: it grants full access to your account, and you can revoke or rotate it any time from the same screen.
-
-### Custom API URL (self-hosted)
-
-If you run a self-hosted PostQueen instance, point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. The CLI appends `/public/v1/...` to whatever you set, and most single-domain setups serve the backend under `/api`:
-
-```bash
-export POSTQUEEN_API_URL=https://postqueen.example.com/api
-```
-
-Running your own auth server? There is an OAuth2 device flow for that instead, and every command works the same either way. Setup guide: [Authentication](/cli/authentication).
+Self-hosted: set `POSTQUEEN_API_URL` to your `NEXT_PUBLIC_BACKEND_URL` (often `https://postqueen.example.com/api`). Device-flow OAuth is for people running their own auth server: [Authentication](/cli/authentication).
 
 ## Your first post
 
 ```bash
-# 1. List your connected social media accounts
 postqueen integrations:list
 
-# 2. Create a scheduled post (-s is the schedule date, required)
 postqueen posts:create \
   -c "Hello from the PostQueen CLI!" \
   -s "2026-08-01T09:00:00Z" \
   -i "your-integration-id"
 
-# 3. List your scheduled posts
 postqueen posts:list
 ```
 
-Repeat `-c` to turn a post into a thread; each extra `-c` becomes a reply or comment on the platforms that support it. The `-d` flag sets the delay between those comments in minutes (default: 0):
+Repeat `-c` for a thread. `-s` is required. Full flags: [Command Reference](/cli/command-reference).
 
-```bash
-# A three-part thread with 5 minutes between replies
-postqueen posts:create \
-  -c "Thread 1/3" \
-  -c "Thread 2/3" \
-  -c "Thread 3/3" \
-  -d 5 \
-  -s "2026-08-01T09:00:00Z" \
-  -i "your-integration-id"
-```
-
-## What she can do from a shell
-
-| Command | Description |
-|---------|-------------|
-| `integrations:list` | List connected channels; `--group` filters by group (customer) ID |
-| `integrations:groups` | List all groups (customers) |
-| `integrations:settings <id>` | Get the settings schema for an integration |
-| `integrations:trigger <id> <method>` | Trigger a dynamic tool on an integration; `-d` passes JSON data |
-| `posts:create` | Create a post. Key flags: `-c` content (repeat for a thread), `-s` schedule date (required, ISO 8601), `-i` integration IDs, `-m` media URLs (upload first), `-t` `schedule` or `draft`, `-d` delay between comments in minutes, `--shortLink` (default `true`), `--json` campaign file |
-| `posts:list` | List posts; `--startDate` and `--endDate` narrow the range |
-| `posts:delete <id>` | Delete a post by ID |
-| `posts:status <id>` | Switch a post between draft and schedule with `--status` |
-| `posts:missing <id>` | List available content from the provider for a post with a missing release ID |
-| `posts:connect <id>` | Connect a post to its published content with `--release-id` |
-| `posts:settings <id>` | Merge provider settings onto a draft or unpublished scheduled post with `--settings` |
-| `analytics:platform <id>` | Get analytics for a channel; `-d` sets days to look back (default 7) |
-| `analytics:post <id>` | Get analytics for a specific post; `-d` sets days to look back (default 7) |
-| `upload <file>` | Upload a media file and get back the URL to pass to `-m` |
-| `auth:login` | OAuth2 device flow (requires a self-hosted auth server, see [Authentication](/cli/authentication)) |
-| `auth:status` | Show current authentication status |
-| `auth:logout` | Remove stored credentials |
-
-Full flag-by-flag details: [Command Reference](/cli/command-reference).
-
-<Note>
-The data commands print a one-line header and then JSON, which makes the CLI easy to use in scripts and automation pipelines. Drop the header with `tail -n +2` before piping into `jq`.
-</Note>
-
-Anything you can type here, an agent can run for you at six in the morning while you sleep. Why she works so well with agents: [Why agents love her](/agents/why-agents).
-
-## Next steps
+The CLI reaches **14 of 23** Public API routes. The other nine, including connect, notifications and video generation, live on the API: [Limits](/cli/limits).
 
 <CardGroup cols={2}>
   <Card title="Get your key in place" icon="key" href="/cli/authentication">
@@ -155,6 +82,6 @@ Anything you can type here, an agent can run for you at six in the morning while
     The full reference, including which commands print plain text.
   </Card>
   <Card title="What it cannot do" icon="gauge" href="/cli/limits">
-    Fourteen of the API's twenty-two endpoints, and where the other eight live.
+    Fourteen of the API's twenty-three routes, and where the other nine live.
   </Card>
 </CardGroup>

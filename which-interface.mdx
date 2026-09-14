@@ -12,20 +12,14 @@ keywords:
   - which interface
 ---
 
-Four routes run her from outside the app, and all four end in the same place: a post on your
-calendar. They ride the same [Public API](/public-api/introduction), so the result never depends on
-which one you picked.
+Four routes run her from outside the app. They ride the same [Public API](/public-api/introduction), so the result never depends on which one you picked.
 
 <Warning>
-**The create-post cap is shared too.** One instance-wide `API_LIMIT` per organization per hour,
-identical on every plan. Cloud and the shipped Compose files set it to 30; unset on your own
-instance it sits at 90. A chatty source reaches it faster than you expect, whichever route it came
-in on.
+**The create-post cap is shared too.** One instance-wide `API_LIMIT` per organization per hour, identical on every plan. Cloud and the shipped Compose files set it to 30; unset on your own instance it sits at 90.
 </Warning>
 
 <Note>
-A draft keeps the date you gave it and does nothing until you publish it. Publish one weeks later
-and it can fire immediately, because that stored date is already behind you.
+A draft keeps the date you gave it and does nothing until you publish it. Publish one weeks later and it can fire immediately, because that stored date is already behind you.
 </Note>
 
 ## The four at a glance
@@ -33,100 +27,34 @@ and it can fire immediately, because that stored date is already behind you.
 | Route | Install effort | Authentication | What it can reach | Who it suits |
 |---|---|---|---|---|
 | **[CLI](/cli/introduction)** | `npm install -g postqueen`. If an assistant will drive it, also `npx skills add GkhanKINAY/postqueen-agent` — the skill is a playbook, not a second installer | `POSTQUEEN_API_KEY` in your shell. There is an OAuth2 device flow too, but it needs an auth server you run yourself | **17 commands** covering channels, posts and analytics. Media uploads included, video generation not | Anyone at home in a shell, a CI job, a coding agent |
-| **[MCP](/mcp/introduction)** | Nothing for most clients, just one URL. Claude Desktop takes a **custom connector**, or `mcp-remote` in `claude_desktop_config.json` for a LAN/VPN instance. A plain `"url"` in that file does not work | API key as a Bearer token on `/mcp`, or the key in the URL at `/mcp/:apiKey`. OAuth tokens starting with `pos_` work on the Bearer form only | **14 tools** on `/mcp` (channel discovery, scheduling, media generation, `ask_postqueen`). Directory OAuth paths expose fewer: [tool counts by path](/mcp/introduction#how-many-tools-you-actually-get). Upload from a URL too. Lists scheduled posts and edits their settings. No analytics, and no deleting or rescheduling posts | Claude, ChatGPT, Cursor, Grok or any MCP client where you would rather ask than type flags |
-| **[Public API](/public-api/introduction)** | Nothing. Your key is the whole setup | Your key in the `Authorization` header, with no `Bearer` prefix. Or an OAuth2 token starting with `pos_` | **22 key-authenticated operations**, plus the two OAuth2 endpoints. The widest surface of the four. Channel connection, notifications and slot finding live only here | Your own code, and anyone building a product for other PostQueen users |
+| **[MCP](/mcp/introduction)** | Nothing for most clients, just one URL. Claude Desktop takes a **custom connector**, or `mcp-remote` in `claude_desktop_config.json` for a LAN/VPN instance. A plain `"url"` in that file does not work | API key as a Bearer token on `/mcp`, or the key in the URL at `/mcp/:apiKey`. OAuth tokens starting with `pos_` work on the Bearer form only | **14 tools** on `/mcp` (channel discovery, scheduling, media generation, `ask_postqueen`). Directory OAuth paths expose fewer: [tool counts by path](/mcp/tools#how-many-tools-you-actually-get). Upload from a URL too. Lists scheduled posts and edits their settings. No analytics, and no deleting or rescheduling posts | Claude, ChatGPT, Cursor, Grok or any MCP client where you would rather ask than type flags |
+| **[Public API](/public-api/introduction)** | Nothing. Your key is the whole setup | Your key in the `Authorization` header, with no `Bearer` prefix. Or an OAuth2 token starting with `pos_` | **23 key-authenticated operations**, plus the two OAuth2 endpoints. The widest surface of the four. Channel connection, notifications and slot finding live only here | Your own code, and anyone building a product for other PostQueen users |
 | **[n8n, Zapier, Make](/automation/overview)** | The `n8n-nodes-postqueen` community node in n8n. Nothing to install in Zapier or Make, where you build the request yourself | The n8n credential stores your key and host. In Zapier and Make you set `Authorization: YOUR_API_KEY` yourself | **Seven ready-made operations** in the n8n node. Zapier and Make reach whatever you write against the API | Teams already living in a workflow tool, with no appetite for code |
 
 ## Pick the CLI when
 
-You are already in a terminal. Run `postqueen integrations:list`, copy the channel ID you want, and
-`posts:create` puts the post on the calendar. Almost every command prints JSON after a one-line
-header, so a shell script or a CI job can read the answer. The
-[Scripting and CI](/cli/command-reference#scripting-and-ci) section names the handful that print
-plain text instead.
+You are already in a terminal, or an agent will drive flags. Seventeen commands, JSON on the data ones, and the only route besides the API that returns analytics. It does not generate video.
 
-It is also the route an AI agent drives best, because the skill teaches your assistant the flags
-before it runs anything. Your numbers come back here too: `analytics:platform` and `analytics:post`
-have no equivalent in the MCP tool set or the n8n node, though the API carries them.
-
-<Info>
-One thing is missing: the CLI does not generate video.
-</Info>
-
-Every command and flag: [Command Reference](/cli/command-reference).
+[Command Reference](/cli/command-reference).
 
 ## Pick MCP when
 
-You want to describe the post rather than write the call. "Schedule a post to X for tomorrow at
-10am" is the whole interaction, and the client picks the tools on its own: one to find your
-channels, one to read what X accepts, one to schedule.
-
-Point your client at a single URL and 14 tools arrive with their schemas. Among the four routes, AI
-image generation appears only here.
+You would rather describe the post than write the call. Point a client at one URL and 14 tools arrive with their schemas, including AI image generation, which none of the other three carry. Directory OAuth paths expose fewer.
 
 <Warning>
-No tool reads analytics, and none lists or deletes an existing post. When you need those, keep the
-CLI installed alongside.
+No tool reads analytics, and none deletes or reschedules a post. `postsListTool` lists scheduled posts between two dates, and `postSettingsTool` can change settings of a post that has not gone out yet. When you need analytics or a delete, keep the CLI or the API.
 </Warning>
 
-Copy-paste configuration for your client: [Client Setup](/mcp/setup).
+[Client Setup](/mcp/setup).
 
 ## Pick the public API when
 
-You are writing the code yourself, or you need something the other three never carry. This is the
-widest surface of the four, and the layer they all ride on. Several of its 22 key-authenticated
-operations stop right here.
+You are writing the code yourself, or you need something the other three never carry: connect or delete a channel, find a slot, read notifications, delete a post group. This is the widest surface, and the layer they all ride on.
 
-| Only on the public API | Endpoint |
-|---|---|
-| Connect a new channel over OAuth | [Connect Channel (OAuth)](/public-api/integrations/connect) |
-| Delete a channel | [Delete Channel](/public-api/integrations/delete) |
-| Find the next open slot | [Find Available Slot](/public-api/integrations/find-slot) |
-| Read your notifications | [List Notifications](/public-api/notifications/list) |
-| Delete a whole post group at once | [Delete Post by Group](/public-api/posts/delete-by-group) |
-
-<Tip>
-Building for other PostQueen users? [OAuth2](/public-api/oauth) gives you tokens that act on their
-behalf, so nobody hands over an API key. Working in Node? [`@postqueen/node`](/public-api/sdk) is a
-typed client where every method maps to one endpoint.
-</Tip>
+[API Overview](/public-api/introduction).
 
 ## Pick n8n, Zapier or Make when
 
-The trigger is not yours to build: a row in a sheet a client keeps filling in, an article going
-live, a Monday timer. Your tool already knows about all of that, and the only missing step is the
-post at the end.
+The trigger already lives in a workflow tool: a sheet, a publish event, a Monday timer. n8n has seven ready-made operations. Zapier and Make use a generic HTTP request (Zapier's Custom Request app is on Professional and up).
 
-| Tool | What you build with | Worth knowing first |
-|---|---|---|
-| **[n8n](/automation/n8n)** | Seven operations waiting on the canvas, from scheduling a post to generating a video with AI | There is no PostQueen trigger node, so the run starts with something of n8n's own |
-| **[Zapier](/automation/zapier)** | **Webhooks by Zapier** and its **Custom Request** action, since there is no native app yet | Zapier lists that app on Professional, Team and Enterprise, so a Free account cannot reach her that way |
-| **[Make](/automation/make)** | The **HTTP** app and its **Make a request** module | The same story as Zapier: no native app, so you write the request yourself |
-
-She can also take the first step herself, with no outside tool at all.
-
-<CardGroup cols={2}>
-  <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
-    She reads a feed hourly and drafts the newest item for you.
-  </Card>
-  <Card title="Webhooks" icon="satellite-dish" href="/automation/webhooks">
-    She calls your endpoint the moment a post goes live.
-  </Card>
-</CardGroup>
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="CLI" icon="terminal" href="/cli/introduction">
-    Install it globally, export your key, and 17 commands are one line away.
-  </Card>
-  <Card title="MCP" icon="plug" href="/mcp/setup">
-    One URL for your client, and 14 tools arrive with their schemas.
-  </Card>
-  <Card title="Public API" icon="code" href="/public-api/introduction">
-    REST for your own code, with your API key as the only setup.
-  </Card>
-  <Card title="Automation" icon="bolt" href="/automation/overview">
-    n8n, Zapier and Make, plus the two routes where she moves first.
-  </Card>
-</CardGroup>
+[Automation](/automation/overview).

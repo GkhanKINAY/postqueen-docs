@@ -78,7 +78,7 @@ The age note on Auto Repost Posts, **1 week old posts**, is the text the card ca
 
 ## X, and the analytics switch
 
-Both X actions read the like count through the X API, which makes them part of analytics. Set `DISABLE_X_ANALYTICS` on your install and they are gone, rather than sitting there and failing quietly. X has only those two Auto Actions, so losing both takes the channel out of the Plugs left rail altogether. If X was the only channel qualifying, the page falls back to its empty state.
+Both X actions read the like count through the X API, which makes them part of analytics. Set `DISABLE_X_ANALYTICS` on your install and they are gone, rather than sitting there and failing quietly. X has only those two Auto Actions, so losing both takes the channel off **Channels → Automations** (and `/plugs`) altogether. If X was the only channel qualifying, the page falls back to its empty state.
 
 The editor plug below, **Add Re-posters**, keeps working through it. It never reads a number, so there is nothing for that switch to turn off.
 
@@ -115,8 +115,8 @@ If a plug shows **No available accounts**, it is not broken. You have connected 
   <Step title="Connect the channels you need">
     One channel for an Auto Action. Two or more on the same network for the editor plugs, since the second account is the one doing the work.
   </Step>
-  <Step title="Open Plugs and pick a channel">
-    The left rail lists only the channels that qualify. Choose one and its cards appear.
+  <Step title="Open Channels → Automations and pick a channel">
+    Same screen as `/plugs`. Only channels that qualify appear. Choose one and its cards appear.
   </Step>
   <Step title="Set the like count you actually hit">
     Look at your own recent numbers on that network and pick something a good post clears within a few hours. Too high and nothing ever fires.

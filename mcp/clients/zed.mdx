@@ -11,7 +11,7 @@ You need your PostQueen API key first. In the app at [app.postqueen.ai](https://
 </Info>
 
 <Warning>
-If a remote server has no `Authorization` header, Zed starts the standard MCP **OAuth** flow. PostQueen `/mcp` with an API key is not that flow. Always send `Authorization: Bearer YOUR_API_KEY`, or put the key in the URL.
+If a remote server has no `Authorization` header, Zed starts the standard MCP **OAuth** flow. PostQueen `/mcp` with an API key is not that flow. Always send `Authorization: Bearer YOUR_API_KEY`. Putting the key in the URL is not enough on its own: without the header, Zed still tries OAuth.
 </Warning>
 
 ## Option A: Zed UI

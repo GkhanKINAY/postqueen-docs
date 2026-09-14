@@ -2,7 +2,6 @@
 title: Connect with MCP
 description: 'Connect AI agents to PostQueen using the Model Context Protocol (MCP)'
 icon: 'circle-info'
-tag: MCP
 keywords:
   - postqueen
   - mcp
@@ -15,191 +14,59 @@ keywords:
   - ask_postqueen
 ---
 
-MCP (Model Context Protocol) lets AI agents work with PostQueen directly: they can list your integrations, schedule posts, and generate images and videos through a standardized tool-calling interface. Connect Claude, Cursor or any MCP-compatible client to your PostQueen account and ask her to run your social media in plain language.
+Point a client at `/mcp` and your agent gets **14 tools** to list channels, upload media and schedule posts. Nothing to install. Directory OAuth paths expose fewer tools.
 
 <Note>
-**You do not have to run or install anything.** In the protocol's own words PostQueen is the
-"server" and your AI client is the "client", but she is already running at a URL. Setup is
-pasting that URL into your client, and for most of them it is a single command.
+**You do not have to run or install anything.** In the protocol's own words PostQueen is the "server" and your AI client is the "client", but she is already running at a URL. Setup is pasting that URL into your client.
 </Note>
 
 <Frame>
   <img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
 </Frame>
 
-## How it works
-
-Point a client at `/mcp` (or `/mcp/:apiKey`) and your agent gets **14 tools** it can call. Other MCP paths expose a shorter set. It reads their schemas, then calls them on your behalf.
-
-```mermaid
-sequenceDiagram
-    participant Agent as AI Agent
-    participant MCP as PostQueen MCP endpoint
-    participant PostQueen as PostQueen Backend
-
-    Agent->>MCP: Connect with API key / OAuth token
-    MCP-->>Agent: List available tools
-    Agent->>MCP: Call tool (e.g., schedule post)
-    MCP->>PostQueen: Execute action
-    PostQueen-->>MCP: Return result
-    MCP-->>Agent: Tool response
-```
-
-## Available tools
-
-| Tool | Description |
-|------|-------------|
-| `integrationList` | List all connected social media accounts (optionally filtered by group) |
-| `groupList` | List all groups (customers) for your organization |
-| `integrationSchema` | Get platform-specific posting rules and settings schema |
-| `triggerTool` | Execute platform-specific helpers (e.g., list Discord channels) |
-| `integrationSchedulePostTool` | Schedule, draft, or immediately publish posts. This is the MCP map key. The Mastra `id` is `schedulePostTool`; clients and error text use `integrationSchedulePostTool` |
-| `postsListTool` | List the posts scheduled between two dates, with their current settings |
-| `postSettingsTool` | Change the settings of a scheduled post or draft that has not gone out yet |
-| `generateImageTool` | Generate AI images for posts |
-| `generateVideoOptions` | List available video generation options |
-| `videoFunctionTool` | Get video generator settings (e.g., available voices) |
-| `generateVideoTool` | Start generating a video for a post |
-| `videoStatusTool` | Check whether that video is ready, and get its URL |
-| `uploadFromUrlTool` | Upload a remote image or video into your media library from a public URL |
-| `ask_postqueen` | Hand her the whole request in plain language and let her pick the steps |
-
-<Note>
-Thirteen of those are the same tools the in-app assistant runs. The fourteenth, `ask_postqueen`, exists
-only on the direct MCP servers: your client is talking to her as an agent, so it can either drive the individual
-tools itself or hand the whole job to her. That is why pages about the assistant say thirteen
-and pages about MCP say fourteen.
-</Note>
-
-### How many tools you actually get
-
-The count depends on which URL you connected. Direct `/mcp` keeps the full set. Directory OAuth paths drop the agent, and Claude's directory path also hides five media and video tools.
-
-| Path | Tools | What is missing |
-|---|---|---|
-| `/mcp` and `/mcp/:apiKey` | **14** | Nothing. Thirteen tools plus `ask_postqueen` |
-| `/sse/:id` and `/message/:id` | **14** | Nothing. Same full set as `/mcp`. Legacy [SSE transport](/mcp/limits-and-troubleshooting#transports-you-may-notice-and-should-not-build-on); prefer streamable HTTP |
-| `/mcp-oauth` and `/mcp-oauth-dynamic` | **13** | No `ask_postqueen`. Directory reviews reject an annotation-less catch-all agent |
-| `/mcp-oauth-claude` | **8** | No `ask_postqueen`, and no `generateImageTool`, `generateVideoTool`, `videoStatusTool`, `generateVideoOptions`, or `videoFunctionTool` |
-
-Custom key-in-URL Claude or ChatGPT connectors that hit `/mcp/:apiKey` still see 14. The shorter lists apply to the OAuth directory endpoints, not to every Claude or ChatGPT setup.
-
-Every parameter and every field each tool sends back: [Tools Reference](/mcp/tools).
-
 ## Authentication
 
-There are two ways to authenticate.
+Two forms, same 14 tools on direct `/mcp`:
 
-<CardGroup cols={2}>
-  <Card title="API key" icon="key">
-    Get your API key from **Settings → API Keys**. Use it directly in
-    the MCP endpoint URL or as a Bearer token.
+| Form | URL | Header |
+|---|---|---|
+| Key in the URL | `https://api.postqueen.ai/mcp/YOUR_API_KEY` | none |
+| Bearer | `https://api.postqueen.ai/mcp` | `Authorization: Bearer YOUR_API_KEY` (or a `pos_` OAuth token) |
+
+The URL form accepts API keys only. Get the key in **Settings → API Keys**. Building for other users: [OAuth2](/public-api/oauth). Directory OAuth uses `mcp:read` / `mcp:write` on `/mcp-oauth*`. Self-hosted: swap the host for your `NEXT_PUBLIC_BACKEND_URL`.
+
+Tool names, parameters, and how many tools each path actually exposes: [Tools Reference](/mcp/tools#how-many-tools-you-actually-get).
+
+## Connect your client
+
+<CardGroup cols={3}>
+  <Card title="Connect your client" icon="plug" href="/mcp/setup">
+    The URL, both auth forms, and the steps for each client
   </Card>
-  <Card title="OAuth token" icon="shield-halved">
-    Building an app for other PostQueen users? Use [OAuth2](/public-api/oauth) to obtain tokens.
-    OAuth tokens start with `pos_` and work like API keys when sent as a Bearer token on `/mcp`.
-    The `/mcp/:apiKey` URL form accepts API keys only.
+  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok-bot">
+    Tell the Bot to add the MCP server. Not grok.com/connectors
+  </Card>
+  <Card title="Claude" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude">
+    One custom connector covers claude.ai, Desktop and mobile
+  </Card>
+  <Card title="ChatGPT" icon="/images/brand/icon-chatgpt.svg" href="/mcp/clients/chatgpt">
+    Developer mode, then paste the URL as a connector
+  </Card>
+  <Card title="Cursor" icon="/images/brand/icon-cursor.svg" href="/mcp/clients/cursor">
+    One `.cursor/mcp.json` entry, or the Settings UI
+  </Card>
+  <Card title="Every tool" icon="wrench" href="/mcp/tools">
+    All 14, with the parameters each one takes
   </Card>
 </CardGroup>
 
-MCP OAuth itself uses the scopes **`mcp:read`** and **`mcp:write`**. The protected-resource URLs are `/mcp-oauth`, `/mcp-oauth-claude` and `/mcp-oauth-dynamic`. They share one authorization server at `/mcp-oauth`. When `OPENAI_OAUTH_CLIENT_ID` is set, the same server also advertises `openid` and `email`.
-
-## Connecting
-
-The server accepts two endpoint forms. Copy-paste configuration for your client: [Connect your client](/mcp/setup).
-
-<Tabs>
-  <Tab title="Bearer Token">
-    Use the `/mcp` endpoint with your API key or OAuth token as a Bearer token:
-
-    ```
-    URL: https://api.postqueen.ai/mcp
-    Authorization: Bearer your-api-key
-    ```
-
-    This method supports both API keys and OAuth tokens (prefixed with `pos_`).
-  </Tab>
-  <Tab title="API Key in URL">
-    Use the `/mcp/:apiKey` endpoint with your API key embedded in the URL:
-
-    ```
-    URL: https://api.postqueen.ai/mcp/your-api-key
-    ```
-  </Tab>
-</Tabs>
-
-<Note>
-For self-hosted instances, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`.
-</Note>
-
-## Quick example
-
-Tell your AI agent something like:
-
-> "Schedule a post to X for tomorrow at 10am: Excited to announce our new feature!"
-
-Three tool calls go by before you look up.
-
-<Steps>
-  <Step title="Read your channels">
-    The agent calls `integrationList` to see your connected accounts (X, LinkedIn, and so on).
-  </Step>
-  <Step title="Read the platform rules">
-    The agent calls `integrationSchema` with `platform: "x"` to learn X's character limits,
-    settings, and rules.
-  </Step>
-  <Step title="Schedule the post">
-    The agent calls `integrationSchedulePostTool` to schedule your post in the correct format.
-  </Step>
-</Steps>
-
-<Check>
-**That is the whole loop.** All of this happens automatically: you wrote one sentence, and the
-post is on your calendar in the format X expects.
-</Check>
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Do I need an OpenAI key to use PostQueen MCP?">
-    No key is needed for reasoning: your MCP client (Claude, Cursor and others) brings the model.
-    But `generateImageTool` and the video tools run her own generation pipeline on the server, so
-    a self-hosted backend needs `OPENAI_API_KEY` (and any video provider keys) for those specific
-    tools. The other tools work without it.
-  </Accordion>
-
-  <Accordion title="What happens when my API key expires or is rotated?">
-    PostQueen API keys do not auto-rotate, but if you regenerate one in Settings → API Keys, every MCP client using the old key stops working until you update its config.
-    Update the URL or the `Authorization` header in your client config and reconnect.
-  </Accordion>
-
-  <Accordion title="Self-hosted: how do I reach the MCP endpoint?">
-    Your backend already serves it. The endpoint sits at `/mcp` (Bearer auth) and `/mcp/:apiKey`
-    (key in URL). Your reverse proxy has to forward these paths and stream the response rather
-    than buffering it: [MCP on a self-hosted install](/mcp/self-hosting).
-  </Accordion>
-
-  <Accordion title="Can MCP read or reply to comments?">
-    Not today. The current tool set is read-only on integrations and write-only on posts and
-    media: there is no `getComments` or `replyToComment` tool. She does not read incoming
-    comments. The closest feature is [Auto Actions](/using/auto-actions), which can repost your
-    own post or add a follow-up comment on it once it crosses the like milestone you set.
-  </Accordion>
-</AccordionGroup>
-
-## Next steps
+Ask it to list your connected accounts. If the names come back, `integrationList` worked and the rest of the tools are there too.
 
 <CardGroup cols={2}>
-  <Card title="Connect your client" icon="plug" href="/mcp/setup">
-    The URL for Claude, Cursor, Codex, ChatGPT and the rest
-  </Card>
-  <Card title="Tools Reference" icon="screwdriver-wrench" href="/mcp/tools">
-    Every parameter and every field the fourteen tools send back
-  </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
-    The flows where an agent has to discover something before it can post
+    Discord channels, video voices, and the flows that need a lookup first
   </Card>
   <Card title="Limits and troubleshooting" icon="gauge-high" href="/mcp/limits-and-troubleshooting">
-    What the tools cannot reach, and what a bad key looks like
+    No analytics, no delete, no reschedule. What a bad key looks like
   </Card>
 </CardGroup>
