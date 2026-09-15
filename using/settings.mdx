@@ -15,9 +15,10 @@ these docs send you to a specific one.
 
 | Tab | What is in it | You see it when |
 | --- | --- | --- |
-| **Global Settings** | Defaults that apply across your posts, including whether she offers to shorten links, and the **Delete Account** button | Always |
+| **Global Settings** | Workspace name (Super Admin only), date format, and whether she offers to shorten links | Always |
 | **Language** | The interface language | Always |
-| **Teams** | Invite people into your organization and set what they can do | Your plan includes team members, **and** you are an organization admin |
+| **Teams** | Invite people, change User/Admin roles, transfer Super Admin, or leave | Your plan includes team members, **and** you are an organization admin |
+| **Account** | Your name, email, password, connected Google/GitHub/Apple (and other enabled OAuth) accounts, and **Delete Account** | Always (first item in the Account group) |
 | **Webhooks** | URLs she calls when a post publishes or fails | Your plan includes webhooks |
 | **Auto Post** | RSS feeds that turn new articles into scheduled posts on their own | Your plan includes auto posting |
 | **Social Sets** | Saved groups of channels, so you stop reselecting the same five | Any plan above Free |
@@ -46,18 +47,43 @@ rather than an error.
 
 If a teammate can reveal the API key and you cannot, role is the likely difference rather than billing.
 
+## Account
+
+**Account** is the first row in the Account group (`?tab=account`). It is your user, not the
+workspace:
+
+- **Name.** Saved with `POST /user/personal`. At least three characters.
+- **Email.** Shown read-only. Change sends a confirmation to the new address (20 minutes) and a
+  notice to the old one. The login email does not move until you confirm. Another account already
+  using that inbox is refused.
+- **Password.** At least eight characters. If you already have one, the current password is
+  required; other sessions are signed out. OAuth-only accounts set a password after a confirmation
+  email or a fresh sign-in with a connected account.
+- **Connected accounts.** Google, GitHub, Apple, and any other OAuth provider enabled on the
+  install. You cannot unlink the last sign-in method unless a password is set.
+
+Workspace name lives on **Global Settings**, and only a Super Admin can change it.
+
+## Teams
+
+The member list is **Member | Role | Actions**. Super Admin is a badge. User and Admin can be
+changed when your role is strictly above theirs — an Admin cannot change another Admin. Super Admin
+cannot be granted from this list; ownership moves with **Transfer** (the current Super Admin
+becomes Admin). You can leave the workspace unless you are the last Super Admin. Inviting an email
+that is already in the workspace is refused.
+
 ## Deleting your account
 
-**Delete Account** sits at the bottom of **Global Settings**. On the Free tier the billing page
-offers the same button among its questions. She asks you to confirm once, and after that there is
-no undo.
+**Delete Account** sits at the bottom of **Account** (not Global Settings). On the Free tier the
+billing page still points at the same screen. Type your email to enable the button, then confirm
+with your password or a fresh OAuth sign-in. After that there is no undo.
 
 What goes, and what stays behind:
 
 - **Organizations you own** are deleted, together with their posts and channels.
 - **Organizations you only belong to** carry on. You are removed from their team.
-- **Your own account** is emptied rather than kept: your email address, password, name and profile
-  details are scrubbed, and you are signed out.
+- **Your own account** is emptied rather than kept: your email address, password, name, linked
+  identities and profile details are scrubbed, and you are signed out.
 
 Two things refuse the request:
 
@@ -73,15 +99,16 @@ nothing is deleted, and you can try again.
 Append `?tab=` and the tab's key:
 
 ```
+https://app.postqueen.ai/settings?tab=account
 https://app.postqueen.ai/settings?tab=api
 https://app.postqueen.ai/settings?tab=teams
 https://app.postqueen.ai/settings?tab=autopost
 ```
 
-The keys are `global_settings`, `language`, `teams`, `webhooks`, `autopost`, `sets`,
-`signatures`, `api`, `developers` and `approved_apps`. **API Keys** is `api`. **Developers**
-(OAuth apps) is `developers`. An unrecognised or unavailable key falls back to Global Settings
-rather than erroring.
+The keys are `global_settings`, `language`, `teams`, `account`, `webhooks`, `autopost`, `sets`,
+`signatures`, `api`, `developers` and `approved_apps`. **Account** is `account`. **API Keys** is
+`api`. **Developers** (OAuth apps) is `developers`. An unrecognised or unavailable key falls back
+to Global Settings rather than erroring.
 
 ## Where to go for each
 
