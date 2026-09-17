@@ -5,19 +5,17 @@ icon: /images/brand/icon-claude.svg
 ---
 
 This is Anthropic's **chat** product: claude.ai, Claude Desktop, iOS and Android.
-One connector covers all three. Custom connectors belong to your Claude account rather than to a
-device, so adding PostQueen once on claude.ai or in Claude Desktop puts her in the web app, the
-desktop app and the iOS and Android apps at the same time. This page used to be two, one headed
+PostQueen is not in Anthropic's Connectors Directory. You paste our public MCP URL yourself. Claude's UI calls that **Add custom connector**; that is their name for a remote MCP server, not a listing we published. One add follows the account, so web, Desktop and the iOS/Android apps pick it up together. This page used to be two, one headed
 Claude Desktop and one headed Claude Web and Mobile, describing the same setup twice.
 
 Claude Code, the terminal and IDE agent, is a different product. Same split as ChatGPT vs Codex.
 Its install is [`claude mcp add`](/mcp/clients/claude-code), not Customize → Connectors.
 
-There are two routes: a **custom connector** added in settings, or the **`mcp-remote` bridge** in `claude_desktop_config.json`.
+There are two routes: paste the MCP URL in Claude's Connectors settings, or the **`mcp-remote` bridge** in `claude_desktop_config.json`.
 
 | Route | Pick it when | Needs |
 |-------|--------------|-------|
-| **A. Custom connector** | Her URL is reachable over the public internet, as `api.postqueen.ai` is | Nothing installed |
+| **A. Paste the MCP URL** | Her URL is reachable over the public internet, as `api.postqueen.ai` is | Nothing installed |
 | **B. `mcp-remote` bridge** | Your instance sits on a LAN or behind a VPN, or you prefer the config file | [Node.js](https://nodejs.org/) on your machine |
 
 <Note>
@@ -31,13 +29,13 @@ Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Sett
 </Info>
 
 <Warning>
-Your API key can post to every account you have connected. Treat it like a password: anyone who sees your connector URL or config file can publish as you. Do not screenshot it and do not commit it. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key can post to every account you have connected. Treat it like a password: anyone who sees your MCP URL or config file can publish as you. Do not screenshot it and do not commit it. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
-## Option A: custom connector (recommended)
+## Option A: paste the MCP URL (recommended)
 
 <Warning>
-PostQueen is not listed in Anthropic's Connectors Directory. **Browse connectors** will not find her. Use **Add custom connector** below.
+PostQueen is not listed in Anthropic's Connectors Directory. Do not search **Browse connectors**. Use **Add custom connector** below and paste the MCP URL. That dialog is Anthropic's name for a remote MCP server you add yourself.
 </Warning>
 
 <Info>
@@ -45,10 +43,10 @@ At the time of writing, Anthropic's help center lists custom connectors as avail
 </Info>
 
 <Steps>
-  <Step title="Open connector settings">
-    In Claude Desktop or on claude.ai, open **Customize → Connectors**. Claude Desktop may still label this **Settings → Connectors**.
+  <Step title="Open Connectors settings">
+    In Claude Desktop or on claude.ai, open **Customize → Connectors**. Claude Desktop may still label this **Settings → Connectors**. Do not browse the directory looking for PostQueen.
   </Step>
-  <Step title="Add a custom connector">
+  <Step title="Paste the MCP URL">
     Click **+**, then **Add custom connector**, and paste the PostQueen endpoint with your API key in the path:
 
     ```
@@ -58,7 +56,7 @@ At the time of writing, Anthropic's help center lists custom connectors as avail
     Leave the OAuth fields in Advanced settings empty: the key in the URL is the authentication.
   </Step>
   <Step title="Confirm">
-    Click **Add**. PostQueen appears in your connector list. Enable it in a chat from **+ → Connectors**. Her 14 tools become available in that conversation.
+    Click **Add**. PostQueen appears in your list. Enable it in a chat from **+ → Connectors**. Her 17 tools become available in that conversation.
   </Step>
 </Steps>
 
@@ -67,7 +65,7 @@ On Team and Enterprise plans, an Owner adds the connector first under **Organiza
 </Note>
 
 <Warning>
-With custom connectors, Claude reaches PostQueen from Anthropic's cloud infrastructure, not from your machine, so the URL has to be reachable over the public internet. `api.postqueen.ai` is, so Option A works there. A self-hosted instance behind a VPN or on your LAN will not connect this way; use Option B instead.
+When you add a remote MCP URL this way, Claude reaches PostQueen from Anthropic's cloud infrastructure, not from your machine, so the URL has to be reachable over the public internet. `api.postqueen.ai` is, so Option A works there. A self-hosted instance behind a VPN or on your LAN will not connect this way; use Option B instead.
 </Warning>
 
 ## On your phone
@@ -194,7 +192,7 @@ Claude calls the `integrationList` tool and returns your connected accounts. She
 
 <CardGroup cols={2}>
   <Card title="Tools reference" icon="screwdriver-wrench" href="/mcp/tools">
-    Every parameter of the 14 tools Claude just discovered
+    Every parameter of the 17 tools Claude just discovered
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     The flows where she has to look something up before she can post
@@ -203,6 +201,6 @@ Claude calls the `integrationList` tool and returns your connected accounts. She
     What MCP cannot reach, and what a bad key looks like
   </Card>
   <Card title="Claude Code" icon="/images/brand/icon-claude-code.svg" href="/mcp/clients/claude-code">
-    Terminal and IDE agent. Different product: `claude mcp add`, not this connector
+    Terminal and IDE agent. Different product: `claude mcp add`, not this MCP URL
   </Card>
 </CardGroup>

@@ -4,9 +4,9 @@ description: 'Complete reference for all PostQueen MCP tools'
 icon: 'screwdriver-wrench'
 ---
 
-These are the fourteen tools she answers over MCP, with every parameter and every field she sends back. Your agent reads these schemas on connect, so you never call one by hand.
+These are the seventeen tools she answers over MCP, with every parameter and every field she sends back. Your agent reads these schemas on connect, so you never call one by hand.
 
-Thirteen of those are the same tools the in-app assistant runs. The fourteenth, `ask_postqueen`, exists only on the direct MCP servers: your client is talking to her as an agent, so it can either drive the individual tools itself or hand the whole job to her. That is why pages about the assistant say thirteen and pages about MCP say fourteen.
+Sixteen of those are the same tools the in-app assistant runs. The seventeenth, `ask_postqueen`, exists only on the direct MCP servers: your client is talking to her as an agent, so it can either drive the individual tools itself or hand the whole job to her. That is why pages about the assistant say sixteen and pages about MCP say seventeen.
 
 ## How many tools you actually get
 
@@ -14,12 +14,12 @@ The count depends on which URL you connected. Direct `/mcp` keeps the full set. 
 
 | Path | Tools | What is missing |
 |---|---|---|
-| `/mcp` and `/mcp/:apiKey` | **14** | Nothing. Thirteen tools plus `ask_postqueen` |
-| `/sse/:id` and `/message/:id` | **14** | Nothing. Same full set as `/mcp`. Legacy [SSE transport](/mcp/limits-and-troubleshooting#transports-you-may-notice-and-should-not-build-on); prefer streamable HTTP |
-| `/mcp-oauth` and `/mcp-oauth-dynamic` | **13** | No `ask_postqueen`. Directory reviews reject an annotation-less catch-all agent |
-| `/mcp-oauth-claude` | **8** | No `ask_postqueen`, and no `generateImageTool`, `generateVideoTool`, `videoStatusTool`, `generateVideoOptions`, or `videoFunctionTool` |
+| `/mcp` and `/mcp/:apiKey` | **17** | Nothing. Sixteen tools plus `ask_postqueen` |
+| `/sse/:id` and `/message/:id` | **17** | Nothing. Same full set as `/mcp`. Legacy [SSE transport](/mcp/limits-and-troubleshooting#transports-you-may-notice-and-should-not-build-on); prefer streamable HTTP |
+| `/mcp-oauth` and `/mcp-oauth-dynamic` | **16** | No `ask_postqueen`. Directory reviews reject an annotation-less catch-all agent |
+| `/mcp-oauth-claude` | **11** | No `ask_postqueen`, and no `generateImageTool`, `generateVideoTool`, `videoStatusTool`, `generateVideoOptions`, or `videoFunctionTool` |
 
-Custom key-in-URL Claude or ChatGPT connectors that hit `/mcp/:apiKey` still see 14. The shorter lists apply to the OAuth directory endpoints, not to every Claude or ChatGPT setup.
+Custom key-in-URL Claude or ChatGPT setups that hit `/mcp/:apiKey` still see 17. The shorter lists apply to the OAuth directory endpoints, which are not how you connect today: PostQueen is not listed in Anthropic's Connectors Directory or the ChatGPT app store.
 
 ## integrationList
 
@@ -396,9 +396,60 @@ Check on a video started with `generateVideoTool`. While the status is `pending`
 
 Use the returned `url` in the `attachments` array when scheduling a post. Whatever your agent schedules with these tools lands on the calendar she publishes from, so you can still open it and change your mind.
 
+---
+
+## analyticsSummaryTool
+
+Workspace totals for published posts, the same numbers as Analytics → All channels → Summary.
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `date` | 7, 30 or 90 | No | Publish-date window in days. Default 30 |
+| `integrationId` | string | No | Channel id from `integrationList`, to limit to one channel |
+| `platform` | string | No | Provider identifier such as `x`, `instagram`, `linkedin-page` |
+
+**Returns:** `posts`, `reactions`, `comments` and `impressions`. Totals are current lifetime counts, not "likes that happened inside this window". Null is unknown, never zero.
+
+---
+
+## analyticsPostsTool
+
+Ranked post performance, the same numbers as Analytics → Top posts and Performance per post. Use this for "top posts" or "how did the post about X do" when you do not have a post id yet.
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `date` | 7, 30 or 90 | No | Publish-date window in days. Default 30 |
+| `sort` | string | No | `reactions`, `comments`, `impressions`, `engagement` or `published`. Default `reactions` |
+| `dir` | `asc` or `desc` | No | Sort direction |
+| `page` | number | No | Page index, from 0 |
+| `limit` | number | No | Page size, 1–20. Default 5 |
+| `integrationId` | string | No | Channel id from `integrationList` |
+| `platform` | string | No | Provider identifier such as `x` or `instagram` |
+| `q` | string | No | Search caption, channel name, platform or post id |
+
+Null is unknown, not zero.
+
+---
+
+## analyticsPostTool
+
+Current lifetime totals for one published post. Use this when you already have a post id from `analyticsPostsTool` or `postsListTool`.
+
+**Parameters:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `postId` | string | Yes | Post id from `analyticsPostsTool` or `postsListTool` |
+
+If `error` is `missing_release`, the published content still needs connecting in the app (Connect Post). Do not invent numbers.
+
 ## `ask_postqueen`
 
-The fourteenth tool is not one of the thirteen above and does not look like them. Your client will discover it anyway, so it is worth knowing what it is.
+The seventeenth tool is not one of the sixteen above and does not look like them. Your client will discover it anyway, so it is worth knowing what it is.
 
 It takes one parameter, `message`, a plain-language request. Behind it sits the same assistant you talk to in the app, running server-side with the same tools listed above and the same access to your calendar. So "ask her to schedule a launch post for Thursday" is a single call rather than a sequence your own agent has to plan.
 
@@ -410,4 +461,4 @@ Two things follow from that. It can write to your calendar, so treat it with the
 
 ## What these tools cannot do
 
-Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Reading analytics is one. Deleting a post is another, and so is moving one to a new time, because `postSettingsTool` changes settings and nothing else. [Limits and Troubleshooting](/mcp/limits-and-troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach her at all.
+Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Deleting a post is one. Moving one to a new time is another, because `postSettingsTool` changes settings and nothing else. Analytics for published posts is in this set (`analyticsSummaryTool`, `analyticsPostsTool`, `analyticsPostTool`). [Limits and Troubleshooting](/mcp/limits-and-troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach her at all.

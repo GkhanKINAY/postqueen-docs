@@ -1,6 +1,6 @@
 ---
 title: ChatGPT
-description: 'Add her as a connector in ChatGPT, or give a Custom GPT an action that schedules posts through her public API'
+description: 'Connect ChatGPT over MCP in Developer mode, or give a Custom GPT an action that schedules posts through her public API'
 icon: /images/brand/icon-chatgpt.svg
 ---
 
@@ -9,17 +9,17 @@ icon: /images/brand/icon-chatgpt.svg
 ChatGPT is where a lot of content gets written. With PostQueen connected it is also where content gets shipped: ask for two posts about the new menu and she writes the copy, generates the images and puts both on your calendar while you keep chatting. This is ChatGPT the chat product, not Codex — same split as Claude vs Claude Code.
 
 <Frame>
-  <img src="/images/brand/chat-chatgpt.svg" alt="ChatGPT with the PostQueen connector: it generates two post images and schedules them to Instagram and X" />
+  <img src="/images/brand/chat-chatgpt.svg" alt="ChatGPT with PostQueen over MCP: it generates two post images and schedules them to Instagram and X" />
 </Frame>
 
 There are two routes in, and they solve different problems:
 
-- **The connector.** One URL in ChatGPT settings, and her [14 MCP tools](/mcp/tools) show up in your chats. This is the route most people want.
+- **MCP in Developer mode.** She is not in the ChatGPT app store. One URL under **Settings → Apps → Create**, and her [17 MCP tools](/mcp/tools) show up in your chats. This is the route most people want.
 - **A Custom GPT action.** You are building a GPT of your own and want it to call her public API directly, with no MCP in the middle.
 
-## Route 1: the connector
+## Route 1: MCP in Developer mode
 
-ChatGPT reaches her over MCP. Turn on **Developer mode** under **Settings → Apps → Advanced settings**, then create an app under **Settings → Apps → Create** with one URL, and she becomes a tool the model can call:
+ChatGPT reaches her over MCP. She is not listed in the ChatGPT app store; do not search Apps. Turn on **Developer mode** under **Settings → Apps → Advanced settings**, then create an app under **Settings → Apps → Create** with one URL, and she becomes a tool the model can call:
 
 ```
 https://api.postqueen.ai/mcp/YOUR_API_KEY
@@ -28,12 +28,12 @@ https://api.postqueen.ai/mcp/YOUR_API_KEY
 Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**.
 
 <Warning>
-Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key travels inside that MCP URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
 </Warning>
 
 Custom apps sit behind ChatGPT's developer mode, which OpenAI offers on the paid web plans. Plus and Pro can usually connect; OpenAI currently documents full write MCP (scheduling) for Business and Enterprise/Edu. The full walkthrough covers the developer mode toggle, the create-app form and enabling her per chat:
 
-<Card title="ChatGPT connector setup" icon="plug" href="/mcp/clients/chatgpt">
+<Card title="ChatGPT MCP setup" icon="plug" href="/mcp/clients/chatgpt">
   Step by step, from the developer mode switch to your first tool call
 </Card>
 
@@ -115,16 +115,16 @@ She runs on your terms. Leave the schedule alone and she is a true autopilot: wh
     No. She works on her own through the dashboard, the CLI and the API. ChatGPT is one of several ways to reach her.
   </Accordion>
   <Accordion title="What can she actually do from a ChatGPT chat?">
-    Everything her 14 MCP tools cover, if your ChatGPT plan is allowed to call write tools. Listing channels is a read. Scheduling a post is a write (`integrationSchedulePostTool`). OpenAI currently documents full write MCP for Business and Enterprise/Edu; Plus and Pro may connect but only get read/fetch.
+    Everything her 17 MCP tools cover, if your ChatGPT plan is allowed to call write tools. Listing channels is a read. Scheduling a post is a write (`integrationSchedulePostTool`). OpenAI currently documents full write MCP for Business and Enterprise/Edu; Plus and Pro may connect but only get read/fetch.
   </Accordion>
   <Accordion title="Can I review posts before they publish?">
     Yes. Ask for drafts and each post sits on your calendar unscheduled until you publish it there.
   </Accordion>
-  <Accordion title="Does the connector cost extra?">
+  <Accordion title="Does MCP access cost extra?">
     No. Agent access uses the same API key and plan limits as your regular PostQueen account, on any plan. ChatGPT's own developer mode does require one of OpenAI's paid plans.
   </Accordion>
-  <Accordion title="Connector or Custom GPT action?">
-    The connector if you want her in your everyday chats with no build step. The action if you are shipping a GPT to other people and want to control exactly which calls it can make.
+  <Accordion title="MCP app or Custom GPT action?">
+    The MCP app if you want her in your everyday chats with no build step. The action if you are shipping a GPT to other people and want to control exactly which calls it can make.
   </Accordion>
 </AccordionGroup>
 
@@ -135,7 +135,7 @@ She runs on your terms. Leave the schedule alone and she is a true autopilot: wh
     Every way to put an agent in front of PostQueen, from chat apps to your terminal
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    The 14 tools ChatGPT calls once the connector is on
+    The 17 tools ChatGPT calls once the MCP app is on
   </Card>
   <Card title="Create Post API" icon="code" href="/public-api/posts/create">
     The endpoint behind a Custom GPT action, with every provider's settings schema

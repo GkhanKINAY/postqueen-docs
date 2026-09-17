@@ -1,6 +1,6 @@
 ---
 title: 'Claude Apps'
-description: 'Add her as a custom connector once on claude.ai or in Claude Desktop, and she answers on your laptop, your desktop and your phone'
+description: 'Paste the MCP URL once on claude.ai or in Claude Desktop, and she answers on your laptop, your desktop and your phone'
 icon: /images/brand/icon-claude.svg
 ---
 
@@ -9,12 +9,12 @@ icon: /images/brand/icon-claude.svg
 Sunday evening, phone in hand, and next week has nothing on the calendar yet. You describe the launch in two sentences, and by the time you put the phone down there are five posts waiting on your calendar, each one shaped for the channel it is going to.
 
 <Frame>
-  <img src="/images/brand/chat-claude.svg" alt="Claude with the PostQueen connector: it plans a five-post launch week and schedules every post to X and LinkedIn" />
+  <img src="/images/brand/chat-claude.svg" alt="Claude with PostQueen over MCP: it plans a five-post launch week and schedules every post to X and LinkedIn" />
 </Frame>
 
-Two surfaces, one **custom** connector. PostQueen is not in Anthropic's Connectors Directory, so Browse will not find her. On claude.ai and Claude Desktop, open **Customize → Connectors** (Desktop may still say **Settings → Connectors**), then **+ → Add custom connector**. Connectors are tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
+Two surfaces, one MCP URL. PostQueen is not in Anthropic's Connectors Directory, so Browse will not find her. On claude.ai and Claude Desktop, open **Customize → Connectors** (Desktop may still say **Settings → Connectors**), then **+ → Add custom connector** and paste the URL. That dialog is Anthropic's name for a remote MCP server you add yourself, not a listing we published. The add is tied to your Claude account rather than the device, so adding her once on the web brings her to the Claude apps on iOS and Android as well.
 
-What she brings into the chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts, with image and video generation in the same set. They can also read back what is already scheduled and change a scheduled post's settings. They do not delete a post or move it to a new time, and none of them returns analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+What she brings into the chat is her [17 MCP tools](/mcp/tools). They list your channels, read what each platform accepts, schedule posts, generate image and video, and read analytics for published posts. They can also read back what is already scheduled and change a scheduled post's settings. They do not delete a post or move it to a new time, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
 
 <Note>
 This is the chat surface. Claude Code, Anthropic's terminal and IDE agent, is a different product —
@@ -25,7 +25,7 @@ Customize → Connectors does not install Claude Code.
 ## Set up
 
 <Warning>
-PostQueen is not listed in Anthropic's Connectors Directory. Searching **Browse connectors** on [claude.com/connectors](https://claude.com/connectors) will not find her. Add a **custom connector** with the MCP URL below.
+PostQueen is not listed in Anthropic's Connectors Directory. Searching **Browse connectors** on [claude.com/connectors](https://claude.com/connectors) will not find her. Paste the MCP URL with **Add custom connector** below.
 </Warning>
 
 On [claude.ai](https://claude.ai), open **Customize → Connectors**, click **+**, then **Add custom connector**, and paste:
@@ -38,7 +38,7 @@ Then toggle **PostQueen** on from **+ → Connectors** in a chat and ask her to 
 accounts. Your channel names come back.
 
 <Card title="Full setup: Claude" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude">
-  Every field on the connector form, what to leave empty and why, and the
+  Every field on the Add custom connector form, what to leave empty and why, and the
   `mcp-remote` bridge for an instance the public internet cannot reach
 </Card>
 
@@ -104,10 +104,10 @@ A plain `"url"` entry in `claude_desktop_config.json` does not work. That file o
     Generally not. New custom connectors are created on the web or in the desktop app, and they show up on your phone afterwards because connectors follow your Claude account.
   </Accordion>
   <Accordion title="What can she do from a Claude chat?">
-    Everything her 14 MCP tools cover. She lists your channels, reads each platform's rules and limits and schedules posts across your 30+ networks. Along the way she can fetch dynamic values such as Pinterest boards, generate an image or build a video to attach.
+    Everything her 17 MCP tools cover. She lists your channels, reads each platform's rules and limits and schedules posts across your 30+ networks. Along the way she can fetch dynamic values such as Pinterest boards, generate an image or build a video to attach, and read analytics for published posts.
   </Accordion>
   <Accordion title="Can she tell me how last week's posts did?">
-    Not from the chat. There is no analytics tool in the MCP set, and no tool for deleting posts either. Those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the `postqueen` CLI, which carries `posts:delete` and `analytics:platform`.
+    Yes, for published posts. `analyticsSummaryTool`, `analyticsPostsTool` and `analyticsPostTool` return the same snapshots as Analytics in the app. Null is unknown, not zero. There is still no tool for deleting posts or moving one to a new time; those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the `postqueen` CLI (`posts:delete`).
   </Accordion>
   <Accordion title="Does the connector cost extra?">
     <Snippet file="agent-plan-limits.mdx" />
@@ -120,11 +120,11 @@ A plain `"url"` entry in `claude_desktop_config.json` does not work. That file o
 
 <CardGroup cols={2}>
   <Card title="Claude setup over MCP" icon="/images/brand/icon-claude.svg" href="/mcp/clients/claude">
-    The connector flow for web, desktop and phone, the `mcp-remote` bridge and
+    The MCP URL flow for web, desktop and phone, the `mcp-remote` bridge and
     where the desktop logs live.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 14 tools Claude gains once the connector is on, with every parameter.
+    All 17 tools Claude gains once the MCP URL is on, with every parameter.
   </Card>
   <Card title="Agents overview" icon="compass" href="/agents/overview">
     Every way to put an agent in front of PostQueen, from chat apps to your terminal.
