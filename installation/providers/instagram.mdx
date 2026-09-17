@@ -20,7 +20,7 @@ Meta does not allow **Facebook Login** and **Instagram Login** on the same app. 
 | Product | Other + **Facebook Login for Business** | **Instagram Login** / API setup with Instagram login. Never Facebook Login for Business |
 | Redirect | `/integrations/social/instagram` | `/integrations/social/instagram-standalone` |
 | Env | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` (**Instagram** App ID, not Facebook App ID) |
-| Scopes | Union with Facebook Page (10 unique). See Path A | Exactly four `instagram_business_*` scopes. See Path B |
+| Scopes | Union with Facebook Page (11 unique). See Path A | Exactly four `instagram_business_*` scopes. See Path B |
 
 ## Path A — Instagram (Facebook Business)
 
@@ -117,7 +117,7 @@ The following steps create the Meta application that Facebook Page and Instagram
       <img src="/images/providers/facebook/facebook-advanced-permissions.png" alt="Path A: Advanced permissions screen" />
     </Frame>
 
-    Facebook Page and Instagram (Facebook Business) share this app. Request the **union** of both providers in one pass (10 unique), not only the Instagram list. The three Facebook-only scopes (`pages_manage_posts`, `pages_manage_engagement`, `read_insights`) are required on this same app if you also connect Facebook Page. Skip a required grant and she stops the channel with `Not enough scopes, when choosing a provider, please add all the scopes`.
+    Facebook Page and Instagram (Facebook Business) share this app. Request the **union** of both providers in one pass (11 unique), not only the Instagram list. The four Facebook-only scopes (`pages_manage_posts`, `pages_manage_engagement`, `pages_read_user_content`, `read_insights`) are required on this same app if you also connect Facebook Page. Skip a required grant and she stops the channel with `Not enough scopes, when choosing a provider, please add all the scopes`.
 
     Go to advanced permission and request access for the following scopes:
     - `pages_show_list`
@@ -125,6 +125,7 @@ The following steps create the Meta application that Facebook Page and Instagram
     - `pages_manage_posts`
     - `pages_manage_engagement`
     - `pages_read_engagement`
+    - `pages_read_user_content`
     - `read_insights`
     - `instagram_basic`
     - `instagram_content_publish`
@@ -134,7 +135,7 @@ The following steps create the Meta application that Facebook Page and Instagram
     Do not add Instagram Standalone (`instagram_business_*`) or Threads (`threads_*`) scopes on this app. Those belong on separate Meta apps.
 
     <Note>
-    Meta's dashboard may require `pages_read_user_content` as a dependency of `instagram_basic` or `pages_manage_engagement`. That is a dashboard dependency, not a scope PostQueen requests in code. Add it only if the dashboard blocks the request without it. Do not request `pages_messaging`, `instagram_manage_messages`, `pages_manage_metadata`, or ads permissions.
+    `pages_read_user_content` is required by Meta together with `pages_manage_engagement`, which PostQueen uses to publish follow-up comments under Facebook Page posts. PostQueen requests it when connecting a Facebook Page and does not read other people's comments or posts. Do not request `pages_messaging`, `instagram_manage_messages`, `pages_manage_metadata`, or ads permissions.
     </Note>
   </Step>
 
