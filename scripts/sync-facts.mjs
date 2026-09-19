@@ -61,6 +61,7 @@ function pricingTable(pricing) {
     ['Posts per month', tiers.map((t) => count(t.posts_per_month))],
     ['AI image credits', tiers.map((t) => String(t.image_generation_count))],
     ['AI video credits', tiers.map((t) => String(t.generate_videos))],
+    ['Clipping minutes', tiers.map((t) => String(t.clipping_minutes))],
     ['Webhooks', tiers.map((t) => count(t.webhooks))],
     ['Team members', tiers.map((t) => yes(t.team_members))],
     ['RSS auto-posting', tiers.map((t) => yes(t.autoPost))],
@@ -78,6 +79,7 @@ function limitsTable(pricing) {
     ['Channels', 'Connecting or enabling one past the cap', tiers.map((t) => t.channel)],
     ['AI images per month', 'Generating an image with no credits left', tiers.map((t) => t.image_generation_count)],
     ['AI videos per month', 'Generating a video with no credits left', tiers.map((t) => t.generate_videos)],
+    ['Clipping minutes per month', 'Clipping a video longer than the minutes left', tiers.map((t) => t.clipping_minutes)],
     ['Webhooks', 'Saving one past the cap', tiers.map((t) => t.webhooks)],
   ];
   const head = `| Limit | Enforced when | ${tiers.map((t) => titleCase(t.current)).join(' | ')} |`;

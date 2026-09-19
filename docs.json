@@ -149,7 +149,8 @@
               "general/automations/auto-post-rss",
               "general/automations/webhooks",
               "general/automations/third-party",
-              "general/agents"
+              "general/agents",
+              "general/clipping"
             ]
           },
           {
@@ -240,6 +241,7 @@
               "self-host/configuration/r2",
               "self-host/configuration/oauth",
               "self-host/configuration/polotno",
+              "self-host/configuration/clipping",
               "self-host/configuration/chrome-extension"
             ]
           },
