@@ -23,4 +23,3 @@ The Guide pages carry one screenshot each, in `images/app/`. They were taken on 
 
 - Retake a shot when its screen changes. A label in the picture that no longer matches the page text is worse than having no picture.
 
-`capture.mjs` is an older helper that logs in to a live account. Do not use it for docs images.
