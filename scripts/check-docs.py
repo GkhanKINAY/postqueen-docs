@@ -9,7 +9,8 @@ Always, on every page:
   and the Guide tab never mentions `.env` or `docker compose`.
 
 On every page that no longer carries an OVERHAUL-TODO marker (all pages on a
-release run): frontmatter has an icon, every image has alt text, no em dash, and
+release run): frontmatter has an icon (endpoint pages excepted), every image has
+alt text, no em dash, and
 the user tabs (every tab but Self-hosting) never mention self-hosting, PostQueen
 as open source, AGPL, Docker, `.env` or a server environment variable (the names
 in scripts/env-names.txt).
@@ -251,7 +252,8 @@ def main() -> int:
         if is_marked and not RELEASE:
             relaxed += 1
             continue
-        if not icon:
+        # Endpoint pages show their method badge in the sidebar instead of an icon.
+        if not icon and not fm_value(fm, "openapi"):
             ERRORS.append(f"frontmatter has no icon: {rel}")
         text_only = prose(body)
         if "—" in text_only:

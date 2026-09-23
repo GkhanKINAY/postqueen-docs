@@ -21,15 +21,15 @@ Run them all before you push. CI runs the same ones on every push and pull reque
 
 | Command | What it checks |
 |---|---|
-| `npm run check` | Navigation, orphans, redirects, snippet imports, card icons, internal links, frontmatter, alt text, no em dash, no self-hosting words outside the Self-hosting tab |
+| `npm run check` | Navigation, orphans, redirects, snippet imports, card icons, internal links, frontmatter (title, description, and an icon except on endpoint pages), alt text, no em dash, no self-hosting words outside the Self-hosting tab |
 | `npm run check:facts` | Banned facts (old tool counts, removed routes, the old API key location and more), channel and agent status lines against `facts/facts.json`, the MCP tool list against the app, prices and trial numbers against `docs.json` |
 | `npm run validate` | `mint validate`: the build, failing on warnings |
 | `npm run links` | `mint broken-links` |
 | `npm run a11y` | `mint a11y`: contrast and alt text |
 | `npm run lint:openapi` | `public-api/openapi.json` with Redocly, and its paths against the app's public routes |
 
-`npm run check:release` is the release run: it also fails on any `OVERHAUL-TODO` marker. CI uses it for pushes to
-`main` and pull requests into `main`.
+`npm run check:release` is the release run: every rule on every page, and a failure on any `OVERHAUL-TODO` marker.
+CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and pull requests into `main`.
 
 ## Where things live
 
@@ -64,7 +64,7 @@ Run them all before you push. CI runs the same ones on every push and pull reque
 - Guide task pages run 300 to 600 words and open with a **Where:** line naming the screen.
 - Quote the app's labels in bold exactly as the app's English strings show them, and error messages exactly.
 - At most one screenshot per page, taken from a throwaway local stack with demo channels, never from a real account.
-- Frontmatter always has `title`, `description` and `icon`.
+- Frontmatter always has `title`, `description` and `icon`. Endpoint pages (`openapi:`) skip the icon: the sidebar shows the method instead.
 
 ### Facts
 
@@ -77,8 +77,9 @@ Run them all before you push. CI runs the same ones on every push and pull reque
   `facts/facts.json`. `check:facts` compares them.
 - Examples use networks that work today (Bluesky, WordPress, DEV, Nostr). A network in review appears only with its
   note.
-- User tabs (Guide, AI agents, API, Plans and billing, Help) never mention self-hosting, open source, Docker, `.env`
-  or environment variables. The docs home carries the one fork line and the one link to Self-hosting.
+- User tabs (Guide, AI agents, API, Plans and billing, Help) never mention self-hosting, PostQueen as open source,
+  AGPL, Docker, `.env` or a server environment variable (`scripts/env-names.txt`). The CLI's `POSTQUEEN_API_KEY` is
+  fine. The docs home carries the one fork line and the one link to Self-hosting.
 - Never document clipping, `/mcp-oauth-claude` or `/mcp-oauth-chatgpt`. The API key is under
   **Connections > API Keys**, and only a workspace Admin or Super Admin can reveal it.
 - API examples send the raw key: `Authorization: YOUR_API_KEY`, never `Bearer` on `/public/v1`.
