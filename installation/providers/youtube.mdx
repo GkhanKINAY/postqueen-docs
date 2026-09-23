@@ -1,65 +1,53 @@
 ---
-title: 'YouTube setup'
-description: 'Register the YouTube application and give PostQueen its keys'
-icon: /images/channels/youtube.svg
+title: "YouTube setup"
+description: "Register your own Google OAuth client for YouTube on a self-hosted PostQueen: the console steps, APIs, scopes, redirect URI, the reviews and the variables to set."
+icon: "/images/channels/youtube.svg"
 ---
 
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen the Google Cloud project is yours. You create one **Web application** OAuth client, turn on two YouTube APIs, and give PostQueen the client ID and secret. The same client also runs **Continue with Google** on the sign-in page, and Google Business Profile can share it.
 
-<img src="/images/channels/youtube.svg" alt="YouTube" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+## Before you start
 
-On your own instance the Google Cloud project is yours: create one **web** OAuth client, enable the YouTube APIs, then put the client id and secret in your environment.
+| | |
+|---|---|
+| Developer console | [Google Cloud console](https://console.cloud.google.com/), with a Google account |
+| Variables | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/youtube`, shared by the YouTube connect and **Continue with Google**. Add `FRONTEND_URL` + `/integrations/social/gmb` if Google Business Profile uses this client too |
+| APIs | **YouTube Data API v3** and **YouTube Analytics API** |
+| Scopes | `userinfo.profile`, `userinfo.email`, `youtube`, `youtube.force-ssl`, `youtube.readonly`, `youtube.upload`, `youtubepartner`, `yt-analytics.readonly` |
+| Review | Google's verification of the sensitive scopes, and YouTube's API audit before uploads can be public |
+
+PostQueen checks all eight scopes when a channel connects. A missing one stops the connect.
 
 <Warning>
-**This same client is Google sign-in.** When `IS_GENERAL` is set (the shipped compose default), the **Continue with Google** button on `/auth` reads `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET`. There is no separate Google-login client. Do not create a second OAuth app for sign-in: login and YouTube connect share this one, and Google My Business can fall back to it as well.
-
-Login asks Google only for `userinfo.profile` and `userinfo.email`. Connecting a YouTube channel asks for those plus the six YouTube scopes below, with `access_type=offline` so she can keep a refresh token.
+**This client is also Google sign-in.** When `IS_GENERAL` is set, **Continue with Google** on the sign-in page uses `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET` and asks only for `userinfo.profile` and `userinfo.email`. Do not create a second client for sign-in: both come back to the same redirect URI.
 </Warning>
 
-Google's current console names this **Google Auth Platform** (Branding, Audience, Clients, Data Access). Older docs still say **APIs & Services → Credentials**; the values are the same.
-
-Follow Google's [Obtaining authorization credentials](https://developers.google.com/youtube/registering_an_application) alongside the steps here.
-
-## General Setup
+## Create the client
 
 <Steps>
-  <Step title="Open Google Cloud">
-    Sign in and open [Google Auth Platform](https://console.cloud.google.com/auth/overview) (or [APIs & Services → Credentials](https://console.cloud.google.com/projectselector2/apis/credentials)). Accept the terms if asked.
+  <Step title="Create or pick a project">
+    In the [Google Cloud console](https://console.cloud.google.com/), create a project for PostQueen or select the one you use.
   </Step>
-
-  <Step title="Create or select a project">
-    Create a project, or pick the one you already use for PostQueen. Fill in the name and click **Create**.
-  </Step>
-
-  <Step title="Enable the YouTube APIs">
-    **Enabled APIs and Services** → **Enable APIs and Services**. Search for each of these and click **Enable**:
-
-    - YouTube Data API v3
-    - YouTube Analytics API
-    - YouTube Reporting API
+  <Step title="Turn on the YouTube APIs">
+    Open **APIs and services > Enabled APIs and services** and choose **Enable APIs and services**. Search for and enable **YouTube Data API v3** (uploads, thumbnails, channel details) and **YouTube Analytics API** (the numbers on the Analytics page). PostQueen does not use the YouTube Reporting API.
 
     <Frame>
-      <img src="/images/providers/youtube/YouTube-Enabled-APIs.png" alt="The Enabled APIs and Services page in Google Cloud Console" />
-    </Frame>
-
-    <Frame>
-      <img src="/images/providers/youtube/Enable-APIs-and-Services.png" alt="The API library search results, with YouTube Data API v3 ready to enable" />
+      <img src="/images/providers/youtube/Enable-APIs-and-Services.png" alt="The APIs and services page in Google Cloud console, with the Enable APIs and services button" />
     </Frame>
   </Step>
+  <Step title="Set up Branding and Audience">
+    Open [Google Auth Platform](https://console.cloud.google.com/auth/overview). In **Branding**, enter the app name, a support email, your home page, privacy policy and terms links, and your domain under **Authorized domains**. In **Audience**, choose **External**, unless everyone who will sign in belongs to your Google Workspace, where **Internal** skips verification.
 
-  <Step title="Configure the consent screen (Branding, Audience, Data Access)">
-    User type **External**, unless you have a Google Workspace organization and want Internal.
+    While the app is in **Testing**, only the accounts under **Test users** can sign in or connect a channel. Add your own Google account there with **Add users**.
+  </Step>
+  <Step title="Add the scopes">
+    In **Data access**, choose **Add or remove scopes** and add all eight, then save:
 
-    Fill in the app name, support email, homepage, privacy policy and terms. Add your public hostname (for example `postqueen.example.com`) as an authorized domain.
-
-    For a public install Google will also check **branding**: the homepage must be a Search Console-verified property on that domain, and the logo must uniquely identify the product (a generic icon is rejected). Branding verification is separate from YouTube scope verification. You can publish first and finish branding afterwards; until branding is accepted, Google may still show its own placeholder instead of your name and logo.
-
-    On **Data Access** (older wizards: the Scopes step), add all eight. Connecting a YouTube channel is refused if any one is missing:
-
-    ```
+    ```text
     https://www.googleapis.com/auth/userinfo.profile
     https://www.googleapis.com/auth/userinfo.email
     https://www.googleapis.com/auth/youtube
@@ -69,116 +57,80 @@ Follow Google's [Obtaining authorization credentials](https://developers.google.
     https://www.googleapis.com/auth/youtubepartner
     https://www.googleapis.com/auth/yt-analytics.readonly
     ```
-
-    Save until the Save / Discard bar is gone. `openid` appears on its own with the userinfo scopes; you do not have to add it.
-
-    Add **your own Google account** as a test user. It has to be a real Google login, not a made-up address.
-
-    <Frame>
-      <img src="/images/providers/youtube/YouTube-Add-Test-Users.png" alt="The OAuth consent screen test users panel, with the control for adding your own account" />
-    </Frame>
-
-    <Warning>
-    While the app is in **Testing**, only those test users can sign in with Google or connect YouTube. Everyone else sees Google's access-denied screen.
-
-    **Audience → Publish app** is what you do for a public install. Google *will* let an External app leave Testing before YouTube verification is finished. After that:
-
-    - **Continue with Google** (non-sensitive `userinfo` scopes) works for any Google account.
-    - Connecting a YouTube channel still requests the **sensitive** scopes. Until you complete [Data Access verification](https://console.cloud.google.com/auth/verification) (justifications plus a demo video), those users see Google's unverified-app screen, and Google keeps the 100-user cap on those scopes.
-
-    You do not have to stay in Testing for login to work. Stay in Testing only if you want to keep the install private. Brand accounts on a Workspace can stay unpublished if you trust the app in the admin console; see below.
-    </Warning>
   </Step>
-
-  <Step title="Create a Web application OAuth client">
-    **Clients** → **Create client** → application type **Web application**.
+  <Step title="Create a Web application client">
+    In **Clients**, choose **Create client** and pick **Web application** as the application type.
 
     <OAuthRedirect />
 
-    For this Google client you usually need **more than one** redirect URI, because login, YouTube and (if you share the client) Google My Business all come back to different paths. No trailing slash. A mismatch, including a trailing slash, fails as `invalid_grant`.
+    Under **Authorized JavaScript origins**, add your `FRONTEND_URL` with no path. Under **Authorized redirect URIs**, add:
 
-    **Authorized JavaScript origins** (your `FRONTEND_URL`, no path):
+    | Where PostQueen runs | Redirect URI |
+    |---|---|
+    | Your domain | `https://postqueen.example.com/integrations/social/youtube` |
+    | Local development | `http://localhost:4200/integrations/social/youtube` |
+    | Docker on your machine | `http://localhost:4007/integrations/social/youtube` |
 
-    - Production: `https://postqueen.example.com`
-    - Local Next: `http://localhost:4200`
-    - Docker frontend: `http://localhost:4007`
+    Google accepts only `https`, except for `localhost`. If this client also serves Google Business Profile, add the same addresses ending in `/integrations/social/gmb`: see [Google My Business setup](/installation/providers/google-my-business).
+  </Step>
+  <Step title="Copy the client ID and secret">
+    Choose **Create** and copy the **Client ID** and **Client secret** from the dialog. Google shows the secret only now: afterwards the console keeps just its last four characters. If you lose it, add a new secret to the same client rather than creating another client.
+  </Step>
+</Steps>
 
-    If the product is on a subdomain (`https://app.postqueen.example.com`) and the branding homepage is the apex, list **both**.
+## Set the variables
 
-    **Authorized redirect URIs:**
-
-    - Production: `https://postqueen.example.com/integrations/social/youtube`
-    - Local Next: `http://localhost:4200/integrations/social/youtube`
-    - Docker: `http://localhost:4007/integrations/social/youtube`
-
-    If this client will also handle Google My Business (PostQueen falls back to `YOUTUBE_CLIENT_*` when `GOOGLE_GMB_*` is empty), add the matching `/integrations/social/gmb` URIs too. You still have to put `business.manage` on Data Access and enable the Business Profile APIs; that is the [GMB guide](/installation/providers/google-my-business).
-
-    <Frame>
-      <img src="/images/providers/youtube/youtube-001.png" alt="The OAuth client configuration in Google Cloud Console, with the Authorized redirect URIs field" />
-    </Frame>
-
-    Copy the client ID and secret **from the create dialog**. Google will not show the secret again; the console only keeps the last four characters. A mistyped secret still lets Google show the consent screen (that step uses the client id alone), then PostQueen's `/auth/oauth/GOOGLE/exists` call fails with `invalid_client` and the login page spins. If that happens, on the same web client click **Add secret**, put the new value in env, recreate the container, and disable the old secret once login works. Do not create a second OAuth client.
+Add the two keys to your environment:
 
 ```env
-YOUTUBE_CLIENT_ID=""
-YOUTUBE_CLIENT_SECRET=""
+YOUTUBE_CLIENT_ID="your client id"
+YOUTUBE_CLIENT_SECRET="your client secret"
 ```
 
-    Recreate the PostQueen container after you save the file. A plain `docker restart` keeps the old environment.
-  </Step>
+<RestartAndAddChannel />
 
-  <Step title="Restart and add the YouTube channel">
-    <RestartAndAddChannel />
-  </Step>
-</Steps>
+Pick **YouTube**, sign in with Google, approve every permission, then choose the channel in **Select YouTube Channel**.
 
-Sign in with Google uses the same keys. After the restart, `/auth` → **Continue with Google** should send you to `accounts.google.com` with this client id. YouTube connect is **Add Channel** → YouTube, then pick the channel on the second step.
+## Review and quota
 
-## Additional Steps for Brand Accounts
-
-<Info>
-When using a Brand account you will need to set your app to External and add a test user. You do not need to publish the app, but it does take time for the changes to propagate. You will also need to add the app to the trusted apps within your Google Workspace Admin.
-</Info>
+Two Google processes stand between a new client and everyone's public uploads:
 
 <Steps>
-  <Step title="Go to admin.google.com">
-    Sign in
+  <Step title="Publish the app and verify the scopes">
+    In **Audience**, choose **Publish app** to leave **Testing**. **Continue with Google** then works for any Google account, because it asks only for the basic profile scopes. The YouTube scopes are sensitive: until Google verifies them in the **Verification Center** (a justification for each scope and a demo video), people who connect a channel see Google's unverified-app screen, and at most 100 accounts can use them.
   </Step>
-
-  <Step title="Go to Security Settings">
-    Go to Security → Access and data Controls → API Controls
-    Click Manage Third Party App Access
-  </Step>
-
-  <Step title="Configure new App">
-    Click "Configure new App"
-    Put your Client ID for the app you created in previous steps into the search box and select your app
-  </Step>
-
-  <Step title="Set scopes and Google Data Access">
-    Set scopes and Google Data Access for the app to Trusted
-    Once set, click save
-  </Step>
-
-  <Step title="Wait for propagation">
-    Wait at least 5 hours for the changes to propagate.
-    After this time you should now be able to add your YouTube channel to your PostQueen account
+  <Step title="Pass the YouTube API audit">
+    YouTube keeps every video uploaded through an unverified API project created after July 28, 2020 private, whatever visibility the post asks for. A project can also upload only 100 videos a day by default, shared by every channel on your install. Request the audit and more quota with the [YouTube API Services Audit and Quota Extension Form](https://support.google.com/youtube/contact/yt_api_form).
   </Step>
 </Steps>
 
-## Next steps
+## Troubleshooting
 
-<CardGroup cols={2}>
-  <Card title="What she can post to YouTube" icon="/images/channels/youtube.svg" href="/channels/youtube">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads, including Google sign-in
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant, invalid_client and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+<AccordionGroup>
+  <Accordion title="redirect_uri_mismatch on Google's screen">
+    The redirect URI PostQueen sent is not in **Authorized redirect URIs**. Add it exactly as in step 5, with the scheme and port your `FRONTEND_URL` uses and no trailing slash.
+  </Accordion>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    A scope is missing from **Data access**, or was declined on the consent screen. Add all eight, then connect again and approve everything.
+  </Accordion>
+  <Accordion title="Access blocked or access denied on Google's screen">
+    The app is in **Testing** and the account is not a test user. Add it under **Audience > Test users**, or publish the app.
+  </Accordion>
+  <Accordion title="The sign-in page keeps loading after Google's consent screen">
+    The client secret in your environment is wrong: Google shows the consent screen with the client ID alone, then refuses the token exchange with `invalid_client`. Add a new secret to the client, put it in `YOUTUBE_CLIENT_SECRET` and restart PostQueen.
+  </Accordion>
+  <Accordion title="A Google Workspace account cannot connect">
+    Your Workspace admin restricts third-party apps. In the Google Admin console, open **Security > Access and data control > API controls > Manage App Access**, choose **Configure new app**, find the app by its client ID and set it to **Trusted**. Google says the change can take up to 24 hours.
+  </Accordion>
+  <Accordion title="Every upload is private">
+    Your project has not passed the YouTube API audit. Request it with the form in step 2 of Review and quota.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Google My Business setup](/installation/providers/google-my-business): can share this client
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [YouTube posting settings](/public-api/providers/youtube)
