@@ -596,3 +596,59 @@ pre *,
     transition: none;
   }
 }
+
+/* 9. Header: a solid bar with a hairline, as on postqueen.ai, and the banner
+   as news in the brand's lilac rather than a dark strip that reads like a
+   warning. Tabs are ink at 600; the open one is violet with a 2px rule.
+   Pricing is a plain link, Log in an outlined pill, Start the violet pill. */
+#navbar {
+  background-color: var(--pq-surface);
+  border-bottom: 1px solid var(--pq-line);
+  box-shadow: 0 10px 24px -22px rgba(40, 20, 80, 0.45);
+}
+.nav-tabs-item {
+  color: var(--pq-ink-2) !important;
+  font-weight: 600;
+}
+.nav-tabs-item:hover {
+  color: var(--pq-ink) !important;
+}
+.nav-tabs-item:has(> .bg-primary) {
+  color: var(--pq-accent) !important;
+}
+.nav-tabs-item > .bg-primary {
+  height: 2px;
+}
+#navbar li.navbar-link {
+  border-radius: 999px;
+}
+#navbar li.navbar-link a {
+  color: var(--pq-ink) !important;
+  font-weight: 600;
+}
+#navbar li.navbar-link:has(a[href$="/pricing"]) {
+  border-color: transparent;
+  background: transparent;
+}
+#navbar li.navbar-link:has(a[href*="/auth/login"]) {
+  border: 1px solid var(--pq-line-2);
+  background: var(--pq-surface);
+}
+/* Mintlify forces the banner text white from inside a cascade layer, which
+   outranks an !important color here, so the fill is set instead. */
+#banner p {
+  -webkit-text-fill-color: var(--pq-inline-ink);
+  font-weight: 600;
+}
+#banner a {
+  -webkit-text-fill-color: var(--pq-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+#banner a::after {
+  content: " \2192";
+}
+#banner button svg,
+#banner button svg path {
+  stroke: var(--pq-accent);
+}
