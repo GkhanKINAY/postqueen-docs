@@ -14,7 +14,7 @@ On a self-hosted PostQueen, most networks talk to PostQueen through a developer 
     Each network's setup page walks through its developer console, the permissions to ask for and the review, if any.
   </Step>
   <Step title="Add the redirect URI">
-    For a sign-in network, the redirect URI is `FRONTEND_URL` + `/integrations/social/` + the path in the table below, with no trailing slash unless the table shows one. A network that accepts only `https` redirects needs a different address on a plain `http` install; its page gives it.
+    For a sign-in network, the redirect URI is `FRONTEND_URL` + `/integrations/social/` + the ending in the table below, with no trailing slash unless the table shows one. Pinterest's, for example, is `https://postqueen.example.com/integrations/social/pinterest`. A network that accepts only `https` redirects needs a different address on a plain `http` install; its page gives it.
   </Step>
   <Step title="Set the variables and restart">
     Put the keys in your environment and recreate the app container so it reads them. [Configuration reference](/configuration/reference) lists every variable.
@@ -30,33 +30,33 @@ On a self-hosted PostQueen, most networks talk to PostQueen through a developer 
 
 ## Networks that need a developer app
 
-| Network | Variables | Redirect path | Setup |
-|---|---|---|---|
-| Instagram (Facebook Business) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `/integrations/social/instagram` | [Instagram setup](/installation/providers/instagram) |
-| Instagram (Standalone) | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | `/integrations/social/instagram-standalone` | [Instagram setup](/installation/providers/instagram) |
-| TikTok | `TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET` | `/integrations/social/tiktok` | [TikTok setup](/installation/providers/tiktok) |
-| TikTok Business | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` | `/integrations/social/tiktok-business/`, with the trailing slash | [TikTok setup](/installation/providers/tiktok) |
-| YouTube | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` | `/integrations/social/youtube` | [YouTube setup](/installation/providers/youtube) |
-| Facebook Page | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `/integrations/social/facebook` | [Facebook setup](/installation/providers/facebook) |
-| X | `X_API_KEY`, `X_API_SECRET`, and optionally `X_URL`, `DISABLE_X_ANALYTICS`, `STRIP_LINKS_FROM_X_POSTS` | `/integrations/social/x` | [X setup](/installation/providers/x-twitter) |
-| LinkedIn and LinkedIn Page | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | `/integrations/social/linkedin`, `/integrations/social/linkedin-page` | [LinkedIn setup](/installation/providers/linkedin) |
-| Threads | `THREADS_APP_ID`, `THREADS_APP_SECRET` | `/integrations/social/threads` | [Threads setup](/installation/providers/threads) |
-| Pinterest | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | `/integrations/social/pinterest` | [Pinterest setup](/installation/providers/pinterest) |
-| Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | `/integrations/social/reddit` | [Reddit setup](/installation/providers/reddit) |
-| Google Business Profile | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET`, or the YouTube client when they are unset | `/integrations/social/gmb` | [Google Business Profile setup](/installation/providers/google-my-business) |
-| Telegram | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` | None: the channel connects with a `/connect` code sent to the bot | [Telegram setup](/installation/providers/telegram) |
-| Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | `/integrations/social/discord` | [Discord setup](/installation/providers/discord) |
-| Slack | `SLACK_ID`, `SLACK_SECRET` | `/integrations/social/slack` | [Slack setup](/installation/providers/slack) |
-| Mastodon | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | `/integrations/social/mastodon` | [Mastodon setup](/installation/providers/mastodon) |
-| Tumblr | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | `/integrations/social/tumblr` | [Tumblr setup](/installation/providers/tumblr) |
-| Twitch | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | `/integrations/social/twitch` | [Twitch setup](/installation/providers/twitch) |
-| VK | `VK_ID` | `/integrations/social/vk` | [VK setup](/installation/providers/vk) |
-| Kick | `KICK_CLIENT_ID`, `KICK_SECRET` | `/integrations/social/kick` | [Kick setup](/installation/providers/kick) |
-| Dribbble | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | `/integrations/social/dribbble` | [Dribbble setup](/installation/providers/dribbble) |
-| Farcaster | `NEYNAR_APP_FID`, `NEYNAR_APP_MNEMONIC`, `NEYNAR_CLIENT_ID`, `NEYNAR_SECRET_KEY`, `NEYNAR_SPONSOR_SIGNERS` | None: the account approves a signer by QR code in the Farcaster app | [Farcaster setup](/installation/providers/farcaster) |
-| Whop | `WHOP_CLIENT_ID` | `/integrations/social/whop` | [Whop setup](/installation/providers/whop) |
-| MeWe | `MEWE_HOST`, `MEWE_APP_ID`, `MEWE_API_KEY` | `/integrations/social/mewe` | [MeWe setup](/installation/providers/mewe) |
-| Skool | `EXTENSION_ID`, for the PostQueen browser extension | None: the extension reads the Skool session | [Browser extension](/configuration/chrome-extension) |
+| Network | Variables | Redirect URI ends in |
+|---|---|---|
+| [Instagram (Facebook Business)](/installation/providers/instagram) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `instagram` |
+| [Instagram (Standalone)](/installation/providers/instagram) | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | `instagram-standalone` |
+| [TikTok](/installation/providers/tiktok) | `TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET` | `tiktok` |
+| [TikTok Business](/installation/providers/tiktok) | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` | `tiktok-business/`, with the trailing slash |
+| [YouTube](/installation/providers/youtube) | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` | `youtube` |
+| [Facebook Page](/installation/providers/facebook) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `facebook` |
+| [X](/installation/providers/x-twitter) | `X_API_KEY`, `X_API_SECRET`, and optionally `X_URL`, `DISABLE_X_ANALYTICS`, `STRIP_LINKS_FROM_X_POSTS` | `x` |
+| [LinkedIn and LinkedIn Page](/installation/providers/linkedin) | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | `linkedin`, `linkedin-page` |
+| [Threads](/installation/providers/threads) | `THREADS_APP_ID`, `THREADS_APP_SECRET` | `threads` |
+| [Pinterest](/installation/providers/pinterest) | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | `pinterest` |
+| [Reddit](/installation/providers/reddit) | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | `reddit` |
+| [Google Business Profile](/installation/providers/google-my-business) | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET`, or the YouTube client when they are unset | `gmb` |
+| [Telegram](/installation/providers/telegram) | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` | None: the channel connects with a `/connect` code sent to the bot |
+| [Discord](/installation/providers/discord) | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | `discord` |
+| [Slack](/installation/providers/slack) | `SLACK_ID`, `SLACK_SECRET` | `slack` |
+| [Mastodon](/installation/providers/mastodon) | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | `mastodon` |
+| [Tumblr](/installation/providers/tumblr) | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | `tumblr` |
+| [Twitch](/installation/providers/twitch) | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | `twitch` |
+| [VK](/installation/providers/vk) | `VK_ID` | `vk` |
+| [Kick](/installation/providers/kick) | `KICK_CLIENT_ID`, `KICK_SECRET` | `kick` |
+| [Dribbble](/installation/providers/dribbble) | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | `dribbble` |
+| [Farcaster](/installation/providers/farcaster) | `NEYNAR_APP_FID`, `NEYNAR_APP_MNEMONIC`, `NEYNAR_CLIENT_ID`, `NEYNAR_SECRET_KEY`, `NEYNAR_SPONSOR_SIGNERS` | None: the account approves a signer by QR code in the Farcaster app |
+| [Whop](/installation/providers/whop) | `WHOP_CLIENT_ID` | `whop` |
+| [MeWe](/installation/providers/mewe) | `MEWE_HOST`, `MEWE_APP_ID`, `MEWE_API_KEY` | `mewe` |
+| [Skool](/configuration/chrome-extension) | `EXTENSION_ID`, for the PostQueen browser extension | None: the extension reads the Skool session |
 
 Two names break the pattern: Kick's secret is `KICK_SECRET`, and Dribbble's variables spell it with three `b` characters.
 
