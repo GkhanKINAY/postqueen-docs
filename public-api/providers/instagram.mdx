@@ -1,330 +1,255 @@
 ---
-title: Instagram Settings
-description: 'API settings for posting to Instagram'
+title: "Instagram posting settings"
+sidebarTitle: "Instagram"
+description: "The settings object a post to Instagram takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/instagram.svg"
 ---
 
-{/* OVERHAUL-TODO(B2): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api), main:public-api/providers/instagram-standalone.mdx (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Instagram posts use one settings block. `post_type` chooses a feed post or a Story. Collaborators, trial reels and Reel audio are optional additions on top.
+<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect and publish.</ChannelStatus>
 
-Creating the OAuth app and connecting a channel: [Instagram setup guide](/installation/providers/instagram).
+Every post to Instagram carries a `settings` object. Instagram has two tiles, and both take the same fields:
 
-<Info>
-Use `__type: "instagram"` for Facebook Business-linked accounts and `__type: "instagram-standalone"` for standalone Instagram accounts. Both use the same settings schema, except `audio`, which is only available for Facebook Business-linked accounts.
-</Info>
+| Tile in Add Channel | `__type` |
+|---|---|
+| Instagram (Facebook Business) | `instagram` |
+| Instagram (Standalone) | `instagram-standalone` |
 
-## Settings Schema
-
-```json
-{
-  "settings": {
-    "__type": "instagram",
-    "post_type": "post",
-    "is_trial_reel": false,
-    "collaborators": [],
-    "audio": {
-      "id": "587784541076604",
-      "audio_volume": 100,
-      "video_volume": 100
-    }
-  }
-}
-```
+Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | `instagram` or `instagram-standalone` |
-| `post_type` | `string` | Yes | Type of Instagram post |
-| `is_trial_reel` | `boolean` | No | Whether to post as a trial reel |
-| `graduation_strategy` | `string` | No | Graduation strategy for trial reels |
-| `collaborators` | `array` | No | List of collaborator usernames |
-| `audio` | `object` | No | Audio to attach to a Reel (single video only) |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | `"instagram"` or `"instagram-standalone"`. PostQueen sets it from the channel you post to, so it always matches the tile. |
+| `post_type` | string | Yes | `post`, `reel` or `story`. See below. |
+| `is_trial_reel` | boolean | No | `true` publishes the Reel as a Trial Reel, shown to people who don't follow you first. Needs exactly one MP4. |
+| `graduation_strategy` | string | No | How a Trial Reel reaches your followers: `MANUAL` or `SS_PERFORMANCE` (automatically, based on performance). Left out, a Trial Reel uses `MANUAL`. |
+| `collaborators` | array of objects | No | Up to 3 accounts to invite as collaborators, each `{ "label": "username" }`. A leading `@` is removed. Private accounts can't be invited. Not sent on stories. |
+| `audio` | object | No | Music or original sound for a single-video Reel. Facebook Business tile only: an `instagram-standalone` channel ignores it. See below. |
 
 ### `post_type`
 
-| Value | Description |
-|-------|-------------|
-| `post` | Regular feed post |
-| `story` | Instagram Story (24-hour visibility) |
-
-### `is_trial_reel`
-
-When set to `true`, the post will be published as a trial reel with limited initial visibility.
-
-### `graduation_strategy`
-
-Controls how trial reels graduate to full visibility. Only applicable when `is_trial_reel` is `true`.
-
-| Value | Description |
-|-------|-------------|
-| `MANUAL` | Manually graduate the reel |
-| `SS_PERFORMANCE` | Automatically graduate based on performance |
-
-### `collaborators`
-
-Array of collaborator objects. Each collaborator will receive an invite to be added as a collaborator on the post.
-
-```json
-{
-  "collaborators": [
-    { "label": "username1" },
-    { "label": "username2" }
-  ]
-}
-```
+| Value | What is published |
+|---|---|
+| `post` | A feed post. One image is a photo post, 2 to 10 items are a carousel, and a single video goes out as a Reel. |
+| `reel` | A Reel. The post must carry exactly one MP4. |
+| `story` | Stories. Each attached photo or video goes out as its own story, in order. There is no caption and no item limit. |
 
 ### `audio`
 
-Attach music or an original sound to a Reel, based on the
-[Instagram Audio API](https://developers.facebook.com/docs/instagram-platform/content-publishing/audio-api/).
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `id` | string | Yes | The audio id from `audioSearch`. |
+| `title`, `artist`, `image` | string | No | Shown in the composer only. Not sent to Instagram. |
+| `audio_volume` | number | No | Volume of the added audio, `0` to `100`. Left out, Instagram's default applies. |
+| `video_volume` | number | No | Volume of the video's own sound, `0` to `100`. Left out, Instagram's default applies. |
 
-<Warning>
-Audio can only be attached to a Reel, which is a single video with `post_type: "post"`.
-It is not supported on Stories, carousels or image posts, and not on
-`instagram-standalone` channels (the Audio API requires Facebook Login).
-</Warning>
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | `string` | Yes | The audio asset ID |
-| `title` | `string` | No | Audio title (display only) |
-| `artist` | `string` | No | Artist or creator name (display only) |
-| `image` | `string` | No | Cover artwork URL (display only) |
-| `audio_volume` | `number` | No | Volume of the attached audio, `0`-`100` (default `100`) |
-| `video_volume` | `number` | No | Volume of the original video audio, `0`-`100` (default `100`) |
-
-#### Finding an audio ID
-
-Use the [trigger endpoint](/public-api/integrations/trigger) with the `audioSearch` tool:
+Find an audio id with the `audioSearch` tool through [trigger a provider tool](/public-api/integrations/trigger). An empty `q` returns trending audio, and `type` is `music` (the default) or `original_sound`:
 
 ```bash
-curl -X POST https://api.postqueen.ai/public/v1/integration-trigger/{integrationId} \
-  -H "Authorization: your-api-key" \
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"methodName": "audioSearch", "data": {"q": "summer vibes", "type": "music"}}'
+  -d '{ "methodName": "audioSearch", "data": { "q": "summer", "type": "music" } }'
 ```
 
-| Parameter | Description |
-|-----------|-------------|
-| `q` | Search query. Leave empty to get trending audio |
-| `type` | `music` (royalty-free catalog) or `original_sound` (user-generated), defaults to `music` |
+The answer is `{ "output": [ { "id", "title", "artist", "image", "duration", "previewUrl" } ] }`. Put the chosen `id` in `settings.audio.id`. Instagram returns only audio cleared for use by other apps, so the list can be shorter than in the Instagram app.
 
-The response contains `{ output: [{ id, title, artist, image, duration, previewUrl }] }`.
+## What PostQueen checks
 
-<Check>
-You now have an audio ID. Pass the chosen `id` into `settings.audio.id`.
-</Check>
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-<Note>
-Only audio authorized for third-party use is returned, so the catalog can be
-smaller than what you see in the Instagram app.
-</Note>
+| Rule | Message |
+|---|---|
+| At least one photo or video | “Should have at least one media” |
+| At most 10 items (not for stories) | “Instagram carousel only supports up to 10 media attachments” |
+| At most 30 hashtags in the caption (not for stories) | “Instagram allows up to 30 hashtags in a caption” |
+| At most 20 @mentions in the caption (not for stories) | “Instagram allows up to 20 @mentions in a caption” |
+| No BMP images | “Instagram only accepts JPEG images and BMP files cannot be converted, please use a JPEG or PNG” |
+| `post_type: "reel"` carries exactly one MP4 | “Reels must be a single video”, “Reels must be a video” |
+| `is_trial_reel: true` carries exactly one MP4 | “Trial Reels can only have one video”, “Trial Reels must be a video” |
+| `audio` on a single-video post or Reel, not a story (Facebook Business tile) | “Audio can only be added to Reels, not to Stories”, “Audio can only be added to a single video Reel”, “Audio can only be added to a video Reel” |
+| At most 3 `collaborators` | “Instagram allows up to 3 collaborators” |
+| Caption up to 2,200 characters | “post is too long, please fix it” |
 
----
-
-## Complete Example
-
-<Tabs>
-  <Tab title="Feed post">
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "instagram",
+  "name": "Your channel name",
+  "message": "Instagram carousel only supports up to 10 media attachments"
+}
+```
+
+Instagram's own rules are not checked first: images up to 8 MB with an aspect ratio between 4:5 and 1.91:1, Reels from 3 seconds to 15 minutes and up to 300 MB, and story videos from 3 to 60 seconds. PNG, WebP, GIF, AVIF and TIFF images are converted to JPEG when the post is published.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Photo post
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-instagram-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Beautiful sunset today! 🌅\n\n#sunset #photography #nature",
+          "content": "Autumn menu is here. Which one are you trying first?",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/photo.jpg" }]
+        }
+      ],
+      "settings": { "__type": "instagram", "post_type": "post" }
+    }
+  ]
+}
+```
+
+```json Carousel with a comment
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Swipe for all three looks. #autumn #lookbook",
           "image": [
-            {
-              "id": "image-id",
-              "path": "https://uploads.postqueen.ai/sunset.jpg"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/look-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/look-2.jpg" },
+            { "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/look-3.jpg" }
           ]
+        },
+        {
+          "content": "Sizes and prices are in our bio.",
+          "image": [],
+          "delay": 5
         }
       ],
       "settings": {
         "__type": "instagram",
         "post_type": "post",
-        "is_trial_reel": false,
-        "collaborators": []
+        "collaborators": [{ "label": "partner_studio" }]
       }
     }
   ]
 }
 ```
 
-  </Tab>
-  <Tab title="Story">
-
-```json
+```json Reel
 {
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-instagram-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Behind the scenes of today's shoot.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/reel.mp4" }]
+        }
+      ],
+      "settings": { "__type": "instagram-standalone", "post_type": "reel" }
+    }
+  ]
+}
+```
+
+```json Trial Reel
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Testing a new format.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/reel.mp4" }]
+        }
+      ],
+      "settings": {
+        "__type": "instagram",
+        "post_type": "reel",
+        "is_trial_reel": true,
+        "graduation_strategy": "SS_PERFORMANCE"
+      }
+    }
+  ]
+}
+```
+
+```json Reel with music
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Friday mood.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/reel.mp4" }]
+        }
+      ],
+      "settings": {
+        "__type": "instagram",
+        "post_type": "reel",
+        "audio": { "id": "AUDIO_ID", "audio_volume": 80, "video_volume": 20 }
+      }
+    }
+  ]
+}
+```
+
+```json Story
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
           "content": "",
           "image": [
-            {
-              "id": "story-image-id",
-              "path": "https://uploads.postqueen.ai/story.jpg"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/story-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/story-2.mp4" }
           ]
         }
       ],
-      "settings": {
-        "__type": "instagram",
-        "post_type": "story"
-      }
+      "settings": { "__type": "instagram", "post_type": "story" }
     }
   ]
 }
 ```
 
-  </Tab>
-  <Tab title="Collaborative">
+</CodeGroup>
 
-```json
-{
-  "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-instagram-integration-id"
-      },
-      "value": [
-        {
-          "content": "Amazing collab with @partner! 🤝",
-          "image": [
-            {
-              "id": "collab-image-id",
-              "path": "https://uploads.postqueen.ai/collab.jpg"
-            }
-          ]
-        }
-      ],
-      "settings": {
-        "__type": "instagram",
-        "post_type": "post",
-        "collaborators": [
-          { "label": "partner_username" }
-        ]
-      }
-    }
-  ]
-}
-```
+In the carousel example, the second entry in `value` is a follow-up comment, posted 5 minutes after the post. Comments on Instagram are text only.
 
-  </Tab>
-  <Tab title="Reel with audio">
+## Related
 
-Attach audio found with `audioSearch` to a single-video Reel:
-
-```json
-{
-  "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-instagram-integration-id"
-      },
-      "value": [
-        {
-          "content": "New reel with trending audio! 🎵",
-          "image": [
-            {
-              "id": "video-id",
-              "path": "https://uploads.postqueen.ai/reel.mp4"
-            }
-          ]
-        }
-      ],
-      "settings": {
-        "__type": "instagram",
-        "post_type": "post",
-        "audio": {
-          "id": "587784541076604",
-          "audio_volume": 80,
-          "video_volume": 20
-        }
-      }
-    }
-  ]
-}
-```
-
-  </Tab>
-  <Tab title="Carousel">
-
-Create a carousel by adding multiple images:
-
-```json
-{
-  "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-instagram-integration-id"
-      },
-      "value": [
-        {
-          "content": "Swipe to see all the photos! 📸",
-          "image": [
-            { "id": "img1", "path": "https://uploads.postqueen.ai/1.jpg" },
-            { "id": "img2", "path": "https://uploads.postqueen.ai/2.jpg" },
-            { "id": "img3", "path": "https://uploads.postqueen.ai/3.jpg" }
-          ]
-        }
-      ],
-      "settings": {
-        "__type": "instagram",
-        "post_type": "post"
-      }
-    }
-  ]
-}
-```
-
-  </Tab>
-</Tabs>
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Connect the channel" icon="plug" href="/channels/instagram">
-    Create the OAuth app and link the Instagram account.
-  </Card>
-  <Card title="Standalone accounts" icon="/images/channels/instagram.svg" href="/public-api/providers/instagram">
-    The settings for channels connected without Facebook Business.
-  </Card>
-  <Card title="Search for audio" icon="zap" href="/public-api/integrations/trigger">
-    The trigger endpoint behind `audioSearch` and the other provider tools.
-  </Card>
-  <Card title="Schedule the post" icon="send" href="/public-api/posts/create">
-    The create endpoint, field by field, with a worked request.
-  </Card>
-</CardGroup>
+- [Connect Instagram in the app](/channels/instagram)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)
