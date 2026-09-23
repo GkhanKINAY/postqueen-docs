@@ -61,7 +61,7 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ("clipping (off in production, never documented)", re.compile(r"\bclipping\b", re.I)),
     ("veo3 (no such video type)", re.compile(r"veo3", re.I)),
 ]
-FENCE_RE = re.compile(r"^(\s*)(```|~~~)[^\n]*\n(.*?)^\1\2", re.M | re.S)
+FENCE_RE = re.compile(r"^([ \t]*)(```|~~~)[^\n]*\n(.*?)^\1\2", re.M | re.S)
 COMMENT_RE = re.compile(r"\{/\*.*?\*/\}", re.S)
 CHANNEL_STATUS_RE = re.compile(r"<ChannelStatus\s+status=\"([^\"]+)\"\s*>(.*?)</ChannelStatus>", re.S)
 CHANNEL_STATUS_EMPTY_RE = re.compile(r"<ChannelStatus\s+status=\"([^\"]+)\"\s*/>")
