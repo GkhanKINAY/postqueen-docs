@@ -1,205 +1,292 @@
 ---
-title: Node.js SDK
-description: '@postqueen/node: a typed Node.js client for the PostQueen Public API'
-icon: 'package'
+title: "Node.js SDK"
+description: "Install @postqueen/node, schedule a post from TypeScript or JavaScript, and fill in the fields its 1.0.4 types ask for."
+icon: "package"
+keywords:
+  - postqueen
+  - sdk
+  - node
+  - typescript
+  - "@postqueen/node"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: api). Row in page-status-2026-09-23.md. */}
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsApi from '/snippets/next-steps-api.mdx';
 
-[`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) is a thin, typed wrapper over the [Public API](/public-api/introduction). Every method maps 1:1 to a REST endpoint.
+[`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) is a small typed client for the [PostQueen API](/public-api/introduction). It sends your API key and calls five endpoints for you: list channels, create a post, list posts, upload a file and delete a post. Everything else in the API is a plain HTTPS call, shown [below](#calls-the-sdk-does-not-wrap).
 
-## Installation
+This page describes version 1.0.4. Run `npm ls @postqueen/node` to see yours.
 
-```bash
-npm i @postqueen/node
-```
+## Before you start
 
-## Authentication
+- **Node.js 20.19 or newer.** On Node.js 22, use 22.12 or newer. The package loads its HTTP library with `require`, which older versions refuse.
+- **A PostQueen workspace on a trial or a paid plan**, with at least one connected channel.
+- **The API key.** Only a workspace Admin or Super Admin can reveal it.
 
-The SDK authenticates with your Public API key, sent as the `Authorization` header on every request. Get it from **[app.postqueen.ai](https://app.postqueen.ai)** under **Connections > API Keys**, then **Reveal**. Only a workspace admin can reveal it.
+<ApiKeyLocation />
 
-```bash
-export POSTQUEEN_API_KEY="your_api_key"
-```
+## Install and schedule a first post
 
-## Quickstart
+<Steps>
+  <Step title="Install the package">
+    <CodeGroup>
+
+    ```bash npm
+    npm install @postqueen/node
+    ```
+
+    ```bash pnpm
+    pnpm add @postqueen/node
+    ```
+
+    </CodeGroup>
+  </Step>
+  <Step title="Set your key">
+    ```bash
+    export POSTQUEEN_API_KEY=your_api_key
+    ```
+
+    The client takes the key as its first argument. Reading it from the environment keeps it out of your code.
+  </Step>
+  <Step title="Schedule a post">
+    This finds your Bluesky channel and schedules a text post on it.
+
+    ```typescript schedule.ts
+    import PostQueen from '@postqueen/node';
+
+    type Channel = { id: string; name: string; identifier: string; disabled: boolean };
+
+    async function main() {
+      const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
+
+      // The channels you can post to. The API calls them integrations.
+      const channels = (await postqueen.integrations()) as Channel[];
+      const bluesky = channels.find((c) => c.identifier === 'bluesky');
+      if (!bluesky) throw new Error('Connect a Bluesky channel first');
+
+      // Schedule a text post
+      const created = await postqueen.post({
+        type: 'schedule',
+        date: '2026-10-01T09:00:00.000Z',
+        shortLink: false,
+        tags: [],
+        posts: [
+          {
+            integration: { id: bluesky.id },
+            group: '',
+            settings: { __type: 'bluesky' },
+            value: [{ id: '', content: 'Shipping the new calendar today.', image: [], delay: 0 }],
+          },
+        ],
+      });
+      console.log(created); // [{ postId, integration }]
+    }
+
+    main();
+    ```
+  </Step>
+  <Step title="Check it">
+    The post appears on the calendar in the app, and `created` holds one `{ postId, integration }` per channel.
+  </Step>
+</Steps>
+
+<Note>
+`group: ''`, `id: ''` and `delay: 0` are there because the 1.0.4 types require them, not because the API does. The next section explains each one.
+</Note>
+
+### In an ES module
+
+In a CommonJS project, or in TypeScript compiled to CommonJS with `esModuleInterop`, the default import above works. In an ES module (`"type": "module"`, a `.mjs` file, or TypeScript with `"module": "nodenext"`), the class is on `.default`:
 
 ```typescript
-import PostQueen from '@postqueen/node';
+import pkg from '@postqueen/node';
 
+const PostQueen = pkg.default;
 const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
-
-// List connected channels (the API calls them "integrations")
-const channels = (await postqueen.integrations()) as { id: string; name: string }[];
-
-// Schedule a post
-await postqueen.post({
-  type: 'schedule',
-  date: '2026-08-01T09:00:00.000Z',
-  shortLink: false,
-  tags: [],
-  posts: [
-    {
-      integration: { id: channels[0].id },
-      value: [{ content: 'We just shipped', image: [] }],
-    },
-  ],
-});
 ```
 
-<Check>
-`integrations()` coming back with your channels means the key is valid and the client is pointed at the right host.
-</Check>
+## Fields the 1.0.4 types require
 
-## Constructor
+The types of version 1.0.4 mark a few fields as required that the API treats as optional, so TypeScript refuses a call without them. Send these values:
 
-```typescript
-new PostQueen(apiKey: string, baseUrl?: string)
-```
+| Field | Send | What the API does with it |
+|---|---|---|
+| `posts[].group` | `''` | An empty group creates new posts. A group id that already exists replaces the posts that have it, so never reuse an old one by accident. |
+| `posts[].settings` | The network's settings, or `{ __type: 'bluesky' }` for a network with none | PostQueen sets `__type` from the channel. What has to match is the shape of the settings. |
+| `posts[].value[].id` | `''` | An empty id creates a new post. The id of an existing post changes that post instead. |
+| `posts[].value[].delay` | `0` | Minutes to wait after the previous entry of a thread. |
+| `postList({ customer })` | `''` | An empty customer lists the posts of every channel. |
 
-| Parameter | Type | Default | Description |
-|---|---|---|---|
-| `apiKey` | `string` | required | Public API key, sent as the `Authorization` header. |
-| `baseUrl` | `string` | `process.env.POSTQUEEN_API_URL \|\| 'https://api.postqueen.ai'` | API host. The client appends `/public/v1/...` to it. |
-
-Self-hosted instances pass their own backend URL, either through the second constructor argument or the `POSTQUEEN_API_URL` environment variable:
-
-```typescript
-const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!, 'https://postqueen.example.com/api');
-```
-
-<Tip>
-Set `POSTQUEEN_API_URL` once in the environment and every `new PostQueen(...)` in your codebase needs only the key.
-</Tip>
+Which settings each network takes is on [Posting settings by network](/public-api/providers/overview).
 
 ## Methods
 
 | Method | Endpoint | Returns |
 |---|---|---|
-| `integrations()` | `GET /public/v1/integrations` | Parsed JSON |
-| `post(dto)` | `POST /public/v1/posts` | Parsed JSON |
-| `postList(filters)` | `GET /public/v1/posts` | Parsed JSON |
-| `upload(file, extension)` | `POST /public/v1/upload` | Parsed JSON |
-| `deletePost(id)` | `DELETE /public/v1/posts/{id}` | The raw `fetch` `Response` |
+| `integrations()` | [`GET /integrations`](/public-api/integrations/list) | The parsed JSON body |
+| `post(body)` | [`POST /posts`](/public-api/posts/create) | The parsed JSON body |
+| `postList(filters)` | [`GET /posts`](/public-api/posts/list) | The parsed JSON body |
+| `upload(file, extension)` | [`POST /upload`](/public-api/uploads/upload-file) | The parsed JSON body |
+| `deletePost(id)` | [`DELETE /posts/{id}`](/public-api/posts/delete) | The raw `Response`, not parsed |
 
-### `integrations()`
+Every method but `deletePost()` is typed as returning `unknown`. Cast the result to the shape you expect, as the examples do.
 
-`GET /public/v1/integrations`. Returns the list of connected channels; use each channel's `id` as `integration.id` when creating posts.
+### Post with an image and a thread
 
-```typescript
-const channels = await postqueen.integrations();
+Upload the file first, then put its `id` and `path` on the post. The second entry goes out 5 minutes after the first.
+
+```typescript upload.ts
+import { readFile } from 'node:fs/promises';
+import PostQueen from '@postqueen/node';
+
+type Media = { id: string; path: string; status: 'ready' | 'processing' | 'failed' };
+
+async function main() {
+  const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
+
+  const media = (await postqueen.upload(await readFile('launch.png'), 'png')) as Media;
+
+  await postqueen.post({
+    type: 'schedule',
+    date: '2026-10-01T09:00:00.000Z',
+    shortLink: false,
+    tags: [],
+    posts: [
+      {
+        integration: { id: 'YOUR_CHANNEL_ID' },
+        group: '',
+        settings: { __type: 'bluesky' },
+        value: [
+          { id: '', content: 'The new calendar is live.', image: [{ id: media.id, path: media.path }], delay: 0 },
+          { id: '', content: 'Drag a post to move it.', image: [], delay: 5 },
+        ],
+      },
+    ],
+  });
+}
+
+main();
 ```
 
-### `post(dto)`
+`upload()` sends the file with a content type taken from the extension you pass: `png`, `jpg` and `gif` are mapped, anything else is sent as JPEG. That label does not matter. PostQueen reads the real type from the file itself, so an MP4 or MOV uploads fine. A video comes back with `status: "processing"`: wait until [media status](/public-api/uploads/media-status) says `ready` before you post it.
 
-`POST /public/v1/posts`. Creates, schedules, or updates posts across one or more channels in a single call.
+### One post on two networks with settings
 
-| Field | Type | Description |
-|---|---|---|
-| `type` | `'draft' \| 'schedule' \| 'now' \| 'update'` | What to do with the post. |
-| `date` | `string` | ISO 8601 timestamp; the publish time for `schedule`. |
-| `shortLink` | `boolean` | Shorten links in the content. |
-| `tags` | `array` | Internal tags (calendar labels), usually `[]`. |
-| `posts` | `array` | One entry per target channel: `{ integration: { id }, value: [{ content, image }], settings? }`. |
+WordPress and DEV each need a title. WordPress also needs the post type, here `posts`.
 
-`settings` is platform-specific and carries a `__type` discriminator (e.g. `{ __type: 'x', who_can_reply_post: 'everyone' }`). Full schema and per-platform settings: [Create Post](/public-api/posts/create).
+```typescript settings.ts
+import PostQueen from '@postqueen/node';
 
-```typescript
-await postqueen.post({
-  type: 'now',
-  date: new Date().toISOString(),
-  shortLink: false,
-  tags: [],
-  posts: [
-    {
-      integration: { id: 'your-integration-id' },
-      value: [{ content: 'Hello from the SDK', image: [] }],
-      settings: { __type: 'x', who_can_reply_post: 'everyone' },
-    },
-  ],
-});
+async function main() {
+  const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
+
+  await postqueen.post({
+    type: 'schedule',
+    date: '2026-10-01T09:00:00.000Z',
+    shortLink: false,
+    tags: [],
+    posts: [
+      {
+        integration: { id: 'YOUR_WORDPRESS_CHANNEL_ID' },
+        group: '',
+        settings: { __type: 'wordpress', title: 'A calendar that shows everything', type: 'posts', status: 'publish' },
+        value: [{ id: '', content: '<p>Drafts now sit next to scheduled posts.</p>', image: [], delay: 0 }],
+      },
+      {
+        integration: { id: 'YOUR_DEV_CHANNEL_ID' },
+        group: '',
+        settings: { __type: 'devto', title: 'Why we rebuilt the calendar', tags: [] },
+        value: [{ id: '', content: '## Why we rebuilt the calendar\n\nThree things changed.', image: [], delay: 0 }],
+      },
+    ],
+  });
+}
+
+main();
 ```
 
-### `postList(filters)`
+### List and delete posts
 
-`GET /public/v1/posts`. Lists posts in a date range.
+```typescript list-delete.ts
+import PostQueen from '@postqueen/node';
 
-| Field | Type | Description |
-|---|---|---|
-| `startDate` | `string` | ISO 8601 range start. |
-| `endDate` | `string` | ISO 8601 range end. |
-| `customer` | `string` (optional) | Filter by customer. |
+type ListedPost = { id: string; content: string; publishDate: string; state: string; group: string };
 
-```typescript
-const posts = await postqueen.postList({
-  startDate: '2026-08-01T00:00:00.000Z',
-  endDate: '2026-08-31T23:59:59.000Z',
-});
+async function main() {
+  const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
+
+  const { posts } = (await postqueen.postList({
+    startDate: '2026-10-01T00:00:00.000Z',
+    endDate: '2026-10-31T23:59:59.000Z',
+    customer: '',
+  })) as { posts: ListedPost[] };
+
+  const res = await postqueen.deletePost(posts[0].id);
+  if (res.status === 404) console.log('Already gone');
+  else if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
+}
+
+main();
 ```
 
-### `upload(file, extension)`
+A delete answers `{ "error": true }` when it works. Judge it by the status code, as above.
 
-`POST /public/v1/upload` (multipart). Uploads a media file and returns the hosted media object (`{ id, path, ... }`).
+## Errors
 
-| Parameter | Type | Description |
-|---|---|---|
-| `file` | `Buffer` | Raw file bytes. |
-| `extension` | `string` | File extension used to derive the MIME type: `png`, `jpg`, `jpeg`, or `gif`. Anything else falls back to `image/jpeg`. |
+The client does not throw when PostQueen answers with an error. It hands back the error body instead, such as `{ "msg": "Invalid API key" }`, or a `400` with `provider` and `message` when a post breaks a network's rules. Check the shape before you use a result:
 
-<Info>
-Media must be uploaded before posting. `post()` expects hosted media objects in `value[].image`, not raw files or base64, so upload first and pass the returned object straight through.
-</Info>
+```typescript errors.ts
+import PostQueen from '@postqueen/node';
 
-```typescript
-import { readFile } from 'fs/promises';
+async function main() {
+  const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
 
-const media = await postqueen.upload(await readFile('banner.png'), 'png');
+  const result = await postqueen.post({
+    type: 'schedule',
+    date: '2026-10-01T09:00:00.000Z',
+    shortLink: false,
+    tags: [],
+    posts: [
+      {
+        integration: { id: 'YOUR_CHANNEL_ID' },
+        group: '',
+        settings: { __type: 'bluesky' },
+        value: [{ id: '', content: 'Shipping the new calendar today.', image: [], delay: 0 }],
+      },
+    ],
+  });
 
-await postqueen.post({
-  type: 'schedule',
-  date: '2026-08-01T09:00:00.000Z',
-  shortLink: false,
-  tags: [],
-  posts: [
-    {
-      integration: { id: 'your-integration-id' },
-      value: [{ content: 'Launch day', image: [media] }],
-    },
-  ],
-});
+  // The SDK returns the body of an error answer instead of throwing.
+  if (!Array.isArray(result)) {
+    throw new Error(`PostQueen refused the post: ${JSON.stringify(result)}`);
+  }
+}
+
+main();
 ```
 
-### `deletePost(id)`
+`post()` counts against an hourly limit per workspace, and `upload()` against 300 uploads an hour per workspace. Put several channels in one `post()` call rather than one call per channel. What each status code means is on [Limits and errors](/public-api/limits-and-errors).
 
-`DELETE /public/v1/posts/{id}`. Deletes a post by ID. Unlike the other methods, this returns the raw `fetch` `Response` object rather than parsed JSON.
+## Calls the SDK does not wrap
 
-```typescript
-await postqueen.deletePost('post-id');
+Every other endpoint is a plain HTTPS call with the same header. Send the key as it is, with no `Bearer` prefix. This one checks whether an uploaded video is ready:
+
+```typescript media-status.ts
+const API = 'https://api.postqueen.ai/public/v1';
+
+type MediaStatus = { id: string; path: string; status: 'ready' | 'processing' | 'failed'; processingError: string | null };
+
+async function mediaStatus(id: string): Promise<MediaStatus> {
+  const res = await fetch(`${API}/media/${id}/status`, {
+    headers: { Authorization: process.env.POSTQUEEN_API_KEY! },
+  });
+  if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+  return (await res.json()) as MediaStatus;
+}
+
+mediaStatus('YOUR_MEDIA_ID').then(console.log);
 ```
 
-## Limits and error handling
+The endpoints are listed in the sidebar under **Endpoints**, each with its request, responses and a playground.
 
-<Info>
-The create-post endpoint has **an hourly limit per workspace**. Batch multiple channels into a single `post()` call instead of one call per channel.
-</Info>
-
-<Warning>
-Except for `deletePost()`, methods return the parsed JSON body as-is, and the SDK does not throw on HTTP error statuses. Check the response for an error payload if a call misbehaves.
-</Warning>
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="API Overview" icon="book" href="/public-api/introduction">
-    Authentication, rate limits, and error codes
-  </Card>
-  <Card title="Create Post" icon="send" href="/public-api/posts/create">
-    Full request schema and per-platform settings
-  </Card>
-  <Card title="List channels" icon="plug" href="/public-api/integrations/list">
-    The endpoint behind `integrations()`, and the id every post needs
-  </Card>
-  <Card title="Upload media" icon="image" href="/public-api/uploads/upload-file">
-    The multipart endpoint behind `upload()`, field by field
-  </Card>
-</CardGroup>
+<NextStepsApi />
