@@ -120,7 +120,7 @@ curl -I https://postqueen.example.com
     `FRONTEND_URL` does not match the address in the browser, character for character. Fix the value and recreate the container.
   </Accordion>
   <Accordion title="A large upload fails">
-    Caddy sets no size limit. PostQueen accepts files up to 1 GB each, and larger ones are refused by PostQueen itself.
+    Caddy sets no size limit, so look at what else is in the path. A CDN or another proxy in front of Caddy often caps the request body, for example at 100 MB. PostQueen itself accepts files up to 1 GB each.
   </Accordion>
 </AccordionGroup>
 

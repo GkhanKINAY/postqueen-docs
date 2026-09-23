@@ -29,7 +29,7 @@ At start, after `Backend started successfully on port 3000`, the backend checks 
     Another program holds 4007, 7233 or 8080. Stop it, or change the left-hand number of that port in `docker-compose.yaml`. If you move 4007, change the port in `MAIN_URL`, `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` too.
   </Accordion>
   <Accordion title="Building from source runs out of memory">
-    The build needs more memory than running the image. Raise Node's limit, `NODE_OPTIONS="--max-old-space-size=4096" pnpm install`, but not above the machine's memory. On a small server, pull the published image instead of building.
+    The build needs more memory than running the image. Raise Node's limit for the build, `NODE_OPTIONS="--max-old-space-size=4096" pnpm run build`, but not above the machine's memory. On a small server, pull the published image instead of building.
   </Accordion>
 </AccordionGroup>
 
@@ -46,7 +46,7 @@ At start, after `Backend started successfully on port 3000`, the backend checks 
     `JWT_SECRET` changed. It signs every session. If `ENCRYPTION_KEY` was never set, the same value also encrypted the API key and the stored credentials of networks such as Bluesky and WordPress, and those stop working too. **Put the old value back**: that recovers everything. Then set `ENCRYPTION_KEY` to that same value before you rotate `JWT_SECRET`. See [Encryption keys](/configuration/reference#encryption-keys).
   </Accordion>
   <Accordion title="Continue with Google is denied, or only some accounts get in">
-    Google sign-in uses the YouTube web client, `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET`, and its redirect URI `FRONTEND_URL` + `/integrations/social/youtube`. While the Google app is in **Testing**, only its listed test users can sign in: publish it, or add the person. See [YouTube](/installation/providers/youtube).
+    Google sign-in uses the YouTube web client, `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET`, and its redirect URI `FRONTEND_URL` + `/integrations/social/youtube`. While the Google app is in **Testing**, only its listed test users can sign in: publish it, or add the person. See [YouTube setup](/installation/providers/youtube).
   </Accordion>
   <Accordion title="Google consent works, then sign-in fails with invalid_client">
     The backend log shows `invalid_client` from Google's token endpoint: `YOUTUBE_CLIENT_SECRET` does not belong to that client. Add a new secret to the same web client in Google Cloud, put it in `.env`, and recreate the container. Google shows a secret in full only when you create it.
@@ -114,10 +114,10 @@ At start, after `Backend started successfully on port 3000`, the backend checks 
 
 <AccordionGroup>
   <Accordion title="Can I run it on Vercel or another serverless host?">
-    Not the backend or the orchestrator. The backend is a long-running server, and the orchestrator is a Temporal worker that runs all the time. Run them on a virtual machine, a container host or Kubernetes. The official image already runs all three processes together.
+    Not the backend or the orchestrator. The backend is a long-running server, and the orchestrator is a Temporal worker that runs all the time. Run them on a virtual machine, a container host or Kubernetes. The official image already runs nginx, the frontend, the backend and the orchestrator together.
   </Accordion>
   <Accordion title="Can I run more than one container?">
-    Yes, with shared PostgreSQL, Redis and Temporal. Store media in [Cloudflare R2](/configuration/r2), since containers do not share a local disk, and set `RUN_CRON` on one of them only.
+    Yes, with shared PostgreSQL, Redis and Temporal. Media needs a volume every container mounts, or [Cloudflare R2](/configuration/r2). Set `RUN_CRON` on one of them only.
   </Accordion>
 </AccordionGroup>
 

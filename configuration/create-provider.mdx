@@ -22,7 +22,7 @@ The imports below use `@gitroom/*`. That is the workspace alias in `tsconfig.bas
     { value: YourDto, name: 'your-identifier' },
     ```
 
-    A network without settings still needs its line, with `setEmpty` as the value, the way `threads` and `bluesky` have it. The create-post DTO checks each post's `__type` against this list and refuses any identifier that is missing.
+    A network without settings still needs both: a `ProviderExtension<'your-identifier', None>` member of the type, and a list line with `setEmpty` as the value, the way `threads` and `bluesky` have them. The create-post DTO checks each post's `__type` against this list and refuses any identifier that is missing.
   </Step>
   <Step title="Write the provider">
     Create `libraries/nestjs-libraries/src/integrations/social/<name>.provider.ts`. A provider extends `SocialAbstract`, which supplies shared helpers such as an SSRF-guarded `fetch` and default `checkValidity`, `checkPostStatus` and `finalizePost`, and implements `SocialProvider`:

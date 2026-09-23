@@ -8,4 +8,5 @@ docker compose up -d --no-deps --force-recreate postqueen
 ```
 
 The database, Redis and Temporal keep running. Avoid `docker compose down` for a settings change: on
-a host that runs other Compose services in the same project, it stops them too.
+a host that runs other Compose services in the same project, it stops them too. On Kubernetes, see
+[Kubernetes with Helm](/installation/kubernetes-helm#apply-a-change).

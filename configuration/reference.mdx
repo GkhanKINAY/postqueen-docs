@@ -46,7 +46,7 @@ A channel's OAuth access and refresh tokens, the ones a network hands back after
 ## How switches are read
 
 <Warning>
-**For most switches, `false` means on.** Only these compare against the exact string `true`: `DISABLE_REGISTRATION`, `PASSWORDLESS_LOGIN`, `WALLET_LOGIN`, `REQUIRE_EMAIL_ACTIVATION`, `NOT_SECURED`, `DISABLE_SSRF_PROTECTION`, `TEMPORAL_TLS`, `EMAIL_SECURE`, `UPLOAD_VIA_SERVER` and `NEYNAR_SPONSOR_SIGNERS`. Every other switch on this page is on when it has any value, so `IS_GENERAL=false`, `RUN_CRON=false` or `POSTQUEEN_GENERIC_OAUTH=false` all turn the setting **on**. Remove the line to turn one off.
+**For most switches, `false` means on.** Only these compare against the exact string `true`: `DISABLE_REGISTRATION`, `PASSWORDLESS_LOGIN`, `WALLET_LOGIN`, `REQUIRE_EMAIL_ACTIVATION`, `NOT_SECURED`, `DISABLE_SSRF_PROTECTION`, `TEMPORAL_TLS`, `EMAIL_SECURE`, `UPLOAD_VIA_SERVER` and `NEYNAR_SPONSOR_SIGNERS`. Every other switch on this page is on when it has any value, so `IS_GENERAL=false`, `RUN_CRON=false` or `POSTQUEEN_GENERIC_OAUTH=false` all turn the setting **on**. Remove the variable to turn one off. With Docker Compose, `IS_GENERAL` and `RUN_CRON` also have a default of `true` in `docker-compose.yaml`, so delete their lines there.
 </Warning>
 
 `PRISMA_MIGRATE` has its own rule: see [Background work](#background-work).
@@ -69,7 +69,7 @@ A channel's OAuth access and refresh tokens, the ones a network hands back after
 | Button | Shows when | Variables |
 |---|---|---|
 | Your own OIDC provider | `IS_GENERAL` and `POSTQUEEN_GENERIC_OAUTH` are set. It replaces every other button. | See [Single sign-on (OIDC)](/configuration/oauth) |
-| Google | `IS_GENERAL` is set and single sign-on is not | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`: sign-in shares the YouTube web client and its redirect URI, `/integrations/social/youtube`. There is no `GOOGLE_CLIENT_ID`. Setup: [YouTube](/installation/providers/youtube). |
+| Google | `IS_GENERAL` is set and single sign-on is not | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`: sign-in shares the YouTube web client and its redirect URI, `/integrations/social/youtube`. There is no `GOOGLE_CLIENT_ID`. Setup: [YouTube setup](/installation/providers/youtube). |
 | Apple | Next to Google, once `APPLE_CLIENT_ID` is set | `APPLE_CLIENT_ID` (the Services ID), `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` (the `.p8` key; write line breaks as `\n`), and optionally `APPLE_APP_BUNDLE_ID` for a native iOS app of your own. Register `NEXT_PUBLIC_BACKEND_URL` + `/auth/oauth/apple/redirect` as the return URL. |
 | Farcaster | Next to Google, once `NEYNAR_CLIENT_ID` is set | `NEYNAR_CLIENT_ID` |
 | Wallet | Next to Google, when `WALLET_LOGIN` is `true` | `WALLET_LOGIN` |
@@ -178,12 +178,12 @@ The channel connects through a Neynar managed signer, which the person approves 
 | Variable | What it is |
 |---|---|
 | `NEYNAR_SECRET_KEY` | Your Neynar API key. |
-| `NEYNAR_APP_FID` | The Farcaster ID of the account that represents your app. Without it and the next one, the connect stops with *Farcaster is not configured*. |
+| `NEYNAR_APP_FID` | The Farcaster ID of the account that represents your app. Without it and the next one, the connect stops with "Farcaster is not configured". |
 | `NEYNAR_APP_MNEMONIC` | The recovery phrase of that account's wallet. It signs the signer requests. Keep it like a private key. |
 | `NEYNAR_SPONSOR_SIGNERS` | `true` lets Neynar pay the signer fee from your Neynar credits. Otherwise the person pays it in the Farcaster app. |
 | `NEYNAR_CLIENT_ID` | Only shows the **Continue with Farcaster** sign-in button. The channel does not use it. |
 
-These three are not listed in the Compose file's YAML; the `.env` file passes them through. Setup: [Farcaster](/installation/providers/farcaster).
+`NEYNAR_APP_FID`, `NEYNAR_APP_MNEMONIC` and `NEYNAR_SPONSOR_SIGNERS` are not listed in the Compose file's YAML; the `.env` file passes them through. Setup: [Farcaster setup](/installation/providers/farcaster).
 
 ### Hide or move a network
 
@@ -212,7 +212,7 @@ Details: [MCP on your server](/configuration/mcp).
 
 | Variable | What it does |
 |---|---|
-| `OPENAI_API_KEY` | Turns on the AI Copilot, AI images, the AI rewrite in the composer and the other OpenAI-backed features. Without it the Copilot answers *AI features are not configured on this installation.* |
+| `OPENAI_API_KEY` | Turns on the AI Copilot, AI images, the AI rewrite in the composer and the other OpenAI-backed features. Without it the Copilot answers "AI features are not configured on this installation." |
 | `TAVILY_API_KEY` | Gives the Copilot a web search tool. Optional. |
 
 ## Billing
@@ -230,7 +230,7 @@ A private install needs none of this: without both Stripe keys there is no billi
 
 | Variable | What it does |
 |---|---|
-| `NEXT_PUBLIC_POLOTNO` | Polotno key for the design editor: see [Design editor](/configuration/polotno). |
+| `NEXT_PUBLIC_POLOTNO` | Polotno key for the design editor: see [Design editor (Polotno)](/configuration/polotno). |
 | `SUPPORT_EMAIL` | Where **Contact support** and **Report a bug** in the Help menu send mail. Without billing and without this, those two entries are hidden. |
 | `CHANGELOG_URL`, `COMMUNITY_URL` | Add **What's new** and **Community** links to the Help menu. |
 | `LEGAL_URL` | Where the terms and privacy links point. |
@@ -278,3 +278,9 @@ All optional.
 ## Listed in example files, but not read
 
 These appear in the Compose file or `.env.example` and change nothing: `FEE_AMOUNT`, `NX_ADD_PLUGINS`, `SLACK_SIGNING_SECRET`, `STRIPE_SIGNING_KEY_CONNECT`, `POSTQUEEN_OAUTH_URL` and `BACKEND_URL`. `MCP_URL` is passed to the web app, but no page uses it: the MCP addresses on **Connections** come from `NEXT_PUBLIC_BACKEND_URL`.
+
+## Related
+
+- [Docker Compose](/installation/docker-compose): where the variables go
+- [Channel developer apps](/installation/providers/overview)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)

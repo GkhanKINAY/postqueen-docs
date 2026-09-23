@@ -23,7 +23,11 @@ Compose prefixes each volume with the project name, the folder you cloned into, 
 
 ## Back up
 
-Stop the stack first, so PostgreSQL is not writing while you copy its files:
+Stop the stack first, so PostgreSQL is not writing while you copy its files.
+
+<Warning>
+`docker compose down` stops every service in the project. On a host where other services share that project, stop the PostQueen services by name instead: `docker compose stop postqueen postqueen-postgres temporal temporal-postgresql`.
+</Warning>
 
 ```bash
 docker compose down
@@ -40,10 +44,6 @@ for v in postgres-volume temporal-postgres-data postqueen-uploads; do
 done
 docker compose up -d
 ```
-
-<Warning>
-`docker compose down` stops every service in the project. On a host where other services share that project, stop the PostQueen services by name instead: `docker compose stop postqueen postqueen-postgres temporal temporal-postgresql`.
-</Warning>
 
 Copy the archives off the server. A backup on the same disk is lost with the disk.
 

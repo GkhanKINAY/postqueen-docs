@@ -69,7 +69,7 @@ Traefik reaches PostQueen over the Docker network, not through the host. It ther
     docker compose logs -f traefik
     ```
 
-    Traefik requests the certificate on the first request for the domain. The domain has to resolve to this server and port 80 has to be open for the challenge.
+    Traefik requests the certificate as soon as it sees the router. The domain has to resolve to this server and port 80 has to be open for the challenge.
   </Step>
   <Step title="Tell PostQueen its address">
     <ComposePublicUrls />
@@ -97,6 +97,9 @@ Traefik does not buffer responses and sets no body size limit by default, so str
   </Accordion>
   <Accordion title="The browser warns about the certificate">
     Traefik is serving its default self-signed certificate because the ACME request failed. `docker compose logs traefik` gives the reason, most often DNS that does not point here yet or port 80 blocked.
+  </Accordion>
+  <Accordion title="curl http://localhost:4007 no longer answers">
+    That is expected once `ports:` is removed: PostQueen is reachable only through Traefik. To check the container itself: `docker compose exec postqueen node -e "require('http').get('http://localhost:5000/',r=>console.log(r.statusCode))"` prints `200`.
   </Accordion>
   <Accordion title="Gateway Timeout or Bad Gateway">
     Traefik cannot reach the container. Check that both services are on `postqueen-network`, that `providers.docker.network` names it as `docker network ls` shows it, and that the service label says port `5000`, not 4007.

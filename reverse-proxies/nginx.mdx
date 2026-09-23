@@ -1,7 +1,7 @@
 ---
 title: "Nginx"
 description: "Put PostQueen behind Nginx on your own domain, with a Let's Encrypt certificate from Certbot and the upload size PostQueen needs."
-icon: "server"
+icon: "server-cog"
 ---
 
 import ComposePublicUrls from '/snippets/compose-public-urls.mdx';
@@ -102,7 +102,7 @@ The AI Copilot streams its replies and sends `X-Accel-Buffering: no`, which Ngin
     The name does not resolve to this server yet, or port 80 is closed. Both have to be true while Certbot runs.
   </Accordion>
   <Accordion title="The page loads, sign-in does not stick">
-    `FRONTEND_URL` does not match the address in the browser. See the step above.
+    `FRONTEND_URL` does not match the address in the browser. See **Tell PostQueen its address** above.
   </Accordion>
 </AccordionGroup>
 

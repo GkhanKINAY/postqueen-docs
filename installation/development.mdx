@@ -177,8 +177,8 @@ Some networks accept only an `https` redirect address. On plain `http`, PostQuee
   <Accordion title="Posts never publish">
     The orchestrator is not running, or Temporal is not. Use `pnpm run dev`, and check the Temporal UI at http://localhost:8080.
   </Accordion>
-  <Accordion title="pnpm install runs out of memory">
-    `NODE_OPTIONS="--max-old-space-size=4096" pnpm install`.
+  <Accordion title="The dev servers or the build run out of memory">
+    Give Node more room in the same shell: `export NODE_OPTIONS="--max-old-space-size=4096"`, then run `pnpm run dev` or `pnpm run build` again. The dev container already sets a higher limit.
   </Accordion>
 </AccordionGroup>
 

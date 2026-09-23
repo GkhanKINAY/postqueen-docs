@@ -91,11 +91,19 @@ You also need Helm 3, `kubectl` for the cluster, and an ingress controller with 
 
 Every variable is described in [Configuration reference](/configuration/reference). Network keys go under `secrets` in the same way, for example `LINKEDIN_CLIENT_ID`.
 
+## Apply a change
+
+The chart hands `env` and `secrets` to the pod through a ConfigMap and a Secret, and a pod reads them only when it starts. After `helm upgrade` with changed values, restart the pod:
+
+```bash
+kubectl rollout restart deployment/postqueen-postqueen-app
+```
+
 ## Change the defaults for a real install
 
 - **Passwords.** Change `postgresql.auth.password` and `redis.auth.password`, and the two connection strings with them.
 - **Your own databases.** Set `postgresql.enabled: false` or `redis.enabled: false` and point the connection string at your service.
-- **Uploads.** Without `extraVolumes`, `/uploads` is an `emptyDir` that is lost when the pod restarts. Mount a persistent volume at `/uploads` with `extraVolumes` and `extraVolumeMounts`, or store media in [Cloudflare R2](/configuration/r2). R2 is the only option with more than one replica, since pods cannot share a local disk.
+- **Uploads.** Without `extraVolumes`, `/uploads` is an `emptyDir` that is lost when the pod restarts. Mount a persistent volume at `/uploads` with `extraVolumes` and `extraVolumeMounts`, or store media in [Cloudflare R2](/configuration/r2). With more than one replica, the volume has to be ReadWriteMany so every pod mounts it, or media goes to R2.
 
 ## Traps
 

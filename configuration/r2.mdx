@@ -50,7 +50,7 @@ Cloudflare R2 keeps uploaded images and video in a bucket instead of on the serv
     A bucket with a jurisdiction answers only on its own endpoint, `<account-id>.eu.r2.cloudflarestorage.com`. Without `CLOUDFLARE_JURISDICTION`, PostQueen asks the account-wide endpoint and reports the bucket as missing.
   </Step>
   <Step title="Choose where media is read from">
-    `CLOUDFLARE_BUCKET_URL` is the address stored with every file. Browsers load it, and several networks, Instagram, Facebook and Threads among them, download from it with their own servers. It has to be public HTTPS.
+    `CLOUDFLARE_BUCKET_URL` is the address stored with every file. Browsers load it, and several networks (Instagram, Facebook and Threads among them) download from it with their own servers. It has to be public HTTPS.
 
     | Option | `CLOUDFLARE_BUCKET_URL` | Trade-off |
     |---|---|---|

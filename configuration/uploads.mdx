@@ -1,6 +1,6 @@
 ---
 title: "Uploads and storage"
-description: "Where a self-hosted PostQueen keeps uploaded media, local disk or Cloudflare R2, who serves the files, moving to a new address, and how uploaded video is processed."
+description: "Where a self-hosted PostQueen keeps uploaded media (local disk or Cloudflare R2), who serves the files, moving to a new address, and how uploaded video is processed."
 icon: "cloud-upload"
 ---
 
@@ -42,7 +42,7 @@ and mounts the `postqueen-uploads` volume at `/uploads`. Keep those values in th
 | The official image | nginx inside the container, straight from `/uploads` |
 | From source, or the frontend on its own | The web app, which reads the file from its own `UPLOAD_DIRECTORY` |
 
-More than one container needs a volume they all share, or R2.
+Several containers need a volume that every one of them mounts (ReadWriteMany on Kubernetes), or R2.
 
 ### Move to a new address
 
