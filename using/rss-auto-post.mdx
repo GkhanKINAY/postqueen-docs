@@ -55,14 +55,17 @@ For **Publish automatically**, pick channels that need nothing but text and a li
 
 ## Check that a feed can post
 
-A feed's toggle and **Test connection** only tell you about the feed. A badge next to the feed's title tells you about its channels. A channel counts as unable to post when it is disabled, needs reconnecting, was never finished connecting, or was deleted.
+A feed's toggle and **Test connection** only tell you about the feed. A badge next to the feed's title tells you about its channels. Which channels count against the feed depends on what it does with new items:
+
+- With **Publish automatically**, a channel counts when it is disabled, needs reconnecting, was never finished connecting, or was deleted, because the feed skips it.
+- With **Create a draft for review**, only a deleted channel counts. A channel that is disabled or needs reconnecting still gets its drafts, so the feed is still running for it.
 
 | Badge | What it means | What to do |
 |---|---|---|
-| **Not running** | None of the feed's channels can post. On a feed set to **All channels**, no channel in the workspace can. | Reconnect or enable the channels on **Channels**, or edit the feed and pick others. |
-| **2/3 channels**, for example | Only that many of the feed's chosen channels can post. | Fix the other channels, or edit the feed and remove them. |
+| **Not running** | None of the feed's chosen channels can take its posts. On a **Publish automatically** feed set to **All channels**, no channel in the workspace can publish. | Reconnect or enable the channels on **Channels**, or edit the feed and pick others. |
+| **2/3 channels**, for example | Only that many of the feed's chosen channels can take its posts. | Fix the other channels, or edit the feed and remove them. |
 
-With no badge, every chosen channel can post. Hover a badge for a one-line reminder.
+With no badge, every chosen channel can take the feed's posts. A **Create a draft for review** feed set to **All channels** never shows a badge. Hover a badge for a one-line reminder.
 
 What happens to new items meanwhile depends on the feed:
 

@@ -35,4 +35,11 @@ Send the `id` you picked as `customParams.voice` to [Generate a video](/public-a
 |---|---|
 | `400` `Function ... not found on video instance` | The generator has no helper of that name. The only helper is `loadVoices`, on `image-text-slides` |
 | `400` with a `message` list | `identifier` or `functionName` is missing |
-| `500` `Internal server error` | The `identifier` is not a generator, or the voice service did not answer. Check the `identifier`, then try again |
+| `404` `Video generator ... not found` | The `identifier` is not a generator. Use `image-text-slides` or `seedance` |
+| `500` `Internal server error` | The voice service did not answer. Try again |
+
+The `404` body names the identifier you sent:
+
+```json
+{ "statusCode": 404, "message": "Video generator image-slides not found" }
+```

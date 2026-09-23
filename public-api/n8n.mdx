@@ -15,7 +15,7 @@ import NextStepsApi from '/snippets/next-steps-api.mdx';
 
 [`n8n-nodes-postqueen`](https://www.npmjs.com/package/n8n-nodes-postqueen) is a community node for n8n. It creates, lists and deletes posts, uploads files, makes AI videos and lists your channels, through the PostQueen API with your API key. Everything it creates lands on the same calendar as the posts you write in the app.
 
-This page describes version 1.0.2 of the node.
+This page describes version 1.0.3 of the node.
 
 ## Before you start
 
@@ -76,7 +76,7 @@ There is no PostQueen trigger node. A workflow starts from an n8n trigger, such 
 | **Short Link** | On to replace links in the text with PostQueen short links. PostQueen has no link shortener set up today, so links stay as written either way. |
 | **Date** | When the post goes out. Required for every type. A time with no offset is read as UTC. |
 | **Tags** | Optional. Each tag needs a **Value** and a **Label**. Only tags that already exist in the workspace are attached, matched by **Label**. |
-| **Posts** | One **Post** per channel. |
+| **Posts** | One **Post** per channel. At least one is required, drafts included. |
 
 Inside each **Post**:
 
@@ -103,8 +103,8 @@ What each network needs is on [Posting settings by network](/public-api/provider
 
 - **Get Posts:** **Start Date (UTC)**, **End Date (UTC)** and an optional **Customer** id.
 - **Upload File:** **Binary Property**, the name of the binary field that holds the file. Most nodes that read files call it `data`. The node returns the stored file with its `id`, `path` and `status`. A video comes back `processing`: wait until it is `ready` before you post it (see [Get media status](/public-api/uploads/media-status)).
-- **Generate Video:** **Video Type** is `seedance` or `image-text-slides` (the default); the field's hint names a type that does not exist. **Output Format** is **Vertical** or **Horizontal**. Under **Custom Parameters**, add one **Parameter** per input of the generator, with its **Key** and **Value**: `prompt` and `images` for `seedance`, `voice` and `prompt` for `image-text-slides`. A **Value** that is valid JSON is sent as JSON, so `images` can be `[]` or `[{"id": "...", "path": "..."}]`, with a lowercase `id`. The node waits while the video is made, which takes minutes, and returns the stored file: its `id` and `path` go into **Images** on Create Post. Each video uses one of your plan's AI video credits. The inputs are on [Generate a video](/public-api/videos/generate).
-- **Video Function:** set **Function Name** to `loadVoices` and **Identifier** to `image-text-slides` to list the voices, each with the `id` that `voice` takes. Leave **Additional Parameters** empty: the node sends them outside the `params` field, where the helper does not read them.
+- **Generate Video:** **Video Type** is `image-text-slides` (the default, narrated slides) or `seedance` (Seedance 2.0, video with audio). **Output Format** is **Vertical** or **Horizontal**. Under **Custom Parameters**, add one **Parameter** per input the video type expects, with its **Key** and **Value**: `prompt` and `voice` for `image-text-slides`, with a voice ID from **Video Function**, and `prompt` and `images` for `seedance`. Seedance needs `images` even for a video from the prompt alone: set it to `[]`. A **Value** that is valid JSON, such as an array, is sent parsed, so `images` can be `[]` or up to three uploaded files as `[{"id": "...", "path": "https://..."}]`, with a lowercase `id`. The node waits while the video is made, which takes minutes, and returns the stored file: its `id` and `path` go into **Images** on Create Post. Each video uses one of your plan's AI video credits. The inputs are on [Generate a video](/public-api/videos/generate).
+- **Video Function:** set **Function Name** to `loadVoices` and **Identifier** to `image-text-slides` to list the voices, each with the `id` that `voice` takes. **Additional Parameters** go to the function under `params`, parsed when a value is valid JSON. `loadVoices` takes none, so leave them empty.
 - **Delete Post:** **Post ID**. When it works, the node outputs `{ "error": true }`: that is the API's answer to a successful delete. A post that does not exist stops the node with a 404.
 
 ## Build a workflow: new blog post to Bluesky

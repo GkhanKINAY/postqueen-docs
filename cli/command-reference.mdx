@@ -11,7 +11,7 @@ keywords:
   - cron
 ---
 
-`postqueen` 2.0.24 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
+`postqueen` 2.0.25 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
 
 ```bash
 postqueen <command> [options]
@@ -53,9 +53,9 @@ A login saved in `~/.postqueen/credentials.json` takes priority over both `POSTQ
 
 | Flag | Default | What it does |
 |---|---|---|
-| `-c, --content` | | The text. Repeat it: the first is the post, each one after it a comment or thread item. Required unless you use `--json`. Text that starts with `-` needs the `=` form: see [text that starts with a dash](#text-that-starts-with-a-dash) |
+| `-c, --content` | | The text. Repeat it: the first is the post, each one after it a comment or thread item. Required unless you use `--json`. Text that starts with `-`, such as `-c "-5% off today"`, is taken as text |
 | `-s, --date` | | The publish time in ISO 8601, such as `2026-10-01T09:00:00Z`. Required unless you use `--json`. A time that has already passed publishes at once |
-| `-i, --integrations` | | Channel IDs from `integrations:list`, separated by commas. Required unless you use `--json` |
+| `-i, --integrations` | | Channel IDs from `integrations:list`, separated by commas. Required unless you use `--json`. An empty ID, such as the one after a trailing comma, is refused before anything is sent |
 | `-m, --media` | | Media paths from `postqueen upload`, separated by commas, for the `-c` in the same position. Repeat it along with `-c`, with `-m ""` for an item that has no media |
 | `-t, --type` | `schedule` | `schedule` or `draft` |
 | `-d, --delay` | `0` | Minutes to wait between the items of a thread or comments |
@@ -103,10 +103,18 @@ Two letters mean different things in different commands. `-s` is `--date` on `po
 | Command | Flags | What it does | Exit code |
 |---|---|---|---|
 | `auth:status` | | Shows which credentials the CLI uses and checks them against the API | `0` when they work. `1` when none are set, when the API refuses them, or when it could not be reached |
-| `auth:login` | `--auth-server <url>` | Prints how to set the API key. It does not sign you in to PostQueen: see below | `0` when `POSTQUEEN_API_KEY` is set, `1` when it is not |
+| `auth:login` | `--auth-server <url>` | Says where to get the API key. It does not sign you in to PostQueen: see below | `1`, unless `--auth-server` signs you in to a server you run yourself |
 | `auth:logout` | | Removes a login saved in `~/.postqueen/credentials.json`, which would otherwise take priority over the key | `0`, also when there was nothing to remove |
 
 ### auth:login does not work with PostQueen
+
+PostQueen signs in with the API key only. On its own, `auth:login` prints one line on stderr and exits `1`:
+
+```text
+❌ PostQueen uses an API key: set POSTQUEEN_API_KEY to the key from PostQueen > Connections > API Keys, visible to workspace admins only.
+```
+
+With the key already set, the line is `❌ PostQueen uses an API key, and POSTQUEEN_API_KEY is already set: run "postqueen auth:status" to check it.`
 
 With `--auth-server <url>`, or with `POSTQUEEN_AUTH_SERVER` set, `auth:login` starts a device sign-in on that server: it asks `<url>/device/code` for a code, opens your browser, then asks `<url>/device/token` every few seconds until you approve, and saves the token and API address in `~/.postqueen/credentials.json`. PostQueen has no such server, on PostQueen Cloud or in its own backend, so the command stops with `❌ No auth server is answering at <url>`, followed by the reason, such as `(HTTP 404)` for `https://api.postqueen.ai`, and exits `1`. Sign in with the API key instead.
 
@@ -131,34 +139,24 @@ Most commands print one status line, then the JSON result. Drop the first line w
 | `analytics:platform` | `📊 Analytics for integration: <id>` |
 | `analytics:post` | `📊 Analytics for post: <id>` |
 
-`posts:missing` prints JSON with no status line. `posts:delete` prints only `✅ Post <id> deleted successfully!`. The `auth:` commands print plain text.
+`posts:missing` prints JSON with no status line. `posts:delete` prints only `✅ Post <id> deleted successfully!`. `auth:status` and `auth:logout` print plain text, and `auth:login` prints one `❌` line on stderr.
 
 ## When a command fails
 
-What you see depends on where the command stopped:
+A command that fails exits `1` and prints its message to stderr. Only `auth:status` prints its result on stdout, even when it fails. What you see depends on where the command stopped:
 
-| Where it stopped | What you see | Exit code |
-|---|---|---|
-| The API refused the request, or could not be reached | One line starting with `❌` on stderr, such as `❌ Failed to create post: Request failed: API Error (400): ...` | `1` |
-| A required flag or ID is missing, or a value is not one the flag takes | The command's whole help on stderr, with the reason on its last line, such as `--date is required when not using --json` | `1` |
-| A command or flag name is misspelled | Nothing. `postqueen post:create` prints nothing, and `posts:list --startdate ...` ignores the flag and lists the default window | `0` |
+| Where it stopped | What you see |
+|---|---|
+| The API refused the request, or could not be reached | One line, such as `❌ Failed to create post: Request failed: API Error (400): ...` |
+| A command name is misspelled | `❌ Unknown command: post:create. Run "postqueen --help" for usage.` |
+| A flag name is misspelled | `❌ Unknown argument: startdate. Run "postqueen posts:list --help" for usage.` Nothing is sent |
+| A flag that takes one value was given twice | `❌ --integrations was given more than once, but takes one value. Run "postqueen posts:create --help" for usage.` Only `-c` and `-m` repeat |
+| A required flag or ID is missing, or a value is not one the flag takes | One line with the reason, such as `❌ Either --content or --json is required. Run "postqueen posts:create --help" for usage.` |
+| `-i` has an empty ID, such as `-i "int-1,"` | `❌ Empty integration ID in --integrations "int-1,"`, then two lines on using `-i` and `integrations:list`. Nothing is sent |
 
-`auth:status` prints its result on stdout, even when it fails.
+Flag names are case-sensitive: `--startDate` and `--start-date` both work, `--startdate` is an unknown argument.
 
-<Tip>
-The CLI does not refuse a command or a flag it does not know, so a typo looks like a success. Check the spelling against `postqueen <command> --help`. Flag names are case-sensitive: `--startDate` and `--start-date` work, `--startdate` does not.
-</Tip>
-
-### Text that starts with a dash
-
-The CLI reads a value that starts with `-` as more flags. `-c "-5% off today"` is refused with `Either --content or --json is required`, `-c "-hello"` prints the help and exits `0` without posting, and a `-c "- item"` after the first `-c` crashes the CLI. Attach the text to its flag with `=` instead:
-
-```bash
-postqueen posts:create --content="-5% off today" -s "2026-10-01T09:00:00Z" -i "bluesky-id"
-postqueen posts:create -c "Three things we changed:" -c="- a smaller size" -s "2026-10-01T09:00:00Z" -i "bluesky-id"
-```
-
-The same goes for any flag whose value starts with `-`.
+Text that starts with `-` is text: `-c "-5% off today"` and `-c "- a smaller size"` post as written.
 
 ## The API route behind each command
 

@@ -315,7 +315,7 @@
             }
           },
           "404": {
-            "description": "`Integration not found`",
+            "description": "`Integration not found`: no channel with that id in your workspace, or the channel was deleted",
             "content": {
               "application/json": {
                 "schema": {
@@ -424,7 +424,7 @@
             }
           },
           "404": {
-            "description": "`Integration not found`, `Integration provider not found` or `Tool not found`",
+            "description": "`Integration not found` (no channel with that id in your workspace, or the channel was deleted), `Integration provider not found` or `Tool not found`",
             "content": {
               "application/json": {
                 "schema": {
@@ -458,7 +458,7 @@
           "Channels"
         ],
         "summary": "Delete a channel",
-        "description": "Deletes a channel and, first, every post of that channel in PostQueen, whatever its state: scheduled, drafts, published records and failed posts. Pending publishing for them is canceled. Posts of other channels are not touched, and nothing already published is taken down from the network. Connecting the account again does not bring the posts back. Deleting a channel that is already deleted answers `200` again.",
+        "description": "Deletes a channel and, first, every post of that channel in PostQueen, whatever its state: scheduled, drafts, published records and failed posts. Pending publishing for them is canceled. Posts of other channels are not touched, and nothing already published is taken down from the network. Connecting the account again does not bring the posts back. Deleting a channel that is already deleted answers `404`.",
         "operationId": "deleteChannel",
         "parameters": [
           {
@@ -502,7 +502,7 @@
             "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
-            "description": "No channel with that id in your workspace",
+            "description": "`Channel not found`: no channel with that id in your workspace, or the channel is already deleted",
             "content": {
               "application/json": {
                 "schema": {
@@ -924,7 +924,7 @@
             }
           },
           "400": {
-            "description": "The body failed validation (`message` is a list), a channel id is not in your workspace, the post breaks a network rule (`provider`, `name` and `message`), or it would publish an already published post again without `republish`",
+            "description": "The body failed validation (`message` is a list), a channel id is not in your workspace or the channel was deleted (`Integration with id <id> not found`), an `update` whose `value[0].id` is not a main post of the workspace, the post breaks a network rule (`provider`, `name` and `message`), or it would publish an already published post again without `republish`",
             "content": {
               "application/json": {
                 "schema": {
@@ -2185,7 +2185,7 @@
           "AI video"
         ],
         "summary": "Run a video helper",
-        "description": "Runs a helper that looks up a value a generator's `customParams` need. The only helper today is `loadVoices` on `image-text-slides`, which lists the voices its `voice` takes.",
+        "description": "Runs a helper that looks up a value a generator's `customParams` need. The only helper today is `loadVoices` on `image-text-slides`, which lists the voices its `voice` takes. An `identifier` that is not a generator answers `404` with `Video generator <identifier> not found`.",
         "operationId": "runVideoFunction",
         "requestBody": {
           "required": true,
@@ -2277,8 +2277,22 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
+          "404": {
+            "description": "`Video generator <identifier> not found`: the `identifier` is not a video generator",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Video generator my-generator not found"
+                }
+              }
+            }
+          },
           "500": {
-            "description": "The generator does not exist, or the voice service refused the call",
+            "description": "The voice service refused the call",
             "content": {
               "application/json": {
                 "schema": {
@@ -3685,7 +3699,7 @@
               "now",
               "update"
             ],
-            "description": "`schedule` queues the post for `date`, and publishes it at once when `date` has already passed. `now` publishes at once. `draft` saves it without publishing. `update` changes posts named by `value[].id` without starting a new publish; an id that matches no post of the workspace is saved as a new post instead, without an error"
+            "description": "`schedule` queues the post for `date`, and publishes it at once when `date` has already passed. `now` publishes at once. `draft` saves it without publishing. `update` changes posts named by `value[].id` without starting a new publish. Its `value[0].id` must be the id of a main post of the workspace, not of a comment, or the request is refused with 400"
           },
           "date": {
             "type": "string",
@@ -3859,7 +3873,7 @@
           },
           "id": {
             "type": "string",
-            "description": "The id of an existing post, to change it in place. Leave it out to create a new post. An id that matches no post of the workspace also creates a new post, without an error"
+            "description": "The id of an existing post, to change it in place. Leave it out to create a new post. With `draft`, `schedule` or `now`, an id that matches no post of the workspace also creates a new post, without an error. With `update`, the first item's id must be a main post of the workspace, or the request is refused with 400; a later item with a new id is added as a new comment or thread item"
           },
           "delay": {
             "type": "integer",

@@ -38,7 +38,7 @@ While PostQueen is open in your browser, a new notice also pops up at the bottom
     In **Settings**, choose **Notifications**. The address the emails go to is at the top.
   </Step>
   <Step title="Switch each email on or off">
-    Flip **Success Emails**, **Failure Emails** or **Streak Reminder Emails**. Each switch saves at once. All three start on.
+    Flip **Success Emails**, **Failure Emails** or **Streak Ended Emails**. Each switch saves at once. All three start on.
   </Step>
 </Steps>
 
@@ -46,7 +46,7 @@ While PostQueen is open in your browser, a new notice also pops up at the bottom
 |---|---|---|
 | A post was published | Within the hour, batched. See below. | **Success Emails** |
 | A post failed, or PostQueen could not confirm it went out | At once | **Failure Emails** |
-| "Streak Ended" | 24 hours after the workspace's last published post | **Streak Reminder Emails** |
+| "Streak Ended" | 24 hours after the workspace's last published post | **Streak Ended Emails** |
 | A channel needs reconnecting, is disabled or was never finished; your plan switched channels off or back on; a payment failed, was disputed or was refunded; a post did not go out because the plan ended | At once | None. These always arrive |
 
 Success emails wait an hour from the first one, so a busy day does not fill your inbox. Everything published in the workspace during that hour arrives in one email with the subject "[PostQueen] Your latest notifications". When only one post went out, the email carries that notice's own subject instead.
@@ -65,9 +65,9 @@ The header shows your streak as a flame and a number, such as **3 day streak**. 
 
 - The streak belongs to the workspace. It starts when any post in the workspace is published, by any member, from the app, an agent, the CLI, the API or Auto Post.
 - Every published post starts a new 24-hour countdown. Drafts and scheduled posts count only once they go out.
-- If 24 hours pass with nothing published, the streak ends and the count goes back to 0. Members with **Streak Reminder Emails** on get an email titled "Streak Ended".
+- If 24 hours pass with nothing published, the streak ends and the count goes back to 0. Members with **Streak Ended Emails** on get an email titled "Streak Ended".
 
-The email comes when the streak has ended, not before. If the workspace does not post every day, it arrives about a day after each post, so switch **Streak Reminder Emails** off if you do not want it.
+The email comes when the streak has ended, not before, as the switch says: "Receive an email when your posting streak ends, 24 hours after your last published post". If the workspace does not post every day, it arrives about a day after each post, so switch **Streak Ended Emails** off if you do not want it.
 
 ## If something goes wrong
 

@@ -15,7 +15,7 @@ A step-by-step guide, from finding the channel id to checking the result, is [Sc
 | `schedule` | The post goes out at `date`, in UTC. A `date` that has already passed publishes at once. |
 | `now` | The post goes out at once. `date` is still required, and PostQueen stamps the current minute instead. |
 | `draft` | Saved on the channel's calendar without publishing. Move it to scheduled later with [Change post status](/public-api/posts/change-status). |
-| `update` | Changes existing posts in place, named by `value[].id`, without starting a new publish. An id that matches no post creates a new one: see [Changing or copying a post](#changing-or-copying-a-post). |
+| `update` | Changes existing posts in place, named by `value[].id`, without starting a new publish. The first id must be a post of your workspace, or the request is refused: see [Changing or copying a post](#changing-or-copying-a-post). |
 
 <Note>
 A draft is checked too: the body, each network's required settings, and that every item has text or media. The network's rules on length and media are checked only when the post is set to go out (`schedule`, `now` and `update`), and again when you move a draft to `schedule` with [Change post status](/public-api/posts/change-status). So a draft that was accepted can still be refused then.
@@ -91,12 +91,20 @@ When a part breaks a network's rule, the call answers `400` before anything is s
 }
 ```
 
+A channel id that is not a channel of your workspace, or a channel that was deleted, answers `400` with `Integration with id <id> not found`, and nothing is saved. Take the ids from [List channels](/public-api/integrations/list).
+
 Every status the endpoint returns, and what to do about it, is on [Limits and errors](/public-api/limits-and-errors).
 
 ## Changing or copying a post
 
 - **Change a scheduled post.** Send it again with `value[].id` set to the id of each part you keep, and its `group` from [List posts](/public-api/posts/list) so the parts you leave out are deleted. Use `update` with the post's current `date` to change its text or media without touching the schedule, or `schedule` with a new `date` to move it. To change only its settings, [Update post settings](/public-api/posts/settings) is simpler.
-- **Check the ids you send with `update`.** An id that matches no post of your workspace is not an error: that item is saved as a new post on the channel, with no warning, and it can still be published once `date` passes. A missing or mistyped first id therefore gives you a second post instead of a changed one. Take the ids from List posts, and check that the `postId` in the answer is the id you sent.
+- **`update` needs the id of the main post.** In each entry of `posts`, `value[0].id` must be the id of a post in your workspace, and of the post itself, not of one of its comments. A missing, mistyped or deleted id is refused with `400` before anything is saved:
+
+  ```text
+  type 'update' changes an existing post: value[0].id must be the id of a post in this workspace (the main post, not a comment). To create a post, use type 'draft', 'schedule' or 'now'.
+  ```
+
+  Take the ids from [List posts](/public-api/posts/list). Later items of `value` with a new id, or none, are added to the post as new comments or thread items.
 - **Publish a post again.** `schedule` or `now` with the id of a post that was already published is refused with `400`. Add `"republish": true` if you mean it.
 - **Copy a post.** There is no copy endpoint. Read the post with [List posts](/public-api/posts/list), parse its `settings` and `image` (they come back as JSON strings), and send the content as a new post without any post ids or `group`.
 

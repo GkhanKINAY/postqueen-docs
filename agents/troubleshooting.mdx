@@ -106,7 +106,7 @@ When the API refuses a command, the CLI prints one line to stderr and exits with
 
 ### Flags
 
-These are caught before anything is sent, and the command exits `1`. A message with `❌` is one line on stderr. The others come at the end of the command's whole help, also on stderr.
+These are caught before anything is sent. Each prints a line starting with `❌` on stderr, and the command exits `1`. A usage error ends with the help to read, such as `Run "postqueen posts:create --help" for usage.`
 
 | Message | What to do |
 |---|---|
@@ -118,13 +118,16 @@ These are caught before anything is sent, and the command exits `1`. A message w
 | `Invalid values: Argument: status, ...` | `posts:status` takes `draft` or `schedule` only |
 | `Not enough non-option arguments: got 0, need at least 1` | A required ID or file is missing, such as the `<id>` of `posts:delete` |
 | `Missing required argument: status` | `posts:status` needs `--status draft` or `--status schedule` |
+| `Unknown command: ...` | The command name is misspelled. `postqueen --help` lists the commands |
+| `Unknown argument: ...` | A flag name is misspelled. Flag names are case-sensitive: `--startDate` and `--start-date` work, `--startdate` does not |
+| `--... was given more than once, but takes one value` | Give the flag once. Only `-c` and `-m` repeat, once per item |
+| `❌ Empty integration ID in --integrations "..."` | `-i` has an empty entry, usually from a stray or trailing comma such as `-i "id1,"` |
 
 ### Posts
 
 | Message | What to do |
 |---|---|
 | `Integration with id ... not found` | The channel ID is wrong or the channel was removed. Run `integrations:list` |
-| `All posts must have an integration id` | `-i` has an empty entry, usually from a stray or trailing comma such as `-i "id1,"` |
 | `posts.0.settings.who_can_reply_post must be one of the following values: ...` | A required setting is missing, here X's. The path names the channel entry and the field. `integrations:settings <id>` lists the required ones, drafts included |
 | `"provider":"...","message":"Please fix your settings"` | A setting the network requires is wrong. Match `integrations:settings <id>` |
 | `post is too long, please fix it` | The text is over the channel's `maxLength` |
@@ -142,12 +145,6 @@ Upload errors are on [upload media](/cli/media-upload#if-an-upload-fails). A pos
 <AccordionGroup>
   <Accordion title="jq fails on the first line" icon="terminal">
     Most commands print a status line before the JSON. Drop it: `postqueen integrations:list | tail -n +2 | jq '.'`. `posts:missing` prints JSON only, so it needs no `tail`.
-  </Accordion>
-  <Accordion title="Nothing happened, and the exit code is 0" icon="circle-question-mark">
-    The CLI does not refuse a command or a flag it does not know. `postqueen post:create` prints nothing and exits `0`, and `posts:list --startdate ...` ignores the flag and lists the default window. Check the spelling against `postqueen <command> --help`: flag names are case-sensitive, so `--startDate` and `--start-date` work and `--startdate` does not.
-  </Accordion>
-  <Accordion title="Text that starts with a dash" icon="minus">
-    A value that starts with `-` is read as more flags, so the text never arrives: `-c "-hello"` prints the help and exits `0`. Attach it with `=`: `--content="-5% off today"` or `-c="- a smaller size"`. See [text that starts with a dash](/cli/command-reference#text-that-starts-with-a-dash).
   </Accordion>
   <Accordion title="The same letter means two things" icon="triangle-alert">
     `-s` is the date on `posts:create` and the status on `posts:status`. `-d` is minutes between items on `posts:create`, days on the analytics commands, and JSON input on `integrations:trigger`.

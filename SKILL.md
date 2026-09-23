@@ -138,7 +138,7 @@ Copy the key from PostQueen > Connections > API Keys. Only workspace admins can 
 
 **Option 2: your own auth server**
 
-PostQueen runs no login server for the CLI, so `postqueen auth:login` on its own only explains the API key. If the user runs the device-flow auth server from the CLI repository's `server/` folder, log in through it:
+PostQueen runs no login server for the CLI, so `postqueen auth:login` on its own only says where to get the API key, and exits 1. If the user runs the device-flow auth server from the CLI repository's `server/` folder, log in through it:
 ```bash
 postqueen auth:login --auth-server https://auth.example.com   # or set POSTQUEEN_AUTH_SERVER
 postqueen auth:logout                                          # remove the stored credentials
@@ -811,7 +811,7 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 # ⚠️ AUTHENTICATE FIRST - required before any other command
 postqueen auth:status                                             # Check if authenticated
 export POSTQUEEN_API_KEY=key                                      # Set the API key
-postqueen auth:login                                              # Explains the API key (or logs in via your own --auth-server)
+postqueen auth:login                                              # Says where to get the API key and exits 1 (or logs in via your own --auth-server)
 
 # Discovery (only after auth is confirmed)
 postqueen integrations:list                           # Get integration IDs

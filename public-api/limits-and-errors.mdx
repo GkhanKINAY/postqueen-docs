@@ -55,7 +55,7 @@ Wait the number of seconds in `Retry-After` before you send the next request. Re
 | `400` | The request is wrong: a missing or malformed field, a post that breaks a network's rule, or an unknown channel id in a post. Read the body, fix the request and send it again. |
 | `401` | The key or token is missing or not valid, or the workspace has no subscription. See [401 messages](#401-messages). |
 | `402` | The workspace is at its plan's channel limit, when you connect a channel, or has used this month's AI videos, when you generate one. The body has the billing link. |
-| `404` | The post, media or channel is not in your workspace. Check the id. |
+| `404` | The post, media or channel is not in your workspace or was deleted, or the video generator does not exist. Check the id. |
 | `406` | The feature is locked during the free trial, such as a Seedance video. See [Free trial](/cloud/trial). |
 | `413` | The JSON body of `POST /posts` is over about 100 kB. Upload files first and send their `id` and `path`, not file data. |
 | `422` | The AI provider's safety system refused a video prompt. The message says why. Change the prompt. |
@@ -124,7 +124,7 @@ The body of an error has one of four shapes. Read the status code first, then wh
 
 ### When a 500 comes from the network
 
-A post, channel or media id that is not in your workspace does not answer `500`. `DELETE /integrations/{id}` answers `404 Channel not found`, and the other endpoints answer `404`, `400` or an empty result, as their pages say. Two endpoints answer `500` when the network, not PostQueen, refuses the call. Retrying the same request will not help:
+A post, channel or media id that is not in your workspace does not answer `500`, and neither does an unknown video generator. `DELETE /integrations/{id}` answers `404 Channel not found`, `POST /video/function` answers `404 Video generator <id> not found`, and the other endpoints answer `404`, `400` or an empty result, as their pages say. Two endpoints answer `500` when the network, not PostQueen, refuses the call. Retrying the same request will not help:
 
 | Endpoint | Cause |
 |---|---|
@@ -135,7 +135,7 @@ Any other `500` is an error on PostQueen's side. Retry it after a short wait, a 
 
 ## Deleting twice
 
-`DELETE /posts/{id}` answers `404 Post not found` for a post that is already deleted, so a client that retries deletes can treat that `404` as done. `DELETE /posts/group/{group}` answers `200` whether or not the group existed, and `DELETE /integrations/{id}` answers `200` again for a channel that is already deleted.
+`DELETE /posts/{id}` answers `404 Post not found` for a post that is already deleted, so a client that retries deletes can treat that `404` as done. `DELETE /integrations/{id}` answers `404 Channel not found` for a channel that is already deleted, which a client can treat as done too. `DELETE /posts/group/{group}` answers `200` whether or not the group existed.
 
 ## Next steps
 

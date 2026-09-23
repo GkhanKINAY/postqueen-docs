@@ -135,6 +135,8 @@ postqueen posts:create \
       -i "cmf1abc2d0001"
     ```
 
+    An item may start with `-`, such as `-c "- a smaller size"`: it is posted as written.
+
     The extra items become a thread on Bluesky, Nostr, X and Threads, and comments on Facebook, Instagram and Lemmy. YouTube, TikTok, WordPress, DEV, Hashnode and Listmonk publish the first item only. More in [comments and threads](/using/comments-and-threads).
 
     Because `-m` pairs by position, give every item before the last one with media its own `-m`, and `-m ""` to an item that has none. Leaving one out moves every later file onto the wrong item:
@@ -153,6 +155,8 @@ postqueen posts:create \
     ```bash
     postqueen posts:create -c "Open on Sunday this week." -s "2026-10-01T09:00:00Z" -i "bluesky-id,nostr-id"
     ```
+
+    An empty ID, such as the one after a trailing comma in `-i "bluesky-id,"`, is refused before anything is sent.
 
     One `--settings` object goes to every channel in `-i`, so mix only channels that take the same settings. For different text or settings per channel, use a `--json` file.
   </Accordion>

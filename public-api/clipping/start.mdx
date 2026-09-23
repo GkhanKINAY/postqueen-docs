@@ -43,7 +43,7 @@ A clipping uses one clipping minute for each started minute of the video, howeve
 |---|---|
 | `400` with a `message` list | A field is missing or out of range. The list says which |
 | `400 Only YouTube videos can be clipped` | Send a `youtube.com` or `youtu.be` link |
-| `400 Channel {id} not found` | One of the `integrations` is not a channel in your workspace. Check it with [List channels](/public-api/integrations/list) |
+| `400 Channel {id} not found` | One of the `integrations` is not a channel in your workspace, or was deleted. Check it with [List channels](/public-api/integrations/list) |
 | `402` | No clipping minutes are left this month. The body has the billing link |
 | `406 Clipping is not available in trial mode` | Clipping is not part of the free trial |
 | `429 Another clipping is being started` | Two requests arrived at the same moment. Wait a few seconds and send it again |

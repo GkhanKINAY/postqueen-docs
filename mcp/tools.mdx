@@ -91,7 +91,7 @@ Runs one of a network's helpers to look up a value a setting needs, such as a li
 | `methodName` | string | Yes | A `methodName` from the `tools` that `integrationSchema` returned |
 | `dataSchema` | list | Yes | The helper's inputs as `key` and `value` pairs. An empty list when it takes none |
 
-**Returns** `output`, whatever the network answered: usually a list of `id` and `name` pairs. If the channel's sign-in has expired, the tool tries to renew it. When that fails, the channel is marked to be reconnected and the tool says so.
+**Returns** `output`, whatever the network answered: usually a list of `id` and `name` pairs. If the channel's sign-in has expired, the tool tries to renew it. When that fails, the channel is marked to be reconnected and the tool says so. A channel that was deleted answers `Integration not found, use integrationList to get a valid integration id`.
 
 ## Posts
 
@@ -110,7 +110,7 @@ Creates posts: a draft, a post scheduled for a time, or a post that goes out now
 | `postsAndComments` | list | Yes | The post, then its comments or thread items. Each has `content` (HTML: `p`, `h1` to `h3`, `strong`, `u`, `ul`, `li`), `attachments` (a list of media paths) and an optional `delay`, the minutes to wait after the item before it |
 | `settings` | list | Yes | The network's settings as `key` and `value` pairs, from `integrationSchema`. An empty list when it needs none |
 
-**Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again.
+**Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again. An `integrationId` that is not a channel of your workspace, or a channel that was deleted, returns `errors`: `Integration not found`.
 
 - Settings and length are checked for scheduled posts and posts that go out now. Over MCP, a draft is saved even when a required setting is missing, so add it before the draft is scheduled. The CLI and the API check a draft's settings too.
 - Attachments must be media paths that end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. Bring a file in with an upload tool first.
@@ -289,7 +289,14 @@ Looks up a value a video generator needs, with one of the helpers `generateVideo
 | `functionName` | string | Yes | The helper's `functionName` |
 | `params` | string | No | The helper's inputs, as a JSON string. `loadVoices` takes none |
 
-**Returns** the helper's answer. `loadVoices` returns `voices`, each with an `id` (the `voice` input), a `name` and a `preview_url` with a sample. A name the generator does not list returns `Function not found`, and `params` that are not JSON return `params must be a JSON string`.
+**Returns** the helper's answer. `loadVoices` returns `voices`, each with an `id` (the `voice` input), a `name` and a `preview_url` with a sample. A wrong call names what you can use instead:
+
+| Error | What it means |
+|---|---|
+| `There is no video generator "<identifier>". Use one of these identifiers: ...` | `identifier` is not a generator. The list names the ones you can use |
+| `The video generator "<identifier>" has no function "<functionName>". Its functions are: ...` | The generator has no helper of that name. On `image-text-slides` the list is `loadVoices` |
+| `The video generator "seedance" has no functions to call.` | Seedance has no helpers. It needs no value you have to look up |
+| `params must be a JSON string` | `params` is not valid JSON |
 
 ### `generateVideoTool`
 
@@ -301,10 +308,15 @@ Starts a video and puts it in your media library when it is done. It takes minut
 | `output` | string | Yes | `vertical` for Reels, Stories, TikTok and Shorts, or `horizontal` for X, LinkedIn, YouTube and Facebook |
 | `customParams` | list | Yes | The generator's inputs as `key` and `value` pairs, such as `{ "key": "prompt", "value": "..." }` |
 
-**Returns** a `jobId`, or `error` when the video could not start. No credit is used then. The error reads `Video generation failed:`, the reason, and `The user's video credit was not used.` The reasons you are most likely to see:
+**Returns** a `jobId`, or `error` when the video could not start. No credit is used then.
+
+An `identifier` that is not a generator is refused before anything else, with `There is no video generator "<identifier>". Use one of these identifiers: ... The user's video credit was not used.` Use one of the identifiers it lists.
+
+Every other error reads `Video generation failed:`, the reason, and `The user's video credit was not used.` The reasons you are most likely to see:
 
 | Reason | What it means |
 |---|---|
+| `customParams are not valid: ...` | An input is missing or has the wrong shape. The reason lists each problem, such as `images must be an array` when a Seedance video has no `images`. Send `images` as an empty list for a video from the prompt alone |
 | `No AI video credits are available on this account.` | The plan's videos for this month are used up. Credits come back on the day of the month the plan started |
 | `This video is not available in trial mode` | Seedance during the free trial. Use `image-text-slides`, or end the trial on **Billing** |
 | `Video generation is not available` | PostQueen could not start the job. Try again later |

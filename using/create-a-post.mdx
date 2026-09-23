@@ -78,13 +78,14 @@ Choose **Repeat Post Every**, then how often: **Every Day**, **Every Two Days**,
 - After each publish, PostQueen waits the interval and publishes the same post again on each of its channels. It never stops by itself. The interval counts from the last publish, and **Every Month** is every 30 days.
 - Every repeat is a normal publish: it sends notices, calls your [webhooks](/using/webhooks) and shows on the [calendar](/using/calendar).
 - Before the first publish, stop the repeat by opening the post, choosing **Clear** at the bottom of the same menu, then **Update**.
-- Once the post has gone out, it opens with **Duplicate Post** only, and the repeat menu is gone. To stop a repeat that is running, delete the post with **Delete Post** on the calendar, on each channel it repeats on. Copies already published stay on the network.
+- Once the post has gone out, the repeat menu is gone. To stop the repeat, open the post and choose **Stop repeating**, next to **Delete Post**. "Stop repeating this post?" asks you to confirm: "It will not be posted again. Everything it already published stays published." Choose **Stop repeating**, and "This post no longer repeats" confirms it. The calendar then shows the post on its first date only.
+- Each channel's copy repeats on its own, so stop it on each channel it repeats on. If it cannot be stopped, the message says why, or reads "Could not stop this post from repeating, please try again".
 
 ## Good to know
 
 - The right column opens on **AI Copilot**, which is locked during the [free trial](/cloud/trial), and switches to **Post Preview** once the post has text or media. See [AI Copilot](/using/ai-copilot).
 - The badge under the editor counts characters against each channel's limit, and its details name any channel under **Links will be removed from** or **Comments cannot be published on**.
-- PostQueen does not shorten links today. Links are published as you wrote them, whatever **Settings > Global Settings > Shortlink Settings** is set to.
+- PostQueen does not shorten links today. Links are published as you wrote them, and Settings has no **Shortlink Settings** card.
 - An existing post opens as **Edit Post**. A scheduled post saves with **Update**, a draft with **Schedule**, and a published one shows **Duplicate Post** instead. Updating a post whose time has passed asks whether to **Just update the post details** or **Republish the post**.
 - On X, the settings card has **Add Re-posters**: pick a **Delay** and your other X channels under **Accounts that will engage:** and they repost the post. X is **In review**: X can be connected once the free trial ends, or right away if you end the trial early.
 
@@ -96,6 +97,7 @@ Choose **Repeat Post Every**, then how often: **Every Day**, **Every Two Days**,
 | “Please fix your settings” (or the setting's own message) | The composer opens that channel's settings. Fill in the required field. |
 | “post is too long, please fix it” | Shorten the text on that channel's own tab. |
 | “Upload size limit exceeded. Maximum 1 GB per upload session.” | Upload fewer or smaller files at a time. |
+| “Only a published post can be stopped from repeating. Edit the post to change its repeat.” | The post has not gone out yet. Open it, choose **Clear** in the **Repeat Post Every** menu, then **Update**. |
 | “None of your channels can be posted to right now. They are disconnected, disabled, or still finishing setup. Check Channels, or your plan, to continue.” | Reconnect or enable the channel: see [Connect a channel](/using/connect-a-channel). |
 
 ## Next steps
