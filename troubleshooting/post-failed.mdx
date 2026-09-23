@@ -12,7 +12,7 @@ keywords:
 
 **Where:** the calendar, the **All** tab of the Posts list, and your notifications.
 
-A post that could not be published is marked with a red **!** on the calendar, and PostQueen tells you why. Nothing publishes it again by itself: you fix the cause, then send it again.
+A post that could not be published is marked with a red **!** on the calendar, and PostQueen tells you why. Once PostQueen stops trying, nothing publishes the post again by itself: you fix the cause, then send it again.
 
 | What you see | Go to |
 |---|---|
@@ -30,15 +30,15 @@ In the Posts list, failed posts are only under **All**, marked **Error**. **Sche
 
 Most reasons are the network's own words. These come from PostQueen:
 
-| Message | What it means | What to do |
-|---|---|---|
-| "Refresh channel needed" | The channel had lost its connection before the post's time. | [Reconnect the channel](#the-channel-needs-reconnecting), then send the post again. |
-| "Channel disabled" | The channel was turned off. | Choose **Enable Channel** on the channel's page, then send the post again. |
-| "Channel setup not finished" | Connecting the channel stopped before a step such as picking a page. | Open the channel on **Channels**, finish connecting it, then send the post again. |
-| "This channel cannot post comments" | The post had follow-up parts, and this network has no way to add them. | Only the follow-ups are marked. The first part is not affected. |
-| "Subscription required" | The workspace had no active plan when the post was due. | Renew the plan on **Billing**, then send the post again. |
-| "No Post" | The post was gone when its time came, usually because it was deleted. | Create it again if you still want it. |
-| "A previous publish attempt was interrupted", "Could not confirm the post status", "Could not publish after several attempts" | The post may have reached the network. | [Sent, but not confirmed](#sent-but-not-confirmed). |
+| Message | What it means and what to do |
+|---|---|
+| "Refresh channel needed" | The channel had lost its connection before the post's time. [Reconnect the channel](#the-channel-needs-reconnecting), then send the post again. |
+| "Channel disabled" | The channel was turned off. Choose **Enable Channel** on the channel's page, then send the post again. |
+| "Channel setup not finished" | Connecting the channel stopped before a step such as picking a page. Open the channel on **Channels**, finish connecting it, then send the post again. |
+| "This channel cannot post comments" | The post had follow-up parts, and this network has no way to add them. Only the follow-ups are marked; the first part is not affected. |
+| "Subscription required" | The workspace had no active plan when the post was due. Renew the plan on **Billing**, then send the post again. |
+| "No Post" | The post was gone when its time came, usually because it was deleted. Create it again if you still want it. |
+| "A previous publish attempt was interrupted", "Could not confirm the post status", "Could not publish after several attempts" | The post may have reached the network: [Sent, but not confirmed](#sent-but-not-confirmed). |
 
 Anything else came from the network. Its page lists the rules PostQueen checks before a post is scheduled: start from [All channels](/channels/overview), fix the post, then send it again. An unchanged post that the network refused is refused again.
 
@@ -124,7 +124,7 @@ A failed post writes a notification in the app, and most of these are also email
 
 Turn **Failure Emails** on or off in [Settings](/using/settings) under **Notifications**. A later failed attempt at the same post does not notify you again.
 
-## Still stuck
+## Still stuck?
 
 Email [support@postqueen.ai](mailto:support@postqueen.ai) with:
 

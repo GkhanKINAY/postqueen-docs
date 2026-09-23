@@ -31,7 +31,7 @@ A post that was scheduled and then failed has its own page: [A post did not go o
 |---|---|
 | "Invalid user name or password" | Check the email and the password. To reset the password, choose **Forgot password?**, or choose **Email me a sign-in code** to sign in without it. |
 | "Invalid or expired code" | The sign-in code is wrong or more than 10 minutes old. Ask for a new one with **Email me a sign-in code**. |
-| "Too many attempts, request a new code" | A code was typed wrong five times. Ask for a new one. |
+| "Too many attempts, request a new code" | The code was typed wrong too many times. Ask for a new one. |
 | "Too many requests, please try again later" | Too many tries in a short time. Wait a few minutes, then try again. |
 | "Your account is not activated yet. Please check your email for the activation link." | Open the link in the email PostQueen sent when you signed up. Lost it? Choose **Resend Activation Email**. |
 | The activation page says the link "is no longer valid" | The link is more than 7 days old, or the account is already active. Try to sign in; if PostQueen asks again, resend the activation email. |
@@ -47,9 +47,8 @@ A post that was scheduled and then failed has its own page: [A post did not go o
 | "Authentication failed" | The network refused the sign-in. Check that you can sign in to the account on the network, then connect again. |
 | "X unlocks after your trial" | X connects once your paid plan starts. Choose **End free trial to unlock X**, or wait: [Free trial](/cloud/trial). |
 | "This social channel was connected previously to another PostQueen account." | During the free trial, an account that another PostQueen account connected before is refused. Choose **Fast track - Charge me now** to end the trial, or connect another account. |
-| "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels." | Disabled channels count toward the limit. Delete a channel you no longer need, or choose **Move to billing** and pick a bigger plan: [Plans and limits](/cloud/plans). |
+| "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels." | You are at your plan's channel limit, when you connect a channel or choose **Enable Channel**. Disabled channels count when you connect a new one, so delete a channel you no longer need, or choose **Move to billing** and pick a bigger plan: [Plans and limits](/cloud/plans). |
 | "Could not connect to the platform" | Try again. If it keeps failing, [contact support](/support). |
-| **Enable Channel** says "Channel Enabled", but the channel stays off | Your enabled channels are at the plan's limit. Disable another channel first: [Known issues](/troubleshooting/known-issues). |
 | A network has no way to connect | It is marked Soon and cannot be connected yet: [All channels](/channels/overview). |
 
 A channel that stopped publishing shows **Needs reconnecting**: [The channel needs reconnecting](/troubleshooting/post-failed#the-channel-needs-reconnecting). Each network's own page lists the messages that network gives.
@@ -78,7 +77,7 @@ In the composer, most messages start with the channel's name, so you know which 
 |---|---|
 | "File is too large. Maximum size allowed is 1GB." | Every file can be up to 1 GB. Compress the video, or upload a smaller file. |
 | "Upload size limit exceeded. Maximum 1 GB per upload session." | Add fewer files at a time. |
-| A file type "is not allowed" | Upload JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF, MP4 or MOV. A MOV is converted to MP4 after upload. |
+| A file type "is not allowed" | The app takes JPG, PNG, GIF and WebP images and MP4 and MOV videos, and the message lists the types that place accepts. A MOV is converted to MP4 after upload. |
 | "The video could not be converted." | Export the video as MP4 yourself and upload it again. |
 | "The video could not be optimized and was kept as it came." | Nothing to do: the MP4 is used as you uploaded it. |
 | "Could not upload" and a file name | The upload stopped. Check your connection and upload the file again. |

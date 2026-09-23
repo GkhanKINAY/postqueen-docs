@@ -10,45 +10,35 @@ keywords:
 
 import ReportIt from '/snippets/report-it.mdx';
 
-**Last reviewed on 23 September 2026.** Each entry was checked against the app on that day. An entry is removed once its fix is live.
+**Last reviewed on September 23, 2026.** Each entry was checked against the app on that day. An entry is removed once its fix is live.
 
-Only issues you can meet on PostQueen today are listed. A network marked Soon cannot be connected, so its bugs are not here.
+Only issues you can run into on PostQueen today are listed. A network marked Soon cannot be connected, so its bugs are not here.
 
 ## Posts and the calendar
 
 | What happens | Way around it |
 |---|---|
-| **Preview Post** on a post that is not published yet opens a page that says "Post not found". The preview page shows published posts only. | Check an unpublished post in the composer. Once it is live, **Preview Post** works, and **Go to post** opens it on the network. |
 | The **Add a thread finisher** switch on X, Threads and Bluesky is never published. | Write the closing text as the last part of the thread. |
-| A post started with **Create Post** at the top does not get the signature marked **Auto add signature?**. Only a post started from an empty calendar slot gets it. | Start the post from an empty slot, or add the signature with the signature button in the editor. [Sets, signatures and tags](/using/sets-signatures-and-tags#add-a-signature) |
 | An upload cannot be canceled once it starts: the uploader shows its progress only. | Let it finish, then delete the file from the [media library](/using/media-library). |
 
 ## Channels
 
 | What happens | Way around it |
 |---|---|
-| **Enable Channel** says "Channel Enabled" when your enabled channels are already at your plan's limit, but the channel stays off. | Disable another channel first, or move to a bigger plan, then enable it again. Reload **Channels** to check that it is on. [Plans and limits](/cloud/plans) |
 | A channel connected while your time zone is UTC+0 gets the posting times 02:00, 06:40 and 11:40 instead of 09:20, 14:10 and 19:00. | Set the times you want with **Edit Time Slots** on the channel's page. [Posting times](/using/posting-times) |
 | On Lemmy, the settings say "Please add at least one Subreddit" until you pick a community. It means a Lemmy community. | Choose **Add Community** and pick one. [Lemmy](/channels/lemmy) |
-| The Listmonk connect form says the token is under Settings → API users. In current Listmonk, API users are under **Admin > Users**. | Follow the steps on [Listmonk](/channels/listmonk). |
+| The Listmonk connect form says "That user's API token, from Listmonk → Settings → API users." In current Listmonk, API users are under **Admin > Users**. | Follow the steps on [Listmonk](/channels/listmonk). |
 
 ## Moltbook
 
 <Warning>
-Moltbook support is experimental. Moltbook keeps a new post out of its feeds until the agent answers a verification challenge, and PostQueen does not answer it. Your posts may not show up in feeds. [Moltbook](/channels/moltbook) has the details.
+Moltbook support is experimental, and your posts may not show up in Moltbook's feeds: [Moltbook](/channels/moltbook) explains why.
 </Warning>
 
 | What happens | Way around it |
 |---|---|
 | A post with no **Submolt** fails in the composer with "Could not save the post, please try again". | Fill in **Submolt**, such as `general`. |
 | Over the API, [Integration settings](/public-api/integrations/settings) answers "No additional settings required" for a Moltbook channel, but `POST /posts` needs `submolt`. | Always send `"submolt"` in the settings: [Moltbook posting settings](/public-api/providers/moltbook). |
-
-## Automation
-
-| What happens | Way around it |
-|---|---|
-| In [RSS Auto Post](/using/rss-auto-post), **Post Immediately** puts new items at the next free posting time, like **Post on the next available slot**. | Add more posting times to the channel so the next free one comes sooner. |
-| On Bluesky, both [Auto-Plugs](/using/auto-plugs) actions stop after the first check, about 6 hours after the post publishes, although the card says the post is checked three times. | Set a number of likes a good post reaches within a few hours. |
 
 ## Plans
 
