@@ -1,659 +1,286 @@
 ---
-title: Configuration Reference
-sidebarTitle: Env vars
-description: 'Environment variables reference for PostQueen'
-icon: 'list'
+title: "Configuration reference"
+sidebarTitle: "Environment variables"
+description: "Every environment variable a self-hosted PostQueen reads, grouped by purpose, with its default and what happens when you leave it out."
+icon: "list"
 ---
 
-import RestartService from '/snippets/restart-service.mdx';
+PostQueen reads all of its settings from environment variables. With Docker Compose they go in the `.env` file next to `docker-compose.yaml`: see [Docker Compose](/installation/docker-compose#where-settings-live). A change takes effect when the `postqueen` container is recreated, not restarted:
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base, but strip the clip…; audit: selfhost). Row in page-status-2026-09-23.md. */}
-
-She reads everything she needs from environment variables. Change one and restart her
-before you expect it to take effect.
-
-<RestartService />
-
-<Note>
-**`NEXT_PUBLIC_` variables do not need a rebuild here.** That is the usual rule for a
-Next.js app, and it does not apply to this image. Her layouts are server rendered on every
-request and hand these values to the browser at runtime, so setting one in Compose and
-restarting is enough. The single genuine exception is `NEXT_PUBLIC_APP_VERSION`, the version
-label she shows, which is baked in when the image is built.
-</Note>
-
-Start from the [example env file](https://github.com/GkhanKINAY/postqueen-app/blob/main/.env.example)
-in the app repository, which is the file to copy on a fresh install. This page then groups the
-variables by purpose and explains what each one does. Neither list is a strict superset of the
-other, so if you meet a variable in one and not the other, it is real either way.
-
-<Warning>
-Variables marked **Required** are checked on boot, but only warned about. The check runs
-*after* the server is already listening and every problem it finds is logged as a
-`Configuration issue` line. Nothing throws and nothing exits.
-
-So a running container is not proof that the configuration is right. Read the first
-minute of `docker compose logs` on a fresh deployment and look for that phrase.
-</Warning>
-
-## Required core
-
-The boot check treats eight variables as non-optional: the six below, plus
-[`MAIN_URL`](#main-url) and [`STORAGE_PROVIDER`](#storage-provider), which are listed
-under their own sections further down.
-
-### `DATABASE_URL` <sup>Required</sup>
-
-PostgreSQL connection string used by Prisma.
-
-```
-DATABASE_URL="postgresql://postqueen-user:postqueen-password@localhost:5432/postqueen-db-local"
+```bash
+docker compose up -d --no-deps --force-recreate postqueen
 ```
 
-### `REDIS_URL` <sup>Required</sup>
+- **`NEXT_PUBLIC_` variables need no rebuild.** The web app renders its pages on the server and hands these values to the browser at run time, so recreating the container is enough. The one exception is `NEXT_PUBLIC_APP_VERSION`, which is fixed when the image is built.
+- **The start-up check only warns.** After the backend is listening it checks the required values below and logs each problem as a `Configuration issue`. Nothing stops, so a running container is not proof that the settings are right: `docker compose logs postqueen | grep -i "configuration issue"`.
+- **The backend and the orchestrator read the same variables.** In the official image both run in one container. If you run them apart, give both the same environment.
 
-Redis connection string used for rate limiting and short-lived caches. Scheduling lives in Temporal, not Redis.
+## Required
 
-```
-REDIS_URL="redis://localhost:6379"
-```
+The start-up check reports these when they are missing, and URLs when they are not valid or end in `/`.
 
-### `JWT_SECRET` <sup>Required</sup>
-
-A long random string used to sign session JWTs.
-
-It has a second job that decides how dangerous rotating it is. When `ENCRYPTION_KEY` is unset, this same value also encrypts the secrets PostQueen holds for you: your API keys, the OAuth client secrets and codes she issues, saved provider credentials, and cookie-based logins such as Skool. Change it in that state and those rows can no longer be decrypted, so the connections that depend on them break and re-entering each one by hand is the only way back.
-
-<Note>
-**What this does not cover.** A channel's own access and refresh tokens, the ones a social network hands back at the end of its OAuth flow, are stored as the network returned them. They are not encrypted with this key, so rotating it does not invalidate them, and the database is the security boundary for those. Treat a database dump accordingly. [Compliance](/security-and-privacy) says the same thing from the other direction.
-</Note>
-
-Read [`ENCRYPTION_KEY`](#encryption-key) before you rotate this. Setting it is what makes rotating this variable safe, and on a fresh install it costs you nothing to do now.
-
-### `ENCRYPTION_KEY`
-
-The key used to encrypt stored secrets: API keys, the OAuth client secrets and codes PostQueen issues, saved provider credentials and cookie logins. Unset, it falls back to `JWT_SECRET`, which is why every install that has never set it has the two jobs welded together. It does not cover a channel's own access and refresh tokens, as described above.
-
-Set it once, to the value `JWT_SECRET` currently holds. Nothing re-encrypts and nothing breaks, because the fallback was already using that value. What changes is that `JWT_SECRET` becomes a signing key you can rotate whenever you like, and the worst it can then do is log everyone out.
-
-### `PREVIOUS_ENCRYPTION_KEY`
-
-The old value, while you are rotating `ENCRYPTION_KEY`. Decryption tries the current key first and falls back to this one, so rows written under the old key keep opening.
-
-Rotate in this order: copy the current key into `PREVIOUS_ENCRYPTION_KEY`, put the new key in `ENCRYPTION_KEY`, restart. Leave both set afterwards. A row is only rewritten under the new key when something happens to rewrite it, so a refresh token for a channel nobody touches stays on the old key indefinitely, and dropping `PREVIOUS_ENCRYPTION_KEY` too early is what loses it.
-
-### `FRONTEND_URL` <sup>Required</sup>
-
-The URL the **browser** uses to reach the PostQueen frontend. Used as the OAuth redirect base and for email links.
-
-```
-FRONTEND_URL="https://postqueen.example.com"
-```
-
-### `NEXT_PUBLIC_BACKEND_URL` <sup>Required</sup>
-
-The URL the **browser** uses to reach the PostQueen backend. What goes here depends on how you
-deployed her, and the two shapes are not interchangeable.
-
-**One address, which is what the official image and Compose file do.** A proxy inside the
-container sends anything under `/api` to the backend, so the backend is a path on the same
-origin:
-
-```
-NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api"
-```
-
-**Separate hostnames**, which applies when you run the frontend and backend as separate
-services, from source or in Kubernetes:
-
-```
-NEXT_PUBLIC_BACKEND_URL="https://api.postqueen.example.com"
-```
-
-<Warning>
-Dropping the `/api` suffix on a Compose install is a common mistake. Requests then land on the
-frontend instead of the backend and everything after sign-in fails. If you are unsure which
-shape you have, check the shipped `docker-compose.yaml`: it uses the `/api` form.
-</Warning>
-
-Note that a trailing slash on any of these URLs is reported as a configuration issue on boot.
-
-### `BACKEND_INTERNAL_URL` <sup>Required</sup>
-
-The URL the **frontend server** uses to reach the backend, server to server. This is not a
-public address. On the official image both run in the same container, so it stays
-`http://localhost:3000` no matter what your domain is. In a split deployment it is the
-backend's internal address, such as `http://backend:3000`.
-
----
-
-## Application behavior
-
-<Warning>
-**Writing `false` turns most of these on.** Only seven variables compare against the literal
-string `true`: `DISABLE_REGISTRATION`, `PASSWORDLESS_LOGIN`, `DISABLE_SSRF_PROTECTION`,
-`TEMPORAL_TLS`, `EMAIL_SECURE`, `REQUIRE_EMAIL_ACTIVATION` and `UPLOAD_VIA_SERVER`. Every other switch on this page is read as
-`!!process.env.NAME`, and in JavaScript the string `"false"` is truthy.
-
-So for `IS_GENERAL`, `POSTQUEEN_GENERIC_OAUTH`, `DISABLE_IMAGE_COMPRESSION`, `RUN_CRON`
-and their neighbours: set the variable to enable, and **remove the line** to disable.
-Setting it to `false`, `0` or `no` enables it just as surely as `true` does.
-</Warning>
-
-### `DISABLE_REGISTRATION`
-
-Set to `true` and only the first account can be created. After that, sign-up is refused. Useful for self-host where you want full control.
-
-It gates **account creation only**, never signing in. Everyone who already has an account keeps logging in normally, because the check is reached only on the branch that would create a new user.
-
-<Note>
-One exception is worth knowing before you rely on this. Your own OIDC provider is **exempt**: a person who signs in through it for the first time still gets an account, even with this set. GitHub, Google and Apple are not exempt. So if your goal is to close the door completely, close it at your identity provider as well.
-</Note>
-
-### `API_LIMIT`
-
-Per-hour allowance, per organization, on the public-API create-post endpoint. Defaults to `90`, and the shipped `docker-compose.yaml` sets `30`, so raise it there if you drive PostQueen from scripts. It is one number for the whole instance and the same on every plan: channel and post quotas are what plans tier. Uploads have their own allowance, `UPLOAD_LIMIT`.
-
-### `UPLOAD_LIMIT`
-
-Per-hour allowance, per organization, on uploads: `POST /public/v1/upload`, `/public/v1/upload-from-url` and the uploads you make in the app. Defaults to `300`. Before v3.5.2 uploads drew on `API_LIMIT` instead, so with the shipped `30`, choosing more than 30 files at once in the media library failed the rest.
-
-### `RUN_CRON`
-
-When set, the backend process runs the scheduled-task workers. Leave unset on API-only instances when workers are deployed separately. Any non-empty value counts as set, `false` included, so remove the variable to turn it off.
-
-### `RESTRICT_UPLOAD_DOMAINS`
-
-A single substring that every media URL in a `POST /public/v1/posts` body must contain, usually your own host or CDN. Unset, any URL passes.
-
-Two things about it surprise people. It is **one value, not a list**: the check is a plain substring test against the whole URL, so `a.com,b.com` demands that literal text and nothing ever matches. And it does **not** guard `/public/v1/upload-from-url`, which has its own rules: the URL must end in one of six extensions and must not point at a private address.
-
-### `DISALLOW_PLUS`
-
-When set, any email address containing a `+` is refused at the door. It exists to stop one person opening account after account with plus-addressed aliases.
-
-Read that carefully before you switch it on, because it applies to **signing in as well as signing up**. Anyone who already has an account at an address like `you+postqueen@example.com` is locked out of it the moment this is set. Only email and password are affected: sign-in through GitHub, Google or your own OIDC provider goes around the check entirely, and nothing in the interface changes.
-
-### `IS_GENERAL`
-
-The product-line switch, and the shipped compose file turns it on. It decides where `/` lands (`/launches`, the calendar, when set, and `/analytics` when not), which sign-in buttons appear (your own OIDC provider when `POSTQUEEN_GENERIC_OAUTH` is also set, [Google](#sign-in-with-google) otherwise, joined by [Apple](#sign-in-with-apple) once it is configured, and GitHub when `IS_GENERAL` is unset), and a handful of labels and billing screens. Set it to `"true"`. Google sign-in uses the YouTube OAuth client; there is no `GOOGLE_CLIENT_ID`.
-
-<Warning>
-Despite the name, `IS_GENERAL` is **not** the switch between a hosted and a self-hosted install. Plans, limits and billing turn on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set. Without them every workspace behaves as the top tier, whatever `IS_GENERAL` says.
-</Warning>
-
-### `DISABLE_IMAGE_COMPRESSION`
-
-When truthy, the frontend skips client-side image compression on upload. Set this if you need pixel-exact originals at the cost of larger uploads.
-
-### `DISABLE_SSRF_PROTECTION`
-
-Every request the backend and the orchestrator send to a URL somebody could influence goes through an SSRF guard. That covers calls to a network's API, the self-hosted ones included (WordPress, Mastodon, Lemmy, Listmonk, a Bluesky PDS), the media she downloads before handing it to a network, outgoing webhooks and `/public/v1/upload-from-url`. The guard resolves the host and refuses loopback, private and link-local addresses. A refused request fails as `fetch failed`, with `Error: Blocked IP` in the backend or orchestrator logs.
-
-Set it to `true` to switch the guard off. Both the backend and the orchestrator read it, so set it wherever those two take their environment.
-
-<Warning>
-This switches the guard off for the whole instance, not for one provider. Only do it when PostQueen has to reach those services over a trusted private network (the same Docker network, a VPC, a home LAN) **and** everyone with an account on the instance is trusted: anyone who can submit a URL can then make the server fetch your internal services. When you can, fix DNS or routing instead, so the hostname resolves to an address the guard accepts.
-</Warning>
-
-### `NOT_SECURED`
-
-Set `true` so login cookies work over plain HTTP (Safari, and hosts that are not treated as
-localhost). On Compose, put it in the sibling `.env`; the YAML does not set it for you.
-
-<Warning>
-Dev and local HTTP only. Never set in production: it disables security checks that exist for
-a reason. Production uses HTTPS instead. See [Try her locally](/installation/quickstart-local)
-and [Domain and HTTPS](/installation/domain-and-https).
-</Warning>
-
-### `MAIN_URL`
-
-Primary application URL used for absolute links in some emails and SEO metadata. Falls back to `FRONTEND_URL` when not set.
-
-### `EXTENSION_ID`
-
-The Chrome Extension ID for cookie-based platform integrations (e.g. Skool). Setup: [Chrome Extension guide](/configuration/chrome-extension).
-
-### `MOBILE_APP_SCHEME`
-
-URL scheme used for deep-linking from emails into the mobile app.
-
----
-
-## Storage
-
-See also: [Cloudflare R2](/configuration/r2) and [Uploads & Storage](/configuration/uploads).
-
-| Variable | Purpose |
+| Variable | What it is |
 |---|---|
-| `STORAGE_PROVIDER` | `local` or `cloudflare`. **Set it explicitly.** Writing falls back to `local`, but the frontend rewrite that serves `/uploads/...` tests for the literal string `local`, so leaving it unset uploads your files successfully and then serves every one of them as a 404. |
-| `UPLOAD_DIRECTORY` | Filesystem path for `local` storage writes. |
-| `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` | The URL path segment for uploaded files, **with no leading slash**. Defaults to `uploads`. It is joined after a slash that is already there, so `/uploads` gives you `https://host//uploads/...`. |
-| `PREVIOUS_FRONTEND_URLS` | Addresses a `local`-storage instance used to run under, comma-separated and written in full. On boot, upload addresses stored under them are moved to the current `FRONTEND_URL`. See [Moving to a new address](/configuration/uploads#moving-to-a-new-address). |
-| `CLOUDFLARE_ACCOUNT_ID` | R2 account ID. |
-| `CLOUDFLARE_ACCESS_KEY` | R2 access key. |
-| `CLOUDFLARE_SECRET_ACCESS_KEY` | R2 secret access key. |
-| `CLOUDFLARE_BUCKETNAME` | R2 bucket name. |
-| `CLOUDFLARE_BUCKET_URL` | Where media is read from. A custom domain on the bucket, the r2.dev development URL, or `https://your-host/api/uploads` to have PostQueen serve it from a private bucket. **Not** the S3 API endpoint, which refuses unsigned reads. Stored with every media row and fetched by the social networks themselves, so the choice matters — see [Uploads and Storage](/configuration/uploads). |
-| `CLOUDFLARE_REGION` | R2 region (usually `auto`). |
-| `CLOUDFLARE_JURISDICTION` | Only for buckets created with a jurisdiction, such as `eu` for data residency. Those buckets answer on their own endpoint (`<account>.eu.r2.cloudflarestorage.com`) and are invisible on the account-wide one, so omitting it makes an existing bucket look missing. Leave blank otherwise. |
-| `UPLOAD_VIA_SERVER` | `true` posts files to the backend, which writes them to storage, instead of the browser uploading straight to the bucket with a presigned URL. Only affects `cloudflare` storage. Costs server bandwidth, but survives anything that rewrites the request in transit — see [Uploads and Storage](/configuration/uploads). |
-| `UPLOAD_TMP_DIR` | Where uploads are spooled while being written to storage. Defaults to the system temp directory. Files are deleted once storage has them. |
+| `DATABASE_URL` | PostgreSQL connection string, for example `postgresql://user:password@postqueen-postgres:5432/postqueen-db-local`. |
+| `REDIS_URL` | Redis connection string, starting with `redis://`. Holds caches, rate-limit counters and short-lived sign-in state. The schedule lives in Temporal, not Redis. |
+| `JWT_SECRET` | A long random string that signs login sessions. Changing it signs everyone out. Unless `ENCRYPTION_KEY` is set it also encrypts stored secrets: see [Encryption keys](#encryption-keys). |
+| `FRONTEND_URL` | The address people open in the browser, for example `https://postqueen.example.com`. Every network's redirect address, email links and the allowed browser origin are built from it. |
+| `NEXT_PUBLIC_BACKEND_URL` | The address the browser uses for the API. With the official image it is `FRONTEND_URL` + `/api`. With a backend on its own host, that host with no path. |
+| `BACKEND_INTERNAL_URL` | How the web app's server reaches the API. `http://localhost:3000` in the official image, whatever your domain. In a [split deployment](/reverse-proxies/split-deployments), the backend's internal address. |
+| `MAIN_URL` | Added to the allowed browser origins next to `FRONTEND_URL`. Set it to the same address. |
+| `STORAGE_PROVIDER` | `local` or `cloudflare`. See [Storage and media](#storage-and-media). |
 
----
+## Encryption keys
+
+| Variable | What it is |
+|---|---|
+| `ENCRYPTION_KEY` | Encrypts the secrets PostQueen stores: the workspace API key, OAuth app client secrets, the passwords and keys typed in to connect networks such as Bluesky, WordPress and Nostr, and the Skool cookies. Unset, `JWT_SECRET` is used. |
+| `PREVIOUS_ENCRYPTION_KEY` | The key the data was encrypted with before the current one. Decryption tries `ENCRYPTION_KEY` first, then this. |
+
+A channel's OAuth access and refresh tokens, the ones a network hands back after sign-in, are stored as the network returned them and are not encrypted with this key. Treat a database dump as sensitive.
+
+- **On a new install**, set `ENCRYPTION_KEY` to its own random value before there is data. `JWT_SECRET` then only signs sessions, and rotating it only signs people out.
+- **On an install that never set it**, set `ENCRYPTION_KEY` to the current value of `JWT_SECRET`. Nothing needs re-encrypting, because that is the key already in use. After that you can rotate `JWT_SECRET` freely.
+- **To rotate `ENCRYPTION_KEY`**, copy the current value into `PREVIOUS_ENCRYPTION_KEY`, put the new value in `ENCRYPTION_KEY`, and recreate the container. Leave both set: a row is re-encrypted only when something rewrites it, so data nobody touches stays on the old key.
+
+## How switches are read
+
+<Warning>
+**For most switches, `false` means on.** Only these compare against the exact string `true`: `DISABLE_REGISTRATION`, `PASSWORDLESS_LOGIN`, `WALLET_LOGIN`, `REQUIRE_EMAIL_ACTIVATION`, `NOT_SECURED`, `DISABLE_SSRF_PROTECTION`, `TEMPORAL_TLS`, `EMAIL_SECURE`, `UPLOAD_VIA_SERVER` and `NEYNAR_SPONSOR_SIGNERS`. Every other switch on this page is on when it has any value, so `IS_GENERAL=false`, `RUN_CRON=false` or `POSTQUEEN_GENERIC_OAUTH=false` all turn the setting **on**. Remove the variable to turn one off. With Docker Compose, `IS_GENERAL` and `RUN_CRON` also have a default of `true` in `docker-compose.yaml`, so delete their lines there.
+</Warning>
+
+`PRISMA_MIGRATE` has its own rule: see [Background work](#background-work).
+
+## Sign-up and sign-in
+
+| Variable | What it does |
+|---|---|
+| `DISABLE_REGISTRATION` | `true` refuses new accounts once the first workspace exists. Existing accounts sign in as before. People invited without an account cannot create one, except through your own [single sign-on](/configuration/oauth) provider. |
+| `IS_GENERAL` | Set it (the Compose file does). It makes `/` open the calendar and shows the Google sign-in button with its companions. Unset, `/` opens analytics and only GitHub sign-in is offered. It does not switch billing: billing turns on only when both Stripe keys are set. |
+| `NOT_SECURED` | `true` drops the `Secure` flag from the login cookie so sign-in works over plain HTTP. For a local try only: on a reachable server it sends sessions in the clear. |
+| `DISALLOW_PLUS` | Refuses email addresses with a `+`, for signing in as well as signing up, so an existing `you+tag@example.com` account is locked out. Sign-in through Google, GitHub or single sign-on is not affected. |
+| `PASSWORDLESS_LOGIN` | `true` signs people in with a one-time code by email. Needs working [email](/configuration/emails). See [Abuse protection and rate limits](/configuration/rate-limits#passwordless-sign-in). |
+| `REQUIRE_EMAIL_ACTIVATION` | `true` makes a new email-and-password account click an emailed link before it can sign in, once mail can go out. See [Email](/configuration/emails). |
+| `WALLET_LOGIN` | `true` adds **Continue with Wallet** (Solana wallets) to the sign-in and sign-up screens. |
+| `MOBILE_APP_SCHEME` | Where `/auth/oauth-mobile-callback` sends a sign-in made from a mobile app of your own. Default `postqueen://auth/callback`. |
+
+### Sign-in buttons
+
+| Button | Shows when | Variables |
+|---|---|---|
+| Your own OIDC provider | `IS_GENERAL` and `POSTQUEEN_GENERIC_OAUTH` are set. It replaces every other button. | See [Single sign-on (OIDC)](/configuration/oauth) |
+| Google | `IS_GENERAL` is set and single sign-on is not | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`: sign-in shares the YouTube web client and its redirect URI, `/integrations/social/youtube`. There is no `GOOGLE_CLIENT_ID`. Setup: [YouTube setup](/installation/providers/youtube). |
+| Apple | Next to Google, once `APPLE_CLIENT_ID` is set | `APPLE_CLIENT_ID` (the Services ID), `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` (the `.p8` key; write line breaks as `\n`), and optionally `APPLE_APP_BUNDLE_ID` for a native iOS app of your own. Register `NEXT_PUBLIC_BACKEND_URL` + `/auth/oauth/apple/redirect` as the return URL. |
+| Farcaster | Next to Google, once `NEYNAR_CLIENT_ID` is set | `NEYNAR_CLIENT_ID` |
+| Wallet | Next to Google, when `WALLET_LOGIN` is `true` | `WALLET_LOGIN` |
+| GitHub | Only when `IS_GENERAL` is unset | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` |
+
+Set the four Apple values together: the button appears with `APPLE_CLIENT_ID` alone and fails without the rest.
+
+## Background work
+
+Temporal runs the schedule, and the orchestrator runs its workers. See [Self-hosting overview](/installation/overview#what-runs).
+
+| Variable | What it does |
+|---|---|
+| `TEMPORAL_ADDRESS` | The Temporal server's `host:port`. `temporal:7233` in the Compose file. Without a reachable server, nothing publishes and no mail is sent. |
+| `TEMPORAL_NAMESPACE` | Temporal namespace. Default `default`. |
+| `TEMPORAL_TLS` | `true` for a server behind TLS, such as Temporal Cloud. |
+| `TEMPORAL_API_KEY` | API key for Temporal Cloud. |
+| `RUN_CRON` | Set on **one** backend: at start it launches the recurring workflows, which recover posts that failed to schedule, sync analytics and settle billing. Unset, none of them runs. The Compose file sets it; the Helm chart does not. |
+| `ACCOUNT_PURGE_MODE` | The daily purge of what deleted workspaces and users leave behind, three days after deletion. `dry-run` logs what it would remove, `on` removes it, anything else (the default) is off. Independent of `RUN_CRON`. |
+| `ACCOUNT_PURGE_HOLD` | Workspace or user ids the purge leaves alone, separated by commas. |
+| `PRISMA_MIGRATE` | How the schema is applied at start. Unset, empty, `false`, `False`, `FALSE` or `0` runs `prisma db push --accept-data-loss`; any other value runs `prisma migrate deploy`. See [Backups and upgrades](/installation/backups-and-upgrades#where-the-schema-changes). |
+| `ORCHESTRATOR_PORT` | Port of the orchestrator's health endpoint. Default `3002`. |
+| `WORKER_CONCURRENCY_DIVIDER` | Divides each network's worker concurrency, so several worker machines together stay within what the network allows. Set it to the number of worker machines. |
+| `EXCLUDE_QUEUE` | Queues this worker does not serve, separated by commas, for example `media` to keep it out of video conversion. For pinning a queue to one machine. |
+
+## Storage and media
+
+Setup and trade-offs: [Uploads and storage](/configuration/uploads) and [Cloudflare R2](/configuration/r2).
+
+| Variable | What it does |
+|---|---|
+| `STORAGE_PROVIDER` | `local` (the default when unset) or `cloudflare`. |
+| `UPLOAD_DIRECTORY` | Where `local` storage writes files. Required with `local`: without it the backend does not start. In the official image it must be `/uploads`, the folder nginx serves. |
+| `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` | The URL path for local files, without slashes: `uploads`. |
+| `PREVIOUS_FRONTEND_URLS` | Addresses a `local` install used to run under, separated by commas. At start, stored file addresses under them move to the current `FRONTEND_URL`. See [Uploads and storage](/configuration/uploads#move-to-a-new-address). |
+| `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ACCESS_KEY`, `CLOUDFLARE_SECRET_ACCESS_KEY`, `CLOUDFLARE_BUCKETNAME` | The R2 account, token and bucket. |
+| `CLOUDFLARE_BUCKET_URL` | The public address media is read from: a custom domain, the `r2.dev` address, or your own `https://postqueen.example.com/api/uploads`. Never the `r2.cloudflarestorage.com` API endpoint. |
+| `CLOUDFLARE_REGION` | Usually `auto`. |
+| `CLOUDFLARE_JURISDICTION` | Only for a bucket created with a jurisdiction, such as `eu`. |
+| `UPLOAD_VIA_SERVER` | `true` sends R2 uploads through the backend instead of from the browser straight to the bucket. |
+| `UPLOAD_TMP_DIR` | Where uploads wait while they are written to storage, and where ffmpeg works. Default: the system temp folder. Keep about 2.5 times the largest upload free. |
+| `MEDIA_PROCESSING_CONCURRENCY` | How many uploaded videos one orchestrator converts at once. Default `1`. |
+| `FFMPEG_PATH`, `FFPROBE_PATH` | Only outside the image, which ships both: point them at an ffmpeg build with libass. |
+| `FFMPEG_TIMEOUT_MS` | Limit for one ffmpeg run, in milliseconds. Default 20 minutes. |
+| `DISABLE_IMAGE_COMPRESSION` | Skips the browser's image compression before upload, to keep originals byte for byte. |
+
+## Limits and safety
+
+| Variable | What it does |
+|---|---|
+| `API_LIMIT` | Posts created through the public API per workspace per hour. Default 90; the Compose file sets 30. |
+| `UPLOAD_LIMIT` | Uploads per workspace per hour, through the public API and the app together. Default 300. |
+| `RESTRICT_UPLOAD_DOMAINS` | One piece of text that every media URL in a public API post must contain, usually your media host. A plain text match, not a list. |
+| `DISABLE_SSRF_PROTECTION` | `true` lets the server fetch private and local addresses: a WordPress, Mastodon, Lemmy, Listmonk or Bluesky server on your own network, webhooks and media downloads. Refused requests fail as `fetch failed` with `Blocked IP` in the log. It applies to the whole install, so set it only when everyone who can add a channel or a webhook is trusted. |
+| `GUARD_*`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET` | Sign-in rate limits and an optional captcha: see [Abuse protection and rate limits](/configuration/rate-limits). |
 
 ## Email
 
-See also: [Email configuration](/configuration/emails).
+Setup: [Email](/configuration/emails).
 
-| Variable | Purpose |
+| Variable | What it does |
 |---|---|
-| `EMAIL_PROVIDER` | `resend` or `nodemailer`. There is no default: leave it unset and the install sends no email at all. |
-| `RESEND_API_KEY` | Resend API key, required when `EMAIL_PROVIDER=resend`. |
-| `EMAIL_HOST` | SMTP host, required when `EMAIL_PROVIDER=nodemailer`. |
-| `EMAIL_PORT` | SMTP port. |
-| `EMAIL_USER` | SMTP user. |
-| `EMAIL_PASS` | SMTP password. |
-| `EMAIL_SECURE` | `true` for SMTPS / implicit TLS. |
-| `EMAIL_FROM_ADDRESS` | From-address used on all outgoing email. |
-| `EMAIL_FROM_NAME` | From-name used on all outgoing email. |
-| `REQUIRE_EMAIL_ACTIVATION` | `true` makes a new email-and-password account wait for its activation link before it can sign in. Off unless set. |
+| `EMAIL_PROVIDER` | `resend` or `nodemailer`. Anything else, including unset, sends nothing. |
+| `EMAIL_FROM_ADDRESS`, `EMAIL_FROM_NAME` | The sender. Without both, no mail goes out even with a provider. |
+| `RESEND_API_KEY` | For `resend`. |
+| `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` | For `nodemailer`, your SMTP server. |
+| `EMAIL_SECURE` | `true` for TLS from the first byte, usually port 465. |
 
-<Warning>
-Activation has a switch of its own. A new email-and-password account has to be activated before it can be used only when `REQUIRE_EMAIL_ACTIVATION` is `true` **and** the install can deliver mail, meaning `EMAIL_PROVIDER` names a provider and both `EMAIL_FROM_ADDRESS` and `EMAIL_FROM_NAME` are set. Short of either, the account is active immediately, so configuring a provider for password resets does not switch activation on by itself.
+## Networks
 
-The trap is turning activation on with a provider you have not finished configuring. `EMAIL_PROVIDER=resend` with no `RESEND_API_KEY` still counts as a provider, so every new signup is created inactive, the activation mail fails quietly, and nobody can get in. Either configure the provider fully or leave `REQUIRE_EMAIL_ACTIVATION` unset. Sign-ups through a provider such as Google or your own OIDC provider skip activation, because the provider has already vouched for the address.
-</Warning>
+Each network's developer app variables, redirect URI and setup page are on [Channel developer apps](/installation/providers/overview). Eight networks read no variable: Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr and WordPress.
 
----
-
-## OAuth sign-in (OIDC)
-
-See also: [OAuth configuration](/configuration/oauth).
-
-| Variable | Purpose |
+| Network | Variables |
 |---|---|
-| `POSTQUEEN_GENERIC_OAUTH` | `true` to enable a generic OIDC sign-in provider. |
-| `POSTQUEEN_OAUTH_AUTH_URL` | Authorization endpoint. |
-| `POSTQUEEN_OAUTH_TOKEN_URL` | Token endpoint. |
-| `POSTQUEEN_OAUTH_USERINFO_URL` | UserInfo endpoint. |
-| `POSTQUEEN_OAUTH_CLIENT_ID` | Client ID issued by the IdP. |
-| `POSTQUEEN_OAUTH_CLIENT_SECRET` | Client secret issued by the IdP. |
-| `NEXT_PUBLIC_POSTQUEEN_OAUTH_DISPLAY_NAME` | Label shown on the sign-in button. |
-| `NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL` | Icon shown on the sign-in button. |
+| Instagram and Facebook Page (the Facebook app) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` |
+| Instagram (Standalone) | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` |
+| Threads | `THREADS_APP_ID`, `THREADS_APP_SECRET` |
+| X | `X_API_KEY`, `X_API_SECRET`, and optionally `X_URL`, `DISABLE_X_ANALYTICS`, `STRIP_LINKS_FROM_X_POSTS` |
+| LinkedIn and LinkedIn Page | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` |
+| TikTok | `TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET` |
+| TikTok Business | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` |
+| YouTube | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` |
+| Google Business Profile | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET`, or the YouTube client when unset |
+| Pinterest | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` |
+| Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` |
+| Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` |
+| Slack | `SLACK_ID`, `SLACK_SECRET` |
+| Telegram | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` |
+| Mastodon | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` |
+| Tumblr | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` |
+| Twitch | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` |
+| Kick | `KICK_CLIENT_ID`, `KICK_SECRET` |
+| VK | `VK_ID` |
+| Dribbble | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` |
+| Whop | `WHOP_CLIENT_ID` |
+| MeWe | `MEWE_HOST`, `MEWE_APP_ID`, `MEWE_API_KEY` |
+| Farcaster | `NEYNAR_SECRET_KEY`, `NEYNAR_APP_FID`, `NEYNAR_APP_MNEMONIC`, and optionally `NEYNAR_SPONSOR_SIGNERS` |
+| Skool | `EXTENSION_ID`, and optionally `EXTENSION_STORE_URL`: see [Chrome extension](/configuration/chrome-extension) |
 
----
+Kick's secret is `KICK_SECRET`, and Dribbble's variables are spelled with three `b` characters.
 
-## Sign in with Google
+### Farcaster
 
-There is no `GOOGLE_CLIENT_ID`. When `IS_GENERAL` is set and you have not switched on
-`POSTQUEEN_GENERIC_OAUTH`, the **Continue with Google** button uses the YouTube OAuth client:
+The channel connects through a Neynar managed signer, which the person approves by scanning a QR code in the Farcaster app. There is no redirect URI.
 
-| Variable | Purpose |
+| Variable | What it is |
 |---|---|
-| `YOUTUBE_CLIENT_ID` | Web client ID. Sign-in and YouTube connect both send this. |
-| `YOUTUBE_CLIENT_SECRET` | Matching secret. |
+| `NEYNAR_SECRET_KEY` | Your Neynar API key. |
+| `NEYNAR_APP_FID` | The Farcaster ID of the account that represents your app. Without it and the next one, the connect stops with "Farcaster is not configured". |
+| `NEYNAR_APP_MNEMONIC` | The recovery phrase of that account's wallet. It signs the signer requests. Keep it like a private key. |
+| `NEYNAR_SPONSOR_SIGNERS` | `true` lets Neynar pay the signer fee from your Neynar credits. Otherwise the person pays it in the Farcaster app. |
+| `NEYNAR_CLIENT_ID` | Only shows the **Continue with Farcaster** sign-in button. The channel does not use it. |
 
-Login asks only for `userinfo.profile` and `userinfo.email`, and comes back to
-`{FRONTEND_URL}/integrations/social/youtube`, the same redirect URI as connecting a YouTube
-channel. Create **one** web client and put that redirect on it; do not register a second Google
-login app. The walkthrough is [YouTube setup](/installation/providers/youtube).
+`NEYNAR_APP_FID`, `NEYNAR_APP_MNEMONIC` and `NEYNAR_SPONSOR_SIGNERS` are not listed in the Compose file's YAML; the `.env` file passes them through. Setup: [Farcaster setup](/installation/providers/farcaster).
 
-Unset or empty keys make the button still render (it follows `IS_GENERAL`), then fail when Google
-rejects the request. A wrong secret is worse: Google still shows consent (that step only needs the
-client id), then `/auth/oauth/GOOGLE/exists` returns 500 with `invalid_client`. Add a new secret on
-the same web client and recreate the container; a plain restart keeps the old value.
+### Hide or move a network
 
-GitHub sign-in is the other product line: it shows only when `IS_GENERAL` is
-unset, and uses `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`.
-
----
-
-## Sign in with Apple
-
-An Apple button joins Google on the sign-in and sign-up screens once `APPLE_CLIENT_ID` is set. It
-follows Google's rules: it shows only when `IS_GENERAL` is set, and your own OIDC provider
-replaces it.
-
-| Variable | Purpose |
+| Variable | What it does |
 |---|---|
-| `APPLE_CLIENT_ID` | The Services ID you create for web sign-in in your Apple developer account. Setting it is what makes the button appear. |
-| `APPLE_TEAM_ID` | Your Apple developer Team ID. |
-| `APPLE_KEY_ID` | The ID of the Sign in with Apple private key. |
-| `APPLE_PRIVATE_KEY` | The contents of that `.p8` key. On a single line, write the line breaks as `\n` and she restores them. |
-| `APPLE_APP_BUNDLE_ID` | Optional. The bundle ID of a native iOS app of your own, accepted as a second audience so that app can sign people in with Apple too. Leave it unset for the web alone. |
+| `HIDDEN_PROVIDERS` | Network identifiers to leave out of **Add Channel**, separated by commas, for example `tiktok,x`. Channels already connected keep working. |
+| `MIGRATE_PROVIDERS` | `old:new` pairs, separated by commas, for example `tiktok:tiktok-business`. Reconnecting an `old` channel then runs the `new` network's sign-in and moves the channel over, keeping its id, scheduled posts and settings. Facebook Page, Instagram through Facebook, LinkedIn Page, YouTube, Google Business Profile and Tumblr cannot be a target. |
 
-Set the first four together. The button renders on `APPLE_CLIENT_ID` alone, and with any of the
-other three missing the sign-in fails.
+The identifier is the last part of the connect address, such as `tiktok` in `/integrations/social/tiktok`. The two are usually set together: hide the network you retire, and its channels move on their next reconnect.
 
-On the Services ID, register `{NEXT_PUBLIC_BACKEND_URL}/auth/oauth/apple/redirect` as the return
-URL, for example `https://postqueen.example.com/api/auth/oauth/apple/redirect`. Apple posts the
-result there. With a backend URL that is not https she wraps it through `redirectmeto.com`, the
-same way the social networks' callbacks are wrapped, so register the wrapped form in that case.
+## MCP and OAuth apps
 
----
+Details: [MCP on your server](/configuration/mcp).
 
-## Temporal (workflow orchestration)
-
-PostQueen uses Temporal for scheduled posts and background workflows.
-Self-host deployments need to run a Temporal stack (the official docker-compose
-ships with one). The scheduling architecture: [How PostQueen works](/introduction).
-
-| Variable | Purpose |
+| Variable | What it does |
 |---|---|
-| `TEMPORAL_ADDRESS` | host:port of the Temporal frontend. |
-| `TEMPORAL_NAMESPACE` | Temporal namespace to run workflows in. |
-| `TEMPORAL_API_KEY` | API key for Temporal Cloud. Leave unset for self-host. |
-| `TEMPORAL_TLS` | `true` to require TLS to the Temporal frontend. |
-| `ORCHESTRATOR_PORT` | Port the in-process orchestrator binds to. |
-| `WORKER_CONCURRENCY_DIVIDER` | Divides each provider's concurrency limit across this many worker servers, so the total never exceeds what the network allows. Set it to the number of servers you run. Leave unset on a single-server install. |
-| `EXCLUDE_QUEUE` | Comma separated list of provider queues this server should not process, for example `reddit,x,twitch`. Used to pin a queue to one server when a provider's concurrency limit is too low to split. Only relevant across multiple workers. |
+| `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | The base address MCP's OAuth discovery advertises for the resource, the issuer and the token, registration and userinfo endpoints. Falls back to `NEXT_PUBLIC_BACKEND_URL`. Set it to a host that serves the backend at its root: see [Split deployments](/reverse-proxies/split-deployments#give-the-backend-its-own-host). |
+| `DCR_VERIFIED_DOMAINS` | Domains, separated by commas, that self-registering OAuth clients may send people back to. With a list, an `https` callback must be on a listed domain or a subdomain of one. `localhost` and app schemes such as `cursor://` are not checked. Unset, any `https` callback registers. |
+| `OPENAI_OAUTH_CLIENT_ID` | The client id of a ChatGPT app you published. Turns on the `openid` and `email` scopes and the `/oauth/userinfo` endpoint, for that client and for self-registered clients whose callbacks are all on a `DCR_VERIFIED_DOMAINS` domain. |
+| `OPENAI_APP_CHALLANGE` | The domain verification string OpenAI gives you, served at `/.well-known/openai-apps-challenge`. The misspelling is the name the code reads. |
+| `MCP_ONLY` | Serves only MCP and its OAuth routes, for an instance that exists for that alone. The web app and the public API stop working on it. |
+| `AGENT_API_KEY` | Secret for `POST /public/agent`, which turns a text brief into a post. Unset, the route refuses every request. |
+| `ENTERPRISE_SECRET` | Key for a few provisioning routes used by reseller integrations. Unset, they refuse every request. If you set it, use a value of its own. |
 
----
+## AI
 
-## Public API & MCP
-
-| Variable | Purpose |
+| Variable | What it does |
 |---|---|
-| `MCP_URL` | URL the frontend uses to advertise the MCP endpoint to clients. |
-| `AGENT_API_KEY` | Shared secret used by the agent runtime to call privileged endpoints. |
-| `BACKEND_URL` | Legacy alias for `NEXT_PUBLIC_BACKEND_URL` in a few server contexts. |
-| `MCP_ONLY` | Strips the backend down to the MCP endpoint and the OAuth routes MCP clients authorize through. Every other route, the web app's and the public API's alike, is left unregistered, so set it only on an instance that exists to serve MCP. Read as a truthy switch: remove the line to turn it off. |
-| `DCR_VERIFIED_DOMAINS` | Comma separated domains that clients registering themselves through `POST /oauth/register` may send people back to, which is how MCP clients sign up. With a list, an https redirect address has to be on a listed domain or a subdomain of one. Loopback addresses (`localhost`, `127.0.0.1`, `[::1]`) and app schemes such as `cursor://` are not checked against it, so local clients keep working. Unset, any https address registers. Addresses a browser would execute, such as `javascript:`, are refused either way. |
-| `OPENAI_OAUTH_CLIENT_ID` | The OAuth client ID of your ChatGPT connector. That client alone may ask for the `openid` and `email` scopes, and with it set her discovery document advertises `/oauth/userinfo`, which returns the signed-in user's ID, email, whether the email is verified, and name. ChatGPT Enterprise reads this to restrict a connector to the company's email domains. Unset, none of this is offered. |
-| `ENTERPRISE_SECRET` | Leave it unset unless you run a reseller integration built against it. It is the key for a handful of provisioning routes under `/enterprise` and for `/public/modify-subscription`, and while it is unset they refuse every request. If you do set it, give it a value of its own, never the one in `JWT_SECRET`. |
+| `OPENAI_API_KEY` | Turns on the AI Copilot, AI images, the AI rewrite in the composer and the other OpenAI-backed features. Without it the Copilot answers "AI features are not configured on this installation." |
+| `TAVILY_API_KEY` | Gives the Copilot a web search tool. Optional. |
 
----
+## Billing
 
-## AI / generation
+A private install needs none of this: without both Stripe keys there is no billing and every workspace has every feature.
 
-| Variable | Purpose |
+| Variable | What it does |
 |---|---|
-| `OPENAI_API_KEY` | OpenAI key used for the copilot and AI image generation. |
-| `OPENAI_APP_CHALLANGE` | Verification challenge string for the OpenAI custom GPT integration. |
-| `ELEVENSLABS_API_KEY` | ElevenLabs API key for voice generation. |
-| `FAL_KEY` | fal.ai API key for image/video models. |
-| `TAVILY_API_KEY` | Tavily search API key used by the research tool. |
-| `EVOLINK_API_KEY` | EvoLink API key. Setting it turns on the Seedance 2.0 engine in [AI video](/using/media-library#ai-video). |
-| `TRANSLOADIT_AUTH` | Transloadit auth key for video pipelines. |
-| `TRANSLOADIT_SECRET` | Transloadit signing secret. |
-| `TRANSLOADIT_TEMPLATE` | Transloadit template ID used by the video generator. |
+| `STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY` | Together they turn on plans, limits and checkout. |
+| `STRIPE_SIGNING_KEY` | Signing secret of the Stripe webhook, which points at `NEXT_PUBLIC_BACKEND_URL` + `/payment/stripe`. |
+| `STRIPE_DISCOUNT_ID` | A Stripe coupon offered as a win-back discount. Unset, none is offered. |
+| `REVENUECAT_WEBHOOK_SECRET`, `REVENUECAT_SECRET_KEY`, `IN_APP_PURCHASE_REJECT_SANDBOX` | Subscriptions sold in a mobile app of your own through RevenueCat. The webhook points at `NEXT_PUBLIC_BACKEND_URL` + `/payment/revenuecat`. |
 
----
+## Interface
 
-## Short-link providers
-
-Pick one set. If more than one is configured the first in this order wins silently, and the choice
-is made once at startup. Setup walkthrough: [Short Links](/configuration/short-links).
-
-### Dub.co
-
-```env
-DUB_TOKEN=""
-DUB_API_ENDPOINT="https://api.dub.co"
-DUB_SHORT_LINK_DOMAIN="dub.sh"
-```
-
-### Short.io
-
-```env
-SHORT_IO_SECRET_KEY=""
-```
-
-### Kutt.it
-
-```env
-KUTT_API_KEY=""
-KUTT_API_ENDPOINT="https://kutt.it/api/v2"
-KUTT_SHORT_LINK_DOMAIN="kutt.it"
-```
-
-### LinkDrip
-
-```env
-LINK_DRIP_API_KEY=""
-LINK_DRIP_API_ENDPOINT="https://api.linkdrip.com/v1/"
-LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
-```
-
----
-
-## Payments
-
-| Variable | Purpose |
+| Variable | What it does |
 |---|---|
-| `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key. |
-| `STRIPE_SECRET_KEY` | Stripe secret key. |
-| `STRIPE_SIGNING_KEY` | Stripe webhook signing key for subscription events. Point the webhook at `{NEXT_PUBLIC_BACKEND_URL}/payment/stripe`. The older `{NEXT_PUBLIC_BACKEND_URL}/stripe` runs the same handler, so an endpoint registered there keeps working. |
-| `STRIPE_DISCOUNT_ID` | A Stripe coupon ID offered as a win-back discount. Unset means no discount is ever applied. |
+| `NEXT_PUBLIC_POLOTNO` | Polotno key for the design editor: see [Design editor (Polotno)](/configuration/polotno). |
+| `SUPPORT_EMAIL` | Where **Contact support** and **Report a bug** in the Help menu send mail. Without billing and without this, those two entries are hidden. |
+| `CHANGELOG_URL`, `COMMUNITY_URL` | Add **What's new** and **Community** links to the Help menu. |
+| `LEGAL_URL` | Where the terms and privacy links point. |
+| `REPOSITORY_URL` | Replaces the source code link in the interface. |
+| `AFFILIATE_URL` | Adds an **Affiliate** entry to the user menu that opens this address. Only shown with billing on. |
+| `AGENCY_NOTIFICATION_EMAIL` | Receives agency directory submissions. |
+| `ONBOARDING_VIDEO_URL` | A video shown in the first-run experience. |
+| `CHATBASE_BOT_ID`, `CHATBASE_TOKEN` | An in-app support chat widget, loaded only with both set. Use a bot you own: its agent can offer the signed-in user a refund on their own subscription. |
+| `NEXT_PUBLIC_APP_VERSION` | The version label. Fixed when the image is built. |
+| `DEV_BACKEND_PROXY` | Development only: the Next dev server proxies `/api` to this backend. Pair it with `NEXT_PUBLIC_BACKEND_URL=/api`. |
 
-Payments are only relevant if you are running PostQueen as a commercial service. A private
-self-hosted install needs none of this, and leaving it unset simply means no billing. Billing switches on only when both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` are set.
+## Short links
 
-### In-app purchases (RevenueCat)
+Setup: [Short links](/configuration/short-links). The first one configured in this order wins: `DUB_TOKEN` (with `DUB_API_ENDPOINT`, `DUB_SHORT_LINK_DOMAIN`), `SHORT_IO_SECRET_KEY`, `KUTT_API_KEY` (with `KUTT_API_ENDPOINT`, `KUTT_SHORT_LINK_DOMAIN`), `LINK_DRIP_API_KEY` (with `LINK_DRIP_API_ENDPOINT`, `LINK_DRIP_SHORT_LINK_DOMAIN`).
 
-If you publish a mobile app of your own that sells subscriptions through the App Store or Google
-Play, she can take its subscription state from RevenueCat. Nothing here is needed for the web app.
+## Newsletter for new sign-ups
 
-| Variable | Purpose |
+These add each new account's email address to a mailing list you run. They have nothing to do with posting.
+
+| Variable | What it does |
 |---|---|
-| `REVENUECAT_WEBHOOK_SECRET` | The value RevenueCat sends in the webhook's `Authorization` header. It has to match exactly, and while it is unset every webhook is refused with `401`. |
-| `REVENUECAT_SECRET_KEY` | RevenueCat secret API key. On each webhook she asks RevenueCat for the subscriber's current state instead of trusting the event body, and without this key the webhook answers `400` with `RevenueCat is not configured`. |
-| `IN_APP_PURCHASE_REJECT_SANDBOX` | Set it and sandbox purchases are ignored, so a test purchase never grants a plan. Read as a truthy switch. |
-
-Point the RevenueCat webhook at `{NEXT_PUBLIC_BACKEND_URL}/payment/revenuecat`, then check two
-things in your app before the first real purchase:
-
-- The app user ID it hands RevenueCat is the PostQueen **organization** ID.
-- Every product ID ends in `<tier>.<period>` or `<tier>_<period>`, where the tier is `standard`,
-  `team`, `pro` or `ultimate` and the period is `monthly` or `yearly`, for example
-  `com.example.app.pro.yearly`. Any other product ID is refused.
-
-An organization is billed on one platform at a time. Once its subscription comes from a store, the
-web billing screens answer *Your subscription is managed on mobile*, and cancelling happens in the
-store as well. Deleting the PostQueen account does not cancel a store subscription.
-
----
-
-## Abuse protection
-
-Rate limiting on the sign-in and sign-up endpoints is on by default and needs no configuration.
-The `GUARD_*` family tunes it, `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET` add a captcha, and
-`PASSWORDLESS_LOGIN` switches sign-in to emailed one-time codes. All of them, with their
-defaults, are on [Abuse Protection and Rate Limits](/configuration/rate-limits).
-
----
-
-## Deployment identity
-
-Cosmetic links and addresses she shows in the interface. Every one is optional.
-
-| Variable | Purpose |
-|---|---|
-| `LEGAL_URL` | Where the "terms" and "privacy" links point. |
-| `REPOSITORY_URL` | Overrides the source-code link in the interface. |
-| `AFFILIATE_URL` | Destination of the affiliate link, when you run a programme. |
-| `AGENCY_NOTIFICATION_EMAIL` | Address notified about agency directory submissions. |
-| `EXTENSION_STORE_URL` | Where the "install the extension" button sends people. |
-| `ONBOARDING_VIDEO_URL` | Video embedded in the first-run experience. |
-| `SUPPORT_EMAIL` | Where **Contact support** and **Report a bug** in the Help menu address their mail. Unset on a self-hosted instance (no billing), the Help menu leaves those two rows out rather than mail anyone else; set it to an inbox you read to bring them back. |
-| `CHANGELOG_URL` | Adds a **What's new** link to the Help menu. Unset, the entry is not shown. |
-| `COMMUNITY_URL` | Adds a **Community** link to the Help menu. Unset, the entry is not shown. |
-
-<Info>
-**`AFFILIATE_URL` points at your programme, not ours.** An **Affiliate** entry appears in the left
-rail only when you set it, and it sends people to whatever address you give it. It also needs
-billing switched on, so an install with no Stripe keys never shows it.
-
-There is no PostQueen-run programme behind this. The rail entry used to point at the vendor's, which
-sent every self-hosted install's users somewhere their operator never chose, and that was removed.
-</Info>
-
----
-
-## Analytics & error tracking
-
-All of this is optional, and a self-hosted install runs perfectly well with none of it set.
-Set the keys for the service you already run and leave the rest alone.
-
-| Variable | Purpose |
-|---|---|
-| `NEXT_PUBLIC_SENTRY_DSN` | Sentry project DSN. Set it and both frontend and backend report errors there. |
-| `SENTRY_SPOTLIGHT` | Sends errors to a local Spotlight debugger instead of Sentry. Development only; the official Compose file has a `debug` profile that runs one. |
-| `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Upload source maps at build time, so stack traces are readable. Only relevant if you build your own image. |
-| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | PostHog product analytics. Both are needed. |
-| `PLAUSIBLE_DOMAIN` | Loads the Plausible script for this domain. Privacy friendly and cookie free. |
-| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager container ID. |
-| `NEXT_PUBLIC_FACEBOOK_PIXEL` | Meta Pixel ID for the browser side. |
-| `FACEBOOK_PIXEL_ACCESS_TOKEN` | Server side companion to the pixel, for the Conversions API. |
-| `DATAFAST_API_KEY`, `DATAFAST_WEBSITE_ID` | Datafast analytics. |
-| `DUB_PUBLISHABLE_KEY` | Dub's client side analytics, separate from `DUB_TOKEN` used for short links. |
-| `NEXT_PUBLIC_TRACKING_TRIAL` | Fires a conversion event when a trial starts. Relevant to the hosted product rather than self-hosting. |
-
-All of these are read at runtime, so setting one and recreating the container is enough. The
-build-time exceptions are the three Sentry source map variables, which only matter when you
-build the image yourself.
-
----
-
-## Misc frontend
-
-| Variable | Purpose |
-|---|---|
-| `NEXT_PUBLIC_POLOTNO` | Polotno API key for the image editor. |
-| `NEXT_PUBLIC_APP_VERSION` | The version label shown beside the logo and in the Help menu, and added to the signature of support mail. Baked in when the image is built, and taken from the repository's `package.json` when unset, so set it only when you build your own image and want a different label. |
-| `CHATBASE_BOT_ID` and `CHATBASE_TOKEN` | The in-app support widget. It loads only when both are set, and the bot has to be one you own: its agent can offer the signed-in user a refund on their own subscription, behind a confirmation dialog showing the amount. Leave both unset and no widget loads. |
-| `DEV_BACKEND_PROXY` | Local development only. Makes the Next dev server proxy `/api` to a backend running elsewhere, such as a Compose stack on port 4007, so you can work on the frontend alone. Pair it with `NEXT_PUBLIC_BACKEND_URL="/api"`. Ignored in the built image. |
-| `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | Narrower than the name suggests. It replaces `NEXT_PUBLIC_BACKEND_URL` in one place only: the `token_endpoint` the MCP server advertises in its OAuth discovery document. Set it when your MCP clients have to reach that endpoint at a different address, such as through a tunnel. Nothing else in the app reads it. |
-
----
-
-## Social provider keys
-
-You came here to find out which variable belongs to which network. This table is
-that lookup, and the setup page in the third column is where the key-by-key
-walkthrough lives.
-
-Not every network appears below, and that is the point. Seven of them ask for no
-environment variable at all, because they take their credentials in the connect
-form itself. You type the key once in Add Channel and never open your `.env` file
-for them:
-
-- Bluesky
-- Dev.to
-- Hashnode
-- Lemmy
-- Listmonk
-- Nostr
-- WordPress
-
-Moltbook needs no environment variable either. It has a connect screen of its own
-that registers the channel and issues its key for you.
-
-Every network in [Providers](/channels/overview) connects from Add Channel whether
-or not it has a row in this table.
-
-| Provider | Variables | Setup |
-|---|---|---|
-| X (Twitter) | `X_API_KEY`, `X_API_SECRET`, `X_URL`, `DISABLE_X_ANALYTICS`, `STRIP_LINKS_FROM_X_POSTS` | [/installation/providers/x-twitter](/installation/providers/x-twitter) |
-| LinkedIn | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | [/installation/providers/linkedin](/installation/providers/linkedin), [/installation/providers/linkedin-page](/installation/providers/linkedin) |
-| Facebook / Instagram (FB) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | [/installation/providers/facebook](/installation/providers/facebook), [/installation/providers/instagram](/installation/providers/instagram) |
-| Instagram (Standalone) | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | [/installation/providers/instagram](/installation/providers/instagram) |
-| Threads | `THREADS_APP_ID`, `THREADS_APP_SECRET` | [/installation/providers/threads](/installation/providers/threads) |
-| YouTube (and Google sign-in) | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` | [/installation/providers/youtube](/installation/providers/youtube), [Sign in with Google](#sign-in-with-google) |
-| Google My Business | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET` (optional; falls back to the YouTube client) | [/installation/providers/google-my-business](/installation/providers/google-my-business) |
-| TikTok | `TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET` | [/installation/providers/tiktok](/installation/providers/tiktok) |
-| TikTok Business | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` | [/installation/providers/tiktok](/installation/providers/tiktok) |
-| Reddit | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | [/installation/providers/reddit](/installation/providers/reddit) |
-| Pinterest | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | [/installation/providers/pinterest](/installation/providers/pinterest) |
-| Discord | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | [/installation/providers/discord](/installation/providers/discord) |
-| Slack | `SLACK_ID`, `SLACK_SECRET` | [/installation/providers/slack](/installation/providers/slack) |
-| Telegram | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` | [/installation/providers/telegram](/installation/providers/telegram) |
-| Mastodon | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | [/installation/providers/mastodon](/installation/providers/mastodon) |
-| Dribbble | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | [/installation/providers/dribbble](/installation/providers/dribbble) |
-| Farcaster | `NEYNAR_CLIENT_ID`, `NEYNAR_SECRET_KEY` | [/installation/providers/farcaster](/installation/providers/farcaster) |
-| MeWe | `MEWE_HOST`, `MEWE_APP_ID`, `MEWE_API_KEY` | [/installation/providers/mewe](/installation/providers/mewe) |
-| Twitch | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | [/installation/providers/twitch](/installation/providers/twitch) |
-| Kick | `KICK_CLIENT_ID`, `KICK_SECRET` | [/installation/providers/kick](/installation/providers/kick) |
-| VK | `VK_ID` | [/installation/providers/vk](/installation/providers/vk) |
-| Whop | `WHOP_CLIENT_ID` | [/installation/providers/whop](/installation/providers/whop) |
-| Tumblr | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | [/installation/providers/tumblr](/installation/providers/tumblr) |
-| GitHub (sign-in) | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | [/configuration/oauth](/configuration/oauth) |
-| Apple (sign-in) | `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY`, `APPLE_APP_BUNDLE_ID` | [Sign in with Apple](#sign-in-with-apple) |
+| `BEEHIIVE_API_KEY`, `BEEHIIVE_PUBLICATION_ID` | Beehiiv. Used when the key is set. |
+| `LISTMONK_DOMAIN`, `LISTMONK_USER`, `LISTMONK_API_KEY`, `LISTMONK_LIST_ID`, `LISTMONK_WELCOME_TEMPLATE_ID` | Listmonk, when Beehiiv is not set and `LISTMONK_API_KEY` is. |
 
 <Note>
-Two variable names break the pattern and cost people an afternoon. Kick signs its
-secret as `KICK_SECRET`, not `KICK_CLIENT_SECRET`. Dribbble spells its variables
-with three `b` characters, `DRIBBBLE_CLIENT_ID` and `DRIBBBLE_CLIENT_SECRET`, while
-the network itself is spelled with two.
+`LISTMONK_*` does not configure the Listmonk channel. The channel takes its server address and API user in the connect form: see [Channel developer apps](/installation/providers/overview#networks-that-need-no-developer-app).
 </Note>
 
-### Hiding a provider, or moving its channels to another
+## Analytics and error tracking
 
-Two variables change what Add Channel offers without touching any keys. Both take provider
-identifiers, the last part of the connect address, such as `tiktok` in `/integrations/social/tiktok`.
+All optional.
 
-| Variable | Purpose |
+| Variable | What it does |
 |---|---|
-| `HIDDEN_PROVIDERS` | Comma separated identifiers to leave out of Add Channel, for example `tiktok,x`. Only the list changes: channels already connected on those providers are left as they are. |
-| `MIGRATE_PROVIDERS` | Comma separated `old:new` pairs, for example `tiktok:tiktok-business`. Reconnecting an `old` channel then runs the `new` provider's authorization and moves the channel across in place, keeping its ID, its scheduled posts and its settings. Connecting the same account through `new` from scratch adopts the existing channel rather than adding a duplicate. |
+| `NEXT_PUBLIC_SENTRY_DSN` | Sends frontend and backend errors to Sentry. |
+| `SENTRY_SPOTLIGHT` | `1` sends errors to a local Spotlight viewer instead. The Compose file's `debug` profile runs one. |
+| `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Upload source maps when you build your own image. |
+| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | PostHog product analytics. |
+| `NEXT_PUBLIC_GTM_ID` | Google Tag Manager. |
+| `NEXT_PUBLIC_FACEBOOK_PIXEL`, `FACEBOOK_PIXEL_ACCESS_TOKEN` | Meta Pixel and its server-side Conversions API. |
+| `DATAFAST_API_KEY`, `DATAFAST_WEBSITE_ID` | Datafast analytics. |
+| `DUB_PUBLISHABLE_KEY` | Dub's click analytics in the browser, separate from short links. |
+| `NEXT_PUBLIC_TRACKING_TRIAL` | Fires a conversion event when a trial starts. Only relevant with billing. |
 
-The two are usually set together: hide the provider you are retiring, and existing channels move
-over on their next reconnect. A pair whose target is not a provider this install offers is ignored.
-Facebook, Instagram through Facebook, LinkedIn Page, YouTube, Google Business Profile and Tumblr
-cannot be a target, because they finish their connect differently.
+## Listed in example files, but not read
 
----
+These appear in the Compose file or `.env.example` and change nothing: `FEE_AMOUNT`, `NX_ADD_PLUGINS`, `SLACK_SIGNING_SECRET`, `STRIPE_SIGNING_KEY_CONNECT`, `POSTQUEEN_OAUTH_URL` and `BACKEND_URL`. `MCP_URL` is passed to the web app, but no page uses it: the MCP addresses on **Connections** come from `NEXT_PUBLIC_BACKEND_URL`.
 
-## Product newsletter sender
+## Related
 
-This block trips people up, so read it before you copy anything into your `.env`
-file. These variables have nothing to do with posting. They subscribe each new
-PostQueen signup to a mailing list you own, and that is all they do.
-
-When someone registers, PostQueen calls one newsletter sender with their email
-address. It picks Beehiiv if `BEEHIIVE_API_KEY` is set, otherwise Listmonk if
-`LISTMONK_API_KEY` is set, otherwise nobody. Leave all of them unset and no
-signup email is ever forwarded anywhere.
-
-| Variable | Purpose |
-|---|---|
-| `BEEHIIVE_API_KEY` | Beehiiv API key. Setting this selects Beehiiv as the sender. |
-| `BEEHIIVE_PUBLICATION_ID` | Beehiiv publication the new signup is added to. |
-| `LISTMONK_DOMAIN` | Base URL of your Listmonk server, used for the subscriber call. |
-| `LISTMONK_USER` | Listmonk API user, sent as HTTP basic auth. |
-| `LISTMONK_API_KEY` | Listmonk API token. Setting this selects Listmonk as the sender. |
-| `LISTMONK_LIST_ID` | Numeric ID of the list the new signup is added to. |
-| `LISTMONK_WELCOME_TEMPLATE_ID` | Template ID for the welcome email sent to that new subscriber. |
-
-<Warning>
-`LISTMONK_*` does **not** configure the Listmonk channel. The channel you connect
-in Add Channel to publish campaigns asks for its URL, username and password in the
-connect form, and it ignores these variables completely. Setting them will not make
-the channel appear, and leaving them unset will not stop it working. See
-[Listmonk](/channels/listmonk) for the channel. There is no Beehiiv channel at
-all: Beehiiv exists only as a sender for the list above.
-</Warning>
-
----
-
-## Runtime & build
-
-These are read from the environment but are typically set by your runtime,
-hosting platform, or framework rather than set by hand.
-
-| Variable | Purpose |
-|---|---|
-| `PORT` | Port the backend HTTP server binds to. Defaults to `3000`. |
-| `ORCHESTRATOR_PORT` | Port the orchestrator binds to. Defaults to `3002`. |
-| `PRISMA_MIGRATE` | Apply the schema with `prisma migrate deploy` instead of `db push`. Unset, empty, `false` or `0` keeps `db push`; any other value switches to migrations, so a typo errs toward the safer path. See [Backups and Upgrades](/installation/backups-and-upgrades) before switching an existing database. |
-| `TZ` | Process timezone. The backend forces this to `UTC` on boot. |
-| `NODE_ENV` | Standard Node environment flag (`development` / `production`). Toggles dev-only behavior like sourcemaps. |
-| `NEXT_RUNTIME` | Set by Next.js (`nodejs` / `edge`) to select the instrumentation hook. Framework-injected. Do not set manually. |
-| `VERCEL_GIT_COMMIT_SHA` | Commit SHA used as the Sentry release tag on the frontend. Injected by Vercel. |
-| `GITHUB_SHA` | Fallback commit SHA for the Sentry release tag when not on Vercel. Injected by GitHub Actions. |
-
-### Leftovers you can delete
-
-The shipped `docker-compose.yaml` and `.env.example` still carry four variables that do nothing. PostQueen does not read `STRIPE_SIGNING_KEY_CONNECT`, `FEE_AMOUNT`, `SLACK_SIGNING_SECRET` or `NX_ADD_PLUGINS` at all, so setting them changes nothing and you can delete the lines.
+- [Docker Compose](/installation/docker-compose): where the variables go
+- [Channel developer apps](/installation/providers/overview)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)

@@ -1,3 +1,9 @@
-The OAuth2 Redirect URI is the location where the provider will redirect to after a successful login. This needs to be set to your PostQueen `FRONTEND_URL` + `/integrations/social/` + `{provider}`.
+The redirect URI is where the network sends the browser back after someone approves PostQueen. It is
+your `FRONTEND_URL` + `/integrations/social/` + the network's identifier, for example
+`https://postqueen.example.com/integrations/social/pinterest`.
 
-Most networks need exactly one URI. Google is the exception: sign-in, YouTube and Google My Business can share one web client, and each path (`/youtube`, `/gmb`) has to be listed. Never add a trailing slash.
+Most networks need exactly one URI, with no trailing slash. Two exceptions: TikTok Business needs
+the trailing slash (`/integrations/social/tiktok-business/`), and a Google web client that also
+serves Google Business Profile lists both `/integrations/social/youtube` and
+`/integrations/social/gmb`. [Channel developer apps](/installation/providers/overview) lists every
+network's ending.

@@ -1,98 +1,124 @@
 ---
-title: Self-Host Gotchas
-description: 'Common problems specific to running PostQueen yourself'
-icon: 'server'
+title: "Self-hosting troubleshooting"
+sidebarTitle: "Troubleshooting"
+description: "Fixes for the problems that come up on a self-hosted PostQueen: start-up, sign-in, connecting channels, posts that never publish, uploads and email."
+icon: "wrench"
 ---
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+Find the symptom and open it. Most answers start with the backend's log:
 
-The things that catch people out on their own install. Find your symptom and open it.
+```bash
+docker compose logs --tail 200 postqueen
+```
+
+At start, after `Backend started successfully on port 3000`, the backend checks its settings and logs each problem as a `Configuration issue`. It keeps running either way, so read those lines first.
+
+## Start-up
 
 <AccordionGroup>
-  <Accordion title="pnpm runs out of heap during install" icon="memory-stick">
-    The monorepo is large enough to overflow the default Node heap on a small VM.
-
-    ```bash
-    NODE_OPTIONS="--max-old-space-size=4096" pnpm install
-    ```
-
-    <Warning>
-    Do not set the heap above the VM's actual memory. That trades an OOM in Node for being killed
-    by the kernel. On a 2 GB box, build the image elsewhere and deploy the artifact.
-    [System requirements](/installation/overview) has the minimums.
-    </Warning>
+  <Accordion title="The container restarts in a loop, or gets killed">
+    Usually memory. The Compose stack needs about 4 GB. `docker stats` shows usage, and `dmesg` on the host shows the kernel killing a process.
   </Accordion>
-
-  <Accordion title="postgres ECONNREFUSED" icon="database">
-    The backend cannot reach Postgres.
-
-    | Check | What to look for |
-    |---|---|
-    | `DATABASE_URL` host | `localhost` fails from a container without host networking. Use the service name, `postqueen-postgres` |
-    | Postgres is up | `docker compose logs postqueen-postgres` shows *database system is ready to accept connections* |
-    | Port mapping | Exposed only on the Docker network is fine. External `psql` will not work, the backend will |
+  <Accordion title="The backend stops: UPLOAD_DIRECTORY is not set">
+    The log says `STORAGE_PROVIDER is "local" but UPLOAD_DIRECTORY is not set`. Local storage needs a folder. In the official image, set `UPLOAD_DIRECTORY=/uploads` and `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY=uploads`, as the Compose file does. See [Uploads and storage](/configuration/uploads).
   </Accordion>
-
-  <Accordion title="Default ports, and which one to open" icon="plug">
-    | How you run her | Ports |
-    |---|---|
-    | Official image `ghcr.io/gkhankinay/postqueen-app` | One port, `5000`. The shipped compose maps it to `4007:5000`, so you reach her at `http://localhost:4007/` |
-    | From source, `pnpm dev` | Frontend `4200`, backend `3000` (override with `PORT`). Put a [reverse proxy](/installation/domain-and-https) in front for one URL |
-
-    Temporal listens on `7233`, and its UI on `8080`, either way.
+  <Accordion title="The database connection is refused">
+    Check `DATABASE_URL`. Inside a container, `localhost` is the container itself: use the service name, `postqueen-postgres` in the Compose file. `docker compose logs postqueen-postgres` should show `database system is ready to accept connections`. Outside Compose, the container must be on the same Docker network as the database.
   </Accordion>
-
-  <Accordion title="Email is not sending" icon="mail">
-    She sends no email at all unless `EMAIL_PROVIDER` is exactly `resend` or `nodemailer`. Unset
-    means the no-op provider.
-
-    <Warning>
-    Check this before anything else, because it also decides activation. `EMAIL_PROVIDER=resend`
-    with no `RESEND_API_KEY` still counts as a provider, so new signups are created **inactive** and
-    wait for a mail that can never arrive.
-    </Warning>
-
-    With no provider configured at all she auto-activates users instead, so signup still works.
-    SMTP setup and the full variable list: [Email configuration](/configuration/emails).
+  <Accordion title="A port is already in use">
+    Another program holds 4007, 7233 or 8080. Stop it, or change the left-hand number of that port in `docker-compose.yaml`. If you move 4007, change the port in `MAIN_URL`, `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` too.
   </Accordion>
-
-  <Accordion title="Mounting the uploads volume" icon="folder">
-    With `STORAGE_PROVIDER=local`, point `UPLOAD_DIRECTORY` at the path she should write to, mount
-    it into the container, and set `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` so the frontend knows where
-    the files are served from. Next rewrites `/uploads/:path*` to `/api/uploads/:path*` when local
-    storage is active.
-
-    Running more than one container? Share the volume across all of them, or move to
-    [Cloudflare R2](/configuration/r2). Detail: [Uploads and storage](/configuration/uploads).
-  </Accordion>
-
-  <Accordion title="Can I deploy on Vercel?" icon="triangle-alert">
-    **Frontend, yes.** It is a standard Next.js app.
-
-    **Backend, no.** It is a NestJS server that also embeds a Temporal worker, so it needs a
-    long-running Node host: Fly.io, Render, Railway, a VM, a Kubernetes pod. Serverless functions
-    will not work.
-  </Accordion>
-
-  <Accordion title="Hiding a provider from the interface" icon="eye-off">
-    There is no environment variable for this today. The only way is to set the per-organization
-    `disabled` field on the Integration row in the database after connecting the channel.
-  </Accordion>
-
-  <Accordion title="Temporal is not reachable" icon="clock">
-    She schedules every post through Temporal, so the backend must reach the Temporal frontend at
-    `TEMPORAL_ADDRESS`. If it cannot, posts are accepted and never publish.
+  <Accordion title="Building from source runs out of memory">
+    The build needs more memory than running the image. Raise Node's limit for the build, `NODE_OPTIONS="--max-old-space-size=4096" pnpm run build`, but not above the machine's memory. On a small server, pull the published image instead of building.
   </Accordion>
 </AccordionGroup>
 
-## Next steps
+## Sign-in
 
-<CardGroup cols={2}>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every environment variable she reads
-  </Card>
-  <Card title="Domain and HTTPS" icon="lock" href="/installation/domain-and-https">
-    The reverse proxy step, done with you
-  </Card>
-</CardGroup>
+<AccordionGroup>
+  <Accordion title="Signing in returns to the login page">
+    The browser dropped the login cookie. On HTTPS, `FRONTEND_URL` must match the address in the browser exactly, with the scheme and without a trailing slash. On plain HTTP, the cookie needs `NOT_SECURED=true`, which is for a local try only.
+  </Accordion>
+  <Accordion title="Origin not allowed">
+    The backend accepts browser requests only from `FRONTEND_URL` and `MAIN_URL`. Opening PostQueen on any other host or port is refused. Set both to the address people use.
+  </Accordion>
+  <Accordion title="Everyone was signed out after a restart">
+    `JWT_SECRET` changed. It signs every session. If `ENCRYPTION_KEY` was never set, the same value also encrypted the API key and the stored credentials of networks such as Bluesky and WordPress, and those stop working too. **Put the old value back**: that recovers everything. Then set `ENCRYPTION_KEY` to that same value before you rotate `JWT_SECRET`. See [Encryption keys](/configuration/reference#encryption-keys).
+  </Accordion>
+  <Accordion title="Continue with Google is denied, or only some accounts get in">
+    Google sign-in uses the YouTube web client, `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET`, and its redirect URI `FRONTEND_URL` + `/integrations/social/youtube`. While the Google app is in **Testing**, only its listed test users can sign in: publish it, or add the person. See [YouTube setup](/installation/providers/youtube).
+  </Accordion>
+  <Accordion title="Google consent works, then sign-in fails with invalid_client">
+    The backend log shows `invalid_client` from Google's token endpoint: `YOUTUBE_CLIENT_SECRET` does not belong to that client. Add a new secret to the same web client in Google Cloud, put it in `.env`, and recreate the container. Google shows a secret in full only when you create it.
+  </Accordion>
+  <Accordion title="A single sign-on button appears that nobody set up">
+    `POSTQUEEN_GENERIC_OAUTH` has a value, often `"false"` copied from `.env.example`. Any value turns it on. Remove the line. See [Single sign-on (OIDC)](/configuration/oauth).
+  </Accordion>
+  <Accordion title="New accounts stay inactive">
+    `REQUIRE_EMAIL_ACTIVATION=true` with a mail provider that cannot deliver. Fix [email](/configuration/emails), or remove the setting.
+  </Accordion>
+</AccordionGroup>
 
+## Connecting channels
+
+<AccordionGroup>
+  <Accordion title="The network's authorization page shows an error">
+    The network's keys are missing, wrong, or the redirect URI registered with the network does not match. **Add Channel** lists every network whether or not its keys are set, so the error appears on the network's side. The redirect URI is `FRONTEND_URL` + `/integrations/social/` + the network's ending: [Channel developer apps](/installation/providers/overview) lists them.
+  </Accordion>
+  <Accordion title="Connecting worked yesterday and fails after a domain change">
+    Every redirect URI is built from `FRONTEND_URL`. Update the redirect URI in each network's developer console to the new address.
+  </Accordion>
+  <Accordion title="fetch failed, with Blocked IP in the log">
+    The server refused to call a private or local address. That protects against requests to your internal network. If the Bluesky, Lemmy, WordPress, Listmonk or Mastodon server really is on your network and everyone who can add channels is trusted, set `DISABLE_SSRF_PROTECTION=true`. Otherwise fix DNS so the name resolves to a public address.
+  </Accordion>
+  <Accordion title="fetch failed without Blocked IP">
+    The server cannot reach the network's API: DNS, a firewall or blocked egress. PostQueen reads no `HTTPS_PROXY`, so behind an egress proxy allow the hosts at the network layer. [Self-hosting overview](/installation/overview#outbound-connections) lists the main ones.
+  </Accordion>
+  <Accordion title="Hide a network from Add Channel">
+    Set `HIDDEN_PROVIDERS` to the identifiers to hide, for example `tiktok,x`, and recreate the container. Connected channels keep working. `MIGRATE_PROVIDERS` moves channels to another network on their next reconnect: see [Hide or move a network](/configuration/reference#hide-or-move-a-network).
+  </Accordion>
+</AccordionGroup>
+
+## Posts and background work
+
+<AccordionGroup>
+  <Accordion title="Posts are scheduled and never publish">
+    Publishing runs in the orchestrator, through Temporal. Check that the `temporal` container is healthy (`docker compose ps`) and that `TEMPORAL_ADDRESS` points at it. Both the backend and the orchestrator must reach it. Running from source, `pnpm run dev-backend` starts no orchestrator: use `pnpm run dev`.
+  </Accordion>
+  <Accordion title="Posts that failed to schedule are never picked up">
+    `RUN_CRON` is not set, so the recurring recovery workflow never started. Set `RUN_CRON=true` on one backend. The Helm chart does not set it.
+  </Accordion>
+  <Accordion title="A post failed">
+    Open the post in the calendar: the error the network returned is on the post. See [A post did not go out](/troubleshooting/post-failed).
+  </Accordion>
+</AccordionGroup>
+
+## Uploads and email
+
+<AccordionGroup>
+  <Accordion title="Uploaded images do not show">
+    With local storage in the official image, `UPLOAD_DIRECTORY` must be `/uploads` and `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` must be `uploads`. After a domain change, old files keep the old address until you set `PREVIOUS_FRONTEND_URLS`. See [Uploads and storage](/configuration/uploads#move-to-a-new-address).
+  </Accordion>
+  <Accordion title="Posts with media fail on Instagram, Facebook or Threads">
+    Those networks download the file from its address. On a laptop or a private network the address is not reachable from the internet. Use a public HTTPS domain or [Cloudflare R2](/configuration/r2).
+  </Accordion>
+  <Accordion title="413 Request Entity Too Large">
+    Your reverse proxy limits the body size. Allow 1 GB: `client_max_body_size 1G;` in Nginx. See [Nginx](/reverse-proxies/nginx).
+  </Accordion>
+  <Accordion title="No email arrives">
+    `EMAIL_PROVIDER` must be exactly `resend` or `nodemailer`, with `EMAIL_FROM_ADDRESS` and `EMAIL_FROM_NAME` set. Without them nothing is sent and nothing fails. See [Email](/configuration/emails).
+  </Accordion>
+</AccordionGroup>
+
+## Platform questions
+
+<AccordionGroup>
+  <Accordion title="Can I run it on Vercel or another serverless host?">
+    Not the backend or the orchestrator. The backend is a long-running server, and the orchestrator is a Temporal worker that runs all the time. Run them on a virtual machine, a container host or Kubernetes. The official image already runs nginx, the frontend, the backend and the orchestrator together.
+  </Accordion>
+  <Accordion title="Can I run more than one container?">
+    Yes, with shared PostgreSQL, Redis and Temporal. Media needs a volume every container mounts, or [Cloudflare R2](/configuration/r2). Set `RUN_CRON` on one of them only.
+  </Accordion>
+</AccordionGroup>
+
+Still stuck? [Report it](https://github.com/GkhanKINAY/postqueen-app/issues) with the version, the symptom and the relevant log lines, without keys or secrets.

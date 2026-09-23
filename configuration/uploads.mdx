@@ -1,302 +1,116 @@
 ---
-title: Uploads & Storage
-description: 'Local filesystem vs Cloudflare R2 for media uploads'
-icon: 'cloud-upload'
+title: "Uploads and storage"
+description: "Where a self-hosted PostQueen keeps uploaded media (local disk or Cloudflare R2), who serves the files, moving to a new address, and how uploaded video is processed."
+icon: "cloud-upload"
 ---
 
 import RestartService from '/snippets/restart-service.mdx';
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+Every image and video uploaded to PostQueen, from the media library, the composer or the public API, goes to one storage backend. There are two:
 
-PostQueen writes user-uploaded media (post images, avatars, generated
-content) through a single storage abstraction. Pick one of two backends.
-
-## Pick a backend
-
-```env
-STORAGE_PROVIDER="local"      # default: write to local filesystem
-# or
-STORAGE_PROVIDER="cloudflare" # write to Cloudflare R2
-```
-
-| Backend | Where files go | What it asks of you |
+| `STORAGE_PROVIDER` | Where files go | What it asks of you |
 |---|---|---|
-| `local` | The server's own filesystem, served under `/uploads` | More than one backend replica needs a shared volume, and providers that pull media by URL need that path reachable over public HTTPS |
-| `cloudflare` | A Cloudflare R2 bucket, read over public HTTPS | Credentials and a bucket URL, set up in the [R2 guide](/configuration/r2) |
+| `local`, the default | A folder on the server, served under `/uploads/` | A persistent volume, and a public HTTPS address for networks that fetch media by URL |
+| `cloudflare` | A Cloudflare R2 bucket | An R2 account, a token and a public address for the bucket: see [Cloudflare R2](/configuration/r2) |
 
-<Warning>
-Set `STORAGE_PROVIDER` explicitly. Writing falls back to `local`, but
-the rewrite that serves the files tests for the literal string `local`,
-so an unset value uploads happily and then 404s every image.
-</Warning>
+Each file can be up to **1 GB**. Accepted types are JPEG, PNG, GIF, WebP, AVIF, BMP and TIFF images, and MP4 and MOV video. What a network will publish is usually far smaller, and each network decides that itself.
 
-## Local filesystem
+## Networks fetch your media by URL
 
-Set the path where PostQueen should write:
+PostQueen stores each file's full address with the post. Several networks download the file from that address themselves instead of receiving it from PostQueen: Instagram, Facebook, Threads, Slack, TikTok photo posts and everything on TikTok Business. For those, the address must be reachable from the public internet over HTTPS. A laptop or a private network cannot serve it, so posts with media to those networks fail there.
+
+Networks that receive the file from PostQueen, such as X, LinkedIn and Bluesky, work from anywhere.
+
+## Local storage
+
+The Compose file ships ready for it:
 
 ```env
-STORAGE_PROVIDER="local"
-UPLOAD_DIRECTORY="/data/postqueen/uploads"
-NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY="uploads"
+STORAGE_PROVIDER=local
+UPLOAD_DIRECTORY=/uploads
+NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY=uploads
 ```
 
-| Variable | What it sets |
-|---|---|
-| `UPLOAD_DIRECTORY` | The directory files are written to on disk |
-| `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` | The URL path segment used to reference those files, **with no leading slash**. Default `uploads` |
+and mounts the `postqueen-uploads` volume at `/uploads`. Keep those values in the official image: its nginx serves exactly the `/uploads` folder, and a different `UPLOAD_DIRECTORY` writes files that are never served. `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` is written without slashes.
 
 <Warning>
-`NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY` is joined after a slash that is
-already there, so writing `/uploads` gives you a double slash in every
-media URL.
+**`UPLOAD_DIRECTORY` is required with local storage.** Without it the backend does not start: it stops with `STORAGE_PROVIDER is "local" but UPLOAD_DIRECTORY is not set`.
 </Warning>
 
-### Who actually serves the files
-
-Not the backend, which is the part most people get wrong when they
-mount the volume.
-
-| Running from | What serves `/uploads/` |
+| Running | What serves `/uploads/` |
 |---|---|
-| The official image | nginx, straight off the container filesystem, from the hard-coded path `/uploads` |
-| Source | Next.js rewrites `/uploads/:path*` to its own `/api/uploads/:path*` route handler, which reads `UPLOAD_DIRECTORY` from the frontend process's own disk |
+| The official image | nginx inside the container, straight from `/uploads` |
+| From source, or the frontend on its own | The web app, which reads the file from its own `UPLOAD_DIRECTORY` |
 
-<Info>
-Either way the **frontend** is what reads the directory. Mount the
-volume where the frontend can see it, and on the official image leave
-`UPLOAD_DIRECTORY` at `/uploads`, because that is the path nginx is
-compiled to serve.
-</Info>
+Several containers need a volume that every one of them mounts (ReadWriteMany on Kubernetes), or R2.
 
-<Warning>
-Local storage saves each file's full address, `FRONTEND_URL` plus
-`/uploads/...`, in the database. Change `FRONTEND_URL` later (a new domain,
-`http` to `https`, another port) and the old addresses keep pointing at the old
-one: existing media stops loading and can no longer be published. Move them as
-described below.
-</Warning>
+### Move to a new address
 
-### Moving to a new address
+Local storage saves each file's address as `FRONTEND_URL` + `/uploads/...`. Change `FRONTEND_URL` later, for a new domain or a move from `http` to `https`, and existing media keeps pointing at the old address: it stops loading and cannot be published.
 
-Put the address the instance used to run under in `PREVIOUS_FRONTEND_URLS`,
-next to the new `FRONTEND_URL`, and recreate the container.
+Put the old address in `PREVIOUS_FRONTEND_URLS` next to the new `FRONTEND_URL`:
+
+```env
+FRONTEND_URL=https://postqueen.example.com
+PREVIOUS_FRONTEND_URLS=http://localhost:4007
+```
 
 <RestartService />
 
-```env
-FRONTEND_URL="https://postqueen.example.com"
-PREVIOUS_FRONTEND_URLS="http://localhost:4007"
-```
+At start, the backend rewrites every stored address under the old one to the new one, in the media library, posts, drafts and channel avatars, and logs what it moved as an `[uploads]` line.
 
-On boot the backend moves every stored upload address under the old one to the
-new one: the media library, posts, drafts and channel avatars. The backend log
-says what it moved:
+- List every earlier address, separated by commas, each written in full with `http://` or `https://`.
+- An address is skipped, with a warning in the log, when none of its files exist under `UPLOAD_DIRECTORY`. Check that the volume is mounted, then recreate the container again.
+- Leaving the variable set afterwards is harmless.
 
-```text
-[uploads] moved http://localhost:4007 to https://postqueen.example.com: Media.path 12, ...
-```
-
-- Moved more than once? List every earlier address, separated by commas.
-- Write each one in full, with `http://` or `https://`.
-- An address is skipped, with a warning in the log, when none of its newest
-  files exist under `UPLOAD_DIRECTORY`. Check that the uploads volume is mounted
-  there, then recreate the container again.
-- Leaving the variable set afterwards is safe: once moved, nothing matches.
-
-This covers local storage only. Cloudflare R2 addresses come from
-`CLOUDFLARE_BUCKET_URL` and are left alone.
-
-### Docker volume mount
-
-In `docker-compose.yaml`:
-
-```yaml
-services:
-  postqueen:
-    environment:
-      STORAGE_PROVIDER: "local"
-      UPLOAD_DIRECTORY: "/uploads"
-      NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY: "uploads"
-    volumes:
-      - postqueen-uploads:/uploads
-
-volumes:
-  postqueen-uploads:
-```
-
-<Info>
-If you scale beyond one backend replica, you need a shared volume, or
-switch to Cloudflare R2.
-</Info>
-
-### Caveat: some providers need public HTTPS URLs
-
-<Warning>
-TikTok (and a few others) fetch media via "pull from URL" rather than
-multipart upload. Your local `/uploads` path must therefore be
-reachable from the public internet over HTTPS for those providers to
-work.
-</Warning>
-
-If your deployment is internet-facing through a reverse proxy with TLS,
-you are fine. If PostQueen is on a private network, those providers
-will fail and you should use [Cloudflare R2](/configuration/r2) or a
-CDN instead.
+This covers local storage only. R2 addresses come from `CLOUDFLARE_BUCKET_URL` and do not change with `FRONTEND_URL`.
 
 ## Cloudflare R2
 
-Set `STORAGE_PROVIDER=cloudflare` and configure the R2 credentials. See
-the dedicated [R2 setup guide](/configuration/r2) for the OAuth and
-bucket-permissions walkthrough.
-
 ```env
-STORAGE_PROVIDER="cloudflare"
-CLOUDFLARE_ACCOUNT_ID="…"
-CLOUDFLARE_ACCESS_KEY="…"
-CLOUDFLARE_SECRET_ACCESS_KEY="…"
-CLOUDFLARE_BUCKETNAME="…"
-CLOUDFLARE_BUCKET_URL="https://pub-your-hash.r2.dev"
-CLOUDFLARE_REGION="auto"
-# Only if you created the bucket with a jurisdiction, e.g. "eu"
-CLOUDFLARE_JURISDICTION=""
+STORAGE_PROVIDER=cloudflare
+CLOUDFLARE_ACCOUNT_ID=your-account-id
+CLOUDFLARE_ACCESS_KEY=your-access-key-id
+CLOUDFLARE_SECRET_ACCESS_KEY=your-secret-access-key
+CLOUDFLARE_BUCKETNAME=your-bucket
+CLOUDFLARE_BUCKET_URL=https://cdn.example.com
+CLOUDFLARE_REGION=auto
 ```
 
-<Warning>
-`CLOUDFLARE_BUCKET_URL` is the address browsers and social networks fetch from.
-It must never be the `…r2.cloudflarestorage.com` S3 endpoint, which serves
-nothing without a signature.
-</Warning>
+[Cloudflare R2](/configuration/r2) walks through the bucket, the token, the three choices for `CLOUDFLARE_BUCKET_URL` and the CORS policy. Any of those choices gives a public HTTPS address, so the networks that fetch by URL work.
 
-You have three choices for it, a custom domain, the r2.dev URL, or PostQueen
-serving the media itself, compared in the
-[R2 setup guide](/configuration/r2#decide-where-media-is-read-from). Any of them
-gives you a public HTTPS address, so the TikTok caveat above does not apply.
+### How an upload travels
 
-### Two ways an upload can travel
+By default the browser uploads **straight to the bucket**, in parts, with addresses the backend signs for it. The file never passes through your server. With `UPLOAD_VIA_SERVER=true`, the browser sends the file to the backend, which writes it to the bucket.
 
-By default the browser sends the file **straight to the bucket**, using a URL
-the backend signs for it. The file never passes through your server:
-
-```mermaid
-graph LR;
-	A[Browser] -->|1. asks for a signed URL| B[PostQueen]
-	A -->|2. uploads the file| C[(R2 bucket)]
-```
-
-With `UPLOAD_VIA_SERVER=true` the file is posted to PostQueen, which writes it
-to the bucket itself:
-
-```mermaid
-graph LR;
-	A[Browser] -->|uploads the file| B[PostQueen]
-	B -->|streams it on| C[(R2 bucket)]
-```
-
-| Mode | Setting | Trade |
+| Mode | Setting | Trade-off |
 |---|---|---|
-| Straight to the bucket | Unset (the default) | Faster, and it costs you no bandwidth |
-| Through the server | `UPLOAD_VIA_SERVER="true"` | Sturdier: nothing between the browser and the bucket can interfere, and it lets the bucket stay private |
+| Straight to the bucket | Unset | Faster, and no server bandwidth. Needs a CORS policy on the bucket. |
+| Through the server | `UPLOAD_VIA_SERVER=true` | Uses your bandwidth twice, but nothing between the browser and the bucket can break the upload, and no CORS policy is needed. |
 
-The next section is what "interfere" looks like in practice.
+<AccordionGroup>
+  <Accordion title="Uploads fail with a CORS error in the browser">
+    The browser reports `blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present`, while the backend's own calls (`create-multipart-upload`, `sign-part`) succeed. Usually the bucket answered `403` because something between the browser and R2 changed the signed request, such as a privacy extension stripping query parameters or a corporate proxy. R2 sends no CORS headers on errors, so the browser shows a CORS message instead. Check the bucket's CORS policy first; if it is right, set `UPLOAD_VIA_SERVER=true`.
+  </Accordion>
+</AccordionGroup>
 
-<Info>
-Either way the size limit is the same, **1 GB per file**, enforced while the
-upload is being read rather than after it finishes. What a social network will
-publish is far smaller and decided by the network, not by this.
-</Info>
+## Video processing
 
-### When uploads fail with a CORS error
+Every uploaded video is converted in the background before it can be published: H.264 video and AAC audio in MP4, at most 1080p, turned upright, with the index at the start of the file and a poster frame. That is why a MOV from a phone works everywhere.
 
-With R2, the browser uploads to the bucket directly using a URL the backend
-signs for it. That signature covers the URL's query parameters, so if anything
-alters the request between the browser and R2, whether a privacy extension
-stripping what it takes for tracking parameters or a corporate proxy, the
-signature no longer matches and R2 answers `403`.
+The upload answers at once with the status `processing`, and the media becomes `ready` when the conversion is done. The work runs in the orchestrator, on its own `media` queue, with the ffmpeg that ships in the image. A file ffmpeg cannot read fails with an error on the media item and is not retried.
 
-R2 leaves CORS headers off its error responses, so the browser cannot read that
-`403` and reports it as:
+| Setting | What it changes |
+|---|---|
+| `MEDIA_PROCESSING_CONCURRENCY` | Videos one orchestrator converts at once. Default `1`: a conversion takes about two cores. |
+| `EXCLUDE_QUEUE=media` | Keeps an orchestrator out of video conversion, so another machine can take it. |
+| `UPLOAD_TMP_DIR` | Where uploads wait and ffmpeg works. Keep about 2.5 times the largest upload free there. |
+| `FFMPEG_TIMEOUT_MS` | Limit for one ffmpeg run. Default 20 minutes. |
+| `FFMPEG_PATH`, `FFPROBE_PATH` | Only when running from source: an ffmpeg build with libass. |
 
-```
-blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present
-```
+## Related
 
-which points at CORS while the actual cause is elsewhere.
-
-<Note>
-The tell is that the backend's own requests all succeed:
-`create-multipart-upload` and `sign-part` return `200`, then
-`abort-multipart-upload` follows after a few retries.
-</Note>
-
-<Check>
-Setting `UPLOAD_VIA_SERVER=true` sidesteps it. Files are posted to the backend,
-which writes them to R2 itself, so nothing between the browser and the bucket
-can invalidate anything. Uploads are spooled to disk rather than held in memory
-and deleted once stored, so a large video does not become a memory spike.
-</Check>
-
-```env
-UPLOAD_VIA_SERVER="true"
-```
-
-The trade is bandwidth: every upload now travels through your server twice
-instead of going straight to storage.
-
-### Serving media from your own domain
-
-Point `CLOUDFLARE_BUCKET_URL` at your own host and PostQueen serves the media
-itself:
-
-```env
-CLOUDFLARE_BUCKET_URL="https://your-host/api/uploads"
-```
-
-It reads each file from R2 over the S3 API and streams it back, cached for a
-year. Object names are random and nothing is ever overwritten, so there is
-nothing to invalidate. That buys you your own domain, no rate limit, no DNS
-changes, and a bucket that can stay **entirely private**: switch its public
-access off and nothing reaches it except your server.
-
-The cost is bandwidth, since media leaves through your server rather than the
-bucket's edge.
-
-<Info>
-Note the `/api` prefix. nginx inside the container maps `/uploads/` to a local
-directory, so only `/api/uploads` reaches the backend.
-</Info>
-
-<Warning>
-Use a bucket that holds **only** PostQueen media. This endpoint is public by
-necessity, since the social networks fetch it with no session, so anything in
-that bucket is potentially reachable. It will only serve objects whose names
-match what PostQueen itself writes (a random name plus an image, video or audio
-extension), which keeps a stray backup or export out of reach, but a dedicated
-bucket is the setup to aim for.
-</Warning>
-
-The other two options, and when each makes sense, are in the
-[R2 setup guide](/configuration/r2#decide-where-media-is-read-from).
-
-## Public-API uploads
-
-Both `/public/v1/upload` and `/public/v1/upload-from-url` write through
-the configured `STORAGE_PROVIDER`. The accepted MIME types and body-size
-limits are documented in [troubleshooting/uploads](/troubleshooting/common-errors).
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Set up Cloudflare R2" icon="cloud" href="/configuration/r2">
-    The bucket, the token, the CORS policy and the three ways media can be read back
-  </Card>
-  <Card title="When an upload fails" icon="triangle-alert" href="/troubleshooting/common-errors">
-    Payload limits, video failures and the size limit that catches people out
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every environment variable she reads, and why a plain restart is not enough
-  </Card>
-  <Card title="Backups and upgrades" icon="archive" href="/installation/backups-and-upgrades">
-    Which volumes carry real data, and what changes once media lives in a bucket
-  </Card>
-</CardGroup>
-
+- [Cloudflare R2](/configuration/r2)
+- [Backups and upgrades](/installation/backups-and-upgrades): what to back up with each storage
+- [Configuration reference](/configuration/reference#storage-and-media)
+- [Upload a file](/public-api/uploads/upload-file) through the public API

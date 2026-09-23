@@ -1,89 +1,44 @@
 ---
-title: Image & Video Editing (Polotno)
-description: 'Turn on in-app image and video editing in PostQueen with the Polotno SDK'
-icon: 'palette'
+title: "Design editor (Polotno)"
+description: "Turn on the in-app image editor of a self-hosted PostQueen with a Polotno API key, and what people see while it is off."
+icon: "palette"
 ---
 
 import RestartService from '/snippets/restart-service.mdx';
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: same as main; audit: selfhost). Row in page-status-2026-09-23.md. */}
+PostQueen's design editor is built on the [Polotno SDK](https://polotno.com/). It lets people design an image from templates, text and shapes, or edit an attached image, without leaving the post. It works on images only; video is not edited. The editor needs a Polotno API key, which you buy from Polotno.
 
-You crop the photo and fix the headline without ever leaving the post
-you are writing. That editor is the
-[Polotno SDK](https://polotno.com/), and one API key turns it on.
-
-<Frame>
-  <img src="/images/brand/studio.svg" alt="The content studio: one topic returns the caption and the on-brand image, in any language" />
-</Frame>
-
-## What you get
-
-- Create and edit visuals inside the post composer.
-- Work with templates, text and brand assets.
-- Update designs in place without re-uploading finished files.
-- Reuse and modify visuals across scheduled posts.
-
-Designs are stored as structured data and rendered when needed. She
-still does the scheduling, the publishing and the platform-specific
-work.
-
-## Setup
+## Turn it on
 
 <Steps>
-  <Step title="Create a Polotno account">
-    Sign up at [polotno.com](https://polotno.com/) and open the
-    [API dashboard](https://polotno.com/cabinet/) to generate an
-    API key.
+  <Step title="Get a Polotno API key">
+    Create an account at [polotno.com](https://polotno.com/) and create a key in its [dashboard](https://polotno.com/cabinet/). Polotno sets its own terms, and a production key is paid.
   </Step>
-
-  <Step title="Add the API key to PostQueen">
-    Set `NEXT_PUBLIC_POLOTNO` in your environment to the key from
-    the Polotno dashboard:
-
+  <Step title="Set the variable">
     ```env
-    NEXT_PUBLIC_POLOTNO="your-polotno-api-key"
+    NEXT_PUBLIC_POLOTNO=your-polotno-api-key
     ```
 
-    In `docker-compose.yaml`:
-
-    ```yaml
-    services:
-      postqueen:
-        environment:
-          NEXT_PUBLIC_POLOTNO: "your-polotno-api-key"
-    ```
+    The web app reads it on every page load, so no rebuild is needed.
   </Step>
-
-  <Step title="Restart PostQueen">
-    PostQueen reads `NEXT_PUBLIC_POLOTNO` on the server for each
-    request, so recreating the container picks up the new value:
-
+  <Step title="Recreate the container">
     <RestartService />
 
-    Running from source, restart the dev server.
+    <Check>
+    In the post composer, **Design Media** opens the editor.
+    </Check>
   </Step>
 </Steps>
 
-Exact steps vary a little by deployment:
-[Docker Compose](/installation/docker-compose) and
-[Development](/installation/development).
+## Where it appears
 
-Leave the variable unset and a self-hosted instance still shows **Design
-Media** and **Editor**. Clicking one explains which variable to set, to admins,
-or asks members to contact an admin, instead of opening an editor without a
-key. PostQueen Cloud shows the editor only where it is configured, so you never see that note there.
+- **Design Media**, beside **Insert Media** under a post, starts a new design and attaches the result.
+- Selecting an image already attached to a post opens it in the editor. Videos cannot be edited.
 
-## Licensing
+Without the key, **Design Media** still shows on a self-hosted install. Choosing it explains the setup instead of opening the editor: an admin sees "Design Media is not set up on this installation. Add NEXT_PUBLIC_POLOTNO to the server environment and restart PostQueen." with a link to this page, and other members are asked to contact an admin.
 
-Polotno bills you separately, and a production key is not free.
+## Related
 
-- You buy and renew the license directly through Polotno.
-- PostQueen does not bundle, resell or proxy Polotno licenses.
-- Polotno bills you and sets its own terms.
-
-## Reference
-
-- Env var: [`NEXT_PUBLIC_POLOTNO`](/configuration/reference#misc-frontend)
-- Polotno docs: [polotno.com/docs](https://polotno.com/docs/)
-- Polotno pricing: [polotno.com/pricing](https://polotno.com/pricing/)
-
+- [Configuration reference](/configuration/reference#interface)
+- [Polotno documentation](https://polotno.com/docs/)
+- [Create a post](/using/create-a-post)
