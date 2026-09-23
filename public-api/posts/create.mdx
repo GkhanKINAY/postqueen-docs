@@ -37,20 +37,30 @@ A step-by-step guide, from finding the channel id to checking the result, is [Sc
 A draft is checked too: the body, and each network's required settings. The network's rules on length and media are checked only when the post is set to go out (`schedule`, `now` and `update`). So a draft you schedule later is already complete.
 </Note>
 
-## The parts of a post
+## The request
 
 | Field | Required | What it does |
 |---|---|---|
-| `posts[].integration.id` | Yes | The channel, from [List channels](/public-api/integrations/list) |
-| `posts[].value[].content` | Yes | The text. It may be empty only when the entry has media |
-| `posts[].value[].image` | Yes | Media, as `{ id, path }` from an upload. Send `[]` for text only |
-| `posts[].value[].delay` | No | Minutes to wait after the previous part of a thread |
-| `posts[].value[].id` | No | An existing post's id, to change that post in place |
-| `posts[].group` | No | Leave it out for a new post. With an existing group, every post of that group you do not resend is deleted |
-| `posts[].settings` | Depends on the network | The network's settings. See the table below |
+| `type` | Yes | `schedule`, `now`, `draft` or `update`, as above |
+| `date` | Yes | When the post goes out, in UTC, ISO 8601 |
 | `shortLink` | Yes | `true` replaces links with PostQueen short links. Send `false` to keep them as they are |
 | `tags` | Yes | Tags to attach, as `{ value, label }`. PostQueen attaches only tags that already exist in the workspace. Send `[]` for none |
+| `posts` | Yes | One entry per channel, described below |
 | `inter` | No | Repeat the post every this many days |
+| `republish` | No | `true` to publish again a post that was already published |
+
+Each entry in `posts`:
+
+| Field | Required | What it does |
+|---|---|---|
+| `integration.id` | Yes | The channel, from [List channels](/public-api/integrations/list) |
+| `value` | Yes | The post, then its thread or comments. Each item has `content`, `image`, and optionally `delay` and `id` |
+| `value[].content` | Yes | The text. It may be empty only when the item has media |
+| `value[].image` | Yes | Media, as `{ id, path }` from an upload. Send `[]` for text only |
+| `value[].delay` | No | Minutes to wait after the previous item of a thread |
+| `value[].id` | No | An existing post's id, to change that post in place |
+| `settings` | Depends on the network | The network's settings: see the table below |
+| `group` | No | Leave it out for a new post. With an existing group, every post of that group you do not resend is deleted |
 
 Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`, and a video must be `ready`: see [Upload a file](/public-api/uploads/upload-file).
 
@@ -70,7 +80,7 @@ Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.
 | X | `who_can_reply_post`, or `article_title` and `article_status` for an article | In review |
 | Instagram | `post_type` | In review |
 | YouTube | `title`, `type` | In review |
-| TikTok | `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle`, `content_posting_method` | In review |
+| TikTok | Eight fields, from `privacy_level` to `content_posting_method`: see [TikTok settings](/public-api/providers/tiktok) | In review |
 | Facebook, Threads | None | In review |
 | Reddit | `subreddit` list, each with a subreddit, title, type and flair choice | Soon |
 | Pinterest | `board` | Soon |
@@ -96,7 +106,12 @@ A `201` with one row per channel entry. Keep the `postId`s: the other post endpo
 When a part breaks a network's rule, the call answers `400` before anything is saved, naming the network and the channel:
 
 ```json
-{ "statusCode": 400, "provider": "bluesky", "name": "PostQueen", "message": "post is too long, please fix it" }
+{
+  "statusCode": 400,
+  "provider": "bluesky",
+  "name": "PostQueen",
+  "message": "post is too long, please fix it"
+}
 ```
 
 Every status the endpoint returns, and what to do about it, is on [Limits and errors](/public-api/limits-and-errors).

@@ -30,7 +30,10 @@ Each answer from a limited endpoint says where you stand:
 Over the limit, the endpoint answers `429` with a `Retry-After` header, in seconds:
 
 ```json
-{ "statusCode": 429, "message": "ThrottlerException: Too Many Requests" }
+{
+  "statusCode": 429,
+  "message": "ThrottlerException: Too Many Requests"
+}
 ```
 
 <Tip>
@@ -39,17 +42,17 @@ Wait the number of seconds in `Retry-After` before you send the next request. Re
 
 ## Status codes
 
-| Status | When | What to do |
-|---|---|---|
-| `200` | A read, change or delete worked | |
-| `201` | A `POST` worked: a post, an upload, a tool run or a token | |
-| `400` | The request is wrong: a missing or malformed field, a post that breaks a network's rule, an unknown channel id in a post | Read the body, fix the request, send it again |
-| `401` | The key or token is missing or not valid, or the workspace has no subscription | See [401 messages](#401-messages) |
-| `402` | The workspace is at its plan's channel limit (connecting a channel) or out of posts (creating a post) | The body has the billing link |
-| `404` | The post, media or channel is not in your workspace | Check the id |
-| `413` | The JSON body of `POST /posts` is over about 100 kB | Upload files first and send their `id` and `path`, not file data |
-| `429` | Over an hourly limit | Wait for `Retry-After` |
-| `500` | Also used for some wrong ids, see below | Check the id before you retry |
+| Status | What it means |
+|---|---|
+| `200` | A read, change or delete worked. |
+| `201` | A `POST` worked: a post, an upload, a tool run or a token. |
+| `400` | The request is wrong: a missing or malformed field, a post that breaks a network's rule, or an unknown channel id in a post. Read the body, fix the request and send it again. |
+| `401` | The key or token is missing or not valid, or the workspace has no subscription. See [401 messages](#401-messages). |
+| `402` | The workspace is at its plan's channel limit (connecting a channel) or out of posts (creating a post). The body has the billing link. |
+| `404` | The post, media or channel is not in your workspace. Check the id. |
+| `413` | The JSON body of `POST /posts` is over about 100 kB. Upload files first and send their `id` and `path`, not file data. |
+| `429` | Over an hourly limit. Wait for `Retry-After`. |
+| `500` | An error, or for a few endpoints a wrong id: see [When a 500 is a wrong id](#when-a-500-is-a-wrong-id). |
 
 There is no `403` on this API. A post, channel or file of another workspace is not forbidden, it is invisible: it answers like an id that does not exist.
 

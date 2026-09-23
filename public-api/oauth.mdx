@@ -51,11 +51,11 @@ sequenceDiagram
     https://app.postqueen.ai/oauth/authorize?client_id=pca_YOUR_CLIENT_ID&response_type=code&state=RANDOM_STATE
     ```
 
-    | Parameter | Required | What it is |
-    |---|---|---|
-    | `client_id` | Yes | Your Client ID |
-    | `response_type` | Yes | Always `code` |
-    | `state` | Recommended | A random value you check on the way back, against forged callbacks |
+    | Parameter | What it is |
+    |---|---|
+    | `client_id` | Your Client ID. Required |
+    | `response_type` | Always `code`. Required |
+    | `state` | A random value you check on the way back, against forged callbacks. Recommended |
 
     The person signs in if they need to, sees your app's name, description and picture, and chooses **Authorize** or **Deny**.
 
