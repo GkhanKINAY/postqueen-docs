@@ -1,7 +1,11 @@
 ---
 title: "Find a free slot"
-description: "The next posting time on a channel that has no post yet."
+description: "The next of a channel's posting times at which your workspace has no post yet."
 openapi: "GET /find-slot/{id}"
 ---
 
-The slots come from the channel's [posting times](/using/posting-times). The answer has no time zone suffix but is UTC. You can send it back as a post's `date` as it is: PostQueen reads a date without a zone as UTC.
+The slots come from the channel's [posting times](/using/posting-times). Starting today, PostQueen takes the first of those times that is still ahead and at which no post of your workspace is set, on any channel. A post of another channel at that exact minute makes the slot taken, and so does a draft, a published post or a failed one. The search goes up to a year ahead.
+
+The answer has no time zone suffix but is UTC. You can send it back as a post's `date` as it is: PostQueen reads a date without a zone as UTC.
+
+An id that is not an active channel of your workspace does not fail: an unknown, disabled or deleted channel falls back to the default posting times, 02:00, 06:40 and 11:40 UTC.

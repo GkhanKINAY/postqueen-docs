@@ -26,7 +26,16 @@ The CLI reads your workspace API key from `POSTQUEEN_API_KEY`. A workspace Admin
 export POSTQUEEN_API_KEY=your_api_key
 ```
 
-The CLI also reads `POSTQUEEN_API_URL` and `POSTQUEEN_AUTH_SERVER`. Leave both unset: the CLI then calls `https://api.postqueen.ai`.
+An OAuth access token that starts with `pos_` works in `POSTQUEEN_API_KEY` too.
+
+The CLI also reads two addresses:
+
+| Variable | On PostQueen Cloud | On your own server |
+|---|---|---|
+| `POSTQUEEN_API_URL` | Leave it unset. The CLI then calls `https://api.postqueen.ai` | Your backend's address, the one the web app calls, without `/public/v1`. For example `https://postqueen.example.com/api` |
+| `POSTQUEEN_AUTH_SERVER` | Leave it unset | Only for a sign-in server you run yourself: see `auth:login` below |
+
+A login saved in `~/.postqueen/credentials.json` takes priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`: the CLI then uses the token and the address in that file, and ignores the variables. `postqueen auth:logout` removes the file.
 
 ## Posts
 
@@ -35,7 +44,7 @@ The CLI also reads `POSTQUEEN_API_URL` and `POSTQUEEN_AUTH_SERVER`. Leave both u
 | `posts:create` | See the table below | Creates a post on one or more channels: scheduled by default, or a draft |
 | `posts:list` | `--startDate`, `--endDate` (ISO 8601), `--customer <id>` | Lists posts between two dates. Default: 30 days back to 30 days ahead |
 | `posts:delete <id>` | | Deletes the post and its comments or thread items on that channel, and stops it from going out. Other channels' posts stay |
-| `posts:status <id>` | `-s, --status draft\|schedule` (required) | Moves a post between draft and scheduled, keeping its date. Refused for a published or failed post |
+| `posts:status <id>` | `-s, --status draft\|schedule` (required) | Moves a post between draft and scheduled, keeping its date. A draft whose date has already passed publishes at once when you schedule it. Refused for a published or failed post |
 | `posts:settings <id>` | `--settings <json>` (required) | Changes the network settings of a draft or of a scheduled post whose time has not passed. Only the keys you pass change. If you copy settings from `posts:list`, leave out `__type` |
 | `posts:missing <id>` | | For a published post whose network ID is missing, lists the channel's recent posts. TikTok only; other networks answer `[]` |
 | `posts:connect <id>` | `--release-id <id>` (required) | Connects the post to its published copy, so its analytics work |
@@ -44,15 +53,15 @@ The CLI also reads `POSTQUEEN_API_URL` and `POSTQUEEN_AUTH_SERVER`. Leave both u
 
 | Flag | Default | What it does |
 |---|---|---|
-| `-c, --content` | | The text. Repeat it: the first is the post, each one after it a comment or thread item. Required unless you use `--json` |
-| `-s, --date` | | The publish time in ISO 8601, such as `2026-10-01T09:00:00Z`. Required unless you use `--json` |
+| `-c, --content` | | The text. Repeat it: the first is the post, each one after it a comment or thread item. Required unless you use `--json`. Text that starts with `-` needs the `=` form: see [text that starts with a dash](#text-that-starts-with-a-dash) |
+| `-s, --date` | | The publish time in ISO 8601, such as `2026-10-01T09:00:00Z`. Required unless you use `--json`. A time that has already passed publishes at once |
 | `-i, --integrations` | | Channel IDs from `integrations:list`, separated by commas. Required unless you use `--json` |
-| `-m, --media` | | Media paths from `postqueen upload`, separated by commas, for the `-c` in the same position. Repeat it along with `-c` |
+| `-m, --media` | | Media paths from `postqueen upload`, separated by commas, for the `-c` in the same position. Repeat it along with `-c`, with `-m ""` for an item that has no media |
 | `-t, --type` | `schedule` | `schedule` or `draft` |
 | `-d, --delay` | `0` | Minutes to wait between the items of a thread or comments |
 | `--settings` | | The network's settings as a JSON string. The same object goes to every channel in `-i` |
 | `-j, --json` | | A file with the whole request body. The other flags are then ignored |
-| `--shortLink` | `true` | Lets PostQueen swap links for short links. `--no-shortLink` keeps them as written |
+| `--shortLink` | `true` | Lets PostQueen swap links for short links. PostQueen has no link shortener set up today, so links stay as written either way. `--no-shortLink` keeps them as written |
 
 ```bash
 # A scheduled Bluesky post
@@ -85,17 +94,23 @@ The `--json` file format is in [posts and channels](/cli/managing-posts#create-a
 | `analytics:platform <id>` | `-d, --date <days>` (default `7`) | A channel's numbers per day, with the change over the window |
 | `analytics:post <id>` | `-d, --date <days>` (default `7`) | One published post's numbers, or `{"missing": true}` |
 
-## Key and login
-
-| Command | Flags | What it does |
-|---|---|---|
-| `auth:status` | | Shows which credentials the CLI uses and checks them against the API |
-| `auth:login` | `--auth-server <url>` | Prints how to set the API key. There is no browser login for PostQueen, so leave `--auth-server` out |
-| `auth:logout` | | Removes credentials a login saved in `~/.postqueen/credentials.json`, which would otherwise take priority over the key |
-
 <Warning>
 Two letters mean different things in different commands. `-s` is `--date` on `posts:create` and `--status` on `posts:status`. `-d` is minutes (`--delay`) on `posts:create`, days (`--date`) on the analytics commands, and JSON input (`--data`) on `integrations:trigger`.
 </Warning>
+
+## Key and login
+
+| Command | Flags | What it does | Exit code |
+|---|---|---|---|
+| `auth:status` | | Shows which credentials the CLI uses and checks them against the API | `0` when they work. `1` when none are set, when the API refuses them, or when it could not be reached |
+| `auth:login` | `--auth-server <url>` | Prints how to set the API key. It does not sign you in to PostQueen: see below | `0` when `POSTQUEEN_API_KEY` is set, `1` when it is not |
+| `auth:logout` | | Removes a login saved in `~/.postqueen/credentials.json`, which would otherwise take priority over the key | `0`, also when there was nothing to remove |
+
+### auth:login does not work with PostQueen
+
+With `--auth-server <url>`, or with `POSTQUEEN_AUTH_SERVER` set, `auth:login` starts a device sign-in on that server: it asks `<url>/device/code` for a code, opens your browser, then asks `<url>/device/token` every few seconds until you approve, and saves the token and API address in `~/.postqueen/credentials.json`. PostQueen has no such server, on PostQueen Cloud or in its own backend, so the command stops with `❌ No auth server is answering at <url>`, followed by the reason, such as `(HTTP 404)` for `https://api.postqueen.ai`, and exits `1`. Sign in with the API key instead.
+
+The device sign-in is only for a sign-in server you run yourself. Every way it can fail (no answer, a refused or expired approval, a timeout) prints a line starting with `❌` to stderr and exits `1`.
 
 ## What each command prints
 
@@ -118,7 +133,32 @@ Most commands print one status line, then the JSON result. Drop the first line w
 
 `posts:missing` prints JSON with no status line. `posts:delete` prints only `✅ Post <id> deleted successfully!`. The `auth:` commands print plain text.
 
-A command that fails prints a line starting with `❌` to stderr and exits with code `1`. `auth:status` prints its result on stdout, and exits `1` when no key is set, when the API refuses it, or when it could not be checked.
+## When a command fails
+
+What you see depends on where the command stopped:
+
+| Where it stopped | What you see | Exit code |
+|---|---|---|
+| The API refused the request, or could not be reached | One line starting with `❌` on stderr, such as `❌ Failed to create post: Request failed: API Error (400): ...` | `1` |
+| A required flag or ID is missing, or a value is not one the flag takes | The command's whole help on stderr, with the reason on its last line, such as `--date is required when not using --json` | `1` |
+| A command or flag name is misspelled | Nothing. `postqueen post:create` prints nothing, and `posts:list --startdate ...` ignores the flag and lists the default window | `0` |
+
+`auth:status` prints its result on stdout, even when it fails.
+
+<Tip>
+The CLI does not refuse a command or a flag it does not know, so a typo looks like a success. Check the spelling against `postqueen <command> --help`. Flag names are case-sensitive: `--startDate` and `--start-date` work, `--startdate` does not.
+</Tip>
+
+### Text that starts with a dash
+
+The CLI reads a value that starts with `-` as more flags. `-c "-5% off today"` is refused with `Either --content or --json is required`, `-c "-hello"` prints the help and exits `0` without posting, and a `-c "- item"` after the first `-c` crashes the CLI. Attach the text to its flag with `=` instead:
+
+```bash
+postqueen posts:create --content="-5% off today" -s "2026-10-01T09:00:00Z" -i "bluesky-id"
+postqueen posts:create -c "Three things we changed:" -c="- a smaller size" -s "2026-10-01T09:00:00Z" -i "bluesky-id"
+```
+
+The same goes for any flag whose value starts with `-`.
 
 ## The API route behind each command
 
@@ -141,7 +181,9 @@ The CLI sends your key in the `Authorization` header exactly as it is, with noth
 | `analytics:platform` | `GET /public/v1/analytics/{integration}` |
 | `analytics:post` | `GET /public/v1/analytics/post/{postId}` |
 
-Creating posts has an hourly limit per workspace, and uploads have their own. One `posts:create` can carry many channels, so list several IDs in `-i` rather than running it once per channel. The limits are on [limits and errors](/public-api/limits-and-errors).
+`auth:login` calls none of these. It calls only the server you give it with `--auth-server`.
+
+A workspace can run `posts:create` 30 times an hour, shared with every other script and app that uses its API, and a run the API refuses with `400` counts too. `upload` has its own allowance of 300 an hour. One `posts:create` can carry many channels, so list several IDs in `-i` rather than running it once per channel. The limits are on [limits and errors](/public-api/limits-and-errors).
 
 ## Scripts and scheduled jobs
 

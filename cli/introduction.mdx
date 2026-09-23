@@ -68,7 +68,7 @@ These pages describe `postqueen` 2.0.24. Run `postqueen --version` to see yours.
   </Step>
 </Steps>
 
-The CLI uses the API key only. There is no browser login: `postqueen auth:login` only prints how to set the key.
+The CLI uses the API key only. There is no browser login: `postqueen auth:login` only prints how to set the key. If you run PostQueen on your own server, also point `POSTQUEEN_API_URL` at your backend: see [the key](/cli/command-reference#the-key).
 
 ## Schedule a first post
 
@@ -129,7 +129,7 @@ Most commands print one status line, then the result as JSON. Drop the first lin
 postqueen integrations:list | tail -n +2 | jq -r '.[] | "\(.identifier)\t\(.id)"'
 ```
 
-`posts:missing` prints JSON only, and `posts:delete` prints only a confirmation line. When a command fails, the message goes to stderr and the command exits with code `1`.
+`posts:missing` prints JSON only, and `posts:delete` prints only a confirmation line. When a command fails, the message goes to stderr and the command exits with code `1`. A misspelled command or flag is not an error: it is ignored, and the exit code is `0`. See [when a command fails](/cli/command-reference#when-a-command-fails).
 
 ## Use it from an AI agent
 

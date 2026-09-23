@@ -73,7 +73,7 @@ There is no PostQueen trigger node. A workflow starts from an n8n trigger, such 
 | Field | What to enter |
 |---|---|
 | **Type** | **Draft**, **Schedule** or **Now**. It starts at **Now**, so a test run publishes: choose **Draft** while you build. |
-| **Short Link** | On to replace links in the text with PostQueen short links. |
+| **Short Link** | On to replace links in the text with PostQueen short links. PostQueen has no link shortener set up today, so links stay as written either way. |
 | **Date** | When the post goes out. Required for every type. A time with no offset is read as UTC. |
 | **Tags** | Optional. Each tag needs a **Value** and a **Label**. Only tags that already exist in the workspace are attached, matched by **Label**. |
 | **Posts** | One **Post** per channel. |
@@ -138,7 +138,7 @@ What each network needs is on [Posting settings by network](/public-api/provider
   </Step>
 </Steps>
 
-Each run of **Create Post** counts against the hourly limit per workspace for creating posts, and each **Upload File** against 300 uploads an hour per workspace. Put several channels in one **Create Post** rather than one node per channel. The limits are on [Limits and errors](/public-api/limits-and-errors).
+Each run of **Create Post** counts against the 30 requests to create posts a workspace can send in an hour, refused ones included, and each **Upload File** against 300 uploads an hour. Put several channels in one **Create Post** rather than one node per channel. The limits are on [Limits and errors](/public-api/limits-and-errors).
 
 ## Calls the node does not make
 

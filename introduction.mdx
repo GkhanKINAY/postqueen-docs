@@ -26,6 +26,26 @@ export const SearchDocs = () => (
   </button>
 );
 
+export const CopyLink = ({ value }) => {
+  const [copied, setCopied] = useState(false);
+  return (
+    <span className="pq-copy">
+      <code>{value}</code>
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard?.writeText(value).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+          });
+        }}
+      >
+        {copied ? 'Copied' : 'Copy'}
+      </button>
+    </span>
+  );
+};
+
 <div className="pq-home">
 
 <section className="pq-top">
@@ -63,8 +83,8 @@ export const SearchDocs = () => (
           <img noZoom src="/images/channels/instagram.svg" alt="Instagram" />
           <img noZoom src="/images/channels/tiktok.svg" alt="TikTok" />
           <img noZoom src="/images/channels/x.svg" alt="X" />
+          <img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn" />
           <img noZoom src="/images/channels/youtube.svg" alt="YouTube" />
-          <img noZoom src="/images/channels/bluesky.svg" alt="Bluesky" />
         </span>
         <span className="pq-way-title">In the app</span>
         <span className="pq-way-text">Connect your channels, write a post once and schedule it for each of them on the calendar.</span>
@@ -181,45 +201,76 @@ export const SearchDocs = () => (
 </section>
 
 <section className="pq-section">
+  <h2 className="pq-h2">Use these docs with AI</h2>
+  <p className="pq-sub">Give ChatGPT, Claude, Cursor or any other agent the docs themselves, so its answers come from them.</p>
+  <div className="pq-ai">
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="copy" size={20} /></span>
+      <span className="pq-ai-title">One page</span>
+      <p>The **Copy page** menu at the top of every page copies it as Markdown, or opens it in ChatGPT, Claude, Perplexity, Cursor or VS Code. Any page is also plain Markdown when you add `.md` to its address.</p>
+      <CopyLink value="https://docs.postqueen.ai/quickstart.md" />
+    </div>
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="file-text" size={20} /></span>
+      <span className="pq-ai-title">All the docs in one file</span>
+      <p>Every page in one text file. Paste the link into a chat, or save the file and attach it.</p>
+      <CopyLink value="https://docs.postqueen.ai/llms-full.txt" />
+    </div>
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="list" size={20} /></span>
+      <span className="pq-ai-title">An index for AI</span>
+      <p>Every page with its address and a one-line summary, so an agent can pick what to read.</p>
+      <CopyLink value="https://docs.postqueen.ai/llms.txt" />
+    </div>
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="search" size={20} /></span>
+      <span className="pq-ai-title">Search the docs over MCP</span>
+      <p>Add this address to an MCP client, such as Claude or Cursor, and the agent can search these docs. It only reads the docs: to post, connect [PostQueen's MCP server](/mcp/introduction).</p>
+      <CopyLink value="https://docs.postqueen.ai/mcp" />
+    </div>
+  </div>
+</section>
+
+<section className="pq-section">
   <div className="pq-head-row">
     <div>
       <h2 className="pq-h2">Channels</h2>
-      <p className="pq-sub">Every network has its own page: what you can post to it, its limits, and what to check before you connect it. In review: it connects today within a limit that its page explains. Soon: it cannot be connected on PostQueen yet.</p>
+      <p className="pq-sub">Every network has its own page: what you can post to it, its limits, and what to check before you connect it.</p>
     </div>
     <a className="pq-link" href="/channels/overview">All channels and their status <Icon icon="arrow-right" size={15} /></a>
   </div>
   <div className="pq-channels">
-    <a href="/channels/instagram"><img noZoom src="/images/channels/instagram.svg" alt="Instagram logo" aria-hidden="true" /><span>Instagram<small>In review</small></span></a>
-    <a href="/channels/tiktok"><img noZoom src="/images/channels/tiktok.svg" alt="TikTok logo" aria-hidden="true" /><span>TikTok<small>In review</small></span></a>
-    <a href="/channels/youtube"><img noZoom src="/images/channels/youtube.svg" alt="YouTube logo" aria-hidden="true" /><span>YouTube<small>In review</small></span></a>
-    <a href="/channels/x-twitter"><img noZoom src="/images/channels/x.svg" alt="X logo" aria-hidden="true" /><span>X<small>In review</small></span></a>
-    <a href="/channels/linkedin"><img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn logo" aria-hidden="true" /><span>LinkedIn<small>Soon</small></span></a>
-    <a href="/channels/facebook"><img noZoom src="/images/channels/facebook.svg" alt="Facebook logo" aria-hidden="true" /><span>Facebook<small>In review</small></span></a>
-    <a href="/channels/threads"><img noZoom src="/images/channels/threads.svg" alt="Threads logo" aria-hidden="true" /><span>Threads<small>In review</small></span></a>
-    <a href="/channels/pinterest"><img noZoom src="/images/channels/pinterest.svg" alt="Pinterest logo" aria-hidden="true" /><span>Pinterest<small>Soon</small></span></a>
-    <a href="/channels/reddit"><img noZoom src="/images/channels/reddit.svg" alt="Reddit logo" aria-hidden="true" /><span>Reddit<small>Soon</small></span></a>
+    <a href="/channels/instagram"><img noZoom src="/images/channels/instagram.svg" alt="Instagram logo" aria-hidden="true" /><span>Instagram</span></a>
+    <a href="/channels/tiktok"><img noZoom src="/images/channels/tiktok.svg" alt="TikTok logo" aria-hidden="true" /><span>TikTok</span></a>
+    <a href="/channels/youtube"><img noZoom src="/images/channels/youtube.svg" alt="YouTube logo" aria-hidden="true" /><span>YouTube</span></a>
+    <a href="/channels/x-twitter"><img noZoom src="/images/channels/x.svg" alt="X logo" aria-hidden="true" /><span>X</span></a>
+    <a href="/channels/linkedin"><img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn logo" aria-hidden="true" /><span>LinkedIn</span></a>
+    <a href="/channels/facebook"><img noZoom src="/images/channels/facebook.svg" alt="Facebook logo" aria-hidden="true" /><span>Facebook</span></a>
+    <a href="/channels/threads"><img noZoom src="/images/channels/threads.svg" alt="Threads logo" aria-hidden="true" /><span>Threads</span></a>
+    <a href="/channels/pinterest"><img noZoom src="/images/channels/pinterest.svg" alt="Pinterest logo" aria-hidden="true" /><span>Pinterest</span></a>
+    <a href="/channels/reddit"><img noZoom src="/images/channels/reddit.svg" alt="Reddit logo" aria-hidden="true" /><span>Reddit</span></a>
     <a href="/channels/bluesky"><img noZoom src="/images/channels/bluesky.svg" alt="Bluesky logo" aria-hidden="true" /><span>Bluesky</span></a>
-    <a href="/channels/mastodon"><img noZoom src="/images/channels/mastodon.svg" alt="Mastodon logo" aria-hidden="true" /><span>Mastodon<small>Soon</small></span></a>
-    <a href="/channels/discord"><img noZoom src="/images/channels/discord.svg" alt="Discord logo" aria-hidden="true" /><span>Discord<small>Soon</small></span></a>
-    <a href="/channels/telegram"><img noZoom src="/images/channels/telegram.svg" alt="Telegram logo" aria-hidden="true" /><span>Telegram<small>Soon</small></span></a>
-    <a href="/channels/slack"><img noZoom src="/images/channels/slack.svg" alt="Slack logo" aria-hidden="true" /><span>Slack<small>Soon</small></span></a>
-    <a href="/channels/twitch"><img noZoom src="/images/channels/twitch.svg" alt="Twitch logo" aria-hidden="true" /><span>Twitch<small>Soon</small></span></a>
-    <a href="/channels/kick"><img noZoom src="/images/channels/kick.svg" alt="Kick logo" aria-hidden="true" /><span>Kick<small>Soon</small></span></a>
+    <a href="/channels/mastodon"><img noZoom src="/images/channels/mastodon.svg" alt="Mastodon logo" aria-hidden="true" /><span>Mastodon</span></a>
+    <a href="/channels/discord"><img noZoom src="/images/channels/discord.svg" alt="Discord logo" aria-hidden="true" /><span>Discord</span></a>
+    <a href="/channels/telegram"><img noZoom src="/images/channels/telegram.svg" alt="Telegram logo" aria-hidden="true" /><span>Telegram</span></a>
+    <a href="/channels/slack"><img noZoom src="/images/channels/slack.svg" alt="Slack logo" aria-hidden="true" /><span>Slack</span></a>
+    <a href="/channels/twitch"><img noZoom src="/images/channels/twitch.svg" alt="Twitch logo" aria-hidden="true" /><span>Twitch</span></a>
+    <a href="/channels/kick"><img noZoom src="/images/channels/kick.svg" alt="Kick logo" aria-hidden="true" /><span>Kick</span></a>
     <a href="/channels/wordpress"><img noZoom src="/images/channels/wordpress.svg" alt="WordPress logo" aria-hidden="true" /><span>WordPress</span></a>
-    <a href="/channels/tumblr"><img noZoom src="/images/channels/tumblr.png" alt="Tumblr logo" aria-hidden="true" /><span>Tumblr<small>Soon</small></span></a>
+    <a href="/channels/tumblr"><img noZoom src="/images/channels/tumblr.png" alt="Tumblr logo" aria-hidden="true" /><span>Tumblr</span></a>
     <a href="/channels/devto"><img noZoom src="/images/channels/devto.svg" alt="DEV logo" aria-hidden="true" /><span>DEV</span></a>
     <a href="/channels/hashnode"><img noZoom src="/images/channels/hashnode.svg" alt="Hashnode logo" aria-hidden="true" /><span>Hashnode</span></a>
-    <a href="/channels/google-my-business"><img noZoom src="/images/channels/google-business.svg" alt="Google Business logo" aria-hidden="true" /><span>Google Business<small>Soon</small></span></a>
-    <a href="/channels/dribbble"><img noZoom src="/images/channels/dribbble.svg" alt="Dribbble logo" aria-hidden="true" /><span>Dribbble<small>Soon</small></span></a>
-    <a href="/channels/vk"><img noZoom src="/images/channels/vk.svg" alt="VK logo" aria-hidden="true" /><span>VK<small>Soon</small></span></a>
-    <a href="/channels/mewe"><img noZoom src="/images/channels/mewe.svg" alt="MeWe logo" aria-hidden="true" /><span>MeWe<small>Soon</small></span></a>
+    <a href="/channels/google-my-business"><img noZoom src="/images/channels/google-business.svg" alt="Google Business logo" aria-hidden="true" /><span>Google Business</span></a>
+    <a href="/channels/dribbble"><img noZoom src="/images/channels/dribbble.svg" alt="Dribbble logo" aria-hidden="true" /><span>Dribbble</span></a>
+    <a href="/channels/vk"><img noZoom src="/images/channels/vk.svg" alt="VK logo" aria-hidden="true" /><span>VK</span></a>
+    <a href="/channels/mewe"><img noZoom src="/images/channels/mewe.svg" alt="MeWe logo" aria-hidden="true" /><span>MeWe</span></a>
     <a href="/channels/lemmy"><img noZoom src="/images/channels/lemmy.svg" alt="Lemmy logo" aria-hidden="true" /><span>Lemmy</span></a>
     <a href="/channels/nostr"><img noZoom src="/images/channels/nostr.svg" alt="Nostr logo" aria-hidden="true" /><span>Nostr</span></a>
-    <a href="/channels/farcaster"><img noZoom src="/images/channels/farcaster.svg" alt="Farcaster logo" aria-hidden="true" /><span>Farcaster<small>Soon</small></span></a>
+    <a href="/channels/farcaster"><img noZoom src="/images/channels/farcaster.svg" alt="Farcaster logo" aria-hidden="true" /><span>Farcaster</span></a>
     <a href="/channels/moltbook"><img noZoom src="/images/channels/moltbook.png" alt="Moltbook logo" aria-hidden="true" /><span>Moltbook</span></a>
     <a href="/channels/listmonk"><img noZoom src="/images/channels/listmonk.svg" alt="Listmonk logo" aria-hidden="true" /><span>Listmonk</span></a>
-    <a href="/channels/whop"><img noZoom src="/images/channels/whop.svg" alt="Whop logo" aria-hidden="true" /><span>Whop<small>Soon</small></span></a>
-    <a href="/channels/skool"><img noZoom src="/images/channels/skool.svg" alt="Skool logo" aria-hidden="true" /><span>Skool<small>Soon</small></span></a>
+    <a href="/channels/whop"><img noZoom src="/images/channels/whop.svg" alt="Whop logo" aria-hidden="true" /><span>Whop</span></a>
+    <a href="/channels/skool"><img noZoom src="/images/channels/skool.svg" alt="Skool logo" aria-hidden="true" /><span>Skool</span></a>
   </div>
 </section>
 

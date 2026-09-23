@@ -101,13 +101,32 @@ const PostQueen = pkg.default;
 const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
 ```
 
+## The client
+
+```typescript
+new PostQueen(apiKey, baseUrl?)
+```
+
+| Argument | What it is |
+|---|---|
+| `apiKey` | Your workspace API key, or an OAuth access token that starts with `pos_`. The SDK sends either as it is in the `Authorization` header, so a product your users sign in to with [OAuth](/public-api/oauth) can use the SDK with their token. |
+| `baseUrl` | Optional. The API's address without `/public/v1`: the SDK adds `/public/v1/...` to it. Left out, or `undefined`, it is the `POSTQUEEN_API_URL` environment variable when that is set, and otherwise `https://api.postqueen.ai`. |
+
+On PostQueen Cloud, leave `baseUrl` out. If you run PostQueen on your own server, pass your backend's address, or set `POSTQUEEN_API_URL` to it:
+
+```typescript
+const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!, 'https://postqueen.example.com/api');
+```
+
+The default is read when you create the client, so set `POSTQUEEN_API_URL` before that. An empty string is used as it is, not replaced by the default, and every call then fails.
+
 ## Fields you can leave out
 
 From 1.0.5 the types follow what the API needs, so the smallest post is a channel, a date and some text.
 
 | Field | When you leave it out |
 |---|---|
-| `shortLink`, `tags` | The SDK sends `false` and `[]`. |
+| `shortLink`, `tags` | The SDK sends `false` and `[]`. PostQueen has no link shortener set up today, so `shortLink: true` would change nothing either. |
 | `posts[].value[].image` | The SDK sends `[]`. |
 | `posts[].group` | PostQueen creates new posts. A group id that already exists replaces the posts that have it, so never reuse an old one by accident. |
 | `posts[].settings` | Fine for a network with no required settings. PostQueen sets `__type` from the channel. |
@@ -252,7 +271,7 @@ async function main() {
 main();
 ```
 
-`post()` counts against an hourly limit per workspace, and `upload()` against 300 uploads an hour per workspace. Put several channels in one `post()` call rather than one call per channel. What each status code means is on [Limits and errors](/public-api/limits-and-errors).
+`post()` counts against the 30 `POST /posts` requests a workspace can send in an hour, refused ones included, and `upload()` against 300 uploads an hour. Put several channels in one `post()` call rather than one call per channel. What each status code means is on [Limits and errors](/public-api/limits-and-errors).
 
 ## Calls the SDK does not wrap
 

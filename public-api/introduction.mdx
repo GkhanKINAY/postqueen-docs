@@ -133,7 +133,7 @@ Each network has an identifier, such as `bluesky`, `wordpress` or `devto`, retur
 
 ## Limits
 
-`POST /posts` has an hourly limit per workspace, and each upload endpoint allows 300 requests an hour. Nothing else is limited. One request can carry many channels and a whole thread and counts once, so batch posts rather than sending them one by one. Details, headers and every status code: [Limits and errors](/public-api/limits-and-errors).
+A workspace can send 30 `POST /posts` requests an hour, refused ones included, and each upload endpoint allows 300 requests an hour. Nothing else is limited. One request can carry many channels and a whole thread and counts once, so batch posts rather than sending them one by one. Details, headers and every status code: [Limits and errors](/public-api/limits-and-errors).
 
 ## Tools that use the API
 

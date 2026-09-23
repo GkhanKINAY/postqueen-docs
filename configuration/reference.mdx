@@ -120,8 +120,8 @@ Setup and trade-offs: [Uploads and storage](/configuration/uploads) and [Cloudfl
 
 | Variable | What it does |
 |---|---|
-| `API_LIMIT` | Posts created through the public API per workspace per hour. Default 90; the Compose file sets 30. |
-| `UPLOAD_LIMIT` | Uploads per workspace per hour, through the public API and the app together. Default 300. |
+| `API_LIMIT` | Requests to create posts through the public API (`POST /public/v1/posts`) per workspace per hour. Default 90; the Compose file sets 30. |
+| `UPLOAD_LIMIT` | Uploads per workspace per hour, counted separately for each upload route. Default 300. |
 | `RESTRICT_UPLOAD_DOMAINS` | One piece of text that every media URL in a public API post must contain, usually your media host. A plain text match, not a list. |
 | `DISABLE_SSRF_PROTECTION` | `true` lets the server fetch private and local addresses: a WordPress, Mastodon, Lemmy, Listmonk or Bluesky server on your own network, webhooks and media downloads. Refused requests fail as `fetch failed` with `Blocked IP` in the log. It applies to the whole install, so set it only when everyone who can add a channel or a webhook is trusted. |
 | `GUARD_*`, `TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET` | Sign-in rate limits and an optional captcha: see [Abuse protection and rate limits](/configuration/rate-limits). |

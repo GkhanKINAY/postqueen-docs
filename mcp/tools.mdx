@@ -106,7 +106,7 @@ Creates posts: a draft, a post scheduled for a time, or a post that goes out now
 | `isPremium` | boolean | Yes | Whether the X account has Premium. `false` for other networks |
 | `date` | string | Yes | When to publish, in UTC |
 | `type` | string | Yes | `draft`, `schedule` or `now` |
-| `shortLink` | boolean | Yes | Whether to shorten the links in the text |
+| `shortLink` | boolean | Yes | Whether to shorten the links in the text. PostQueen has no link shortener set up today, so links stay as written either way |
 | `postsAndComments` | list | Yes | The post, then its comments or thread items. Each has `content` (HTML: `p`, `h1` to `h3`, `strong`, `u`, `ul`, `li`), `attachments` (a list of media paths) and an optional `delay`, the minutes to wait after the item before it |
 | `settings` | list | Yes | The network's settings as `key` and `value` pairs, from `integrationSchema`. An empty list when it needs none |
 

@@ -7,7 +7,7 @@
       "name": "MIT",
       "identifier": "MIT"
     },
-    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\n`POST /posts` has an hourly limit per workspace. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
+    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\nA workspace can send 30 `POST /posts` requests an hour, and a request refused with `400` counts too. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
   },
   "servers": [
     {
@@ -458,7 +458,7 @@
           "Channels"
         ],
         "summary": "Delete a channel",
-        "description": "Deletes a channel and, first, every post of that channel in PostQueen, whatever its state: scheduled, drafts, published records and failed posts. Pending publishing for them is canceled. Posts of other channels are not touched, and nothing already published is taken down from the network. Connecting the account again does not bring the posts back.",
+        "description": "Deletes a channel and, first, every post of that channel in PostQueen, whatever its state: scheduled, drafts, published records and failed posts. Pending publishing for them is canceled. Posts of other channels are not touched, and nothing already published is taken down from the network. Connecting the account again does not bring the posts back. Deleting a channel that is already deleted answers `200` again.",
         "operationId": "deleteChannel",
         "parameters": [
           {
@@ -556,7 +556,7 @@
           "Channels"
         ],
         "summary": "Find a free slot",
-        "description": "The next posting time that has no post yet, from the posting times set for the channel. The time is UTC, written `YYYY-MM-DDTHH:mm:00` with no zone suffix. An id that matches no channel falls back to the default posting times.",
+        "description": "The next of the channel's posting times, from today on, at which no post of the workspace is set, on any channel and in any state. The time is UTC, written `YYYY-MM-DDTHH:mm:00` with no zone suffix. An id that matches no channel falls back to the default posting times.",
         "operationId": "findSlot",
         "parameters": [
           {
@@ -1240,7 +1240,7 @@
           "Posts"
         ],
         "summary": "Change post status",
-        "description": "Moves a post between draft and scheduled. `schedule` queues it for its stored date. A draft is checked first, with the same rules [Create a post](/public-api/posts/create) applies to a scheduled post: text or media present, the network's required settings, its media rules and its length. A draft that fails answers 400 with the channel name and the reason, and stays a draft. `draft` stops any pending publish and keeps the post as a draft. The date does not change. Published and failed posts cannot change.",
+        "description": "Moves a post between draft and scheduled. `schedule` queues it for its stored date, and a stored date that has already passed publishes it at once. A draft is checked first, with the same rules [Create a post](/public-api/posts/create) applies to a scheduled post: text or media present, the network's required settings, its media rules and its length. A draft that fails answers 400 with the channel name and the reason, and stays a draft. `draft` stops any pending publish and keeps the post as a draft. The date does not change. Published and failed posts cannot change.",
         "operationId": "changePostStatus",
         "parameters": [
           {
@@ -3685,16 +3685,16 @@
               "now",
               "update"
             ],
-            "description": "`schedule` queues the post for `date`. `now` publishes at once. `draft` saves it without publishing. `update` changes posts named by `value[].id` without starting a new publish"
+            "description": "`schedule` queues the post for `date`, and publishes it at once when `date` has already passed. `now` publishes at once. `draft` saves it without publishing. `update` changes posts named by `value[].id` without starting a new publish; an id that matches no post of the workspace is saved as a new post instead, without an error"
           },
           "date": {
             "type": "string",
             "format": "date-time",
-            "description": "Publish date and time in UTC, ISO 8601. Required for every type; `now` uses the current minute instead"
+            "description": "Publish date and time in UTC, ISO 8601. Required for every type; `now` uses the current minute instead. A date in the past with `schedule` publishes at once"
           },
           "shortLink": {
             "type": "boolean",
-            "description": "Replace links in the text with PostQueen short links. Required; send `false` to keep links as they are"
+            "description": "Replace links in the text with PostQueen short links. Required; send `false` to keep links as they are. PostQueen has no link shortener set up today, so `true` leaves links as they are too"
           },
           "order": {
             "type": "string",
@@ -3848,7 +3848,7 @@
         "properties": {
           "content": {
             "type": "string",
-            "description": "The text. It may be empty when `image` has at least one file. HTML is accepted and converted for each network"
+            "description": "The text. It may be empty when `image` has at least one file. HTML is accepted and converted for each network. `(post:ID)`, with the id of another post of the workspace, is replaced with that post's address on its network when this post is published, or removed when that post has no address yet"
           },
           "image": {
             "type": "array",
@@ -3859,7 +3859,7 @@
           },
           "id": {
             "type": "string",
-            "description": "The id of an existing post, to change it in place. Leave it out to create a new post"
+            "description": "The id of an existing post, to change it in place. Leave it out to create a new post. An id that matches no post of the workspace also creates a new post, without an error"
           },
           "delay": {
             "type": "integer",

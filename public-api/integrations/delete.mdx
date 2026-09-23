@@ -13,4 +13,4 @@ What the delete does not do:
 - It does not touch the same content scheduled on your other channels. Each channel has its own posts.
 - It does not take anything down from the network. Published posts stay live there.
 
-An id that is not a channel of your workspace answers `500`, not `404`. Check it against [List channels](/public-api/integrations/list) first.
+An id that is not a channel of your workspace answers `404` with `Channel not found`, and nothing is deleted. A channel that is already deleted is still found, so deleting it again answers `200`.

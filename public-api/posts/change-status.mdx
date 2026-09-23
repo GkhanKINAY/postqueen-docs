@@ -4,6 +4,10 @@ description: "Move a post between draft and scheduled without changing its conte
 openapi: "PUT /posts/{id}/status"
 ---
 
-Moving a draft to `schedule` runs the checks [Create a post](/public-api/posts/create) runs for a scheduled post. A draft that fails them answers 400 with the channel name and the reason, for example `Acme community: channel should not be null or undefined`, and stays a draft.
+Moving a draft to `schedule` runs the checks [Create a post](/public-api/posts/create) runs for a scheduled post, including the length and media rules a draft skipped. A draft that fails them answers 400 with the channel name and the reason, for example `Acme community: channel should not be null or undefined`, and stays a draft.
+
+<Warning>
+`schedule` keeps the post's stored date. If that date has already passed, the post publishes at once. Check the date in [List posts](/public-api/posts/list) first, and change it in the app when it is in the past.
+</Warning>
 
 A post that is already published, or failed, cannot change status. To publish a draft at a new time, change its date in the app, or send it again with [Create a post](/public-api/posts/create) and its `value[].id`.

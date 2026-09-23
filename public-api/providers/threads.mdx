@@ -28,7 +28,8 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | Rule | Message |
 |---|---|
 | At most 20 items in each entry | “Threads carousels can have up to 20 items” |
-| JPEG or PNG images only (GIF, WebP, AVIF, BMP and TIFF are refused) | “Threads accepts JPEG or PNG images only” |
+| JPEG or PNG images only: GIF and WebP are refused | “Threads accepts JPEG or PNG images only” |
+| No AVIF, BMP or TIFF images, as on every network | “File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4” |
 | At most 5 different links in each entry | “Threads allows up to 5 links per post” |
 | Each entry within 500 UTF-8 bytes | “post is too long, please fix it” |
 

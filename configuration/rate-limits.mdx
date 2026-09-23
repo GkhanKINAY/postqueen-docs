@@ -84,8 +84,8 @@ Separate from the sign-in limits, two hourly caps apply per workspace:
 
 | Variable | What it counts | Default |
 |---|---|---|
-| `API_LIMIT` | Posts created with `POST /public/v1/posts` | 90 per hour. The Compose file sets 30. |
-| `UPLOAD_LIMIT` | Uploads, through the public API and in the app | 300 per hour |
+| `API_LIMIT` | Requests to `POST /public/v1/posts`, whatever the number of posts in each. A request refused with `400` counts too | 90 per hour. The Compose file sets 30. |
+| `UPLOAD_LIMIT` | Uploads. Each upload route keeps its own count | 300 per hour |
 
 They are counted separately, so a folder of files added to the media library never uses up the posting cap. The other public API routes and posts made in the app are not counted. With Redis, the counts are shared by every backend. A request over the cap is answered with `429`: see [Limits and errors](/public-api/limits-and-errors).
 

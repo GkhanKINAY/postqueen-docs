@@ -67,15 +67,24 @@ Drag a thumbnail under the editor to move it. The files are published in this or
 |---|---|
 | **Save as draft** | The post is stored at its date and nothing publishes it. A draft only needs text or media; network settings and length are checked when you schedule. |
 | The arrow next to **Schedule**, then **Post now** | The post is published right away. |
-| **Repeat Post Every** | The post repeats: **Every Day** up to **Every Month**. **Clear** removes the repeat. |
+| **Repeat Post Every** | The post is published again and again at the interval you pick. See [Repeat a post](#repeat-a-post). |
 | **Notify me** or **Quiet** | **Quiet** skips the success notice for this post. You are still told if it fails. |
 | The tag control | Colors the post on the calendar. See [tags](/using/sets-signatures-and-tags). |
+
+## Repeat a post
+
+Choose **Repeat Post Every**, then how often: **Every Day**, **Every Two Days**, **Every Three Days**, **Every Four Days**, **Every Five Days**, **Every Six Days**, **Every Week**, **Every Two Weeks** or **Every Month**. The control then shows your choice. Schedule the post as usual.
+
+- After each publish, PostQueen waits the interval and publishes the same post again on each of its channels. It never stops by itself. The interval counts from the last publish, and **Every Month** is every 30 days.
+- Every repeat is a normal publish: it sends notices, calls your [webhooks](/using/webhooks) and shows on the [calendar](/using/calendar).
+- Before the first publish, stop the repeat by opening the post, choosing **Clear** at the bottom of the same menu, then **Update**.
+- Once the post has gone out, it opens with **Duplicate Post** only, and the repeat menu is gone. To stop a repeat that is running, delete the post with **Delete Post** on the calendar, on each channel it repeats on. Copies already published stay on the network.
 
 ## Good to know
 
 - The right column opens on **AI Copilot**, which is locked during the [free trial](/cloud/trial), and switches to **Post Preview** once the post has text or media. See [AI Copilot](/using/ai-copilot).
 - The badge under the editor counts characters against each channel's limit, and its details name any channel under **Links will be removed from** or **Comments cannot be published on**.
-- Links can be shortened for click counts. Choose whether PostQueen asks, always does it or never does in **Settings > Global Settings > Shortlink Settings**.
+- PostQueen does not shorten links today. Links are published as you wrote them, whatever **Settings > Global Settings > Shortlink Settings** is set to.
 - An existing post opens as **Edit Post**. A scheduled post saves with **Update**, a draft with **Schedule**, and a published one shows **Duplicate Post** instead. Updating a post whose time has passed asks whether to **Just update the post details** or **Republish the post**.
 - On X, the settings card has **Add Re-posters**: pick a **Delay** and your other X channels under **Accounts that will engage:** and they repost the post. X is **In review**: X can be connected once the free trial ends, or right away if you end the trial early.
 

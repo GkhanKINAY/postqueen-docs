@@ -583,6 +583,76 @@ pre *,
   background: var(--pq-lilac);
   color: var(--pq-violet);
 }
+/* Use these docs with AI: four cards, each with an address and a copy
+   button (CopyLink in introduction.mdx). */
+.pq-ai {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+.pq-ai-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 20px;
+  background: var(--pq-surface);
+}
+.pq-ai-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--pq-ink);
+}
+.pq-ai-item p {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--pq-ink-2);
+}
+.pq-ai-item p a {
+  color: var(--pq-accent) !important;
+  font-weight: 600;
+}
+.pq-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid var(--pq-line);
+  border-radius: 12px;
+  background: var(--pq-paper);
+}
+#content .pq-copy code,
+.pq-copy code {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12.5px;
+  color: var(--pq-ink-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pq-copy button {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border: 1px solid var(--pq-line-2);
+  border-radius: 999px;
+  background: var(--pq-surface);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pq-accent);
+  cursor: pointer;
+}
+.pq-copy button:hover {
+  border-color: var(--pq-violet-300);
+}
 .pq-head-row {
   display: flex;
   flex-wrap: wrap;
@@ -599,9 +669,12 @@ pre *,
   white-space: nowrap;
   color: var(--pq-accent) !important;
 }
+/* Every row as tall as the tallest, so a two-line name (Google Business)
+   does not make one row of tiles bigger than the rest. */
 .pq-channels {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  grid-auto-rows: 1fr;
   gap: 0.6rem;
   margin-top: 1.5rem;
 }
@@ -632,16 +705,7 @@ pre *,
   border-radius: 6px;
 }
 .pq-channels span {
-  display: flex;
-  flex-direction: column;
   line-height: 1.25;
-}
-/* The channel's status from its page, under the name: In review or Soon. */
-.pq-channels small {
-  margin-top: 1px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--pq-muted);
 }
 /* The rule spans the text, not the 1120px box around it, so it starts on
    the same left edge as every block above. */
@@ -681,7 +745,8 @@ pre *,
   .pq-section {
     padding: 3rem 1rem 0;
   }
-  .pq-topics {
+  .pq-topics,
+  .pq-ai {
     grid-template-columns: minmax(0, 1fr);
   }
   .pq-channels {
@@ -875,4 +940,13 @@ html[data-page-mode="wide"] #content-area {
 /* On a wide page (agents/overview) the app window fills more of the panel. */
 .pq-visual-wide img {
   max-width: 920px;
+}
+
+/* 16. Footer links: Mintlify caps each at 144px and cuts the rest with an
+   ellipsis, which hid most of support@postqueen.ai. They take their full
+   width; the columns have room for it. */
+footer a.max-w-36 {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
 }

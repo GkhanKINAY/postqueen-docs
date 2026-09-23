@@ -53,6 +53,24 @@ Auto Post checks a feed every hour. When the feed has a new item, PostQueen writ
 For **Publish automatically**, pick channels that need nothing but text and a link, such as Bluesky or Nostr. A network that asks for a title or other settings on every post always falls back to a draft.
 </Tip>
 
+## Check that a feed can post
+
+A feed's toggle and **Test connection** only tell you about the feed. A badge next to the feed's title tells you about its channels. A channel counts as unable to post when it is disabled, needs reconnecting, was never finished connecting, or was deleted.
+
+| Badge | What it means | What to do |
+|---|---|---|
+| **Not running** | None of the feed's channels can post. On a feed set to **All channels**, no channel in the workspace can. | Reconnect or enable the channels on **Channels**, or edit the feed and pick others. |
+| **2/3 channels**, for example | Only that many of the feed's chosen channels can post. | Fix the other channels, or edit the feed and remove them. |
+
+With no badge, every chosen channel can post. Hover a badge for a one-line reminder.
+
+What happens to new items meanwhile depends on the feed:
+
+- With **Publish automatically**, the channels that cannot post are skipped. When none is left, the item is skipped for good and the bell shows "Autopost has no channel to post to".
+- With **Create a draft for review**, channels that are disabled or need reconnecting still get their drafts, which wait for you to fix the channel.
+
+See [Connect a channel](/using/connect-a-channel) to reconnect or enable a channel.
+
 ## Good to know
 
 - Each saved feed has a toggle that pauses the hourly check and keeps the setup.
@@ -67,7 +85,7 @@ For **Publish automatically**, pick channels that need nothing but text and a li
 | “Run Send Test on the Feed step before saving.” | Go back to **Feed** and choose **Send Test**. |
 | “Pick at least one channel.” | Select a channel, or choose **All channels**. |
 | “Autopost saved drafts instead of publishing” (notification) | The channels it names could not publish without their own settings. Open the drafts on the calendar and finish them. |
-| “Autopost has no channel to post to” (notification) | None of the feed's channels can be used. Reconnect them, or edit the feed and pick other channels. |
+| “Autopost has no channel to post to” (notification), or **Not running** on the feed | None of the feed's channels can be used. Reconnect them, or edit the feed and pick other channels. The item that raised the notice is not posted later. |
 | “Your subscription does not include Auto Post. Please upgrade your subscription to post from a feed automatically.” | Auto Post needs a paid plan. See [Plans](/cloud/plans). |
 
 ## Next steps

@@ -25,7 +25,7 @@
     }
   },
   "appearance": {
-    "default": "light",
+    "default": "system",
     "strict": false
   },
   "styling": {
@@ -77,6 +77,7 @@
             "pages": [
               "introduction",
               "quickstart",
+              "using/sign-in",
               "using/app-at-a-glance"
             ]
           },
@@ -187,6 +188,7 @@
             "pages": [
               "using/team",
               "using/connections",
+              "using/notifications",
               "using/settings"
             ]
           }
@@ -624,7 +626,10 @@
       "view",
       "chatgpt",
       "claude",
-      "cursor"
+      "perplexity",
+      "cursor",
+      "vscode",
+      "mcp"
     ],
     "display": "header"
   },
@@ -751,10 +756,6 @@
     {
       "source": "/using/third-party-integrations",
       "destination": "/using/ai-images-and-video"
-    },
-    {
-      "source": "/using/notifications",
-      "destination": "/using/settings"
     },
     {
       "source": "/providers/overview",

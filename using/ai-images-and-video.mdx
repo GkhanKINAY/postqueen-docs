@@ -10,6 +10,7 @@ keywords:
   - seedance
   - image text slides
   - video credits
+  - heygen
 ---
 
 **Where:** **AI Image** and **AI Video** under the post editor in **Create Post**. Media integrations are in **Settings > Integrations**, in the More group.
@@ -105,10 +106,32 @@ Each image uses one AI image credit and each video one AI video credit. The two 
 
 What each service does once it is connected:
 
-- **HeyGen** makes an avatar video from your post's text in your own HeyGen account. In Create Post, choose **Integrations** under the post editor, then HeyGen.
+- **HeyGen** makes a video of one of your HeyGen avatars reading a script, in your own HeyGen account. See [Make a HeyGen video](#make-a-heygen-video).
 - **Reel.Farm** brings videos from your Reel.Farm account into your library. On the Media page, choose **Import**, then **Browse** on Reel.Farm.
 
 **Update key** replaces a saved key. **Disconnect** removes it after you confirm "Are you sure you want to delete this integration?".
+
+## Make a HeyGen video
+
+You need a HeyGen account with at least one avatar of your own, and its API key added in **Settings > Integrations** as above.
+
+<Steps>
+  <Step title="Open HeyGen from the post">
+    In **Create Post**, write the post, then choose **Integrations** under the post editor and **Use** on HeyGen. With no service connected, the window says "No Integrations Yet" and **Go to integrations** opens Settings in a new tab, so your post stays open.
+  </Step>
+  <Step title="Pick the shape and captions">
+    Under **Aspect ratio**, **Portrait** makes a 1280 × 720 video, wider than tall, and **Story** a 720 × 1280 vertical one. Under **Generate captions**, **Yes** has HeyGen add captions to the video.
+  </Step>
+  <Step title="Write the script">
+    **Voice script** is what the avatar says, at least 20 characters. **Fill from post text** has PostQueen's AI write the script from your post. It first asks "Are you sure? It will replace the current script text." and works once per window.
+  </Step>
+  <Step title="Pick the avatar and the voice">
+    **Select avatar** lists the avatars in your HeyGen account. HeyGen's public avatars are not offered. **Select voice** lists 20 HeyGen voices, each with its language.
+  </Step>
+  <Step title="Generate">
+    Choose **Generate video** and keep the window open while HeyGen works. You can follow it in your HeyGen dashboard too. PostQueen waits up to about 9 minutes. The finished video is saved in [Media](/using/media-library) and attached to the post.
+  </Step>
+</Steps>
 
 ## Good to know
 
@@ -133,6 +156,9 @@ What each service does once it is connected:
 | “The result is no longer available here; a finished video is in the Media library.” | Look for the video in [Media](/using/media-library) and attach it with **Insert Media**. |
 | “Invalid API key” | Copy a fresh key from the service and paste it again. |
 | “Integration Already Exists” | The service is already connected. Use **Update key** on its card instead. |
+| “Voice must be at least 20 characters long” | Write a longer **Voice script** for the HeyGen video. |
+| “Avatar is required”, or no **Select avatar** list | Pick an avatar. If none is listed, create an avatar in your HeyGen account first. |
+| “Voice is required” | Pick a voice under **Select voice**. |
 
 ## Next steps
 

@@ -1,7 +1,7 @@
 ---
 title: "Manage your subscription"
 sidebarTitle: "Subscription"
-description: "Change plan, update the card, get invoices, cancel or reactivate, and what happens when a payment fails."
+description: "Change plan, update the card, get invoices, cancel or reactivate, and what happens when a payment fails or is disputed."
 icon: "credit-card"
 keywords:
   - billing
@@ -10,6 +10,8 @@ keywords:
   - reactivate
   - invoices
   - failed payment
+  - disputed payment
+  - chargeback
 ---
 
 **Where:** **Billing**, from the **Upgrade** row at the bottom of the left rail (**Billing & invoices** on Ultimate, **Founding member** for founding members), or **Billing & invoices** in the account menu.
@@ -68,6 +70,12 @@ Deleting your account also cancels the plans of the workspaces you own. See [Ref
 ## When a payment fails
 
 If Stripe cannot charge a renewal, you get an email and an in-app notice, and Billing shows "We could not charge your credit card" with **Update payment method**. The plan keeps working while Stripe retries the payment. The next attempt uses the card you set in the billing portal. If the payment still cannot be collected, the plan ends.
+
+## When a payment is disputed
+
+If a payment to PostQueen is disputed with your bank (a chargeback) and the workspace has no subscription still running, such as a founding-member payment, the plan is suspended at once. Every member gets an email titled "Payment disputed", and the bell shows the same words: "A payment for PostQueen was disputed with your bank, so your plan has been suspended. Contact support if this was not you." **Go to billing** on the notice opens Billing.
+
+The workspace is then without a plan, as described below. If you did not dispute the payment, email [support@postqueen.ai](mailto:support@postqueen.ai). A dispute over a past payment does not suspend a subscription that is still running, and a bank's query that takes no money back does not suspend anything.
 
 ## When a plan ends
 

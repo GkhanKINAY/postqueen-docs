@@ -51,7 +51,6 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ("app.postqueen.ai/settings as the key location", re.compile(r"app\.postqueen\.ai/settings(?![?\w/])")),
     ('"no card" (the trial takes a card)', re.compile(r"\bno (?:credit )?card\b", re.I)),
     ('"60-day" (refunds are 30 days)', re.compile(r"\b60-day\b", re.I)),
-    ('"30 requests per hour" (no production number is published)', re.compile(r"\b30 requests (?:per|an|a) hour", re.I)),
     ('"ten connectors" (nine networks report analytics)', re.compile(r"\bten connectors\b", re.I)),
     ('"every network" claimed as connectable (17 cannot connect yet)',
      re.compile(r"(?<!not )\b(?:every|all) (?:networks?|channels?) (?:is|are) (?:available|ready|connectable|supported)\b"

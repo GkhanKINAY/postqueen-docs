@@ -18,7 +18,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 Each network wants its own settings, and PostQueen refuses a post that is missing a required one. This page has a command for each network you can connect today, with the settings it needs. Replace `bluesky-id` and the others with your channel IDs from `postqueen integrations:list`.
 
 <Warning>
-These commands schedule real posts. To try one safely, add `-t draft`: the post waits on your calendar until you schedule it. Settings are checked for drafts too, so a draft that is accepted will also pass when you schedule it.
+These commands schedule real posts. To try one safely, add `-t draft`: the post waits on your calendar until you schedule it. A draft gets the settings check, so a missing required setting is refused at once. The length and media rules wait until you schedule it, so an accepted draft can still be refused then.
 </Warning>
 
 When you post to a network for the first time, read its rules and settings:

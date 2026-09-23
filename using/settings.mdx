@@ -1,6 +1,6 @@
 ---
 title: "Settings"
-description: "What each Settings tab holds and who sees it, your email notifications, and how to delete your account."
+description: "What each Settings tab holds and who sees it, your email notifications, the language and time zone, and how to delete your account."
 icon: "sliders-horizontal"
 keywords:
   - settings
@@ -8,6 +8,8 @@ keywords:
   - account
   - delete account
   - date format
+  - language
+  - time zone
 ---
 
 **Where:** **Settings** at the bottom of the left rail, or in the account menu under your avatar.
@@ -24,20 +26,20 @@ Settings opens over the page you were on and starts on **Global Settings**. Its 
 |---|---|---|---|
 | Workspace | **Global Settings** | **Organization name**, **Date Metrics**, **Date format** and **Shortlink Settings** | Everyone |
 | Workspace | **Teams** | Members, roles and invites. See [Team](/using/team) | Admins and Super Admins |
-| Workspace | **Language** | The language for the interface, emails and AI prompts | Everyone |
-| Workspace | **Notifications** | Your email notifications | Everyone |
+| Workspace | **Language** | The app's language in this browser. See [Pick your language](#pick-your-language) | Everyone |
+| Workspace | **Notifications** | Your email switches. See [Notifications](/using/notifications) | Everyone |
 | More | **Social Sets**, **Signatures** | Saved starting points and text for posts. See [Sets, signatures and tags](/using/sets-signatures-and-tags) | Paid plans |
 | More | **Auto Post** | Feeds that turn into posts. See [RSS Auto Post](/using/rss-auto-post) | Paid plans |
 | More | **Webhooks** | Calls to your URL when a post goes out. See [Webhooks](/using/webhooks) | Paid plans |
 | More | **Integrations** | Services you connect with their own API key to bring media into posts. See [AI images](/using/ai-images-and-video) | Everyone |
-| Account | **Account** | Your name, email, password, sign-in accounts, time zone and **Delete Account** | Everyone |
+| Account | **Account** | Your name, email, password, sign-in accounts, [time zone](#your-time-zone) and **Delete Account** | Everyone |
 | Account | **API Keys**, **Developers**, **Approved Apps** | The same screens as on [Connections](/using/connections) | Everyone; only admins can reveal the key or create an app |
 
 On **Global Settings**:
 
 - Only the Super Admin sees **Organization name**, the workspace name shown in the switcher and on invoices.
 - **Date Metrics** (**AM:PM** or **24 hours**) and **Date format** (**MM/DD/YYYY** or **DD/MM/YYYY**) are saved in this browser only.
-- **Shortlink Settings** decides what happens to links in your posts: **Ask every time**, **Always shortlink** or **Never shortlink**. Only an admin can change it.
+- **Shortlink Settings** offers **Ask every time**, **Always shortlink** and **Never shortlink**, and only an admin can change it. PostQueen has no link shortener today, so none of the three changes anything: links are published as you wrote them.
 
 ## Choose your email notifications
 
@@ -46,11 +48,25 @@ On **Global Settings**:
     In Settings, choose **Notifications** in the Workspace group.
   </Step>
   <Step title="Switch each email on or off">
-    **Success Emails** tell you a post was published, **Failure Emails** that a post failed, and **Streak Reminder Emails** that your posting streak is about to end. All three start on.
+    **Success Emails** tell you a post was published, **Failure Emails** that a post failed, and **Streak Reminder Emails** that the workspace's posting streak has ended. All three start on.
   </Step>
 </Steps>
 
-These are yours alone: each member picks the emails for their own inbox. Keep **Failure Emails** on unless you check the calendar every day, because a failed post does not publish again by itself. See [A post did not go out](/troubleshooting/post-failed).
+The switches choose what reaches your own inbox, but the emails cover every post in the workspace, whoever made it. Emails about channels and billing always arrive, whatever the switches say. Keep **Failure Emails** on unless you check the calendar every day, because a failed post does not publish again by itself. [Notifications](/using/notifications) lists every email, when it comes and what the bell shows.
+
+## Pick your language
+
+In **Settings > Language**, choose a language. The app switches at once.
+
+| Direction | Languages offered |
+|---|---|
+| Left to right | English, Русский, 中文, Français, Español, Português, Deutsch, Italiano, 日本語, 한국어, Türkçe, Tiếng Việt |
+| Right to left | עברית (Hebrew) and العربية (Arabic). The whole layout flips to read from the right. |
+
+- The choice is saved in this browser, not in your account or the workspace. Each member, and each of your browsers and devices, picks on its own. Until you pick, PostQueen is in English.
+- This browser keeps the choice for 7 days. After that, the app is in English again until you pick once more.
+- Emails from PostQueen are always in English.
+- The AI Copilot is told which language the app is in.
 
 ## Change your account details
 
@@ -60,6 +76,12 @@ In **Settings > Account**:
 - **Email**: choose **Change**, enter the **New email** and choose **Send confirmation**. The address changes when you confirm it from the new inbox.
 - **Password**: choose **Change**, or **Set password** if you only sign in with another account. Changing it signs out your other sessions.
 - **Connected accounts**: **Connect** or **Unlink** a sign-in method. You cannot unlink the last one unless a password is set.
+
+## Your time zone
+
+PostQueen shows every time in the time zone your browser reports, which is the time zone of your computer or phone. **Settings > Account** shows it under **Timezone**, with a **Coming soon** badge: you cannot change it in PostQueen yet.
+
+To see and schedule times in another time zone, change your device's time zone, then reload PostQueen. A post is saved as a moment, not a clock time: a post set for 09:00 in Berlin shows as 08:00 to a teammate in London, and goes out once, at that moment.
 
 ## Delete your account
 
@@ -99,8 +121,8 @@ This cannot be undone. Every workspace you own is deleted with its channels and 
   <Card title="Connections" icon="cable" href="/using/connections">
     The API key, your AI agents and the apps you approved.
   </Card>
-  <Card title="The app at a glance" icon="layout-dashboard" href="/using/app-at-a-glance">
-    Where everything is, and the words the app uses.
+  <Card title="Notifications" icon="bell" href="/using/notifications">
+    The bell, every email PostQueen sends, and the posting streak.
   </Card>
   <Card title="Plans and limits" icon="layers" href="/cloud/plans">
     Which tabs and limits come with each plan.

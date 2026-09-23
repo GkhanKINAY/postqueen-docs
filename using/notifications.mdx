@@ -1,0 +1,96 @@
+---
+title: "Notifications and your posting streak"
+sidebarTitle: "Notifications"
+description: "What the bell shows, which emails PostQueen sends and when, and how the posting streak counts."
+icon: "bell"
+keywords:
+  - notifications
+  - email
+  - bell
+  - streak
+  - mark all read
+---
+
+**Where:** the bell in the header. Your email switches are in **Settings > Notifications**, in the Workspace group.
+
+Notifications belong to the workspace. Every member sees the same notices in the bell, and the emails cover every post in the workspace, not only the posts you made.
+
+## Read your notifications
+
+Choose the bell. A dot on it means there are notices you have not seen yet. The panel lists the workspace's 10 most recent notices, newest first, with the ones you have not seen highlighted. Opening the panel marks them as seen for you, and **Mark all read** clears the highlight. Other members keep their own unread state.
+
+A notice can carry a button that takes you where you fix it:
+
+| Button | On notices about | Opens |
+|---|---|---|
+| **View post** | A post that was published | The post on the network, in a new tab |
+| **Reconnect** | A channel that lost its connection | **Channels**, with that channel selected |
+| **Open channel** | A channel that is disabled, was never finished connecting, or was switched back on, and an Auto Post feed with no channel to post to | **Channels** |
+| **Go to billing** | A payment that failed, was disputed or was refunded, channels your plan switched off, and a post that did not go out because the plan ended | **Billing** |
+| **Open calendar** | A post that failed, and Auto Post drafts or items it could not schedule | The calendar |
+
+While PostQueen is open in your browser, a new notice also pops up at the bottom of the screen and counts as seen. With nothing yet, the panel reads "No notifications".
+
+## Choose your emails
+
+<Steps>
+  <Step title="Open Notifications">
+    In **Settings**, choose **Notifications**. The address the emails go to is at the top.
+  </Step>
+  <Step title="Switch each email on or off">
+    Flip **Success Emails**, **Failure Emails** or **Streak Reminder Emails**. Each switch saves at once. All three start on.
+  </Step>
+</Steps>
+
+| Email | When it arrives | Switch |
+|---|---|---|
+| A post was published | Within the hour, batched. See below. | **Success Emails** |
+| A post failed, or PostQueen could not confirm it went out | At once | **Failure Emails** |
+| "Streak Ended" | 24 hours after the workspace's last published post | **Streak Reminder Emails** |
+| A channel needs reconnecting, is disabled or was never finished; your plan switched channels off or back on; a payment failed, was disputed or was refunded; a post did not go out because the plan ended | At once | None. These always arrive |
+
+Success emails wait an hour from the first one, so a busy day does not fill your inbox. Everything published in the workspace during that hour arrives in one email with the subject "[PostQueen] Your latest notifications". When only one post went out, the email carries that notice's own subject instead.
+
+- Your switches decide what reaches your own inbox, in every workspace you belong to. They do not change what other members get.
+- A switch turned off stops the email only. The notice still appears in the bell.
+- A post saved with **Quiet** sends no success notice or email. You are still told if it fails. See [Create a post](/using/create-a-post).
+- Auto Post notices appear in the bell only. They are not emailed.
+- Emails from PostQueen are in English, whatever language the app is in.
+
+Keep **Failure Emails** on unless you check the calendar every day: a failed post does not publish again by itself. See [A post did not go out](/troubleshooting/post-failed).
+
+## Your posting streak
+
+The header shows your streak as a flame and a number, such as **3 day streak**. Hover it to see this week's days. Phones do not show it.
+
+- The streak belongs to the workspace. It starts when any post in the workspace is published, by any member, from the app, an agent, the CLI, the API or Auto Post.
+- Every published post starts a new 24-hour countdown. Drafts and scheduled posts count only once they go out.
+- If 24 hours pass with nothing published, the streak ends and the count goes back to 0. Members with **Streak Reminder Emails** on get an email titled "Streak Ended".
+
+The email comes when the streak has ended, not before. If the workspace does not post every day, it arrives about a day after each post, so switch **Streak Reminder Emails** off if you do not want it.
+
+## If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| Emails about posts you did not make | Notices cover the whole workspace. Turn off the switch for that email in **Settings > Notifications**. |
+| No email after a post was published | Success emails can take up to an hour. Check that **Success Emails** is on, that the post was not saved with **Quiet**, and your spam folder. |
+| A notice you did not want to miss has scrolled away | The bell keeps the 10 most recent notices. For a failed post, open the calendar: the reason is on the post. |
+| "Something went wrong" when you flip a switch | The switch goes back. Reload the page and try again. |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="A post did not go out" icon="triangle-alert" href="/troubleshooting/post-failed">
+    Every failure notice, and how to send the post again.
+  </Card>
+  <Card title="Connect a channel" icon="plug" href="/using/connect-a-channel">
+    Reconnect or enable a channel a notice points to.
+  </Card>
+  <Card title="Settings" icon="sliders-horizontal" href="/using/settings">
+    Every Settings tab, and who sees it.
+  </Card>
+  <Card title="Manage your subscription" icon="credit-card" href="/cloud/subscription">
+    Failed, disputed and refunded payments.
+  </Card>
+</CardGroup>

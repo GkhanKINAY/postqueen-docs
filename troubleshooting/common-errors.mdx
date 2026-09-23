@@ -108,7 +108,7 @@ In the composer, most messages start with the channel's name, so you know which 
 | `No API Key found` (401) | Send the key in the `Authorization` header. |
 | `Invalid API key` (401) | The key is wrong, was rotated, or was sent with `Bearer` in front. Copy it again from **Connections > API Keys** and send it as it is. |
 | `No subscription found` (401) | The workspace has no trial or plan. Start one on **Billing**. |
-| `ThrottlerException: Too Many Requests` (429) | You reached an hourly limit. Wait the seconds in `Retry-After`, and put several channels in one request. |
+| `ThrottlerException: Too Many Requests` (429) | You reached an hourly limit, such as 30 requests to create posts through the public API. Wait the seconds in `Retry-After`, and put several channels in one request. See [Rate limits](/public-api/limits-and-errors#rate-limits). |
 | A setting path, such as `posts.0.settings.who_can_reply_post must be one of the following values: ...` (400) | A required setting is missing or wrong. The channel's settings list says what it takes: [Integration settings](/public-api/integrations/settings). |
 | The channel name, a colon and a reason, such as `My Bluesky: post is too long, please fix it` (400) | Moving a draft to scheduled runs the same checks as creating a post. Fix the draft for that channel, then schedule it again. |
 | `Cannot change status of a published or errored post` (400) | A failed post cannot be scheduled again by status. Create it again, or send it again from the calendar: [Send the post again](/troubleshooting/post-failed#send-the-post-again). |

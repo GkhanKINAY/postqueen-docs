@@ -12,23 +12,34 @@ A step-by-step guide, from finding the channel id to checking the result, is [Sc
 
 | Value | What happens |
 |---|---|
-| `schedule` | The post goes out at `date`, in UTC. |
+| `schedule` | The post goes out at `date`, in UTC. A `date` that has already passed publishes at once. |
 | `now` | The post goes out at once. `date` is still required, and PostQueen stamps the current minute instead. |
 | `draft` | Saved on the channel's calendar without publishing. Move it to scheduled later with [Change post status](/public-api/posts/change-status). |
-| `update` | Changes existing posts in place, named by `value[].id`, without starting a new publish. |
+| `update` | Changes existing posts in place, named by `value[].id`, without starting a new publish. An id that matches no post creates a new one: see [Changing or copying a post](#changing-or-copying-a-post). |
 
 <Note>
-A draft is checked too: the body, and each network's required settings. The network's rules on length and media are checked only when the post is set to go out (`schedule`, `now` and `update`). So a draft you schedule later is already complete.
+A draft is checked too: the body, each network's required settings, and that every item has text or media. The network's rules on length and media are checked only when the post is set to go out (`schedule`, `now` and `update`), and again when you move a draft to `schedule` with [Change post status](/public-api/posts/change-status). So a draft that was accepted can still be refused then.
 </Note>
 
 ## Two fields that are easy to miss
 
 - **`image` is required on every item of `value`.** Send `[]` for text only. Leaving it out answers `400` with `posts.0.value.0.image must be an array`.
 - **`group` deletes.** Leave it out for a new post. When it names an existing group, every post of that group that the request does not resend is deleted.
+- **`shortLink` changes nothing today.** It is required, but PostQueen has no link shortener set up, so links stay as written with `true` too.
 
 Every field, with its type, is in the body schema on this page.
 
 Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`, and a video must be `ready`: see [Upload a file](/public-api/uploads/upload-file).
+
+## Link to another post
+
+Write `(post:ID)` in a `content`, with the id of another post of your workspace, and PostQueen replaces it with that post's address on its network when this post is published. Use it to point a new post or a comment at an earlier one:
+
+```json
+{ "content": "Part two of our spring menu. Part one: (post:cmg1p0s7k0001qz0h4yq2a8r1)", "image": [] }
+```
+
+The id is a `postId` from this endpoint's answer or an `id` from [List posts](/public-api/posts/list). The address is read at publish time, so the other post has to be published first. When it has no address by then, or the id is not a post of your workspace, the placeholder is removed and the rest of the text goes out.
 
 ## Settings by network
 
@@ -85,6 +96,7 @@ Every status the endpoint returns, and what to do about it, is on [Limits and er
 ## Changing or copying a post
 
 - **Change a scheduled post.** Send it again with `value[].id` set to the id of each part you keep, and its `group` from [List posts](/public-api/posts/list) so the parts you leave out are deleted. Use `update` with the post's current `date` to change its text or media without touching the schedule, or `schedule` with a new `date` to move it. To change only its settings, [Update post settings](/public-api/posts/settings) is simpler.
+- **Check the ids you send with `update`.** An id that matches no post of your workspace is not an error: that item is saved as a new post on the channel, with no warning, and it can still be published once `date` passes. A missing or mistyped first id therefore gives you a second post instead of a changed one. Take the ids from List posts, and check that the `postId` in the answer is the id you sent.
 - **Publish a post again.** `schedule` or `now` with the id of a post that was already published is refused with `400`. Add `"republish": true` if you mean it.
 - **Copy a post.** There is no copy endpoint. Read the post with [List posts](/public-api/posts/list), parse its `settings` and `image` (they come back as JSON strings), and send the content as a new post without any post ids or `group`.
 
@@ -95,5 +107,5 @@ Do not put file data in the body. This endpoint takes about 100 kB of JSON, whic
 </Warning>
 
 <Note>
-`POST /posts` has an hourly limit per workspace. One request can carry many channels and a whole thread, and it counts once. See [Limits and errors](/public-api/limits-and-errors).
+A workspace can send 30 `POST /posts` requests an hour, and a request refused with `400` counts too. One request can carry many channels and a whole thread, and it counts once. See [Limits and errors](/public-api/limits-and-errors).
 </Note>

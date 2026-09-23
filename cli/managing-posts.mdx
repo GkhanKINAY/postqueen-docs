@@ -111,7 +111,7 @@ postqueen posts:create \
     postqueen posts:create -c "Draft for review" -s "2026-10-01T09:00:00Z" -t draft -i "cmf1abc2d0001"
     ```
 
-    A draft keeps its date and waits on your calendar until you schedule it. The CLI checks a draft's settings too, so pass them now.
+    A draft keeps its date and waits on your calendar until you schedule it with `posts:status`. PostQueen checks a draft's required settings too, so pass them now. The network's rules on length and media are checked only when you schedule it, so a draft that was accepted can still be refused then.
   </Accordion>
   <Accordion title="Add images or a video" icon="image">
     Upload each file first, then pass the returned `path` with `-m`. Separate several files with commas:
@@ -137,7 +137,15 @@ postqueen posts:create \
 
     The extra items become a thread on Bluesky, Nostr, X and Threads, and comments on Facebook, Instagram and Lemmy. YouTube, TikTok, WordPress, DEV, Hashnode and Listmonk publish the first item only. More in [comments and threads](/using/comments-and-threads).
 
-    Because `-m` pairs by position, leaving it out on a middle item moves every later file onto the wrong item. Use a `--json` file for that.
+    Because `-m` pairs by position, give every item before the last one with media its own `-m`, and `-m ""` to an item that has none. Leaving one out moves every later file onto the wrong item:
+
+    ```bash
+    postqueen posts:create \
+      -c "Three things we changed in the spring menu." -m "" \
+      -c "First: every dish now has a smaller size." -m "$IMG" \
+      -s "2026-10-01T09:00:00Z" \
+      -i "cmf1abc2d0001"
+    ```
   </Accordion>
   <Accordion title="Post to several channels" icon="layers">
     List the IDs with commas. Each channel gets its own post:
@@ -192,9 +200,10 @@ postqueen posts:create \
 
 ### Good to know
 
-- Before it saves anything, PostQueen checks each post the way the app does: the settings, the length and the media. A refused post names the channel and the reason; see [troubleshooting](/agents/troubleshooting#a-cli-command-fails).
-- `--shortLink` is on by default, which lets PostQueen swap links in the text for short links. Pass `--no-shortLink` to keep every link exactly as written.
-- The date is required even for a draft: it is the time the post goes out once you schedule it.
+- Before it saves anything, PostQueen checks each post the way the app does: the settings, the length and the media. A draft gets only the settings check and the check that each item has text or media. A refused post names the channel and the reason; see [troubleshooting](/agents/troubleshooting#a-cli-command-fails).
+- `--shortLink` is on by default, which lets PostQueen swap links in the text for short links. PostQueen has no link shortener set up today, so links stay as written either way. Pass `--no-shortLink` to keep every link exactly as written.
+- The date is required even for a draft: it is the time the post goes out once you schedule it. A date that has already passed publishes the post at once.
+- `(post:ID)` in the text, with the ID of another post of your workspace, becomes that post's address on its network when this post is published. If that post has no address yet, the placeholder is removed.
 
 ## List posts
 
@@ -227,7 +236,7 @@ Each post has its `id`, `content`, `publishDate`, `state` (`QUEUE`, `DRAFT`, `PU
     postqueen posts:status <post-id> --status schedule   # queue it for its date
     ```
 
-    The date does not change. A post that was published or failed cannot change status: `Cannot change status of a published or errored post`.
+    The date does not change. Scheduling a draft runs the length and media checks it skipped, and a draft whose date has already passed publishes at once. A post that was published or failed cannot change status: `Cannot change status of a published or errored post`.
   </Tab>
 </Tabs>
 
