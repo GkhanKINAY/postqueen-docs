@@ -34,8 +34,11 @@ This runs the whole stack on your own computer, over plain HTTP on `http://local
   </Step>
   <Step title="Write the .env file">
     ```bash
-    printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nNOT_SECURED=true\n' \
-      "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
+    cat > .env <<EOF
+    JWT_SECRET=$(openssl rand -hex 32)
+    ENCRYPTION_KEY=$(openssl rand -hex 32)
+    NOT_SECURED=true
+    EOF
     ```
 
     The Compose file reads `.env` from this folder. `JWT_SECRET` signs sessions, `ENCRYPTION_KEY` encrypts the credentials PostQueen stores, and `NOT_SECURED=true` lets the login cookie work over HTTP. Everything else keeps the Compose file's defaults, which point PostQueen at `http://localhost:4007`.

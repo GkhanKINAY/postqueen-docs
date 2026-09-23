@@ -84,7 +84,8 @@ On every start the container first applies the database schema, then starts the 
 | CPU | 2 vCPU | 4 vCPU |
 | Memory | 4 GB | 8 GB |
 | Disk | 20 GB | 50 GB, plus room for uploaded media |
-| System | Any Linux that runs Docker Engine with the Compose plugin v2.24 or newer. Docker Desktop on macOS and Windows for a local try. | |
+
+Any Linux that runs Docker Engine with the Compose plugin v2.24 or newer works, on amd64 or arm64. Docker Desktop on macOS and Windows is fine for a local try.
 
 The Compose stack runs eight containers, and Temporal's Elasticsearch alone takes several hundred megabytes, so a 2 GB machine runs out of memory while it starts. Video conversion takes about two cores while it runs. Building the image from source needs more memory than running it.
 
@@ -109,7 +110,7 @@ PostQueen calls each network's API from the server, so a strict egress firewall 
 - `graph.facebook.com`, `graph.instagram.com` and `graph.threads.net` for Meta
 - `api.linkedin.com` and `www.linkedin.com` for LinkedIn
 - `open.tiktokapis.com`, and `business-api.tiktok.com` for TikTok Business
-- `www.googleapis.com` and the `mybusiness*.googleapis.com` hosts for YouTube and Google Business Profile
+- Google's `*.googleapis.com` hosts, such as `www.googleapis.com`, `oauth2.googleapis.com` and the Business Profile API hosts, for YouTube and Google Business Profile
 - `api.neynar.com` for Farcaster
 - the instance in `MASTODON_URL`, and the servers people enter for Bluesky, Lemmy, WordPress and Listmonk
 

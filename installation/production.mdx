@@ -76,15 +76,19 @@ Replace `postqueen.example.com` with your own name everywhere on this page.
   </Step>
   <Step title="Write the .env file">
     ```bash
-    printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nMAIN_URL=%s\nFRONTEND_URL=%s\nNEXT_PUBLIC_BACKEND_URL=%s\n' \
-      "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" \
-      https://postqueen.example.com https://postqueen.example.com https://postqueen.example.com/api > .env
+    cat > .env <<EOF
+    JWT_SECRET=$(openssl rand -hex 32)
+    ENCRYPTION_KEY=$(openssl rand -hex 32)
+    MAIN_URL=https://postqueen.example.com
+    FRONTEND_URL=https://postqueen.example.com
+    NEXT_PUBLIC_BACKEND_URL=https://postqueen.example.com/api
+    EOF
     ```
 
     Put your own domain in the three addresses before you run it. Keep `/api` on the last one and leave off trailing slashes. Do **not** add `NOT_SECURED`: the site runs on HTTPS.
 
     <Warning>
-    **Keep both keys once set.** `JWT_SECRET` signs sessions, so changing it signs everyone out. `ENCRYPTION_KEY` encrypts the API key, the stored credentials of networks such as Bluesky and WordPress, and other secrets, so changing it without `PREVIOUS_ENCRYPTION_KEY` makes those unreadable. Setting `ENCRYPTION_KEY` now, before there is data, is what lets you rotate `JWT_SECRET` later. See [Configuration reference](/configuration/reference#encryption-key).
+    **Keep both keys once set.** `JWT_SECRET` signs sessions, so changing it signs everyone out. `ENCRYPTION_KEY` encrypts the API key, the stored credentials of networks such as Bluesky and WordPress, and other secrets, so changing it without `PREVIOUS_ENCRYPTION_KEY` makes those unreadable. Setting `ENCRYPTION_KEY` now, before there is data, is what lets you rotate `JWT_SECRET` later. See [Configuration reference](/configuration/reference#encryption-keys).
     </Warning>
   </Step>
   <Step title="Pin the image">

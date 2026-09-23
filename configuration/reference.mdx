@@ -5,11 +5,11 @@ description: "Every environment variable a self-hosted PostQueen reads, grouped 
 icon: "list"
 ---
 
-import RestartService from '/snippets/restart-service.mdx';
+PostQueen reads all of its settings from environment variables. With Docker Compose they go in the `.env` file next to `docker-compose.yaml`: see [Docker Compose](/installation/docker-compose#where-settings-live). A change takes effect when the `postqueen` container is recreated, not restarted:
 
-PostQueen reads all of its settings from environment variables. With Docker Compose they go in the `.env` file next to `docker-compose.yaml`: see [Docker Compose](/installation/docker-compose#where-settings-live). A change takes effect when the container is recreated:
-
-<RestartService />
+```bash
+docker compose up -d --no-deps --force-recreate postqueen
+```
 
 - **`NEXT_PUBLIC_` variables need no rebuild.** The web app renders its pages on the server and hands these values to the browser at run time, so recreating the container is enough. The one exception is `NEXT_PUBLIC_APP_VERSION`, which is fixed when the image is built.
 - **The start-up check only warns.** After the backend is listening it checks the required values below and logs each problem as a `Configuration issue`. Nothing stops, so a running container is not proof that the settings are right: `docker compose logs postqueen | grep -i "configuration issue"`.
