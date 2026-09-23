@@ -1,146 +1,126 @@
 ---
-title: 'Claude Code'
-description: 'Run your calendar from the terminal you already have open: install her skill or connect over MCP, and Claude Code schedules the posts'
-icon: /images/brand/icon-claude-code.svg
+title: "Claude Code"
+description: "Connect Claude Code to PostQueen with one claude mcp add command, then announce releases and draft posts from your terminal."
+icon: "/images/brand/icon-claude-code.svg"
 ---
 
-import AgentPlanLimits from '/snippets/agent-plan-limits.mdx';
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/claude-code.mdx (merge; WIP: better, use as base; audit: agents), this file (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-## Working with her in the terminal
+Claude Code is Anthropic's coding agent for the terminal and IDEs. Add PostQueen with one command and Claude Code can turn a changelog into posts, schedule them and report how your published posts did, from the terminal you already have open.
 
-Claude Code is Anthropic's agentic coding tool. It lives in your terminal, runs real commands and speaks the Model Context Protocol, which is everything she needs to join the session you already have open. It is not the Claude chat apps on claude.ai, Desktop, iOS or Android — that product uses a [custom connector](/agents/claude). Same pairing as Codex vs ChatGPT. You finish the feature, you say what you want the world to see, and the announcement is on your calendar before you have switched windows.
+## Before you start
 
+- **Plans:** Pro, Max, Team, Enterprise or a Console (API) account. The free Claude plan does not include Claude Code.
+- **Platforms:** the terminal on macOS, Linux and Windows, plus IDE integrations.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
-## Set up
+<ApiKeyLocation />
 
-Two routes lead to the same place. The postqueen skill teaches Claude Code the `postqueen` CLI, which is the one to pick when you want shell commands and JSON you can pipe into `jq`. MCP hands it PostQueen's 21 hosted tools instead, with nothing installed locally. Running both is fine.
+## Connect Claude Code
 
 <Steps>
-  <Step title="Install the CLI">
+  <Step title="Add PostQueen">
+    Run this in your terminal, with your key in place of `YOUR_API_KEY`:
+
     ```bash
-    npm install -g postqueen
+    claude mcp add --transport http postqueen \
+      https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
+
+    Add `--scope user` to use PostQueen in every project. Without it, the server is saved for the current project only.
   </Step>
-  <Step title="Install her skill">
-    ```bash
-    npx skills add GkhanKINAY/postqueen-agent
-    ```
-
-    What lands is her `SKILL.md`, registered under the name `postqueen` and declaring `Bash(postqueen:*)` as the only tool it needs. Claude Code picks it up on its own when a task looks like posting work, so it arrives already knowing the discovery flow, the flags on `posts:create` and the rule about media.
+  <Step title="Check the server">
+    Run `claude mcp list`. PostQueen is listed with its address.
   </Step>
-  <Step title="Export your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Export it in the shell you launch Claude Code from:
-
-    ```bash
-    export POSTQUEEN_API_KEY="your-api-key"
-    ```
-
-    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
-
-    ```bash
-    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
-    ```
-  </Step>
-  <Step title="Verify the connection">
-    ```bash
-    postqueen integrations:list
-    ```
-
-    A JSON list of your connected channels means she is ready. If a command starts failing later,
-    `postqueen auth:status` shows which credentials the CLI is using and then calls
-    `GET /public/v1/integrations` to prove they still work. This same `integrations:list`
-    command is the hard gate for scripts, because `auth:status` exits `0` even when it reports
-    that you are not authenticated.
-  </Step>
-  <Step title="Or connect over MCP">
-    Prefer tool calls to shell commands? It is one `claude mcp add` line, and the scoping options,
-    the header variant and self-hosted URLs are all on
-    [Claude Code over MCP](/agents/claude-code).
+  <Step title="Start a new session">
+    Start a new Claude Code session so the PostQueen tools load.
   </Step>
 </Steps>
 
-<Note>
-`postqueen auth:login` runs an OAuth2 device flow against a self-hosted auth server, and there is no hosted one at the moment. On the hosted service, the API key is the route to take.
-</Note>
+## Check that it works
 
-## 👑 A launch post with a screenshot
+In the new session, ask: "List my PostQueen channels." Claude Code calls PostQueen and answers with the channels you connected. Type `/mcp` to see the server and its tools.
 
-You just shipped dark mode and grabbed a screenshot of it. Ask in plain words:
+## Good to know
 
-> *"Schedule a launch post about dark mode for tomorrow at 9am on X and LinkedIn, with screenshots/dark-mode.png attached."*
+- **Scopes:** the default is local, this project only, stored in `~/.claude.json`. `--scope user` covers every project, and `--scope project` writes a shared `.mcp.json` into the project.
+- **Keep the key out of a shared file.** `.mcp.json` expands `${VAR}` in the address and headers, so a committed file can read the key from your environment. Or use the header form below.
+- **Claude Code can run the command for you** if you allow it, since it runs shell commands. The tools still load only in a new session.
+- **A connector you added in Claude** on claude.ai also shows up in Claude Code when you log in with a claude.ai subscription.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app, or with the [PostQueen CLI](/cli/introduction). [The MCP tools](/mcp/tools) lists what it can do.
 
-It starts by finding your channels and their integration IDs:
+## Other ways to connect
 
-```bash
-postqueen integrations:list
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From Anthropic's docs. The route above |
+| The Bearer header | `{{mcpBearerUrl}}` | From Anthropic's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| The postqueen skill and the CLI | `npm install -g postqueen` | See [the postqueen skill](/agents/skill) |
+
+<Tabs>
+  <Tab title="Bearer header">
+    ```bash
+    claude mcp add --transport http postqueen https://api.postqueen.ai/mcp \
+      --header "Authorization: Bearer YOUR_API_KEY"
+    ```
+  </Tab>
+  <Tab title="Sign in (not tested yet)">
+    ```bash
+    claude mcp add --transport http postqueen \
+      https://api.postqueen.ai/mcp-oauth-dynamic
+    ```
+
+    Then run `/mcp` in Claude Code (or `claude mcp login postqueen`) and sign in to PostQueen. A workspace admin approves. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+
+    If Claude Code cannot find the sign-in, set `oauth.authServerMetadataUrl` for the server in `.mcp.json` to `https://api.postqueen.ai/.well-known/oauth-authorization-server/mcp-oauth-dynamic`.
+  </Tab>
+</Tabs>
+
+## Try this first
+
+```text wrap
+Read CHANGELOG.md and write a short Bluesky post about the latest release. Save it in PostQueen as a draft for tomorrow at 9am.
 ```
 
-The screenshot goes through upload next, because `-m` takes a PostQueen URL rather than a local path. Media has to live on a PostQueen domain, and the API rejects the request otherwise. The `tail -n +2` drops the command's header line, which is not JSON:
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
+
+## Run it on a schedule
+
+Claude Code runs without a chat with `-p`, from cron or a CI job, and a `-p` run connects the same MCP servers as a normal session. It cannot stop to ask you for approval, so allow the PostQueen tools up front with `--allowedTools`:
 
 ```bash
-IMAGE_URL=$(postqueen upload screenshots/dark-mode.png | tail -n +2 | jq -r '.path')
+claude -p "Turn CHANGELOG.md into three PostQueen drafts for Bluesky" \
+  --allowedTools "mcp__postqueen"
 ```
 
-Then it schedules the post. The `-s` flag is required and takes an ISO 8601 date, and `-i` takes the integration IDs from the first command. X requires `who_can_reply_post`, which LinkedIn ignores, so one call still covers both channels:
+`mcp__postqueen` allows every tool of the `postqueen` server and nothing else. Source: [Anthropic, run Claude Code programmatically](https://code.claude.com/docs/en/headless).
 
-```bash
-postqueen posts:create \
-  -c "Dark mode is live 🌙 Flip it on in Settings and your eyes will thank you tonight." \
-  -m "$IMAGE_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"who_can_reply_post":"everyone"}' \
-  -i "twitter-id,linkedin-id"
-```
+## Troubleshooting
 
-The per-provider requirements are listed in [X provider settings](/public-api/providers/x) and its neighbors.
+| Symptom | Fix |
+|---|---|
+| PostQueen is missing from a session | Run `claude mcp list`, then start a new session so the tools load. |
+| It works in one project only | The default scope is local. Add it again with `--scope user`. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| A `-p` run stops at a permission prompt | Add `--allowedTools "mcp__postqueen"` to the command. |
+| You meant the Claude app | Claude and Claude Cowork use a connector instead. See [Claude](/agents/claude). |
 
-Finally it reads back what it queued, so you get a confirmation instead of a promise:
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
-```bash
-postqueen posts:list
-```
+## Is it the same as Claude?
 
-The post now sits on your calendar at [app.postqueen.ai](https://app.postqueen.ai). She runs on your terms: leave it there and she publishes it at nine tomorrow, on time, without another word from you. Want to look first? Add `-t draft` to the same command and the post lands on the calendar unscheduled, waiting until you publish it.
+No. Claude Code is Anthropic's coding agent, with its own command. Claude and Claude Cowork share a connector instead:
 
-<Tip>
-Over MCP the conversation is the same and only the plumbing changes. Claude Code calls `integrationList`, brings media in with `uploadFromUrlTool` when it has a public URL, then schedules with `integrationSchedulePostTool`. Each tool is documented in the [MCP tool reference](/mcp/tools).
-</Tip>
+| Product | What it is | How it connects |
+|---|---|---|
+| **Claude Code** (this page) | Anthropic's coding agent for the terminal and IDEs | One `claude mcp add` command |
+| [Claude](/agents/claude) | Anthropic's assistant on the web, desktop and mobile | A custom connector |
+| [Claude Cowork](/agents/claude-cowork) | Claude's agent mode for everyday work | The Claude connector, switched on in a Cowork session |
 
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Do I need Claude Code to use PostQueen?">
-    No. She works on her own through the dashboard, the CLI and the public API. Claude Code is one of several ways to automate her, and the one to pick when your day already happens in a terminal.
-  </Accordion>
-  <Accordion title="Should I install the skill or connect over MCP?">
-    Whichever fits the way you work. The skill plus the CLI gives you shell commands with JSON output you can pipe and script, which suits repo work and cron jobs. MCP gives Claude Code 21 tools with no local install, which suits a machine where you would rather not add a global npm package. The two coexist happily, so you can start with one and add the other later.
-  </Accordion>
-  <Accordion title="What can Claude Code actually do with her?">
-    Everything the CLI can do. It lists your channels and reads what each one accepts, creates scheduled posts or drafts with media attached, and pulls analytics once they are live. Commands print a one-line header and then JSON, so the agent reads a field rather than guessing at wording on screen. Pipe through `tail -n +2` before `jq`.
-  </Accordion>
-  <Accordion title="Can I review posts before they publish?">
-    Yes. Ask for drafts and each post lands on the calendar unscheduled, waiting until you publish it there. Anything already scheduled is visible on the same calendar before it goes out, so you can still edit or delete it.
-  </Accordion>
-  <Accordion title="Does the integration cost extra?">
-    <AgentPlanLimits />
-  </Accordion>
-</AccordionGroup>
-
-## Learn more
-
-<CardGroup cols={2}>
-  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
-    The `postqueen` CLI that Claude Code drives, with installation and the full command set.
-  </Card>
-  <Card title="Claude Code over MCP" icon="plug" href="/agents/claude-code">
-    Project config, the Authorization-header variant and self-hosted URLs.
-  </Card>
-  <Card title="Why agents love her" icon="bot" href="/agents/overview">
-    Why an agent can drive her without guesswork, and the two rules that matter most.
-  </Card>
-  <Card title="Agents overview" icon="compass" href="/agents/overview">
-    Every way to put an agent in front of PostQueen, from coding assistants to chat apps.
-  </Card>
-</CardGroup>
+<NextStepsAgent />

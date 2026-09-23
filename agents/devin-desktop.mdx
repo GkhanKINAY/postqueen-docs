@@ -1,66 +1,113 @@
 ---
-title: Devin Desktop
-description: 'Connect Devin Desktop to PostQueen over MCP'
-icon: 'laptop'
+title: "Devin Desktop"
+description: "Connect Devin Desktop to PostQueen with one devin mcp add command, then ask Devin Local to write, schedule and check your posts."
+icon: "laptop"
 ---
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: this file, moved from mcp/clients/windsurf, which H1 rewrote in place as this agent (WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Devin Local reads MCP servers from `~/.config/devin/mcp_config.json` (Windows: `%APPDATA%\devin\mcp_config.json`), and PostQueen connects with one URL.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-<Note>
-From Cognition's docs, not tested by PostQueen yet.
-</Note>
+Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Add PostQueen as an MCP server and Devin Local can write posts about your work, schedule them and report how your published posts did.
 
-<Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
-</Info>
+## Before you start
 
-## Option A: one command
+- **Plans:** Free, Pro, Max, Teams and Enterprise. Cognition does not confirm MCP on the Free plan. On Enterprise, an admin must enable Devin Local.
+- **Platforms:** macOS, Windows 10 or later, and Linux (glibc 2.28 or later).
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
-```bash
-devin mcp add -s user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
+<ApiKeyLocation />
 
-`-s user` saves the server for every project. Without it, it is saved for the current project only.
+## Connect Devin Desktop
 
-## Option B: mcp_config.json
+<Steps>
+  <Step title="Add PostQueen">
+    Run this in your terminal, with your key in place of `YOUR_API_KEY`:
 
-<Tabs>
-  <Tab title="API key in URL">
-    ```json ~/.config/devin/mcp_config.json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
-        }
+    ```bash
+    devin mcp add -s user postqueen \
+      https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+
+    `-s user` saves it for every project. Without it, it is saved for the current project only.
+  </Step>
+  <Step title="Open a new agent tab">
+    In Devin Desktop, open a new agent tab so Devin Local loads the server.
+  </Step>
+</Steps>
+
+<Accordion title="Prefer to edit the config file?" icon="file-code">
+  Add the server to `~/.config/devin/mcp_config.json`, or `%APPDATA%\devin\mcp_config.json` on Windows:
+
+  ```json ~/.config/devin/mcp_config.json
+  {
+    "mcpServers": {
+      "postqueen": {
+        "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
       }
     }
+  }
+  ```
+</Accordion>
+
+## Check that it works
+
+Ask Devin Local: "List my PostQueen channels." By default it asks before each tool call; allow the PostQueen tool once, for the session, or always. It then answers with the channels you connected.
+
+## Good to know
+
+- **Devin Local asks before every MCP tool call** by default. You can allow one PostQueen tool, or every tool on the server, for the session or for good.
+- **Run `devin mcp list`** to see the servers Devin knows about.
+- **Devin Local can run the command for you** if you allow it.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From Cognition's docs. The route above |
+| The Bearer header | `{{mcpBearerUrl}}` | From Cognition's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+
+<Tabs>
+  <Tab title="Bearer header">
+    ```bash
+    devin mcp add -s user postqueen https://api.postqueen.ai/mcp \
+      -H "Authorization: Bearer YOUR_API_KEY"
     ```
   </Tab>
-  <Tab title="Bearer token">
+  <Tab title="Sign in (not tested yet)">
     ```bash
-    devin mcp add -s user postqueen https://api.postqueen.ai/mcp -H "Authorization: Bearer YOUR_API_KEY"
+    devin mcp add -s user postqueen \
+      https://api.postqueen.ai/mcp-oauth-dynamic
+    devin mcp login postqueen
     ```
+
+    Or press **Authenticate** on PostQueen in Devin Desktop. Devin registers itself and opens the PostQueen sign-in, which a workspace admin approves. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
   </Tab>
 </Tabs>
 
-<Note>
-Sign-in instead of a key is an option, not tested yet: add `https://api.postqueen.ai/mcp-oauth-dynamic` as the server URL, then run `devin mcp login postqueen` or press **Authenticate** in Devin Desktop. A workspace admin approves the connection.
-</Note>
+## Try this first
 
-<Warning>
-Your API key can post to every account you have connected. Keep `mcp_config.json` off shared screens. If the key leaks, an admin rotates it under **Connections > API Keys**; then update every client that uses it.
-</Warning>
+```text wrap
+List my PostQueen channels. Then write a short Bluesky post about the change in this branch and save it as a draft for tomorrow at 9am.
+```
 
-## Self-hosted
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
-Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY` tail. Most self-hosted setups serve the backend under `/api`. The reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/configuration/mcp).
+## Troubleshooting
 
-## Verify
+| Symptom | Fix |
+|---|---|
+| Devin Local does not see PostQueen | Open a new agent tab. Run `devin mcp list` to check that the server is saved. |
+| It works in one project only | It was added without `-s user`. Add it again with `-s user`. |
+| Every PostQueen call asks for approval | That is Devin Local's default. Allow the tool, or every PostQueen tool, for the session or always. |
+| PostQueen shows **Needs auth** | Press **Authenticate** to sign in again, or use the key address. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
 
-Open a new agent tab and ask:
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
-> "List my connected social media accounts"
-
-Your channel names come back when Devin Local calls `integrationList`. It asks before each tool call by default. On Enterprise, an admin must enable Devin Local first.
+<NextStepsAgent />

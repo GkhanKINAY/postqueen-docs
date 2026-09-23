@@ -1,103 +1,125 @@
 ---
-title: VS Code
-description: 'Connect VS Code Copilot to PostQueen over MCP'
-icon: /images/brand/icon-vscode.svg
+title: "VS Code"
+description: "Add PostQueen to VS Code as an MCP server, then ask GitHub Copilot in agent mode to write, schedule and check your posts."
+icon: "/images/brand/icon-vscode.svg"
 ---
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: this file, moved from mcp/clients/vscode (merge; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-VS Code Copilot speaks MCP over streamable HTTP. The config file is **not** Cursor's `mcp.json`. VS Code uses a `servers` object, and each remote entry needs `"type": "http"`.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-This page is the VS Code editor. GitHub Copilot CLI (`copilot mcp add`, `~/.copilot/mcp-config.json`) is a different product. Use [Any MCP client](/agents/other-mcp-clients) for that CLI.
+VS Code is Microsoft's code editor, and GitHub Copilot's agent mode in it uses MCP servers. Add PostQueen once and Copilot can write posts about your work, schedule them and report how your published posts did.
 
-<Info>
-You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
-</Info>
+## Before you start
 
-## Option A: Command Palette
+- **Plans:** you need GitHub Copilot. Copilot Free, Pro, Pro+ and Max are not restricted. On Copilot Business and Enterprise, the **MCP servers in Copilot** policy must be on, and it is off by default.
+- **Platforms:** VS Code 1.99 or later on macOS, Windows and Linux.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect VS Code
 
 <Steps>
   <Step title="Add the server">
-    Open the Command Palette, run **MCP: Add Server**, choose **HTTP**, and name it `postqueen`. Pick **Workspace** (writes `.vscode/mcp.json`) or **Global** (user `mcp.json`).
-  </Step>
-  <Step title="Paste the URL">
-    Use the streamable HTTP URL with your API key in the path:
+    Open the Command Palette and run **MCP: Add Server**. Choose **HTTP (HTTP or Server-Sent Events)**, enter your key address as the server URL, enter `postqueen` as the server ID, and pick **Global** or **Workspace**:
 
-    ```
+    ```text wrap
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
   </Step>
-  <Step title="Trust and start">
-    VS Code asks you to trust the server before it starts. After it starts, Copilot Chat lists the 21 tools.
+  <Step title="Start it">
+    VS Code asks you to trust the server before it starts it. Confirm, then open Copilot Chat in agent mode.
   </Step>
 </Steps>
 
-## Option B: mcp.json
+<Accordion title="Prefer to edit mcp.json yourself?" icon="file-code">
+  Open `.vscode/mcp.json` in the project, or run **MCP: Open User Configuration** for every workspace, and add:
 
-Two locations:
-
-- Workspace: `.vscode/mcp.json` in the project. Safe to commit only if the key is an input variable, not a literal.
-- User profile: **MCP: Open User Configuration**. Servers here apply to every workspace.
-
-<Tabs>
-  <Tab title="API key in URL">
-    ```json
-    {
-      "servers": {
-        "postqueen": {
-          "type": "http",
-          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
-        }
+  ```json .vscode/mcp.json
+  {
+    "servers": {
+      "postqueen": {
+        "type": "http",
+        "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
       }
     }
-    ```
-  </Tab>
-  <Tab title="Bearer token">
-    ```json
+  }
+  ```
+</Accordion>
+
+## Check that it works
+
+In Copilot Chat, in agent mode, ask: "List my PostQueen channels." Copilot calls PostQueen and answers with the channels you connected.
+
+## Good to know
+
+- **VS Code uses `"servers"`, not `"mcpServers"`,** and `"type"` must be `"http"`. A block copied from Cursor does not work here.
+- **The file holds your key** when you use the key address. Keep a workspace `.vscode/mcp.json` out of version control, or use an input variable below.
+- **Copilot can add the entry for you** in agent mode, if you allow it to edit `.vscode/mcp.json`.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From Microsoft's docs. The route above |
+| The Bearer header from an input variable | `{{mcpBearerUrl}}` | From Microsoft's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+
+<Tabs>
+  <Tab title="Input variable">
+    VS Code recommends input variables for secrets. It asks for the key the first time the server starts and stores it for you, so the file holds no secret:
+
+    ```json .vscode/mcp.json
     {
+      "inputs": [
+        {
+          "type": "promptString",
+          "id": "postqueen-key",
+          "description": "PostQueen API key",
+          "password": true
+        }
+      ],
       "servers": {
         "postqueen": {
           "type": "http",
           "url": "https://api.postqueen.ai/mcp",
           "headers": {
-            "Authorization": "Bearer YOUR_API_KEY"
+            "Authorization": "Bearer ${input:postqueen-key}"
           }
         }
       }
     }
     ```
   </Tab>
+  <Tab title="Sign in (not tested yet)">
+    Use `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL, with no headers. VS Code registers itself and opens the PostQueen sign-in, which a workspace admin approves.
+
+    The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+  </Tab>
 </Tabs>
 
-<Warning>
-Do not paste a Cursor `{ "mcpServers": { "postqueen": { "url": "..." } } }` block into this file. VS Code will not read `mcpServers`. Official reference: [Add MCP servers in VS Code](https://code.visualstudio.com/docs/copilot/customization/mcp-servers) and the [MCP configuration schema](https://code.visualstudio.com/docs/agents/reference/mcp-configuration).
-</Warning>
+## Try this first
 
-<Warning>
-Your API key can post to every account you have connected. If you put it in a workspace `.vscode/mcp.json`, keep that file out of version control. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
-</Warning>
-
-## Self-hosted
-
-Replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`:
-
-```json
-{
-  "servers": {
-    "postqueen": {
-      "type": "http",
-      "url": "https://postqueen.example.com/api/mcp/YOUR_API_KEY"
-    }
-  }
-}
+```text wrap
+List my PostQueen channels. Then write a short Bluesky post about the feature in this branch and save it as a draft for tomorrow at 9am.
 ```
 
-Most self-hosted setups serve the backend under `/api`. Your reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/configuration/mcp).
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
-## Verify
+## Troubleshooting
 
-Open Copilot Chat in agent mode and ask:
+| Symptom | Fix |
+|---|---|
+| Copilot does not list PostQueen | Run **MCP: List Servers** and check that PostQueen is running. Make sure you are in agent mode. |
+| The server does not start | Check that the file uses `"servers"` and `"type": "http"`, not `"mcpServers"`. |
+| On Business or Enterprise, MCP is not available | Ask your GitHub admin to turn on the **MCP servers in Copilot** policy. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
 
-> "List my connected social media accounts"
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
-Your channel names come back when the agent calls `integrationList`. If it fails, check that the server is enabled under **MCP: List Servers**, that `mcp.json` saved with `"servers"` and `"type": "http"`, and that the API key was pasted in full.
+<NextStepsAgent />

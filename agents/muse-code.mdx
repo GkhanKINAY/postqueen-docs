@@ -1,30 +1,37 @@
 ---
-title: Muse Code
-description: "Connect Muse Code, Meta's coding agent, to PostQueen over streamable HTTP."
-icon: /images/brand/icon-muse.svg
+title: "Muse Code"
+description: "Connect Muse Code, Meta's coding agent for the terminal and CI, to PostQueen with one entry in its settings file."
+icon: "/images/brand/icon-muse.svg"
 ---
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: this file, moved from mcp/clients/muse (merge; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-**Muse Code** is Meta's coding agent for the terminal and CI. It loads remote MCP servers from `~/.config/muse/settings.json` over streamable HTTP.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-<Note>
-From Meta's docs, not tested by PostQueen yet.
-</Note>
+Muse Code is Meta's coding agent for the terminal and CI, built on Muse Spark. Add PostQueen to its settings file and Muse Code can list your channels, draft and schedule posts from your repo, and report how published posts did.
 
-Looking for **Muse**, Meta's personal agent in the Muse app and WhatsApp? It is a different agent and connects a different way: [Muse, the personal agent](/agents/muse#muse-the-personal-agent).
+## Before you start
 
-<Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
-</Info>
+- **Plans:** pay as you go per token, or the Everyday, High and Power subscriptions. You need a Meta account, and availability varies by region.
+- **Platforms:** the terminal and CI on macOS, Linux and Windows.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
-## Muse Code
+<ApiKeyLocation />
+
+## Connect Muse Code
+
+Muse Code has no `mcp add` command. You add PostQueen by editing its settings file.
 
 <Steps>
-  <Step title="Edit Muse Code settings">
-    Add this to `~/.config/muse/settings.json`. The file must contain `"schema_version": 1`, and `"mode": "optional"` keeps a failing server from stopping the run. Restart Muse Code after saving.
+  <Step title="Open the settings file">
+    Open `~/.config/muse/settings.json`, or create it.
+  </Step>
+  <Step title="Add PostQueen">
+    Add the `postqueen` entry under `mcp_servers`, with your key in place of `YOUR_API_KEY`. Keep `"schema_version": 1` at the top of the file.
 
-    ```json
+    ```json ~/.config/muse/settings.json
     {
       "schema_version": 1,
       "mcp_servers": {
@@ -37,45 +44,84 @@ You need your PostQueen API key first. In [app.postqueen.ai](https://app.postque
     }
     ```
   </Step>
-  <Step title="Or pass the key as a header">
-    If you prefer a bare `/mcp` URL, put the key in `Authorization`:
+  <Step title="Restart Muse Code">
+    Restart Muse Code, then type `/mcp` to see the PostQueen tools.
+  </Step>
+</Steps>
 
-    ```json
+## Check that it works
+
+Ask Muse Code: "List my PostQueen channels." It answers with the channels you connected in PostQueen. If `/mcp` does not list PostQueen, check the settings file against the example above.
+
+## Good to know
+
+- **`"schema_version": 1` is required.** Without it every command fails with a malformed settings file error.
+- **Keep `"mode": "optional"`.** Servers are required by default, and a required server that fails stops the run.
+- **The file holds your key** when you use the key address. Keep it private, or use the header form below.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From Meta's docs. The route above |
+| The Bearer header | `{{mcpBearerUrl}}` | From Meta's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+
+<Tabs>
+  <Tab title="Bearer header">
+    ```json ~/.config/muse/settings.json
     {
       "schema_version": 1,
       "mcp_servers": {
         "postqueen": {
           "transport": "streamable_http",
           "url": "https://api.postqueen.ai/mcp",
-          "headers": {
-            "Authorization": "Bearer YOUR_API_KEY"
-          },
+          "headers": { "Authorization": "Bearer YOUR_API_KEY" },
           "mode": "optional"
         }
       }
     }
     ```
-  </Step>
-  <Step title="Confirm">
-    Type `/mcp` to see the PostQueen tools, then ask Muse Code to list your PostQueen channels. Your account names come back when it calls `integrationList`.
-  </Step>
-</Steps>
+  </Tab>
+  <Tab title="Sign in (not tested yet)">
+    Set `"url"` to `https://api.postqueen.ai/mcp-oauth-dynamic` with no headers, then run:
 
-<Warning>
-Your API key grants full access to your PostQueen workspace: treat it like a password. Keep `~/.config/muse/settings.json` private. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update the file.
-</Warning>
+    ```bash
+    muse mcp login postqueen
+    ```
 
-## Self-hosted
+    Muse Code registers itself and opens the PostQueen sign-in, which a workspace admin approves. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+  </Tab>
+</Tabs>
 
-On a self-hosted instance, replace `https://api.postqueen.ai` with your `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api/mcp/YOUR_API_KEY`. Your reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/configuration/mcp).
+## Try this first
 
-## Next steps
+```text wrap
+Read the last five commits and write a short Bluesky post about what changed. Save it in PostQueen as a draft for tomorrow at 10am.
+```
 
-<CardGroup cols={2}>
-  <Card title="Muse Code and Muse" icon="/images/brand/icon-muse.svg" href="/agents/muse">
-    Muse Code at a glance, and how Muse, the personal agent, connects
-  </Card>
-  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 21 tools Muse Code discovers on connect
-  </Card>
-</CardGroup>
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| Every command fails with a malformed settings file error | Add `"schema_version": 1` at the top of `settings.json`. |
+| A run stops when PostQueen cannot be reached | Set `"mode": "optional"` on the `postqueen` entry. |
+| `/mcp` does not list PostQueen | Restart Muse Code after saving, and check the JSON is valid. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+## Is it the same as Muse?
+
+No. Meta ships two agents with the Muse name, and they connect to PostQueen in different ways:
+
+| Product | What it is | How it connects |
+|---|---|---|
+| **Muse Code** (this page) | Meta's coding agent for the terminal and CI | PostQueen's MCP address in its settings file |
+| [Muse](/agents/muse) | Meta's personal agent in the Muse app, on muse.ai and in WhatsApp | Not by address yet |
+
+<NextStepsAgent />
