@@ -1,235 +1,184 @@
 ---
-title: n8n
-description: 'Install the n8n-nodes-postqueen community node and let your workflows schedule, upload, and generate for you'
-icon: /images/brand/icon-n8n.svg
+title: "n8n"
+description: "Install the n8n-nodes-postqueen community node, add your API key, and schedule posts from an n8n workflow."
+icon: "/images/brand/icon-n8n.svg"
+keywords:
+  - postqueen
+  - n8n
+  - community node
+  - n8n-nodes-postqueen
+  - workflow
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file, moved from automation/n8n (fix; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsApi from '/snippets/next-steps-api.mdx';
 
-The n8n node puts seven PostQueen operations on your canvas, from scheduling a post to generating a
-video with AI. It talks to the same public API as the [CLI](/cli/introduction) and
-[MCP](/mcp/introduction), so everything a workflow schedules lands on the same calendar you already
-review.
+[`n8n-nodes-postqueen`](https://www.npmjs.com/package/n8n-nodes-postqueen) is a community node for n8n. It creates, lists and deletes posts, uploads files and lists your channels, through the PostQueen API with your API key. Everything it creates lands on the same calendar as the posts you write in the app.
 
-<Frame>
-  <img src="/images/brand/flow-everywhere.svg" alt="One content source, every channel: an n8n workflow fans a post out through PostQueen" />
-</Frame>
+This page describes version 1.0.2 of the node.
 
-## Install
+## Before you start
 
-<Info>
-The node requires n8n running on Node.js 20.15 or newer.
-</Info>
+- **An n8n instance you run, where you are the Owner or an Admin.** n8n installs community nodes from npm only there. n8n Cloud installs only the community nodes n8n has verified, and this one is not verified yet. On n8n Cloud, call the API with the HTTP Request node instead, as shown in [Calls the node does not make](#calls-the-node-does-not-make).
+- **A PostQueen workspace on a trial or a paid plan**, with at least one connected channel.
+- **The API key**, from the box below.
 
-<Tabs>
-  <Tab title="n8n UI (recommended)">
-    1. Open **Settings**.
-    2. Choose **Community Nodes**.
-    3. Click **Install**.
-    4. Enter `n8n-nodes-postqueen` as the npm package name.
-    5. Click **Install** again to confirm.
+<ApiKeyLocation />
+
+## Install the node and add your key
+
+<Steps>
+  <Step title="Install the community node">
+    In n8n, go to **Settings** > **Community Nodes** and select **Install**. Enter `n8n-nodes-postqueen` in **Enter npm package name**, check **I understand the risks of installing unverified code from a public source**, and select **Install**.
 
     <Frame>
-      <img src="/images/brand/community-node.png" alt="n8n Community Nodes install dialog with n8n-nodes-postqueen entered as the package name" />
+      <img src="/images/brand/community-node.png" alt="The n8n Community Nodes install dialog with n8n-nodes-postqueen entered as the npm package name" />
     </Frame>
-  </Tab>
+  </Step>
+  <Step title="Create the credential">
+    Add a **PostQueen** node to a workflow and create a new **PostQueen API** credential:
 
-  <Tab title="npm (manual, non-Docker)">
-    Go to your n8n installation folder, usually `~/.n8n`. If there is no `custom` folder, create one
-    with a `package.json`, then install the package:
+    | Field | What to enter |
+    |---|---|
+    | **API Key** | Your PostQueen API key, as it is. The node sends it in the `Authorization` header for you. |
+    | **Host** | Leave it at `https://api.postqueen.ai`. The node adds `/public/v1` itself. |
 
-    ```bash
-    mkdir -p ~/.n8n/custom
-    cd ~/.n8n/custom
-    npm init -y
-    npm install n8n-nodes-postqueen
-    ```
-  </Tab>
+    When you save, n8n tests the credential against the API's key check (`GET /public/v1/is-connected`).
+  </Step>
+  <Step title="Check it">
+    Set the node's **Operation** to **Get Channels** and execute the node on its own.
 
-  <Tab title="Docker">
-    Create a folder on your host machine for custom nodes and install the package there:
-
-    ```bash
-    mkdir -p ~/n8n-custom-nodes
-    cd ~/n8n-custom-nodes
-    npm init -y
-    npm install n8n-nodes-postqueen
-    ```
-
-    Then mount that folder into the container and point n8n at it with `N8N_CUSTOM_EXTENSIONS`:
-
-    ```bash
-    docker run -d --name n8n \
-      -v ~/n8n-custom-nodes:/home/node/n8n-custom-nodes \
-      -e N8N_CUSTOM_EXTENSIONS="/home/node/n8n-custom-nodes" \
-      -p 5678:5678 n8nio/n8n
-    ```
-  </Tab>
-</Tabs>
-
-## Credentials
-
-Two fields and the node is talking to your account:
-
-| Field | Description |
-| --- | --- |
-| **API Key** | Your PostQueen Public API key. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and hit **Reveal**. Only a workspace admin can reveal the key. |
-| **Host** | Base URL of the PostQueen API. Defaults to `https://api.postqueen.ai` (cloud). |
-
-Create a new **PostQueen API** credential in n8n, paste your key, and set the host if you self-host.
-n8n validates the credential against a live endpoint when you save, so a typo shows up immediately.
-
-<Warning>
-Self-hosting? The **Host** value must end with `/api`, for example `https://postqueen.example.com/api`. Without that suffix the node cannot reach your instance's API.
-</Warning>
-
-### Check it before you build anything
-
-Drop a **PostQueen** node into a blank workflow, choose **Get Channels**, and execute the node on
-its own.
-
-<Check>
-Your connected channels come back as JSON with their ids. Doing this first separates a credential
-problem from a workflow problem, which is much harder to tell apart later.
-</Check>
-
-<AccordionGroup>
-  <Accordion title="Get Channels returns nothing, or an auth error">
-    The key or the host. Check the key is pasted in full, and if you self-host, that **Host** ends
-    with `/api`. Without that suffix the request lands on the web interface rather than the API,
-    which fails without explaining itself.
-  </Accordion>
-
-  <Accordion title="PostQueen does not appear in the node list after installing">
-    Community nodes need n8n restarted before they show up. If it is still missing after a
-    restart, check whether your n8n allows community nodes at all, since some hosted plans
-    restrict them.
-  </Accordion>
-
-  <Accordion title="A post is created but never publishes">
-    Check the date. Nothing validates that it is in the future, so a past date is accepted and
-    goes out on the next pass. Send ISO 8601 in UTC.
-  </Accordion>
-</AccordionGroup>
+    <Check>
+    Your connected channels come back, one item per channel, each with its `id`. That `id` is the **Channel ID** every post needs.
+    </Check>
+  </Step>
+</Steps>
 
 ## Operations
 
-Seven operations cover everything the node can do:
+| Operation | What it does | API call |
+|---|---|---|
+| **Create Post** | Saves a draft, schedules a post or publishes it now, on one or more channels | [`POST /posts`](/public-api/posts/create) |
+| **Delete Post** | Deletes a post by its ID, with its whole thread | [`DELETE /posts/{id}`](/public-api/posts/delete) |
+| **Get Channels** | Lists your connected channels, one item per channel | [`GET /integrations`](/public-api/integrations/list) |
+| **Get Posts** | Lists posts between two dates, optionally for one customer | [`GET /posts`](/public-api/posts/list) |
+| **Upload File** | Uploads an image or a video from a binary property | [`POST /upload`](/public-api/uploads/upload-file) |
 
-| Operation | Description |
-| --- | --- |
-| **Create Post** | Schedule, draft, or immediately publish a post to one or more channels. |
-| **Delete Post** | Delete a post by its ID. |
-| **Generate Video** | Generate a video with AI. |
-| **Get Channels** | List your connected channels (integrations). |
-| **Get Posts** | List posts within a start/end date range, optionally filtered by customer. |
-| **Upload File** | Upload a file (image or video) from a binary property. |
-| **Video Function** | Run a video helper function, such as loading available voices. |
+There is no PostQueen trigger node. A workflow starts from an n8n trigger, such as a Schedule Trigger, an RSS Feed Trigger or a webhook. To start a workflow when PostQueen publishes a post, point a [PostQueen webhook](/using/webhooks) at an n8n Webhook node.
 
-### Fields on Generate Video
+### Create Post fields
 
-| Field | What to put in it |
-| --- | --- |
-| **Video Type** | The type to render, for example `image-text-slides` or `seedance`. |
-| **Output Format** | `vertical` or `horizontal`. |
-| **Custom Parameters** | Optional key/value pairs such as `prompt`, `voice` or `images`. |
+| Field | What to enter |
+|---|---|
+| **Type** | **Draft**, **Schedule** or **Now**. It starts at **Now**, so a test run publishes: choose **Draft** while you build. |
+| **Short Link** | On to replace links in the text with PostQueen short links. |
+| **Date** | When the post goes out. Required for every type. A time with no offset is read as UTC. |
+| **Tags** | Optional. Each tag needs a **Value** and a **Label**. Only tags that already exist in the workspace are attached, matched by **Label**. |
+| **Posts** | One **Post** per channel. |
 
-<Info>
-Need the list of voices? Run **Video Function** with the function name `loadVoices` and the
-identifier of the video type you plan to use, such as `image-text-slides`. Both fields are required
-on that operation.
-</Info>
+Inside each **Post**:
 
-<Note>
-There is no PostQueen trigger node. Triggers come from n8n itself: a Schedule trigger, an RSS feed, or a webhook. Form submissions work too. Any of them can start a workflow that ends with a new post on your calendar.
-</Note>
+| Field | What to enter |
+|---|---|
+| **Channel ID** | The `id` from **Get Channels**. |
+| **Group** | Leave it empty. A group id that already exists replaces the posts that have it. |
+| **Settings** | The network's settings, one **Setting** per key: **Key**, **Value Type** (String, Number, Boolean or JSON) and **Value**. Leave it empty for networks with none, such as Bluesky and Nostr. |
+| **Content Items** | The post, then each entry of its thread. Each **Content Item** has **Content**, an optional **ID**, and **Images**. |
+| **Images** | Each **Image** needs the **ID** and **Path** that **Upload File** returned. |
 
-## Workflow ideas
+Leave a content item's **ID** empty to create a new post. The ID of an existing post changes that post instead.
 
-**Blog on autopilot.** An RSS trigger watches your blog, an AI node writes a caption for each new
-article, and **Create Post** schedules it to every channel you have connected. You publish the
-article and walk away: she carries it out to every feed while you write the next one.
+A WordPress post, for example, needs two settings:
 
-<Frame>
-  <img src="/images/brand/n8n-flow.svg" alt="An RSS trigger, an AI caption, then Create Post: your blog promotes itself" />
-</Frame>
+| Key | Value Type | Value |
+|---|---|---|
+| `title` | String | `A calendar that shows everything` |
+| `type` | String | `posts` |
 
-**A video channel that grows overnight.** A daily Schedule trigger runs **Generate Video** with your
-prompt, as `seedance` or `image-text-slides`, vertical or horizontal. Add a voiceover if you want one.
-**Create Post** then queues the finished video to your channel, so a new upload is waiting every
-morning whether you opened your laptop or not. Video generation is not something the `postqueen` CLI
-offers, so this node is where you reach for it without writing code.
+What each network needs is on [Posting settings by network](/public-api/providers/overview).
 
-<Frame>
-  <img src="/images/brand/flow-youtube.svg" alt="A daily schedule, Generate Video, then Create Post: a channel that fills itself overnight" />
-</Frame>
+### Other fields
 
-**One clip, three short-form feeds.** A new video lands in Drive, Dropbox or S3, **Upload File**
-brings it in, and a single **Create Post** schedules it to TikTok, Instagram and YouTube together.
+- **Get Posts:** **Start Date (UTC)**, **End Date (UTC)** and an optional **Customer** id.
+- **Upload File:** **Binary Property**, the name of the binary field that holds the file. Most nodes that read files call it `data`. The node returns the stored file with its `id`, `path` and `status`. A video comes back `processing`: wait until it is `ready` before you post it (see [Get media status](/public-api/uploads/media-status)).
+- **Delete Post:** **Post ID**. When it works, the node outputs `{ "error": true }`: that is the API's answer to a successful delete. A post that does not exist stops the node with a 404.
 
-<Warning>
-Upload first and pass the returned path into the post. Those three networks only accept media from
-trusted domains, so linking a raw external URL will not work.
-</Warning>
+## Build a workflow: new blog post to Bluesky
 
 <Frame>
-  <img src="/images/brand/flow-clips.svg" alt="A new video file, Upload File, then one Create Post for TikTok, Reels and Shorts" />
+  <img src="/images/brand/n8n-flow.svg" alt="An n8n workflow: an RSS Feed Trigger, an optional AI caption step, then PostQueen Create Post" />
 </Frame>
 
-**Queue guard.** Every Monday, **Get Posts** pulls the next seven days of your calendar. If the
-queue looks thin, a Slack message tells you before your followers notice a gap.
+<Steps>
+  <Step title="Watch the feed">
+    Add an **RSS Feed Trigger**. Set **Feed URL** to your blog's feed and **Poll Times** to **Every Hour**.
+  </Step>
+  <Step title="Add Create Post">
+    Add a **PostQueen** node with **Operation** set to **Create Post** and **Type** set to **Draft** for now. Set **Date** to an expression, for an hour from the run:
 
-<Frame>
-  <img src="/images/brand/flow-guard.svg" alt="Monday check: if the week ahead looks empty, a Slack message reaches you first" />
-</Frame>
+    ```text
+    {{ $now.plus({ hours: 1 }).toUTC().toISO() }}
+    ```
+  </Step>
+  <Step title="Pick the channel and the text">
+    Under **Posts**, add a **Post** with your Bluesky **Channel ID**. Add a **Content Item** and set **Content** to an expression:
 
-**A launch announced from a spreadsheet.** A row lands in the sheet your team already fills in, and
-**Create Post** turns it into the announcement across every channel. Nobody opens PostQueen.
+    ```text
+    {{ $json.title }} {{ $json.link }}
+    ```
 
-<Frame>
-  <img src="/images/brand/flow-launch.svg" alt="A new sheet row describing a product launch becoming a scheduled PostQueen announcement" />
-</Frame>
+    Bluesky takes 300 characters. To have a caption written for you, put an AI node between the trigger and PostQueen and use its output here.
+  </Step>
+  <Step title="Test, then go live">
+    Execute the workflow once and find the draft on your PostQueen calendar. When it looks right, set **Type** to **Schedule** and activate the workflow.
+  </Step>
+</Steps>
 
-**Bring the good ones back.** A Friday Schedule trigger picks a post that did well, and **Create
-Post** puts it back on the calendar for a quieter slot next week.
+Each run of **Create Post** counts against the hourly limit per workspace for creating posts, and each **Upload File** against 300 uploads an hour per workspace. Put several channels in one **Create Post** rather than one node per channel. The limits are on [Limits and errors](/public-api/limits-and-errors).
 
-<Frame>
-  <img src="/images/brand/flow-recycle.svg" alt="A weekly schedule trigger feeding a past post back into PostQueen for another slot" />
-</Frame>
+## Calls the node does not make
 
-She runs on your terms. Leave her alone and she is a true autopilot: whatever lands on the calendar
-goes out on time without another word from you.
+For any other endpoint, such as [Get media status](/public-api/uploads/media-status) or [analytics](/public-api/analytics/platform), use n8n's **HTTP Request** node:
 
-<Tip>
-Want a closer look first? Everything is visible on the calendar before it publishes, and setting
-**Create Post** to draft saves the post without scheduling it, so it stays there until you publish
-it.
-</Tip>
+1. Set **Authentication** to **Generic Credential Type** and **Generic Auth Type** to **Header Auth**.
+2. Create a Header Auth credential with **Name** `Authorization` and **Value** your API key, as it is, with no `Bearer` prefix.
+3. Set the URL to the endpoint under `{{apiBase}}`, for example:
 
-## Source and releases
+```text
+{{apiBase}}/media/{{ $json.id }}/status
+```
+
+This also works on n8n Cloud, where the community node cannot be installed.
+
+## If something goes wrong
+
+<AccordionGroup>
+  <Accordion title="The credential test fails">
+    Check that the key is pasted in full and that **Host** is `https://api.postqueen.ai`. A workspace with no plan answers `No subscription found`.
+  </Accordion>
+  <Accordion title="PostQueen is missing from the node list after the install">
+    Restart n8n, then look again. Installing from npm needs the Owner or an Admin of the instance.
+  </Accordion>
+  <Accordion title="A test run published a post">
+    **Type** starts at **Now**. Choose **Draft** while you build the workflow.
+  </Accordion>
+  <Accordion title="Create Post is refused with a settings error">
+    The network needs settings on every post. Add them under **Settings** on the post. [Posting settings by network](/public-api/providers/overview) lists the required ones.
+  </Accordion>
+  <Accordion title="An image is refused with a file extension error">
+    A post takes media whose **Path** ends in .png, .jpg, .jpeg, .gif, .webp or .mp4. Upload the file with **Upload File** and use the `path` it returns.
+  </Accordion>
+</AccordionGroup>
+
+## Source
 
 <CardGroup cols={2}>
   <Card title="postqueen-n8n on GitHub" icon="git-branch" href="https://github.com/GkhanKINAY/postqueen-n8n">
-    The node's source, plus ready-made versions of every workflow here.
+    The node's source and issues.
   </Card>
   <Card title="n8n-nodes-postqueen on npm" icon="package" href="https://www.npmjs.com/package/n8n-nodes-postqueen">
-    The package page with versions and release notes.
+    Versions of the package.
   </Card>
 </CardGroup>
 
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Public API" icon="code" href="/public-api/introduction">
-    The API this node calls, if you want to go beyond the node.
-  </Card>
-  <Card title="Create Post" icon="send" href="/public-api/posts/create">
-    Every field of the create-post request body, with per-provider settings.
-  </Card>
-  <Card title="Zapier" icon="/images/brand/icon-zapier.svg" href="/public-api/zapier-and-make">
-    Using another automation tool? The same recipes work in Zapier.
-  </Card>
-  <Card title="Make" icon="/images/brand/icon-make.svg" href="/public-api/zapier-and-make">
-    Prefer Make? It calls the same API and the same ideas carry over.
-  </Card>
-</CardGroup>
+<NextStepsApi />

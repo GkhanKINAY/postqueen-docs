@@ -1,13 +1,16 @@
 ---
-title: 'Get Settings & Tools'
-sidebarTitle: Settings
-description: "Read a channel's posting rules, character limit, settings schema and helper tools."
-openapi: 'GET /integration-settings/{id}'
+title: "Get a channel's settings"
+description: "A channel's posting rules, text limit, settings schema and helper tools."
+openapi: "GET /integration-settings/{id}"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same as main; audit: api). Row in page-status-2026-09-23.md. */}
+Read this before you build a post for a network you have not posted to yet:
 
-The `tools` array in the response lists the helper tools this channel offers, each with
-the `methodName` to pass to [Trigger a Tool](/public-api/integrations/trigger) and its
-parameter schema. To see what every network offers without connecting one first, read
-[Provider Tools](/public-api/integrations/provider-tools).
+| Field | What it tells you |
+|---|---|
+| `rules` | The network's media rules in words, such as how many images a post may carry |
+| `maxLength` | The longest text PostQueen accepts for this channel |
+| `settings` | The JSON schema of the post's `settings` object, or `No additional settings required` |
+| `tools` | Helper tools you can run with [Trigger a tool](/public-api/integrations/trigger), each with its `methodName` and inputs |
+
+The same fields, written out for people with examples, are on [Posting settings by network](/public-api/providers/overview). What every network's tools return is on [Provider tools](/public-api/integrations/provider-tools).

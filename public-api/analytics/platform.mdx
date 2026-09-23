@@ -1,29 +1,24 @@
 ---
-title: 'Platform Analytics'
-description: 'Channel-level metrics such as followers and impressions for a date range.'
-openapi: 'GET /analytics/{integration}'
+title: "Get channel analytics"
+description: "A channel's metrics over time, such as followers and impressions, read from the network."
+openapi: "GET /analytics/{integration}"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
-
-## Path parameter: `integration`
-
-The `{integration}` path parameter must be the integration's **`id`** (the UUID-shaped string returned by `GET /public/v1/integrations`).
-
-It is **not** the platform `__type` (e.g. `x`, `linkedin`) and **not** the channel display name. Passing either of those returns `500` with the message `Invalid integration`. That is a rough edge rather than a designed status: the lookup throws a plain error. Read it as "no such integration in this organization".
+`{integration}` is the channel's `id` from [List channels](/public-api/integrations/list), not the network name. `date` is the number of days to look back.
 
 ```bash
-# Get the integration ID
-curl -H "Authorization: your-api-key" \
-  https://api.postqueen.ai/public/v1/integrations
-
-# Use the returned id
-curl -H "Authorization: your-api-key" \
-  https://api.postqueen.ai/public/v1/analytics/<integration-id>
+curl -H "Authorization: YOUR_API_KEY" \
+  "{{apiBase}}/analytics/YOUR_CHANNEL_ID?date=30"
 ```
 
-## Common errors
+## Which channels report
 
-- `500 Invalid integration`: no integration with that id belongs to your organization. A `__type`, a display name or an id from another workspace all land here.
-- **Empty array with `200`**: the channel exists but its token expired and could not be refreshed, so PostQueen disconnected it. Reconnect it from the PostQueen UI. There is no `404 Channel not found` on this endpoint.
-- Empty data: some platforms (notably Google My Business) restrict analytics by date range or by profile verification status. The endpoint returns an empty payload rather than an error.
+Nine networks return channel metrics: Instagram, TikTok, YouTube, Facebook Page, X, LinkedIn Page, Threads, Pinterest and Google Business Profile. Every other channel answers `[]`, and that includes every network Available on PostQueen today. The app offers 7, 30 and 90 days, and 7 and 30 on Instagram, Threads and TikTok; the API passes your number to the network as it is. An answer is kept for an hour per channel and range, so asking again within the hour returns the same numbers.
+
+## If it fails
+
+| Answer | What it means |
+|---|---|
+| `500` | No channel with that id in your workspace. A network name or a display name lands here too |
+| `400 This channel needs to be refreshed` | The token expired and could not be renewed, or a permission is missing. Reconnect the channel |
+| `200` with `[]` | The network has no channel metrics in PostQueen, or it answered with nothing PostQueen could read |

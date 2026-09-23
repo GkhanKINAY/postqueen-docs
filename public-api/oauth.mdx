@@ -1,269 +1,203 @@
 ---
-title: OAuth2 Authentication
-description: 'Let users authorize your app to access PostQueen on their behalf'
+title: "OAuth apps"
+description: "Build a product other PostQueen workspaces sign in to: register an OAuth app, get their approval and call the API with their token."
+icon: "key-round"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+If you are automating your own workspace, use its [API key](/public-api/introduction#authentication). If you are building a product that other PostQueen users connect to, use OAuth: they approve your app on a PostQueen consent screen, and you get a `pos_` token that acts on their workspace. Nobody hands you their API key.
 
-OAuth2 lets you build third-party apps and agents that act on behalf of PostQueen users. Instead of asking users for their API key, your app redirects them to PostQueen where they approve access on a consent screen, and you receive a `pos_` access token. PostQueen supports the OAuth2 Authorization Code flow.
+A `pos_` token works on every [public API](/public-api/introduction) endpoint, sent the same way as a key: `Authorization: pos_...`, with no prefix. It also works on the MCP server at `https://api.postqueen.ai/mcp`, sent there as `Authorization: Bearer pos_...`. It does not work in the `/mcp/YOUR_API_KEY` address, which only takes API keys.
 
-That token works on the Public API: list their connected channels, create and schedule posts, and pull analytics for their accounts.
-
-<Info>
-OAuth tokens work with all the same Public API endpoints as API keys. The only difference is how the token is obtained.
-</Info>
-
-## How It Works
+## How it works
 
 ```mermaid
 sequenceDiagram
     participant User
-    participant YourApp
+    participant YourApp as Your app
     participant PostQueen
 
-    User->>YourApp: Clicks "Connect with PostQueen"
-    YourApp->>PostQueen: Redirect to /oauth/authorize
-    PostQueen->>User: Shows consent screen
-    User->>PostQueen: Approves access
-    PostQueen->>YourApp: Redirects with ?code=...
-    YourApp->>PostQueen: POST /oauth/token (exchange code)
-    PostQueen->>YourApp: Returns access_token
-    YourApp->>PostQueen: API calls with access_token
+    User->>YourApp: Clicks "Connect PostQueen"
+    YourApp->>PostQueen: Redirect to app.postqueen.ai/oauth/authorize
+    PostQueen->>User: Consent screen
+    User->>PostQueen: Authorize
+    PostQueen->>YourApp: Redirect to your Redirect URL with ?code=...
+    YourApp->>PostQueen: POST /oauth/token
+    PostQueen->>YourApp: access_token (pos_...)
+    YourApp->>PostQueen: API calls with the token
 ```
 
-## Implementation
+## Set it up
 
 <Steps>
-  <Step title="Register Your OAuth App">
-    Go to **Settings → Developers** in your PostQueen dashboard and create an OAuth application.
+  <Step title="Create the app">
+    In PostQueen, open **Connections > Developers** and choose **Create OAuth App**. Fill in:
 
-    <Note>
-    Each organization has one OAuth application. Creating or rotating the client secret is an admin action on a plan that includes the public API. The API key itself is under **Connections > API Keys**, which is a different screen.
-    </Note>
+    | Field | What it is for |
+    |---|---|
+    | **App Name** | Shown to people on the consent screen |
+    | **Description** | Optional. Shown on the consent screen |
+    | **Profile Picture** | Optional. Shown on the consent screen |
+    | **Redirect URL** | Where PostQueen sends people after they choose **Authorize** or **Deny** |
 
-    You will need:
-    - **App Name** - displayed to users on the consent screen
-    - **Description** (optional) - explains what your app does
-    - **Profile Picture** (optional) - shown on the consent screen
-    - **Redirect URL** - where PostQueen sends users after they approve/deny access
-
-    After creating the app, you will receive:
-    - **Client ID** - a public identifier for your app (starts with `pca_`)
-    - **Client Secret** - a secret key for token exchange (starts with `pcs_`)
+    You get a **Client ID** (`pca_...`) and a **Client Secret** (`pcs_...`). A workspace has one OAuth app, and only a workspace Admin or Super Admin can create, edit or delete it.
 
     <Warning>
-    The client secret is only shown once on creation. Copy it immediately and store it securely. If you lose it, you can rotate it from the settings page.
+    The Client Secret is shown once. Copy it and keep it on your server. If you lose it, choose **Rotate Secret**.
     </Warning>
   </Step>
 
-  <Step title="Redirect Users to Authorize">
-    When a user wants to connect their PostQueen account to your app, redirect them to:
-
-    ```
-    https://app.postqueen.ai/oauth/authorize?client_id={CLIENT_ID}&response_type=code&state={STATE}
+  <Step title="Send people to the consent screen">
+    ```text
+    https://app.postqueen.ai/oauth/authorize?client_id=pca_YOUR_CLIENT_ID&response_type=code&state=RANDOM_STATE
     ```
 
-    Self-hosting? Use `https://postqueen.example.com/oauth/authorize` instead.
+    | Parameter | What it is |
+    |---|---|
+    | `client_id` | Your Client ID. Required |
+    | `response_type` | Always `code`. Required |
+    | `state` | A random value you check on the way back, against forged callbacks. Recommended |
 
-    | Parameter | Required | Description |
-    |-----------|----------|-------------|
-    | `client_id` | Yes | Your app's Client ID |
-    | `response_type` | Yes | Must be `code` |
-    | `state` | No | A random string to prevent CSRF attacks. Recommended. |
+    The person signs in if they need to, sees your app's name, description and picture, and chooses **Authorize** or **Deny**.
 
-    **Example:**
-
-    ```bash
-    https://app.postqueen.ai/oauth/authorize?client_id=pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs&response_type=code&state=random123
-    ```
-
-    The user will see a consent screen showing your app's name, description, and the permissions being requested. They can choose to **Authorize** or **Deny**.
+    <Note>
+    Only a workspace Admin or Super Admin can authorize an app. The token acts with full rights on the workspace, like its API key, so a regular member cannot hand one out.
+    </Note>
   </Step>
 
-  <Step title="Catch the callback">
-    After the user makes a decision, PostQueen redirects them to your **Redirect URL** with query parameters.
+  <Step title="Take the code from the callback">
+    PostQueen redirects to your **Redirect URL**:
 
-    **If approved:**
-
-    ```
-    https://yourapp.com/callback?code=abc123&state=random123
+    ```text
+    https://yourapp.example.com/callback?code=AUTHORIZATION_CODE&state=RANDOM_STATE
     ```
 
-    | Parameter | Description |
-    |-----------|-------------|
-    | `code` | Authorization code to exchange for a token (expires in 10 minutes) |
-    | `state` | The same state value you sent in the previous step |
-
-    **If denied:**
-
-    ```
-    https://yourapp.com/callback?error=access_denied&state=random123
-    ```
-
-    <Tip>
-    Verify that the `state` parameter matches what you originally sent to prevent CSRF attacks.
-    </Tip>
+    Check that `state` is the value you sent. If the person chose **Deny**, the callback carries `error=access_denied` instead of a code. The code works once, for 10 minutes.
   </Step>
 
-  <Step title="Exchange Code for Token">
-    Make a server-side `POST` request to exchange the authorization code for an access token:
+  <Step title="Exchange the code for a token">
+    From your server:
 
     ```bash
-    curl -X POST https://api.postqueen.ai/oauth/token \
+    curl -X POST "https://api.postqueen.ai/oauth/token" \
       -H "Content-Type: application/json" \
       -d '{
         "grant_type": "authorization_code",
-        "code": "abc123",
-        "client_id": "pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs",
-        "client_secret": "pcs_your_client_secret"
+        "code": "AUTHORIZATION_CODE",
+        "client_id": "pca_YOUR_CLIENT_ID",
+        "client_secret": "pcs_YOUR_CLIENT_SECRET"
       }'
     ```
 
-    | Parameter | Required | Description |
-    |-----------|----------|-------------|
-    | `grant_type` | Yes | Must be `authorization_code` |
-    | `code` | Yes | The authorization code from the previous step |
-    | `client_id` | Yes | Your app's Client ID |
-    | `client_secret` | Yes | Your app's Client Secret |
-
-    Self-hosting? The token endpoint is `https://postqueen.example.com/api/oauth/token`.
-
-    **Response:**
+    You can also send the Client ID and Secret as HTTP Basic credentials in `Authorization` and leave them out of the body. The answer is `201`:
 
     ```json
     {
-      "id": "org_abc123",
-      "cus": "cus_stripe_customer_id",
-      "access_token": "pos_aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcd",
-      "token_type": "bearer"
+      "id": "cmg1oxk4b0000qz0h1f3e9a2c",
+      "cus": "cus_QkT3uV8wXyZ12a",
+      "access_token": "pos_8Jd02kLq9ZmX4tR7vB1nC6yH3wE5pA0sF2gD4hK8",
+      "token_type": "bearer",
+      "scope": "mcp:read mcp:write"
     }
     ```
 
-    | Field | Description |
-    |-------|-------------|
-    | `id` | The organization ID associated with the authorized user |
-    | `cus` | The Stripe customer ID for the organization (useful for billing integrations) |
-    | `access_token` | The token to use for subsequent API calls |
-    | `token_type` | Always `bearer` |
-
-    <Check>
-    An `access_token` in the response means the grant is complete. Store the token, not the code: the code is spent.
-    </Check>
-
-    <Warning>
-    The authorization code expires after **10 minutes** and can only be used once. If it expires, the user must go through the authorization flow again.
-    </Warning>
+    `id` is the workspace the person approved your app for. Store `access_token`; the code is spent. Every field: [Get an access token](/public-api/oauth/token).
   </Step>
 
-  <Step title="Make API Calls">
-    Use the access token in the `Authorization` header, just like you would with an API key:
-
+  <Step title="Call the API">
     ```bash
-    curl -H "Authorization: pos_aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcd" \
-      https://api.postqueen.ai/public/v1/integrations
+    curl -H "Authorization: pos_YOUR_ACCESS_TOKEN" \
+      "{{apiBase}}/integrations"
     ```
 
-    The token works with all Public API endpoints:
-    - [List Integrations](/public-api/integrations/list)
-    - [Create Posts](/public-api/posts/create)
-    - [View Analytics](/public-api/analytics/platform)
-    - And all other endpoints documented in this API reference
-
-    <Info>
-    OAuth tokens do not expire. Users can revoke access at any time from **Settings > Approved Apps** in their PostQueen dashboard.
-    </Info>
+    <Check>
+    A list of the person's channels means the token works. From here every endpoint in this reference is open to your app.
+    </Check>
   </Step>
 </Steps>
 
----
+## How long a token lasts
 
-## Managing Your App
+The token has no expiry date. It stops working when:
 
-### Rotate Client Secret
+- the person revokes your app under **Connections > Approved Apps**;
+- the person who approved it is removed from the workspace, disabled, or deletes their account;
+- the same person approves your app again in the same workspace: the new token replaces the old one;
+- you delete your app.
 
-If your client secret is compromised, go to **Settings → Developers** and click **Rotate Secret**. This invalidates the old secret immediately, and any token exchange requests using the old secret will fail.
+**Rotate Secret** replaces the Client Secret at once, so token requests with the old secret fail, but tokens already issued keep working. **Delete App** revokes every token your app holds; it cannot be undone.
 
-<Note>
-Rotating the secret does **not** invalidate existing access tokens. Only new token exchange requests require the new secret.
-</Note>
+## Clients that register themselves
 
-### Delete Your App
+MCP clients and other tools can register without anyone creating an app: `POST https://api.postqueen.ai/oauth/register` (Dynamic Client Registration, RFC 7591) takes no API key.
 
-<Warning>
-Deleting your OAuth app will:
-- Revoke **all** access tokens issued to users
-- Remove the app from all users' Approved Apps list
-- This action cannot be undone
-</Warning>
+```bash
+curl -X POST "https://api.postqueen.ai/oauth/register" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_name": "My MCP client",
+    "redirect_uris": ["http://127.0.0.1:33418/callback"],
+    "token_endpoint_auth_method": "none"
+  }'
+```
 
----
+A registered client gets a `pcd_` Client ID and differs from an app made under **Developers**:
 
-## Full Example (Node.js)
+| | App under Developers | Registered client |
+|---|---|---|
+| Callback | Its stored **Redirect URL** | One of its `redirect_uris`, sent on both the consent URL and the token request |
+| Secret | Always | None when registered with `token_endpoint_auth_method: none` |
+| PKCE | Optional | Required for a client without a secret, with `S256` |
+| Callbacks allowed | The one URL you set | `https`, `http` on `localhost`, `127.0.0.1` or `[::1]`, or a private scheme such as `cursor://` |
 
-<Accordion title="Express app: redirect, callback, token exchange, first API call" icon="package">
+A registered client that nobody has approved after 30 days may be removed. The answer carries `client_id`, `client_secret` (only for a client with a secret, shown once), `redirect_uris`, `token_endpoint_auth_method`, `grant_types: ["authorization_code"]` and `scope`. A callback that breaks the rules answers `400 invalid_redirect_uri`.
+
+## Full example (Node.js)
+
+<Accordion title="Express: redirect, callback, token exchange and a first call" icon="code">
 
 ```javascript
-const express = require('express');
-const crypto = require('crypto');
+import express from "express";
+import session from "express-session";
+import crypto from "node:crypto";
+
+const CLIENT_ID = process.env.PQ_CLIENT_ID;         // pca_...
+const CLIENT_SECRET = process.env.PQ_CLIENT_SECRET; // pcs_...
+// The callback below must live at the Redirect URL you set on the app.
+
 const app = express();
+app.use(session({ secret: "change-me", resave: false, saveUninitialized: false }));
 
-const CLIENT_ID = 'pca_your_client_id';
-const CLIENT_SECRET = 'pcs_your_client_secret';
-const POSTQUEEN_URL = 'https://app.postqueen.ai';
-const BACKEND_URL = 'https://api.postqueen.ai';
-const REDIRECT_URL = 'https://yourapp.com/callback';
-
-// Step 2: Redirect user to PostQueen
-app.get('/connect', (req, res) => {
-  const state = crypto.randomBytes(16).toString('hex');
-  // Store state in session for CSRF verification
+app.get("/connect", (req, res) => {
+  const state = crypto.randomBytes(16).toString("hex");
   req.session.oauthState = state;
-
-  const params = new URLSearchParams({
-    client_id: CLIENT_ID,
-    response_type: 'code',
-    state,
-  });
-
-  res.redirect(`${POSTQUEEN_URL}/oauth/authorize?${params}`);
+  const params = new URLSearchParams({ client_id: CLIENT_ID, response_type: "code", state });
+  res.redirect(`https://app.postqueen.ai/oauth/authorize?${params}`);
 });
 
-// Step 3 & 4: Handle callback and exchange code
-app.get('/callback', async (req, res) => {
+app.get("/callback", async (req, res) => {
   const { code, state, error } = req.query;
+  if (error === "access_denied") return res.send("Access was denied.");
+  if (!state || state !== req.session.oauthState) return res.status(403).send("Invalid state");
 
-  // Check for denial
-  if (error === 'access_denied') {
-    return res.send('User denied access');
-  }
-
-  // Verify state
-  if (state !== req.session.oauthState) {
-    return res.status(403).send('Invalid state');
-  }
-
-  // Exchange code for token
-  const response = await fetch(`${BACKEND_URL}/oauth/token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const tokenRes = await fetch("https://api.postqueen.ai/oauth/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      grant_type: 'authorization_code',
+      grant_type: "authorization_code",
       code,
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
     }),
   });
+  if (tokenRes.status !== 201) return res.status(502).json(await tokenRes.json());
+  const { access_token } = await tokenRes.json();
 
-  const { id, cus, access_token } = await response.json();
+  // Store access_token for this user. Then, for example, list their channels:
+  const channels = await fetch("{{apiBase}}/integrations", {
+    headers: { Authorization: access_token },
+  }).then((r) => r.json());
 
-  // Store access_token securely and use it for API calls
-  // Example: fetch user's integrations
-  const integrations = await fetch(
-    `${BACKEND_URL}/public/v1/integrations`,
-    { headers: { Authorization: access_token } }
-  ).then(r => r.json());
-
-  res.json({ connected: true, integrations });
+  res.json({ connected: true, channels });
 });
 
 app.listen(3000);
@@ -271,30 +205,29 @@ app.listen(3000);
 
 </Accordion>
 
----
+## Errors
 
-## Error Reference
-
-| Error | When | Description |
-|-------|------|-------------|
-| `invalid_client` | Token exchange | Client ID or Client Secret is wrong |
-| `invalid_grant` | Token exchange | Code is invalid, expired, or already used |
-| `unsupported_grant_type` | Token exchange | `grant_type` is not `authorization_code` |
-| `access_denied` | Callback | User denied the authorization request |
+| Error | Where | What it means |
+|---|---|---|
+| `Invalid client_id` | Consent screen | The Client ID does not exist, or its app was deleted |
+| `access_denied` | Your callback | The person chose **Deny** |
+| `invalid_client` (`401`) | Token request | Unknown Client ID, or a wrong or missing secret |
+| `invalid_grant` (`400`) | Token request | The code is wrong, used or older than 10 minutes, or `code_verifier` or `redirect_uri` does not match |
+| `unsupported_grant_type` (`400`) | Token request | `grant_type` is not `authorization_code` |
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Check a client_id first" icon="user-check" href="/public-api/oauth/authorize">
-    `GET /oauth/authorize`, the call behind the consent screen.
+  <Card title="Check an authorization request" icon="user-check" href="/public-api/oauth/authorize">
+    The call behind the consent screen, useful to test a Client ID.
   </Card>
-  <Card title="Exchange the code" icon="key" href="/public-api/oauth/token">
-    `POST /oauth/token`, field by field, with its failure modes.
+  <Card title="Get an access token" icon="key" href="/public-api/oauth/token">
+    The token request, field by field.
   </Card>
-  <Card title="List the user's channels" icon="plug" href="/public-api/integrations/list">
-    The first call most apps make with a fresh `pos_` token.
+  <Card title="List channels" icon="list" href="/public-api/integrations/list">
+    The first call most apps make with a new token.
   </Card>
-  <Card title="Rate limits and errors" icon="code" href="/public-api/introduction">
-    Base URLs, the per-hour limit, and what each status code means.
+  <Card title="Limits and errors" icon="gauge" href="/public-api/limits-and-errors">
+    The hourly limits and every status code.
   </Card>
 </CardGroup>

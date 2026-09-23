@@ -1,8 +1,9 @@
 ---
-title: 'List Integrations'
-description: 'List connected channels for the workspace, with ids you pass when creating posts.'
-openapi: 'GET /integrations'
+title: "List channels"
+description: "Every channel connected to the workspace, with the id every other call takes."
+openapi: "GET /integrations"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same page; audit: api). Row in page-status-2026-09-23.md. */}
+The `id` of each channel is what [Create a post](/public-api/posts/create), [Get a channel's settings](/public-api/integrations/settings), [Trigger a tool](/public-api/integrations/trigger) and the [analytics](/public-api/analytics/platform) endpoints take. `identifier` names the network, such as `bluesky` or `wordpress`; the settings each network takes are on [Posting settings by network](/public-api/providers/overview).
 
+A channel with `disabled: true` is switched off in the app and does not publish until someone turns it back on.

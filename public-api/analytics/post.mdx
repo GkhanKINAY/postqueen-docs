@@ -1,8 +1,17 @@
 ---
-title: 'Post Analytics'
-description: 'Metrics for one published post, plus short-link click counts when configured.'
-openapi: 'GET /analytics/post/{postId}'
+title: "Get post analytics"
+description: "Live metrics for one published post, read from the network."
+openapi: "GET /analytics/post/{postId}"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+Pass the PostQueen post id and `date`, the number of days to look back. The numbers are read live from the network, so they are what that network reports for one post: likes, comments, views, shares and the like.
 
+Eight networks have post metrics: Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube and Pinterest. None of the networks Available on PostQueen today reports them. The answer is `[]` when:
+
+- the post has not been published yet,
+- its network has no post metrics, or
+- the channel's token cannot be renewed.
+
+A TikTok post whose id never came back answers `{ "missing": true }`. Connect it with [Get missing content](/public-api/posts/missing-content) and [Update release ID](/public-api/posts/update-release-id).
+
+For many posts at once, sorted by what did best, use [List post analytics](/public-api/analytics/posts).

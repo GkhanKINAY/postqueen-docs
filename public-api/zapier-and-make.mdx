@@ -1,11 +1,97 @@
 ---
 title: "Zapier and Make"
-description: "Where the Zapier and Make integrations stand today."
-icon: "workflow"
+description: "Official Zapier and Make apps are coming soon. Until then, call the PostQueen API from Webhooks by Zapier or Make's HTTP module."
+icon: "zap"
+keywords:
+  - postqueen
+  - zapier
+  - make
+  - webhooks by zapier
+  - http module
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: main:automation/zapier.mdx (merge; WIP: partly better; audit: cli-help), main:automation/make.mdx (rewrite; WIP: partly better; audit: cli-help). Row in page-status-2026-09-23.md. */}
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsApi from '/snippets/next-steps-api.mdx';
+
+<ChannelStatus status="soon">The official apps are not out yet.</ChannelStatus>
+
+Official PostQueen apps for Zapier and Make are coming soon. Today both tools can call the [PostQueen API](/public-api/introduction) directly: Zapier with **Webhooks by Zapier**, Make with its **HTTP** app. What you build that way does not depend on the apps. For n8n there is already a node: see [n8n](/public-api/n8n).
+
+## What every request needs
+
+| Part | What to send |
+|---|---|
+| **URL** | `{{apiBase}}/posts` to create a post. Other endpoints are under the same base. |
+| **Method** | `POST` |
+| **Headers** | `Authorization` set to your API key as it is, with no `Bearer` prefix, and `Content-Type` set to `application/json` |
+| **Body** | JSON, as below |
+
+<ApiKeyLocation />
+
+This body schedules a text post on a Bluesky channel. `type`, `date`, `shortLink`, `tags` and `posts` are all required, and each entry in `value` needs `image`, even when it is empty:
+
+```json
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        { "content": "New on the blog: a calendar that shows everything.", "image": [] }
+      ]
+    }
+  ]
+}
+```
+
+The channel id comes from [List channels](/public-api/integrations/list). A network that needs settings, such as WordPress or DEV, takes them in a `settings` object: see [Posting settings by network](/public-api/providers/overview). [Schedule a post](/public-api/schedule-a-post) walks through the whole flow, media included.
+
+## Zapier
+
+<Steps>
+  <Step title="Add the action">
+    Add a **Webhooks by Zapier** action and choose the **Custom Request** event. The plain POST event cannot send the nested JSON a post needs.
+  </Step>
+  <Step title="Fill in the request">
+    Set **Method** to `POST`, **URL** to `{{apiBase}}/posts`, and **Data** to the JSON body. Under **Headers**, add `Authorization` with your API key and `Content-Type` with `application/json`.
+  </Step>
+  <Step title="Test the step">
+    A working request answers with `[{ "postId": "...", "integration": "..." }]`, and the post appears on your calendar.
+  </Step>
+</Steps>
 
 <Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
+Webhooks by Zapier is on Zapier's Professional, Team and Enterprise plans, not the Free plan.
 </Note>
+
+## Make
+
+<Steps>
+  <Step title="Add the module">
+    Add the **HTTP** app and choose **Make a request**.
+  </Step>
+  <Step title="Fill in the request">
+    Set **URL** to `{{apiBase}}/posts` and **Method** to `POST`. Under **Headers**, add `Authorization` with your API key. Set **Body content type** to `application/json`, **Body input method** to **JSON string**, and paste the body into **Body content**.
+  </Step>
+  <Step title="Parse the answer">
+    Set **Parse response** to **Yes**, so the returned `postId` can be mapped into later modules. Run the module once to check it.
+  </Step>
+</Steps>
+
+<Tip>
+Text mapped from another module can carry quotes or line breaks that break a hand-written JSON string. In Zapier, build the body in a **Code by Zapier** step. In Make, choose **data structure** as the **Body input method** instead, or build the body with the JSON app's **Create JSON** module.
+</Tip>
+
+## The other direction
+
+To start a Zap or a scenario when PostQueen publishes a post, add a [PostQueen webhook](/using/webhooks) that points at Zapier's **Catch Hook** trigger or Make's **Custom webhook** module.
+
+## Limits
+
+Creating posts has an hourly limit per workspace. A Zap or scenario that loops over many rows can reach it, so put several channels in one request where you can. The limits and the error codes are on [Limits and errors](/public-api/limits-and-errors).
+
+<NextStepsApi />

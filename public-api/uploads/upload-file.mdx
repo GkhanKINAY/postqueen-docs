@@ -1,56 +1,61 @@
 ---
-title: 'Upload File'
-description: 'Upload a local image or MP4 and receive the hosted path attachments need.'
-openapi: 'POST /upload'
+title: "Upload a file"
+description: "Upload an image or video from disk and get the id and path a post's media takes."
+openapi: "POST /upload"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+Send the file as multipart form data in a field named `file`. The answer's `id` and `path` go into a post's `image` array.
 
-Upload a media file by multipart form. Returns an `id` and `path` you can pass into a post's `image` array.
+<CodeGroup>
 
-## Accepted MIME types
-
-The backend inspects the file's actual content (not just the extension) and rejects anything outside this allowlist:
-
-| Type | MIME |
-|---|---|
-| JPEG | `image/jpeg` |
-| PNG | `image/png` |
-| GIF | `image/gif` |
-| WebP | `image/webp` |
-| AVIF | `image/avif` |
-| BMP | `image/bmp` |
-| TIFF | `image/tiff` |
-| MP4 video | `video/mp4` |
-
-PDFs are not accepted. Limits and recommended video formats: [Uploads troubleshooting](/troubleshooting/common-errors).
-
-## Example
-
-```bash
-curl -X POST "https://api.postqueen.ai/public/v1/upload" \
-  -H "Authorization: your-api-key" \
-  -F "file=@photo.jpg"
+```bash curl
+curl -X POST "{{apiBase}}/upload" \
+  -H "Authorization: YOUR_API_KEY" \
+  -F "file=@launch-banner.png"
 ```
 
-Example response:
+```js Node.js
+import { readFile } from "node:fs/promises";
+
+const form = new FormData();
+form.append("file", new Blob([await readFile("launch-banner.png")]), "launch-banner.png");
+
+const res = await fetch("{{apiBase}}/upload", {
+  method: "POST",
+  headers: { Authorization: process.env.POSTQUEEN_API_KEY },
+  body: form,
+});
+const media = await res.json();
+```
+
+</CodeGroup>
+
+Then, in the post:
 
 ```json
-{
-  "id": "01HXYZ123ABCDEF",
-  "path": "https://uploads.postqueen.ai/photo.jpg"
-}
+"image": [
+  {
+    "id": "e639003b-f727-4a1e-87bd-74a2c48ae41e",
+    "path": "https://cdn.example.com/a1b2c3d4e5.png"
+  }
+]
 ```
 
-## Usage in a post
+## What it accepts
 
-```json
-{
-  "image": [
-    {
-      "id": "01HXYZ123ABCDEF",
-      "path": "https://uploads.postqueen.ai/photo.jpg"
-    }
-  ]
-}
-```
+PostQueen reads the type from the file's bytes, not its name, and stores files up to 1 GB. Each network then has its own, much smaller limits when it publishes.
+
+| Type | Stored | Can go on a post |
+|---|---|---|
+| JPEG, PNG, GIF, WebP | Yes | Yes |
+| MP4 | Yes, after processing | Yes, once `ready` |
+| MOV | Yes, converted to MP4 | Yes, once `ready` |
+| AVIF, BMP, TIFF | Yes | No: a post's media must end in .png, .jpg, .jpeg, .gif, .webp or .mp4 |
+
+## Videos are processed first
+
+A video answers with `"status": "processing"` while PostQueen prepares it for the networks. Poll [Get media status](/public-api/uploads/media-status) until it is `ready`, then use the `path` that call returns: a converted file has a new one. Images are `ready` at once.
+
+<Note>
+`POST /upload` allows 300 requests an hour per workspace, counted apart from Upload from a URL and from the posting limit. See [Limits and errors](/public-api/limits-and-errors).
+</Note>

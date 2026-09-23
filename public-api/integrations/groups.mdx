@@ -1,9 +1,7 @@
 ---
-title: 'List Groups (Customers)'
-sidebarTitle: Groups
-description: 'List customer groups so you can filter channels and posts by client.'
-openapi: 'GET /groups'
+title: "List groups"
+description: "The workspace's customers, whose ids narrow List channels and List posts to one customer."
+openapi: "GET /groups"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same as main; audit: api). Row in page-status-2026-09-23.md. */}
-
+In the app these are [customers](/using/customers). Pass a group's `id` as `group` to [List channels](/public-api/integrations/list) or as `customer` to [List posts](/public-api/posts/list).

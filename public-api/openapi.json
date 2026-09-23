@@ -1,28 +1,18 @@
 {
-  "x-overhaul-todo": "B8: rebuild this spec from the WIP spec (docs/next) against the app controller and DTOs on origin/main, then delete this key. See OVERHAUL-PLAN 5.2.",
   "openapi": "3.1.0",
   "info": {
     "title": "PostQueen Public API",
-    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from **Connections > API Keys** in PostQueen. Only a workspace admin can reveal it.\n\n## Rate Limits\n\nThe create-post endpoint (`POST /posts`) has an hourly limit per workspace. Uploads have a separate hourly allowance. No other endpoint is throttled.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (34)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram, Kick, Twitch\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Dev.to, Hashnode, WordPress, Moltbook\n\n**Business:** Google My Business (GMB), Listmonk (newsletters), Whop, Skool",
+    "version": "1.0.0",
     "license": {
-      "name": "MIT"
+      "name": "MIT",
+      "identifier": "MIT"
     },
-    "version": "1.0.0"
+    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\n`POST /posts` has an hourly limit per workspace. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
   },
   "servers": [
     {
       "url": "https://api.postqueen.ai/public/v1",
-      "description": "PostQueen Cloud"
-    },
-    {
-      "url": "https://{host}/api/public/v1",
-      "description": "Self-hosted",
-      "variables": {
-        "host": {
-          "default": "localhost:4007",
-          "description": "Your PostQueen instance domain"
-        }
-      }
+      "description": "PostQueen"
     }
   ],
   "security": [
@@ -32,46 +22,42 @@
   ],
   "tags": [
     {
-      "name": "Integrations",
-      "description": "Manage connected social media channels"
+      "name": "Channels",
+      "description": "Connected channels. The API calls them integrations."
     },
     {
       "name": "Posts",
-      "description": "Create, list, and delete posts"
+      "description": "Create, list, change and delete posts"
     },
     {
-      "name": "Uploads",
-      "description": "Upload media files"
-    },
-    {
-      "name": "Notifications",
-      "description": "View organization notifications"
+      "name": "Media",
+      "description": "Upload files to the media library"
     },
     {
       "name": "Analytics",
-      "description": "View analytics for integrations and posts"
+      "description": "Channel and post metrics"
     },
     {
-      "name": "Video Generation",
-      "description": "Generate videos with AI"
+      "name": "Notifications",
+      "description": "The workspace's notifications"
     },
     {
       "name": "OAuth",
-      "description": "Authorize third-party apps and exchange codes for access tokens"
+      "description": "Sign-in for apps that act for other PostQueen workspaces"
     }
   ],
   "paths": {
     "/integrations": {
       "get": {
         "tags": [
-          "Integrations"
+          "Channels"
         ],
-        "summary": "List all integrations",
-        "description": "Returns all connected social media channels for your organization.",
+        "summary": "List channels",
+        "description": "Every channel connected to the workspace, including disabled ones. Deleted channels are left out.",
         "operationId": "listIntegrations",
         "responses": {
           "200": {
-            "description": "List of integrations",
+            "description": "The channels",
             "content": {
               "application/json": {
                 "schema": {
@@ -82,20 +68,23 @@
                 },
                 "example": [
                   {
-                    "id": "cm4ean69r0003w8w1cdomox9n",
-                    "name": "Jane Doe",
-                    "identifier": "x",
-                    "picture": "https://uploads.postqueen.ai/avatar.jpg",
+                    "id": "cmg1ozx2c0000qz0h8c7w5v3n",
+                    "name": "PostQueen",
+                    "identifier": "bluesky",
+                    "picture": "https://cdn.example.com/avatar.png",
                     "disabled": false,
-                    "profile": "janedoe",
+                    "profile": "postqueen.bsky.social",
                     "customer": {
-                      "id": "customer-id",
-                      "name": "My Company"
+                      "id": "cmg1oyv9a0000qz0hc2k1d7m4",
+                      "name": "Acme"
                     }
                   }
                 ]
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         },
         "parameters": [
@@ -103,7 +92,7 @@
             "name": "group",
             "in": "query",
             "required": false,
-            "description": "Filter integrations by customer (group) ID. Returns only channels assigned to the given group.",
+            "description": "Only channels assigned to this customer id (see List groups)",
             "schema": {
               "type": "string"
             }
@@ -114,10 +103,10 @@
     "/groups": {
       "get": {
         "tags": [
-          "Integrations"
+          "Channels"
         ],
-        "summary": "List all groups (customers)",
-        "description": "Returns all customers (groups) for your organization. Use a group ID to filter the integrations list.",
+        "summary": "List groups",
+        "description": "The workspace's customers. The API calls them groups. Pass a group id to List channels or List posts to narrow them.",
         "operationId": "listGroups",
         "responses": {
           "200": {
@@ -132,56 +121,15 @@
                 },
                 "example": [
                   {
-                    "id": "customer-id",
-                    "name": "My Company"
+                    "id": "cmg1oyv9a0000qz0hc2k1d7m4",
+                    "name": "Acme"
                   }
                 ]
               }
             }
-          }
-        }
-      }
-    },
-    "/integrations/{id}": {
-      "delete": {
-        "tags": [
-          "Integrations"
-        ],
-        "summary": "Delete a channel",
-        "description": "Delete a connected channel by its integration ID. Any scheduled posts associated with this channel will also be deleted.",
-        "operationId": "deleteChannel",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "Integration ID of the channel to delete",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Channel deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "example": {
-                  "id": "cm4ean69r0003w8w1cdomox9n"
-                }
-              }
-            }
           },
-          "404": {
-            "description": "Channel not found"
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -189,17 +137,17 @@
     "/social/{integration}": {
       "get": {
         "tags": [
-          "Integrations"
+          "Channels"
         ],
-        "summary": "Get OAuth URL for a channel",
-        "description": "Generate an OAuth authorization URL for a given integration. Use this to connect a new social media channel. Only OAuth-based integrations are supported (integrations that require an external URL, such as Mastodon, are not available via this endpoint).",
+        "summary": "Get a connect URL",
+        "description": "Starts connecting a network and returns the URL of its sign-in page, for a person to open in a browser. When they approve, the new channel appears in the workspace and they land in the PostQueen app.\n\nThis works for networks that sign in with their own consent page. Networks connected with a handle, key or password (Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress) answer 200 with a `url` that is only an internal state value: connect those from **Add Channel** in the app. A network marked Soon on [Channels](/channels/overview) cannot be connected yet, whatever this returns. The sign-in state is kept for one hour.",
         "operationId": "getIntegrationUrl",
         "parameters": [
           {
             "name": "integration",
             "in": "path",
             "required": true,
-            "description": "The integration identifier (e.g. x, linkedin, facebook, instagram, youtube, tiktok, reddit, etc.)",
+            "description": "The network's identifier, as in `identifier` from List channels, for example `youtube` or `threads`",
             "schema": {
               "type": "string"
             }
@@ -208,7 +156,7 @@
             "name": "refresh",
             "in": "query",
             "required": false,
-            "description": "Pass an existing integration ID to refresh its OAuth token instead of creating a new connection",
+            "description": "The id of an existing channel, to reconnect it instead of adding a new one. A reconnect does not count against the channel limit",
             "schema": {
               "type": "string"
             }
@@ -216,7 +164,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OAuth authorization URL",
+            "description": "The URL to open",
             "content": {
               "application/json": {
                 "schema": {
@@ -224,18 +172,59 @@
                   "properties": {
                     "url": {
                       "type": "string",
-                      "description": "The OAuth authorization URL to redirect the user to"
+                      "description": "The network's sign-in URL"
                     }
                   }
                 },
                 "example": {
-                  "url": "https://twitter.com/i/oauth2/authorize?response_type=code&client_id=..."
+                  "url": "https://accounts.google.com/o/oauth2/v2/auth?client_id=...&redirect_uri=...&state=..."
                 }
               }
             }
           },
           "400": {
-            "description": "Integration not allowed or requires an external URL"
+            "description": "`Integration not allowed`: not a network identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "example": {
+                  "msg": "Integration not allowed"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "description": "The workspace is at its plan's channel limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequired"
+                },
+                "example": {
+                  "statusCode": 402,
+                  "message": "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels.",
+                  "url": "https://app.postqueen.ai/billing"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "`Failed to generate auth URL`: the network refused the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "example": {
+                  "msg": "Failed to generate auth URL"
+                }
+              }
+            }
           }
         }
       }
@@ -243,17 +232,17 @@
     "/integration-settings/{id}": {
       "get": {
         "tags": [
-          "Integrations"
+          "Channels"
         ],
-        "summary": "Get integration settings and tools",
-        "description": "Returns the posting rules, maximum content length, settings schema, and available provider tools for a connected channel. Use this to discover which tools can be executed with the trigger endpoint.",
+        "summary": "Get a channel's settings",
+        "description": "What a post to this channel may carry: the network's rules in words, the maximum text length, the JSON schema of its `settings`, and the tools you can run with Trigger a tool. `settings` is the text `No additional settings required` for networks without a settings schema.\n\nMoltbook answers `No additional settings required`, but Create a post needs `submolt` for it.",
         "operationId": "getIntegrationSettings",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "The integration ID",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -261,7 +250,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Settings and tools for the integration",
+            "description": "The channel's settings and tools",
             "content": {
               "application/json": {
                 "schema": {
@@ -279,7 +268,7 @@
                           "description": "Maximum content length"
                         },
                         "settings": {
-                          "description": "JSON schema of the provider settings, or a string when no settings are required"
+                          "description": "JSON schema of the provider settings, or the string \"No additional settings required\""
                         },
                         "tools": {
                           "type": "array",
@@ -308,36 +297,30 @@
                 },
                 "example": {
                   "output": {
-                    "rules": "Instagram should have at least one attachment, if it's a story, it can have only one picture",
-                    "maxLength": 2200,
-                    "settings": {
-                      "type": "object"
-                    },
-                    "tools": [
-                      {
-                        "methodName": "audioSearch",
-                        "description": "Search audio (music or original sounds) to attach to a Reel via the \"audio\" setting, an empty query returns trending audio",
-                        "dataSchema": [
-                          {
-                            "key": "q",
-                            "type": "string",
-                            "description": "Search query, leave empty for trending audio"
-                          },
-                          {
-                            "key": "type",
-                            "type": "string",
-                            "description": "Either \"music\" or \"original_sound\", defaults to \"music\""
-                          }
-                        ]
-                      }
-                    ]
+                    "rules": "Bluesky can have maximum 1 video or 4 pictures in one post, it can also be without attachments",
+                    "maxLength": 300,
+                    "settings": "No additional settings required",
+                    "tools": []
                   }
                 }
               }
             }
           },
           "404": {
-            "description": "Integration not found"
+            "description": "`Integration not found`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "example": {
+                  "msg": "Integration not found"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -345,17 +328,17 @@
     "/integration-trigger/{id}": {
       "post": {
         "tags": [
-          "Integrations"
+          "Channels"
         ],
-        "summary": "Trigger an integration tool",
-        "description": "Executes a provider-specific tool on a connected channel, for example searching Instagram audio for Reels, listing Discord channels, or fetching Reddit flairs. Discover available tools with the integration settings endpoint.",
+        "summary": "Trigger a tool",
+        "description": "Runs one of a network's helper tools on a channel, such as listing WordPress post types or Hashnode publications, to get the ids a post's `settings` need. Get a channel's settings lists each channel's tools with their `methodName` and `dataSchema`. The tools of every network are on [Provider tools](/public-api/integrations/provider-tools).",
         "operationId": "triggerIntegrationTool",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "The integration ID",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -377,7 +360,7 @@
                   },
                   "data": {
                     "type": "object",
-                    "description": "Key-value parameters for the tool",
+                    "description": "The tool's input, keyed as in its `dataSchema`. Send `{}` for a tool that takes none",
                     "additionalProperties": {
                       "type": "string"
                     }
@@ -385,37 +368,34 @@
                 }
               },
               "example": {
-                "methodName": "audioSearch",
-                "data": {
-                  "q": "summer vibes",
-                  "type": "music"
-                }
+                "methodName": "postTypes",
+                "data": {}
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Tool executed successfully",
+          "201": {
+            "description": "The tool's result",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "output": {
-                      "description": "The tool result, shape depends on the tool"
+                      "description": "The result. Its shape depends on the tool"
                     }
                   }
                 },
                 "example": {
                   "output": [
                     {
-                      "id": "587784541076604",
-                      "title": "Summer Vibes",
-                      "artist": "Some Artist",
-                      "image": "https://scontent.cdninstagram.com/cover.jpg",
-                      "duration": 30000,
-                      "previewUrl": "https://scontent.cdninstagram.com/preview.mp4"
+                      "id": "posts",
+                      "name": "Posts"
+                    },
+                    {
+                      "id": "pages",
+                      "name": "Pages"
                     }
                   ]
                 }
@@ -423,10 +403,109 @@
             }
           },
           "401": {
-            "description": "Channel disconnected due to expired token"
+            "description": "`Channel disconnected due to expired token`, or the API key is not valid (see Unauthorized)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "example": {
+                  "msg": "Channel disconnected due to expired token"
+                }
+              }
+            }
           },
           "404": {
-            "description": "Integration or tool not found"
+            "description": "`Integration not found`, `Integration provider not found` or `Tool not found`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "example": {
+                  "msg": "Tool not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "`Unexpected error`: the network refused the call, or `data` did not fit the tool",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "example": {
+                  "msg": "Unexpected error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integrations/{id}": {
+      "delete": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "Delete a channel",
+        "description": "Deletes a channel and, first, every post of that channel in PostQueen, whatever its state: scheduled, drafts, published records and failed posts. Pending publishing for them is canceled. Posts of other channels are not touched, and nothing already published is taken down from the network. Connecting the account again does not bring the posts back.",
+        "operationId": "deleteChannel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The channel's id, from List channels",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The channel's record with `deletedAt` set. Its stored credentials are replaced by one-way hashes; read `id` and `deletedAt` and ignore the rest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "additionalProperties": true
+                },
+                "example": {
+                  "id": "cmg1ozx2c0000qz0h8c7w5v3n",
+                  "name": "PostQueen",
+                  "providerIdentifier": "bluesky",
+                  "deletedAt": "2026-10-01T09:00:00.000Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "description": "No channel with that id in your workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 500,
+                  "message": "Internal server error"
+                }
+              }
+            }
           }
         }
       }
@@ -434,10 +513,10 @@
     "/is-connected": {
       "get": {
         "tags": [
-          "Integrations"
+          "Channels"
         ],
-        "summary": "Check connection status",
-        "description": "Verify if your API key is valid and connected.",
+        "summary": "Check the API key",
+        "description": "Answers `{ \"connected\": true }` when the key or token is valid and the workspace has a subscription. Use it to test a key.",
         "operationId": "isConnected",
         "responses": {
           "200": {
@@ -457,6 +536,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -464,17 +546,17 @@
     "/find-slot/{id}": {
       "get": {
         "tags": [
-          "Integrations"
+          "Channels"
         ],
-        "summary": "Find next available slot",
-        "description": "Get the next available time slot for posting to a specific channel.",
+        "summary": "Find a free slot",
+        "description": "The next posting time that has no post yet, from the posting times set for the channel. The time is UTC, written `YYYY-MM-DDTHH:mm:00` with no zone suffix. An id that matches no channel falls back to the default posting times.",
         "operationId": "findSlot",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Integration ID",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -490,15 +572,18 @@
                   "properties": {
                     "date": {
                       "type": "string",
-                      "format": "date-time"
+                      "description": "UTC date and time, YYYY-MM-DDTHH:mm:00"
                     }
                   }
                 },
                 "example": {
-                  "date": "2025-01-15T10:00:00.000Z"
+                  "date": "2026-10-02T06:40:00"
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -509,36 +594,36 @@
           "Posts"
         ],
         "summary": "List posts",
-        "description": "Get posts within a date range.",
+        "description": "Posts whose publish date falls in a range, drafts with a date included. Only the first post of each thread is listed, and posts of deleted channels are left out. A repeating post appears once per occurrence in the range, each with `actualDate` set to the original date. `settings` and `image` are JSON strings: parse them before use.",
         "operationId": "listPosts",
         "parameters": [
           {
             "name": "startDate",
             "in": "query",
             "required": true,
-            "description": "Start date in UTC ISO format",
+            "description": "Start of the range, UTC, ISO 8601",
             "schema": {
               "type": "string",
               "format": "date-time"
             },
-            "example": "2024-12-01T00:00:00.000Z"
+            "example": "2026-10-01T00:00:00.000Z"
           },
           {
             "name": "endDate",
             "in": "query",
             "required": true,
-            "description": "End date in UTC ISO format",
+            "description": "End of the range, UTC, ISO 8601",
             "schema": {
               "type": "string",
               "format": "date-time"
             },
-            "example": "2024-12-31T23:59:59.000Z"
+            "example": "2026-10-31T23:59:59.000Z"
           },
           {
             "name": "customer",
             "in": "query",
             "required": false,
-            "description": "Filter by customer ID",
+            "description": "Only posts of channels assigned to this customer id",
             "schema": {
               "type": "string"
             }
@@ -551,9 +636,40 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PostsResponse"
+                },
+                "example": {
+                  "posts": [
+                    {
+                      "id": "cmg1p0s7k0001qz0h4yq2a8r1",
+                      "content": "Shipping the new calendar today.",
+                      "publishDate": "2026-10-01T09:00:00.000Z",
+                      "releaseURL": null,
+                      "releaseId": null,
+                      "state": "QUEUE",
+                      "error": null,
+                      "intervalInDays": null,
+                      "group": "6f0d2c1e-3b1a-4f4e-9f1d-2a7c9e5b8d10",
+                      "creationMethod": "API",
+                      "settings": "{\"__type\":\"bluesky\"}",
+                      "image": "[]",
+                      "tags": [],
+                      "integration": {
+                        "id": "cmg1ozx2c0000qz0h8c7w5v3n",
+                        "providerIdentifier": "bluesky",
+                        "name": "PostQueen",
+                        "picture": "https://cdn.example.com/avatar.png"
+                      }
+                    }
+                  ]
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       },
@@ -562,7 +678,7 @@
           "Posts"
         ],
         "summary": "Create a post",
-        "description": "Create or schedule a new post. Each social media platform has its own settings schema.",
+        "description": "Schedules, publishes or saves posts on one or more channels. Each entry in `posts` is one channel: its text, media, thread and the network's `settings`. PostQueen checks every entry before it saves anything: the body and each network's required settings always, and for everything but a draft also the network's rules on length and media.\n\nThe settings of each network are on [Posting settings by network](/public-api/providers/overview).",
         "operationId": "createPost",
         "requestBody": {
           "required": true,
@@ -572,769 +688,187 @@
                 "$ref": "#/components/schemas/CreatePostRequest"
               },
               "examples": {
-                "general": {
-                  "summary": "General (Threads, Mastodon, Bluesky, Telegram, Nostr, VK, Kick)",
+                "bluesky": {
+                  "summary": "A text post (Bluesky)",
                   "value": {
                     "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
+                    "date": "2026-10-01T09:00:00.000Z",
                     "shortLink": false,
                     "tags": [],
                     "posts": [
                       {
                         "integration": {
-                          "id": "your-integration-id"
+                          "id": "YOUR_CHANNEL_ID"
                         },
                         "value": [
                           {
-                            "content": "Hello world!",
+                            "content": "Shipping the new calendar today.",
                             "image": []
                           }
-                        ],
-                        "settings": {
-                          "__type": "bluesky"
-                        }
+                        ]
                       }
                     ]
                   }
                 },
-                "x": {
-                  "summary": "X (Twitter)",
+                "thread": {
+                  "summary": "A thread with an image (Bluesky)",
                   "value": {
                     "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
+                    "date": "2026-10-01T09:00:00.000Z",
                     "shortLink": false,
                     "tags": [],
                     "posts": [
                       {
                         "integration": {
-                          "id": "your-x-integration-id"
+                          "id": "YOUR_CHANNEL_ID"
                         },
                         "value": [
                           {
-                            "content": "Hello from the PostQueen API!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "x",
-                          "who_can_reply_post": "everyone",
-                          "community": ""
-                        }
-                      }
-                    ]
-                  }
-                },
-                "linkedin": {
-                  "summary": "LinkedIn",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-linkedin-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Check out our latest product showcase!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "linkedin",
-                          "post_as_images_carousel": false
-                        }
-                      }
-                    ]
-                  }
-                },
-                "linkedin-page": {
-                  "summary": "LinkedIn Page",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-linkedin-page-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Company update: We just launched a new feature!",
+                            "content": "The new calendar is live.",
                             "image": [
                               {
-                                "id": "img1",
-                                "path": "https://uploads.postqueen.ai/1.png"
-                              },
-                              {
-                                "id": "img2",
-                                "path": "https://uploads.postqueen.ai/2.png"
+                                "id": "YOUR_MEDIA_ID",
+                                "path": "https://cdn.example.com/a1b2c3d4e5.png"
                               }
                             ]
+                          },
+                          {
+                            "content": "Drag a post to move it. Hold Shift to copy it.",
+                            "image": [],
+                            "delay": 5
                           }
-                        ],
-                        "settings": {
-                          "__type": "linkedin-page",
-                          "post_as_images_carousel": true,
-                          "carousel_name": "Product Showcase"
-                        }
+                        ]
                       }
                     ]
                   }
                 },
-                "instagram": {
-                  "summary": "Instagram",
+                "two-channels": {
+                  "summary": "One post on two channels (Bluesky and Nostr)",
                   "value": {
                     "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
+                    "date": "2026-10-01T09:00:00.000Z",
                     "shortLink": false,
                     "tags": [],
                     "posts": [
                       {
                         "integration": {
-                          "id": "your-instagram-integration-id"
+                          "id": "YOUR_BLUESKY_CHANNEL_ID"
                         },
                         "value": [
                           {
-                            "content": "Beautiful sunset today!",
-                            "image": [
-                              {
-                                "id": "img1",
-                                "path": "https://uploads.postqueen.ai/photo.jpg"
-                              }
-                            ]
+                            "content": "Shipping the new calendar today.",
+                            "image": []
                           }
-                        ],
-                        "settings": {
-                          "__type": "instagram",
-                          "post_type": "post",
-                          "is_trial_reel": false,
-                          "collaborators": []
-                        }
+                        ]
+                      },
+                      {
+                        "integration": {
+                          "id": "YOUR_NOSTR_CHANNEL_ID"
+                        },
+                        "value": [
+                          {
+                            "content": "Shipping the new calendar today.",
+                            "image": []
+                          }
+                        ]
                       }
                     ]
                   }
                 },
-                "instagram-standalone": {
-                  "summary": "Instagram Standalone",
+                "wordpress": {
+                  "summary": "A blog post (WordPress)",
                   "value": {
                     "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
+                    "date": "2026-10-01T09:00:00.000Z",
                     "shortLink": false,
                     "tags": [],
                     "posts": [
                       {
                         "integration": {
-                          "id": "your-instagram-standalone-integration-id"
+                          "id": "YOUR_CHANNEL_ID"
                         },
                         "value": [
                           {
-                            "content": "",
-                            "image": [
-                              {
-                                "id": "story-img",
-                                "path": "https://uploads.postqueen.ai/story.jpg"
-                              }
-                            ]
-                          }
-                        ],
-                        "settings": {
-                          "__type": "instagram-standalone",
-                          "post_type": "story",
-                          "is_trial_reel": false,
-                          "collaborators": []
-                        }
-                      }
-                    ]
-                  }
-                },
-                "youtube": {
-                  "summary": "YouTube",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-youtube-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Video description here...",
-                            "image": [
-                              {
-                                "id": "video-id",
-                                "path": "https://uploads.postqueen.ai/video.mp4"
-                              }
-                            ]
-                          }
-                        ],
-                        "settings": {
-                          "__type": "youtube",
-                          "title": "My Awesome Video",
-                          "type": "public",
-                          "selfDeclaredMadeForKids": "no",
-                          "tags": [
-                            {
-                              "value": "tutorial",
-                              "label": "tutorial"
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                },
-                "tiktok": {
-                  "summary": "TikTok",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-tiktok-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Check this out! #viral #fyp",
-                            "image": [
-                              {
-                                "id": "video-id",
-                                "path": "https://uploads.postqueen.ai/tiktok.mp4"
-                              }
-                            ]
-                          }
-                        ],
-                        "settings": {
-                          "__type": "tiktok",
-                          "privacy_level": "PUBLIC_TO_EVERYONE",
-                          "duet": true,
-                          "stitch": true,
-                          "comment": true,
-                          "autoAddMusic": "no",
-                          "brand_content_toggle": false,
-                          "brand_organic_toggle": false,
-                          "video_made_with_ai": false,
-                          "content_posting_method": "DIRECT_POST"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "reddit": {
-                  "summary": "Reddit",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-reddit-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Post content here...",
+                            "content": "<p>The calendar now shows drafts next to scheduled posts.</p>",
                             "image": []
                           }
                         ],
                         "settings": {
-                          "__type": "reddit",
-                          "subreddit": [
-                            {
-                              "value": {
-                                "subreddit": "programming",
-                                "title": "My Post Title",
-                                "type": "self",
-                                "url": "",
-                                "is_flair_required": false,
-                                "flair": null
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                },
-                "lemmy": {
-                  "summary": "Lemmy",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-lemmy-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Post content here...",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "lemmy",
-                          "subreddit": [
-                            {
-                              "value": {
-                                "subreddit": "technology",
-                                "id": "community-id",
-                                "title": "My Post Title",
-                                "url": ""
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                },
-                "pinterest": {
-                  "summary": "Pinterest",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-pinterest-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Pin description here...",
-                            "image": [
-                              {
-                                "id": "pin-img",
-                                "path": "https://uploads.postqueen.ai/pin.jpg"
-                              }
-                            ]
-                          }
-                        ],
-                        "settings": {
-                          "__type": "pinterest",
-                          "board": "board-id",
-                          "title": "My Pin",
-                          "link": "https://example.com"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "dribbble": {
-                  "summary": "Dribbble",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-dribbble-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Shot description here...",
-                            "image": [
-                              {
-                                "id": "shot-img",
-                                "path": "https://uploads.postqueen.ai/shot.png"
-                              }
-                            ]
-                          }
-                        ],
-                        "settings": {
-                          "__type": "dribbble",
-                          "title": "My Design Shot"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "discord": {
-                  "summary": "Discord",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-discord-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Hello Discord!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "discord",
-                          "channel": "channel-id"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "slack": {
-                  "summary": "Slack",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-slack-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Hello Slack!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "slack",
-                          "channel": "channel-id"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "twitch": {
-                  "summary": "Twitch",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-twitch-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Stream announcement!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "twitch",
-                          "messageType": "announcement",
-                          "announcementColor": "primary"
+                          "__type": "wordpress",
+                          "title": "A calendar that shows everything",
+                          "type": "posts",
+                          "status": "publish"
                         }
                       }
                     ]
                   }
                 },
                 "devto": {
-                  "summary": "Dev.to",
+                  "summary": "An article (DEV)",
                   "value": {
                     "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
+                    "date": "2026-10-01T09:00:00.000Z",
                     "shortLink": false,
                     "tags": [],
                     "posts": [
                       {
                         "integration": {
-                          "id": "your-devto-integration-id"
+                          "id": "YOUR_CHANNEL_ID"
                         },
                         "value": [
                           {
-                            "content": "# Tutorial\n\nStep-by-step guide...",
+                            "content": "## Why we rebuilt the calendar\n\nThree things changed.",
                             "image": []
                           }
                         ],
                         "settings": {
                           "__type": "devto",
-                          "title": "Building APIs with Node.js",
-                          "tags": [
-                            {
-                              "value": "javascript",
-                              "label": "javascript"
-                            },
-                            {
-                              "value": "nodejs",
-                              "label": "nodejs"
-                            }
-                          ]
+                          "title": "Why we rebuilt the calendar"
                         }
                       }
                     ]
                   }
                 },
-                "hashnode": {
-                  "summary": "Hashnode",
+                "draft": {
+                  "summary": "A draft",
                   "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
+                    "type": "draft",
+                    "date": "2026-10-01T09:00:00.000Z",
                     "shortLink": false,
                     "tags": [],
                     "posts": [
                       {
                         "integration": {
-                          "id": "your-hashnode-integration-id"
+                          "id": "YOUR_CHANNEL_ID"
                         },
                         "value": [
                           {
-                            "content": "# Getting Started\n\nArticle content here...",
+                            "content": "Idea: a post about the calendar.",
                             "image": []
                           }
-                        ],
-                        "settings": {
-                          "__type": "hashnode",
-                          "title": "Getting Started with PostQueen",
-                          "subtitle": "A beginner's guide",
-                          "publication": "publication-id",
-                          "tags": [
-                            {
-                              "value": "webdev",
-                              "label": "Web Development"
-                            }
-                          ]
-                        }
+                        ]
                       }
                     ]
                   }
                 },
-                "wordpress": {
-                  "summary": "WordPress",
+                "now": {
+                  "summary": "Publish now",
                   "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
+                    "type": "now",
+                    "date": "2026-10-01T09:00:00.000Z",
                     "shortLink": false,
                     "tags": [],
                     "posts": [
                       {
                         "integration": {
-                          "id": "your-wordpress-integration-id"
+                          "id": "YOUR_CHANNEL_ID"
                         },
                         "value": [
                           {
-                            "content": "Blog post content here...",
+                            "content": "We are live.",
                             "image": []
                           }
-                        ],
-                        "settings": {
-                          "__type": "wordpress",
-                          "title": "My Blog Post",
-                          "type": "post"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "listmonk": {
-                  "summary": "Listmonk",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-listmonk-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Newsletter content here...",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "listmonk",
-                          "subject": "Weekly Newsletter",
-                          "preview": "This week's highlights...",
-                          "list": "list-id"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "gmb": {
-                  "summary": "Google My Business",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-gmb-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Check out our latest offers!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "gmb",
-                          "topicType": "OFFER",
-                          "callToActionType": "GET_OFFER",
-                          "callToActionUrl": "https://example.com/offer",
-                          "offerCouponCode": "SAVE20"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "facebook": {
-                  "summary": "Facebook",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-facebook-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Hello Facebook!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "facebook",
-                          "url": "https://example.com"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "warpcast": {
-                  "summary": "Warpcast (Farcaster)",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-warpcast-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Hello Farcaster!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "wrapcast",
-                          "subreddit": [
-                            {
-                              "value": {
-                                "id": "channel-id"
-                              }
-                            }
-                          ]
-                        }
-                      }
-                    ]
-                  }
-                },
-                "moltbook": {
-                  "summary": "Moltbook",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-moltbook-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Hello Moltbook!",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "moltbook",
-                          "submolt": "submolt-id"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "skool": {
-                  "summary": "Skool",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-skool-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Post content here...",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "skool",
-                          "group": "group-id",
-                          "label": "label-id",
-                          "title": "My Skool Post"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "whop": {
-                  "summary": "Whop",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-whop-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "Post content here...",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "whop",
-                          "company": "company-id",
-                          "experience": "experience-id",
-                          "title": "My Whop Post"
-                        }
+                        ]
                       }
                     ]
                   }
@@ -1344,8 +878,19 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Post created successfully",
+          "201": {
+            "description": "Saved. One row per channel entry",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -1364,12 +909,82 @@
                 },
                 "example": [
                   {
-                    "postId": "post-123",
-                    "integration": "integration-456"
+                    "postId": "cmg1p0s7k0001qz0h4yq2a8r1",
+                    "integration": "cmg1ozx2c0000qz0h8c7w5v3n"
                   }
                 ]
               }
             }
+          },
+          "400": {
+            "description": "The body failed validation (`message` is a list), a channel id is not in your workspace, the post breaks a network rule (`provider`, `name` and `message`), or it would publish an already published post again without `republish`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/PostValidationError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NestError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/MessageError"
+                    }
+                  ]
+                },
+                "examples": {
+                  "rule": {
+                    "summary": "A network rule",
+                    "value": {
+                      "statusCode": 400,
+                      "provider": "bluesky",
+                      "name": "PostQueen",
+                      "message": "post is too long, please fix it"
+                    }
+                  },
+                  "validation": {
+                    "summary": "Validation",
+                    "value": {
+                      "message": [
+                        "posts.0.value.0.image must be an array"
+                      ],
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  },
+                  "channel": {
+                    "summary": "Unknown channel",
+                    "value": {
+                      "message": "Integration with id YOUR_CHANNEL_ID not found",
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "description": "The workspace's plan allows no more posts. Current plans have no monthly post limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequired"
+                },
+                "example": {
+                  "statusCode": 402,
+                  "message": "You have reached the maximum number of posts for your subscription. Please upgrade your subscription to add more posts.",
+                  "url": "https://app.postqueen.ai/billing"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
           }
         }
       }
@@ -1379,15 +994,15 @@
         "tags": [
           "Posts"
         ],
-        "summary": "Delete a post by ID",
-        "description": "Delete a post by its ID. The API will look up the post and delete all posts in the same group.",
+        "summary": "Delete a post",
+        "description": "Deletes the post's whole group: the post and every entry of its thread or comments on that channel. The id of a comment deletes its whole group too. Pending publishing is canceled. Nothing already published is taken down from the network.",
         "operationId": "deletePost",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID to delete",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1395,19 +1010,29 @@
         ],
         "responses": {
           "200": {
-            "description": "Post deleted",
+            "description": "Deleted. The body is always `{ \"error\": true }`: judge the call by the status code",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "`Post not found`: no such post in your workspace, or it is already deleted",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    }
-                  }
+                  "$ref": "#/components/schemas/NestError"
                 },
                 "example": {
-                  "id": "deleted-post-id"
+                  "message": "Post not found",
+                  "error": "Not Found",
+                  "statusCode": 404
                 }
               }
             }
@@ -1421,14 +1046,14 @@
           "Posts"
         ],
         "summary": "Delete a post by group",
-        "description": "Delete all posts in a group by the group identifier.",
+        "description": "Deletes every post with this group id. A group is one channel's post with its thread or comments: each channel entry of a create request gets its own group. The `group` of a post is in List posts.",
         "operationId": "deletePostByGroup",
         "parameters": [
           {
             "name": "group",
             "in": "path",
             "required": true,
-            "description": "Group identifier to delete",
+            "description": "The post's `group`, from List posts",
             "schema": {
               "type": "string"
             }
@@ -1436,22 +1061,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Posts deleted",
+            "description": "Done. The body is always `{ \"error\": true }`, also when no post had that group",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string"
-                    }
-                  }
-                },
                 "example": {
-                  "id": "deleted-group-id"
+                  "error": true
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -1462,14 +1082,14 @@
           "Posts"
         ],
         "summary": "Get missing content",
-        "description": "When a post has been published but the platform did not return a usable post ID (the `releaseId` is set to `\"missing\"`), this endpoint fetches recent content from the provider so you can match and connect the correct one to the post.\n\nThe provider must implement the optional `missing` method. If the provider does not support it, an empty array is returned.",
+        "description": "For a TikTok post that TikTok published without returning its id (its `releaseId` is `missing`), this lists the channel's recent TikTok videos so you can pick the right one and set it with Update release ID. Every other post answers `[]`.",
         "operationId": "getMissingContent",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1498,6 +1118,9 @@
                 ]
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -1508,14 +1131,14 @@
           "Posts"
         ],
         "summary": "Update release ID",
-        "description": "Updates the `releaseId` of a post that currently has its release ID set to `\"missing\"`. This connects the post to its actual published content on the platform, enabling analytics and statistics tracking.\n\nTypically used after calling the **Get Missing Content** endpoint to retrieve the list of available content items.",
+        "description": "Sets the network id of a post whose `releaseId` is `missing`, so its analytics can be read. Only TikTok posts end up in that state. The body is not validated: send `releaseId` as a string. A post that is not in your workspace or not `missing` answers 500.",
         "operationId": "updateReleaseId",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1545,7 +1168,7 @@
         },
         "responses": {
           "200": {
-            "description": "Release ID updated successfully",
+            "description": "The updated post record",
             "content": {
               "application/json": {
                 "schema": {
@@ -1557,11 +1180,30 @@
                     "releaseId": {
                       "type": "string"
                     }
-                  }
+                  },
+                  "additionalProperties": true
                 },
                 "example": {
-                  "id": "post-123",
-                  "releaseId": "7321456789012345678"
+                  "id": "cmg1p0s7k0001qz0h4yq2a8r1",
+                  "releaseId": "7321456789012345678",
+                  "state": "PUBLISHED"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "description": "No post in your workspace with that id and a `missing` release id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 500,
+                  "message": "Internal server error"
                 }
               }
             }
@@ -1575,14 +1217,14 @@
           "Posts"
         ],
         "summary": "Change post status",
-        "description": "Moves a post between `draft` and `schedule` state.\n\n- `schedule` → sets the post state to `QUEUE` and (re)starts the publishing workflow so it will be published at its stored date.\n- `draft` → sets the post state to `DRAFT` and terminates any currently running publishing workflow for the post, so it will not be published.\n\nThe post keeps its stored date; only the state (and the workflow) changes.",
+        "description": "Moves a post between draft and scheduled. `schedule` queues it for its stored date. `draft` stops any pending publish and keeps the post as a draft. The date does not change. Published and failed posts cannot change.",
         "operationId": "changePostStatus",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1635,14 +1277,29 @@
                   }
                 },
                 "example": {
-                  "id": "post-123",
+                  "id": "cmg1p0s7k0001qz0h4yq2a8r1",
                   "state": "QUEUE"
                 }
               }
             }
           },
           "400": {
-            "description": "Invalid status or post not found"
+            "description": "`Post not found`, `Cannot change status of a published or errored post`, or a `status` that is not `draft` or `schedule`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "message": "Cannot change status of a published or errored post",
+                  "error": "Bad Request",
+                  "statusCode": 400
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -1660,7 +1317,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1685,7 +1342,7 @@
               },
               "example": {
                 "settings": {
-                  "who_can_reply_post": "following"
+                  "title": "A calendar that shows everything"
                 }
               }
             }
@@ -1708,169 +1365,44 @@
                   }
                 },
                 "example": {
-                  "postId": "post-123",
-                  "publishDate": "2026-08-01T10:00:00"
+                  "postId": "cmg1p0s7k0001qz0h4yq2a8r1",
+                  "publishDate": "2026-10-01T09:00:00"
                 }
               }
             }
           },
           "400": {
-            "description": "The id belongs to a comment (pass the main post's id), the post was already published or failed, its publish time has passed, or the merged settings failed validation"
+            "description": "The id belongs to a comment (pass the main post's id), the post was already published or failed, its publish time has passed, or the merged settings failed validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "message": "Only scheduled posts that were not published yet (or drafts) can be updated",
+                  "error": "Bad Request",
+                  "statusCode": 400
+                }
+              }
+            }
           },
           "404": {
-            "description": "Post not found"
-          }
-        }
-      }
-    },
-    "/analytics/{integration}": {
-      "get": {
-        "tags": [
-          "Analytics"
-        ],
-        "summary": "Get platform analytics",
-        "description": "Get analytics data for a specific integration/channel. Returns metrics like followers, impressions, engagement, etc. depending on the platform.",
-        "operationId": "getAnalytics",
-        "parameters": [
-          {
-            "name": "integration",
-            "in": "path",
-            "required": true,
-            "description": "Integration ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "date",
-            "in": "query",
-            "required": true,
-            "description": "Number of days to look back for analytics data (e.g. 7, 30, 90)",
-            "schema": {
-              "type": "string"
-            },
-            "example": "7"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Analytics data for the integration",
+            "description": "`Post not found`",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AnalyticsData"
-                  }
+                  "$ref": "#/components/schemas/NestError"
                 },
-                "example": [
-                  {
-                    "label": "Followers",
-                    "data": [
-                      {
-                        "total": "1250",
-                        "date": "2025-01-01"
-                      },
-                      {
-                        "total": "1280",
-                        "date": "2025-01-02"
-                      }
-                    ],
-                    "percentageChange": 2.4
-                  },
-                  {
-                    "label": "Impressions",
-                    "data": [
-                      {
-                        "total": "5000",
-                        "date": "2025-01-01"
-                      },
-                      {
-                        "total": "5200",
-                        "date": "2025-01-02"
-                      }
-                    ],
-                    "percentageChange": 4
-                  }
-                ]
+                "example": {
+                  "message": "Post not found",
+                  "error": "Not Found",
+                  "statusCode": 404
+                }
               }
-            }
-          }
-        }
-      }
-    },
-    "/analytics/post/{postId}": {
-      "get": {
-        "tags": [
-          "Analytics"
-        ],
-        "summary": "Get post analytics",
-        "description": "Get analytics data for a specific published post. Returns metrics like likes, comments, shares, impressions, etc. depending on the platform.",
-        "operationId": "getPostAnalytics",
-        "parameters": [
-          {
-            "name": "postId",
-            "in": "path",
-            "required": true,
-            "description": "Post ID",
-            "schema": {
-              "type": "string"
             }
           },
-          {
-            "name": "date",
-            "in": "query",
-            "required": true,
-            "description": "Number of days to look back for analytics data (e.g. 7, 30, 90)",
-            "schema": {
-              "type": "string"
-            },
-            "example": "7"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Analytics data for the post",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AnalyticsData"
-                  }
-                },
-                "example": [
-                  {
-                    "label": "Likes",
-                    "data": [
-                      {
-                        "total": "150",
-                        "date": "2025-01-01"
-                      },
-                      {
-                        "total": "175",
-                        "date": "2025-01-02"
-                      }
-                    ],
-                    "percentageChange": 16.7
-                  },
-                  {
-                    "label": "Comments",
-                    "data": [
-                      {
-                        "total": "25",
-                        "date": "2025-01-01"
-                      },
-                      {
-                        "total": "30",
-                        "date": "2025-01-02"
-                      }
-                    ],
-                    "percentageChange": 20
-                  }
-                ]
-              }
-            }
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -1878,10 +1410,10 @@
     "/upload": {
       "post": {
         "tags": [
-          "Uploads"
+          "Media"
         ],
         "summary": "Upload a file",
-        "description": "Upload a media file using multipart form data.",
+        "description": "Uploads a file to the media library, as multipart form data in a field named `file`. PostQueen reads the type from the file itself: JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF, MP4 or MOV, up to 1 GB. A video comes back `processing` while it is prepared in the background (a MOV becomes an MP4): poll Get media status until it is `ready`, then use the `path` that returns.\n\nA post takes media whose path ends in .png, .jpg, .jpeg, .gif, .webp or .mp4, so an AVIF, BMP or TIFF file can be stored but not posted.",
         "operationId": "uploadFile",
         "requestBody": {
           "required": true,
@@ -1904,8 +1436,19 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "File uploaded successfully",
+          "201": {
+            "description": "Stored",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -1913,6 +1456,45 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "`No file provided`, `Unsupported file type.`, or `File size exceeds the maximum allowed size of 1073741824 bytes.`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/MessageError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NestError"
+                    }
+                  ]
+                },
+                "examples": {
+                  "type": {
+                    "summary": "Unsupported type",
+                    "value": {
+                      "message": "Unsupported file type.",
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  },
+                  "missing": {
+                    "summary": "No file",
+                    "value": {
+                      "msg": "No file provided"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
           }
         }
       }
@@ -1920,10 +1502,10 @@
     "/upload-from-url": {
       "post": {
         "tags": [
-          "Uploads"
+          "Media"
         ],
-        "summary": "Upload from URL",
-        "description": "Upload a file from an existing URL.",
+        "summary": "Upload from a URL",
+        "description": "PostQueen downloads a file from a public HTTPS URL into the media library. The URL's path must end in .png, .jpg, .jpeg, .gif, .webp or .mp4 (a query string is ignored), and it cannot point at a private or local address. The download may take up to 5 minutes and 1 GB, and the type is then read from the file itself. A video comes back `processing`, as with Upload a file.",
         "operationId": "uploadFromUrl",
         "requestBody": {
           "required": true,
@@ -1943,14 +1525,25 @@
                 ]
               },
               "example": {
-                "url": "https://example.com/image.png"
+                "url": "https://example.com/launch-banner.png"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "File uploaded successfully",
+          "201": {
+            "description": "Stored",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
@@ -1958,6 +1551,674 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "The URL failed validation (`message` is a list), or `Failed to fetch URL`, `File is too large.` or `Unsupported file type.` (`msg`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/NestError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/MessageError"
+                    }
+                  ]
+                },
+                "examples": {
+                  "validation": {
+                    "summary": "Validation",
+                    "value": {
+                      "message": [
+                        "URL must be a public HTTPS URL and cannot point to internal network addresses"
+                      ],
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  },
+                  "fetch": {
+                    "summary": "Download failed",
+                    "value": {
+                      "msg": "Failed to fetch URL"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/media/{id}/status": {
+      "get": {
+        "tags": [
+          "Media"
+        ],
+        "summary": "Get media status",
+        "description": "Whether an uploaded file is ready to put on a post. A video answers the upload endpoints with `status: \"processing\"` and is ready a few seconds to a few minutes later, possibly with a new `path`. Use the `path` this returns once `status` is `ready`. `failed` carries the reason in `processingError`.",
+        "operationId": "getMediaStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The media id from an upload",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The media row",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "originalName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "path": {
+                      "type": "string"
+                    },
+                    "thumbnail": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "alt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ready",
+                        "processing",
+                        "failed"
+                      ]
+                    },
+                    "processingError": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "example": {
+                  "id": "e639003b-f727-4a1e-87bd-74a2c48ae41e",
+                  "name": "f6g7h8i9j0.mp4",
+                  "originalName": "clip.mov",
+                  "path": "https://cdn.example.com/f6g7h8i9j0.mp4",
+                  "thumbnail": "https://cdn.example.com/f6g7h8i9j0.jpg",
+                  "alt": null,
+                  "status": "ready",
+                  "processingError": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Media not found`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Media not found"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/analytics/{integration}": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get channel analytics",
+        "description": "Channel metrics over time, such as followers and impressions, read from the network. Nine networks report them: Instagram, TikTok, YouTube, Facebook Page, X, LinkedIn Page, Threads, Pinterest and Google Business Profile. Other channels answer `[]`. A result is kept for an hour per channel and range.",
+        "operationId": "getAnalytics",
+        "parameters": [
+          {
+            "name": "integration",
+            "in": "path",
+            "required": true,
+            "description": "The channel's id, from List channels",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "Number of days to look back. The app offers 7, 30 and 90 (Instagram, Threads and TikTok only 7 and 30); the value is passed to the network as it is.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "7"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The channel's metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AnalyticsData"
+                  }
+                },
+                "example": [
+                  {
+                    "label": "Followers",
+                    "data": [
+                      {
+                        "total": "1250",
+                        "date": "2026-09-29"
+                      },
+                      {
+                        "total": "1280",
+                        "date": "2026-09-30"
+                      }
+                    ],
+                    "percentageChange": 2.4
+                  },
+                  {
+                    "label": "Impressions",
+                    "data": [
+                      {
+                        "total": "5000",
+                        "date": "2026-09-29"
+                      },
+                      {
+                        "total": "5200",
+                        "date": "2026-09-30"
+                      }
+                    ],
+                    "percentageChange": 4
+                  }
+                ]
+              }
+            }
+          },
+          "400": {
+            "description": "`This channel needs to be refreshed`: reconnect the channel",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": "This channel needs to be refreshed"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "No channel with that id in your workspace",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 500,
+                  "message": "Internal server error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/analytics/post/{postId}": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get post analytics",
+        "description": "Metrics for one published post, read live from the network, such as likes, comments and views. Eight networks report them: Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube and Pinterest. The answer is `[]` when the post has no network id yet, its network has no post metrics, or the channel cannot be refreshed, and `{ \"missing\": true }` when a TikTok post is waiting for Update release ID.",
+        "operationId": "getPostAnalytics",
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "path",
+            "required": true,
+            "description": "The post's id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "description": "Days to look back, such as 7 or 30",
+            "schema": {
+              "type": "string"
+            },
+            "example": "7"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The post's metrics, `[]`, or `{ \"missing\": true }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnalyticsData"
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "missing": {
+                          "type": "boolean",
+                          "enum": [
+                            true
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                },
+                "example": [
+                  {
+                    "label": "Likes",
+                    "data": [
+                      {
+                        "total": "150",
+                        "date": "2026-09-29"
+                      },
+                      {
+                        "total": "175",
+                        "date": "2026-09-30"
+                      }
+                    ],
+                    "percentageChange": 16.7
+                  },
+                  {
+                    "label": "Comments",
+                    "data": [
+                      {
+                        "total": "25",
+                        "date": "2026-09-29"
+                      },
+                      {
+                        "total": "30",
+                        "date": "2026-09-30"
+                      }
+                    ],
+                    "percentageChange": 20
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/analytics/posts": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "List post analytics",
+        "description": "Your published posts in a date range with their latest stored metrics, sorted and paged. The numbers come from snapshots PostQueen stores for the networks that report per-post metrics (Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube, Pinterest); a request starts a background refresh when they are more than an hour old, and `syncing` says so.",
+        "operationId": "listPostAnalytics",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "description": "Days to look back by publish date, 1 to 90. Default 30",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90,
+              "default": 30
+            }
+          },
+          {
+            "name": "integrationIds",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated channel ids to limit the report to",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Text to match in the post content, channel name or platform",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "description": "The network's identifier, such as x or instagram",
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Sort field. Default reactions",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "reactions",
+                "comments",
+                "impressions",
+                "engagement",
+                "published"
+              ],
+              "default": "reactions"
+            }
+          },
+          {
+            "name": "dir",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction. Default desc",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number, 0-indexed",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Posts per page, 1 to 100. Default 20",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of posts with their metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "syncing": {
+                      "type": "boolean",
+                      "description": "A background refresh was started; ask again shortly for newer numbers"
+                    },
+                    "date": {
+                      "type": "integer"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "notes": {
+                      "type": "object",
+                      "description": "Fixed reading notes: the range filters posts by publish date, numbers are current lifetime totals, null means unknown rather than zero, Facebook returns no comments, Pinterest no reactions or comments, Google Business no post metrics"
+                    },
+                    "columns": {
+                      "type": "object",
+                      "description": "Which metrics any post in the range has at all: comments, reactions, impressions, engagement"
+                    },
+                    "posts": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnalyticsPostRow"
+                      }
+                    },
+                    "top": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnalyticsPostRow"
+                      },
+                      "description": "Same as topReactions"
+                    },
+                    "topReactions": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnalyticsPostRow"
+                      },
+                      "description": "Up to 5 posts with the most reactions"
+                    },
+                    "topComments": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AnalyticsPostRow"
+                      },
+                      "description": "Up to 5 posts with the most comments"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/analytics/summary": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Get an analytics summary",
+        "description": "Totals across the published posts in a date range, from the same stored metrics as List post analytics. A total is null when any post in the range has no value for it.",
+        "operationId": "postAnalyticsSummary",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "description": "Days to look back by publish date, 1 to 90. Default 30",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90,
+              "default": 30
+            }
+          },
+          {
+            "name": "integrationIds",
+            "in": "query",
+            "required": false,
+            "description": "Comma-separated channel ids to limit the report to",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Text to match in the post content, channel name or platform",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "required": false,
+            "description": "The network's identifier, such as x or instagram",
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Totals for the range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "syncing": {
+                      "type": "boolean"
+                    },
+                    "date": {
+                      "type": "integer"
+                    },
+                    "notes": {
+                      "type": "object",
+                      "description": "Fixed reading notes: the range filters posts by publish date, numbers are current lifetime totals, null means unknown rather than zero, Facebook returns no comments, Pinterest no reactions or comments, Google Business no post metrics"
+                    },
+                    "posts": {
+                      "type": "integer",
+                      "description": "Posts in the range"
+                    },
+                    "reactions": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "comments": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "impressions": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "channels": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "integrationId": {
+                            "type": "string"
+                          },
+                          "platform": {
+                            "type": "string"
+                          },
+                          "channelName": {
+                            "type": "string"
+                          },
+                          "posts": {
+                            "type": "integer"
+                          },
+                          "impressions": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "weekdays": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "description": "Posts per weekday, Monday first, by UTC publish date"
+                    },
+                    "engagementMix": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "Known reactions and comments, summed over the posts that report them"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -1968,14 +2229,14 @@
           "Notifications"
         ],
         "summary": "List notifications",
-        "description": "Get paginated notifications for your organization, sorted by most recent first. Returns 100 notifications per page.",
+        "description": "The workspace's notifications, newest first, 100 per page.",
         "operationId": "listNotifications",
         "parameters": [
           {
             "name": "page",
             "in": "query",
             "required": false,
-            "description": "Page number (0-indexed). Defaults to 0.",
+            "description": "Page number, starting at 0",
             "schema": {
               "type": "integer",
               "minimum": 0,
@@ -1995,16 +2256,16 @@
                 "example": {
                   "notifications": [
                     {
-                      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                      "content": "Your post to X was published successfully",
+                      "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+                      "content": "Your post was published on Bluesky",
                       "link": null,
-                      "createdAt": "2025-01-15T10:30:00.000Z"
+                      "createdAt": "2026-10-01T09:00:12.000Z"
                     },
                     {
-                      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-                      "content": "Failed to publish post to LinkedIn",
+                      "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+                      "content": "Could not publish your post on WordPress",
                       "link": null,
-                      "createdAt": "2025-01-15T09:15:00.000Z"
+                      "createdAt": "2026-09-30T15:30:05.000Z"
                     }
                   ],
                   "total": 250,
@@ -2014,144 +2275,12 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/generate-video": {
-      "post": {
-        "tags": [
-          "Video Generation"
-        ],
-        "summary": "Generate a video",
-        "description": "Create AI-generated videos for your posts.",
-        "operationId": "generateVideo",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VideoGenerationRequest"
-              },
-              "examples": {
-                "image-text-slides": {
-                  "summary": "Image Text Slides",
-                  "value": {
-                    "type": "image-text-slides",
-                    "output": "vertical",
-                    "customParams": {
-                      "voice": "elevenlabs-voice-id",
-                      "prompt": "Description of the video content"
-                    }
-                  }
-                },
-                "veo3": {
-                  "summary": "VEO3 Fast Video",
-                  "value": {
-                    "type": "veo3",
-                    "output": "vertical",
-                    "customParams": {
-                      "prompt": "A scenic view of mountains at sunset",
-                      "images": []
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Video generated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "path": {
-                        "type": "string",
-                        "description": "URL of the generated video"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/video/function": {
-      "post": {
-        "tags": [
-          "Video Generation"
-        ],
-        "summary": "Video function",
-        "description": "Execute video-related functions like loading available voices.",
-        "operationId": "videoFunction",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "functionName": {
-                    "type": "string",
-                    "description": "Function to execute"
-                  },
-                  "identifier": {
-                    "type": "string",
-                    "description": "Video type identifier"
-                  },
-                  "params": {
-                    "type": "object",
-                    "description": "Additional parameters"
-                  }
-                },
-                "required": [
-                  "functionName",
-                  "identifier"
-                ]
-              },
-              "example": {
-                "functionName": "loadVoices",
-                "identifier": "image-text-slides"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Function executed successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "voices": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string"
-                          },
-                          "name": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -2161,24 +2290,14 @@
         "tags": [
           "OAuth"
         ],
-        "summary": "Get consent screen details",
-        "description": "Validates an OAuth application and returns the details PostQueen shows on the consent screen. The consent page at `https://app.postqueen.ai/oauth/authorize` calls this endpoint, so you normally redirect the user to that page instead of calling this yourself. It is useful for checking that a `client_id` is valid.\n\nThis endpoint lives outside `/public/v1` and takes no API key.",
+        "summary": "Check an authorization request",
+        "description": "Checks an OAuth app and returns what PostQueen shows on its consent screen. You do not normally call this: send the person to the consent page at `https://app.postqueen.ai/oauth/authorize` with the same query, and that page calls it. It is useful to check a `client_id`.\n\nOutside `/public/v1`; takes no API key. A client registered with Register a client must also send one of its `redirect_uri`s, and a public client (no secret) must send a PKCE `code_challenge` with method `S256`.",
         "operationId": "oauthAuthorize",
         "security": [],
         "servers": [
           {
             "url": "https://api.postqueen.ai",
-            "description": "PostQueen Cloud"
-          },
-          {
-            "url": "https://{host}/api",
-            "description": "Self-hosted",
-            "variables": {
-              "host": {
-                "default": "localhost:5000",
-                "description": "Your PostQueen instance domain"
-              }
-            }
+            "description": "PostQueen"
           }
         ],
         "parameters": [
@@ -2186,7 +2305,7 @@
             "name": "client_id",
             "in": "query",
             "required": true,
-            "description": "Your app's Client ID (starts with `pca_`)",
+            "description": "The app's client id: `pca_...` for an app made under Connections > Developers, `pcd_...` for a registered client",
             "schema": {
               "type": "string"
             }
@@ -2211,6 +2330,42 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "redirect_uri",
+            "in": "query",
+            "required": false,
+            "description": "Required for a registered client, and must be one of its `redirect_uris`. An app made under Connections > Developers always uses its stored Redirect URL",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_challenge",
+            "in": "query",
+            "required": false,
+            "description": "PKCE challenge. Required for a registered client without a secret",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code_challenge_method",
+            "in": "query",
+            "required": false,
+            "description": "PKCE method. A registered client must use `S256`",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "description": "Accepted and not used; the granted scope comes back on the token response",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2229,12 +2384,21 @@
                           "description": "App name shown on the consent screen"
                         },
                         "description": {
-                          "type": "string",
-                          "nullable": true,
+                          "type": [
+                            "string",
+                            "null"
+                          ],
                           "description": "App description shown on the consent screen"
                         },
                         "picture": {
-                          "$ref": "#/components/schemas/MediaFile",
+                          "anyOf": [
+                            {
+                              "$ref": "#/components/schemas/MediaFile"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
                           "description": "The app's profile picture, or null when none is set. Use `picture.path` as the image URL."
                         },
                         "clientId": {
@@ -2267,9 +2431,12 @@
             }
           },
           "400": {
-            "description": "Unknown `client_id`, or a missing/invalid query parameter",
+            "description": "`Invalid client_id`, `Invalid redirect_uri`, `code_challenge is required for this client`, `Only the S256 code_challenge_method is supported`, or a failed query validation",
             "content": {
               "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
                 "example": {
                   "statusCode": 400,
                   "message": "Invalid client_id"
@@ -2285,24 +2452,14 @@
         "tags": [
           "OAuth"
         ],
-        "summary": "Exchange an authorization code for an access token",
-        "description": "Exchanges the authorization code from your callback for a `pos_` access token. Call this from your server, since it requires your client secret. The code expires 10 minutes after it is issued and can only be used once. The access token does not expire; users revoke it from Settings > Approved Apps.\n\nThis endpoint lives outside `/public/v1` and takes no API key. The token it returns is used as the `Authorization` header on every other endpoint in this reference.",
+        "summary": "Get an access token",
+        "description": "Exchanges the code from your callback for a `pos_` access token. Call it from your server. Send the client secret in the body, or the id and secret as HTTP Basic in `Authorization`. A public client registered with `token_endpoint_auth_method: none` sends no secret and proves itself with `code_verifier`. The code works once, for 10 minutes.\n\nThe token does not expire. It stops working when the person revokes the app under **Connections > Approved Apps**, when they leave the workspace, are disabled or delete their account, or when they approve the app again (the new token replaces it). Send it in `Authorization` with no prefix on `/public/v1`. Outside `/public/v1`; takes no API key.",
         "operationId": "oauthToken",
         "security": [],
         "servers": [
           {
             "url": "https://api.postqueen.ai",
-            "description": "PostQueen Cloud"
-          },
-          {
-            "url": "https://{host}/api",
-            "description": "Self-hosted",
-            "variables": {
-              "host": {
-                "default": "localhost:5000",
-                "description": "Your PostQueen instance domain"
-              }
-            }
+            "description": "PostQueen"
           }
         ],
         "requestBody": {
@@ -2325,32 +2482,38 @@
                   },
                   "client_id": {
                     "type": "string",
-                    "description": "Your app's Client ID (starts with `pca_`)"
+                    "description": "Your app's Client ID. Leave it out when you send it in a Basic Authorization header"
                   },
                   "client_secret": {
                     "type": "string",
-                    "description": "Your app's Client Secret (starts with `pcs_`)"
+                    "description": "Your app's Client Secret (starts with `pcs_`). Leave it out with Basic auth, or for a public PKCE client"
+                  },
+                  "code_verifier": {
+                    "type": "string",
+                    "description": "The PKCE verifier, required when the authorization request carried a code_challenge"
+                  },
+                  "redirect_uri": {
+                    "type": "string",
+                    "description": "Required when the authorization request carried one, and must match it"
                   }
                 },
                 "required": [
                   "grant_type",
-                  "code",
-                  "client_id",
-                  "client_secret"
+                  "code"
                 ]
               },
               "example": {
                 "grant_type": "authorization_code",
-                "code": "abc123",
-                "client_id": "pca_VklHTpdEJ6dJ73FHQEJ97qVA0lcMDsrs",
-                "client_secret": "pcs_your_client_secret"
+                "code": "AUTHORIZATION_CODE",
+                "client_id": "pca_YOUR_CLIENT_ID",
+                "client_secret": "pcs_YOUR_CLIENT_SECRET"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Access token issued",
+          "201": {
+            "description": "The access token",
             "content": {
               "application/json": {
                 "schema": {
@@ -2358,12 +2521,14 @@
                   "properties": {
                     "id": {
                       "type": "string",
-                      "description": "Organization ID of the user who authorized your app"
+                      "description": "The workspace the person approved your app for"
                     },
                     "cus": {
-                      "type": "string",
-                      "nullable": true,
-                      "description": "The organization's Stripe customer ID, or null when it has none"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The workspace's billing customer id, or null"
                     },
                     "access_token": {
                       "type": "string",
@@ -2371,36 +2536,36 @@
                     },
                     "token_type": {
                       "type": "string",
-                      "description": "Always `bearer`"
+                      "description": "Always `bearer`. On `/public/v1` send the token with no prefix all the same"
+                    },
+                    "scope": {
+                      "type": "string",
+                      "description": "Granted scopes: `mcp:read mcp:write`, plus `openid email` for clients allowed email claims"
                     }
                   }
                 },
                 "example": {
-                  "id": "85460a39-6329-4cf4-a252-187ce89a3480",
-                  "cus": "cus_stripe_customer_id",
-                  "access_token": "pos_aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890abcd",
-                  "token_type": "bearer"
+                  "id": "cmg1oxk4b0000qz0h1f3e9a2c",
+                  "cus": "cus_QkT3uV8wXyZ12a",
+                  "access_token": "pos_8Jd02kLq9ZmX4tR7vB1nC6yH3wE5pA0sF2gD4hK8",
+                  "token_type": "bearer",
+                  "scope": "mcp:read mcp:write"
                 }
               }
             }
           },
           "400": {
-            "description": "`unsupported_grant_type` when `grant_type` is not `authorization_code`, or `invalid_grant` when the code is unknown, belongs to another app, or has expired",
+            "description": "`unsupported_grant_type`, `invalid_grant` (a wrong, used or expired code, a wrong `code_verifier` or `redirect_uri`), or a failed body validation",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "error": {
-                      "type": "string",
-                      "enum": [
-                        "unsupported_grant_type",
-                        "invalid_grant"
-                      ]
+                      "type": "string"
                     },
                     "error_description": {
-                      "type": "string",
-                      "description": "Present only when the code has expired"
+                      "type": "string"
                     }
                   }
                 },
@@ -2412,22 +2577,198 @@
             }
           },
           "401": {
-            "description": "`invalid_client` when the Client ID is unknown or the Client Secret does not match",
+            "description": "`invalid_client`: unknown client id, or a wrong or missing secret",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "error": {
-                      "type": "string",
-                      "enum": [
-                        "invalid_client"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
                 "example": {
                   "error": "invalid_client"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/register": {
+      "post": {
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "Register a client",
+        "description": "Dynamic Client Registration (RFC 7591). A client, usually an MCP client, registers itself and gets a `pcd_` client id without anyone making an app under Connections > Developers. Callbacks must be https, an http loopback address (`localhost`, `127.0.0.1`, `[::1]`) or a private-use scheme such as `cursor://`. Only the `authorization_code` grant is supported. Send `token_endpoint_auth_method: none` for a public client, which then gets no secret and must use PKCE (`S256`). A registered client that nobody has approved after 30 days may be removed.\n\nOutside `/public/v1`; takes no API key.",
+        "operationId": "oauthRegister",
+        "security": [],
+        "servers": [
+          {
+            "url": "https://api.postqueen.ai",
+            "description": "PostQueen"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "redirect_uris"
+                ],
+                "properties": {
+                  "redirect_uris": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The callback URLs the client may use"
+                  },
+                  "client_name": {
+                    "type": "string",
+                    "description": "The name shown on the consent screen, up to 100 characters. Default `MCP Client`"
+                  },
+                  "client_uri": {
+                    "type": "string",
+                    "description": "Accepted and not stored"
+                  },
+                  "logo_uri": {
+                    "type": "string",
+                    "description": "Accepted and not stored"
+                  },
+                  "token_endpoint_auth_method": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "client_secret_post",
+                      "client_secret_basic"
+                    ],
+                    "description": "`none` for a public client with PKCE. Anything else gets a secret; the default is `client_secret_post`"
+                  },
+                  "grant_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Must include `authorization_code` when sent"
+                  },
+                  "response_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Accepted; the answer is always `code`"
+                  },
+                  "scope": {
+                    "type": "string",
+                    "description": "Accepted; the scope is set by PostQueen"
+                  }
+                }
+              },
+              "example": {
+                "client_name": "My MCP client",
+                "redirect_uris": [
+                  "http://127.0.0.1:33418/callback"
+                ],
+                "token_endpoint_auth_method": "none"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registered. `client_secret` is present only for a confidential client, and is shown once",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "client_id": {
+                      "type": "string"
+                    },
+                    "client_secret": {
+                      "type": "string"
+                    },
+                    "client_secret_expires_at": {
+                      "type": "integer",
+                      "description": "`0`: the secret does not expire"
+                    },
+                    "client_id_issued_at": {
+                      "type": "integer",
+                      "description": "Unix time in seconds"
+                    },
+                    "client_name": {
+                      "type": "string"
+                    },
+                    "redirect_uris": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "token_endpoint_auth_method": {
+                      "type": "string"
+                    },
+                    "grant_types": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "response_types": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "scope": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "client_id": "pcd_5sT8wQ2eR7yU1iO4pA9sD3fG6hJ0kL2z",
+                  "client_id_issued_at": 1790845200,
+                  "client_name": "My MCP client",
+                  "redirect_uris": [
+                    "http://127.0.0.1:33418/callback"
+                  ],
+                  "token_endpoint_auth_method": "none",
+                  "grant_types": [
+                    "authorization_code"
+                  ],
+                  "response_types": [
+                    "code"
+                  ],
+                  "scope": "mcp:read mcp:write"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`invalid_redirect_uri`, `invalid_client_metadata`, or a failed body validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "error_description": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "error": "invalid_redirect_uri",
+                  "error_description": "redirect_uris must use https or a private-use scheme (http is allowed for loopback only)"
                 }
               }
             }
@@ -2442,7 +2783,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "Your PostQueen API key"
+        "description": "Your API key from Connections > API Keys, or an OAuth access token (`pos_...`). Send it as it is, with no `Bearer` prefix."
       }
     },
     "schemas": {
@@ -2451,7 +2792,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique integration ID"
+            "description": "The channel's id. Every other call that names a channel takes it"
           },
           "name": {
             "type": "string",
@@ -2486,6 +2827,7 @@
               "telegram",
               "threads",
               "tiktok",
+              "tiktok-business",
               "tumblr",
               "twitch",
               "vk",
@@ -2497,16 +2839,22 @@
             ]
           },
           "picture": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Profile picture URL"
           },
           "disabled": {
             "type": "boolean",
-            "description": "Whether the integration is disabled"
+            "description": "True when the channel is switched off in the app. A disabled channel does not publish"
           },
           "profile": {
-            "type": "string",
-            "description": "Profile handle/username"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Profile handle or username"
           },
           "customer": {
             "type": "object",
@@ -2517,7 +2865,8 @@
               "name": {
                 "type": "string"
               }
-            }
+            },
+            "description": "The customer the channel is assigned to. Left out when there is none"
           }
         }
       },
@@ -2554,7 +2903,7 @@
           },
           "path": {
             "type": "string",
-            "description": "Public URL of the file. This is the value to send as an attachment"
+            "description": "URL of the stored file. Send it with `id` as a post's media"
           },
           "thumbnail": {
             "type": [
@@ -2569,15 +2918,25 @@
               "null"
             ],
             "description": "Alt text, when one was set"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "processing",
+              "failed"
+            ],
+            "description": "A video (MP4 or MOV) is normalized in the background and starts as `processing`; poll `GET /media/{id}/status` until it is `ready` before you put it on a post. Images are `ready` at once."
           }
         },
         "example": {
           "id": "e639003b-f727-4a1e-87bd-74a2c48ae41e",
-          "name": "image.png",
+          "name": "a1b2c3d4e5.png",
           "originalName": "launch-banner.png",
-          "path": "https://uploads.postqueen.ai/image.png",
+          "path": "https://cdn.example.com/a1b2c3d4e5.png",
           "thumbnail": null,
-          "alt": null
+          "alt": null,
+          "status": "ready"
         }
       },
       "PostsResponse": {
@@ -2601,20 +2960,23 @@
             "type": "string"
           },
           "settings": {
-            "type": "object",
-            "additionalProperties": true,
-            "description": "The post's current platform settings, in the same shape used when creating the post. Keys depend on the channel's platform.",
-            "example": {
-              "who_can_reply_post": "everyone"
-            }
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The post's platform settings as a JSON-encoded string, in the same shape used when creating the post. Parse it before reusing it.",
+            "example": "{\"__type\":\"bluesky\"}"
           },
           "publishDate": {
             "type": "string",
             "format": "date-time"
           },
           "releaseURL": {
-            "type": "string",
-            "description": "URL of the published post"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "URL of the published post on the network"
           },
           "state": {
             "type": "string",
@@ -2638,7 +3000,10 @@
                 "type": "string"
               },
               "picture": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           },
@@ -2647,7 +3012,7 @@
               "string",
               "null"
             ],
-            "description": "Provider-side post id. Required by PUT /posts/{id}/release-id"
+            "description": "The network's id for the published post. `missing` when TikTok did not return one"
           },
           "intervalInDays": {
             "type": [
@@ -2658,19 +3023,30 @@
           },
           "group": {
             "type": "string",
-            "description": "Group id shared by every channel in one publish. Required by DELETE /posts/group/{group}"
+            "description": "The post's group: this channel's post and its thread or comments. Used by Delete by group"
           },
           "creationMethod": {
-            "type": [
-              "string",
-              "null"
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "WEB",
+              "MCP",
+              "API",
+              "AUTOPOST",
+              "CLI"
             ],
-            "description": "How the post was created"
+            "description": "Where the post was created"
           },
           "tags": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "tag": {
+                  "type": "object",
+                  "description": "The tag row, with `name` and `color`"
+                }
+              }
             },
             "description": "Tags attached to the post"
           },
@@ -2678,6 +3054,20 @@
             "type": "string",
             "format": "date-time",
             "description": "Present only on the expanded occurrences of a recurring post: the date of the original"
+          },
+          "image": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The attached media as a JSON-encoded array of `{ id, path }` objects."
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The readable reason a post failed to publish, set when `state` is `ERROR`."
           }
         }
       },
@@ -2699,30 +3089,32 @@
               "now",
               "update"
             ],
-            "description": "Post type. `update` rewrites an existing post without starting a publishing workflow."
+            "description": "`schedule` queues the post for `date`. `now` publishes at once. `draft` saves it without publishing. `update` changes posts named by `value[].id` without starting a new publish"
           },
           "date": {
             "type": "string",
             "format": "date-time",
-            "description": "Publish date in UTC ISO format"
+            "description": "Publish date and time in UTC, ISO 8601. Required for every type; `now` uses the current minute instead"
           },
           "shortLink": {
             "type": "boolean",
-            "description": "Whether to use short links"
+            "description": "Replace links in the text with PostQueen short links. Required; send `false` to keep links as they are"
           },
           "order": {
             "type": "string",
-            "description": "Order of posts"
+            "description": "Accepted and not used"
           },
           "inter": {
-            "type": "number",
-            "description": "Interval between posts"
+            "type": "integer",
+            "minimum": 1,
+            "description": "Repeat the post every this many days. Leave it out for a post that goes out once"
           },
           "tags": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Tag"
-            }
+            },
+            "description": "Tags to attach. Required: send `[]` for none"
           },
           "posts": {
             "type": "array",
@@ -2730,7 +3122,11 @@
               "$ref": "#/components/schemas/PostItem"
             },
             "minItems": 1,
-            "description": "The channels to post to and the content for each. Required for every type, drafts included: omitting it returns 400 'All posts must have an integration id'."
+            "description": "One entry per channel. Each entry becomes its own post with its own group"
+          },
+          "republish": {
+            "type": "boolean",
+            "description": "Needed to publish again a post that was already published (`schedule` or `now` with a `value[].id` of a published post). Without it the request is refused with 400"
           }
         }
       },
@@ -2749,22 +3145,25 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Integration ID"
+                "description": "The channel's id, from List channels"
               }
             }
           },
           "value": {
             "type": "array",
+            "minItems": 1,
             "items": {
               "$ref": "#/components/schemas/PostContent"
-            }
+            },
+            "description": "The post, then its thread or comments in order"
           },
           "group": {
             "type": "string",
-            "description": "Group ID for related posts"
+            "description": "Leave it out for a new post. When set, every post in that group that this request does not resend is deleted, and the entry is saved under a new group id. Use it with `value[].id` to change a post and drop the thread parts you leave out"
           },
           "settings": {
-            "oneOf": [
+            "description": "The network's settings. `__type` is always set from the channel, so what matters is the shape. May be left out for networks with no required settings, such as Bluesky and Nostr. Its required fields are checked for drafts too.",
+            "anyOf": [
               {
                 "$ref": "#/components/schemas/XSettings"
               },
@@ -2820,7 +3219,7 @@
                 "$ref": "#/components/schemas/GmbSettings"
               },
               {
-                "$ref": "#/components/schemas/WarpcastSettings"
+                "$ref": "#/components/schemas/FarcasterSettings"
               },
               {
                 "$ref": "#/components/schemas/MoltbookSettings"
@@ -2840,35 +3239,35 @@
               {
                 "$ref": "#/components/schemas/TumblrSettings"
               }
-            ],
-            "description": "Provider-specific settings"
+            ]
           }
         }
       },
       "PostContent": {
         "type": "object",
         "required": [
-          "content"
+          "content",
+          "image"
         ],
         "properties": {
           "content": {
             "type": "string",
-            "description": "Post text content"
-          },
-          "id": {
-            "type": "string",
-            "description": "Post ID (for updates)"
+            "description": "The text. It may be empty when `image` has at least one file. HTML is accepted and converted for each network"
           },
           "image": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Media"
-            }
+            },
+            "description": "Media for this entry. Required: send `[]` for a text-only entry"
+          },
+          "id": {
+            "type": "string",
+            "description": "The id of an existing post, to change it in place. Leave it out to create a new post"
           },
           "delay": {
             "type": "integer",
-            "minimum": 0,
-            "description": "Minutes to wait before this entry of a thread goes out. Optional"
+            "description": "For the second and later entries of a thread: minutes to wait after the previous entry"
           }
         }
       },
@@ -2880,10 +3279,21 @@
         ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "The media id from the upload response"
           },
           "path": {
-            "type": "string"
+            "type": "string",
+            "description": "The file's URL, normally the `path` from the upload response. It must end in .png, .jpg, .jpeg, .gif, .webp or .mp4 (a query string is ignored)"
+          },
+          "alt": {
+            "type": "string",
+            "description": "Alt text, on networks that take it"
+          },
+          "thumbnail": {
+            "type": "string",
+            "format": "uri",
+            "description": "Cover image URL for a video, on networks that take one"
           }
         }
       },
@@ -2895,27 +3305,24 @@
         ],
         "properties": {
           "value": {
-            "type": "string"
+            "type": "number"
           },
           "label": {
-            "type": "string"
+            "type": "string",
+            "description": "The tag name. PostQueen attaches tags that already exist in the workspace, matched by this label, and ignores the rest"
           }
         }
       },
       "XSettings": {
         "title": "X (Twitter)",
         "type": "object",
-        "required": [
-          "__type",
-          "who_can_reply_post"
-        ],
         "properties": {
           "__type": {
             "type": "string",
             "enum": [
               "x"
             ],
-            "description": "Must be 'x'"
+            "description": "Set from the channel. You may leave it out"
           },
           "who_can_reply_post": {
             "type": "string",
@@ -2926,11 +3333,12 @@
               "subscribers",
               "verified"
             ],
-            "description": "Who can reply to the post"
+            "description": "Who can reply to the post. Required unless post_type is article"
           },
           "community": {
             "type": "string",
-            "description": "X Community URL (format: https://x.com/i/communities/123)"
+            "description": "X Community URL (format: https://x.com/i/communities/123)",
+            "pattern": "^(https:\\/\\/x\\.com\\/i\\/communities\\/\\d+)?$"
           },
           "made_with_ai": {
             "type": "boolean",
@@ -2939,15 +3347,42 @@
           "paid_partnership": {
             "type": "boolean",
             "description": "Label the post as a paid partnership"
+          },
+          "post_type": {
+            "type": "string",
+            "enum": [
+              "post",
+              "article"
+            ],
+            "description": "`post` (default) is a regular post; `article` is a long-form X article whose content is HTML"
+          },
+          "article_title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Article title, required when post_type is article"
+          },
+          "article_status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ],
+            "description": "Save the article as a draft on X or publish it, required when post_type is article"
+          },
+          "article_cover": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Media"
+              }
+            ],
+            "description": "Optional article cover image"
           }
-        }
+        },
+        "description": "`who_can_reply_post` is required unless `post_type` is `article`, which requires `article_title` and `article_status` instead."
       },
       "LinkedInSettings": {
         "title": "LinkedIn",
         "type": "object",
-        "required": [
-          "__type"
-        ],
         "properties": {
           "__type": {
             "type": "string",
@@ -2955,7 +3390,7 @@
               "linkedin",
               "linkedin-page"
             ],
-            "description": "Use 'linkedin' for profiles, 'linkedin-page' for company pages"
+            "description": "Set from the channel. You may leave it out"
           },
           "post_as_images_carousel": {
             "type": "boolean",
@@ -2971,7 +3406,6 @@
         "title": "Instagram",
         "type": "object",
         "required": [
-          "__type",
           "post_type"
         ],
         "properties": {
@@ -2981,12 +3415,13 @@
               "instagram",
               "instagram-standalone"
             ],
-            "description": "Use 'instagram' for FB-linked, 'instagram-standalone' for standalone"
+            "description": "Set from the channel. You may leave it out"
           },
           "post_type": {
             "type": "string",
             "enum": [
               "post",
+              "reel",
               "story"
             ],
             "description": "Type of Instagram post"
@@ -3012,6 +3447,42 @@
                   "type": "string",
                   "description": "Collaborator username"
                 }
+              },
+              "required": [
+                "label"
+              ]
+            },
+            "maxItems": 3,
+            "description": "Up to 3 collaborator usernames, as `{ label }`"
+          },
+          "audio": {
+            "type": "object",
+            "description": "Audio for a Reel, from the `audioSearch` tool. Facebook-linked channel only",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "artist": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "audio_volume": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "video_volume": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
               }
             }
           }
@@ -3021,7 +3492,6 @@
         "title": "YouTube",
         "type": "object",
         "required": [
-          "__type",
           "title",
           "type"
         ],
@@ -3030,13 +3500,15 @@
             "type": "string",
             "enum": [
               "youtube"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "title": {
             "type": "string",
             "minLength": 2,
             "maxLength": 100,
-            "description": "Video title"
+            "description": "Video title, 2 to 100 characters, without < or >",
+            "pattern": "^[^<>]*$"
           },
           "type": {
             "type": "string",
@@ -3056,14 +3528,19 @@
             "description": "Made for kids declaration"
           },
           "thumbnail": {
-            "$ref": "#/components/schemas/Media",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Media"
+              }
+            ],
             "description": "Custom thumbnail"
           },
           "tags": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Tag"
-            }
+            },
+            "description": "At most 500 characters across all tags"
           }
         }
       },
@@ -3071,7 +3548,6 @@
         "title": "TikTok",
         "type": "object",
         "required": [
-          "__type",
           "privacy_level",
           "duet",
           "stitch",
@@ -3085,8 +3561,10 @@
           "__type": {
             "type": "string",
             "enum": [
-              "tiktok"
-            ]
+              "tiktok",
+              "tiktok-business"
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "title": {
             "type": "string",
@@ -3142,6 +3620,56 @@
               "UPLOAD"
             ],
             "description": "Required. Use \"DIRECT_POST\" to actually publish the post to TikTok. \"UPLOAD\" does NOT publish: it only sends the media to the user's TikTok app inbox, where they must manually finish and publish it within 24 hours or it is discarded. Only use \"UPLOAD\" when the user explicitly asks to review or edit the post inside the TikTok app before publishing. \"UPLOAD\" also makes TikTok ignore every other setting in this object except the title."
+          },
+          "music": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "description": "TikTok Business only, with DIRECT_POST. A commercial music library track from the `musicSearch` tool",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "artist": {
+                "type": "string"
+              },
+              "image": {
+                "type": "string"
+              },
+              "audio_volume": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "video_volume": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          },
+          "location": {
+            "type": "object",
+            "required": [
+              "id",
+              "name"
+            ],
+            "description": "TikTok Business only, with DIRECT_POST. A location tag from the `locationSearch` tool",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -3149,7 +3677,6 @@
         "title": "Reddit",
         "type": "object",
         "required": [
-          "__type",
           "subreddit"
         ],
         "properties": {
@@ -3157,7 +3684,8 @@
             "type": "string",
             "enum": [
               "reddit"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "subreddit": {
             "type": "array",
@@ -3177,12 +3705,13 @@
                     "subreddit": {
                       "type": "string",
                       "minLength": 2,
-                      "description": "Subreddit name without r/"
+                      "description": "Subreddit path starting with /r/"
                     },
                     "title": {
                       "type": "string",
                       "minLength": 2,
-                      "description": "Post title"
+                      "description": "Post title",
+                      "maxLength": 300
                     },
                     "type": {
                       "type": "string",
@@ -3209,11 +3738,18 @@
                         "name": {
                           "type": "string"
                         }
-                      }
+                      },
+                      "required": [
+                        "id",
+                        "name"
+                      ]
                     }
                   }
                 }
-              }
+              },
+              "required": [
+                "value"
+              ]
             }
           }
         }
@@ -3222,7 +3758,6 @@
         "title": "Lemmy",
         "type": "object",
         "required": [
-          "__type",
           "subreddit"
         ],
         "description": "Lemmy uses 'subreddit' for communities (historical naming)",
@@ -3231,7 +3766,8 @@
             "type": "string",
             "enum": [
               "lemmy"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "subreddit": {
             "type": "array",
@@ -3258,8 +3794,9 @@
                     },
                     "title": {
                       "type": "string",
-                      "minLength": 2,
-                      "description": "Post title"
+                      "minLength": 3,
+                      "description": "Post title",
+                      "maxLength": 200
                     },
                     "url": {
                       "type": "string",
@@ -3268,7 +3805,10 @@
                     }
                   }
                 }
-              }
+              },
+              "required": [
+                "value"
+              ]
             }
           }
         }
@@ -3277,7 +3817,6 @@
         "title": "Pinterest",
         "type": "object",
         "required": [
-          "__type",
           "board"
         ],
         "properties": {
@@ -3285,7 +3824,8 @@
             "type": "string",
             "enum": [
               "pinterest"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "board": {
             "type": "string",
@@ -3309,7 +3849,6 @@
         "title": "Discord",
         "type": "object",
         "required": [
-          "__type",
           "channel"
         ],
         "properties": {
@@ -3317,7 +3856,8 @@
             "type": "string",
             "enum": [
               "discord"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "channel": {
             "type": "string",
@@ -3330,7 +3870,6 @@
         "title": "Slack",
         "type": "object",
         "required": [
-          "__type",
           "channel"
         ],
         "properties": {
@@ -3338,7 +3877,8 @@
             "type": "string",
             "enum": [
               "slack"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "channel": {
             "type": "string",
@@ -3351,7 +3891,6 @@
         "title": "Dribbble",
         "type": "object",
         "required": [
-          "__type",
           "title"
         ],
         "properties": {
@@ -3359,7 +3898,8 @@
             "type": "string",
             "enum": [
               "dribbble"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "title": {
             "type": "string",
@@ -3368,8 +3908,7 @@
           },
           "team": {
             "type": "string",
-            "format": "uri",
-            "description": "Team URL"
+            "description": "Team id, from the `teams` tool. Leave it out to post as yourself"
           }
         }
       },
@@ -3377,7 +3916,6 @@
         "title": "Dev.to",
         "type": "object",
         "required": [
-          "__type",
           "title"
         ],
         "properties": {
@@ -3385,15 +3923,21 @@
             "type": "string",
             "enum": [
               "devto"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "title": {
             "type": "string",
             "minLength": 2,
-            "description": "Article title"
+            "description": "Article title",
+            "maxLength": 128
           },
           "main_image": {
-            "$ref": "#/components/schemas/Media",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Media"
+              }
+            ],
             "description": "Cover image"
           },
           "canonical": {
@@ -3410,7 +3954,8 @@
             "maxItems": 4,
             "items": {
               "$ref": "#/components/schemas/Tag"
-            }
+            },
+            "description": "Up to 4 tags, each `{ value, label }` with a numeric `value`. DEV receives the labels. Leave it out for no tags"
           }
         }
       },
@@ -3418,7 +3963,6 @@
         "title": "Hashnode",
         "type": "object",
         "required": [
-          "__type",
           "title",
           "tags",
           "publication"
@@ -3428,7 +3972,8 @@
             "type": "string",
             "enum": [
               "hashnode"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "title": {
             "type": "string",
@@ -3441,7 +3986,11 @@
             "description": "Article subtitle"
           },
           "main_image": {
-            "$ref": "#/components/schemas/Media",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Media"
+              }
+            ],
             "description": "Cover image"
           },
           "canonical": {
@@ -3466,7 +4015,6 @@
         "title": "WordPress",
         "type": "object",
         "required": [
-          "__type",
           "title",
           "type"
         ],
@@ -3475,7 +4023,8 @@
             "type": "string",
             "enum": [
               "wordpress"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "title": {
             "type": "string",
@@ -3483,26 +4032,30 @@
             "description": "Post title"
           },
           "main_image": {
-            "$ref": "#/components/schemas/Media",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Media"
+              }
+            ],
             "description": "Featured image"
           },
           "type": {
             "type": "string",
-            "description": "Post type (depends on WordPress setup)"
+            "description": "Post type REST base, such as `posts` or `pages`, from the `postTypes` tool"
           },
           "categories": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "number"
             },
-            "description": "Categories to file the post under"
+            "description": "Category ids, from the `categoriesList` tool"
           },
           "tags": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "number"
             },
-            "description": "Tags to attach"
+            "description": "Tag ids, from the `tagsList` tool"
           },
           "status": {
             "type": "string",
@@ -3520,7 +4073,6 @@
         "title": "Listmonk",
         "type": "object",
         "required": [
-          "__type",
           "subject",
           "preview",
           "list"
@@ -3530,7 +4082,8 @@
             "type": "string",
             "enum": [
               "listmonk"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "subject": {
             "type": "string",
@@ -3554,16 +4107,14 @@
       "GmbSettings": {
         "title": "Google My Business",
         "type": "object",
-        "required": [
-          "__type"
-        ],
-        "description": "Google My Business post settings",
+        "description": "An EVENT or OFFER post needs `eventTitle`, `eventStartDate` and `eventEndDate` (an offer uses them for its title and dates).",
         "properties": {
           "__type": {
             "type": "string",
             "enum": [
               "gmb"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "topicType": {
             "type": "string",
@@ -3586,32 +4137,32 @@
               "GET_OFFER",
               "CALL"
             ],
-            "description": "Call-to-action button"
+            "description": "Call-to-action button. `CALL` needs no URL and dials the profile's number. `GET_OFFER` is still accepted for old posts but Google retired it, so it is sent as `LEARN_MORE`."
           },
           "callToActionUrl": {
             "type": "string",
             "format": "uri",
-            "description": "URL for the CTA button. Genuinely optional: set callToActionType without it and the request still succeeds, with the button silently left off the post."
+            "description": "URL for the CTA button, required for every button except `CALL`. A button without a URL is left off the post."
           },
           "eventTitle": {
             "type": "string",
-            "description": "Event title (required for EVENT type)"
+            "description": "Event or offer title (required for EVENT and OFFER)"
           },
           "eventStartDate": {
             "type": "string",
-            "description": "Event start date"
+            "description": "Start date, YYYY-MM-DD (required for EVENT and OFFER)"
           },
           "eventEndDate": {
             "type": "string",
-            "description": "Event end date"
+            "description": "End date, YYYY-MM-DD (required for EVENT and OFFER)"
           },
           "eventStartTime": {
             "type": "string",
-            "description": "Event start time"
+            "description": "Start time, HH:mm (optional)"
           },
           "eventEndTime": {
             "type": "string",
-            "description": "Event end time"
+            "description": "End time, HH:mm (optional)"
           },
           "offerCouponCode": {
             "type": "string",
@@ -3631,68 +4182,38 @@
       "FacebookSettings": {
         "title": "Facebook",
         "type": "object",
-        "required": [
-          "__type"
-        ],
         "description": "Facebook post settings",
         "properties": {
           "__type": {
             "type": "string",
             "enum": [
               "facebook"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "url": {
             "type": "string",
             "format": "uri",
             "description": "Optional link URL to include in the post"
-          }
-        }
-      },
-      "WarpcastSettings": {
-        "title": "Warpcast",
-        "type": "object",
-        "required": [
-          "__type"
-        ],
-        "description": "Warpcast (Farcaster) post settings",
-        "properties": {
-          "__type": {
+          },
+          "post_type": {
             "type": "string",
             "enum": [
-              "wrapcast"
-            ]
+              "post",
+              "story"
+            ],
+            "description": "Post to the Page feed (default) or as a Page story"
           },
-          "subreddit": {
-            "type": "array",
-            "description": "Farcaster channels to post to",
-            "items": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "object",
-                  "required": [
-                    "id"
-                  ],
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "Channel ID"
-                    }
-                  }
-                }
-              }
-            }
+          "text_format_preset_id": {
+            "type": "string",
+            "description": "Background preset for a short text-only post"
           }
         }
       },
       "EmptySettings": {
-        "title": "Other Platforms (Threads, Mastodon, Bluesky, etc.)",
+        "title": "Networks with no settings",
         "type": "object",
-        "required": [
-          "__type"
-        ],
-        "description": "For platforms that don't require additional settings",
+        "description": "Threads, Mastodon, Bluesky, Telegram, Nostr, VK and Kick take no settings. The whole object may be left out",
         "properties": {
           "__type": {
             "type": "string",
@@ -3705,7 +4226,7 @@
               "vk",
               "kick"
             ],
-            "description": "Platform identifier"
+            "description": "Set from the channel. You may leave it out"
           }
         }
       },
@@ -3748,8 +4269,10 @@
             "description": "Notification message"
           },
           "link": {
-            "type": "string",
-            "nullable": true,
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Optional link associated with the notification"
           },
           "createdAt": {
@@ -3801,66 +4324,17 @@
           }
         }
       },
-      "VideoGenerationRequest": {
-        "type": "object",
-        "required": [
-          "type",
-          "output",
-          "customParams"
-        ],
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "image-text-slides",
-              "veo3"
-            ],
-            "description": "Video generation type"
-          },
-          "output": {
-            "type": "string",
-            "enum": [
-              "vertical",
-              "horizontal"
-            ],
-            "description": "Video orientation"
-          },
-          "customParams": {
-            "type": "object",
-            "properties": {
-              "voice": {
-                "type": "string",
-                "description": "ElevenLabs voice ID (for image-text-slides)"
-              },
-              "prompt": {
-                "type": "string",
-                "description": "Description/script for the video"
-              },
-              "images": {
-                "type": "array",
-                "maxItems": 3,
-                "items": {
-                  "$ref": "#/components/schemas/Media"
-                },
-                "description": "Reference images (for veo3, max 3)"
-              }
-            }
-          }
-        }
-      },
       "TwitchSettings": {
         "title": "Twitch",
         "type": "object",
-        "required": [
-          "__type"
-        ],
         "description": "Twitch post settings",
         "properties": {
           "__type": {
             "type": "string",
             "enum": [
               "twitch"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "messageType": {
             "type": "string",
@@ -3887,7 +4361,6 @@
         "title": "Moltbook",
         "type": "object",
         "required": [
-          "__type",
           "submolt"
         ],
         "description": "Moltbook post settings",
@@ -3896,12 +4369,13 @@
             "type": "string",
             "enum": [
               "moltbook"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "submolt": {
             "type": "string",
             "minLength": 1,
-            "description": "Submolt (community) ID"
+            "description": "The submolt's name, such as `general`"
           }
         }
       },
@@ -3909,7 +4383,6 @@
         "title": "Skool",
         "type": "object",
         "required": [
-          "__type",
           "group",
           "label",
           "title"
@@ -3920,7 +4393,8 @@
             "type": "string",
             "enum": [
               "skool"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "group": {
             "type": "string",
@@ -3943,7 +4417,6 @@
         "title": "Whop",
         "type": "object",
         "required": [
-          "__type",
           "company",
           "experience"
         ],
@@ -3953,7 +4426,8 @@
             "type": "string",
             "enum": [
               "whop"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "company": {
             "type": "string",
@@ -3974,41 +4448,46 @@
       "MeweSettings": {
         "type": "object",
         "required": [
-          "__type",
-          "group"
+          "postType"
         ],
         "properties": {
           "__type": {
             "type": "string",
             "enum": [
               "mewe"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "group": {
             "type": "string",
-            "description": "Group id, from the `groups` provider tool"
+            "description": "Group id from the `groups` tool, required when postType is group",
+            "minLength": 1
           },
           "postType": {
             "type": "string",
-            "description": "Post type accepted by the group"
+            "enum": [
+              "timeline",
+              "group"
+            ],
+            "description": "Post to your timeline or to a group"
           }
         }
       },
       "TumblrSettings": {
         "type": "object",
-        "required": [
-          "__type"
-        ],
         "properties": {
           "__type": {
             "type": "string",
             "enum": [
               "tumblr"
-            ]
+            ],
+            "description": "Set from the channel. You may leave it out"
           },
           "title": {
             "type": "string",
-            "description": "Optional post title"
+            "description": "Optional post title",
+            "minLength": 1,
+            "maxLength": 4096
           },
           "link": {
             "type": "string",
@@ -4020,7 +4499,279 @@
           },
           "tags": {
             "type": "string",
-            "description": "Optional comma-separated tags, up to 4096 characters"
+            "description": "Optional comma-separated tags, up to 4096 characters",
+            "maxLength": 4096
+          }
+        }
+      },
+      "AnalyticsPostRow": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "group": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "publishDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "releaseURL": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "integrationId": {
+            "type": "string"
+          },
+          "platform": {
+            "type": "string"
+          },
+          "channelName": {
+            "type": "string"
+          },
+          "channelPicture": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "impressions": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "reactions": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "comments": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "shares": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "engagementRate": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "(reactions + comments) / impressions x 100, when all three are known"
+          },
+          "previous": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The snapshot before the latest one: impressions, reactions, comments"
+          }
+        }
+      },
+      "MessageError": {
+        "type": "object",
+        "description": "The error shape of most checks written into the public API itself",
+        "properties": {
+          "msg": {
+            "type": "string"
+          }
+        }
+      },
+      "NestError": {
+        "type": "object",
+        "description": "The standard error shape: validation errors, not-found errors and rate limits",
+        "properties": {
+          "statusCode": {
+            "type": "integer"
+          },
+          "message": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "PostValidationError": {
+        "type": "object",
+        "description": "A post that breaks a network's rules",
+        "properties": {
+          "statusCode": {
+            "type": "integer"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Identifier of the network, such as `bluesky`"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the channel"
+          },
+          "message": {
+            "type": "string",
+            "description": "What to fix"
+          }
+        }
+      },
+      "PaymentRequired": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "The billing page"
+          }
+        }
+      },
+      "FarcasterSettings": {
+        "title": "Farcaster",
+        "type": "object",
+        "required": [
+          "subreddit"
+        ],
+        "description": "Farcaster post settings. The network's identifier is `wrapcast`",
+        "properties": {
+          "__type": {
+            "type": "string",
+            "enum": [
+              "wrapcast"
+            ],
+            "description": "Set from the channel. You may leave it out"
+          },
+          "subreddit": {
+            "type": "array",
+            "description": "Farcaster channels to post to",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Channel ID"
+                    }
+                  }
+                }
+              },
+              "required": [
+                "value"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "X-RateLimit-Limit": {
+        "description": "Requests allowed in the current hour",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "X-RateLimit-Remaining": {
+        "description": "Requests left in the current hour",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "X-RateLimit-Reset": {
+        "description": "Seconds until the count starts again",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "Retry-After": {
+        "description": "Seconds to wait before the next request",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "`No API Key found`, `Invalid API key`, `Invalid OAuth token`, or `No subscription found` when the workspace has no subscription",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/MessageError"
+            },
+            "example": {
+              "msg": "Invalid API key"
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Over the hourly limit for this endpoint. Wait the number of seconds in `Retry-After`",
+        "headers": {
+          "Retry-After": {
+            "$ref": "#/components/headers/Retry-After"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NestError"
+            },
+            "example": {
+              "statusCode": 429,
+              "message": "ThrottlerException: Too Many Requests"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "The body or query failed validation. `message` lists every problem",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/NestError"
+            },
+            "example": {
+              "message": [
+                "startDate must be a valid ISO 8601 date string"
+              ],
+              "error": "Bad Request",
+              "statusCode": 400
+            }
           }
         }
       }

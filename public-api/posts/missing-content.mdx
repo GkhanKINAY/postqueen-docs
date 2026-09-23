@@ -1,9 +1,9 @@
 ---
-title: 'Get Missing Content'
-sidebarTitle: Missing
-description: 'List recent published items so you can reconnect a missing release id.'
-openapi: 'GET /posts/{id}/missing'
+title: "Get missing content"
+description: "Recent TikTok videos of a channel, to connect a post whose TikTok id never came back."
+openapi: "GET /posts/{id}/missing"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+Only TikTok leaves a post without its network id. A post sent with `content_posting_method: "UPLOAD"` goes to the creator's TikTok inbox, they finish it in TikTok, and TikTok does not say which video it became, so PostQueen stores the post with `releaseId: "missing"`.
 
+This lists the channel's recent videos as `{ id, url }`, where `url` is the cover image. Send the right `id` to [Update release ID](/public-api/posts/update-release-id) so the post's analytics can be read.
