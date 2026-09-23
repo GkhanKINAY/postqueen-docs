@@ -2,10 +2,72 @@
 title: "Refunds"
 description: "A charge is refunded in full when you ask within 30 days of it. How to ask, and what deleting your account does."
 icon: "receipt"
+keywords:
+  - refund
+  - money back
+  - cancel
+  - delete account
 ---
 
-{/* OVERHAUL-TODO(B1): rewrite it to the style guide in CONTRIBUTING.md. Sources: none on main, a new page. Row in page-status-2026-09-23.md. */}
+**Where:** by email to [support@postqueen.ai](mailto:support@postqueen.ai). There is no refund button in the app.
 
-<Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
-</Note>
+PostQueen refunds any charge in full when you ask within {{refundDays}} days of it. Monthly, yearly and one-time founding-member charges are treated the same.
+
+## Ask for a refund
+
+<Steps>
+  <Step title="Find the charge">
+    On **Billing**, choose **Open billing portal** under **Payment method & invoices**. Note the date and the invoice number of the charge.
+  </Step>
+  <Step title="Email support">
+    Write to [support@postqueen.ai](mailto:support@postqueen.ai) within {{refundDays}} days of the charge, from the email address on the account, or include the invoice number.
+  </Step>
+  <Step title="Say whether to cancel too">
+    A refund on its own does not cancel the plan. To stop future charges, cancel on Billing as well, or ask support to cancel it for you.
+  </Step>
+  <Step title="Wait for the money">
+    The refund goes back to the card or payment method you paid with, through Stripe. Banks usually show it within 5 to 10 business days.
+  </Step>
+</Steps>
+
+## Good to know
+
+- **Your plan after a refund.** If the refund leaves the workspace without an active plan, the plan it paid for ends and PostQueen tells you with a **Payment refunded** notice. You can subscribe again from Billing at any time. Your channels and posts stay.
+- **The trial is free.** The $1 authorization placed when the [free trial](/cloud/trial) starts is released at once and never charged, so there is nothing to refund.
+- **Older charges.** A charge older than {{refundDays}} days is refunded where the law or the [Terms of Service](https://postqueen.ai/terms-of-service) give you a right to it, for example the right of withdrawal for consumers in the EU, the EEA and the UK.
+- **Cancelling is separate.** [Manage your subscription](/cloud/subscription#cancel) shows how to cancel, and what happens to your channels when a plan ends.
+
+## Deleting your account
+
+Deleting your account cancels the plans of every workspace you own at once, then deletes your account, workspaces, channels and posts. It does not refund anything by itself, so ask for a refund first.
+
+<Steps>
+  <Step title="Open your account settings">
+    Choose **Settings** at the bottom of the left rail, then **Account** in the Account group.
+  </Step>
+  <Step title="Start the deletion">
+    Under **Delete Account**, choose **Delete Account**. Type your email in **Type your email to confirm**, and your password in **Current password**, or sign in again with a connected account instead.
+  </Step>
+  <Step title="Confirm">
+    Choose **Delete Account**, then **Yes, delete my account**. This cannot be undone.
+  </Step>
+</Steps>
+
+What is removed and when, and the records the law requires PostQueen to keep, are on [Delete my account](https://postqueen.ai/delete-my-account).
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Manage your subscription" icon="credit-card" href="/cloud/subscription">
+    Change plan, update the card or cancel.
+  </Card>
+  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
+    Prices and what each plan includes.
+  </Card>
+  <Card title="Free trial" icon="hourglass" href="/cloud/trial">
+    $0 today, and how to cancel before the first charge.
+  </Card>
+  <Card title="Get help" icon="life-buoy" href="/support">
+    What to send support so they can help fast.
+  </Card>
+</CardGroup>

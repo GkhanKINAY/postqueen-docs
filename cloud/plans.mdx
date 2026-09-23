@@ -1,23 +1,83 @@
 ---
-title: Plans
-sidebarTitle: Plans
-description: 'Creator, Growth, Pro and Ultimate on Cloud. Price is on the site. Checkout is Billing.'
-icon: 'layers'
+title: "Plans and limits"
+sidebarTitle: "Plans"
+description: "Creator, Growth, Pro and Ultimate: what each costs, what each includes, and the message you see at each limit."
+icon: "layers"
+keywords:
+  - pricing
+  - plans
+  - creator
+  - growth
+  - pro
+  - ultimate
+  - limits
 ---
 
-{/* OVERHAUL-TODO(B1): rewrite it to the style guide in CONTRIBUTING.md. Sources: main:using/plans-and-limits.mdx (merge; WIP: same as main; audit: guide), main:cloud/overview.mdx (merge; WIP: better, use as base; audit: guide), this file (fix; WIP: better, use as base; audit: guide), main:cloud/limits.mdx (merge; WIP: better, use as base; audit: guide). Row in page-status-2026-09-23.md. */}
+import TrialLocks from '/snippets/trial-locks.mdx';
 
-Four plans: **Creator**, **Growth**, **Pro**, **Ultimate**.
+**Where:** **Billing**, from the **Upgrade** row at the bottom of the left rail, or **Billing & invoices** in the account menu. Only workspace admins see Billing.
 
-Price lives on [postqueen.ai/pricing](https://postqueen.ai/pricing). Checkout is **Billing**. The numbers the app actually checks are on [Plans and limits](/cloud/plans).
+PostQueen has four plans. Each one starts with a {{trialDays}}-day free trial and bills monthly or yearly. Prices are in US dollars and exclude tax, which checkout adds where it applies.
 
-| Plan | Channels | Team |
-| --- | --- | --- |
-| Creator | 5 | No |
-| Growth | 10 | Yes |
-| Pro | 30 | Yes |
-| Ultimate | Unlimited | Yes |
+## Prices
 
-Every paid plan includes the public API, Auto Post, and the picture editor's **AI Img** tab.
+| Plan | Monthly | Yearly | Yearly, per month |
+|---|---|---|---|
+| Creator | {{priceCreator}} | $132 | $11 (5 months free) |
+| Growth | {{priceGrowth}} | $264 | $22 (4 months free) |
+| Pro | {{pricePro}} | $396 | $33 (4 months free) |
+| Ultimate | {{priceUltimate}} | $792 | $66 (4 months free) |
 
-A one-time founding deal can grant Pro. That is not a fifth plan: [Codes and offers](/cloud/subscription).
+Switch between **Monthly** and **Yearly** at the top of the plan cards to see both prices.
+
+## What each plan includes
+
+| | Creator | Growth | Pro | Ultimate |
+|---|---|---|---|---|
+| Channels | 5 | 10 | 30 | Unlimited |
+| Team members | Owner only | Unlimited | Unlimited | Unlimited |
+| AI images a month | 20 | 100 | 300 | 500 |
+| Webhooks | 2 | 10 | 30 | 10,000 |
+| Posts a month | No limit | No limit | No limit | No limit |
+
+Every plan also includes the calendar and the post composer, the AI Copilot, analytics, Auto Post from RSS feeds, Auto-Plugs, Social Sets, signatures, the MCP server for AI agents and the public API. Plans differ only in the rows above.
+
+<TrialLocks />
+
+## How the limits count
+
+- **Channels.** Every connected channel counts, including disabled ones. A channel that is waiting to be reconnected does not. Disabling a channel does not make room for a new one; it only lets you turn another disabled channel back on.
+- **AI images.** Credits reset every month on the day your subscription started, on yearly plans too. Unused credits do not carry over.
+- **Posts.** No plan has a monthly post limit. Each network still applies its own daily limits, and the public API has an hourly posting limit per workspace.
+- **Team members.** Creator is for one person, the workspace owner. Growth and up have no seat count and no per-seat price. Moving down to Creator switches off every member except the owner, and moving back up switches them on again.
+
+## When you reach a limit
+
+| Limit | What you see | What to do |
+|---|---|---|
+| Channels | "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels." in a **Payment Required** dialog | Choose **Move to billing** and pick a bigger plan, or delete a channel you no longer use |
+| Webhooks | "Your plan is at its webhook limit. Remove one or upgrade to add another." | Delete a webhook, or upgrade |
+| AI images | "You are out of AI credits for this month." | Wait for the monthly reset, or upgrade |
+| Team members | **Unlock team members** in **Settings > Teams**, with "Your subscription does not include team members. Please upgrade your subscription to invite your team." | Choose **Upgrade plan** and move to Growth or higher |
+| An admin-only action | "Only a workspace admin can do this. Please ask an admin of this workspace." | Ask an Admin or Super Admin of the workspace |
+
+<Warning>
+Deleting a channel also deletes that channel's own posts in PostQueen: scheduled posts, drafts and the records of published ones. Read [Connect a channel](/using/connect-a-channel) before you delete one to free a slot.
+</Warning>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Free trial" icon="hourglass" href="/cloud/trial">
+    {{trialDays}} days, $0 today, and what waits for the paid plan.
+  </Card>
+  <Card title="Manage your subscription" icon="credit-card" href="/cloud/subscription">
+    Change plan, update the card, download invoices or cancel.
+  </Card>
+  <Card title="Refunds" icon="receipt" href="/cloud/refunds">
+    Any charge is refunded in full within {{refundDays}} days.
+  </Card>
+  <Card title="Connect a channel" icon="plug" href="/using/connect-a-channel">
+    Add the networks you post to.
+  </Card>
+</CardGroup>
