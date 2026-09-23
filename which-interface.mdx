@@ -15,7 +15,7 @@ keywords:
 Four routes run her from outside the app. They ride the same [Public API](/public-api/introduction), so the result never depends on which one you picked.
 
 <Warning>
-**The create-post cap is shared too.** One instance-wide `API_LIMIT` per organization per hour, identical on every plan. Cloud and the shipped Compose files set it to 30; unset on your own instance it sits at 90.
+**The create-post cap is shared too.** One hourly limit per workspace on `POST /posts`, identical on every plan and every route. On your own instance it is `API_LIMIT`, 90 when unset.
 </Warning>
 
 <Note>

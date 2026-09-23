@@ -132,7 +132,7 @@ curl https://api.postqueen.ai/public/v1/integrations \
 Copy `id` into `posts[].integration.id`, and use `identifier` as your `settings.__type`. You can also run this call as its own Zap step with the **GET** event of Webhooks by Zapier when you want the list inside a workflow.
 
 <Warning>
-The create-post endpoint allows 30 requests per hour. A Zap that fires on a busy trigger can hit that ceiling, so add a filter or a delay when your source is chatty. On self-hosted instances the limit is the `API_LIMIT` environment variable.
+The create-post endpoint has an hourly limit per workspace. A Zap that fires on a busy trigger can hit that ceiling, so add a filter or a delay when your source is chatty. On self-hosted instances the limit is the `API_LIMIT` environment variable.
 </Warning>
 
 ## React to PostQueen events

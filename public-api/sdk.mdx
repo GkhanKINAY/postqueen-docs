@@ -178,7 +178,7 @@ await postqueen.deletePost('post-id');
 ## Limits and error handling
 
 <Info>
-The create-post endpoint is rate limited to **30 requests per hour**. Batch multiple channels into a single `post()` call instead of one call per channel.
+The create-post endpoint has **an hourly limit per workspace**. Batch multiple channels into a single `post()` call instead of one call per channel.
 </Info>
 
 <Warning>

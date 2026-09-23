@@ -85,9 +85,9 @@ regenerate it and not before, so treat it as a password rather than a session.
 ## Rate Limits
 
 <Info>
-**30 requests per hour** limit applies only to the create post endpoint. Uploads have a separate allowance of their own, 300 per hour.
+**An hourly limit per workspace** applies only to the create post endpoint (`POST /posts`). Uploads have a separate hourly allowance of their own.
 
-That is not a ceiling of 30 posts. Each call counts once no matter how much it carries, so put several posts in one request when you need volume.
+That is not a limit on posts. Each call counts once no matter how much it carries, so put several posts in one request when you need volume.
 </Info>
 
 The rate limit is one global value for the whole instance, and it is the same on every subscription plan. Plans differ on channel counts and posts per month instead. Self-hosting? You set the per-hour limit with the `API_LIMIT` env var, and the upload allowance with `UPLOAD_LIMIT` (default 300). The official Docker Compose sets `API_LIMIT: 30`; with the variable unset the backend defaults to 90 requests per hour. Full env var list: [Configuration Reference](/configuration/reference).
@@ -186,7 +186,6 @@ She posts to 30+ networks, and each one has its own settings schema. Every post 
   <Tab title="Blogging">
     | Platform | `__type` | Key settings |
     |----------|----------|--------------|
-    | Medium | `medium` | `title`, `subtitle`, `canonical`, `publication`, `tags` |
     | Dev.to | `devto` | `title`, `main_image`, `canonical`, `organization`, `tags` |
     | Hashnode | `hashnode` | `title`, `subtitle`, `main_image`, `publication`, `tags` |
     | WordPress | `wordpress` | `title`, `main_image`, `type` |
@@ -307,36 +306,6 @@ curl -X POST "https://api.postqueen.ai/public/v1/posts" \
       }
     }]
   }'
-```
-
-### Publish a Medium article
-
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": { "id": "your-medium-id" },
-      "value": [
-        {
-          "content": "# Introduction\n\nThis is my article in markdown...",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "medium",
-        "title": "My Amazing Article",
-        "subtitle": "A deep dive into something interesting",
-        "tags": [
-          { "value": "programming", "label": "Programming" }
-        ]
-      }
-    }
-  ]
-}
 ```
 
 ### Create a Google My Business offer

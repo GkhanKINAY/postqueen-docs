@@ -70,6 +70,7 @@ the post, and [Troubleshooting](/cli/troubleshooting) covers the common ones.
 postqueen posts:create \
   -c "Hello from the terminal" \
   -s "2026-08-01T09:00:00Z" \
+  --settings '{"who_can_reply_post":"everyone"}' \
   -i "x-id"
 ```
 
@@ -84,6 +85,7 @@ postqueen posts:create \
   -c "Thread 3/3: Conclusion" \
   -s "2026-08-01T09:00:00Z" \
   -d 2 \
+  --settings '{"who_can_reply_post":"everyone"}' \
   -i "x-id"
 ```
 
@@ -98,7 +100,7 @@ postqueen posts:create \
 ```
 
 `who_can_reply_post` takes one of `everyone`, `following`, `mentionedUsers`, `subscribers` or
-`verified`. Leave the setting out and X applies its own default.
+`verified`. It is required on every X post except an article: leave it out and the post is refused.
 
 ---
 
@@ -114,7 +116,7 @@ postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"/r/progr
 postqueen posts:create \
   -c "My post content" \
   -s "2026-08-01T09:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"text","is_flair_required":true,"flair":{"id":"abc123","name":"Discussion"}}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"self","is_flair_required":true,"flair":{"id":"abc123","name":"Discussion"}}}]}' \
   -i "reddit-id"
 ```
 
@@ -137,7 +139,7 @@ FLAIR_NAME=$(echo "$FLAIRS" | jq -r '.output.flairs[0].name')
 postqueen posts:create \
   -c "Automated Reddit post" \
   -s "2026-08-01T09:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"text\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"$FLAIR_NAME\"}}}]}" \
+  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"self\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"$FLAIR_NAME\"}}}]}" \
   -i "$REDDIT_ID"
 ```
 
@@ -356,6 +358,7 @@ for i in "${!DATES[@]}"; do
   postqueen posts:create \
     -c "${CONTENT[$i]}" \
     -s "${DATES[$i]}" \
+    --settings '{"who_can_reply_post":"everyone"}' \
     -i "x-id"
 done
 ```
@@ -390,7 +393,7 @@ Example `campaign.json`:
       "integration": { "id": "reddit-789" },
       "value": [{ "content": "Reddit post body", "image": [] }],
       "settings": {
-        "subreddit": [{ "value": { "subreddit": "programming", "title": "Post Title", "type": "text", "url": "", "is_flair_required": false } }]
+        "subreddit": [{ "value": { "subreddit": "/r/programming", "title": "Post Title", "type": "self", "url": "", "is_flair_required": false } }]
       }
     }
   ]
