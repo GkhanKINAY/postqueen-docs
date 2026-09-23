@@ -1,145 +1,137 @@
 ---
-title: Whop Settings
-description: 'API settings for posting to Whop forums'
+title: "Whop posting settings"
+sidebarTitle: "Whop"
+description: "The settings object a post to a Whop forum takes in the public API: every field, the companies and experiences tools, what PostQueen checks, and complete examples."
+icon: "/images/channels/whop.svg"
 ---
 
-{/* OVERHAUL-TODO(B5): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Whop setup guide](/installation/providers/whop).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Whop cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Whop channel will take.
 
-When creating a post for Whop, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "whop",
-    "company": "company-id",
-    "experience": "experience-id",
-    "title": "My Post Title"
-  }
-}
-```
+Every post to Whop carries a `settings` object with `"__type": "whop"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `whop` |
-| `company` | `string` | Yes | Whop company ID |
-| `experience` | `string` | Yes | Forum experience ID |
-| `title` | `string` | No | Optional title for the forum post |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"whop"`. PostQueen sets it from the channel you post to. |
+| `company` | string | Yes | The id of the Whop company the forum belongs to. |
+| `experience` | string | Yes | The id of the forum to post in, which Whop calls an experience. This is where the post goes. |
+| `title` | string | No | The post's title. Left out, the post has none. |
 
-### `company`
+The text is sent as Markdown, up to 50,000 characters. Each file is uploaded to Whop and attached to the post. Each extra entry in `value` is a reply, posted after its `delay` in minutes: the first replies to the post, and each later one replies to the one before it. Replies can carry files too, and take no title.
 
-The Whop company ID to post under. You can find available companies by selecting them in the PostQueen UI when configuring the Whop channel.
+### Find the ids
 
-### `experience`
+Two tools list the ids. Call them through [trigger a provider tool](/public-api/integrations/trigger):
 
-The forum experience ID where the post will be published. Each company can have multiple forums, so select the target forum in the PostQueen UI to obtain its ID.
+- `companies` lists your companies, with no `data`.
+- `experiences` lists a company's forums. Pass the company id as `data.id`.
 
-### `title`
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "experiences", "data": { "id": "COMPANY_ID" } }'
+```
 
-An optional title for the forum post. If omitted, the post will be created without a title.
+Both answer `{ "output": [ { "id", "name" } ] }`, with the first 50 of each. Put the company's `id` in `settings.company` and the forum's `id` in `settings.experience`.
 
----
+## What PostQueen checks
 
-## Complete Example
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-### Forum Post
+| Rule | Message |
+|---|---|
+| Each entry up to 50,000 characters | “post is too long, please fix it” |
+| `company` and `experience` are set and not empty | A validation error naming the field, such as “posts.0.settings.experience should not be null or undefined” |
+
+The error body for a too-long entry names the channel and the rule:
 
 ```json
+{
+  "statusCode": 400,
+  "provider": "whop",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+A missing field fails the request validation instead, and the body lists every problem under `message`.
+
+After scheduling, a post can still fail at Whop. If Whop has not finished processing a file after about 9 minutes, the post fails with “File upload timed out”. A forum that was deleted, or that the account can no longer reach, fails with “Forum or experience not found”.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), `company` and `experience` with ids from the tools above, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Titled post with a reply
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-whop-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "# Weekly Update\n\nHere's what we shipped this week:\n\n- New dashboard redesign\n- Performance improvements\n- Bug fixes\n\nLet us know what you think!",
+          "content": "## What shipped this week\n\n- Faster checkout\n- A new members page\n\nTell us what you think below.",
           "image": []
+        },
+        {
+          "content": "Next week: the mobile app beta opens to every member.",
+          "image": [],
+          "delay": 30
         }
       ],
       "settings": {
         "__type": "whop",
-        "company": "biz_xxxxxxxxxxxx",
-        "experience": "exp_xxxxxxxxxxxx",
-        "title": "Weekly Update - Dec 14"
+        "company": "biz_XXXXXXXXXXXX",
+        "experience": "exp_XXXXXXXXXXXX",
+        "title": "Weekly update"
       }
     }
   ]
 }
 ```
 
-### Post with Attachment
-
-```json
+```json Post with an image and no title
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-whop-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Check out our new feature preview! 👀",
-          "image": [
-            {
-              "id": "preview-image-id",
-              "path": "https://uploads.postqueen.ai/preview.png"
-            }
-          ]
+          "content": "A first look at the new members page.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/members-page.png" }]
         }
       ],
       "settings": {
         "__type": "whop",
-        "company": "biz_xxxxxxxxxxxx",
-        "experience": "exp_xxxxxxxxxxxx"
+        "company": "biz_XXXXXXXXXXXX",
+        "experience": "exp_XXXXXXXXXXXX"
       }
     }
   ]
 }
 ```
 
-### Post Without Title
+</CodeGroup>
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-whop-integration-id"
-      },
-      "value": [
-        {
-          "content": "Quick update: we just fixed the checkout issue. Thanks for your patience!",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "whop",
-        "company": "biz_xxxxxxxxxxxx",
-        "experience": "exp_xxxxxxxxxxxx"
-      }
-    }
-  ]
-}
-```
+In the first example, the second entry in `value` is posted 30 minutes after the forum post, as a reply to it.
 
-<Info>
-Whop forums take **Markdown** in post content: headings, bold, links.
-</Info>
+## Related
+
+- [Whop in the app](/channels/whop)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)

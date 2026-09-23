@@ -1,96 +1,145 @@
 ---
-title: Telegram Settings
-description: 'API settings for posting to Telegram'
+title: "Telegram posting settings"
+sidebarTitle: "Telegram"
+description: "The settings object a post to Telegram takes in the public API, the caption and album rules PostQueen checks, and complete examples."
+icon: "/images/channels/telegram.svg"
 ---
 
-{/* OVERHAUL-TODO(B5): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Telegram setup guide](/installation/providers/telegram).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Telegram cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Telegram channel will take.
 
-When creating a post for Telegram, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "telegram"
-  }
-}
-```
-
-<Note>
-Telegram has no provider-specific settings beyond `__type`. The destination
-chat or channel is determined by the connected integration, not the
-settings block. Post content, images, and the schedule are configured at
-the post level. Full request body: [Create Post](/public-api/posts/create).
-</Note>
+Every post to Telegram carries a `settings` object with `"__type": "telegram"`, and nothing else. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `telegram` |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"telegram"`. PostQueen sets it from the channel you post to. |
 
----
+The chat is the one the channel was connected to, so a post names no chat of its own.
 
-## Complete Example
+Plain text is sent as it is. For formatting, send HTML: `<strong>` for bold, `<u>` for underline and `<p>` for each paragraph. Other tags are removed and only their text is kept, so italics and link targets are lost. A plain URL in the text still shows as a link in Telegram.
 
-### Text Post
+What each entry in `value` becomes depends on its media:
+
+| Media in the entry | What Telegram gets |
+|---|---|
+| None | A text message, up to 4,096 characters |
+| One file | A photo, a video or a document, with the text as its caption |
+| 2 to 10 files | An album, with the text as the caption of its first item |
+| More than 10 | Several albums in a row. Only the first carries the text, and a single file left over after a full album is sent on its own |
+
+Images go out as photos and videos as videos. Any other file goes out as a document. Each extra entry in `value` is a follow-up, posted after its `delay` in minutes: the first replies to the post, and each later one replies to the one before it.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| An entry with media has at most 1,024 characters of text, counted as it will appear, without formatting | “Telegram captions can be at most 1,024 characters when the message has media” |
+| Each entry up to 4,096 characters | “post is too long, please fix it” |
+
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "telegram",
+  "name": "Your channel name",
+  "message": "Telegram captions can be at most 1,024 characters when the message has media"
+}
+```
+
+Telegram's own rules are not checked first. Telegram fetches each file from its link and accepts photos up to 5 MB and other files up to 20 MB, and it can refuse an album that mixes photos and documents.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Text message with a reply
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-telegram-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Hello from the PostQueen API!",
+          "content": "<p><strong>Doors open at 18:00.</strong></p><p>The meetup starts at 18:30 in the main hall.</p>",
           "image": []
+        },
+        {
+          "content": "Reminder: bring your ticket on your phone.",
+          "image": [],
+          "delay": 60
         }
       ],
-      "settings": {
-        "__type": "telegram"
-      }
+      "settings": { "__type": "telegram" }
     }
   ]
 }
 ```
 
-### Post with Image
-
-```json
+```json Photo with a caption
 {
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-telegram-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Sharing today's launch screenshot",
+          "content": "Tonight's stage, ready for the first talk.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/stage.jpg" }]
+        }
+      ],
+      "settings": { "__type": "telegram" }
+    }
+  ]
+}
+```
+
+```json Album
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Three photos from last night.",
           "image": [
-            {
-              "id": "image-id",
-              "path": "https://uploads.postqueen.ai/launch.png"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/night-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/night-2.jpg" },
+            { "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/night-3.jpg" }
           ]
         }
       ],
-      "settings": {
-        "__type": "telegram"
-      }
+      "settings": { "__type": "telegram" }
     }
   ]
 }
 ```
+
+</CodeGroup>
+
+In the first example, the second entry in `value` is posted an hour after the message, as a reply to it.
+
+## Related
+
+- [Telegram in the app](/channels/telegram)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

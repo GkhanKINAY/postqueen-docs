@@ -1,144 +1,129 @@
 ---
-title: Slack Settings
-description: 'API settings for posting to Slack'
+title: "Slack posting settings"
+sidebarTitle: "Slack"
+description: "The settings object a post to Slack takes in the public API: the channel field, the channels tool, what PostQueen checks, and complete examples."
+icon: "/images/channels/slack.svg"
 ---
 
-{/* OVERHAUL-TODO(B5): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Slack setup guide](/installation/providers/slack).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Slack cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Slack channel will take.
 
-When posting a message to Slack, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "slack",
-    "channel": "channel-id"
-  }
-}
-```
+Every post to Slack carries a `settings` object with `"__type": "slack"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `slack` |
-| `channel` | `string` | Yes | Slack channel ID |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"slack"`. PostQueen sets it from the channel you post to. |
+| `channel` | string | Yes | The id of the Slack channel to post in, public or private. For a private channel, invite the app to it first. |
 
-### `channel`
+One PostQueen channel is one Slack workspace. To post in two channels of the same workspace, send two posts.
 
-The Slack channel ID where the message will be posted. This is required.
+The text is sent as Slack mrkdwn, so `*bold*` and `_italic_` work. Write a link as a plain URL, which Slack links by itself: text in angle brackets, such as Slack's own link form, is read as HTML and comes out broken. Text longer than 3,000 characters is split into sections at line breaks, and each picture is shown under the text as an image block. Each extra entry in `value` is posted as a reply in the message's thread, after its `delay` in minutes.
 
-<Note>
-**How to get a Slack channel ID:**
-1. Right-click on the channel name in Slack
-2. Click "View channel details"
-3. Scroll to the bottom - the Channel ID is displayed there
-4. Or, the channel ID is in the URL when viewing a channel: `https://app.slack.com/client/WORKSPACE/CHANNEL_ID`
-</Note>
+### Find the channel id
 
----
+The `channels` tool lists the workspace's public channels and the private channels the app has been invited to. Call it through [trigger a provider tool](/public-api/integrations/trigger):
 
-## Complete Example
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "channels", "data": {} }'
+```
 
-### Simple Message
+The response is `{ "output": [ { "id", "name" } ] }`. Put the chosen `id`, such as `C0123456789`, in `settings.channel`.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| No video in any entry | “Slack posts can include pictures but not videos” |
+| Each entry fits in 50 blocks: one per picture and one per 3,000 characters of text, so at most 150,000 characters | “A Slack message can hold at most 50 blocks: each picture is one, and the text takes one per 3,000 characters” |
+| `channel` is set and not empty | A validation error naming the field, such as “posts.0.settings.channel should not be null or undefined” |
+
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "slack",
+  "name": "Your channel name",
+  "message": "Slack posts can include pictures but not videos"
+}
+```
+
+A missing `channel` fails the request validation instead, and the body lists every problem under `message`.
+
+Slack's own rules are not checked first: an image block shows PNG, JPG and GIF only, and a private channel needs the app invited. If Slack refuses a message, the post fails with Slack's reason, such as `not_in_channel`, instead of being marked published.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), the Slack `channel` with an id from the `channels` tool, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Message with a thread reply
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-slack-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "🎉 *New Release v2.0*\n\nWe're excited to announce our latest update!\n\n• New dashboard design\n• Improved performance\n• Bug fixes\n\nCheck it out: https://example.com/release",
+          "content": "*Release 2.4 ships today.* Faster exports and a new dark theme.",
           "image": []
+        },
+        {
+          "content": "Release notes: https://example.com/changelog",
+          "image": [],
+          "delay": 5
         }
       ],
-      "settings": {
-        "__type": "slack",
-        "channel": "C0123456789"
-      }
+      "settings": { "__type": "slack", "channel": "C0123456789" }
     }
   ]
 }
 ```
 
-### Message with Image
-
-```json
+```json Message with images
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-slack-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "📊 *Weekly Metrics Report*\n\nHere's our performance this week:",
+          "content": "This week's numbers, in two charts.",
           "image": [
-            {
-              "id": "metrics-image-id",
-              "path": "https://uploads.postqueen.ai/metrics.png"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/signups.png" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/revenue.png" }
           ]
         }
       ],
-      "settings": {
-        "__type": "slack",
-        "channel": "C0123456789"
-      }
+      "settings": { "__type": "slack", "channel": "C0123456789" }
     }
   ]
 }
 ```
 
-### Team Announcement
+</CodeGroup>
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-slack-integration-id"
-      },
-      "value": [
-        {
-          "content": ":mega: *Team Update*\n\n> Reminder: All-hands meeting tomorrow at 2 PM\n\n*Agenda:*\n1. Q4 Review\n2. 2025 Planning\n3. Open Q&A\n\nSee you there! :wave:",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "slack",
-        "channel": "C9876543210"
-      }
-    }
-  ]
-}
-```
+In the first example, the second entry in `value` is posted 5 minutes after the message, as a reply in its thread.
 
-<Info>
-Slack supports its own formatting syntax:
-- `*bold*` for **bold**
-- `_italic_` for *italic*
-- `~strikethrough~` for ~~strikethrough~~
-- `:emoji_name:` for emojis
-- `> quote` for quotes
-- `` `code` `` for inline code
-</Info>
+## Related
 
+- [Slack in the app](/channels/slack)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)

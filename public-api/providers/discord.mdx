@@ -1,142 +1,137 @@
 ---
-title: Discord Settings
-description: 'API settings for posting to Discord'
+title: "Discord posting settings"
+sidebarTitle: "Discord"
+description: "The settings object a post to Discord takes in the public API: the channel field, the channels tool, what PostQueen checks, and complete examples."
+icon: "/images/channels/discord.svg"
 ---
 
-{/* OVERHAUL-TODO(B5): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Discord setup guide](/installation/providers/discord).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Discord cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Discord channel will take.
 
-When posting a message to Discord, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "discord",
-    "channel": "channel-id"
-  }
-}
-```
+Every post to Discord carries a `settings` object with `"__type": "discord"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `discord` |
-| `channel` | `string` | Yes | Discord channel ID |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"discord"`. PostQueen sets it from the channel you post to. |
+| `channel` | string | Yes | The id of the Discord channel to post in: a text or announcement channel of the connected server. A forum channel does not take plain messages, so a post to one fails. |
 
-### `channel`
+One PostQueen channel is one Discord server. To post in two channels of the same server, send two posts.
 
-The Discord channel ID where the message will be posted. This is required.
+The text is sent as it is, so Discord markdown such as `**bold**` or `> quote` works. Each extra entry in `value` is a follow-up, posted after its `delay` in minutes: the first starts a thread on the message, and later ones go into the same thread.
 
-<Note>
-**How to get a Discord channel ID:**
-1. Enable Developer Mode in Discord (User Settings → App Settings → Advanced → Developer Mode)
-2. Right-click on the channel
-3. Click "Copy Channel ID"
-</Note>
+### Find the channel id
 
----
+The `channels` tool lists the server's text and announcement channels. Call it through [trigger a provider tool](/public-api/integrations/trigger):
 
-## Complete Example
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "channels", "data": {} }'
+```
 
-### Text Message
+The response is `{ "output": [ { "id", "name" } ] }`. Put the chosen `id` in `settings.channel`.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| Each entry up to 1,980 characters | “post is too long, please fix it” |
+| `channel` is set and not empty | A validation error naming the field, such as “posts.0.settings.channel should not be null or undefined” |
+
+The error body for a too-long entry names the channel and the rule:
 
 ```json
+{
+  "statusCode": 400,
+  "provider": "discord",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+A missing `channel` fails the request validation instead, which lists every problem with the body:
+
+```json
+{
+  "message": [
+    "posts.0.settings.channel should not be null or undefined",
+    "posts.0.settings.channel must be a string",
+    "posts.0.settings.channel must be longer than or equal to 1 characters"
+  ],
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
+Discord's own rules are not checked first: 20 MiB per file by default, and the bot's permissions in the channel. When Discord refuses a post, it fails with “Bot doesn't have access to this channel”, “Bot lacks permission to send messages in this channel”, “Channel no longer exists” or “Attachment exceeds Discord's size limit”.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), the Discord `channel` with an id from the `channels` tool, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Message with a thread
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-discord-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "🎉 **New Update Released!**\n\nWe've just shipped some exciting new features:\n\n• Feature 1\n• Feature 2\n• Feature 3\n\nCheck it out and let us know what you think!",
+          "content": "**Version 2.4 is out.** Faster exports and a new dark theme.",
           "image": []
+        },
+        {
+          "content": "Questions about the update? Ask them in this thread.",
+          "image": [],
+          "delay": 5
         }
       ],
-      "settings": {
-        "__type": "discord",
-        "channel": "1234567890123456789"
-      }
+      "settings": { "__type": "discord", "channel": "1234567890123456789" }
     }
   ]
 }
 ```
 
-### Message with Image
-
-```json
+```json Message with an image
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-discord-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Check out this preview of our new feature! 👀",
-          "image": [
-            {
-              "id": "preview-image-id",
-              "path": "https://uploads.postqueen.ai/preview.png"
-            }
-          ]
+          "content": "A first look at the new dashboard.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/dashboard.png" }]
         }
       ],
-      "settings": {
-        "__type": "discord",
-        "channel": "1234567890123456789"
-      }
+      "settings": { "__type": "discord", "channel": "1234567890123456789" }
     }
   ]
 }
 ```
 
-### Announcement with Formatting
+</CodeGroup>
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-discord-integration-id"
-      },
-      "value": [
-        {
-          "content": "# 📢 Important Announcement\n\n> We'll be performing scheduled maintenance tonight from 10 PM - 12 AM UTC.\n\n**What to expect:**\n- Brief service interruption\n- Improved performance after maintenance\n\n*Thank you for your patience!*",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "discord",
-        "channel": "9876543210987654321"
-      }
-    }
-  ]
-}
-```
+In the first example, the second entry in `value` is posted 5 minutes after the message, in a thread started on it.
 
-<Info>
-Discord supports Markdown formatting in messages. You can use:
-- `**bold**` for **bold**
-- `*italic*` for *italic*
-- `# Heading` for headings
-- `> quote` for quotes
-- `` `code` `` for inline code
-</Info>
+## Related
 
+- [Discord in the app](/channels/discord)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)
