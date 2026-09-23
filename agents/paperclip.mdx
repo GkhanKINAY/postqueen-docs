@@ -1,11 +1,113 @@
 ---
 title: "Paperclip"
-description: "Let Paperclip agents schedule posts through PostQueen's MCP server."
+description: "Connect PostQueen in Paperclip's Apps page, and give its Claude Code and Codex agents the tools to write, schedule and check your posts."
 icon: "paperclip"
 ---
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: none on main, a new page. Row in page-status-2026-09-23.md. */}
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-<Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
-</Note>
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
+
+Paperclip is an open-source app for running a team of AI agents, such as Claude Code, Codex, OpenClaw and Cursor, as a company: you set goals, hire agents, set budgets and approve their work from one dashboard. Connect PostQueen in its Apps page and your agents can plan, draft and schedule posts, with your approval on each change.
+
+## Before you start
+
+- **Plans:** Paperclip is free and open source (MIT). You host it yourself, and no Paperclip account is needed.
+- **Platforms:** your own macOS, Linux or WSL2 machine with Node 24.11 or later, or Docker. PostQueen's tools reach Paperclip's Claude Code and Codex agents.
+- **A PostQueen API key.** A workspace admin copies it from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect Paperclip
+
+<Steps>
+  <Step title="Add your own MCP server">
+    In Paperclip, open **Apps**, then **Connect an app**, then **Connect your own MCP server**. Enter the address and press **Check link**:
+
+    ```text wrap
+    https://api.postqueen.ai/mcp
+    ```
+  </Step>
+  <Step title="Enter the key">
+    Under **Advanced authentication**, choose **Key or token** and paste your PostQueen API key on its own, without the word `Bearer`. Paperclip saves it as an encrypted secret.
+  </Step>
+  <Step title="Review the tools">
+    Reading tools start on. Tools that change something, such as scheduling a post, start off until you turn them on, and then ask for your approval by default.
+  </Step>
+  <Step title="Grant access">
+    Give an agent, a project or the whole company access to PostQueen.
+  </Step>
+</Steps>
+
+## Check that it works
+
+Assign a Claude Code or Codex agent a task: "List my PostQueen channels." The agent answers with the channels you connected in PostQueen.
+
+## Good to know
+
+- **Only Claude Code and Codex agents get the Apps connection.** Other agent types in Paperclip use their own MCP settings.
+- **Every value you enter becomes an encrypted Paperclip secret** and is never shown again.
+- **A Claude Code agent managed by Paperclip ignores** servers added on the same machine with `claude mcp add`. Give it access in **Apps** instead.
+- **There is no `paperclipai` command for MCP connections yet.** Use the **Apps** page.
+- **Approval by default:** tools that change something ask before each call, so nothing is scheduled without you.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| Key or token in Apps | `{{mcpBearerUrl}}` | From Paperclip's docs. The route above |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| The PostQueen CLI and skill | `npm install -g postqueen` | Not tested yet |
+
+<Tabs>
+  <Tab title="Sign in (not tested yet)">
+    In **Connect your own MCP server**, enter `https://api.postqueen.ai/mcp-oauth-dynamic` and choose **Sign in to continue**. Paperclip registers itself; a workspace admin signs in to PostQueen and approves.
+
+    The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+  </Tab>
+  <Tab title="CLI and skill (not tested yet)">
+    For agent types that run commands:
+
+    1. Install the CLI where the agents run: `npm install -g postqueen`.
+    2. Save your PostQueen API key as a company secret, and add `POSTQUEEN_API_KEY` to the agent's environment variables with that secret as the source.
+    3. In the Skills Store, import the skill from `https://github.com/GkhanKINAY/postqueen-agent/tree/main/skills/postqueen`.
+
+    See [the postqueen skill](/agents/skill) and [the CLI](/cli/introduction).
+  </Tab>
+</Tabs>
+
+## Try this first
+
+Assign this to a Claude Code or Codex agent:
+
+```text wrap
+List my PostQueen channels. Then plan next week's launch posts for Bluesky and save four of them in PostQueen as drafts, Monday to Thursday at 10am.
+```
+
+Approve the save when Paperclip asks. The drafts appear on your PostQueen calendar, ready for you to check and schedule.
+
+## Run it on a schedule
+
+Add a routine with a cron schedule, such as `0 9 * * 1` for Mondays at 9am. Each run opens an issue for the routine's agent, which picks it up on its next heartbeat.
+
+```text wrap
+Save next week's Bluesky posts in PostQueen as drafts.
+```
+
+Source: [Paperclip on GitHub](https://github.com/paperclipai/paperclip).
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| A Claude Code agent does not see PostQueen | Give that agent, its project or the company access in **Apps**. Servers added with `claude mcp add` are ignored while Paperclip manages MCP. |
+| Scheduling a post does nothing | Tools that change something start off. Turn them on in **Apps**, then approve each call when Paperclip asks. |
+| The key is refused | Paste the key on its own, without the word `Bearer`, copied from **Connections > API Keys**. |
+| Another agent type cannot use PostQueen | Only Claude Code and Codex agents get the Apps connection. Give other agents the PostQueen CLI instead. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+<NextStepsAgent />
