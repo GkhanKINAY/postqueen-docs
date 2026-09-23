@@ -1,11 +1,100 @@
 ---
 title: "Channel developer apps"
-description: "Every network's variables, redirect path and setup page, and the networks that need no developer app."
+sidebarTitle: "Overview"
+description: "Every network's variables, redirect path and setup page on a self-hosted PostQueen, the Meta callback URLs, and the eight networks that need no developer app."
 icon: "key-round"
 ---
 
-{/* OVERHAUL-TODO(B3): rewrite it to the style guide in CONTRIBUTING.md. Sources: none on main, a new page. Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen, most networks talk to PostQueen through a developer app that you register with the network yourself. You set the app's keys as environment variables, restart PostQueen, and the network then connects from **Add Channel**. Eight networks need no app at all: the person connecting types a key or a login into the connect form, or, for Moltbook, registers an agent.
+
+## How it works
+
+<Steps>
+  <Step title="Register the app with the network">
+    Each network's setup page walks through its developer console, the permissions to ask for and the review, if any.
+  </Step>
+  <Step title="Add the redirect URI">
+    For a sign-in network, the redirect URI is `FRONTEND_URL` + `/integrations/social/` + the ending in the table below, with no trailing slash unless the table shows one. Pinterest's, for example, is `https://postqueen.example.com/integrations/social/pinterest`. A network that accepts only `https` redirects needs a different address on a plain `http` install; its page gives it.
+  </Step>
+  <Step title="Set the variables and restart">
+    Put the keys in your environment and recreate the app container so it reads them. [Configuration reference](/configuration/reference) lists every variable.
+  </Step>
+  <Step title="Connect the channel">
+    Open **Channels**, choose **Add Channel** and pick the network.
+  </Step>
+</Steps>
 
 <Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
+**Add Channel lists every network whether or not its keys are set.** A network with missing or wrong keys fails on its own authorization page, not with a message in PostQueen. To take a network out of the list, use `HIDDEN_PROVIDERS`.
 </Note>
+
+## Networks that need a developer app
+
+| Network | Variables | Redirect URI ends in |
+|---|---|---|
+| [Instagram (Facebook Business)](/installation/providers/instagram) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `instagram` |
+| [Instagram (Standalone)](/installation/providers/instagram) | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | `instagram-standalone` |
+| [TikTok](/installation/providers/tiktok) | `TIKTOK_CLIENT_ID`, `TIKTOK_CLIENT_SECRET` | `tiktok` |
+| [TikTok Business](/installation/providers/tiktok) | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` | `tiktok-business/`, with the trailing slash |
+| [YouTube](/installation/providers/youtube) | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` | `youtube` |
+| [Facebook Page](/installation/providers/facebook) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `facebook` |
+| [X](/installation/providers/x-twitter) | `X_API_KEY`, `X_API_SECRET`, and optionally `X_URL`, `DISABLE_X_ANALYTICS`, `STRIP_LINKS_FROM_X_POSTS` | `x` |
+| [LinkedIn and LinkedIn Page](/installation/providers/linkedin) | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | `linkedin`, `linkedin-page` |
+| [Threads](/installation/providers/threads) | `THREADS_APP_ID`, `THREADS_APP_SECRET` | `threads` |
+| [Pinterest](/installation/providers/pinterest) | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` | `pinterest` |
+| [Reddit](/installation/providers/reddit) | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` | `reddit` |
+| [Google Business Profile](/installation/providers/google-my-business) | `GOOGLE_GMB_CLIENT_ID`, `GOOGLE_GMB_CLIENT_SECRET`, or the YouTube client when they are unset | `gmb` |
+| [Telegram](/installation/providers/telegram) | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` | None: the channel connects with a `/connect` code sent to the bot |
+| [Discord](/installation/providers/discord) | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` | `discord` |
+| [Slack](/installation/providers/slack) | `SLACK_ID`, `SLACK_SECRET` | `slack` |
+| [Mastodon](/installation/providers/mastodon) | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` | `mastodon` |
+| [Tumblr](/installation/providers/tumblr) | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` | `tumblr` |
+| [Twitch](/installation/providers/twitch) | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` | `twitch` |
+| [VK](/installation/providers/vk) | `VK_ID` | `vk` |
+| [Kick](/installation/providers/kick) | `KICK_CLIENT_ID`, `KICK_SECRET` | `kick` |
+| [Dribbble](/installation/providers/dribbble) | `DRIBBBLE_CLIENT_ID`, `DRIBBBLE_CLIENT_SECRET` | `dribbble` |
+| [Farcaster](/installation/providers/farcaster) | `NEYNAR_APP_FID`, `NEYNAR_APP_MNEMONIC`, `NEYNAR_CLIENT_ID`, `NEYNAR_SECRET_KEY`, `NEYNAR_SPONSOR_SIGNERS` | None: the account approves a signer by QR code in the Farcaster app |
+| [Whop](/installation/providers/whop) | `WHOP_CLIENT_ID` | `whop` |
+| [MeWe](/installation/providers/mewe) | `MEWE_HOST`, `MEWE_APP_ID`, `MEWE_API_KEY` | `mewe` |
+| [Skool](/configuration/chrome-extension) | `EXTENSION_ID`, for the PostQueen browser extension | None: the extension reads the Skool session |
+
+Two names break the pattern: Kick's secret is `KICK_SECRET`, and Dribbble's variables spell it with three `b` characters.
+
+## Meta callback URLs
+
+Meta calls PostQueen when someone removes one of your Meta apps from their account, or asks for their data to be deleted. Each Meta app takes one pair of callback URLs, on `NEXT_PUBLIC_BACKEND_URL`:
+
+| App | Deauthorize callback | Data deletion callback |
+|---|---|---|
+| The Facebook app (Facebook Page, and Instagram through Facebook) | `/integrations/facebook/platform-deauthorize` | `/integrations/facebook/platform-deletion` |
+| The Instagram (Standalone) app | `/integrations/instagram-standalone/platform-deauthorize` | `/integrations/instagram-standalone/platform-deletion` |
+| The Threads app | `/integrations/threads/platform-deauthorize` | `/integrations/threads/platform-deletion` |
+
+With the backend at `https://postqueen.example.com/api`, the Facebook app's first URL is `https://postqueen.example.com/api/integrations/facebook/platform-deauthorize`. A deauthorize request flags that person's channels for reconnection, and a deletion request deletes the channels and their posts. Meta only calls a public `https` address, so a local install can skip them. Each Meta setup page shows where the URLs go in the app dashboard.
+
+## Networks that need no developer app
+
+These eight read no variable, so they work as soon as PostQueen runs. The person connecting enters their own key or login in the connect form, or registers a Moltbook agent:
+
+| Network | The connect form asks for |
+|---|---|
+| Bluesky | **Service** (`https://bsky.social` by default), **Identifier** (the handle) and **Password** (an app password) |
+| Nostr | **Nostr private key**, in hex |
+| Lemmy | **Service** (the instance, `https://lemmy.world` by default), **Identifier** (the username) and **Password** |
+| WordPress | **Domain URL**, **Username** and **Password** (an Application Password) |
+| DEV | **API key** |
+| Hashnode | **API key** (a personal access token, for a publication on Hashnode Pro) |
+| Listmonk | **URL** of the Listmonk server, **Username** of an API user and **Password** (its token) |
+| Moltbook | An agent name: PostQueen registers the agent and the person claims it on Moltbook |
+
+Things to know on your own server:
+
+- **Addresses on private networks are refused.** The Bluesky service, the Lemmy instance, the WordPress site and the Listmonk server must resolve to public addresses, because outgoing requests are guarded against private and local ranges. Set `DISABLE_SSRF_PROTECTION=true` only when one of them lives on your own network and you trust everyone who can connect a channel.
+- **`LISTMONK_*` does not configure the Listmonk channel.** Those variables choose the newsletter that new sign-ups are added to. The channel takes its URL and API user in the connect form.
+- **Hashnode cover images need public URLs.** With local storage, a cover's path is made absolute with `NEXT_PUBLIC_BACKEND_URL` and `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY`, and Hashnode must be able to download it from there.
+- **Nostr uses a fixed set of relays**: `nos.lol`, `relay.damus.io`, `relay.snort.social`, `temp.iris.to` and `vault.iris.to`. There is no variable to change them.
+
+## Related
+
+- [Configuration reference](/configuration/reference): every variable, grouped.
+- [Browser extension](/configuration/chrome-extension): building the extension that Skool needs.

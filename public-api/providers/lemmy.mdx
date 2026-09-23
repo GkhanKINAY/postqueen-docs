@@ -1,65 +1,102 @@
 ---
-title: 'Lemmy Settings'
-description: 'Provider settings for Lemmy posts'
+title: "Lemmy posting settings"
+sidebarTitle: "Lemmy"
+description: "The settings object a post to Lemmy takes in the public API: the communities, their titles and links, what PostQueen checks, and complete examples."
+icon: "/images/channels/lemmy.svg"
 ---
 
-{/* OVERHAUL-TODO(B3): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Lemmy setup guide](/channels/lemmy).
+<ChannelStatus status="available" />
 
-## Overview
+Every post to Lemmy carries a `settings` object with `"__type": "lemmy"` and the communities to post in. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
-Lemmy is a decentralized Reddit alternative. When posting to Lemmy, you need to specify the community and post details.
+A Lemmy channel connects with your instance, username and password, which only the app's connect form takes. [Connect it in the app](/channels/lemmy) first, then post to it here.
 
-<Note>
-The settings use `subreddit` as the field name for historical reasons, but it refers to Lemmy communities.
-</Note>
+## Fields
 
-## Settings Schema
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"lemmy"`. PostQueen sets it from the channel you post to. |
+| `subreddit` | array | Yes | The communities to post in, at least one. The name is historical: each entry is a Lemmy community on the channel's instance. |
+| `subreddit[].value.subreddit` | string | Yes | The community's name as the `subreddits` tool returns it, at least 2 characters. PostQueen shows it in the app; Lemmy is sent the id. |
+| `subreddit[].value.id` | string | Yes | The community's numeric id, as a string. |
+| `subreddit[].value.title` | string | Yes | The post's title in this community, 3 to 200 characters. |
+| `subreddit[].value.url` | string | No | A link to share with the post. Leave it out or send `""` for none. |
+
+Each community gets its own submission, with its own title and link and the same body from `value[0].content`, sent as plain text. The first file of the first entry becomes the cover image of every submission.
+
+### Find a community id
+
+The `subreddits` tool searches the channel's instance. Call it through [trigger a provider tool](/public-api/integrations/trigger):
+
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"methodName": "subreddits", "data": {"word": "linux"}}'
+```
+
+It answers `{ "output": [{ "id": 1234, "name": "Linux", "title": "Linux" }] }`. Send `id` as a string in `value.id`, and `name` in `value.subreddit`.
+
+### Follow-up comments
+
+Each extra entry in `value` is posted as a top-level comment under the submission in every community, after its `delay` in minutes. Comments are text only.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| At least one community | “subreddit must contain at least 1 elements” |
+| A title of at least 3 characters | “title must be longer than or equal to 3 characters” |
+| A title of at most 200 characters | “title must be shorter than or equal to 200 characters” |
+| `url`, when set, is a web address | “url must be a URL address” |
+| The first file is a PNG, JPG, JPEG, GIF or WebP image | “You can set only one picture for a cover” |
+| Each entry within 10,000 characters | “post is too long, please fix it” |
+
+A settings field that is missing or wrong is refused first, with the field's path in each message:
 
 ```json
 {
-  "__type": "lemmy",
-  "subreddit": [
-    {
-      "value": {
-        "subreddit": "community_name",
-        "id": "community-id",
-        "title": "Post Title",
-        "url": "https://example.com"
-      }
-    }
-  ]
+  "statusCode": 400,
+  "message": ["posts.0.settings.subreddit.0.value.title must be longer than or equal to 3 characters"],
+  "error": "Bad Request"
 }
 ```
 
-## Properties
-
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"lemmy"` |
-| `subreddit` | array | ✅ | Array of community targets |
-| `subreddit[].value.subreddit` | string | ✅ | Community name (min 2 chars) |
-| `subreddit[].value.id` | string | ✅ | Community ID |
-| `subreddit[].value.title` | string | ✅ | Post title (min 2 chars) |
-| `subreddit[].value.url` | string | ❌ | Optional link URL |
-
-## Example
+The other rules come back with the channel's name:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "lemmy",
+  "name": "Your channel name",
+  "message": "You can set only one picture for a cover"
+}
+```
+
+Each instance sets its own posting rate, and PostQueen does not check it first. Lemmy's default is 6 posts in 10 minutes from one address.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), each community `id` and name with the values the `subreddits` tool returns, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Link post in one community
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-lemmy-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Check out this interesting article about open-source software!",
+          "content": "We wrote up how we run our own mail server on a small VPS, with the full config.",
           "image": []
         }
       ],
@@ -68,10 +105,10 @@ The settings use `subreddit` as the field name for historical reasons, but it re
         "subreddit": [
           {
             "value": {
-              "subreddit": "opensource",
-              "id": "123456",
-              "title": "Why Open Source Matters",
-              "url": ""
+              "subreddit": "Linux",
+              "id": "1234",
+              "title": "Running your own mail server in 2026",
+              "url": "https://example.com/mail-server"
             }
           }
         ]
@@ -81,9 +118,38 @@ The settings use `subreddit` as the field name for historical reasons, but it re
 }
 ```
 
-## Notes
+```json Two communities, a cover and a comment
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Our open data set of city bike trips is out, with a short write-up of what we found.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/bike-map.png" }]
+        },
+        { "content": "Questions welcome, we will answer here all day.", "image": [], "delay": 30 }
+      ],
+      "settings": {
+        "__type": "lemmy",
+        "subreddit": [
+          { "value": { "subreddit": "Datasets", "id": "2345", "title": "City bike trips, one year of data" } },
+          { "value": { "subreddit": "Cycling", "id": "3456", "title": "What a year of bike share trips shows" } }
+        ]
+      }
+    }
+  ]
+}
+```
 
-- You can post to multiple communities by adding more items to the `subreddit` array
-- Each community requires a unique title for the post
-- The `url` field is optional and used for link-type posts
+</CodeGroup>
 
+## Related
+
+- [Connect Lemmy in the app](/channels/lemmy)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)

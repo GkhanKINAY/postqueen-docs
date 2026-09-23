@@ -1,101 +1,96 @@
 ---
-title: Nostr
-description: 'How to add Nostr to your system'
-icon: /images/channels/nostr.svg
+title: "Nostr"
+description: "Connect Nostr to PostQueen with your private key, what you can post to it, and the relays PostQueen sends your notes to."
+icon: "/images/channels/nostr.svg"
 ---
 
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NeverShare from '/snippets/never-share.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B3): write it from _templates/channel.mdx. Sources: this file, moved from providers/nostr (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="available" />
 
-<img src="/images/channels/nostr.svg" alt="Nostr" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+Sign and broadcast Nostr notes and threads on schedule, with images linked by URL. You connect with your Nostr private key, and PostQueen sends each note to five public relays.
 
-<NeverShare />
-
-One field connects this channel, and the whole page comes down to what you put in it. **Paste the raw hexadecimal private key, not the `nsec1` form.** She reads the value two characters at a time as hex bytes and derives your public key from that, so an `nsec1` string is never decoded and never turns into your identity. Sixty four hex characters is what you want. If your client only ever shows you `nsec1`, convert it to hex before you come back here.
-
-There is no developer app behind this one, no client id and no environment variable. You click **Nostr** in **Add Channel**, paste the key, and she signs your notes locally from then on.
-
-## What she can post to Nostr
-
-A note is a note. There is no title, no album, no settings block to fill in, and nothing to choose before you publish.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    100,000 characters per note.
+  <Card title="Text" icon="type">
+    Up to 100,000 characters per note, if the relays accept that much.
   </Card>
   <Card title="Media" icon="image">
-    Not uploaded. Each file you attach is appended to the end of the note as a link, which is how images usually travel on Nostr anyway.
+    Images and videos are linked by their address at the end of the note. They are not uploaded to a relay.
   </Card>
   <Card title="Post types" icon="layers">
-    A kind 1 text note, then further notes threaded underneath it as replies.
+    Text notes and threads, with each part replying to the one before.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None. Nine networks report analytics to PostQueen, and Nostr is not one of them.
+    No analytics for Nostr.
   </Card>
 </CardGroup>
 
-| Area | Detail |
+**Not supported:** choosing your own relays, long-form articles, zaps and keys in `nsec` form.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks this rule and shows the message in the composer:
+
+| Rule | Message |
 |---|---|
-| Post settings | Nothing beyond `__type`. There is no settings panel for Nostr in the editor: [Nostr settings](/public-api/providers/nostr). |
-| Connect flow | One step, one field typed into the **Add Provider** modal. Your key is signed into the channel token and never sent to a relay. |
-| Automations | None on this network. |
-| Publish rate | Five notes at a time. |
+| Text within 100,000 characters, in the note and in every reply | “post is too long, please fix it” |
 
-### The relays are fixed
-
-She publishes every note to the same five relays, one after another, and the list is compiled into the connector rather than read from a setting. You cannot add your own, and a relay that is down is skipped without an error.
-
-- `wss://nos.lol`
-- `wss://relay.damus.io`
-- `wss://relay.snort.social`
-- `wss://temp.iris.to`
-- `wss://vault.iris.to`
-
-Those same five are where she looks for your profile at connect time.
+Each relay sets its own size limit, and PostQueen does not check it first.
 
 ## Connect Nostr
 
 <Steps>
   <Step title="Get your private key in hex">
-    Open the client you already use and find the export for the secret key in hex form. The hint that appears when you hover **Nostr** in the channel list points at [iris.to](https://iris.to) as one place to read it.
-
-    What you are after is a string of hexadecimal characters. If what you have starts with `nsec1`, it is the bech32 form and it will not work here, so run it through an `nsec` to hex conversion first.
-
-    <Warning>
-    This is the key that controls your Nostr identity, not a scoped token you can revoke. Anyone holding it can post as you forever. Treat the value the way you treat a wallet seed phrase.
-    </Warning>
+    PostQueen needs the private key as 64 hexadecimal characters, not the `nsec1...` form most apps show. A client such as [iris.to](https://iris.to) can show the hex version, or convert an `nsec` key for you.
   </Step>
-
-  <Step title="Open Add Channel and pick Nostr">
-    In PostQueen, click **Add Channel** and select **Nostr**. A modal titled **Add Provider** opens with a single password field labeled **Nostr private key**.
+  <Step title="Open Add Channel">
+    In PostQueen, open **Channels** and choose **Add Channel**, then **Nostr** and **Enter details**.
   </Step>
-
-  <Step title="Paste the key and press Connect">
-    She derives your public key from the hex you pasted, then asks the five relays for your profile event and builds the channel from it. Your display name and your avatar come from that profile.
+  <Step title="Paste the key">
+    Paste the hex key in **Nostr private key** and choose **Connect**.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with the name and picture of your Nostr profile. It shows **No Name** when none of the five relays has your profile.
   </Step>
 </Steps>
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+<NeverShare />
 
+## Post settings
+
+Nostr has no post settings. The API takes `"__type": "nostr"` and nothing else, as [Nostr posting settings](/public-api/providers/nostr) shows.
+
+## Comments and threads
+
+**Continue thread** adds parts to the note. Each part is published as a reply to the part before, with its own delay, and is held to the same limit as the first note.
+
+A reply points only at the part before it, not at the first note, so a client that follows Nostr's threading rules strictly may not show the parts as one thread.
+
+## Good to know
+
+- PostQueen signs each note with your key and sends it to five relays: `nos.lol`, `relay.damus.io`, `relay.snort.social`, `temp.iris.to` and `vault.iris.to`. A note counts as published when at least one of them accepts it. The list is fixed, so a note reaches your followers only if their clients read one of these relays.
+- Your key is stored encrypted on PostQueen's server, so that PostQueen can sign each note at the scheduled time. Treat it as you would any key that can post as you.
+- A key pasted in `nsec` form is read as hex and connects the wrong identity. Delete that channel and connect again with the hex key.
+- The link on a published note opens it on [primal.net](https://primal.net).
+- **Invite by link** does not offer Nostr, because the key is typed into PostQueen. Connect it with **Connect myself**.
+- During the free trial, a Nostr account that another PostQueen workspace already connected is refused until you end the trial.
 
 ## Troubleshooting
 
-### The channel is called "No Name"
-
-No profile event came back from those five relays, so she fell back to the placeholder, and the username reads `nousername`. This is the name lookup falling back, not a broken connection. It happens when your profile lives on relays outside the fixed five, or when the relay that has it did not answer in time. Publishing your profile to one of the five relays above and reconnecting the channel is what fixes the name.
-
-### "Invalid credentials"
-
-The value did not turn into a usable key at all.
-
-Worth knowing: an `nsec1` string does **not** produce this message. The connector reads whatever you paste as hex rather than decoding bech32, and an `nsec1` survives that reading as a different, valid-looking key. So it connects, under a public key that is not yours, usually showing up as a "No Name" channel. If that is what you are looking at, disconnect it and reconnect with the hex form of your key.
-
-### The link on a published note points at the wrong note
-
-The note itself is published correctly. The link she stores is `https://primal.net/e/` plus an event id she picks up by subscribing to your notes on each relay, and the first note the relay hands back is not always the one just sent. Trust your own client over that link when they disagree.
+<AccordionGroup>
+  <Accordion title="Invalid credentials">
+    PostQueen could not read the key. Paste the private key in hex form, 64 characters from `0` to `9` and `a` to `f`, not the `nsec1...` form and not your public key.
+  </Accordion>
+  <Accordion title="No Nostr relay accepted the note">
+    None of the five relays took the note, so it was not published. Relays can refuse a very long note, or be down for a while. Shorten the note or try again later.
+  </Accordion>
+  <Accordion title="The channel has a different name than my profile">
+    The key belongs to another identity, often because an `nsec` key was pasted as it was. Delete the channel and connect again with the hex form of your key.
+  </Accordion>
+</AccordionGroup>
 
 <NextStepsChannel />

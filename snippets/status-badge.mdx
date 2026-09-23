@@ -8,6 +8,11 @@
 
   import { ChannelStatus } from '/snippets/status-badge.mdx';
   <ChannelStatus status="in-review">Until Meta approves PostQueen's app, ...</ChannelStatus>
+
+  ChannelBadge is the same badge on its own, with no note and no margin, for
+  a table cell or a card on the index pages (channels/overview,
+  public-api/providers/overview):
+  <ChannelBadge status="soon" />
 */}
 
 export const ChannelStatus = ({ status, children }) => {
@@ -22,4 +27,13 @@ export const ChannelStatus = ({ status, children }) => {
       {children ? <span className="pq-status-note">{children}</span> : null}
     </div>
   );
+};
+
+export const ChannelBadge = ({ status }) => {
+  const look = {
+    available: { color: 'green', label: 'Available' },
+    'in-review': { color: 'yellow', label: 'In review' },
+    soon: { color: 'gray', label: 'Soon' },
+  }[status] || { color: 'gray', label: status };
+  return <Badge color={look.color} shape="pill" size="sm">{look.label}</Badge>;
 };
