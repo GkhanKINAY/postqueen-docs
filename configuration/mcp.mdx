@@ -1,142 +1,97 @@
 ---
-title: MCP on a self-hosted install
-description: 'The URL to use, and the one proxy setting that breaks MCP while leaving the app fine'
-icon: 'server'
+title: "MCP on your server"
+description: "The MCP addresses of a self-hosted PostQueen, how to check them through your proxy, what the sign-in address needs, and the MCP settings you can change."
+icon: "bot"
 ---
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file, moved from mcp/self-hosting (fix; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
 
-MCP works on a self-hosted PostQueen with no extra service and no extra configuration in the app.
-Her backend already serves the endpoint. What you do need is a reverse proxy that passes the
-connection through without buffering it, and that is where self-hosters lose an afternoon.
+A self-hosted PostQueen serves MCP from its own backend, with no extra service to run. AI agents connect to it the same way they connect to PostQueen Cloud, with your own address in place of `api.postqueen.ai`.
 
-## Your URL
+## Your addresses
 
-Replace `https://api.postqueen.ai` with whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append
-the MCP path:
+The backend's address is `NEXT_PUBLIC_BACKEND_URL`, which on a standard install is your domain plus `/api`:
 
-```
-https://postqueen.example.com/api/mcp/YOUR_API_KEY
-```
+| Address | How it signs in | Tools |
+|---|---|---|
+| `https://postqueen.example.com/api/mcp/YOUR_API_KEY` | The API key is part of the address | {{mcpToolsKey}} |
+| `https://postqueen.example.com/api/mcp` | Header `Authorization: Bearer YOUR_API_KEY` | {{mcpToolsKey}} |
+| `https://api.postqueen.example.com/mcp-oauth-dynamic` | Sign in with PostQueen, on a backend host of its own: see [below](#the-sign-in-address) | {{mcpToolsOauth}}, all but `ask_postqueen` |
 
-Most single-domain installs serve the backend under `/api`, so the MCP path lands at `/api/mcp`.
-If your `NEXT_PUBLIC_BACKEND_URL` is a separate hostname, use that instead and the path is just
-`/mcp`.
+**Connections** in your own install builds the key address from `NEXT_PUBLIC_BACKEND_URL` and shows it on every agent card with the key filled in. Each agent's page under [AI agents](/agents/overview) says where the address goes.
 
-Both endpoint forms work exactly as they do on the hosted service:
+<ApiKeyLocation />
 
-| Endpoint | Auth |
-| --- | --- |
-| `<backend>/mcp` | `Authorization: Bearer YOUR_API_KEY`. API keys and `pos_` OAuth tokens both work |
-| `<backend>/mcp/YOUR_API_KEY` | The key in the path. API keys only |
+Clients that only speak the older SSE transport can use `https://postqueen.example.com/api/sse/YOUR_API_KEY`. Prefer the addresses above: an SSE connection stays open, and proxies with short idle timeouts cut it.
 
-## The proxy setting that matters
+## What the proxy needs
 
-Her MCP transport is **streamable HTTP**: the connection stays open and the response arrives in
-chunks. A proxy that buffers the whole response, or that talks HTTP/1.0 upstream and so cannot
-receive a chunked one, breaks this while leaving every other page working perfectly.
+Nothing beyond what the web app needs. MCP requests are ordinary `POST` requests that go to the backend under `/api/`, and each answer is a single JSON response, not a stream, so buffering settings do not matter. Two things to keep:
 
-The symptom is unhelpful. The client connects, reports no error, and lists no tools.
-
-<Warning>
-**The Simple Config on the [Nginx](/reverse-proxies/nginx) page has no `proxy_http_version 1.1;`
-line.** An HTTP/1.0 upstream cannot send a chunked response, so that configuration serves the app
-correctly and quietly breaks MCP. If you used it, this is almost certainly your problem.
-</Warning>
-
-<Tabs>
-  <Tab title="Nginx">
-    Add these inside the `location /` block, or in a dedicated location for the MCP paths:
-
-    ```nginx
-    location / {
-        proxy_pass http://localhost:4007;
-        proxy_http_version 1.1;          # required: HTTP/1.0 cannot chunk
-        proxy_buffering off;             # required: no holding the response
-        proxy_cache off;
-        proxy_read_timeout 3600s;        # streams stay open
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Connection "";
-    }
-    ```
-
-    The Secure config on the Nginx page already carries `proxy_http_version 1.1;`. It still needs
-    `proxy_buffering off;` adding.
-  </Tab>
-
-  <Tab title="Caddy">
-    Nothing to add. Caddy speaks HTTP/1.1 upstream and streams by default, so the three-line
-    Caddyfile on the [Caddy](/installation/domain-and-https) page already works for MCP.
-  </Tab>
-
-  <Tab title="Traefik">
-    Nothing to add for streaming. Traefik does not buffer responses unless you attach a
-    `buffering` middleware, so leave that off the router that serves PostQueen.
-  </Tab>
-</Tabs>
+- The proxy passes the `Authorization` header through, which every proxy on these pages does by default.
+- The request body limit allows uploads: agents can attach media, and PostQueen accepts files up to 1 GB.
 
 ## Check it from outside
 
-From your own machine, not the server:
+From your own computer, not the server:
 
 ```bash
 curl -i -X POST https://postqueen.example.com/api/mcp \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
 
-A healthy install answers with the tool list. What you get instead tells you where the problem is:
-
 | What comes back | What it means |
-| --- | --- |
-| The tool list | Working. Point your client at the same URL |
-| `401 Missing Authorization header` | The header did not survive the proxy |
-| `401 Invalid API Key or OAuth token` | The key is wrong or was revoked |
-| `400 Invalid API Key` | You are on the URL form, or you pasted a `pos_` OAuth token into it. The path form only accepts API keys |
-| A 404 page from the web interface | The `/mcp` path is not being forwarded to the backend |
-| Nothing, and the request hangs | Buffering. See the proxy section above |
+|---|---|
+| A JSON list of tools | MCP works. Use the same address in the agent. |
+| `401` with `Missing Authorization header` | The header did not reach the backend. |
+| `401` with `Invalid API Key or OAuth token` | The key is wrong or was rotated. |
+| `400` with `Invalid API Key` | On the key-in-the-address form: the key is wrong, or it is an OAuth token, which only the header form takes. |
+| The web app's 404 page | The request went to the frontend. `NEXT_PUBLIC_BACKEND_URL` or the proxy's `/api/` route is wrong. |
 
-<Note>
-Responses on these routes are plain text rather than JSON, so some clients show them as a bare
-"server error" with the real message only in a log. Read the raw response before changing config.
-</Note>
+Errors come back as plain text, not JSON, so some agents show only a generic server error. Read the raw response before changing settings. Both addresses also answer a browser's `OPTIONS` preflight with `200` before any key is checked, so an agent that reports it connected has not yet proved the key works: the first tool call does.
 
-## One thing that is not a check
+## The sign-in address
 
-Both endpoint forms answer `OPTIONS` with a `200` and permissive CORS headers **before any key is
-checked**. A browser-based client that reports a successful connection has therefore proved
-nothing. The first real call is the one that tells you.
+Agents that sign in to MCP, instead of taking the key, use `/mcp-oauth-dynamic`. They register themselves, open PostQueen for a workspace Admin or Super Admin to approve, and the access lasts until it is revoked under **Connections > Approved Apps**. PostQueen has not tested this sign-in end to end yet.
 
-## Settings you might add later
+Signing in needs discovery to work: the agent looks for the authorization server's metadata at the root of the backend's host. With the backend under `/api`, that lookup reaches the web app and fails. So:
 
-MCP works without any of these. Each one changes a single thing:
+<Steps>
+  <Step title="Give the backend a host of its own">
+    For example `api.postqueen.example.com`, routed to the backend at its root. [Split deployments](/reverse-proxies/split-deployments#give-the-backend-its-own-host) has the proxy configuration.
+  </Step>
+  <Step title="Advertise that host">
+    ```env
+    NEXT_PUBLIC_OVERRIDE_BACKEND_URL=https://api.postqueen.example.com
+    ```
+
+    Recreate the container. The discovery documents then name that host.
+  </Step>
+  <Step title="Give agents the sign-in address on that host">
+    `https://api.postqueen.example.com/mcp-oauth-dynamic`, with no slash at the end. An agent checks that the address it connected to matches the one the discovery names.
+  </Step>
+</Steps>
+
+## Settings
+
+MCP works with none of these set.
 
 | Variable | What it changes |
-| --- | --- |
-| `DCR_VERIFIED_DOMAINS` | Limits which https addresses a self-registering client may send people back to. Clients on `localhost` or an app scheme such as `cursor://` are not affected |
-| `OPENAI_OAUTH_CLIENT_ID` | Lets one ChatGPT connector read the signed-in user's email, which ChatGPT Enterprise needs to restrict a connector by domain |
-| `MCP_ONLY` | Strips the backend down to MCP and its OAuth routes, for an instance that serves nothing else |
+|---|---|
+| `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | The host that OAuth discovery advertises, as above. Falls back to `NEXT_PUBLIC_BACKEND_URL`. |
+| `DCR_VERIFIED_DOMAINS` | Limits the `https` callback domains a self-registering agent may use. `localhost` and app schemes such as `cursor://` are not checked. Unset, any agent can register. |
+| `OPENAI_OAUTH_CLIENT_ID` | Turns on the `openid` and `email` scopes for a ChatGPT app you published, and for self-registered agents whose callbacks are all on a `DCR_VERIFIED_DOMAINS` domain. |
+| `OPENAI_APP_CHALLANGE` | The domain verification string for publishing an OpenAI app, served at `/.well-known/openai-apps-challenge`. |
+| `MCP_ONLY` | Serves only MCP and its sign-in routes. The web app and the public API stop working on that instance. |
+| `OPENAI_API_KEY` | Needed by the `ask_postqueen` tool, which hands a request to PostQueen's own agent. |
 
-Each is described in full in the [Configuration Reference](/configuration/reference).
+`MCP_URL` is passed to the web app but not used. [Configuration reference](/configuration/reference#mcp-and-oauth-apps) has every variable.
 
-## Next steps
+## Related
 
-<CardGroup cols={2}>
-  <Card title="Connect your client" icon="plug" href="/agents/overview">
-    Now that the URL works, point your client at it
-  </Card>
-  <Card title="Limits and troubleshooting" icon="circle-minus" href="/agents/troubleshooting">
-    What the tools cannot reach, and the rest of the failure modes
-  </Card>
-  <Card title="Domain and HTTPS" icon="lock" href="/installation/domain-and-https">
-    Setting up the reverse proxy in the first place
-  </Card>
-  <Card title="Configuration reference" icon="sliders-horizontal" href="/configuration/reference">
-    `MCP_URL` and the other endpoints she advertises
-  </Card>
-</CardGroup>
+- [Connect PostQueen to AI agents](/mcp/introduction)
+- [Agent troubleshooting](/agents/troubleshooting)
+- [Split deployments](/reverse-proxies/split-deployments)

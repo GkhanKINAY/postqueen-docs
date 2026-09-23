@@ -1,107 +1,74 @@
 ---
-title: Short Links
-description: 'Wire up a link shortener so she can offer to shorten the URLs in a post'
-icon: 'link'
+title: "Short links"
+description: "Connect Dub, Short.io, Kutt or LinkDrip so a self-hosted PostQueen can shorten the links in a post and count their clicks."
+icon: "link"
 ---
 
 import RestartService from '/snippets/restart-service.mdx';
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same as main; audit: selfhost). Row in page-status-2026-09-23.md. */}
+When a post contains a link, PostQueen can replace it with a short link from a link shortener, which counts the clicks. The option exists only when a shortener is configured. Without one, links go out as written and PostQueen never asks.
 
-When a post contains a link, she can offer to shorten it and count the clicks. That offer only
-appears when a shortener is configured, which is why the option is missing on a fresh install
-rather than broken.
-
-Four services are supported. You pick one by setting its API key.
-
-## The rule that catches people
+Four services are supported. You choose one by setting its key.
 
 <Warning>
-**Set two keys and the first one silently wins.** The provider is chosen by a first-match chain in
-this order, and nothing warns you that the others are being ignored:
-
-1. `DUB_TOKEN`
-2. `SHORT_IO_SECRET_KEY`
-3. `KUTT_API_KEY`
-4. `LINK_DRIP_API_KEY`
-
-The choice is made once when she starts, so changing keys needs a restart, not just a save.
+**Set only one.** PostQueen picks the first configured service in this order, reads it once at start, and ignores the rest without a warning: `DUB_TOKEN`, then `SHORT_IO_SECRET_KEY`, then `KUTT_API_KEY`, then `LINK_DRIP_API_KEY`.
 </Warning>
 
-With none of them set, she uses a no-op provider: links go out at full length and she stops
-offering to shorten them at all.
+## Set it up
 
-## Setting one up
+<Steps>
+  <Step title="Set the service's variables">
+    <Tabs>
+      <Tab title="Dub">
+        ```env
+        DUB_TOKEN=your-api-key
+        DUB_API_ENDPOINT=https://api.dub.co
+        DUB_SHORT_LINK_DOMAIN=dub.sh
+        ```
 
-<Tabs>
-  <Tab title="Dub">
-    ```env
-    DUB_TOKEN="your-api-key"
-    DUB_API_ENDPOINT="https://api.dub.co"
-    DUB_SHORT_LINK_DOMAIN="dub.sh"
-    ```
+        Only the token is required; the other two show their defaults. Set `DUB_SHORT_LINK_DOMAIN` to a domain you added in Dub to get links on your own name.
+      </Tab>
+      <Tab title="Short.io">
+        ```env
+        SHORT_IO_SECRET_KEY=your-secret-key
+        ```
 
-    Only the token is required. The endpoint defaults to Dub's own API, and the domain to
-    `dub.sh`; set `DUB_SHORT_LINK_DOMAIN` to a custom domain you have added in Dub if you want
-    links on your own name.
-  </Tab>
+        One variable, with no endpoint or domain to set.
+      </Tab>
+      <Tab title="Kutt">
+        ```env
+        KUTT_API_KEY=your-api-key
+        KUTT_API_ENDPOINT=https://kutt.it/api/v2
+        KUTT_SHORT_LINK_DOMAIN=kutt.it
+        ```
 
-  <Tab title="Short.io">
-    ```env
-    SHORT_IO_SECRET_KEY="your-secret-key"
-    ```
+        Point the endpoint and the domain at your own Kutt server to keep the links on it.
+      </Tab>
+      <Tab title="LinkDrip">
+        ```env
+        LINK_DRIP_API_KEY=your-api-key
+        LINK_DRIP_API_ENDPOINT=https://api.linkdrip.com/v1/
+        LINK_DRIP_SHORT_LINK_DOMAIN=dripl.ink
+        ```
 
-    One variable, and there is no endpoint or domain override for this one.
-  </Tab>
+        Set the domain to one you configured in LinkDrip to get links on your own name.
+      </Tab>
+    </Tabs>
+  </Step>
+  <Step title="Recreate the container">
+    <RestartService />
+  </Step>
+  <Step title="Try it">
+    Write a post with a link and schedule it. PostQueen asks *Do you want to shortlink the URLs? it will let you get statistics over clicks*. Choose **Yes, shortlink it!** and the published post carries the short domain.
+  </Step>
+</Steps>
 
-  <Tab title="Kutt">
-    ```env
-    KUTT_API_KEY="your-api-key"
-    KUTT_API_ENDPOINT="https://kutt.it/api/v2"
-    KUTT_SHORT_LINK_DOMAIN="kutt.it"
-    ```
+A workspace admin chooses how links are handled in **Settings > Global Settings > Shortlink Settings**: **Ask every time**, **Always shortlink** or **Never shortlink**. With `STRIP_LINKS_FROM_X_POSTS` set, X posts lose their links anyway, so their text is not checked for links to shorten.
 
-    Kutt is open source, so the endpoint override is the useful one here: point it at your own
-    instance and the links stay on infrastructure you run.
-  </Tab>
-
-  <Tab title="LinkDrip">
-    ```env
-    LINK_DRIP_API_KEY="your-api-key"
-    LINK_DRIP_API_ENDPOINT="https://api.linkdrip.com/v1/"
-    LINK_DRIP_SHORT_LINK_DOMAIN="dripl.ink"
-    ```
-
-    The domain is sent as a custom domain on each link, so set it to one you have configured in
-    LinkDrip rather than leaving the default if you want your own.
-  </Tab>
-</Tabs>
-
-Apply the change:
-
-<RestartService />
-
-## Checking it worked
-
-Write a post containing a link. She asks whether to shorten it, which she does not do when no
-provider is configured. Say yes, and the published post carries the short domain you set.
-
-If she never asks, the key is not reaching her. Check for a typo in the variable name, and check
-you recreated the container rather than restarting it.
+If PostQueen never asks, the key is not reaching the backend: check the variable name, and that the container was recreated rather than restarted.
 
 ## Related
 
-<CardGroup cols={2}>
-  <Card title="Writing a post" icon="pen" href="/using/create-a-post">
-    Where the shortening prompt appears while you write
-  </Card>
-  <Card title="Analytics" icon="chart-line" href="/using/analytics">
-    Click counts come from the shortener, not from PostQueen
-  </Card>
-  <Card title="Configuration reference" icon="sliders-horizontal" href="/configuration/reference">
-    Every short-link variable in one table
-  </Card>
-  <Card title="Docker Compose" icon="container" href="/installation/docker-compose">
-    Where to put these variables and how to apply them
-  </Card>
-</CardGroup>
+- [Create a post](/using/create-a-post)
+- [Settings](/using/settings)
+- [Configuration reference](/configuration/reference#short-links)
