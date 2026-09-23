@@ -19,10 +19,10 @@ These are the tool names your agent sees when it connects, so you can match them
 
 | Address | Tools |
 |---|---|
-| `https://api.postqueen.ai/mcp/YOUR_API_KEY` | {{mcpToolsKey}} |
-| `https://api.postqueen.ai/mcp` with `Authorization: Bearer YOUR_API_KEY` | {{mcpToolsKey}} |
+| `{{mcpKeyUrl}}` (key address) | {{mcpToolsKey}} |
+| `{{mcpBearerUrl}}` with `Authorization: Bearer YOUR_API_KEY` (Bearer header) | {{mcpToolsKey}} |
 | `https://api.postqueen.ai/sse/YOUR_API_KEY` (older SSE clients) | {{mcpToolsKey}} |
-| `https://api.postqueen.ai/mcp-oauth-dynamic` (sign-in) | {{mcpToolsOauth}}: every tool except `ask_postqueen` |
+| `{{mcpOauthUrl}}` (sign-in address) | {{mcpToolsOauth}}: every tool except `ask_postqueen` |
 
 How to connect: [MCP server](/mcp/introduction).
 
@@ -110,7 +110,7 @@ Creates posts: a draft, a post scheduled for a time, or a post that goes out now
 
 **Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again.
 
-- Settings and length are checked for scheduled posts and posts that go out now. A draft is saved even when a required setting is missing, so add it before the draft is scheduled.
+- Settings and length are checked for scheduled posts and posts that go out now. Over MCP, a draft is saved even when a required setting is missing, so add it before the draft is scheduled. The CLI and the API check a draft's settings too.
 - Attachments must be media paths that end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. Bring a file in with an upload tool first.
 - What extra items in `postsAndComments` become depends on the network: see [comments and threads](/using/comments-and-threads).
 
@@ -122,7 +122,7 @@ Lists your posts between two dates, whatever their state.
 |---|---|---|---|
 | `startDate` | string | Yes | Start of the window, in UTC |
 | `endDate` | string | Yes | End of the window, in UTC |
-| `customer` | string | No | A customer ID, to list only that customer's channels |
+| `customer` | string | No | A customer ID, to list only posts on that customer's channels |
 
 **Returns** `output.posts`, each with `id`, `publishDate` (UTC), `state` (`QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR`), `content`, `settings`, `group`, `integrationId`, `platform` and `integrationName`.
 
@@ -149,7 +149,7 @@ Changes the network settings of a post that has not gone out. The text and the p
 
 ## Analytics
 
-The three analytics tools read your published posts on the networks that report numbers: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile.
+The three analytics tools read your published posts on the networks that report numbers: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. Only some of these can be connected today: see the status column on [CLI analytics](/cli/analytics#which-networks-report-numbers).
 
 - The window (7, 30 or 90 days) picks which posts count, by publish date. The numbers are each post's totals so far, not only what happened inside the window.
 - `null` means the network does not report that number. Facebook gives no comment counts, Pinterest gives impressions only, and Google Business Profile gives no numbers per post.
@@ -236,7 +236,7 @@ Lists what you uploaded through the panel.
 
 ## Images and video
 
-These tools use your plan's monthly AI credits. The credits per plan are on [plans](/cloud/plans).
+Creating an image or a video uses your plan's monthly AI credits. The credits per plan are on [plans](/cloud/plans).
 
 ### `generateImageTool`
 
@@ -298,7 +298,7 @@ Checks a video job.
 
 ### `ask_postqueen`
 
-Sends a request in plain words to PostQueen's own agent, which picks and runs the other tools itself. Before it schedules a new post, it writes out the draft and waits for a yes. It is on the key and Bearer addresses only.
+Sends a request in plain words to PostQueen's own agent, which picks and runs the other tools itself. Before it schedules a new post, it writes out the draft and waits for a yes. It is on the key address and the Bearer header only.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|

@@ -111,7 +111,7 @@ postqueen posts:create \
     postqueen posts:create -c "Draft for review" -s "2026-10-01T09:00:00Z" -t draft -i "cmf1abc2d0001"
     ```
 
-    A draft keeps its date and waits on your calendar until you schedule it. The network's settings are checked for drafts too, so pass them now.
+    A draft keeps its date and waits on your calendar until you schedule it. The CLI checks a draft's settings too, so pass them now.
   </Accordion>
   <Accordion title="Add images or a video" icon="image">
     Upload each file first, then pass the returned `path` with `-m`. Separate several files with commas:
@@ -190,7 +190,11 @@ postqueen posts:create \
   </Accordion>
 </AccordionGroup>
 
-`--shortLink` is on by default, which lets PostQueen swap links in the text for short links. Pass `--no-shortLink` to keep every link exactly as written. Before it saves anything, PostQueen checks each post the way the app does: the settings, the length and the media. A refused post names the channel and the reason; see [troubleshooting](/agents/troubleshooting#cli).
+### Good to know
+
+- Before it saves anything, PostQueen checks each post the way the app does: the settings, the length and the media. A refused post names the channel and the reason; see [troubleshooting](/agents/troubleshooting#a-cli-command-fails).
+- `--shortLink` is on by default, which lets PostQueen swap links in the text for short links. Pass `--no-shortLink` to keep every link exactly as written.
+- The date is required even for a draft: it is the time the post goes out once you schedule it.
 
 ## List posts
 
@@ -215,7 +219,7 @@ Each post has its `id`, `content`, `publishDate`, `state` (`QUEUE`, `DRAFT`, `PU
     postqueen posts:settings <post-id> --settings '{"status":"pending"}'
     ```
 
-    Only the keys you pass change, and the text and time stay as they are. It works on drafts and on scheduled posts whose time has not passed. Pass the ID of the post itself, not of one of its comments.
+    Only the keys you pass change, and the text and time stay as they are. It works on drafts and on scheduled posts whose time has not passed. Pass the ID of the post itself, not of one of its comments. If you copy settings from `posts:list`, leave out `__type`.
   </Tab>
   <Tab title="Draft or scheduled">
     ```bash

@@ -16,7 +16,7 @@ import ApiKeyLocation from '/snippets/api-key-location.mdx';
 
 The postqueen skill is one `SKILL.md` file that teaches an AI agent to use the [PostQueen CLI](/cli/introduction). An agent that has read it lists your channels first, reads what each network needs, uploads media before it attaches it, and passes the settings each post needs. Without it, an agent tends to guess at flags and send posts the API refuses.
 
-The skill is for agents that run shell commands, such as Claude Code, Codex, Cursor, Gemini CLI, Grok Build, OpenClaw and Hermes Agent. Chat assistants such as Claude, ChatGPT and Grok do not run commands on your machine: connect them over [MCP](/mcp/introduction) instead.
+The skill is for agents that run shell commands, such as Claude Code, Cursor, Gemini CLI, Grok Build, OpenClaw and Hermes Agent. Chat assistants such as Claude, ChatGPT and Grok do not run commands on your machine: connect them over [MCP](/mcp/introduction) instead.
 
 ## What it teaches
 
@@ -46,7 +46,7 @@ Read it yourself on [GitHub](https://github.com/GkhanKINAY/postqueen-agent/blob/
 
 ## Before you start
 
-- **The CLI where the agent runs:** `npm install -g postqueen`, with Node.js 20.19 or newer (22.12 or newer on Node 22). The skill tells the agent to install it when it is missing, but installing it first saves a step.
+- **The CLI where the agent runs:** `npm install -g postqueen`, with Node.js 20.19 or newer. On Node.js 22, use 22.12 or newer. The skill tells the agent to install it when it is missing, but installing it first saves a step.
 - **The API key as `POSTQUEEN_API_KEY`,** in the environment the agent's commands run in. The skill carries no key.
 
 <ApiKeyLocation />
@@ -70,7 +70,7 @@ Read it yourself on [GitHub](https://github.com/GkhanKINAY/postqueen-agent/blob/
     | Agent | `-a` name | Project folder | With `-g` |
     |---|---|---|---|
     | Claude Code | `claude-code` | `.claude/skills/` | `~/.claude/skills/` |
-    | Codex | `codex` | `.agents/skills/` | `~/.codex/skills/` |
+    | Codex (better over [MCP](/agents/codex)) | `codex` | `.agents/skills/` | `~/.codex/skills/` |
     | Cursor | `cursor` | `.agents/skills/` | `~/.cursor/skills/` |
     | Gemini CLI | `gemini-cli` | `.agents/skills/` | `~/.gemini/skills/` |
     | VS Code (GitHub Copilot) | `github-copilot` | `.agents/skills/` | `~/.copilot/skills/` |
@@ -122,7 +122,7 @@ The agent runs `postqueen integrations:list` and shows your channels. To check t
 |---|---|
 | The agent does not know the skill | Start a new session. Check the folder in the table above for your agent |
 | `command not found: postqueen` | Install the CLI where the agent runs: `npm install -g postqueen` |
-| `Error: No authentication found.` | `POSTQUEEN_API_KEY` is not set where the agent runs. Set it there, not only in your own terminal |
+| `❌ Error: No authentication found.` | `POSTQUEEN_API_KEY` is not set where the agent runs. Set it there, not only in your own terminal |
 
 More fixes: [troubleshooting agents](/agents/troubleshooting).
 

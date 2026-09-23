@@ -50,7 +50,7 @@ postqueen posts:create \
 
 ## What you can upload
 
-| | |
+| What | Limit |
 |---|---|
 | Images | JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF |
 | Video | MP4, MOV (converted to MP4) |
@@ -63,7 +63,7 @@ PostQueen reads the file's contents to tell its type, so renaming a file does no
 
 An image is ready as soon as the upload returns. A video comes back with `"status": "processing"` while PostQueen checks it and, when needed, converts it into an MP4 the networks accept. That takes from a few seconds to a few minutes. A converted video gets a new `path`, and the original file is removed, so do not post the `path` from the upload answer.
 
-The CLI has no command for this step. Ask the API until the status changes, then take the `path` from its answer:
+The CLI has no command for this step. Ask the API's [media status](/public-api/uploads/media-status) route until the status changes, then take the `path` from its answer:
 
 ```bash
 VIDEO_ID=$(postqueen upload launch.mov | tail -n +2 | jq -r '.id')
@@ -76,7 +76,12 @@ while [ "$STATUS" = "processing" ]; do
   STATUS=$(echo "$MEDIA" | jq -r '.status')
 done
 
-VIDEO=$(echo "$MEDIA" | jq -r '.path')   # use this path when STATUS is ready
+if [ "$STATUS" != "ready" ]; then
+  echo "$MEDIA" | jq -r '.processingError // .' >&2
+  exit 1
+fi
+
+VIDEO=$(echo "$MEDIA" | jq -r '.path')
 ```
 
 The API takes the key as it is in the `Authorization` header, with no `Bearer` in front. When the status is `failed`, `processingError` says why. A MOV that fails is removed from the library.

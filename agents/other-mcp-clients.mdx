@@ -22,7 +22,7 @@ Any client that can reach a remote MCP server over streamable HTTP can use PostQ
 
 <McpAddresses />
 
-Start with the key address. It needs no header and no sign-in, so it works in almost every client. Use the Bearer header when the client has a header field and you want the key out of the address. The sign-in address works only in clients that support MCP sign-in, and PostQueen has not tested it end to end yet.
+Start with the key address. It needs no header and no sign-in, so it works in almost every client. Use the Bearer header when the client has a header field and you want the key out of the address. The sign-in address works only in clients that support MCP sign-in.
 
 ## Config shapes
 
@@ -40,7 +40,7 @@ Most clients take the server in one of these shapes. Check your client's docs fo
 }
 ```
 
-```json servers with a type
+```json servers
 {
   "servers": {
     "postqueen": {
@@ -51,7 +51,7 @@ Most clients take the server in one of these shapes. Check your client's docs fo
 }
 ```
 
-```json Bearer header
+```json mcpServers with a header
 {
   "mcpServers": {
     "postqueen": {
@@ -124,23 +124,6 @@ Ask the client's agent:
 List my PostQueen channels.
 ```
 
-It calls `integrationList` and answers with your connected channels.
-
-<AccordionGroup>
-  <Accordion title="The connection fails with Invalid API Key">
-    The key in the address is wrong or cut short. Copy it again from **Connections > API Keys** and paste it whole, with no spaces or quotes around it. The key address answers `400` with `Invalid API Key` when it does not know the key.
-  </Accordion>
-  <Accordion title="The connection fails with 401">
-    On the Bearer address, `Missing Authorization header` means the client sent no header, and `Invalid API Key or OAuth token` means the key in it is wrong. Check that the header reads `Authorization: Bearer YOUR_API_KEY`.
-  </Accordion>
-  <Accordion title="The client starts a sign-in on the key address">
-    Some clients start a sign-in when a server refuses them. Check the key first. If the client insists on signing in, use the Bearer header, or the sign-in address if the client supports it.
-  </Accordion>
-  <Accordion title="Connected, but no PostQueen tools">
-    Many clients load tools when a session starts. Start a new session or reload the servers, then ask again.
-  </Accordion>
-</AccordionGroup>
-
-More fixes: [troubleshooting agents](/agents/troubleshooting).
+It calls `integrationList` and answers with your connected channels. If the connection fails or no PostQueen tools appear, see [the agent will not connect over MCP](/agents/troubleshooting#the-agent-will-not-connect-over-mcp).
 
 <NextStepsAgent />

@@ -48,12 +48,15 @@ Use MCP when your agent supports it: it finds the tools on its own. Use the CLI 
 | Add a file from a public link | Yes | No | Yes |
 | Generate an image | Yes | No | No |
 | Read how published posts did | Yes | One post at a time | Yes |
+| Totals and top posts across the workspace | Yes | No | Yes |
 | Read channel numbers, such as followers | No | Yes | Yes |
+
+Connect channels and edit a post's text or time in the app.
 
 ## Before you start
 
 - **A PostQueen workspace on a trial or a paid plan.** Agents post through your workspace, so its plan limits apply to them too.
-- **A workspace admin.** Only an Admin or Super Admin can see the API key or approve a sign-in.
+- **A workspace admin.** Only an Admin or Super Admin can reveal the API key or approve a sign-in.
 - **At least one connected channel.** An agent posts only to channels you connected in the app. See [connect a channel](/using/connect-a-channel).
 
 <ApiKeyLocation />
@@ -66,6 +69,8 @@ Use MCP when your agent supports it: it finds the tools on its own. Use the CLI 
 - <Badge color="green">Key tested</Badge> PostQueen tested the key address on 2026-09-19. The sign-in address is not tested yet.
 - <Badge color="surface">Vendor's docs</Badge> The guide follows the vendor's current documentation. PostQueen has not tested the connection yet.
 - <Badge color="gray">Not possible yet</Badge> The agent cannot connect to PostQueen today.
+
+Each guide shows the agent's full status under its title.
 
 ### Assistants and bots
 
@@ -91,7 +96,7 @@ Use MCP when your agent supports it: it finds the tools on its own. Use the CLI 
 | Cursor | Anysphere | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/cursor) |
 | Gemini CLI | Google | `gemini mcp add` command | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/gemini-cli) |
 | Grok Build | xAI | `grok mcp add` command | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/grok-build) |
-| Paperclip | Paperclip AI | Remote MCP connection in Apps | Key or sign-in | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/paperclip) |
+| Paperclip | Paperclip AI | Remote MCP connection in Apps | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/paperclip) |
 
 ### Editors and Muse Code
 
@@ -118,7 +123,7 @@ Using an agent that is not listed? If it can reach a remote MCP server, give it 
     You see each post before it goes out, and you can edit or delete it until its time.
   </Card>
   <Card title="Access you can take back" icon="key-round">
-    An admin rotates the API key under **Connections > API Keys**, or revokes a sign-in under **Connections > Approved Apps**. That agent stops working at once.
+    An admin rotates the API key under **Connections > API Keys**, which stops every agent that used it, or revokes one sign-in under **Connections > Approved Apps**.
   </Card>
   <Card title="No social passwords" icon="shield-check">
     The agent never sees the passwords of your social accounts. It works through PostQueen, which posts with each network's own API.

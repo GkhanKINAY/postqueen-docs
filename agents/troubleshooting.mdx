@@ -19,10 +19,10 @@ Find the symptom or the message you see. Most failures come from the key, from a
 
 <AccordionGroup>
   <Accordion title="The connection fails with Invalid API Key" icon="key-round">
-    The key address answers `400` with `Invalid API Key` when it does not know the key. Copy the key again from **Connections > API Keys** and paste the whole address, `https://api.postqueen.ai/mcp/YOUR_API_KEY`, with no space or quote around the key. Only a workspace admin can reveal the key; other members see it masked.
+    The key address answers `400` with `Invalid API Key` when it does not know the key. Copy the key again from **Connections > API Keys** and paste the whole address, `{{mcpKeyUrl}}`, with no space or quote around the key. Only a workspace Admin or Super Admin can reveal the key; other members see it masked.
   </Accordion>
   <Accordion title="The connection fails with 401" icon="shield-x">
-    On `https://api.postqueen.ai/mcp`, `Missing Authorization header` means the agent sent no header, and `Invalid API Key or OAuth token` means the key in it is wrong. The header must read `Authorization: Bearer YOUR_API_KEY`.
+    With the Bearer header on `{{mcpBearerUrl}}`, `Missing Authorization header` means the agent sent no header, and `Invalid API Key or OAuth token` means the key in it is wrong. The header must read `Authorization: Bearer YOUR_API_KEY`.
   </Accordion>
   <Accordion title="It worked before, and stopped" icon="rotate-ccw">
     An admin may have rotated the key under **Connections > API Keys**, which stops the old key everywhere at once, or revoked a sign-in under **Connections > Approved Apps**. Put the new key in every agent that used the old one, or sign in again.
@@ -35,8 +35,8 @@ Find the symptom or the message you see. Most failures come from the key, from a
   </Accordion>
   <Accordion title="The sign-in fails" icon="lock-keyhole">
     - Only a workspace Admin or Super Admin can approve the sign-in. Ask one to connect the agent.
-    - Paste `https://api.postqueen.ai/mcp-oauth-dynamic` with no slash at the end, and leave any client ID and secret fields empty.
-    - Gemini CLI, Grok, Grok Bot, Perplexity Computer and NanoClaw take the key address only.
+    - Paste `{{mcpOauthUrl}}` with no slash at the end, and leave any client ID and secret fields empty.
+    - Gemini CLI, Grok, Grok Bot, Perplexity Computer and NanoClaw cannot sign in. Give them the API key, in the key address or the Bearer header.
 
     PostQueen has not completed this sign-in end to end yet. If it fails, use the key address.
   </Accordion>
@@ -75,17 +75,23 @@ Find the symptom or the message you see. Most failures come from the key, from a
   </Accordion>
 </AccordionGroup>
 
-## CLI
+## A CLI command fails
 
 A failed command prints one line to stderr and exits with code `1`. The line says which command gave up, then what the API answered:
 
-```text
-❌ Failed to create post: Request failed: API Error (400): {"statusCode":400,"provider":"x","name":"PostQueen Bakery","message":"post is too long, please fix it"}
+```text wrap
+❌ Failed to create post: Request failed: API Error (400): {"statusCode":400,"provider":"bluesky","name":"PostQueen Bakery","message":"post is too long, please fix it"}
 ```
 
-`API Error (401)` is the key, `404` a wrong ID, `400` a post or setting the API refused, and `429` the hourly limit. `Request failed` with no `API Error` means the API was not reached: check your connection.
+| In the message | What it points to |
+|---|---|
+| `API Error (401)` | The key, or the workspace's plan |
+| `API Error (404)` | A wrong ID |
+| `API Error (400)` | A post or a setting the API refused |
+| `API Error (429)` | The hourly limit |
+| `Request failed` with no `API Error` | The API was not reached: check your connection |
 
-### Sign-in
+### The key
 
 | Message | What to do |
 |---|---|
@@ -150,18 +156,9 @@ Upload errors are on [upload media](/cli/media-upload#if-an-upload-fails). A pos
   </Accordion>
 </AccordionGroup>
 
-## What each route cannot do yet
+## Something the route cannot do
 
-| You want to | MCP | CLI | Where instead |
-|---|---|---|---|
-| Delete a post | No | `posts:delete` | The app, the API |
-| Change a post's text or time | No | No | The app |
-| Move a post between draft and scheduled | No | `posts:status` | The app, the API |
-| Read channel numbers, such as followers | No | `analytics:platform` | The app, the API |
-| Totals and top posts across the workspace | `analyticsSummaryTool`, `analyticsPostsTool` | No | The app, the API |
-| Upload from a link | `uploadFromUrlTool` | No | The API |
-| Generate an image | `generateImageTool` | No | The app |
-| Connect a channel | No | No | The app |
+Some things are not a failure: the route you use does not offer them yet. What MCP, the CLI and the API can each do is on [AI agents](/agents/overview#three-ways-to-connect).
 
 ## Still stuck?
 

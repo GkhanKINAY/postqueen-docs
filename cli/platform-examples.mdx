@@ -47,7 +47,7 @@ postqueen posts:create \
 
 <ChannelStatus status="available" />
 
-No settings. Extra `-c` items become replies.
+No settings. Extra `-c` items become a thread of replies.
 
 ```bash
 postqueen posts:create \
@@ -100,7 +100,7 @@ Use the tag numbers `tags` returns for your account; the `8` here is an example.
 
 <ChannelStatus status="available">Needs Hashnode's Pro plan on the publication you connect.</ChannelStatus>
 
-Needs a `title` of at least 6 characters, a `publication` ID from `publications`, and at least one tag. Each tag is a `value` and a `label`: the `objectID` and `name` of a tag from `tagsList`.
+Needs a `title` of at least 6 characters, a `publication` ID from `publications`, and at least one tag. Each tag is a `value` and a `label`: the `objectID` and `name` of a tag from `tagsList`. The example uses the JavaScript tag.
 
 ```bash
 # Answers [{ "id": "...", "name": "My blog" }]
@@ -109,7 +109,7 @@ postqueen integrations:trigger hashnode-id publications
 postqueen posts:create \
   -c "Version 2.4 adds offline mode and fixes the login loop." \
   -s "2026-10-01T15:00:00Z" \
-  --settings '{"title":"Version 2.4 is out","publication":"PUBLICATION_ID","tags":[{"value":"TAG_OBJECT_ID","label":"JavaScript"}]}' \
+  --settings '{"title":"Version 2.4 is out","publication":"PUBLICATION_ID","tags":[{"value":"56744721958ef13879b94cad","label":"JavaScript"}]}' \
   -i "hashnode-id"
 ```
 
@@ -163,7 +163,7 @@ postqueen posts:create \
 
 ## Networks in review
 
-These connect today with a limit until the network approves PostQueen's app. Each status line says the limit.
+These connect today with a limit until the network approves PostQueen's app. The note next to each badge says the limit.
 
 ### X
 
@@ -232,7 +232,20 @@ postqueen posts:create \
 
 <ChannelStatus status="in-review">Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet.</ChannelStatus>
 
-Needs eight settings, with no defaults: `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle` and `content_posting_method`. Use `SELF_ONLY` for `privacy_level` until the audit passes. `DIRECT_POST` publishes; `UPLOAD` only sends the video to the TikTok app's inbox, where you finish it within 24 hours. `title` (up to 90 characters) and `video_made_with_ai` are optional.
+Needs these eight settings, with no defaults:
+
+| Setting | Values | Note |
+|---|---|---|
+| `content_posting_method` | `DIRECT_POST` or `UPLOAD` | `DIRECT_POST` publishes. `UPLOAD` only sends the video to the TikTok app's inbox, where you finish it within 24 hours, and TikTok then ignores the other settings |
+| `privacy_level` | `PUBLIC_TO_EVERYONE`, `MUTUAL_FOLLOW_FRIENDS`, `FOLLOWER_OF_CREATOR` or `SELF_ONLY` | Use `SELF_ONLY` until TikTok's audit passes |
+| `duet` | `true` or `false` | Videos only |
+| `stitch` | `true` or `false` | Videos only |
+| `comment` | `true` or `false` | Whether people can comment |
+| `autoAddMusic` | `yes` or `no` | Photo posts only |
+| `brand_content_toggle` | `true` or `false` | The post promotes another brand |
+| `brand_organic_toggle` | `true` or `false` | The post promotes your own brand |
+
+`title` (up to 90 characters) and `video_made_with_ai` are optional.
 
 Upload the video and [wait until it is ready](/cli/media-upload#wait-for-a-video), then use its `path` as `$VIDEO`:
 
@@ -298,6 +311,8 @@ postqueen posts:create --json campaign.json
 ```
 
 ## A week of posts
+
+A shell loop schedules one post a day on two channels:
 
 ```bash
 DATES=("2026-10-05T09:00:00Z" "2026-10-06T09:00:00Z" "2026-10-07T09:00:00Z")

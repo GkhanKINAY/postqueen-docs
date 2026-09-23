@@ -38,7 +38,7 @@ postqueen analytics:platform <channel-id>          # the last 7 days
 postqueen analytics:platform <channel-id> -d 30    # the last 30 days
 ```
 
-`-d` is the number of days to look back, `7` by default. Use `7`, `30` or `90`, the windows the table shows for that network: another number goes to the network as it is. The answer is a list of metrics, each with a value per day and the change over the window:
+`-d` is the number of days to look back, `7` by default. Use a window the table lists for that network. PostQueen passes any other number to the network unchanged, and the network may refuse it. The answer is a list of metrics, each with a value per day and the change over the window:
 
 ```text
 📊 Analytics for integration: cmf1abc2d0003
@@ -127,7 +127,7 @@ postqueen analytics:post <post-id> | tail -n +2 | jq '.[] | {label, latest: .dat
 
 <CardGroup cols={2}>
   <Card title="Analytics in the app" icon="chart-column" href="/using/analytics">
-    The same numbers on the Analytics page.
+    The same numbers on the **Analytics** page.
   </Card>
   <Card title="Command reference" icon="square-terminal" href="/cli/command-reference">
     Every command and flag on one page.

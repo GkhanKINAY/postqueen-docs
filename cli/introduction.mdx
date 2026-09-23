@@ -1,6 +1,6 @@
 ---
 title: "PostQueen CLI"
-description: "Install the postqueen command, sign in with your API key and schedule a first post from a terminal, a script or an AI agent."
+description: "Install the postqueen command, set your API key and schedule a first post from a terminal, a script or an AI agent."
 icon: "terminal"
 keywords:
   - postqueen
@@ -20,13 +20,13 @@ These pages describe `postqueen` 2.0.23. Run `postqueen --version` to see yours.
 
 ## Before you start
 
-- **Node.js 20.19 or newer**, or 22.12 or newer on Node 22.
+- **Node.js 20.19 or newer.** On Node.js 22, use 22.12 or newer.
 - **A PostQueen workspace on a trial or a paid plan**, with at least one connected channel.
-- **The API key.** Only a workspace admin can reveal it.
+- **The API key.** Only a workspace Admin or Super Admin can reveal it.
 
 <ApiKeyLocation />
 
-## Install and sign in
+## Install and set the key
 
 <Steps>
   <Step title="Install the CLI">
@@ -64,7 +64,7 @@ These pages describe `postqueen` 2.0.23. Run `postqueen --version` to see yours.
   </Step>
 </Steps>
 
-The CLI signs in with the API key only. `postqueen auth:login` explains how to set the key: PostQueen runs no login server for the CLI.
+The CLI uses the API key only. There is no browser login: `postqueen auth:login` only prints how to set the key.
 
 ## Schedule a first post
 
@@ -115,7 +115,7 @@ The CLI signs in with the API key only. `postqueen auth:login` explains how to s
   </Step>
 </Steps>
 
-Some networks need settings of their own before they accept a post. X, for example, needs `who_can_reply_post`. `postqueen integrations:settings <id>` shows what a channel needs, and [examples by network](/cli/platform-examples) has a working command for each.
+Some networks need settings of their own before they accept a post. WordPress, for example, needs a `title` and a post `type`. `postqueen integrations:settings <id>` shows what a channel needs, and [examples by network](/cli/platform-examples) has a working command for each.
 
 ## Read the output
 
@@ -141,8 +141,10 @@ Set `POSTQUEEN_API_KEY` where the agent's commands run, which is not always your
 
 | Pick | When |
 |---|---|
-| [MCP](/mcp/introduction) | The agent supports MCP. Nothing to install, the agent sees every tool with its inputs, and it can generate images and open an upload panel in Claude, Claude Cowork and ChatGPT. Codex should use MCP: its sandbox asks before every command that uses the network |
-| CLI | The agent runs commands, or you are writing a script, a scheduled job or a CI step. It can also delete posts, move them between draft and scheduled, upload files from disk and read channel analytics, which MCP cannot do yet |
+| [MCP](/mcp/introduction) | The agent supports MCP. Nothing to install. Codex should use MCP: its sandbox asks before every command that uses the network |
+| CLI | The agent runs commands, or you are writing a script, a scheduled job or a CI step. The CLI can also delete posts, move them between draft and scheduled, and read channel numbers, which MCP cannot do yet, and it uploads files from disk in any agent |
+
+The full comparison is on [AI agents](/agents/overview#three-ways-to-connect).
 
 ## Next steps
 
@@ -154,7 +156,7 @@ Set `POSTQUEEN_API_KEY` where the agent's commands run, which is not always your
     Images and videos, and waiting for a video to be ready.
   </Card>
   <Card title="Command reference" icon="square-terminal" href="/cli/command-reference">
-    All 17 commands, every flag and the API route each one calls.
+    Every command and flag, and the API route each one calls.
   </Card>
   <Card title="Troubleshooting" icon="life-buoy" href="/agents/troubleshooting">
     What each error means and how to fix it.

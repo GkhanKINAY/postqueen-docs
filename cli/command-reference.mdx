@@ -18,15 +18,15 @@ postqueen <command> [options]
 postqueen posts:create --help
 ```
 
-## Environment
+## The key
 
-| Variable | What it does |
-|---|---|
-| `POSTQUEEN_API_KEY` | Your workspace API key. Required. A workspace admin copies it from **Connections > API Keys** |
-| `POSTQUEEN_API_URL` | The API the CLI calls. Leave it unset: the default is `https://api.postqueen.ai` |
-| `POSTQUEEN_AUTH_SERVER` | Not set by default. Only for logging in through a device-flow login server you run; PostQueen runs none |
+The CLI reads your workspace API key from `POSTQUEEN_API_KEY`. A workspace Admin or Super Admin copies it from **Connections > API Keys**.
 
-A login through such a server is saved in `~/.postqueen/credentials.json`, and that file takes priority over `POSTQUEEN_API_KEY`. `postqueen auth:logout` removes it.
+```bash
+export POSTQUEEN_API_KEY=your_api_key
+```
+
+The CLI also reads `POSTQUEEN_API_URL` and `POSTQUEEN_AUTH_SERVER`. Leave both unset: the CLI then calls `https://api.postqueen.ai`.
 
 ## Posts
 
@@ -36,7 +36,7 @@ A login through such a server is saved in `~/.postqueen/credentials.json`, and t
 | `posts:list` | `--startDate`, `--endDate` (ISO 8601), `--customer <id>` | Lists posts between two dates. Default: 30 days back to 30 days ahead |
 | `posts:delete <id>` | | Deletes the post and its comments or thread items on that channel, and stops it from going out. Other channels' posts stay |
 | `posts:status <id>` | `-s, --status draft\|schedule` (required) | Moves a post between draft and scheduled, keeping its date. Refused for a published or failed post |
-| `posts:settings <id>` | `--settings <json>` (required) | Changes the network settings of a draft or of a scheduled post whose time has not passed. Only the keys you pass change. Leave out `__type` |
+| `posts:settings <id>` | `--settings <json>` (required) | Changes the network settings of a draft or of a scheduled post whose time has not passed. Only the keys you pass change. If you copy settings from `posts:list`, leave out `__type` |
 | `posts:missing <id>` | | For a published post whose network ID is missing, lists the channel's recent posts. TikTok only; other networks answer `[]` |
 | `posts:connect <id>` | `--release-id <id>` (required) | Connects the post to its published copy, so its analytics work |
 
@@ -85,13 +85,13 @@ The `--json` file format is in [posts and channels](/cli/managing-posts#create-a
 | `analytics:platform <id>` | `-d, --date <days>` (default `7`) | A channel's numbers per day, with the change over the window |
 | `analytics:post <id>` | `-d, --date <days>` (default `7`) | One published post's numbers, or `{"missing": true}` |
 
-## Sign-in
+## Key and login
 
 | Command | Flags | What it does |
 |---|---|---|
 | `auth:status` | | Shows which credentials the CLI uses and checks them against the API |
-| `auth:login` | `--auth-server <url>` | Explains how to set the API key. With `--auth-server` or `POSTQUEEN_AUTH_SERVER`, logs in through a device-flow login server you run |
-| `auth:logout` | | Removes the credentials `auth:login` saved |
+| `auth:login` | `--auth-server <url>` | Prints how to set the API key. There is no browser login for PostQueen, so leave `--auth-server` out |
+| `auth:logout` | | Removes credentials a login saved in `~/.postqueen/credentials.json`, which would otherwise take priority over the key |
 
 <Warning>
 Two letters mean different things in different commands. `-s` is `--date` on `posts:create` and `--status` on `posts:status`. `-d` is minutes (`--delay`) on `posts:create`, days (`--date`) on the analytics commands, and JSON input (`--data`) on `integrations:trigger`.

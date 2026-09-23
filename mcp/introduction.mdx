@@ -24,7 +24,7 @@ PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Proto
 
 <Tabs>
   <Tab title="Key address">
-    The API key is part of the address, so there is nothing else to fill in. Most agents take this one, and it is the address PostQueen has tested.
+    The API key is part of the address, so there is nothing else to fill in. Most agents take this one. PostQueen tested it with Claude and ChatGPT.
 
     ```text
     https://api.postqueen.ai/mcp/YOUR_API_KEY
@@ -38,16 +38,10 @@ PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Proto
     Authorization: Bearer YOUR_API_KEY
     ```
 
-    The header also takes an access token from a [PostQueen OAuth app](/public-api/oauth), which starts with `pos_`.
+    The header also takes an access token (it starts with `pos_`) from a [PostQueen OAuth app](/public-api/oauth).
   </Tab>
   <Tab title="Sign-in address">
-    For agents that can sign in to an MCP server: Claude, Claude Cowork and ChatGPT lead with it. No key goes into the agent.
-
-    ```text
-    https://api.postqueen.ai/mcp-oauth-dynamic
-    ```
-
-    It has {{mcpToolsOauth}} tools: every tool except `ask_postqueen`. PostQueen has not completed this sign-in end to end yet.
+    For agents that can sign in to an MCP server, such as Claude, Claude Cowork and ChatGPT. No key goes into the agent, and the agent gets every tool except `ask_postqueen`. How it works: [sign in instead of a key](#sign-in-instead-of-a-key).
   </Tab>
 </Tabs>
 
@@ -63,7 +57,7 @@ Anyone with the key can post to every channel in the workspace, so treat it like
 
 <Steps>
   <Step title="Add the sign-in address">
-    Paste `https://api.postqueen.ai/mcp-oauth-dynamic` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen.
+    Paste `{{mcpOauthUrl}}` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen.
   </Step>
   <Step title="Sign in and approve">
     The agent opens PostQueen in your browser. Sign in and approve the access. Only a workspace Admin or Super Admin can approve it.
@@ -74,7 +68,7 @@ Anyone with the key can post to every channel in the workspace, so treat it like
 </Steps>
 
 <Warning>
-Gemini CLI, Grok, Grok Bot, Perplexity Computer and NanoClaw take the key address only. Gemini CLI, for example, refuses PostQueen's sign-in.
+Gemini CLI, Grok, Grok Bot, Perplexity Computer and NanoClaw cannot sign in. Give them the API key, in the key address or the Bearer header.
 </Warning>
 
 ## What the agent can do
@@ -87,7 +81,7 @@ The tools come in six groups. The agent picks the ones it needs from what you as
 | Posts | 4 | Create a draft, a scheduled post or a post that goes out now; list posts; read one in full; change the settings of one that has not gone out |
 | Analytics | 3 | Totals for your published posts over 7, 30 or 90 days, your best posts, and the numbers for one post |
 | Uploads | 4 | Bring an image or video in from a link, or open an upload panel in Claude, Claude Cowork and ChatGPT |
-| Images and video | 5 | Create an image for a post, or start a video job and follow it. Each uses your plan's AI credits |
+| Images and video | 5 | Create an image for a post, or start a video job and follow it. Creating an image or a video uses your plan's monthly AI credits |
 | Agent | 1 | `ask_postqueen`: hand over a request in plain words and let PostQueen's own agent run the other tools |
 
 Every tool, with what it takes and what it returns: [MCP tools](/mcp/tools).

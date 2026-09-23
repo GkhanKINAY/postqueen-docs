@@ -13,7 +13,7 @@ keywords:
 
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-You ask in plain words and the agent makes the calls. This page shows prompts that work and the calls behind them, so you can tell what went wrong when a result looks off. The examples use Bluesky, WordPress and DEV, which anyone can connect today.
+You ask in plain words and the agent makes the calls. This page shows prompts that work and the calls behind them, so you can tell what went wrong when a result looks off. The examples use Bluesky, WordPress and DEV, which anyone can connect today. The analytics example uses Instagram, which is in review.
 
 Most requests follow the same order: find the channel with `integrationList`, read its rules with `integrationSchema`, look up any value a setting needs with `triggerTool`, bring in media, then create the post with `integrationSchedulePostTool`. Every tool is on [MCP tools](/mcp/tools).
 
@@ -23,7 +23,7 @@ Name the channel, the day and the time, and say whether you want a draft. "Draft
 
 ## Schedule a post
 
-```text Prompt
+```text Prompt wrap
 Schedule a Bluesky post for Thursday October 1 at 9:00 UTC: "Our spring menu is live. Come by this weekend."
 ```
 
@@ -63,7 +63,7 @@ It returns the new post's `postId`.
 
 ## Post a thread
 
-```text Prompt
+```text Prompt wrap
 Post this as a Bluesky thread on Friday October 2 at 10:00 UTC, with the second part five minutes after the first.
 ```
 
@@ -94,7 +94,7 @@ On some networks the extra items become comments instead, and on others only the
 
 ## Draft a WordPress article
 
-```text Prompt
+```text Prompt wrap
 Write a short WordPress article about our spring menu and save it as a draft for Friday at 8:00 UTC.
 ```
 
@@ -137,7 +137,7 @@ Then it saves the draft with the `id` it picked:
 
 ## Publish a DEV article with tags
 
-```text Prompt
+```text Prompt wrap
 Publish my release notes on DEV now, titled "Version 2.4 is out", tagged webdev and javascript.
 ```
 
@@ -180,21 +180,21 @@ A post takes media from your PostQueen media library, never a link to another si
 
 <Tabs>
   <Tab title="From a link">
-    ```text Prompt
+    ```text Prompt wrap
     Use the photo at https://example.com/spring-menu.jpg for Thursday's Bluesky post.
     ```
 
     The agent calls `uploadFromUrlTool` with the link. It returns the file's `id`, `path` and `status`, and the `path` goes into `attachments`.
   </Tab>
   <Tab title="From your device">
-    ```text Prompt
+    ```text Prompt wrap
     I want to add a photo from my laptop to this post.
     ```
 
     In Claude, Claude Cowork and ChatGPT the agent calls `uploadWidgetTool`, and an **Upload Media** panel opens in the chat. Add the file there. The agent then calls `uploadWidgetStatusTool` and uses the `path` once the file is `ready`. Other apps show no panel: give the agent a public link instead.
   </Tab>
   <Tab title="Generate one">
-    ```text Prompt
+    ```text Prompt wrap
     Make a square image of a bright spring salad on a wooden table for this post.
     ```
 
@@ -206,7 +206,7 @@ A video comes back as `processing` while PostQueen prepares it, and its `path` c
 
 ## Check and change what is scheduled
 
-```text Prompt
+```text Prompt wrap
 What do I have scheduled next week? Put the WordPress draft up for review instead.
 ```
 
@@ -217,7 +217,7 @@ What do I have scheduled next week? Put the WordPress draft up for review instea
 { "startDate": "2026-09-28T00:00:00Z", "endDate": "2026-10-05T00:00:00Z" }
 ```
 
-`postReadTool` reads the draft in full, then `postSettingsTool` changes one setting. WordPress takes `publish`, `draft`, `pending` or `private` as its `status`:
+`postReadTool` reads the draft in full, then `postSettingsTool` changes one setting. WordPress's `status` is the state the article gets on your WordPress site when PostQueen publishes it: `publish`, `draft`, `pending` or `private`. In PostQueen the post stays a draft until you schedule it.
 
 ```json postSettingsTool
 { "id": "the-post-id", "settings": [ { "key": "status", "value": "pending" } ] }
@@ -232,9 +232,13 @@ An agent cannot delete a post, change its text or time, or move it between draft
 
 ## Ask how posts did
 
-```text Prompt
+```text Prompt wrap
 Which of my Instagram posts did best this month, and how many impressions did my posts get in the last 90 days?
 ```
+
+<Note>
+Bluesky, WordPress and DEV report no analytics, so this example uses Instagram. Instagram is [in review](/channels/instagram): until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect it.
+</Note>
 
 <Accordion title="The tool calls" icon="code">
 ```json analyticsPostsTool
@@ -245,15 +249,15 @@ Which of my Instagram posts did best this month, and how many impressions did my
 { "date": 90 }
 ```
 
-The window picks posts by publish date, and the numbers are each post's totals so far. `null` means the network does not report that number. Bluesky, WordPress and DEV report no analytics; the networks that do are listed on [MCP tools](/mcp/tools#analytics). Instagram is [in review](/channels/instagram), so only accounts with a role on PostQueen's Meta app can connect it for now.
+The window picks posts by publish date, and the numbers are each post's totals so far. `null` means the network does not report that number. The networks that report numbers are listed on [MCP tools](/mcp/tools#analytics).
 </Accordion>
 
 ## Hand over the whole request
 
-```text Prompt
+```text Prompt wrap
 Ask PostQueen to plan three Bluesky posts about our spring menu, one a day from Monday at 9:00 UTC.
 ```
 
-On the key and Bearer addresses the agent can pass the request to `ask_postqueen`, PostQueen's own agent, which runs the other tools itself. It writes out the drafts and waits for your yes before it schedules them. The sign-in address has no `ask_postqueen`: there the agent makes the calls itself.
+On the key address and the Bearer header, the agent can pass the request to `ask_postqueen`, PostQueen's own agent, which runs the other tools itself. It writes out the drafts and waits for your yes before it schedules them. The sign-in address has no `ask_postqueen`: there the agent makes the calls itself.
 
 <NextStepsAgent />
