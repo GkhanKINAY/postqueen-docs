@@ -1,7 +1,7 @@
 ---
 title: FAQ
 description: 'Short answers on how PostQueen runs, what she connects to, and where to get help'
-icon: 'circle-question'
+icon: 'circle-question-mark'
 keywords:
   - postqueen
   - faq
@@ -25,7 +25,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
     New here? The [quickstart](/quickstart) takes you from an empty account to your first scheduled post in about five minutes.
   </Accordion>
 
-  <Accordion title="Should I use the cloud or self-host her?" icon="scale-balanced">
+  <Accordion title="Should I use the cloud or self-host her?" icon="scale">
     Both run the same code.
 
     | | |
@@ -34,7 +34,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
     | **[Self-host](/installation/overview)** | Free forever, your database and your tokens |
   </Accordion>
 
-  <Accordion title="Is there a mobile app?" icon="mobile">
+  <Accordion title="Is there a mobile app?" icon="smartphone">
     On the way. Meanwhile [app.postqueen.ai](https://app.postqueen.ai) runs the whole calendar from a phone browser, and she answers on WhatsApp or Telegram through [OpenClaw](/agents/openclaw) or [Hermes](/agents/hermes).
   </Accordion>
 </AccordionGroup>
@@ -42,7 +42,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
 ## Channels and posting
 
 <AccordionGroup>
-  <Accordion title="Which networks can she post to?" icon="share-nodes">
+  <Accordion title="Which networks can she post to?" icon="share-2">
     30+ networks, from the big ones like X, LinkedIn and Instagram to community platforms such as Discord, Mastodon and Reddit.
 
     <Frame caption="Some of the networks she posts to. One setup page each on Providers">
@@ -94,7 +94,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
 ## Agents and the API
 
 <AccordionGroup>
-  <Accordion title="Can my AI assistant use her?" icon="robot">
+  <Accordion title="Can my AI assistant use her?" icon="bot">
     Any assistant that can run a command or call a tool.
 
     - **[MCP](/mcp/introduction)** gives any client 21 tools from one URL with your API key (20 with the sign-in address, not tested yet)
@@ -104,7 +104,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
     Compared side by side: [which interface](/introduction).
   </Accordion>
 
-  <Accordion title="Are there API limits?" icon="gauge-high">
+  <Accordion title="Are there API limits?" icon="gauge">
     An hourly limit per workspace on create-post (`POST /posts`). Uploads have an hourly allowance of their own. Nothing else is capped by them. Schedule several posts in one request when you need throughput.
 
     Self-hosting? Raise or lower them with `API_LIMIT` and `UPLOAD_LIMIT`.
@@ -114,7 +114,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
 ## Open source and licensing
 
 <AccordionGroup>
-  <Accordion title="Is PostQueen open source?" icon="code-branch">
+  <Accordion title="Is PostQueen open source?" icon="git-branch">
     Yes. She is AGPL-3.0, forked from [Postiz](https://github.com/gitroomhq/postiz-app) with thanks to its contributors.
 
     Her source lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app). Read it, run it on your own box, and open an issue when something looks wrong.
@@ -137,7 +137,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
   <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/common-errors">
     Sorted by symptom
   </Card>
-  <Card title="Providers" icon="share-nodes" href="/channels/overview">
+  <Card title="Providers" icon="share-2" href="/channels/overview">
     Setup for every network
   </Card>
 </CardGroup>

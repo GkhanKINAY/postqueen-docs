@@ -16,7 +16,7 @@
     "codeblocks": "system"
   },
   "icons": {
-    "library": "fontawesome"
+    "library": "lucide"
   },
   "navigation": {
     "tabs": [

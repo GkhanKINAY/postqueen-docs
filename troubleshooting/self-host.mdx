@@ -9,7 +9,7 @@ icon: 'server'
 The things that catch people out on their own install. Find your symptom and open it.
 
 <AccordionGroup>
-  <Accordion title="pnpm runs out of heap during install" icon="memory">
+  <Accordion title="pnpm runs out of heap during install" icon="memory-stick">
     The monorepo is large enough to overflow the default Node heap on a small VM.
 
     ```bash
@@ -42,7 +42,7 @@ The things that catch people out on their own install. Find your symptom and ope
     Temporal listens on `7233`, and its UI on `8080`, either way.
   </Accordion>
 
-  <Accordion title="Email is not sending" icon="envelope">
+  <Accordion title="Email is not sending" icon="mail">
     She sends no email at all unless `EMAIL_PROVIDER` is exactly `resend` or `nodemailer`. Unset
     means the no-op provider.
 
@@ -66,7 +66,7 @@ The things that catch people out on their own install. Find your symptom and ope
     [Cloudflare R2](/configuration/r2). Detail: [Uploads and storage](/configuration/uploads).
   </Accordion>
 
-  <Accordion title="Can I deploy on Vercel?" icon="triangle-exclamation">
+  <Accordion title="Can I deploy on Vercel?" icon="triangle-alert">
     **Frontend, yes.** It is a standard Next.js app.
 
     **Backend, no.** It is a NestJS server that also embeds a Temporal worker, so it needs a
@@ -74,7 +74,7 @@ The things that catch people out on their own install. Find your symptom and ope
     will not work.
   </Accordion>
 
-  <Accordion title="Hiding a provider from the interface" icon="eye-slash">
+  <Accordion title="Hiding a provider from the interface" icon="eye-off">
     There is no environment variable for this today. The only way is to set the per-organization
     `disabled` field on the Integration row in the database after connecting the channel.
   </Accordion>
