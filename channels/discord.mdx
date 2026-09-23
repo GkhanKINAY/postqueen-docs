@@ -1,65 +1,57 @@
 ---
-title: Discord
-description: 'How to add Discord to your system'
-icon: /images/channels/discord.svg
+title: "Discord"
+description: "What PostQueen will post to Discord text and announcement channels, and the limits it checks before a post is scheduled."
+icon: "/images/channels/discord.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B5): write it from _templates/channel.mdx. Sources: this file, moved from providers/discord (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/discord.svg" alt="Discord" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post messages with attachments and mentions to the text and announcement channels of your Discord servers, sent by PostQueen's bot.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to Discord
-
-A release note in announcements, a screenshot in general, a thread underneath for everything that follows. She writes in Discord markdown and posts as your bot, so the message looks like it belongs there.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    1,980 characters
+  <Card title="Text" icon="type">
+    Up to 1,980 characters, sent as Discord markdown.
   </Card>
-  <Card title="Media" icon="images">
-    Optional. Every attachment on the post rides with the message
+  <Card title="Media" icon="image">
+    Images and videos, attached to the message.
   </Card>
   <Card title="Post types" icon="layers">
-    Channel message, thread reply
+    A message in a text or announcement channel, with follow-ups in a thread.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None
+    No analytics for Discord.
   </Card>
 </CardGroup>
 
-Nine networks report numbers back to the Analytics page. Discord is not one of them, so a Discord channel shows no chart. What it does carry is the markdown editor: headings, quotes and code fences survive the trip exactly as you wrote them. Discord rate limits are generous enough that PostQueen runs five posting jobs side by side.
+**Not supported:** forum channels, embeds, polls, and more than one channel of the same server in one post.
 
-| | |
-|---|---|
-| **Post settings** | `channel`. Full schema in the [Discord settings reference](/public-api/providers/discord) |
-| **Connect flow** | One step. Authorizing the app drops your bot into the server, and the channel picker then lists the text, announcement and forum channels the bot can see |
-| **Automations** | None. Comments open a thread on the message and reply inside it |
+## Connect Discord
 
-<Warning>
-Mentions behave in two ways. `@here` and `@everyone` pass through exactly as typed. Anyone else resolves to a member ID first, so the mention pings the right person even when their display name changes later.
+<Note>
+Discord is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting will add PostQueen's bot to one server, which needs the **Manage Server** permission there.
+</Note>
 
-If the bot cannot reach the channel you picked, the post comes back saying the bot does not have access to this channel. Check the channel permissions on the Discord side rather than the PostQueen side.
-</Warning>
+## Post settings
 
-<Info>
-This integration requires that you have **Manage Server** permissions on the Discord server you want to integrate with.
-</Info>
+Each Discord post in the composer has one setting:
 
-## Self-hosting
+- **Select Channel**: the text or announcement channel to post in. Required. Forum channels are not listed.
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Discord on your own instance](/installation/providers/discord).
-</Info>
+The field names and values for the API are on [Discord posting settings](/public-api/providers/discord).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it is at most 1,980 characters and that a channel is picked.
+- **Add comment** adds follow-ups, each with its own delay. The first starts a thread on the message, named Thread, and later ones go into the same thread. Discord archives the thread after a day without activity.
+- Type `@` to mention a member or a role, found by search. `@here` and `@everyone` are offered too, but they only notify people when the bot's role has the **Mention Everyone** permission in that server.
+- The bot asks for View Channels, Send Messages, Embed Links, Attach Files and the thread permissions. If a channel limits who can see it, let the bot's role view it and attach files there.
+- When Discord refuses a post, it fails with the reason: "Bot doesn't have access to this channel", "Bot lacks permission to send messages in this channel", "Channel no longer exists" or "Attachment exceeds Discord's size limit".
+- Discord's own file limit is not checked first: 20 MiB per file by default, and more in boosted servers.
 
 <NextStepsChannel />
-

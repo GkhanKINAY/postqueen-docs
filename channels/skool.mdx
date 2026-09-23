@@ -1,127 +1,60 @@
 ---
-title: Skool
-description: 'How to add Skool to PostQueen'
-icon: /images/channels/skool.svg
+title: "Skool"
+description: "What PostQueen will post to Skool groups, how it will connect, and the limits it checks before a post is scheduled."
+icon: "/images/channels/skool.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B5): write it from _templates/channel.mdx. Sources: this file, moved from providers/skool (rewrite; WIP: partly better; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/skool.svg" alt="Skool" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post titled posts with attachments into your Skool groups and categories, with threaded comments underneath.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-Skool is a **cookie-based** integration that uses the PostQueen browser extension to connect. Unlike OAuth-based providers, Skool authentication works by extracting session cookies from your browser.
-
-<Warning>
-**Three things have to be true before you can connect Skool at all**, and none is optional:
-
-- **Chrome or a Chromium browser.** The connect flow reaches the extension through Chrome's own
-  messaging API, which does not exist in Firefox or Safari. There is no fallback.
-- **The PostQueen extension installed.** It is not on the Chrome Web Store yet, so you build it from
-  source and load it unpacked.
-- **`EXTENSION_ID` set on the instance to that build's ID.** It is a server variable, and each
-  unpacked build has its own ID, so this needs an instance you administer. Without a match the
-  connect stops at *Extension Not Found* before anything reaches Skool.
-
-Setting the extension up: [Chrome Extension](/configuration/chrome-extension).
-</Warning>
-
-<Warning>
-Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned. PostQueen does not take responsibility for any issues arising from the use of this method.
-</Warning>
-
-## What she can post to Skool
-
-A Skool post needs a title, a group and a label before she will send it. Once it lands, the comments you queued follow it into the same thread.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    5,000 characters per post.
+  <Card title="Text" icon="type">
+    Up to 5,000 characters, under a title you set for each post.
   </Card>
   <Card title="Media" icon="image">
-    Files, uploaded to Skool file storage and attached to posts and to comments.
+    Images or video files, uploaded to Skool as attachments.
   </Card>
   <Card title="Post types" icon="layers">
-    A titled post in one group, then comments threaded underneath it.
+    A titled post in a group and category, and threaded comments.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None. Nine networks report analytics to PostQueen, and Skool is not one of them.
+    No analytics for Skool.
   </Card>
 </CardGroup>
 
-| Area | Detail |
-|---|---|
-| Post settings | `group`, `label` and `title` are all required, each at least one character: [Skool settings](/public-api/providers/skool). |
-| Connect flow | One step, through the Chrome extension. It reads the `client_id` and `auth_token` cookies on `.skool.com` and stores them encrypted. |
-| Automations | None on this network. |
-| Publish rate | One post at a time. |
+**Not supported:** polls.
+
+## Connect Skool
+
+<Note>
+Skool is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Skool has no public API, so it will connect through the PostQueen browser extension in Chrome, which uses your own Skool session.
+</Note>
 
 <Warning>
-The group picker reads your first 30 Skool groups, so a very long membership list may not show every option. If a group has no labels of its own, the only choice is **Default Label**, and she sends the post without a label attached.
-
-Two refusals come from Skool itself: **"You can't post to this channel"** when your role in the group is below what the group requires, and **"Cannot post to this label"** when the label is restricted.
+Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned. PostQueen does not take responsibility for any issues arising from this method.
 </Warning>
 
-## Prerequisites
+## Post settings
 
-Before connecting Skool, you need:
+Each Skool post in the composer has these settings:
 
-1. The **PostQueen Chrome Extension** installed. Setup: [Chrome Extension guide](/configuration/chrome-extension).
-2. An active **Skool account**: you must be logged in to [skool.com](https://www.skool.com) in the same browser where the extension is installed.
+- **Title**: the post's title. Required.
+- **Select Group**: the group to post in. Required. The list shows your first 30 groups.
+- **Select Label**: the category the post is filed under. Required. In a group with no categories the only choice is **Default Label**, which posts without one.
 
-Self-hosting? The extension id belongs in the instance configuration: [Chrome Extension](/configuration/chrome-extension).
+The field names and values for the API are on [Skool posting settings](/public-api/providers/skool).
 
-## Connecting Skool
+## Good to know
 
-<Steps>
-  <Step title="Log in to Skool">
-    Open [skool.com](https://www.skool.com) in Chrome and make sure you are logged in to your Skool account.
-  </Step>
-
-  <Step title="Add Skool as a Channel">
-    In PostQueen, click **Add Channel** and select **Skool**. You will see a warning about browser extension usage. Read it and click **I understand, continue**.
-
-    The extension will automatically extract your Skool session cookies and connect your account.
-  </Step>
-
-  <Step title="Create a Post">
-    When creating a post for Skool, you will need to configure:
-
-    - **Title**: The title of your Skool post (required).
-    - **Group**: Select which Skool group to post in.
-    - **Label**: Select a label for the post, or use the default.
-
-    You can also attach images to your post. Files are uploaded directly to Skool's file storage.
-  </Step>
-</Steps>
-
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
-
-
-## Features
-
-- **Post to groups**: Publish posts to any Skool group you are a member of.
-- **Labels**: Assign labels to categorize your posts.
-- **Comments**: Schedule threaded comments on your posts.
-- **Image attachments**: Attach images to posts and comments.
-- **Automatic cookie refresh**: The extension refreshes your cookies every 24 hours to keep the connection alive.
-
-## Troubleshooting
-
-- **"Extension not found"**: Make sure the PostQueen Chrome Extension is installed and that `EXTENSION_ID` is correctly set. Setup: [Chrome Extension guide](/configuration/chrome-extension).
-- **"Could not get cookies"**: Log in to [skool.com](https://www.skool.com) in Chrome before connecting.
-- **"You can't post to this channel"**: You must be an admin or have sufficient permissions in the Skool group.
-- **"Cannot post to this label"**: The selected label may have restrictions. Try a different label or the default.
-- **Session expires**: If your session expires, reconnect the integration. The extension will attempt to refresh cookies automatically every 24 hours.
+- Before a post is scheduled, PostQueen checks that it is at most 5,000 characters and that a title, a group and a label are set.
+- The composer's follow-up button reads **Add comment / post**, but every follow-up goes out as a comment, each under the one before it, with its own delay and attachments.
+- Skool can refuse a post. "You can't post to this channel" means your role in the group is below what it requires, and "Cannot post to this label" means the category is restricted.
 
 <NextStepsChannel />
-
