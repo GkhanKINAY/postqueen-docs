@@ -34,7 +34,7 @@ Grok Build is xAI's coding agent for the terminal: the `grok` CLI. It also runs 
     It saves PostQueen in your user config, `~/.grok/config.toml`, so every project can use it.
   </Step>
   <Step title="Check the server">
-    Run the doctor, or type `/mcps` inside Grok Build to open the extensions list:
+    Run the doctor, or type `/mcps` inside Grok Build to open the extensions modal:
 
     ```bash
     grok mcp doctor postqueen
@@ -61,7 +61,7 @@ Start Grok Build and ask: "List my PostQueen channels." It calls PostQueen and a
 | The key in the address | `{{mcpKeyUrl}}` | From xAI's docs. The route above |
 | The Bearer header, key read from your environment | `{{mcpBearerUrl}}` | From xAI's docs |
 | Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
-| The postqueen skill as a Grok plugin | GitHub `GkhanKINAY/postqueen-agent` | Not tested yet |
+| The postqueen skill as a Grok plugin | No address | Not tested yet |
 
 <Tabs>
   <Tab title="Bearer header">
@@ -76,7 +76,7 @@ Start Grok Build and ask: "List my PostQueen channels." It calls PostQueen and a
     Keep the single quotes. With double quotes your shell writes the key itself into `config.toml`.
   </Tab>
   <Tab title="Sign in (not tested yet)">
-    Add the sign-in address, then sign in from the extensions list. It has {{mcpToolsOauth}} tools, all but `ask_postqueen`.
+    Add the sign-in address, then sign in from the extensions modal. It has {{mcpToolsOauth}} tools, all but `ask_postqueen`.
 
     ```bash
     grok mcp add --transport http postqueen \

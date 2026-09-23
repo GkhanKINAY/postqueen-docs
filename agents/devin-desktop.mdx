@@ -54,11 +54,11 @@ Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Add P
 
 ## Check that it works
 
-Ask Devin Local: "List my PostQueen channels." By default it asks before each tool call; allow the PostQueen tool once, for the session, or always. It then answers with the channels you connected.
+Ask Devin Local: "List my PostQueen channels." By default it asks before each tool call; allow the tool, or every PostQueen tool, for the session or permanently. It then answers with the channels you connected.
 
 ## Good to know
 
-- **Devin Local asks before every MCP tool call** by default. You can allow one PostQueen tool, or every tool on the server, for the session or for good.
+- **Devin Local asks before every MCP tool call** by default. You can allow one PostQueen tool, or every tool on the server, for the session or permanently.
 - **Run `devin mcp list`** to see the servers Devin knows about.
 - **Devin Local can run the command for you** if you allow it.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
@@ -104,7 +104,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 |---|---|
 | Devin Local does not see PostQueen | Open a new agent tab. Run `devin mcp list` to check that the server is saved. |
 | It works in one project only | It was added without `-s user`. Add it again with `-s user`. |
-| Every PostQueen call asks for approval | That is Devin Local's default. Allow the tool, or every PostQueen tool, for the session or always. |
+| Every PostQueen call asks for approval | That is Devin Local's default. Allow the tool, or every PostQueen tool, for the session or permanently. |
 | PostQueen shows **Needs auth** | Press **Authenticate** to sign in again, or use the key address. |
 | The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
 

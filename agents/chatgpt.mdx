@@ -14,7 +14,7 @@ ChatGPT is OpenAI's AI assistant. You add PostQueen as a developer mode app from
 
 ## Before you start
 
-- **Plans:** paid plans on the web: Plus, Pro, Business, Enterprise and Education. Not Free. OpenAI's pages disagree on which plans can make changes such as scheduling a post, so check yours on [OpenAI's developer mode help page](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt).
+- **Plans:** Plus, Pro, Business, Enterprise and Education, on the web. Not Free. OpenAI's pages disagree on which plans can make changes such as scheduling a post, so check yours on [OpenAI's developer mode help page](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt).
 - **Platforms:** ChatGPT on the web only.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
@@ -26,7 +26,7 @@ These steps use the key address with **No Authentication**, the route PostQueen 
 
 <Steps>
   <Step title="Turn on developer mode">
-    In ChatGPT on the web, open **Settings > Security and login** and turn on **Developer mode**. On Business, Enterprise and Edu, an admin first allows it under **Workspace settings > Permissions & roles**.
+    In ChatGPT on the web, open **Settings > Security and login** and turn on **Developer mode**. On Business, Enterprise and Education, an admin first allows it under **Workspace settings > Permissions & roles**.
   </Step>
   <Step title="Create the app">
     Go to [chatgpt.com/plugins](https://chatgpt.com/plugins) and press **+**. Enter the name `PostQueen` and a short description, and under **Connection** enter your key address:
@@ -66,7 +66,7 @@ Ask ChatGPT: "List my PostQueen channels." It answers with the channels you conn
 | Sign in with PostQueen, OAuth | `{{mcpOauthUrl}}` | From OpenAI's docs, not tested yet |
 | The Bearer header | `{{mcpBearerUrl}}` | Not for ChatGPT: it cannot send a custom header |
 
-The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}: the same set without `ask_postqueen`.
+The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}, all but `ask_postqueen`.
 
 <Accordion title="Sign in with PostQueen instead (not tested yet)" icon="log-in">
   With the sign-in, no key is copied or stored in ChatGPT. Only a workspace admin can approve it.
@@ -98,7 +98,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 
 | Symptom | Fix |
 |---|---|
-| There is no **Developer mode** option | Turn it on under **Settings > Security and login**. On Business, Enterprise and Edu, an admin allows it first under **Workspace settings > Permissions & roles**. |
+| There is no **Developer mode** option | Turn it on under **Settings > Security and login**. On Business, Enterprise and Education, an admin allows it first under **Workspace settings > Permissions & roles**. |
 | A guide says **Settings > Apps > Advanced settings** | That is the older path. Add PostQueen at chatgpt.com/plugins. |
 | PostQueen is not in the chat | Open the **+** menu, choose **Developer mode** and select PostQueen. |
 | The desktop app's MCP servers setting does nothing in chat | That setting belongs to Codex. Add PostQueen to ChatGPT on the web. |

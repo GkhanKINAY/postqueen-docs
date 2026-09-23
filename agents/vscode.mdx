@@ -31,7 +31,7 @@ VS Code is Microsoft's code editor, and GitHub Copilot's agent mode in it uses M
     ```
   </Step>
   <Step title="Start it">
-    VS Code asks you to trust the server before it starts it. Confirm, then open Copilot Chat in agent mode.
+    VS Code asks you to confirm that you trust the server. Confirm, then open Copilot Chat in agent mode.
   </Step>
 </Steps>
 
@@ -72,7 +72,7 @@ In Copilot Chat, in agent mode, ask: "List my PostQueen channels." Copilot calls
 
 <Tabs>
   <Tab title="Input variable">
-    VS Code recommends input variables for secrets. It asks for the key the first time the server starts and stores it for you, so the file holds no secret:
+    VS Code recommends input variables for secrets. It prompts you for the key instead of reading it from the file, so the file holds no secret:
 
     ```json .vscode/mcp.json
     {

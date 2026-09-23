@@ -9,10 +9,25 @@ import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
 You can ask for a post from the chat app you already have open: WhatsApp or Telegram on your phone, Slack or Discord with your team. PostQueen does not join those apps itself. An agent you run on your own computer or server sits in between: it reads your message, uses PostQueen, and answers in the same chat.
 
+<CardGroup cols={2}>
+  <Card title="WhatsApp" icon="/images/brand/icon-whatsapp.svg" href="#whatsapp">
+    Message the agent from your phone. Pairs by QR code.
+  </Card>
+  <Card title="Telegram" icon="/images/channels/telegram.svg" href="#telegram">
+    One bot token from BotFather.
+  </Card>
+  <Card title="Slack" icon="/images/channels/slack.svg" href="#slack">
+    A Slack app in your workspace, for the whole team.
+  </Card>
+  <Card title="Discord" icon="/images/channels/discord.svg" href="#discord">
+    A bot on your server, where your community already is.
+  </Card>
+</CardGroup>
+
 ## How it works
 
 ```text wrap
-your chat app  ->  OpenClaw, Hermes Agent or NanoClaw  ->  PostQueen  ->  your calendar
+chat app  ->  your agent  ->  PostQueen  ->  your calendar
 ```
 
 - **The agent has to be running.** Each of these agents runs a background process that stays connected to your chat apps. If the machine sleeps, nobody is listening.

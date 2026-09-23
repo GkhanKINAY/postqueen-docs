@@ -58,8 +58,8 @@ Message the agent in one of your chat apps: "List my PostQueen channels." It ans
 - **Fallback if the tools do not load:** NanoClaw does not say that its MCP client sends requests through the vault. If PostQueen's tools do not load, add the server with the key as a header instead, then restart the group:
 
   ```bash
-  ncl groups config add-mcp-server --id YOUR_GROUP_ID --name postqueen \
-    --url https://api.postqueen.ai/mcp \
+  ncl groups config add-mcp-server --id YOUR_GROUP_ID \
+    --name postqueen --url https://api.postqueen.ai/mcp \
     --headers '{"Authorization":"Bearer YOUR_API_KEY"}'
   ```
 
@@ -84,7 +84,7 @@ Message the agent in one of your chat apps: "List my PostQueen channels." It ans
 List my PostQueen channels. Then draft two short Bluesky posts about Saturday's event and save them in PostQueen as drafts for Friday at 10am.
 ```
 
-The drafts appear on your PostQueen calendar, ready for you to check and schedule.
+The drafts appear on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
 ## Run it on a schedule
 

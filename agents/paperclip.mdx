@@ -60,7 +60,7 @@ Assign a Claude Code or Codex agent a task: "List my PostQueen channels." The ag
 |---|---|---|
 | Key or token in Apps | `{{mcpBearerUrl}}` | From Paperclip's docs. The route above |
 | Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
-| The PostQueen CLI and skill | `npm install -g postqueen` | Not tested yet |
+| The PostQueen CLI and skill | No address | Not tested yet |
 
 <Tabs>
   <Tab title="Sign in (not tested yet)">
@@ -87,7 +87,7 @@ Assign this to a Claude Code or Codex agent:
 List my PostQueen channels. Then plan next week's launch posts for Bluesky and save four of them in PostQueen as drafts, Monday to Thursday at 10am.
 ```
 
-Approve the save when Paperclip asks. The drafts appear on your PostQueen calendar, ready for you to check and schedule.
+Approve the save when Paperclip asks. The drafts appear on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
 ## Run it on a schedule
 
@@ -105,7 +105,7 @@ Source: [Paperclip on GitHub](https://github.com/paperclipai/paperclip).
 |---|---|
 | A Claude Code agent does not see PostQueen | Give that agent, its project or the company access in **Apps**. Servers added with `claude mcp add` are ignored while Paperclip manages MCP. |
 | Scheduling a post does nothing | Tools that change something start off. Turn them on in **Apps**, then approve each call when Paperclip asks. |
-| The key is refused | Paste the key on its own, without the word `Bearer`, copied from **Connections > API Keys**. |
+| The key is refused | Paste the key on its own, without the word `Bearer`, copied from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
 | Another agent type cannot use PostQueen | Only Claude Code and Codex agents get the Apps connection. Give other agents the PostQueen CLI instead. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
