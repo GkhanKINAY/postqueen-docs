@@ -57,7 +57,7 @@ The agent pages in these docs say which setups PostQueen has tested: start at [A
     Choose **Rotate key**, then **Rotate** to confirm. PostQueen makes a new key at once.
   </Step>
   <Step title="Update what used it">
-    The old key stops working straight away, so paste the new one, or the new MCP address, into every agent, script and n8n credential that used it.
+    The old key stops working right away, so paste the new one, or the new MCP address, into every agent, script and n8n credential that used it.
   </Step>
 </Steps>
 
@@ -70,14 +70,14 @@ A workspace has one key. Only an admin can reveal or rotate it.
 ## Developers and Approved Apps
 
 - **Developers** is for building your own product on PostQueen. An admin chooses **Create OAuth App** and fills in **App Name**, **Description**, **Profile Picture** and **Redirect URL**. The **Client Secret** is shown only when the app is created or the secret is rotated, so copy it then. A workspace has one OAuth app. See [OAuth apps](/public-api/oauth).
-- **Approved Apps** lists the apps you allowed to sign in to your account, with the date. Choose **Revoke** to cut an app off. Each person sees the apps they approved.
+- **Approved Apps** lists the apps you approved, with the date. Only an Admin or Super Admin can approve an app, and an approved app can act for the whole workspace. Choose **Revoke** to cut an app off.
 
 ## If something goes wrong
 
 | Message | What to do |
 |---|---|
-| "The API key is managed by admins" | Only an Admin or Super Admin can reveal or rotate the key. Ask one |
-| "OAuth apps are managed by admins" | Only an Admin or Super Admin can create or change the OAuth app |
+| "The API key is managed by admins" | Only an Admin or Super Admin can reveal or rotate the key. Ask one. |
+| "OAuth apps are managed by admins" | Only an Admin or Super Admin can create or change the OAuth app. |
 
 ## Next steps
 

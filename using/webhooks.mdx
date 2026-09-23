@@ -4,36 +4,29 @@ description: "Get an HTTP call at your own URL each time PostQueen publishes a p
 icon: "webhook"
 ---
 
-**Where:** **Settings** > **Webhooks**, in the More group. The rail's **More** group links there too.
+**Where:** **Settings > Webhooks**, in the More group. The **More** group in the left rail links there too.
 
-A webhook sends a `POST` request to a URL you own each time a post goes live. Use it to start a workflow in Zapier, Make or n8n, or to update a sheet, a chat channel or your own system.
+A webhook sends a `POST` request to a URL you own each time a post goes live. Use it to start a workflow in Zapier, Make or n8n, or to update a sheet, a team chat or your own system.
 
 ## Add a webhook
 
 <Steps>
-  <Step title="Choose Add a webhook">
-    The pane's title counts your webhooks against your plan, for example **Webhooks (1/10)**. You need at least one connected channel first.
+  <Step title="Start a new webhook">
+    Choose **Add a webhook**. The pane's title counts your webhooks against your plan, for example **Webhooks (1/10)**. You need at least one connected channel first.
   </Step>
   <Step title="Enter a Name and a URL">
     **Name** is for you. **URL** is where PostQueen sends the request. It must be a public `https://` address.
   </Step>
   <Step title="Pick the Channels">
-    **All channels** fires for posts on every connected channel. **Specific channels** fires only for the channels you tick.
+    **All channels** fires for posts on every connected channel. **Specific channels** fires only for the channels you select.
   </Step>
-  <Step title="Choose Send Test">
-    PostQueen sends a sample payload to the URL and tells you whether your endpoint accepted it. Set up the receiving side before you save.
+  <Step title="Test it">
+    Choose **Send Test**. PostQueen sends a sample payload to the URL and tells you whether your endpoint accepted it. Set up the receiving side before you save.
   </Step>
-  <Step title="Choose Save">
-    "Webhook added successfully" confirms it. Each saved webhook shows its name and URL, a **Send Test** button, and buttons to edit or delete it.
+  <Step title="Save the webhook">
+    Choose **Save**. "Webhook added successfully" confirms it. Each saved webhook shows its name and URL, a **Send Test** button, and buttons to edit or delete it.
   </Step>
 </Steps>
-
-## Good to know
-
-- **Once per channel.** A post scheduled to three channels publishes three times, so a webhook on **All channels** is called three times, once as each channel goes live.
-- **Only on publish.** Drafts, and posts that fail to publish, send nothing.
-- **No retries.** PostQueen waits up to 10 seconds for your endpoint and follows redirects. If the endpoint is down, slow or answers with an error, the delivery is not retried and not reported.
-- **No signature.** The request carries no secret or signature header. Use a long URL that is hard to guess, and treat the body as untrusted input.
 
 ## What arrives
 
@@ -76,7 +69,14 @@ The request has `Content-Type: application/json`. The body is a JSON array that 
 | Pro | 30 |
 | Ultimate | 10,000 |
 
-At the limit, **Add a webhook** is switched off and the pane says "Your plan is at its webhook limit. Remove one or upgrade to add another." See [Plans](/cloud/plans).
+At the limit, **Add a webhook** is switched off and the pane says "Your plan is at its webhook limit. Remove one or upgrade to add another." See [Plans and limits](/cloud/plans).
+
+## Good to know
+
+- **Once per channel.** A post scheduled to three channels publishes three times, so a webhook on **All channels** is called three times, once as each channel goes live.
+- **Only on publish.** Drafts, and posts that fail to publish, send nothing.
+- **No retries.** PostQueen waits up to 10 seconds for your endpoint and follows redirects. If the endpoint is down, slow or answers with an error, the delivery is not retried and not reported.
+- **No signature.** The request carries no secret or signature header. Use a long URL that is hard to guess, and treat the body as untrusted input.
 
 ## If something goes wrong
 
@@ -84,13 +84,13 @@ At the limit, **Add a webhook** is switched off and the pane says "Your plan is 
 |---|---|
 | "Webhook URL must be a public HTTPS URL and cannot point to internal network addresses" | Use a public `https://` address. For a service on your own computer, put a public HTTPS tunnel in front of it. |
 | "The endpoint did not accept the test webhook", or an HTTP status such as `HTTP 404` | Check that the URL is right and that your endpoint accepts a JSON `POST`. |
-| "Pick at least one channel." | Tick a channel, or choose **All channels**. |
+| "Pick at least one channel." | Select a channel, or choose **All channels**. |
 | "You have reached the maximum number of webhooks for your subscription. Please upgrade your subscription to add more webhooks." | Delete a webhook you no longer use, or move to a bigger plan. |
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Zapier and Make" icon="workflow" href="/public-api/zapier-and-make">
+  <Card title="Zapier and Make" icon="blocks" href="/public-api/zapier-and-make">
     Catch the webhook and carry on in a workflow.
   </Card>
   <Card title="n8n" icon="workflow" href="/public-api/n8n">
