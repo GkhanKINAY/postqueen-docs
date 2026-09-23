@@ -30,16 +30,23 @@ not about what she can do.
 
 <Tabs>
   <Tab title="PostQueen Cloud">
-    Sign up at [app.postqueen.ai](https://app.postqueen.ai). Nothing to install, nothing to keep
-    patched, and every network's OAuth app is already registered, so **Add Channel** offers all of
-    them from the first minute.
+    Sign up at [app.postqueen.ai](https://app.postqueen.ai). Nothing to install and nothing to keep
+    patched.
 
     **Best for:** getting a post out today, and anyone who does not want to run a server.
 
     **Pros:**
-    - Free for 7 days, no card to start
-    - Every network she supports is available immediately
+    - A 7-day trial with $0 due today. A card is required: PostQueen places a $1 authorization on it
+      and releases it at once
     - Upgrades and security patches happen without you
+
+    <Note>
+    Two things wait for the paid plan: connecting X, and the AI Copilot. They unlock when the trial
+    ends, or right away if you end the trial early. [Free trial](/cloud/trial) has the details.
+
+    Not every network can be connected yet. Some are marked **Soon** or **In review** on PostQueen:
+    see the [status of every network](/providers/overview#status-on-postqueen).
+    </Note>
   </Tab>
 
   <Tab title="Your own server">
@@ -76,7 +83,7 @@ A channel is one social account she can post to. Until one exists, a post has no
 <Steps>
   <Step title="Open Add Channel">
     Your channels live in the **left sidebar**, and **Add Channel** sits with them. It is the same
-    button for every network: X, a WordPress blog, a Discord server, all of it.
+    button for every network: X, a WordPress blog, a Bluesky account, all of it.
   </Step>
 
   <Step title="Pick the network">
@@ -85,8 +92,8 @@ A channel is one social account she can post to. Until one exists, a post has no
 
     - **Most send you to their own login.** You approve PostQueen there, the browser comes back, and
       the channel appears. Nothing to type.
-    - **A smaller group asks for a credential in the form.** Bluesky takes an app password,
-      WordPress takes a site URL and an application password, Mastodon needs its instance address.
+    - **A smaller group asks for a credential in the form.** Bluesky takes an app password, and
+      WordPress takes a site URL and an application password.
 
     [Providers](/providers/overview) says which kind each network is, and what it wants.
   </Step>
@@ -176,7 +183,7 @@ it until you press **Schedule**.
 
 <AccordionGroup>
   <Accordion title="The network I want is not in Add Channel" icon="plug-circle-xmark">
-    On PostQueen Cloud every supported network is already in **Add Channel**. On a self-hosted install a network only appears once its OAuth app is registered and she has been restarted. [Providers](/providers/overview) has the Cloud connect flow; [self-hosting provider pages](/installation/providers/instagram) have the OAuth app setup.
+    Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet. The [status of every network](/providers/overview#status-on-postqueen) says which. On a self-hosted install a network only appears once its OAuth app is registered and the instance has been restarted. [Providers](/providers/overview) has the Cloud connect flow; [self-hosting provider pages](/installation/providers/instagram) have the OAuth app setup.
   </Accordion>
 
   <Accordion title="The post went to Drafts instead of being scheduled" icon="file-pen">
