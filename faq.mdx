@@ -66,7 +66,6 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
       <img src="/images/channels/nostr.svg" height="28" alt="Nostr" />
       <img src="/images/channels/vk.svg" height="28" alt="VK" />
       <img src="/images/channels/devto.svg" height="28" alt="Dev.to" />
-      <img src="/images/channels/medium.svg" height="28" alt="Medium" />
       <img src="/images/channels/hashnode.svg" height="28" alt="Hashnode" />
       <img src="/images/channels/wordpress.svg" height="28" alt="WordPress" />
       <img src="/images/channels/whop.svg" height="28" alt="Whop" />
@@ -104,7 +103,7 @@ to. Cannot find yours? The [support page](/support) is the fastest route to a hu
   </Accordion>
 
   <Accordion title="Are there API limits?" icon="gauge-high">
-    30 requests per hour on create-post. Uploads have an allowance of their own, 300 per hour. Nothing else is capped by them. Schedule several posts in one request when you need throughput.
+    An hourly limit per workspace on create-post (`POST /posts`). Uploads have an hourly allowance of their own. Nothing else is capped by them. Schedule several posts in one request when you need throughput.
 
     Self-hosting? Raise or lower them with `API_LIMIT` and `UPLOAD_LIMIT`.
   </Accordion>

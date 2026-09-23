@@ -215,7 +215,7 @@ When working with a new platform, follow this workflow:
     postqueen posts:create \
       -c "My post" \
       -s "2026-08-01T09:00:00Z" \
-      --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"text","is_flair_required":false}}]}' \
+      --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"self","is_flair_required":false}}]}' \
       -i "$INTEGRATION_ID"
     ```
   </Step>

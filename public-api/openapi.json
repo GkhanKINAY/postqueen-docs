@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "PostQueen Public API",
-    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from PostQueen Settings.\n\n## Rate Limits\n\nThe create-post endpoint is capped per organization per hour. With `API_LIMIT` unset the ceiling is **90 requests per hour**; the shipped Compose files and PostQueen Cloud both set it to **30**. No other endpoint is throttled.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (34)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram, Kick, Twitch\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Medium, Dev.to, Hashnode, WordPress, Moltbook\n\n**Business:** Google My Business (GMB), Listmonk (newsletters), Whop, Skool",
+    "description": "API for managing social media posts, integrations, and media uploads in PostQueen.\n\n## Authentication\n\nAll endpoints require an API key passed in the `Authorization` header:\n\n```\nAuthorization: your-api-key\n```\n\nGet your API key from **Connections > API Keys** in PostQueen. Only a workspace admin can reveal it.\n\n## Rate Limits\n\nThe create-post endpoint (`POST /posts`) has an hourly limit per workspace. Uploads have a separate hourly allowance. No other endpoint is throttled.\n\n## Terminology\n\nThe UI uses `channel`, but the API uses `integration`. They refer to the same thing.\n\n## Supported Platforms (34)\n\n**Social Platforms:** X (Twitter), LinkedIn, LinkedIn Page, Facebook, Instagram, Instagram Standalone, Threads, Bluesky, Mastodon, Warpcast (Farcaster), Nostr, VK\n\n**Video Platforms:** YouTube, TikTok\n\n**Community Platforms:** Reddit, Lemmy, Discord, Slack, Telegram, Kick, Twitch\n\n**Design Platforms:** Pinterest, Dribbble\n\n**Blogging Platforms:** Dev.to, Hashnode, WordPress, Moltbook\n\n**Business:** Google My Business (GMB), Listmonk (newsletters), Whop, Skool",
     "license": {
       "name": "MIT"
     },
@@ -1039,39 +1039,6 @@
                           "__type": "twitch",
                           "messageType": "announcement",
                           "announcementColor": "primary"
-                        }
-                      }
-                    ]
-                  }
-                },
-                "medium": {
-                  "summary": "Medium",
-                  "value": {
-                    "type": "schedule",
-                    "date": "2024-12-14T10:00:00.000Z",
-                    "shortLink": false,
-                    "tags": [],
-                    "posts": [
-                      {
-                        "integration": {
-                          "id": "your-medium-integration-id"
-                        },
-                        "value": [
-                          {
-                            "content": "# My Article\n\nThis is my article content in markdown...",
-                            "image": []
-                          }
-                        ],
-                        "settings": {
-                          "__type": "medium",
-                          "title": "My Amazing Article",
-                          "subtitle": "A deep dive into...",
-                          "tags": [
-                            {
-                              "value": "programming",
-                              "label": "Programming"
-                            }
-                          ]
                         }
                       }
                     ]
@@ -2508,7 +2475,6 @@
               "linkedin-page",
               "listmonk",
               "mastodon",
-              "medium",
               "mewe",
               "moltbook",
               "nostr",
@@ -2836,9 +2802,6 @@
               },
               {
                 "$ref": "#/components/schemas/DribbbleSettings"
-              },
-              {
-                "$ref": "#/components/schemas/MediumSettings"
               },
               {
                 "$ref": "#/components/schemas/DevToSettings"
@@ -3406,49 +3369,6 @@
             "type": "string",
             "format": "uri",
             "description": "Team URL"
-          }
-        }
-      },
-      "MediumSettings": {
-        "title": "Medium",
-        "type": "object",
-        "required": [
-          "__type",
-          "title",
-          "subtitle"
-        ],
-        "properties": {
-          "__type": {
-            "type": "string",
-            "enum": [
-              "medium"
-            ]
-          },
-          "title": {
-            "type": "string",
-            "minLength": 2,
-            "description": "Article title"
-          },
-          "subtitle": {
-            "type": "string",
-            "minLength": 2,
-            "description": "Article subtitle"
-          },
-          "canonical": {
-            "type": "string",
-            "format": "uri",
-            "description": "Original URL for SEO"
-          },
-          "publication": {
-            "type": "string",
-            "description": "Publication ID to post to"
-          },
-          "tags": {
-            "type": "array",
-            "maxItems": 4,
-            "items": {
-              "$ref": "#/components/schemas/Tag"
-            }
           }
         }
       },

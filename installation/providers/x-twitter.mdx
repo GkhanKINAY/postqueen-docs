@@ -4,226 +4,103 @@ description: 'Register the X (Twitter) application and give PostQueen its keys'
 icon: /images/channels/x.svg
 ---
 
-On your own instance the X app is yours: create it in the X developer portal, then put its API key and secret in your environment.
+On your own instance the X app is yours: create it in the X Developer Console, then put its consumer key and secret in your environment.
 
-<Info>
-**PostQueen Cloud (`https://app.postqueen.ai`):** Forceplay OÜ registers the app **PostQueen** at [console.x.com](https://console.x.com). End users do not create a second developer app for Cloud. Operators still maintain **pay-per-use API credits** on that developer account. Customers open **Add Channel → X** on a **paid** workspace only — X is **trialLocked** in PostQueen, so trial workspaces cannot connect the channel.
-</Info>
-
-PostQueen connects with **OAuth 1.0a** (three-legged). Publishing uses X API v2 endpoints, but the login flow is OAuth 1, not OAuth 2 PKCE. PostQueen reads only **Consumer Key** and **Consumer Secret** from env (`X_API_KEY`, `X_API_SECRET`). Do **not** put OAuth 2 Client ID/Secret, a Bearer token, or your personal “Access Token for @…” into those variables.
-
-There is **no Meta-style App Review** queue on X. Once the app exists, authentication is correct, and **credits** are loaded, customers can connect. **Exhibit / X App Store** listing is optional and not required for Add Channel.
+PostQueen connects X accounts with **OAuth 1.0a** (three-legged) and publishes through the X API v2. It reads only the app's **consumer key and secret** (`X_API_KEY`, `X_API_SECRET`). The OAuth 2.0 client id and secret, the bearer token and your own account's access token are not used; do not put them in those variables.
 
 ## Before you start
 
-| Requirement | Detail |
-| --- | --- |
-| Portal | [console.x.com](https://console.x.com) (legacy [developer.x.com](https://developer.x.com/en/portal/dashboard) redirects here) |
-| X account | The account that owns the developer app, 2FA recommended |
-| API billing | **Pay-per-use credits** (Billing / Credits). New developer accounts in 2026 cannot rely on Free, Basic, or Pro tiers for new sign-ups |
-| PostQueen Cloud workspace | **Paid plan** for X connect (`trialLocked`) |
-| Callback (Cloud) | `https://app.postqueen.ai/integrations/social/x` — **no trailing slash** |
-| Website (portal forms) | `https://postqueen.ai` |
-| Privacy / Terms | `https://postqueen.ai/privacy-policy`, `https://postqueen.ai/terms-of-service` |
-| Cloud env | Set `X_API_KEY` / `X_API_SECRET` only. **Leave `X_URL` unset** — callback is built from `FRONTEND_URL` (`https://app.postqueen.ai`) |
-
-Connect and posting consume credits (for example reading `v2/me` on connect, creating posts, analytics reads). Set a spending limit in the portal if you want a cap.
-
-## Critical path (do not reorder)
-
-1. Accept the Developer Agreement and load **pay-per-use credits**.
-2. **New App** / **Create App** (name e.g. `PostQueen`).
-3. **User authentication:** OAuth 1.0a, **Read and Write**, **Native App**.
-4. Callback exactly `https://app.postqueen.ai/integrations/social/x` on Cloud (no `/` at the end).
-5. **Keys and tokens → Consumer Keys** → map to `X_API_KEY` / `X_API_SECRET`.
-6. Write env, restart or recreate PostQueen so the container picks up keys.
-7. **Add Channel → X** on a paid workspace; authorize the X account that should connect.
-8. Test a text post, then photo, then short video.
+- **A developer account with credits.** The X API is pay-per-use: you buy credits in the [Developer Console](https://console.x.com) and each request is charged against them. At the time of writing, creating a post costs $0.015 and a post that contains a URL $0.20 ([X API pricing](https://docs.x.com/x-api/getting-started/pricing)). Connecting, publishing and PostQueen's analytics reads all use credits; set a spending limit in the console if you want a cap.
 
 <Steps>
-  <Step title="Open console.x.com and load credits">
-    Sign in with the X account that will own the app. Open [console.x.com](https://console.x.com) and accept the Developer Agreement if prompted.
+  <Step title="Create the app">
+    Sign in to the [Developer Console](https://console.x.com) with the X account that will own the app, accept the Developer Agreement and create a new app.
 
-    Under **Billing** / **Credits**, purchase **pay-per-use** credits before you test connect or posting. Without credits, calls fail with usage-capped / 402-style errors even when OAuth is correct.
-
-    The portal may still mention a “free account” in older copy. For new accounts in 2026, plan on **credits**, not Free/Basic/Pro subscription tiers.
-
-    <Frame caption="Placeholder — Gökhan will replace with a current console.x.com screenshot.">
-      <img src="/images/providers/x/x-001.svg" alt="Placeholder for the X developer portal dashboard" />
-    </Frame>
+    PostQueen does not need direct messages or email access, so do not request them.
   </Step>
 
-  <Step title="Create the PostQueen app">
-    Choose **New App** / **Create App**.
+  <Step title="Set up user authentication">
+    Open the app's **User authentication settings** and set:
 
-    | Field | Value |
-    | --- | --- |
-    | Name | `PostQueen` |
-    | Description | Scheduling tool; each user connects their own X account (see paste text below) |
-    | Use case | Publishing on behalf of the signed-in user |
-
-    Do not request **DM** or **email** permissions. PostQueen does not use them.
-
-    Consumer credentials may be shown once at creation. Copy **API Key** and **API Key Secret** to a password manager if shown here; you can always regenerate under Consumer Keys later.
-
-    <Frame caption="Placeholder — Gökhan will replace with a current console.x.com screenshot.">
-      <img src="/images/providers/x/x-002.svg" alt="Placeholder for X app overview and settings" />
-    </Frame>
-  </Step>
-
-  <Step title="Configure OAuth 1.0a user authentication">
-    Open the app → **User authentication** / **Set up** authentication.
-
-    <Frame caption="Placeholder — Gökhan will replace with a current console.x.com screenshot.">
-      <img src="/images/providers/x/x-003.svg" alt="Placeholder for X user authentication settings" />
-    </Frame>
-
-    Set all of the following:
-
-    1. **App permission:** `Read and Write`. Read-only permission can still allow connect but tweets fail with not permitted / 403.
-    2. **Type of App:** `Native App`.
+    1. **App permissions:** `Read and write`. With read-only access the connect can succeed and every post then fails.
+    2. **Type of app:** `Native App`.
+    3. **Callback URI / Redirect URL:** the address below.
+    4. **Website URL:** your public website.
 
     <Warning>
-    You must select **Native App** for OAuth 1.0a. **Web App, Automated App or Bot** breaks connect with error **32** (`Could not authenticate you`).
+    Select **Native App**. Setting the type to *Web App, Automated App or Bot* makes the OAuth 1.0a connect fail with error **32** (`Could not authenticate you`).
     </Warning>
 
-    3. **Callback URI / Redirect URL** — character-for-character, **HTTPS**, **no trailing slash**, no `www`:
-
-    ```
-    https://app.postqueen.ai/integrations/social/x
-    ```
-
-    Self-hosted: replace the host with your `FRONTEND_URL` host (listed in the next step).
-
-    4. **Website URL:** `https://postqueen.ai` (marketing site, not the app login URL).
-
-    If the portal lists separate OAuth 2 Client ID/Secret fields, you may paste the same callback there for consistency, but PostQueen **never** reads OAuth 2 credentials from env.
-
-    Save. If you later change permission from Read to Read and Write, every connected customer must **reconnect**; regenerating keys alone does not upgrade old tokens.
+    If you change the permission from read-only to read and write later, every account that already connected has to reconnect; its old token keeps the old permission.
   </Step>
 
-  <Step title="Register the callback on your domain">
+  <Step title="Register the callback">
     <Snippet file="oauth2redirect.mdx" />
 
-    PostQueen builds the callback as `(X_URL || FRONTEND_URL) + '/integrations/social/x'`. On Cloud, **`X_URL` must stay unset** so the callback stays `https://app.postqueen.ai/integrations/social/x`.
+    For X the host part comes from `X_URL` when it is set, otherwise from `FRONTEND_URL`, and X matches the registered callback exactly.
 
-    The portal label may say “OAuth2 Redirect URI”; for X it is still the single callback string PostQueen uses for OAuth 1.0a.
-
-    **Callback URI (no trailing slash):**
-    - PostQueen Cloud: `https://app.postqueen.ai/integrations/social/x`
-    - Self-hosted production: `https://postqueen.example.com/integrations/social/x`
+    **Your X callback URL:**
+    - Production: `https://postqueen.example.com/integrations/social/x`
     - Local development: `http://localhost:4200/integrations/social/x`
     - Docker: `http://localhost:4007/integrations/social/x`
-    - If X requires HTTPS for localhost: `https://redirectmeto.com/http://localhost:4200/integrations/social/x`
+
+    X answers `Callback URL not approved for this client application` (error 415) when the address PostQueen sends is not on the app's list.
   </Step>
 
-  <Step title="Copy Consumer Keys into environment variables">
-    Open **Keys and tokens** → **Consumer Keys**. On the current console the secret is hidden until you click **Regenerate** on the Consumer Key row.
+  <Step title="Copy the consumer keys">
+    Open **Keys and tokens**, then **Consumer Keys**, and click **Regenerate** to see the key and secret.
 
-    Map portal names to env:
-
-    | Portal | Environment variable |
+    | Console | Environment variable |
     | --- | --- |
-    | API Key (Consumer Key) | `X_API_KEY` |
-    | API Key Secret (Consumer Secret) | `X_API_SECRET` |
-
-    Do **not** put these in env:
-
-    - OAuth 2 Client ID / Client Secret
-    - Bearer Token
-    - “Access Token” / “Access Token Secret” for your personal @ handle (customers obtain their own tokens during Add Channel)
+    | API Key (consumer key) | `X_API_KEY` |
+    | API Key Secret (consumer secret) | `X_API_SECRET` |
 
 ```env
-X_API_KEY=""
-X_API_SECRET=""
+X_API_KEY="your-consumer-key"
+X_API_SECRET="your-consumer-secret"
 ```
+  </Step>
 
-    Never commit real values to git or paste secrets into chat.
-
+  <Step title="Restart and add the X channel">
     <Snippet file="restart-and-add-channel.mdx" />
 
-    On Docker/Cloud, `docker restart` alone may leave old env in the container — recreate the app service after changing env so `X_API_KEY` / `X_API_SECRET` reload.
-  </Step>
+    PostQueen connects whichever X account is signed in on x.com in that browser, so switch accounts on X first if you want a different one. The **Verified** setting (4,000 characters instead of 280) is read from X at connect and can be changed later under the channel menu's **Additional Settings**.
 
-  <Step title="Connect X in PostQueen">
-    Open PostQueen (Cloud: `https://app.postqueen.ai`, **English** UI for support recordings).
-
-    1. Use a **paid** workspace (trial cannot add X).
-    2. **Add Channel → X**.
-    3. In the browser, be signed into the X account you want to connect — PostQueen attaches whichever account is logged in on x.com.
-    4. Approve authorization. The channel list should show avatar and `@username`.
-
-    If connect fails, compare callback character-for-character, confirm **Native App** + **Read and Write**, confirm credits are loaded, and confirm the container was recreated after env changes. See [OAuth connect errors](/troubleshooting/oauth-connect).
-  </Step>
-
-  <Step title="Verify posting">
-    From the composer, publish in this order:
-
-    1. Plain text post (280 characters, or 4,000 if the channel is marked Verified).
-    2. One photo (up to four images per post, or one video — not mixed).
-    3. One short video within the account’s length limit.
-
-    Threads are the first post plus reply chain. X Articles use a separate API path and require the feature on the user’s account.
-
-    **usage-capped / 402:** add credits in the portal. **Unsupported Authentication:** reconnect the channel. **Duplicate content:** change the text.
+    <Note>
+    If your instance runs with Stripe billing enabled, a workspace still on its trial cannot connect X. Without billing there is no such lock.
+    </Note>
   </Step>
 </Steps>
 
-## App description (paste into the portal)
-
-```
-PostQueen (postqueen.ai) is a scheduling app, similar to Buffer or Hootsuite.
-
-A user signs in, connects their own X account, and then schedules or publishes tweets and threads (text, photos, video) from our dashboard. They can also do the same through AI agents they already use (Grok, Claude, Codex, and similar): the agent talks to PostQueen, and PostQueen still posts only to the X account that user connected. We don't post to anyone else's account.
-
-We need Read and Write so we can create those posts and pull the public metrics the user can already see on X. We don't read DMs, don't scrape the firehose, and don't sell X data.
-```
-
-## API access: pay-per-use vs legacy tiers
-
-| Tier | New accounts (2026) | PostQueen |
-| --- | --- | --- |
-| Free | Not available for new developer sign-ups | Do not wait for it |
-| Basic (~$200/mo) | Not available for new sign-ups | Not required |
-| Pro (~$5000/mo) | Not available for new sign-ups | Not required |
-| **Pay-per-use** | **Default for new accounts** | **Load credits** |
-| Enterprise | Contract | Optional at scale |
-
-Analytics and automations that read like counts still consume API credits on pay-per-use. Use `DISABLE_X_ANALYTICS=true` only if you intentionally want to skip those reads.
-
-## What PostQueen sends to X (for debugging)
-
-- OAuth 1.0a connect with `authAccessType: 'write'`.
-- Callback path `/integrations/social/x` only.
-- Posts via `POST https://api.x.com/2/tweets` with OAuth 1 signing.
-- Media upload via v2 upload APIs.
-- OAuth 2 PKCE is **not** used for X connect in PostQueen.
-
 ## Optional environment variables
 
-- `X_URL`: overrides the host used to build the OAuth callback (`<X_URL>/integrations/social/x`). Defaults to `FRONTEND_URL`. Wrong value breaks connect. **Do not set on PostQueen Cloud.**
-- `DISABLE_X_ANALYTICS=true`: skip analytics fetches and disable automations that depend on like counts.
-- `STRIP_LINKS_FROM_X_POSTS=true`: strip URLs from post text before publish (global behavior).
+| Variable | What it does |
+| --- | --- |
+| `X_URL` | Replaces `FRONTEND_URL` as the host of the OAuth callback (`<X_URL>/integrations/social/x`). Leave it unset unless X must call back to a different address than the one users open; a wrong value breaks the connect. |
+| `DISABLE_X_ANALYTICS` | Any value turns off X analytics and the automations that read like counts, which saves the credits those reads cost. |
+| `STRIP_LINKS_FROM_X_POSTS` | Any value removes URLs from the text of every X post before it is published. |
 
-Full list: [Configuration reference](/configuration/reference).
+Full list: [configuration reference](/configuration/reference).
 
-## Common mistakes
+## When something fails
 
-- Putting OAuth 2 **Client ID/Secret** in `X_API_KEY` / `X_API_SECRET`.
-- **Web App** instead of **Native App** → error 32.
-- Callback `.../integrations/social/x/` with a **trailing slash**.
-- Setting **`X_URL`** on Cloud when the portal callback is `app.postqueen.ai`.
-- Testing on a **trial** workspace (X blocked by `trialLocked`).
-- Connecting without **credits** loaded.
+| What you see | What to check |
+| --- | --- |
+| Error 32, `Could not authenticate you` | Type of app is not **Native App**, or the key and secret are not the consumer pair |
+| Error 415 on connect | The callback registered on X differs from `<X_URL or FRONTEND_URL>/integrations/social/x` |
+| 403 or "not permitted" on posting | App permission is read-only; set **Read and write**, then reconnect the channel |
+| A usage-capped or 402 answer | The developer account has no credits left, or hit its spending limit |
+
+See also [connect errors](/troubleshooting/oauth-connect).
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="What she can post to X" icon="/images/channels/x.svg" href="/providers/x-twitter">
+  <Card title="What PostQueen can post to X" icon="/images/channels/x.svg" href="/providers/x-twitter">
     Limits, post types and settings
   </Card>
   <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
+    Every variable PostQueen reads
   </Card>
   <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
     Invalid state, invalid_grant and the rest

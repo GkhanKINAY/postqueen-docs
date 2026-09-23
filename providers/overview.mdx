@@ -1,6 +1,6 @@
 ---
 title: Providers Overview
-description: 'Every network PostQueen posts to, the ten that report analytics, and where each one is documented'
+description: 'Every network PostQueen posts to, its status on PostQueen, the nine that report analytics, and where each one is documented'
 icon: 'plug'
 keywords:
   - postqueen
@@ -18,12 +18,22 @@ keywords:
 Nothing is connected by default, and every network is added the same way, from **Add Channel**. What changes is whether the network sends you to its own login or asks you to paste a key in the form.
 
 <Info>
-On PostQueen Cloud the OAuth apps are already registered. A network missing from **Add Channel** is a [self-hosted](/installation/overview) concern: each platform needs an application you create yourself, then a restart. Walkthroughs live under [Connect your channels](/installation/providers/instagram).
+Running your own instance? Each OAuth network needs an application you create yourself, then a restart. Walkthroughs live under [Connect your channels](/installation/providers/instagram).
 </Info>
 
 A smaller group takes the credential in the connect form, so you paste an API key or a login there and you are done. The card for each one below says which kind it is.
 
 <Snippet file="never-share.mdx" />
+
+## Status on PostQueen
+
+Every network below is listed in **Add Channel**, but not every one can be connected on PostQueen today.
+
+| Status | What it means | Networks |
+|---|---|---|
+| **Available** | Connect it from Add Channel today | Bluesky, DEV, Hashnode (needs Hashnode Pro on the publication), Lemmy, Listmonk, Moltbook (posts may stay hidden from feeds), Nostr, WordPress |
+| **In review** | Connects, with a limit until the platform approves PostQueen's app | Facebook and Instagram (only accounts added to PostQueen's Meta app), Threads (Threads testers only), TikTok (posts publish as Self only), YouTube (uploads stay private), X (connects once your trial ends) |
+| **Soon** | Listed in Add Channel, but it cannot be connected on PostQueen yet | LinkedIn, LinkedIn Page, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop, TikTok Business, Telegram, Farcaster, Skool |
 
 ## Every network she posts to
 
@@ -51,7 +61,6 @@ A smaller group takes the credential in the connect form, so you paste an API ke
   <img src="/images/channels/twitch.svg" alt="Twitch" height="28" />
   <img src="/images/channels/kick.svg" alt="Kick" height="28" />
   <img src="/images/channels/dribbble.svg" alt="Dribbble" height="28" />
-  <img src="/images/channels/medium.svg" alt="Medium" height="28" />
   <img src="/images/channels/devto.svg" alt="Dev.to" height="28" />
   <img src="/images/channels/hashnode.svg" alt="Hashnode" height="28" />
   <img src="/images/channels/wordpress.svg" alt="WordPress" height="28" />
@@ -67,79 +76,76 @@ Most of them take about five minutes. Pick the one you want and the page tells y
 
 <CardGroup cols={3}>
   <Card title="X (Twitter)" icon="/images/channels/x.svg" href="/providers/x-twitter">
-    OAuth 1.0a; pay-per-use API credits
+    In review. Connects once your trial ends
   </Card>
   <Card title="LinkedIn" icon="/images/channels/linkedin.svg" href="/providers/linkedin">
-    Personal profiles
+    Soon
   </Card>
   <Card title="LinkedIn Page" icon="/images/channels/linkedin.svg" href="/providers/linkedin-page">
-    Your company pages
+    Soon
   </Card>
   <Card title="Facebook" icon="/images/channels/facebook.svg" href="/providers/facebook">
-    Pages, via a Meta app
+    In review. Accounts added to PostQueen's Meta app only
   </Card>
   <Card title="Instagram" icon="/images/channels/instagram.svg" href="/providers/instagram">
-    Shares the Meta app
+    In review. Accounts added to PostQueen's Meta app only
   </Card>
   <Card title="Threads" icon="/images/channels/threads.svg" href="/providers/threads">
-    Meta for Developers app
+    In review. Threads testers only
   </Card>
   <Card title="Bluesky" icon="/images/channels/bluesky.svg" href="/providers/bluesky">
     No app keys needed
   </Card>
   <Card title="Mastodon" icon="/images/channels/mastodon.svg" href="/providers/mastodon">
-    Register a client by API
+    Soon
   </Card>
   <Card title="YouTube" icon="/images/channels/youtube.svg" href="/providers/youtube">
-    Google Cloud credentials
+    In review. Uploads stay private for now
   </Card>
   <Card title="Google My Business" icon="/images/channels/google-business.svg" href="/providers/google-my-business">
-    Verified Business Profile
+    Soon
   </Card>
   <Card title="TikTok" icon="/images/channels/tiktok.svg" href="/providers/tiktok">
-    Needs a verified domain
+    In review. Posts publish as Self only
   </Card>
   <Card title="Reddit" icon="/images/channels/reddit.svg" href="/providers/reddit">
-    An app on Reddit Developers
+    Soon
   </Card>
   <Card title="Pinterest" icon="/images/channels/pinterest.svg" href="/providers/pinterest">
-    Company account required
+    Soon
   </Card>
   <Card title="Discord" icon="/images/channels/discord.svg" href="/providers/discord">
-    Manage Server permission
+    Soon
   </Card>
   <Card title="Slack" icon="/images/channels/slack.svg" href="/providers/slack">
-    Your Slack workspace
+    Soon
   </Card>
   <Card title="Telegram" icon="/images/channels/telegram.svg" href="/providers/telegram">
-    One bot token, one host
+    Soon
   </Card>
   <Card title="Dribbble" icon="/images/channels/dribbble.svg" href="/providers/dribbble">
-    Register an application
+    Soon
   </Card>
   <Card title="Skool" icon="/images/channels/skool.svg" href="/providers/skool">
-    Browser extension, not OAuth
+    Soon
   </Card>
   <Card title="Whop" icon="/images/channels/whop.svg" href="/providers/whop">
-    A company with a forum
+    Soon
   </Card>
   <Card title="MeWe" icon="/images/channels/mewe.svg" href="/providers/mewe">
-    Developer Program in beta
+    Soon
   </Card>
   <Card title="Farcaster" icon="/images/channels/farcaster.svg" href="/providers/farcaster">
-    Neynar keys. Was Warpcast
+    Soon
   </Card>
   <Card title="Twitch" icon="/images/channels/twitch.svg" href="/providers/twitch">
-    OAuth keys from Twitch
+    Soon
   </Card>
   <Card title="Kick" icon="/images/channels/kick.svg" href="/providers/kick">
-    OAuth keys from Kick
+    Soon
   </Card>
   <Card title="VK" icon="/images/channels/vk.svg" href="/providers/vk">
-    One app ID, no secret
-  </Card>
-  <Card title="Medium" icon="/images/channels/medium.svg" href="/providers/medium">
-    An API key, no app
+    Soon
   </Card>
   <Card title="Dev.to" icon="/images/channels/devto.svg" href="/providers/devto">
     An API key, no app
@@ -164,14 +170,13 @@ Most of them take about five minutes. Pick the one you want and the page tells y
   </Card>
 </CardGroup>
 
-## Analytics reaches ten of them
+## Analytics reaches nine of them
 
-Posting is the wide part of PostQueen. Measuring is the narrow one. Ten networks report numbers back to her per channel, and nine of those also per post. Google My Business is the exception: it reports at the location level and has nothing per post. Every other platform publishes without a scoreboard. So an empty analytics view on Reddit or Telegram is the platform being quiet, not your setup being broken.
+Posting is the wide part of PostQueen. Measuring is the narrow one. Nine networks report numbers back to PostQueen per channel, and eight of those also per post. Google My Business is the exception: it reports at the location level and has nothing per post. Every other platform publishes without a scoreboard. So an empty analytics view on Reddit or Telegram is the platform being quiet, not your setup being broken.
 
 - Facebook Page
 - Google My Business
-- Instagram (Facebook Business)
-- Instagram (Standalone)
+- Instagram (both cards)
 - LinkedIn Page
 - Pinterest
 - Threads
@@ -185,46 +190,44 @@ One more, on purpose: set `DISABLE_X_ANALYTICS` and she stops asking X for numbe
 
 ## Which page covers which platform
 
-Thirty-four connectors ship in the box, and every one of them shows up in the Add Channel list. None of them is API-only, and none of them is hidden behind a flag. Limits below are the code `maxLength` (X has extra verified and article ceilings). Connect is what **Add Channel** does in the Cloud app; OAuth app registration for self-host is a separate [install page](/installation/providers/instagram).
+Thirty-four cards for 31 networks show up in the Add Channel list. None of them is API-only, but not every one can be connected on PostQueen yet: the Status column says which. Limits below are the code `maxLength` (X has extra verified and article ceilings). Connect is what **Add Channel** does in the Cloud app; OAuth app registration for self-host is a separate [install page](/installation/providers/instagram).
 
-| Platform | Limit | Connect | API `__type` | Guide | Analytics |
-|---|---|---|---|---|---|
-| Bluesky | 300 | App password in the form | `bluesky` | [Guide](/providers/bluesky) | No |
-| Dev.to | 100,000 | API key in the form | `devto` | [Guide](/providers/devto) | No |
-| Discord | 1,980 | Bot, then pick a server | `discord` | [Guide](/providers/discord) | No |
-| Dribbble | 40,000 | One-step OAuth | `dribbble` | [Guide](/providers/dribbble) | No |
-| Facebook | 63,206 | Auth, then pick a page | `facebook` | [Guide](/providers/facebook) | Yes |
-| Farcaster | 800 | Neynar | `wrapcast` | [Guide](/providers/farcaster) | No |
-| Google My Business | 1,500 | Auth, then pick a location | `gmb` | [Guide](/providers/google-my-business) | Yes |
-| Hashnode | 10,000 | PAT in the form | `hashnode` | [Guide](/providers/hashnode) | No |
-| Instagram | 2,200 | Meta, then pick an account | `instagram` | [Guide](/providers/instagram) | Yes |
-| Instagram (Standalone) | 2,200 | Standalone product connect | `instagram-standalone` | [Guide](/providers/instagram) | Yes |
-| Kick | 500 | One-step OAuth | `kick` | [Guide](/providers/kick) | No |
-| Lemmy | 10,000 | Instance URL, name, password | `lemmy` | [Guide](/providers/lemmy) | No |
-| LinkedIn | 3,000 | One-step OAuth | `linkedin` | [Guide](/providers/linkedin) | No |
-| LinkedIn Page | 3,000 | Auth, then pick a company page | `linkedin-page` | [Guide](/providers/linkedin-page) | Yes |
-| Listmonk | very large | URL, user, token in the form | `listmonk` | [Guide](/providers/listmonk) | No |
-| Mastodon | 500 | OAuth to the install instance | `mastodon` | [Guide](/providers/mastodon) | No |
-| Mastodon custom | 500 | **M. Instance**: paste the instance URL | `mastodon-custom` | [Guide](/providers/mastodon) | No |
-| Medium | 100,000 | Token in the form | `medium` | [Guide](/providers/medium) | No |
-| MeWe | 63,206 | One-step OAuth | `mewe` | [Guide](/providers/mewe) | No |
-| Moltbook | 300 | In-app | `moltbook` | [Guide](/providers/moltbook) | No |
-| Nostr | 100,000 | Hex key in the form | `nostr` | [Guide](/providers/nostr) | No |
-| Pinterest | 500 | One-step OAuth | `pinterest` | [Guide](/providers/pinterest) | Yes |
-| Reddit | 10,000 | One-step OAuth | `reddit` | [Guide](/providers/reddit) | No |
-| Skool | 5,000 | Chrome extension | `skool` | [Guide](/providers/skool) | No |
-| Slack | 400,000 | One-step OAuth | `slack` | [Guide](/providers/slack) | No |
-| Telegram | 4,096 | Add bot, paste in the form | `telegram` | [Guide](/providers/telegram) | No |
-| Threads | 500 | One-step OAuth | `threads` | [Guide](/providers/threads) | Yes |
-| TikTok | 2,000 | One-step OAuth | `tiktok` | [Guide](/providers/tiktok) | Yes |
-| TikTok Business | 2,200 | Business API app | `tiktok-business` | [Guide](/providers/tiktok) | Yes |
-| Tumblr | 32,768 | Auth, then pick a blog | `tumblr` | [Guide](/providers/tumblr) | No |
-| Twitch | 500 | One-step OAuth | `twitch` | [Guide](/providers/twitch) | No |
-| VK | 2,048 | One-step PKCE | `vk` | [Guide](/providers/vk) | No |
-| Whop | 50,000 | One-step OAuth PKCE | `whop` | [Guide](/providers/whop) | No |
-| WordPress | 100,000 | Domain, user, application password | `wordpress` | [Guide](/providers/wordpress) | No |
-| X (Twitter) | 280 / 4,000 verified / 100,000 article | One-step OAuth | `x` | [Guide](/providers/x-twitter) | Yes |
-| YouTube | 5,000 | Auth, then pick a channel | `youtube` | [Guide](/providers/youtube) | Yes |
+| Platform | Status | Limit | Connect | API `__type` | Guide | Analytics |
+|---|---|---|---|---|---|---|
+| Bluesky | Available | 300 | App password in the form | `bluesky` | [Guide](/providers/bluesky) | No |
+| Dev.to | Available | 100,000 | API key in the form | `devto` | [Guide](/providers/devto) | No |
+| Discord | Soon | 1,980 | Bot, then pick a server | `discord` | [Guide](/providers/discord) | No |
+| Dribbble | Soon | 40,000 | One-step OAuth | `dribbble` | [Guide](/providers/dribbble) | No |
+| Facebook | In review | 63,206 | Auth, then pick a page | `facebook` | [Guide](/providers/facebook) | Yes |
+| Farcaster | Soon | 800 | Neynar | `wrapcast` | [Guide](/providers/farcaster) | No |
+| Google My Business | Soon | 1,500 | Auth, then pick a location | `gmb` | [Guide](/providers/google-my-business) | Yes |
+| Hashnode | Available | 10,000 | PAT in the form | `hashnode` | [Guide](/providers/hashnode) | No |
+| Instagram | In review | 2,200 | Meta, then pick an account | `instagram` | [Guide](/providers/instagram) | Yes |
+| Instagram (Standalone) | In review | 2,200 | Standalone product connect | `instagram-standalone` | [Guide](/providers/instagram) | Yes |
+| Kick | Soon | 500 | One-step OAuth | `kick` | [Guide](/providers/kick) | No |
+| Lemmy | Available | 10,000 | Instance URL, name, password | `lemmy` | [Guide](/providers/lemmy) | No |
+| LinkedIn | Soon | 3,000 | One-step OAuth | `linkedin` | [Guide](/providers/linkedin) | No |
+| LinkedIn Page | Soon | 3,000 | Auth, then pick a company page | `linkedin-page` | [Guide](/providers/linkedin-page) | Yes |
+| Listmonk | Available | very large | URL, user, token in the form | `listmonk` | [Guide](/providers/listmonk) | No |
+| Mastodon | Soon | 500 | OAuth to the install instance | `mastodon` | [Guide](/providers/mastodon) | No |
+| MeWe | Soon | 63,206 | One-step OAuth | `mewe` | [Guide](/providers/mewe) | No |
+| Moltbook | Available | 300 | In-app | `moltbook` | [Guide](/providers/moltbook) | No |
+| Nostr | Available | 100,000 | Hex key in the form | `nostr` | [Guide](/providers/nostr) | No |
+| Pinterest | Soon | 500 | One-step OAuth | `pinterest` | [Guide](/providers/pinterest) | Yes |
+| Reddit | Soon | 10,000 | One-step OAuth | `reddit` | [Guide](/providers/reddit) | No |
+| Skool | Soon | 5,000 | Chrome extension | `skool` | [Guide](/providers/skool) | No |
+| Slack | Soon | 400,000 | One-step OAuth | `slack` | [Guide](/providers/slack) | No |
+| Telegram | Soon | 4,096 | Add bot, paste in the form | `telegram` | [Guide](/providers/telegram) | No |
+| Threads | In review | 500 | One-step OAuth | `threads` | [Guide](/providers/threads) | Yes |
+| TikTok | In review | 2,000 | One-step OAuth | `tiktok` | [Guide](/providers/tiktok) | Yes |
+| TikTok Business | Soon | 2,200 | Business API app | `tiktok-business` | [Guide](/providers/tiktok) | Yes |
+| Tumblr | Soon | 32,768 | Auth, then pick a blog | `tumblr` | [Guide](/providers/tumblr) | No |
+| Twitch | Soon | 500 | One-step OAuth | `twitch` | [Guide](/providers/twitch) | No |
+| VK | Soon | 2,048 | One-step PKCE | `vk` | [Guide](/providers/vk) | No |
+| Whop | Soon | 50,000 | One-step OAuth PKCE | `whop` | [Guide](/providers/whop) | No |
+| WordPress | Available | 100,000 | Domain, user, application password | `wordpress` | [Guide](/providers/wordpress) | No |
+| X (Twitter) | In review | 280 / 4,000 verified / 100,000 article | One-step OAuth | `x` | [Guide](/providers/x-twitter) | Yes |
+| YouTube | In review | 5,000 | Auth, then pick a channel | `youtube` | [Guide](/providers/youtube) | Yes |
 
 Settings schemas: [Public API providers](/public-api/providers/x). MeWe is the one row still missing a dedicated settings page; its post settings are listed in the [Public API introduction](/public-api/introduction). Self-host OAuth app keys: [Configuration Reference](/configuration/reference).
 

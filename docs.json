@@ -93,7 +93,6 @@
               "providers/skool",
               "providers/moltbook",
               "providers/wordpress",
-              "providers/medium",
               "providers/devto",
               "providers/hashnode",
               "providers/listmonk",
@@ -376,7 +375,6 @@
                 "expanded": false,
                 "pages": [
                   "public-api/providers/wordpress",
-                  "public-api/providers/medium",
                   "public-api/providers/devto",
                   "public-api/providers/hashnode",
                   "public-api/providers/listmonk",
@@ -576,6 +574,14 @@
     {
       "source": "/mcp/clients/claude-app",
       "destination": "/mcp/clients/claude"
+    },
+    {
+      "source": "/providers/medium",
+      "destination": "/providers/overview"
+    },
+    {
+      "source": "/public-api/providers/medium",
+      "destination": "/public-api/introduction"
     }
   ],
   "logo": {

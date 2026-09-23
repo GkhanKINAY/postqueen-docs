@@ -131,7 +131,7 @@ A campaign file is plain JSON and a CLI call is a plain command, so a release jo
 Two habits keep this pleasant to live with:
 
 - **Draft first.** Set `"type": "draft"` in the campaign file while you are getting a pipeline right. The posts appear on your calendar unscheduled, so a broken job costs you a click instead of a public apology.
-- **Watch the budget.** The create-post endpoint allows 30 requests per hour, and a campaign file counts as one request no matter how many networks it covers. Batch the launch into a single file rather than looping over channels.
+- **Watch the budget.** The create-post endpoint has an hourly limit per workspace, and a campaign file counts as one request no matter how many networks it covers. Batch the launch into a single file rather than looping over channels.
 
 The same command works from cron on a small box. Cron does not read your shell profile, so set the key in the crontab itself:
 

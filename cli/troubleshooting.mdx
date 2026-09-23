@@ -84,7 +84,7 @@ These are caught locally, before any network call.
 | `API Error (400): ... "Your post should have at least one character or one image."` | Same situation, caught by the server-side post validator. | Same fix. |
 | `API Error (400): ... "Please fix your settings"` | The provider's settings schema rejected your `--settings` payload. The message is often replaced by a provider-specific one that names the missing field. | Run `integrations:settings <id>` and match the schema. |
 | `API Error (400): ... "post is too long, please fix it"` | The content exceeds that platform's character limit. | Check `maxLength` in `integrations:settings <id>`. |
-| `API Error (429): ... "ThrottlerException: Too Many Requests"` | You crossed the public API rate limit, 30 requests per hour on PostQueen Cloud. | Wait for the window to roll, or batch multiple channels into one `posts:create` with a comma-separated `-i`. Running her yourself? Raise `API_LIMIT`. |
+| `API Error (429): ... "ThrottlerException: Too Many Requests"` | You crossed the hourly limit per workspace on `POST /posts`. | Wait for the window to roll, or batch multiple channels into one `posts:create` with a comma-separated `-i`. Running your own instance? Raise `API_LIMIT`. |
 
 Settings and length failures come back in a shape that names the channel that rejected the post, which is what you want when you posted to six at once:
 
@@ -185,7 +185,7 @@ If `analytics:post` returns an empty array `[]` instead, the post has not publis
     postqueen posts:create \
       -c "New thread" \
       -s "2026-08-01T09:00:00Z" \
-      --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Title","type":"text","url":"","is_flair_required":false}}]}' \
+      --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Title","type":"self","url":"","is_flair_required":false}}]}' \
       -i "reddit-123"
     ```
 

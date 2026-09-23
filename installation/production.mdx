@@ -108,9 +108,10 @@ Three things, and the guide helps you get all of them.
     </Warning>
 
     <Note>
-    Port 4007 is **not** on that list, and should not be. PostQueen listens on 4007 locally, and
-    the reverse proxy you set up later is the only thing that talks to her. The outside world
-    only ever sees 443.
+    Port 4007 is **not** on that list, and should not be. The reverse proxy you set up later is
+    the only thing that should talk to PostQueen on 4007. UFW alone does not keep that port
+    closed, though: ports that Docker publishes bypass UFW's rules. The next step binds 4007 to
+    the server itself.
     </Note>
   </Step>
 
@@ -125,6 +126,15 @@ Three things, and the guide helps you get all of them.
     single file that describes the whole install, along with the `dynamicconfig` folder that
     the scheduler reads at startup.
     </Note>
+
+    <Warning>
+    **Bind port 4007 to the server itself.** Docker publishes container ports past UFW, so the
+    firewall rules above do not close 4007. In `docker-compose.yaml`, change the `postqueen`
+    service's port mapping from `"4007:5000"` to `"127.0.0.1:4007:5000"`. PostQueen then
+    answers only on the server, where the reverse proxy reaches it, and the outside world only
+    sees 443. If you keep the original mapping, filter the port in Docker's `DOCKER-USER` chain
+    instead.
+    </Warning>
   </Step>
 
   <Step title="Write `.env` (JWT, encryption, public URLs)">

@@ -72,6 +72,7 @@ postqueen posts:create \
   -c "Thread 2/3" -m "https://uploads.postqueen.ai/image2.jpg" \
   -c "Thread 3/3" \
   -s "2026-08-01T09:00:00Z" \
+  --settings '{"who_can_reply_post":"everyone"}' \
   -i "twitter-integration-id"
 ```
 
@@ -84,6 +85,7 @@ postqueen posts:create \
   -c "Third tweet" \
   -s "2026-08-01T09:00:00Z" \
   -d 5 \
+  --settings '{"who_can_reply_post":"everyone"}' \
   -i "twitter-integration-id"
 ```
 
@@ -95,6 +97,7 @@ Send the same content to multiple platforms by passing comma-separated integrati
 postqueen posts:create \
   -c "Posting everywhere!" \
   -s "2026-08-01T09:00:00Z" \
+  --settings '{"who_can_reply_post":"everyone"}' \
   -i "twitter-id,linkedin-id,facebook-id"
 ```
 
@@ -106,7 +109,7 @@ Some platforms require additional settings. Pass them as JSON with `--settings`:
 postqueen posts:create \
   -c "Check out this discussion" \
   -s "2026-08-01T09:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"programming","title":"My Post","type":"text","url":"","is_flair_required":false}}]}' \
+  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Post","type":"self","url":"","is_flair_required":false}}]}' \
   -i "reddit-integration-id"
 ```
 
@@ -168,9 +171,9 @@ Example `campaign.json`:
       "settings": {
         "subreddit": [{
           "value": {
-            "subreddit": "programming",
+            "subreddit": "/r/programming",
             "title": "Post Title",
-            "type": "text",
+            "type": "self",
             "url": "",
             "is_flair_required": false
           }
