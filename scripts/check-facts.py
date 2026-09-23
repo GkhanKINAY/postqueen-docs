@@ -12,8 +12,8 @@
 5. mcp/tools names exactly facts.json's tools.
 6. Prices, trial days and refund days written in a page equal facts.json.
 
-Checks 3 to 6 run on every page without an OVERHAUL-TODO marker, on the
-snippets and on SKILL.md; pages still marked, and openapi.json while it carries
+Checks 3 to 6 run on every page without an OVERHAUL-TODO marker (check 3 also
+on the snippets and on SKILL.md); pages still marked, and openapi.json while it carries
 "x-overhaul-todo", only report a count. --release (or DOCS_RELEASE=1) applies
 every check everywhere. --offline skips the GitHub fetch (check 2).
 """
@@ -43,8 +43,8 @@ SPELLED = "ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eightee
 BANNED: list[tuple[str, re.Pattern]] = [
     ("the /mcp-oauth-claude or /mcp-oauth-chatgpt route (never published)", re.compile(r"mcp-oauth-(?:claude|chatgpt)\b")),
     ("schedulePostTool (the tool is integrationSchedulePostTool)", re.compile(r"(?<![A-Za-z])schedulePostTool")),
-    ("a tool count other than 21 or 20", re.compile(r"\b(?:1\d|2[2-9]|[3-9]\d)\s+(?:(?:MCP|hosted|PostQueen)\s+)?tools\b", re.I)),
-    ("a spelled-out tool count", re.compile(rf"\b(?:{SPELLED})\s+(?:(?:MCP|hosted|PostQueen)\s+)?tools\b", re.I)),
+    ("a tool count other than 21 or 20", re.compile(r"\b(?:1\d|2[2-9]|[3-9]\d|\d{3,})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
+    ("a spelled-out tool count", re.compile(rf"\b(?:{SPELLED})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
     ("Windsurf (the product is Devin Desktop)", re.compile(r"windsurf", re.I)),
     ("Medium (the network was removed)", re.compile(r"\bMedium\b(?![- ](?:priority|size|risk|term))")),
     ("Settings > API Keys (the key is under Connections > API Keys)", re.compile(r"Settings\s*(?:→|>|->|&gt;|/)\s*API Keys", re.I)),
@@ -53,7 +53,11 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ('"60-day" (refunds are 30 days)', re.compile(r"\b60-day\b", re.I)),
     ('"30 requests per hour" (no production number is published)', re.compile(r"\b30 requests (?:per|an|a) hour", re.I)),
     ('"ten connectors" (nine networks report analytics)', re.compile(r"\bten connectors\b", re.I)),
-    ('"every network" (not every network can connect)', re.compile(r"\bevery network\b", re.I)),
+    ('"every network" claimed as connectable (17 cannot connect yet)',
+     re.compile(r"(?<!not )\b(?:every|all) (?:networks?|channels?) (?:is|are) (?:available|ready|connectable|supported)\b"
+                r"|(?<!not )\b(?:every|all) (?:networks?|channels?) (?:works?|can be connected|connects?)\b"
+                r"|from the first minute", re.I)),
+    ("api.postqueen.ai/docs (the internal Swagger list, never linked)", re.compile(r"api\.postqueen\.ai/docs\b")),
     ("clipping (off in production, never documented)", re.compile(r"\bclipping\b", re.I)),
     ("veo3 (no such video type)", re.compile(r"veo3", re.I)),
 ]
@@ -62,6 +66,7 @@ COMMENT_RE = re.compile(r"\{/\*.*?\*/\}", re.S)
 CHANNEL_STATUS_RE = re.compile(r"<ChannelStatus\s+status=\"([^\"]+)\"\s*>(.*?)</ChannelStatus>", re.S)
 CHANNEL_STATUS_EMPTY_RE = re.compile(r"<ChannelStatus\s+status=\"([^\"]+)\"\s*/>")
 AGENT_STATUS_RE = re.compile(r"<AgentStatus\b([^>]*?)/?>", re.S)
+OWN_WORDS = {"PostQueen", "The", "A", "Your", "On", "Or", "And", "To", "From"}
 STATUS_KEY = {"works": "available", "review_gated": "in-review", "no_keys": "soon", "cannot_connect": "soon"}
 
 
@@ -81,6 +86,7 @@ def check_variables(facts: dict, docs: dict) -> None:
         "appUrl": facts["urls"]["app"],
         "apiBase": facts["urls"]["apiBase"],
         "mcpKeyUrl": addr["key"]["url"],
+        "mcpBearerUrl": addr["bearer"]["url"],
         "mcpOauthUrl": addr["signin"]["url"],
         "mcpToolsKey": str(facts["mcp"]["toolCount"]["key"]),
         "mcpToolsOauth": str(facts["mcp"]["toolCount"]["signin"]),
@@ -138,7 +144,7 @@ def scan_banned(rel: str, text: str, pending: bool) -> None:
             report(pending, f"{rel}:{line}: {label}: {m.group(0)!r}")
     for fence in FENCE_RE.finditer(body):
         code = fence.group(3)
-        if "/public/v1" in code and re.search(r"Bearer", code):
+        if re.search(r"/public/v1|\{\{apiBase\}\}", code) and re.search(r"Bearer", code):
             line = body.count("\n", 0, fence.start()) + 1
             report(pending, f"{rel}:{line}: Bearer in a /public/v1 example (the API takes the raw key)")
 
@@ -147,6 +153,10 @@ def check_numbers(rel: str, text: str, facts: dict, pending: bool) -> None:
     body = COMMENT_RE.sub("", text)
     tiers = {t["name"]: t for t in facts["plans"]["tiers"]}
     for m in re.finditer(r"\b(Creator|Growth|Pro|Ultimate)\b(?: plan)?[^$\n|]{0,12}\$(\d+)", body):
+        # "Claude Pro", "Hashnode Pro": another product's plan, not PostQueen's
+        before = re.search(r"([A-Za-z][\w.]*)\s+$", body[max(0, m.start() - 30):m.start()])
+        if before and before.group(1)[0].isupper() and before.group(1) not in OWN_WORDS:
+            continue
         tier = tiers[m.group(1)]
         if int(m.group(2)) not in (tier["monthly"], tier["yearly"]):
             report(pending, f"{rel}: {m.group(1)} at ${m.group(2)}, facts.json says ${tier['monthly']} a month or ${tier['yearly']} a year")

@@ -29,13 +29,10 @@ Every post to NETWORK carries a `settings` object with `"__type": "TYPE"`. Read 
 
 ## Fields
 
-<ResponseField name="__type" type="string" required>
-  Always `"TYPE"`.
-</ResponseField>
-
-<ResponseField name="FIELD" type="TYPE" required>
-  What it does. Allowed values: `VALUE`, `VALUE`. PostQueen refuses the post with "EXACT MESSAGE" when RULE.
-</ResponseField>
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"TYPE"`. |
+| `FIELD` | TYPE | Yes or no | What it does. Allowed values: `VALUE`, `VALUE`. |
 
 ## What PostQueen checks
 

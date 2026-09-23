@@ -434,9 +434,7 @@ pre *,
   color: var(--pq-code-ink);
   font-size: 12.5px;
   line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 .pq-way-more {
   display: inline-flex;

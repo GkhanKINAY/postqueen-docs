@@ -60,7 +60,7 @@ Report a mistake in the docs as an issue here. Report a bug in the app itself on
 | --- | --- |
 | Docs | [docs.postqueen.ai](https://docs.postqueen.ai/introduction) |
 | Hosted service | [postqueen.ai](https://postqueen.ai) · [pricing](https://postqueen.ai/pricing) |
-| API reference | [api.postqueen.ai/docs](https://api.postqueen.ai/docs) |
+| API reference | [docs.postqueen.ai/public-api](https://docs.postqueen.ai/public-api/introduction) |
 | Repositories | [app](https://github.com/GkhanKINAY/postqueen-app) · [CLI and skill](https://github.com/GkhanKINAY/postqueen-agent) · [n8n node](https://github.com/GkhanKINAY/postqueen-n8n) · [docs](https://github.com/GkhanKINAY/postqueen-docs) · [Docker Compose](https://github.com/GkhanKINAY/postqueen-docker-compose) · [Helm chart](https://github.com/GkhanKINAY/postqueen-helmchart) |
 | Help | support@postqueen.ai · [GitHub issues](https://github.com/GkhanKINAY/postqueen-docs/issues) |
 

@@ -655,6 +655,7 @@
     "appUrl": "https://app.postqueen.ai",
     "apiBase": "https://api.postqueen.ai/public/v1",
     "mcpKeyUrl": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
+    "mcpBearerUrl": "https://api.postqueen.ai/mcp",
     "mcpOauthUrl": "https://api.postqueen.ai/mcp-oauth-dynamic",
     "mcpToolsKey": "21",
     "mcpToolsOauth": "20",
@@ -1121,6 +1122,10 @@
     {
       "source": "/mcp/clients/claude-app",
       "destination": "/agents/claude"
+    },
+    {
+      "source": "/public-api",
+      "destination": "/public-api/introduction"
     }
   ]
 }

@@ -35,7 +35,16 @@ ERRORS: list[str] = []
 SELF_HOST_TAB = "Self-hosting"
 MARKER = "OVERHAUL-TODO"
 # The docs home carries the fork line and the one link to Self-hosting (plan 3.1).
-SELF_HOST_WORDS_ALLOWED = {"introduction"}
+# The "Agents you run" pages describe the agent's own install (Docker, its .env,
+# its self-hosted server); the server-variable ban still applies to them.
+SELF_HOST_WORDS_ALLOWED = {
+    "introduction",
+    "agents/openclaw",
+    "agents/hermes",
+    "agents/nanoclaw",
+    "agents/paperclip",
+    "agents/chat-channels",
+}
 
 # Mintlify nav containers. Walking only `pages`/`groups`/`tabs` misses dropdowns.
 NAV_CONTAINER_KEYS = (
@@ -156,7 +165,7 @@ def main() -> int:
     # "open source" only as PostQueen's own pitch: a third-party agent may be open source.
     # "environment variable" alone is fine: the CLI reads POSTQUEEN_API_KEY from one.
     self_host_re = re.compile(
-        r"self[- ]?host|\bAGPL|\bdocker\b|docker[- ]compose|\.env\b"
+        r"self[- ]?host|\bAGPL|\bdocker\b|docker[- ]compose|(?<![\w.])\.env\b"
         r"|PostQueen is (?:an? )?open[- ]source|open[- ]source (?:fork|tool|scheduler)",
         re.I,
     )
@@ -169,10 +178,9 @@ def main() -> int:
     md_img_re = re.compile(r"!\[([^\]]*)\]\(")
 
     marked: dict[str, int] = {}
-    relaxed = 0
     checked_links = 0
 
-    # Snippets: imports they make must resolve, and none may use <Snippet file>.
+    # Snippets: none may use <Snippet file>, and no em dash.
     for snip in sorted((ROOT / "snippets").glob("*.mdx")):
         text = snip.read_text()
         rel = snip.relative_to(ROOT).as_posix()
@@ -250,7 +258,6 @@ def main() -> int:
 
         # Style rules: for finished pages, and for every page on a release run.
         if is_marked and not RELEASE:
-            relaxed += 1
             continue
         # Endpoint pages show their method badge in the sidebar instead of an icon.
         if not icon and not fm_value(fm, "openapi"):

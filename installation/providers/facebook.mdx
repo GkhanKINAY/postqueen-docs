@@ -4,7 +4,7 @@ description: 'Register the Facebook application and give PostQueen its keys'
 icon: /images/channels/facebook.svg
 ---
 
-import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
 {/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
@@ -81,7 +81,7 @@ On your own instance the Meta app is yours: create it in Meta for Developers, th
       <img src="/images/providers/facebook/facebook-redirect-uri.png" alt="Redirect URI" />
     </Frame>
 
-    <Oauth2redirect />
+    <OAuthRedirect />
 
     **Your Facebook OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/facebook`

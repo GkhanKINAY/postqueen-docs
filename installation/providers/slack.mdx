@@ -4,7 +4,7 @@ description: 'Register the Slack application and give PostQueen its keys'
 icon: /images/channels/slack.svg
 ---
 
-import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
 {/* OVERHAUL-TODO(B5): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better; audit: selfhost). Row in page-status-2026-09-23.md. */}
@@ -17,7 +17,7 @@ On your own instance the Slack app is yours: create it, add the six bot scopes a
   </Step>
 
   <Step title="Set up OAuth Scopes and redirect URIs">
-    <Oauth2redirect />
+    <OAuthRedirect />
 
     **Your Slack OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/slack`

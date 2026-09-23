@@ -22,7 +22,7 @@ Run them all before you push. CI runs the same ones on every push and pull reque
 | Command | What it checks |
 |---|---|
 | `npm run check` | Navigation, orphans, redirects, snippet imports, card icons, internal links, frontmatter (title, description, and an icon except on endpoint pages), alt text, no em dash, no self-hosting words outside the Self-hosting tab |
-| `npm run check:facts` | Banned facts (old tool counts, removed routes, the old API key location and more), channel and agent status lines against `facts/facts.json`, the MCP tool list against the app, prices and trial numbers against `docs.json` |
+| `npm run check:facts` | Banned facts (old tool counts, removed routes, the old API key location and more), channel and agent status lines against `facts/facts.json`, the MCP tool list against the app, prices, trial and refund numbers and the `docs.json` variables against `facts/facts.json` |
 | `npm run validate` | `mint validate`: the build, failing on warnings |
 | `npm run links` | `mint broken-links` |
 | `npm run a11y` | `mint a11y`: contrast and alt text |
@@ -72,7 +72,7 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
   **In review** with the limit in one sentence. An agent page says whether PostQueen tested it.
 - Every number has one owner. Prices, the trial, the refund window and tool counts come from `docs.json` variables
   (`{{trialDays}}`, `{{refundDays}}`, `{{priceCreator}}`, `{{mcpToolsKey}}`, `{{mcpToolsOauth}}`, `{{mcpKeyUrl}}`,
-  `{{apiBase}}` ...), or the page links to the page that owns the fact.
+  `{{mcpBearerUrl}}`, `{{apiBase}}` ...), or the page links to the page that owns the fact.
 - The status line under a channel or agent title is the `ChannelStatus` or `AgentStatus` snippet, with the values in
   `facts/facts.json`. `check:facts` compares them.
 - Examples use networks that work today (Bluesky, WordPress, DEV, Nostr). A network in review appears only with its

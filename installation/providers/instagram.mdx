@@ -4,7 +4,7 @@ description: 'Register the Instagram application and give PostQueen its keys'
 icon: /images/channels/instagram.svg
 ---
 
-import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 
 {/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
@@ -108,7 +108,7 @@ The following steps create the Meta application that Facebook Page and Instagram
       <img src="/images/providers/instagram/instagram-redirect-uri.png" alt="Path A: Valid OAuth Redirect URIs field in Client OAuth settings" />
     </Frame>
 
-    <Oauth2redirect />
+    <OAuthRedirect />
 
     **Your Instagram OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/instagram`
@@ -201,7 +201,7 @@ The permissions are not the Path A list. Request exactly these four. Do not add 
       <img src="/images/providers/instagram-standalone/instagram-standalone-003.png" alt="Path B: Set up redirect URI" />
     </Frame>
 
-    <Oauth2redirect />
+    <OAuthRedirect />
 
     **Your Instagram Standalone OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/instagram-standalone`

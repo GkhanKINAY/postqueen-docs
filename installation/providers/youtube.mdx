@@ -4,7 +4,7 @@ description: 'Register the YouTube application and give PostQueen its keys'
 icon: /images/channels/youtube.svg
 ---
 
-import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
 {/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
@@ -93,7 +93,7 @@ Follow Google's [Obtaining authorization credentials](https://developers.google.
   <Step title="Create a Web application OAuth client">
     **Clients** → **Create client** → application type **Web application**.
 
-    <Oauth2redirect />
+    <OAuthRedirect />
 
     For this Google client you usually need **more than one** redirect URI, because login, YouTube and (if you share the client) Google My Business all come back to different paths. No trailing slash. A mismatch, including a trailing slash, fails as `invalid_grant`.
 

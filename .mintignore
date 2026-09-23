@@ -1,2 +1,4 @@
-# Page templates for writers: copied, never published (see CONTRIBUTING.md)
+# Kept out of the published site: page templates for writers, and the repo tooling
+# (scripts/env-names.txt lists server variables and is not docs content).
 _templates/
+scripts/
