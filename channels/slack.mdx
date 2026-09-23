@@ -1,63 +1,57 @@
 ---
-title: Slack
-description: 'How to add Slack to your system'
-icon: /images/channels/slack.svg
+title: "Slack"
+description: "What PostQueen will post to public and private Slack channels, and the limits it checks before a post is scheduled."
+icon: "/images/channels/slack.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B5): write it from _templates/channel.mdx. Sources: this file, moved from providers/slack (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/slack.svg" alt="Slack" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post messages and images to your public and private Slack channels, under the name and picture you choose for the channel, with follow-ups as thread replies.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to Slack
-
-The launch note lands in the channel you picked at nine sharp, under the name and avatar you gave the channel in PostQueen. She joins the channel herself first, so nothing bounces on a membership error.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    400,000 characters
+  <Card title="Text" icon="type">
+    Up to 150,000 characters, sent as Slack mrkdwn. Long text is split into sections of up to 3,000 characters at line breaks.
   </Card>
-  <Card title="Media" icon="images">
-    Optional. Images attach as image blocks under the text
+  <Card title="Media" icon="image">
+    PNG, JPG or GIF images, shown under the text. No video.
   </Card>
   <Card title="Post types" icon="layers">
-    Channel message, threaded reply
+    A channel message, with follow-ups as replies in its thread.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None
+    No analytics for Slack.
   </Card>
 </CardGroup>
 
-Nine networks report numbers back to the Analytics page. Slack is not one of them, so a Slack channel shows no chart. The message body goes up as a Slack markdown block, and PostQueen reads back the permalink so the post links straight to the message in your workspace.
+**Not supported:** video, file uploads, and more than one channel of the same workspace in one post.
 
-| | |
-|---|---|
-| **Post settings** | `channel`. Full schema in the [Slack settings reference](/public-api/providers/slack) |
-| **Connect flow** | One step. You authorize the Slack app and the channel picker lists public and private channels together. She joins the target channel before the first message goes out |
-| **Automations** | None. Comments post as threaded replies under the message |
+## Connect Slack
 
-<Warning>
-She asks Slack for six bot scopes and checks all six came back before she saves the channel: `chat:write`, `channels:read`, `users:read`, `groups:read`, `channels:join` and `chat:write.customize`. That last one is what lets a message carry your own channel name and avatar. Leave it off the Slack app and the connection fails on scopes rather than on the first post.
-</Warning>
+<Note>
+Slack is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will install PostQueen's Slack app in your workspace, so you will need permission to install apps there.
+</Note>
 
-<Info>
-This integration requires that you have a Slack Workspace
-</Info>
+## Post settings
 
-## Self-hosting
+Each Slack post in the composer has one setting:
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Slack on your own instance](/installation/providers/slack).
-</Info>
+- **Select Channel**: the public or private channel to post in. Required. You pick it in each post, not when you connect.
+
+The field names and values for the API are on [Slack posting settings](/public-api/providers/slack).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it has no video, that a channel is picked, and that each message fits in Slack's 50 blocks: each picture is one block, and the text takes one per 3,000 characters.
+- **Add comment** adds follow-ups, each with its own delay. They go out as replies in the message's thread, and each can carry images.
+- Posts show the name and picture set for the channel in PostQueen. Change them with **Bot name & avatar** on the **Channels** page.
+- PostQueen joins a public channel by itself before posting. Invite the app to a private channel first, or the post fails.
+- If Slack refuses a message, the post fails with Slack's reason, such as `not_in_channel`, instead of being marked published.
+- Each published post links to the message in Slack.
 
 <NextStepsChannel />
-

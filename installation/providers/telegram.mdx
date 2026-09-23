@@ -1,106 +1,92 @@
 ---
-title: 'Telegram setup'
-description: 'Register the Telegram application and give PostQueen its keys'
-icon: /images/channels/telegram.svg
+title: "Telegram setup"
+description: "Create your own Telegram bot for a self-hosted PostQueen: BotFather, group privacy, the two variables, and how a chat connects with a /connect code."
+icon: "/images/channels/telegram.svg"
 ---
 
-import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+import RestartService from '/snippets/restart-service.mdx';
 
-{/* OVERHAUL-TODO(B5): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen the Telegram bot is yours. Telegram has no OAuth app and no redirect URI: you create a bot with BotFather, and a chat connects when someone adds the bot to it and sends a one-time `/connect` code there.
 
-On your own instance you create the bot yourself and put its token in your environment.
+## Before you start
+
+| | |
+|---|---|
+| Where | [@BotFather](https://t.me/BotFather) in any Telegram app |
+| Variables | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` |
+| Redirect URI | None |
+| Bot rights | In a channel, an administrator allowed to post messages. In a group, a member who can send messages and media |
+| Review | None |
+
+## Create the bot
 
 <Steps>
-  <Step title="Create a Telegram Bot">
-    1. Open Telegram and message [@BotFather](https://t.me/botfather).
-    2. Click Start
-    3. Click Menu
-       - Click "Create a new bot"
-       - Enter a name for your bot (e.g., `MyPostQueenBot`).
+  <Step title="Create the bot in BotFather">
+    Open [@BotFather](https://t.me/BotFather) and send `/newbot`. Enter a display name, then a username that ends in `bot`, such as `acme_postqueen_bot`. A username is 5 to 32 characters of Latin letters, numbers and underscores.
 
-    <Frame>
-      <img src="/images/providers/telegram/telegram-name-bot.png" alt="Name Bot" />
-    </Frame>
-       
-       - Choose a unique username ending with "bot" (e.g., `MyPostQueenBot_bot`).
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-unique-username.png" alt="Unique Bot Name" />
-    </Frame>
-
-    Once your bot is created, **BotFather** will give you an **API Token**. Keep it safe. You will need it later.
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-bot-token.png" alt="Bot Token" />
-    </Frame>
+    BotFather answers with the bot's token. Keep it private: anyone with it controls the bot. BotFather also has a Mini App with the same options, if you prefer buttons to commands.
   </Step>
+  <Step title="Turn off group privacy">
+    Send `/setprivacy` to BotFather, pick the bot and choose **Disable**.
 
-  <Step title="Configure Bot Group Permissions (optional but recommended)">
-    1. Click on "Menu"
-    2. Click on "Edit your bots"
-    3. Select your bot
-    4. Click on "Bot Settings"
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-bot-settings.png" alt="Bot Settings" />
-    </Frame>
-
-    5. Click on "Group Privacy"
-
-    <Frame>
-      <img src="/images/providers/telegram/telegram-group-privacy.png" alt="Group Privacy" />
-    </Frame>
-
-    6. If "Privacy mode" is enabled, turn it off (it is enabled by default)
+    In a group, a bot with privacy mode on only receives commands that name it, such as `/start@acme_postqueen_bot`, and the `/connect` code PostQueen asks for does not name the bot. Administrators receive every message either way, and channels are not affected. If the bot is already in a group, remove it and add it again, because Telegram applies the change only when the bot joins.
   </Step>
+</Steps>
 
-  <Step title="Add Your Bot to Telegram Groups or Channels">
-    1. Navigate to your group/channel
-    2. Add your bot to your group/channel
-    3. The bot requires these permissions to work with PostQueen:
-       - access to messages, so the bot can read messages sent in the group/channel
-       - Send Text Messages, so the bot can send messages
-       - Send Media, so the bot can send media
+## Set the variables
 
-    <Info>
-    While not strictly required, making your bot an `admin` is **recommended**. It will give the bot all the permissions needed and make the setup easier and faster.
-    </Info>
-  </Step>
-
-  <Step title="Add Bot Token to Your Application">
-    In your `.env` file, add the **Telegram Bot Name** (Without the @) and the **Telegram Bot API Token** that you received from **BotFather** in Step 1:
+Add the token and the bot's username, without the `@`:
 
 ```env
-TELEGRAM_BOT_NAME="MyPostQueenBot_bot"
-TELEGRAM_TOKEN="MyPostQueenBot token"
+TELEGRAM_TOKEN="123456789:your-bot-token"
+TELEGRAM_BOT_NAME="acme_postqueen_bot"
 ```
 
-    You should be able to connect your group/channel to PostQueen now!
+Both are needed. The web app shows the username in the connect window, and the server uses the token to read the `/connect` code and to post.
+
+<RestartService />
+
+## Connect a chat
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels**, choose **Add Channel**, then **Telegram**. The window names your bot: "Please add @acme_postqueen_bot to your telegram group / channel and click here:".
   </Step>
-  <Step title="Restart and add the Telegram channel">
-    <RestartAndAddChannel />
+  <Step title="Add the bot to the chat">
+    In Telegram, add the bot to the channel or group. A channel takes a bot only as an administrator, and it needs the right to post messages. In a group, make it an administrator if privacy mode is still on.
+  </Step>
+  <Step title="Send the /connect code">
+    Back in PostQueen, choose **Connect Telegram**. The window shows a code such as `/connect a1B2`. Choose **Copy** and send it in the chat exactly as shown.
+  </Step>
+  <Step title="Check that it connected">
+    The window checks every 2 seconds and connects the chat once the bot has read the code. If the bot is an administrator allowed to delete messages, it deletes your code and posts "Connection Successful. Message will be deleted in 10 seconds." Otherwise it says "Connection Successful. I don't have admin privileges to delete these messages, please go ahead and remove them yourself." The chat appears in the **Channels** list with its picture and name.
   </Step>
 </Steps>
 
 <Warning>
-PostQueen talks to Telegram using long-polling (`getUpdates`). Telegram allows only **one** connected process per bot token at a time. If you run PostQueen against the same `TELEGRAM_TOKEN` from two places (e.g. self-hosted plus cloud, or two self-hosted instances), each instance will continuously kick the other off and you will see `409 Conflict: terminated by other getUpdates` errors in the logs.
-
-Use one bot token per PostQueen deployment. If you need Telegram on multiple environments, create a separate bot for each.
+PostQueen reads the `/connect` code with Telegram's `getUpdates`, and Telegram allows one reader per bot. Two deployments on the same `TELEGRAM_TOKEN` consume each other's codes, and overlapping reads fail with `409 Conflict: terminated by other getUpdates request`. `getUpdates` also stops working while a webhook is set on the bot. Use one bot per deployment and never set a webhook on it.
 </Warning>
 
-## Next steps
+## Troubleshooting
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Telegram" icon="/images/channels/telegram.svg" href="/channels/telegram">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+<AccordionGroup>
+  <Accordion title="Telegram is not set up on this installation. Add TELEGRAM_TOKEN and TELEGRAM_BOT_NAME to the server environment and restart PostQueen.">
+    This is what an admin sees. Other members see "Telegram is not set up on this installation yet. Ask a workspace admin to turn it on." `TELEGRAM_BOT_NAME` is empty: set both variables and recreate the container. An instance with billing turned on says "Telegram cannot be connected right now. Please contact support." for the same reason.
+  </Accordion>
+  <Accordion title="The window keeps waiting after the code was sent">
+    The bot did not receive the code. In a group, privacy mode is still on and the bot is not an administrator: disable it with `/setprivacy`, then remove the bot and add it again. In a channel, the bot is not an administrator. Send the code exactly as shown, without adding `@` and the bot's name. If none of that helps, check that no other deployment uses the same token and that the bot has no webhook.
+  </Accordion>
+  <Accordion title="409 Conflict: terminated by other getUpdates request">
+    Another process reads the same bot's updates. Give each PostQueen deployment its own bot.
+  </Accordion>
+  <Accordion title="Posts to a channel fail">
+    The bot is not an administrator of the channel, or it lost the right to post messages. Make it an administrator with that right.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Telegram posting settings](/public-api/providers/telegram)

@@ -1,147 +1,138 @@
 ---
-title: Skool Settings
-description: 'API settings for posting to Skool communities'
+title: "Skool posting settings"
+sidebarTitle: "Skool"
+description: "The settings object a post to Skool takes in the public API: every field, the groups and label tools, what PostQueen checks, and complete examples."
+icon: "/images/channels/skool.svg"
 ---
 
-{/* OVERHAUL-TODO(B5): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: partly better; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Skool setup guide](/channels/skool).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Skool cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Skool channel will take.
 
-When creating a post for Skool, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "skool",
-    "group": "group-id",
-    "label": "label-id",
-    "title": "My Post Title"
-  }
-}
-```
+Every post to Skool carries a `settings` object with `"__type": "skool"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `skool` |
-| `group` | `string` | Yes | Skool group ID |
-| `label` | `string` | Yes | Label ID for the post |
-| `title` | `string` | Yes | Title of the post (min 1 character) |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"skool"`. PostQueen sets it from the channel you post to. |
+| `group` | string | Yes | The id of the Skool group to post in. |
+| `label` | string | Yes | The id of the category the post is filed under. `"none"` posts without a category, and it is the only value the `label` tool offers for a group that has no categories. |
+| `title` | string | Yes | The post's title. |
 
-### `group`
+The text is sent as it is, up to 5,000 characters, and each file is uploaded to Skool as an attachment. Each extra entry in `value` is a comment, posted after its `delay` in minutes under the entry before it. Comments can carry files too, and take no title.
 
-The Skool group ID where the post will be published. You can find available groups by selecting them in the PostQueen UI when configuring the Skool channel.
+### Find the ids
 
-### `label`
+Two tools list the ids. Call them through [trigger a provider tool](/public-api/integrations/trigger):
 
-The label ID to categorize the post. Each Skool group can have multiple labels, so select the target label in the PostQueen UI to obtain its ID.
+- `groups` lists your first 30 groups, with no `data`.
+- `label` lists a group's categories. Pass the group id as `data.id`.
 
-### `title`
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "label", "data": { "id": "GROUP_ID" } }'
+```
 
-The title of the Skool post. This is a required field and must be at least 1 character long.
+Both return `{ "output": [ { "id", "name" } ] }`. For a group with no categories, `label` answers `[ { "id": "none", "name": "Default Label" } ]`. Put the group's `id` in `settings.group` and the category's `id` in `settings.label`.
 
----
+## What PostQueen checks
 
-## Complete Example
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-### Community Post
+| Rule | Message |
+|---|---|
+| Each entry up to 5,000 characters | “post is too long, please fix it” |
+| `group`, `label` and `title` are set and not empty | A validation error naming the field, such as “posts.0.settings.title should not be null or undefined” |
+
+The error body for a too-long entry names the channel and the rule:
 
 ```json
+{
+  "statusCode": 400,
+  "provider": "skool",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
+
+After scheduling, Skool can still refuse a post: "You can't post to this channel" when the account's role in the group is below what it requires, and "Cannot post to this label" when the category is restricted.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), `group` and `label` with ids from the tools above, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Post with a comment
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-skool-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Hey everyone! 👋\n\nI wanted to share some tips that helped me grow my community:\n\n1. Be consistent with posting\n2. Engage with every comment\n3. Create valuable content\n\nWhat strategies have worked for you?",
+          "content": "This week's call is on Thursday at 17:00. Post your questions below and we will answer them live.",
           "image": []
+        },
+        {
+          "content": "The recording of last week's call is in the Classroom.",
+          "image": [],
+          "delay": 10
         }
       ],
       "settings": {
         "__type": "skool",
-        "group": "your-group-id",
-        "label": "your-label-id",
-        "title": "Community Growth Tips - What Worked For Me"
+        "group": "GROUP_ID",
+        "label": "LABEL_ID",
+        "title": "Thursday Q&A"
       }
     }
   ]
 }
 ```
 
-### Post with Image
-
-```json
+```json Post with an image, no category
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-skool-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Here's my progress report for this month. Really happy with the results!\n\nKey metrics:\n- Revenue up 25%\n- New members: 150\n- Engagement rate: 45%",
-          "image": [
-            {
-              "id": "metrics-image-id",
-              "path": "https://uploads.postqueen.ai/metrics.png"
-            }
-          ]
+          "content": "Here is the checklist from today's lesson.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/checklist.png" }]
         }
       ],
       "settings": {
         "__type": "skool",
-        "group": "your-group-id",
-        "label": "your-label-id",
-        "title": "Monthly Progress Report - December 2024"
+        "group": "GROUP_ID",
+        "label": "none",
+        "title": "Lesson checklist"
       }
     }
   ]
 }
 ```
 
-### Quick Announcement
+</CodeGroup>
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-skool-integration-id"
-      },
-      "value": [
-        {
-          "content": "We're going live in 30 minutes! Join us for a Q&A session about scaling your business.\n\nDrop your questions below and we'll cover them live! 🎙️",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "skool",
-        "group": "your-group-id",
-        "label": "your-label-id",
-        "title": "🔴 LIVE Q&A Starting Soon!"
-      }
-    }
-  ]
-}
-```
+In the first example, the second entry in `value` is posted 10 minutes after the post, as a comment under it.
 
-<Note>
-Skool uses the PostQueen Chrome Extension for authentication. Make sure the extension is installed and configured before using the API. Setup: [Skool provider guide](/channels/skool).
-</Note>
+## Related
+
+- [Skool in the app](/channels/skool)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)

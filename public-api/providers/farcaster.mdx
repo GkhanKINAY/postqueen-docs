@@ -1,178 +1,114 @@
 ---
-title: 'Warpcast (Farcaster) Settings'
-sidebarTitle: Farcaster
-description: 'Provider settings for Warpcast/Farcaster posts'
+title: "Farcaster posting settings"
+sidebarTitle: "Farcaster"
+description: "The settings object a cast to Farcaster takes in the public API: the channels field, the channel search tool, what PostQueen checks, and complete examples."
+icon: "/images/channels/farcaster.svg"
 ---
 
-{/* OVERHAUL-TODO(B5): write it from _templates/api-settings.mdx. Sources: this file, moved from public-api/providers/warpcast (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Warpcast (Farcaster) setup guide](/installation/providers/farcaster).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Overview
+Farcaster cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Farcaster channel will take.
 
-Warpcast is a client for the Farcaster protocol, a decentralized social network. When posting to Warpcast, you can specify which channels to post to.
+Every post to Farcaster carries a `settings` object with `"__type": "wrapcast"`, the API's name for Farcaster. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
-<Note>
-The `__type` identifier is spelled `wrapcast`, not `warpcast`. That is the value `GET /integrations` returns and the one the settings schema is keyed on. On `POST /posts` the server overwrites `__type` with the channel's own identifier, so a misspelling is ignored rather than refused. The settings also use `subreddit` as the field name for historical reasons, but it refers to Farcaster channels.
-</Note>
+## Fields
 
-## Settings Schema
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"wrapcast"`. PostQueen sets it from the channel you post to. |
+| `subreddit` | array | No | The Farcaster channels to cast into, despite the field's name. Each item is `{ "value": { "id": "CHANNEL_ID" } }`, where the id is a Farcaster channel id such as `dev`. Left out or empty, the cast goes to your home feed. |
+
+With channels, PostQueen publishes one cast in each, and the post's id and link come back as comma-separated lists. Each extra entry in `value` is a follow-up, posted after its `delay` in minutes as a reply to the cast before it, in every channel the post went to. Links in the text stay plain text, with no embed or frame.
+
+### Find a channel id
+
+The `subreddits` tool searches Farcaster channels by name and returns up to 10. Call it through [trigger a provider tool](/public-api/integrations/trigger):
+
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "subreddits", "data": { "word": "design" } }'
+```
+
+The response is `{ "output": [ { "id", "name", "title" } ] }`. Put the chosen `id` in `settings.subreddit[].value.id`.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| Images only, no video | “Can only accept images” |
+| At most 4 images in each entry | “Farcaster casts can have up to 4 images” |
+| Each entry at most 1,024 bytes of text | “Farcaster casts can be at most 1,024 bytes, and accented letters, emoji and non-Latin scripts take 2 to 4 bytes each” |
+| Each channel item has a string `id` | A validation error naming the field, such as “posts.0.settings.subreddit.0.value.id must be a string” |
+
+The error body names the channel and the rule:
 
 ```json
 {
-  "__type": "wrapcast",
-  "subreddit": [
-    {
-      "value": {
-        "id": "channel-id"
-      }
-    }
-  ]
+  "statusCode": 400,
+  "provider": "wrapcast",
+  "name": "Your channel name",
+  "message": "Farcaster casts can have up to 4 images"
 }
 ```
 
-## Properties
+A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"wrapcast"` |
-| `subreddit` | array | ❌ | Array of channel targets |
-| `subreddit[].value.id` | string | ✅ | Channel ID |
+A plain Latin letter is one byte, so English text fits about 1,024 characters, while text in other scripts or with emoji fits fewer.
 
 ## Examples
 
-### Simple cast (no channel)
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), each Farcaster channel `id` with one from the `subreddits` tool, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-warpcast-integration-id"
-      },
-      "value": [
-        {
-          "content": "Hello Farcaster! 👋",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "wrapcast"
-      }
-    }
-  ]
-}
-```
+<CodeGroup>
 
-### Cast to a specific channel
-
-```json
+```json Cast to your home feed
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-warpcast-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
-        {
-          "content": "Check out this new open-source project! 🚀",
-          "image": []
-        }
+        { "content": "Shipping the new editor this week. Early notes below.", "image": [] },
+        { "content": "It keeps drafts offline and syncs when you reconnect.", "image": [], "delay": 2 }
       ],
-      "settings": {
-        "__type": "wrapcast",
-        "subreddit": [
-          {
-            "value": {
-              "id": "developers"
-            }
-          }
-        ]
-      }
+      "settings": { "__type": "wrapcast" }
     }
   ]
 }
 ```
 
-### Cast to multiple channels
-
-```json
+```json Cast into two channels with images
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-warpcast-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Excited to announce our new feature! Built with the community in mind.",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "wrapcast",
-        "subreddit": [
-          {
-            "value": {
-              "id": "announcements"
-            }
-          },
-          {
-            "value": {
-              "id": "builders"
-            }
-          }
-        ]
-      }
-    }
-  ]
-}
-```
-
-### Cast with image
-
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-warpcast-integration-id"
-      },
-      "value": [
-        {
-          "content": "New design preview! What do you think? 🎨",
+          "content": "Two layouts for the new home screen. Which one reads better?",
           "image": [
-            {
-              "id": "img-123",
-              "path": "https://uploads.postqueen.ai/design.png"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/layout-a.png" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/layout-b.png" }
           ]
         }
       ],
       "settings": {
         "__type": "wrapcast",
         "subreddit": [
-          {
-            "value": {
-              "id": "design"
-            }
-          }
+          { "value": { "id": "design" } },
+          { "value": { "id": "dev" } }
         ]
       }
     }
@@ -180,10 +116,12 @@ The `__type` identifier is spelled `wrapcast`, not `warpcast`. That is the value
 }
 ```
 
-## Notes
+</CodeGroup>
 
-- Channel IDs are the names/slugs of Farcaster channels
-- You can post without specifying channels (posts to your main feed)
-- You can post to multiple channels simultaneously
-- Images are supported and will be displayed as embeds
+In the first example, the second entry in `value` is posted 2 minutes after the cast, as a reply to it.
 
+## Related
+
+- [Farcaster in the app](/channels/farcaster)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)

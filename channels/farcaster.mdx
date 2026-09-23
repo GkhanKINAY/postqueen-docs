@@ -1,60 +1,55 @@
 ---
-title: Farcaster
-description: 'How to add Farcaster (Warpcast) to your system'
-icon: /images/channels/farcaster.svg
+title: "Farcaster"
+description: "What PostQueen will post to your Farcaster home feed and channels, and the limits it checks before a cast is scheduled."
+icon: "/images/channels/farcaster.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B5): write it from _templates/channel.mdx. Sources: this file, moved from providers/farcaster (rewrite; WIP: partly better; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/farcaster.svg" alt="Farcaster" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will publish casts with up to 4 images to your home feed or to one or more Farcaster channels, with follow-ups published as a reply chain.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to Farcaster
-
-Eight hundred characters and a picture is the whole shape of a cast. Name several channels and she sends the same cast into each one, then keeps the ids so your comments land in the right threads.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    800 characters per cast.
+  <Card title="Text" icon="type">
+    Up to 1,024 bytes. A plain Latin letter is one byte, while accented letters, emoji and other scripts take 2 to 4, so text with them fits fewer characters.
   </Card>
   <Card title="Media" icon="image">
-    Images only. Video is refused before she reaches Farcaster.
+    Up to 4 images. Video is refused.
   </Card>
   <Card title="Post types" icon="layers">
-    A cast, into your feed or into one or more channels, then replies threaded underneath as comments.
+    A cast to your home feed or to Farcaster channels, and follow-up replies.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None. Nine networks report analytics to PostQueen, and Farcaster is not one of them.
+    No analytics for Farcaster.
   </Card>
 </CardGroup>
 
-| Area | Detail |
-|---|---|
-| Post settings | A `subreddit` array of channel targets, each one a `value.id`. The field name is historical and it means Farcaster channels: [Warpcast settings](/public-api/providers/farcaster). |
-| Connect flow | One step, through the Neynar login screen. No scopes are requested, since the signer covers posting. |
-| Automations | None on this network. |
-| Publish rate | Three casts at a time. |
+**Not supported:** video, frames and link embeds. A link in a cast stays plain text.
 
-<Warning>
-Attach a video and she stops before publishing with **"Can only accept images"**.
+## Connect Farcaster
 
-Two naming quirks worth knowing. The `__type` on the API is spelled `wrapcast`, and the connect slug is `farcaster`. When you cast into several channels at once, one cast is created per channel and the ids come back comma separated in a single response.
-</Warning>
+<Note>
+Farcaster is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will mean approving PostQueen in the Farcaster app on your phone.
+</Note>
 
-## Self-hosting
+## Post settings
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Farcaster on your own instance](/installation/providers/farcaster).
-</Info>
+Each Farcaster post in the composer has one setting:
+
+- **Add Channel**: adds a Farcaster channel to the post. Search by name under **Search Channel** and pick one from the list. Add as many as you like.
+
+With no channel, the cast goes to your home feed. With channels, PostQueen publishes one cast in each.
+
+The field names and values for the API are on [Farcaster posting settings](/public-api/providers/farcaster).
+
+## Good to know
+
+- Before a cast is scheduled, PostQueen checks that it is at most 1,024 bytes, has at most 4 images, and has no video. The composer counts characters, so a cast in accented or non-Latin text can pass the composer's count and still be refused for its size in bytes.
+- **Continue thread** adds follow-ups, each with its own delay. Each one replies to the cast before it, in every channel the post went to, and can carry images.
 
 <NextStepsChannel />
-
