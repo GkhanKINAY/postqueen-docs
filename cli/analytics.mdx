@@ -1,152 +1,135 @@
 ---
-title: Analytics
-description: 'View platform and post-level analytics from the command line'
-icon: 'chart-line'
+title: "Analytics"
+description: "Read a channel's numbers and one post's numbers with the postqueen CLI, see which networks report them, and connect a post whose published copy PostQueen could not find."
+icon: "chart-line"
+keywords:
+  - analytics:platform
+  - analytics:post
+  - posts:missing
+  - posts:connect
+  - followers
+  - impressions
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+Two commands read analytics: `analytics:platform` for a channel, such as its followers and impressions over time, and `analytics:post` for one published post.
 
-<Frame>
-  <img src="/images/brand/analytics.svg" alt="PostQueen analytics: engagement chart, followers, impressions and video views" />
-</Frame>
+## Which networks report numbers
 
-Ask her how last week went and she answers with numbers, per channel or per post.
+Nine networks send analytics to PostQueen. Every other channel answers with an empty list, `[]`.
 
-## Platform Analytics
+| Network | Channel windows | One post's numbers | Followers | Status today |
+|---|---|---|---|---|
+| X | 7, 30, 90 days | Yes | No | [In review](/channels/x-twitter) |
+| Facebook Page | 7, 30, 90 days | Yes | Yes | [In review](/channels/facebook) |
+| Instagram | 7, 30 days | Yes | Yes | [In review](/channels/instagram) |
+| Threads | 7, 30 days | Yes | No | [In review](/channels/threads) |
+| TikTok | 7, 30 days | Yes | Yes | [In review](/channels/tiktok) |
+| YouTube | 7, 30, 90 days | Yes | Yes | [In review](/channels/youtube) |
+| LinkedIn Page | 7, 30, 90 days | Yes | Yes | [Soon](/channels/linkedin) |
+| Pinterest | 7, 30, 90 days | Yes | No | [Soon](/channels/pinterest) |
+| Google Business Profile | 7, 30, 90 days | No | No | [Soon](/channels/google-my-business) |
 
-Get analytics for a specific integration/channel. Returns metrics like followers, impressions, and engagement over time.
+The networks you can connect without limits today, such as Bluesky, WordPress and DEV, report no analytics.
 
-```bash
-postqueen analytics:platform <integration-id>
-```
-
-### Options
-
-| Flag | Description |
-|------|-------------|
-| `-d, --date` | Number of days to look back (default: 7) |
-
-### Examples
+## A channel's numbers
 
 ```bash
-# Last 7 days (default)
-postqueen analytics:platform your-integration-id
-
-# Last 30 days
-postqueen analytics:platform your-integration-id -d 30
-
-# Last 90 days
-postqueen analytics:platform your-integration-id -d 90
+postqueen analytics:platform <channel-id>          # the last 7 days
+postqueen analytics:platform <channel-id> -d 30    # the last 30 days
 ```
 
-The response is an array of metrics, each with daily data points:
+`-d` is the number of days to look back, `7` by default. Use `7`, `30` or `90`, the windows the table shows for that network: another number goes to the network as it is. The answer is a list of metrics, each with a value per day and the change over the window:
 
-```json
+```text
+📊 Analytics for integration: cmf1abc2d0003
 [
-  {
-    "label": "Followers",
-    "data": [
-      { "total": "1250", "date": "2026-07-01" },
-      { "total": "1280", "date": "2026-07-02" }
-    ],
-    "percentageChange": 2.4
-  },
   {
     "label": "Impressions",
     "data": [
-      { "total": "5000", "date": "2026-07-01" },
-      { "total": "5200", "date": "2026-07-02" }
+      { "total": "5000", "date": "2026-09-01" },
+      { "total": "5200", "date": "2026-09-02" }
     ],
-    "percentageChange": 4.0
+    "percentageChange": 4
   }
 ]
 ```
 
-<Note>
-The metrics returned depend on the platform. For example, X returns followers and impressions, while YouTube may return subscribers and views.
-</Note>
+The labels depend on the network. PostQueen keeps a channel's answer for an hour, so asking again within the hour returns the same numbers.
 
-## Post Analytics
-
-Get analytics for a specific published post. Returns metrics like likes, comments and impressions.
+## One post's numbers
 
 ```bash
 postqueen analytics:post <post-id>
+postqueen analytics:post <post-id> -d 30
 ```
 
-### Options
+The answer has the same shape: a list of metrics such as likes, comments and impressions. It can also be:
 
-| Flag | Description |
-|------|-------------|
-| `-d, --date` | Number of days to look back (default: 7) |
+- `[]`: the post has not been published yet, or its network gives no numbers per post.
+- `{"missing": true}`: the post was published, but PostQueen does not know its ID on the network. Fix it below.
 
-### Examples
+## Fix a missing release ID
 
-```bash
-# Last 7 days (default)
-postqueen analytics:post your-post-id
+When a network does not return the post's ID after publishing, PostQueen marks it as missing and cannot read its numbers. This happens with TikTok, which is also the only network that can list its recent posts for you to pick from.
 
-# Last 30 days
-postqueen analytics:post your-post-id -d 30
+<Steps>
+  <Step title="List the channel's recent posts">
+    ```bash
+    postqueen posts:missing <post-id>
+    ```
+
+    ```json
+    [
+      { "id": "7321456789012345678", "url": "https://.../cover.jpeg" },
+      { "id": "7321456789012345679", "url": "https://.../cover2.jpeg" }
+    ]
+    ```
+
+    Each item is a post on the network, with its cover image. This command prints JSON with no status line. Every other network answers `[]`.
+  </Step>
+  <Step title="Connect the right one">
+    ```bash
+    postqueen posts:connect <post-id> --release-id "7321456789012345678"
+    ```
+  </Step>
+  <Step title="Read the numbers">
+    ```bash
+    postqueen analytics:post <post-id>
+    ```
+  </Step>
+</Steps>
+
+## Totals and top posts
+
+The CLI reads one channel or one post at a time. For totals across your published posts, or your best posts ranked, use the API's [analytics summary](/public-api/analytics/summary) and [post analytics](/public-api/analytics/posts) routes, or ask an agent over [MCP](/mcp/tools#analytics).
+
+## Use the numbers in a script
+
+Drop the status line with `tail -n +2`, then read the JSON with `jq`:
+
+<CodeGroup>
+
+```bash Change per metric
+postqueen analytics:platform <channel-id> -d 30 | tail -n +2 | jq -r '.[] | "\(.label): \(.percentageChange)%"'
 ```
 
-The response follows the same format as platform analytics:
-
-```json
-[
-  {
-    "label": "Likes",
-    "data": [
-      { "total": "150", "date": "2026-07-01" },
-      { "total": "175", "date": "2026-07-02" }
-    ],
-    "percentageChange": 16.7
-  },
-  {
-    "label": "Comments",
-    "data": [
-      { "total": "25", "date": "2026-07-01" },
-      { "total": "30", "date": "2026-07-02" }
-    ],
-    "percentageChange": 20.0
-  }
-]
+```bash Latest value of one metric
+postqueen analytics:platform <channel-id> | tail -n +2 | jq -r '.[] | select(.label=="Impressions") | .data[-1].total'
 ```
 
-<Tip>
-Post analytics are only available for published posts. Draft or queued posts will not return analytics data. An empty array `[]` means either the post has not been published yet or that network does not report per-post metrics; run `postqueen posts:list` to confirm the post has a release ID.
-</Tip>
-
-### When a post shows `{"missing": true}`
-
-If `analytics:post` returns `{"missing": true}`, the post was published but the platform did not return a usable post ID, so it is not connected to its published content yet. Resolve it, then retry:
-
-```bash
-# 1. List available content from the provider
-postqueen posts:missing <post-id>
-
-# 2. Connect the correct content to the post
-postqueen posts:connect <post-id> --release-id "7321456789012345678"
-
-# 3. Analytics will now work
-postqueen analytics:post <post-id>
+```bash Latest value per post metric
+postqueen analytics:post <post-id> | tail -n +2 | jq '.[] | {label, latest: .data[-1].total}'
 ```
 
-<Note>
-The full error table: [Troubleshooting](/agents/troubleshooting).
-</Note>
+</CodeGroup>
 
-## Scripting with Analytics
+## Next steps
 
-Extract specific metrics using `jq`. Every analytics command prints a one-line header before the JSON, so `tail -n +2` drops it first; the header line is not JSON.
-
-```bash
-# Get just the follower count trend
-postqueen analytics:platform integration-id -d 30 | tail -n +2 | jq '.[] | select(.label=="Followers")'
-
-# Get percentage changes for all metrics
-postqueen analytics:platform integration-id | tail -n +2 | jq '.[] | {label, percentageChange}'
-
-# Get the latest total for each post metric
-postqueen analytics:post post-id | tail -n +2 | jq '.[] | {label, latest: .data[-1].total}'
-```
+<CardGroup cols={2}>
+  <Card title="Analytics in the app" icon="chart-column" href="/using/analytics">
+    The same numbers on the Analytics page.
+  </Card>
+  <Card title="Command reference" icon="square-terminal" href="/cli/command-reference">
+    Every command and flag on one page.
+  </Card>
+</CardGroup>

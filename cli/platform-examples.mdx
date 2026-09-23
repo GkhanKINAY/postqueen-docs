@@ -1,423 +1,320 @@
 ---
-title: Platform Examples
-description: 'A working command for every network, with the settings each one insists on'
-icon: 'lightbulb'
+title: "Examples by network"
+description: "postqueen commands that pass PostQueen's checks for each network you can connect, with the settings each one requires and the helpers that look them up."
+icon: "layout-grid"
+keywords:
+  - postqueen
+  - bluesky
+  - wordpress
+  - dev.to
+  - hashnode
+  - who_can_reply_post
+  - tiktok settings
+  - youtube settings
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Every network wants something slightly different. X wants to know who may reply, Reddit wants a
-flair decision even when the answer is no, TikTok wants eight fields and refuses a shorter object.
-This page has a command you can paste for each of them, and says what that network will reject you
-for.
-
-Every example here is ready to run once you have swapped in your own channel id. Nothing on this
-page is a sketch.
+Each network wants its own settings, and PostQueen refuses a post that is missing a required one. This page has a command for each network you can connect today, with the settings it needs. Replace `bluesky-id` and the others with your channel IDs from `postqueen integrations:list`.
 
 <Warning>
-**These commands publish.** `-s` takes a real date, and nothing checks that it is in the future:
-a date in the past is accepted and the post goes out on the next pass. The examples use a date a
-week out. If you want to try one safely, add `-t draft` and it lands on your calendar without
-being sent.
+These commands schedule real posts. To try one safely, add `-t draft`: the post waits on your calendar until you schedule it. Settings are checked for drafts too, so a draft that is accepted will also pass when you schedule it.
 </Warning>
 
-## First, your channel ids
-
-Every command below ends with `-i` and a channel id. That id is not the network name and not the
-handle, it is the id PostQueen gave the channel when you connected it. Get the list once:
+When you post to a network for the first time, read its rules and settings:
 
 ```bash
-postqueen integrations:list
+postqueen integrations:settings <channel-id>
 ```
 
-```json
-[
-  { "id": "c7f3a91e-4b2d-4f8a-9e11-2a6b5c0d7e83", "name": "@yourhandle", "identifier": "x" },
-  { "id": "18d40b6c-9a77-4c31-b5e2-77f9de104ab2", "name": "Your Page", "identifier": "linkedin" }
-]
-```
+## Networks you can connect today
 
-The `identifier` tells you which network it is. To pull one straight into a variable:
+### Bluesky
 
-```bash
-X_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="x") | .id')
-```
+<ChannelStatus status="available" />
 
-Throughout this page, replace `x-id`, `reddit-id` and the rest with the real values.
-
-<Note>
-Not sure what a network accepts? `postqueen integrations:settings <channel-id>` prints its rules,
-character limit and settings schema. [Integrations](/cli/managing-posts) shows the output.
-</Note>
-
-## Checking it worked
-
-After any command on this page:
-
-```bash
-postqueen posts:list
-```
-
-Your new post is in the list with a `state`. `QUEUE` means it is waiting for its time, `PUBLISHED`
-means it has gone out, `ERROR` means the network refused it. If you see `ERROR`, the reason is on
-the post, and [Troubleshooting](/agents/troubleshooting) covers the common ones.
-
----
-
-## X (Twitter)
-
-### Simple post
+No settings. A post has up to 300 characters, and extra `-c` items become a thread.
 
 ```bash
 postqueen posts:create \
-  -c "Hello from the terminal" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"who_can_reply_post":"everyone"}' \
-  -i "x-id"
+  -c "Our spring menu is live. Come by this weekend." \
+  -c "Every dish now comes in a smaller size too." \
+  -s "2026-10-01T09:00:00Z" \
+  -i "bluesky-id"
 ```
 
-### Thread
+### Nostr
 
-Repeat `-c` once per tweet. `-d` is the delay in **minutes** between them.
+<ChannelStatus status="available" />
+
+No settings. Extra `-c` items become replies.
 
 ```bash
 postqueen posts:create \
-  -c "Thread 1/3: Introduction" \
-  -c "Thread 2/3: Main point" \
-  -c "Thread 3/3: Conclusion" \
-  -s "2026-08-01T09:00:00Z" \
+  -c "Open on Sunday this week." \
+  -s "2026-10-01T09:00:00Z" \
+  -i "nostr-id"
+```
+
+### WordPress
+
+<ChannelStatus status="available" />
+
+Needs a `title` and a `type`, the WordPress post type. Look the type up with `postTypes`, and categories and tags with `categoriesList` and `tagsList`: they go in as lists of numbers.
+
+```bash
+# Answers [{ "id": "posts", "name": "Posts" }, ...]
+postqueen integrations:trigger wordpress-id postTypes
+# Answers [{ "id": 4, "name": "News" }, ...]
+postqueen integrations:trigger wordpress-id categoriesList
+
+postqueen posts:create \
+  -c "<h2>What is new</h2><p>Every dish now comes in a smaller size.</p>" \
+  -s "2026-10-02T08:00:00Z" \
+  --settings '{"title":"Our spring menu","type":"posts","categories":[4],"status":"publish"}' \
+  -i "wordpress-id"
+```
+
+`status` is optional: `publish`, `draft`, `pending` or `private` on your WordPress site. `main_image` takes an uploaded image as `{"id":"...","path":"..."}`.
+
+### DEV
+
+<ChannelStatus status="available" />
+
+Needs a `title` of 2 to 128 characters. `tags` takes up to four, as the `value` and `label` pairs the `tags` helper returns. `organization` (from `organizations`), `canonical` and `main_image` are optional.
+
+```bash
+# Answers [{ "value": 8, "label": "webdev" }, ...]
+postqueen integrations:trigger devto-id tags
+
+postqueen posts:create \
+  -c "Version 2.4 adds offline mode and fixes the login loop." \
+  -s "2026-10-01T15:00:00Z" \
+  --settings '{"title":"Version 2.4 is out","tags":[{"value":8,"label":"webdev"}]}' \
+  -i "devto-id"
+```
+
+Use the tag numbers `tags` returns for your account; the `8` here is an example.
+
+### Hashnode
+
+<ChannelStatus status="available">Needs Hashnode's Pro plan on the publication you connect.</ChannelStatus>
+
+Needs a `title` of at least 6 characters, a `publication` ID from `publications`, and at least one tag. Each tag is a `value` and a `label`: the `objectID` and `name` of a tag from `tagsList`.
+
+```bash
+# Answers [{ "id": "...", "name": "My blog" }]
+postqueen integrations:trigger hashnode-id publications
+
+postqueen posts:create \
+  -c "Version 2.4 adds offline mode and fixes the login loop." \
+  -s "2026-10-01T15:00:00Z" \
+  --settings '{"title":"Version 2.4 is out","publication":"PUBLICATION_ID","tags":[{"value":"TAG_OBJECT_ID","label":"JavaScript"}]}' \
+  -i "hashnode-id"
+```
+
+### Lemmy
+
+<ChannelStatus status="available" />
+
+Needs a `subreddit` list with at least one community. Each entry has the community's `subreddit` (its name), its `id` as a string, and a `title` of 3 to 200 characters; `url` is optional. Find communities with `subreddits`:
+
+```bash
+# Answers [{ "id": 123, "name": "Baking", ... }]
+postqueen integrations:trigger lemmy-id subreddits -d '{"word":"baking"}'
+
+postqueen posts:create \
+  -c "Our sourdough starter guide, three weeks in." \
+  -s "2026-10-01T09:00:00Z" \
+  --settings '{"subreddit":[{"value":{"subreddit":"Baking","id":"123","title":"Sourdough starter, three weeks in"}}]}' \
+  -i "lemmy-id"
+```
+
+### Listmonk
+
+<ChannelStatus status="available" />
+
+Needs a `subject`, a `preview` text and a `list` ID from `list`. `template` (from `templates`) is optional. Both IDs go in as strings.
+
+```bash
+# Answers [{ "id": 3, "name": "Newsletter" }]
+postqueen integrations:trigger listmonk-id list
+
+postqueen posts:create \
+  -c "<p>This month: the spring menu, and a new Sunday brunch.</p>" \
+  -s "2026-10-01T07:00:00Z" \
+  --settings '{"subject":"Spring at the bakery","preview":"The spring menu is here","list":"3"}' \
+  -i "listmonk-id"
+```
+
+### Moltbook
+
+<ChannelStatus status="available" />
+
+Needs a `submolt`, the name of the community to post in. `integrations:settings` reports no settings for Moltbook, but a post without `submolt` is refused.
+
+```bash
+postqueen posts:create \
+  -c "Notes from our first week of letting an agent run our bakery's posts." \
+  -s "2026-10-01T09:00:00Z" \
+  --settings '{"submolt":"SUBMOLT_NAME"}' \
+  -i "moltbook-id"
+```
+
+## Networks in review
+
+These connect today with a limit until the network approves PostQueen's app. Each status line says the limit.
+
+### X
+
+<ChannelStatus status="in-review">X can be connected once the free trial ends, or right away if you end the trial early.</ChannelStatus>
+
+Every regular post needs `who_can_reply_post`: `everyone`, `following`, `mentionedUsers`, `subscribers` or `verified`. There is no default, and a post without it is refused, drafts included.
+
+```bash
+postqueen posts:create \
+  -c "Our spring menu is live." \
+  -c "Every dish now comes in a smaller size too." \
   -d 2 \
+  -s "2026-10-01T09:00:00Z" \
   --settings '{"who_can_reply_post":"everyone"}' \
   -i "x-id"
 ```
 
-### Reply controls
+A post has up to 280 characters unless the account has X Premium. For a long-form article, set `post_type` to `article` with an `article_title` and an `article_status` (`draft` or `published`), and write the text as HTML; `who_can_reply_post` is not needed then. `community` (an `https://x.com/i/communities/...` address), `made_with_ai` and `paid_partnership` are optional.
+
+### Instagram
+
+<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect and publish.</ChannelStatus>
+
+Needs `post_type`: `post`, `reel` or `story`, and at least one uploaded image or video.
 
 ```bash
+IMG=$(postqueen upload spring-menu.jpg | tail -n +2 | jq -r '.path')
+
 postqueen posts:create \
-  -c "Only people I follow can reply to this" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"who_can_reply_post":"following"}' \
-  -i "x-id"
+  -c "Spring menu, out now." \
+  -m "$IMG" \
+  -s "2026-10-01T09:00:00Z" \
+  --settings '{"post_type":"post"}' \
+  -i "instagram-id"
 ```
 
-`who_can_reply_post` takes one of `everyone`, `following`, `mentionedUsers`, `subscribers` or
-`verified`. It is required on every X post except an article: leave it out and the post is refused.
+`collaborators` (up to three) is optional. On an Instagram channel connected through Facebook, `audio` adds a track found with the `audioSearch` helper.
 
----
+### Facebook
 
-## Reddit
+<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish.</ChannelStatus>
 
-### Post with a flair
+No required settings. `post_type` (`post` or `story`) and `url` are optional.
 
 ```bash
-# 1. Get available flairs. The subreddit goes in as the /r/ path, not the bare name
-postqueen integrations:trigger reddit-id restrictions -d '{"subreddit":"/r/programming"}'
-
-# 2. Post with a flair. Take the id from .output.flairs[] in step 1
 postqueen posts:create \
-  -c "My post content" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"Post Title","type":"self","is_flair_required":true,"flair":{"id":"abc123","name":"Discussion"}}}]}' \
-  -i "reddit-id"
+  -c "Open on Sunday this week." \
+  -s "2026-10-01T09:00:00Z" \
+  -i "facebook-id"
 ```
 
-`is_flair_required` is not optional. Leave it out and the call is refused before the post is
-created. Say `false` when the subreddit does not need a flair, and drop the `flair` object with it.
+### Threads
 
-`restrictions` answers with an object, not a list: `.output.flairs[]` holds the flairs, and
-`.output.is_flair_required` tells you whether the subreddit insists on one. A flair you send needs
-both its `id` and its `name`.
+<ChannelStatus status="in-review">Until Meta approves PostQueen's Threads app, only accounts added as Threads testers on it can connect and publish.</ChannelStatus>
 
-### Scripted
+No settings. Extra `-c` items become a thread.
 
 ```bash
-#!/bin/bash
-REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id')
-FLAIRS=$(postqueen integrations:trigger "$REDDIT_ID" restrictions -d '{"subreddit":"/r/programming"}' | tail -n +2)
-FLAIR_ID=$(echo "$FLAIRS" | jq -r '.output.flairs[0].id')
-FLAIR_NAME=$(echo "$FLAIRS" | jq -r '.output.flairs[0].name')
-
 postqueen posts:create \
-  -c "Automated Reddit post" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"self\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"$FLAIR_NAME\"}}}]}" \
-  -i "$REDDIT_ID"
+  -c "Our spring menu is live." \
+  -s "2026-10-01T09:00:00Z" \
+  -i "threads-id"
 ```
 
-<Note>
-One post can target several subreddits: `subreddit` is an array. The comment feature is the
-exception, it only works when you target a single subreddit.
-[Reddit](/channels/reddit) explains why.
-</Note>
+### TikTok
 
----
+<ChannelStatus status="in-review">Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet.</ChannelStatus>
 
-## YouTube
+Needs eight settings, with no defaults: `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle` and `content_posting_method`. Use `SELF_ONLY` for `privacy_level` until the audit passes. `DIRECT_POST` publishes; `UPLOAD` only sends the video to the TikTok app's inbox, where you finish it within 24 hours. `title` (up to 90 characters) and `video_made_with_ai` are optional.
+
+Upload the video and [wait until it is ready](/cli/media-upload#wait-for-a-video), then use its `path` as `$VIDEO`:
 
 ```bash
-# Upload video first
-VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
-
 postqueen posts:create \
-  -c "Video description here" \
-  -m "$VIDEO_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"title":"My Video Title","type":"public","tags":[{"value":"tech","label":"Tech"}]}' \
-  -i "youtube-id"
-```
-
-`title` and `type` are both required and neither has a default. `type` must be exactly `public`,
-`private` or `unlisted`.
-
-<Warning>
-**Tags share a 500-character budget**, counted across all of them together rather than per tag.
-A tag containing a space costs two extra characters, because YouTube wraps it in quotes. Go over
-and the whole post is refused with "The maximum allowed is 500 characters in total for all tags."
-</Warning>
-
-`selfDeclaredMadeForKids` (`yes` or `no`) and `thumbnail` are optional.
-
----
-
-## TikTok
-
-```bash
-# Upload video first
-VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
-
-postqueen posts:create \
-  -c "Check this out! #fyp" \
-  -m "$VIDEO_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"content_posting_method":"DIRECT_POST","privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false}' \
+  -c "How we shape a sourdough loaf #baking" \
+  -m "$VIDEO" \
+  -s "2026-10-01T17:00:00Z" \
+  --settings '{"privacy_level":"SELF_ONLY","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}' \
   -i "tiktok-id"
 ```
 
-TikTok is the strictest settings block in the CLI. Eight of these fields are required and there
-are no defaults, so a shorter object is refused rather than filled in: `content_posting_method`,
-`privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle` and
-`brand_organic_toggle`. Only `title` and `video_made_with_ai` are optional.
+### YouTube
 
-TikTok applies these settings only when `content_posting_method` is `"DIRECT_POST"`. With
-`"UPLOAD"`, which sends the video to the TikTok app inbox instead of publishing it, every setting
-except the post content is silently discarded. `duet` and `stitch` apply to video posts only.
+<ChannelStatus status="in-review">Until Google's audit of PostQueen's app passes, every upload is private, and all PostQueen customers share a limit of 100 uploads a day.</ChannelStatus>
 
-<Note>
-An unapproved TikTok app can only post privately. If your posts come back with
-`App not approved for public posting, contact support`, that is TikTok's audit gate rather than
-anything in this command. [TikTok](/channels/tiktok) covers it.
-</Note>
-
----
-
-## Instagram
-
-```bash
-# Upload image first
-IMAGE_URL=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
-
-# Regular post
-postqueen posts:create \
-  -c "Beautiful day! #photography" \
-  -m "$IMAGE_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"post_type":"post"}' \
-  -i "instagram-id"
-```
-
-### Story
+Needs a `title` of 2 to 100 characters, without `<` or `>`, and a `type`: `public`, `private` or `unlisted`. `selfDeclaredMadeForKids` (`yes` or `no`), `thumbnail` and `tags` are optional; all tags together may have 500 characters. A post takes one video, and `-c` is its description.
 
 ```bash
 postqueen posts:create \
-  -c "Story content" \
-  -m "$IMAGE_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"post_type":"story"}' \
-  -i "instagram-id"
+  -c "Shaping a sourdough loaf, start to finish." \
+  -m "$VIDEO" \
+  -s "2026-10-01T17:00:00Z" \
+  --settings '{"title":"How we shape sourdough","type":"public","selfDeclaredMadeForKids":"no"}' \
+  -i "youtube-id"
 ```
 
-### Reel
+## Networks marked Soon
 
-A single video with `post_type: "post"` is published as a Reel:
+LinkedIn, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop, Telegram, Farcaster and Skool cannot be connected on PostQueen yet. Their settings are on [posting settings by network](/public-api/providers/overview) for when they open.
 
-```bash
-postqueen posts:create \
-  -c "Reel caption" \
-  -m "$VIDEO_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"post_type":"post"}' \
-  -i "instagram-id"
-```
+## Several networks in one command
 
-### Reel with audio
+A `--json` file gives each channel its own text and settings:
 
-Search the Instagram audio catalog and attach a track to the Reel
-(Facebook Business-linked channels only, and an empty `q` returns trending audio):
-
-```bash
-# Find an audio ID
-AUDIO_ID=$(postqueen integrations:trigger instagram-id audioSearch \
-  -d '{"q":"summer vibes","type":"music"}' | tail -n +2 | jq -r '.output[0].id')
-
-postqueen posts:create \
-  -c "Reel with trending audio" \
-  -m "$VIDEO_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings "{\"post_type\":\"post\",\"audio\":{\"id\":\"$AUDIO_ID\",\"audio_volume\":80,\"video_volume\":20}}" \
-  -i "instagram-id"
-```
-
-<Note>
-Instagram fetches your media from a URL rather than accepting the file from PostQueen, so
-`/uploads` has to be reachable over public HTTPS. On a laptop install it will not be, and the post
-fails. [Uploads and Storage](/configuration/uploads) explains the options.
-</Note>
-
----
-
-## LinkedIn
-
-```bash
-postqueen posts:create \
-  -c "Professional update on LinkedIn" \
-  -s "2026-08-01T09:00:00Z" \
-  -i "linkedin-id"
-```
-
-Every LinkedIn setting is optional, so the plain command above works as it is.
-
-### Image carousel
-
-```bash
-postqueen posts:create \
-  -c "Check out these slides!" \
-  -m "https://uploads.postqueen.ai/image1.jpg,https://uploads.postqueen.ai/image2.jpg,https://uploads.postqueen.ai/image3.jpg" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"post_as_images_carousel":true,"carousel_name":"Q3 highlights"}' \
-  -i "linkedin-id"
-```
-
-`post_as_images_carousel` turns the images into a document carousel; `carousel_name` is the title
-shown on it. Both are optional, and without the first one the images post as an ordinary gallery.
-
----
-
-## Pinterest
-
-```bash
-# Boards are addressed by id, so look yours up first
-postqueen integrations:trigger pinterest-id boards
-
-postqueen posts:create \
-  -c "Pin description" \
-  -m "$IMAGE_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"board":"board-id","title":"Pin Title","link":"https://example.com"}' \
-  -i "pinterest-id"
-```
-
-<Warning>
-**`board` is required and must be the board's id**, not its name. Sending the name is the usual
-reason a Pinterest post is rejected with "Board is required" even though you clearly set one. The
-`boards` trigger above returns `{ id, name }` pairs.
-</Warning>
-
-`title` caps at 100 characters. `link` has to be a valid URL if you send it. Both are optional,
-as is `dominant_color`.
-
----
-
-## Discord
-
-```bash
-# Channels are addressed by id too
-postqueen integrations:trigger discord-id channels
-
-postqueen posts:create \
-  -c "Message to Discord" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"channel":"channel-id"}' \
-  -i "discord-id"
-```
-
-`channel` is required and is an id, not the `#name` you see in the sidebar. The `channels` trigger
-lists the ones the PostQueen bot can post to; a channel missing from that list is a permissions
-question on the Discord side.
-
----
-
-## Batch scheduling
-
-Schedule several posts across different dates:
-
-```bash
-#!/bin/bash
-DATES=("2026-08-01T09:00:00Z" "2026-08-02T09:00:00Z" "2026-08-03T09:00:00Z")
-CONTENT=("Monday motivation" "Tuesday tips" "Wednesday wisdom")
-
-for i in "${!DATES[@]}"; do
-  postqueen posts:create \
-    -c "${CONTENT[$i]}" \
-    -s "${DATES[$i]}" \
-    --settings '{"who_can_reply_post":"everyone"}' \
-    -i "x-id"
-done
-```
-
-## Multi-platform campaign
-
-Post different content per platform in one command using a JSON file:
-
-```bash
-postqueen posts:create --json campaign.json
-```
-
-Example `campaign.json`:
-
-```json
+```json campaign.json
 {
   "type": "schedule",
-  "date": "2026-08-01T09:00:00.000Z",
-  "shortLink": false,
+  "date": "2026-10-01T09:00:00Z",
+  "shortLink": true,
   "tags": [],
   "posts": [
     {
-      "integration": { "id": "twitter-123" },
-      "value": [{ "content": "Short tweet version", "image": [] }],
-      "settings": { "who_can_reply_post": "everyone" }
+      "integration": { "id": "bluesky-id" },
+      "value": [{ "content": "Our spring menu is live.", "image": [] }]
     },
     {
-      "integration": { "id": "linkedin-456" },
-      "value": [{ "content": "More detailed LinkedIn post with professional tone", "image": [] }]
+      "integration": { "id": "wordpress-id" },
+      "value": [{ "content": "<p>Every dish now comes in a smaller size.</p>", "image": [] }],
+      "settings": { "title": "Our spring menu", "type": "posts" }
     },
     {
-      "integration": { "id": "reddit-789" },
-      "value": [{ "content": "Reddit post body", "image": [] }],
-      "settings": {
-        "subreddit": [{ "value": { "subreddit": "/r/programming", "title": "Post Title", "type": "self", "url": "", "is_flair_required": false } }]
-      }
+      "integration": { "id": "devto-id" },
+      "value": [{ "content": "The spring menu, and how we built its ordering page.", "image": [] }],
+      "settings": { "title": "Building our spring menu page", "tags": [] }
     }
   ]
 }
 ```
 
-Every entry in `posts` needs its own `integration.id`, drafts included. The full field reference
-for this file is in [Managing Posts](/cli/managing-posts#complex-posts-with-json).
+```bash
+postqueen posts:create --json campaign.json
+```
+
+## A week of posts
+
+```bash
+DATES=("2026-10-05T09:00:00Z" "2026-10-06T09:00:00Z" "2026-10-07T09:00:00Z")
+TEXTS=("Monday: fresh rye." "Tuesday: cinnamon rolls." "Wednesday: sourdough day.")
+
+for i in "${!DATES[@]}"; do
+  postqueen posts:create -c "${TEXTS[$i]}" -s "${DATES[$i]}" -i "bluesky-id,nostr-id"
+done
+```
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="What the CLI cannot do" icon="circle-minus" href="/agents/troubleshooting">
-    The gaps, and which surface covers each one
-  </Card>
-  <Card title="Command reference" icon="terminal" href="/cli/command-reference">
-    Every command and flag, including the two that mean different things
+  <Card title="Posts and channels" icon="calendar-plus" href="/cli/managing-posts">
+    Threads, drafts, changing and deleting posts.
   </Card>
   <Card title="Troubleshooting" icon="life-buoy" href="/agents/troubleshooting">
-    What the errors mean and how to clear them
-  </Card>
-  <Card title="Provider setup" icon="plug" href="/channels/overview">
-    Creating the OAuth app each network needs
+    What a refused post's message means.
   </Card>
 </CardGroup>

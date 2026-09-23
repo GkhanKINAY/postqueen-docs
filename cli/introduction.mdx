@@ -1,86 +1,162 @@
 ---
-title: PostQueen CLI
-description: 'Automate social media posting from the command line with the PostQueen CLI'
-icon: 'terminal'
+title: "PostQueen CLI"
+description: "Install the postqueen command, sign in with your API key and schedule a first post from a terminal, a script or an AI agent."
+icon: "terminal"
 keywords:
   - postqueen
   - cli
   - command line
-  - posts:create
-  - auth:status
   - npm
-  - agentic social media scheduler
-  - mcp
+  - POSTQUEEN_API_KEY
+  - auth:status
+  - posts:create
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: cli-help), main:cli/authentication.mdx (rewrite; WIP: partly better; audit: cli-help). Row in page-status-2026-09-23.md. */}
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
 
-The PostQueen CLI puts her one command away in your terminal. Schedule a post, upload the image that goes with it or pull last week's numbers, from a shell script, a CI job or an AI agent. Underneath it is the same [Public API](/public-api/introduction) the SDK and the n8n node run on. The data commands print JSON.
+`postqueen` is the command line for PostQueen. It creates, lists, changes and deletes posts, uploads images and videos, and reads analytics, from a terminal, a script, a scheduled job or an AI agent. It calls the PostQueen API with your API key, and every post it makes lands on the same calendar as the posts you write in the app.
 
+These pages describe `postqueen` 2.0.23. Run `postqueen --version` to see yours.
 
-## Installation
+## Before you start
 
-<Tabs>
-  <Tab title="npm">
-    ```bash
+- **Node.js 20.19 or newer**, or 22.12 or newer on Node 22.
+- **A PostQueen workspace on a trial or a paid plan**, with at least one connected channel.
+- **The API key.** Only a workspace admin can reveal it.
+
+<ApiKeyLocation />
+
+## Install and sign in
+
+<Steps>
+  <Step title="Install the CLI">
+    <CodeGroup>
+
+    ```bash npm
     npm install -g postqueen
     ```
-  </Tab>
-  <Tab title="pnpm">
-    ```bash
+
+    ```bash pnpm
     pnpm install -g postqueen
     ```
-  </Tab>
-</Tabs>
+
+    </CodeGroup>
+  </Step>
+  <Step title="Set your key">
+    ```bash
+    export POSTQUEEN_API_KEY=your_api_key
+    ```
+
+    Add the line to your shell profile, such as `~/.zshrc` or `~/.bashrc`, so a new terminal has it too.
+  </Step>
+  <Step title="Check it">
+    ```bash
+    postqueen auth:status
+    ```
+
+    ```text
+    🔑 Authentication method: API Key (environment variable)
+    🔑 Key: a1b2c3d4...
+
+    🔄 Verifying credentials...
+    ✅ Credentials are valid. 3 integration(s) connected.
+    ```
+  </Step>
+</Steps>
+
+The CLI signs in with the API key only. `postqueen auth:login` explains how to set the key: PostQueen runs no login server for the CLI.
+
+## Schedule a first post
+
+<Steps>
+  <Step title="Find the channel ID">
+    ```bash
+    postqueen integrations:list
+    ```
+
+    ```text
+    🔌 Connected Integrations:
+    [
+      {
+        "id": "cmf1abc2d0001",
+        "name": "PostQueen Bakery",
+        "identifier": "bluesky",
+        "picture": "https://...",
+        "disabled": false,
+        "profile": "postqueenbakery.bsky.social"
+      }
+    ]
+    ```
+
+    `identifier` is the network. Copy the `id` of the channel you want.
+  </Step>
+  <Step title="Create the post">
+    ```bash
+    postqueen posts:create \
+      -c "Our spring menu is live. Come by this weekend." \
+      -s "2026-10-01T09:00:00Z" \
+      -i "cmf1abc2d0001"
+    ```
+
+    ```text
+    ✅ Post created successfully!
+    [
+      {
+        "postId": "cmf1xyz9k0042",
+        "integration": "cmf1abc2d0001"
+      }
+    ]
+    ```
+
+    `-s` is the publish time in ISO 8601 and is required. Add `-t draft` to save a draft instead.
+  </Step>
+  <Step title="See it on the calendar">
+    The post is on your calendar in the app, and in `postqueen posts:list`.
+  </Step>
+</Steps>
+
+Some networks need settings of their own before they accept a post. X, for example, needs `who_can_reply_post`. `postqueen integrations:settings <id>` shows what a channel needs, and [examples by network](/cli/platform-examples) has a working command for each.
+
+## Read the output
+
+Most commands print one status line, then the result as JSON. Drop the first line before you parse it:
 
 ```bash
-postqueen --help
+postqueen integrations:list | tail -n +2 | jq -r '.[] | "\(.identifier)\t\(.id)"'
 ```
 
-If an AI assistant will drive it, also install the skill playbook. It does **not** install the CLI:
+`posts:missing` prints JSON only, and `posts:delete` prints only a confirmation line. When a command fails, the message goes to stderr and the command exits with code `1`.
+
+## Use it from an AI agent
+
+An agent that runs shell commands, such as Claude Code, Cursor, Gemini CLI, Grok Build, OpenClaw or Hermes Agent, can drive the CLI. Install [the postqueen skill](/agents/skill) so it knows the commands and the rules:
 
 ```bash
 npx skills add GkhanKINAY/postqueen-agent
 ```
 
-## Authentication
+Set `POSTQUEEN_API_KEY` where the agent's commands run, which is not always your own terminal.
 
-In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal** (only a workspace admin can reveal the key), then:
+### CLI or MCP?
 
-```bash
-export POSTQUEEN_API_KEY=your_api_key_here
-```
+| Pick | When |
+|---|---|
+| [MCP](/mcp/introduction) | The agent supports MCP. Nothing to install, the agent sees every tool with its inputs, and it can generate images and open an upload panel in Claude, Claude Cowork and ChatGPT. Codex should use MCP: its sandbox asks before every command that uses the network |
+| CLI | The agent runs commands, or you are writing a script, a scheduled job or a CI step. It can also delete posts, move them between draft and scheduled, upload files from disk and read channel analytics, which MCP cannot do yet |
 
-Self-hosted: set `POSTQUEEN_API_URL` to your `NEXT_PUBLIC_BACKEND_URL` (often `https://postqueen.example.com/api`). Device-flow OAuth is for people running their own auth server: [Authentication](/cli/introduction).
-
-## Your first post
-
-```bash
-postqueen integrations:list
-
-postqueen posts:create \
-  -c "Hello from the PostQueen CLI!" \
-  -s "2026-08-01T09:00:00Z" \
-  -i "your-integration-id"
-
-postqueen posts:list
-```
-
-Repeat `-c` for a thread. `-s` is required. Full flags: [Command Reference](/cli/command-reference).
-
-The CLI reaches **14 of 23** Public API routes. The other nine, including connect, notifications and video generation, live on the API: [Limits](/agents/troubleshooting).
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Get your key in place" icon="key" href="/cli/introduction">
-    Where the key lives, and the self-hosted URL shape that trips people up.
+  <Card title="Posts and channels" icon="calendar-plus" href="/cli/managing-posts">
+    Channels, settings, threads, drafts, campaign files and deleting.
   </Card>
-  <Card title="Schedule a post" icon="send" href="/cli/managing-posts">
-    Channels, threads and drafts, in one command.
+  <Card title="Upload media" icon="cloud-upload" href="/cli/media-upload">
+    Images and videos, and waiting for a video to be ready.
   </Card>
-  <Card title="Every flag" icon="book" href="/cli/command-reference">
-    The full reference, including which commands print plain text.
+  <Card title="Command reference" icon="square-terminal" href="/cli/command-reference">
+    All 17 commands, every flag and the API route each one calls.
   </Card>
-  <Card title="What it cannot do" icon="gauge" href="/agents/troubleshooting">
-    Fourteen of the API's twenty-three routes, and where the other nine live.
+  <Card title="Troubleshooting" icon="life-buoy" href="/agents/troubleshooting">
+    What each error means and how to fix it.
   </Card>
 </CardGroup>
