@@ -1,22 +1,70 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "PostQueen Documentation",
+  "theme": "maple",
+  "name": "PostQueen Docs",
+  "description": "How to schedule posts with PostQueen: from the app, from AI agents over MCP, from the postqueen CLI and from the public API.",
   "colors": {
-    "primary": "#7c3aed",
-    "light": "#a78bfa",
-    "dark": "#6d28d9"
+    "primary": "#7C3AED",
+    "light": "#A78BFA",
+    "dark": "#6D28D9"
   },
-  "favicon": "/favicon.svg",
+  "background": {
+    "color": {
+      "light": "#FAF9FC",
+      "dark": "#100E16"
+    }
+  },
+  "fonts": {
+    "heading": {
+      "family": "Plus Jakarta Sans",
+      "weight": 800
+    },
+    "body": {
+      "family": "Plus Jakarta Sans",
+      "weight": 400
+    }
+  },
   "appearance": {
-    "default": "system"
+    "default": "light",
+    "strict": false
   },
   "styling": {
     "eyebrows": "breadcrumbs",
-    "codeblocks": "system"
+    "codeblocks": "dark"
   },
   "icons": {
     "library": "lucide"
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg",
+    "href": "https://postqueen.ai"
+  },
+  "favicon": "/favicon.svg",
+  "navbar": {
+    "links": [
+      {
+        "label": "Pricing",
+        "href": "https://postqueen.ai/pricing"
+      },
+      {
+        "label": "Log in",
+        "href": "https://app.postqueen.ai/auth/login"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Start for $0",
+      "href": "https://app.postqueen.ai/auth"
+    }
+  },
+  "banner": {
+    "content": "Post from Claude, ChatGPT, Grok Bot or any AI agent. [Connect your agent](/agents/overview)",
+    "dismissible": true,
+    "color": {
+      "light": "#15131C",
+      "dark": "#15131C"
+    }
   },
   "navigation": {
     "tabs": [
@@ -475,6 +523,168 @@
       }
     ]
   },
+  "footer": {
+    "socials": {
+      "website": "https://postqueen.ai"
+    },
+    "links": [
+      {
+        "header": "Product",
+        "items": [
+          {
+            "label": "Pricing",
+            "href": "https://postqueen.ai/pricing"
+          },
+          {
+            "label": "Channels",
+            "href": "https://postqueen.ai/channels"
+          },
+          {
+            "label": "MCP server",
+            "href": "https://postqueen.ai/mcp"
+          },
+          {
+            "label": "AI agents CLI",
+            "href": "https://postqueen.ai/agent"
+          }
+        ]
+      },
+      {
+        "header": "Developers",
+        "items": [
+          {
+            "label": "API reference",
+            "href": "/public-api/introduction"
+          },
+          {
+            "label": "Node SDK",
+            "href": "/public-api/sdk"
+          },
+          {
+            "label": "n8n node",
+            "href": "/public-api/n8n"
+          },
+          {
+            "label": "llms.txt",
+            "href": "https://docs.postqueen.ai/llms.txt"
+          }
+        ]
+      },
+      {
+        "header": "Help",
+        "items": [
+          {
+            "label": "support@postqueen.ai",
+            "href": "mailto:support@postqueen.ai"
+          },
+          {
+            "label": "Contact",
+            "href": "https://postqueen.ai/contact"
+          },
+          {
+            "label": "Trust and safety",
+            "href": "https://postqueen.ai/trust"
+          }
+        ]
+      },
+      {
+        "header": "Legal",
+        "items": [
+          {
+            "label": "Privacy",
+            "href": "https://postqueen.ai/privacy-policy"
+          },
+          {
+            "label": "Terms",
+            "href": "https://postqueen.ai/terms-of-service"
+          },
+          {
+            "label": "Cookies",
+            "href": "https://postqueen.ai/cookie-policy"
+          },
+          {
+            "label": "Delete my account",
+            "href": "https://postqueen.ai/delete-my-account"
+          }
+        ]
+      }
+    ]
+  },
+  "search": {
+    "prompt": "Search the docs"
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "cursor"
+    ],
+    "display": "header"
+  },
+  "metadata": {
+    "timestamp": true
+  },
+  "thumbnails": {
+    "appearance": "light",
+    "background": "/images/og/docs-card.png",
+    "fonts": {
+      "family": "Plus Jakarta Sans"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "og:site_name": "PostQueen Docs",
+      "og:description": "Schedule posts to 30+ networks from the PostQueen app, from AI agents over MCP, from the CLI and from the public API.",
+      "twitter:card": "summary_large_image"
+    },
+    "organization": {
+      "name": "PostQueen",
+      "url": "https://postqueen.ai"
+    }
+  },
+  "markdown": {
+    "instructions": [
+      "PostQueen's hosted API is https://api.postqueen.ai. The public API base is https://api.postqueen.ai/public/v1 and takes the raw API key in the Authorization header, with no Bearer prefix.",
+      "The MCP server for posting is https://api.postqueen.ai/mcp/YOUR_API_KEY (or /mcp with Authorization: Bearer YOUR_API_KEY). docs.postqueen.ai/mcp only searches these docs and cannot post.",
+      "The API key is under Connections > API Keys in the app, and only workspace admins can see it."
+    ]
+  },
+  "variables": {
+    "appUrl": "https://app.postqueen.ai",
+    "apiBase": "https://api.postqueen.ai/public/v1",
+    "mcpKeyUrl": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
+    "mcpOauthUrl": "https://api.postqueen.ai/mcp-oauth-dynamic",
+    "mcpToolsKey": "21",
+    "mcpToolsOauth": "20",
+    "networks": "31",
+    "trialDays": "7",
+    "refundDays": "30",
+    "priceCreator": "$20",
+    "priceGrowth": "$33",
+    "pricePro": "$49",
+    "priceUltimate": "$99"
+  },
+  "errors": {
+    "404": {
+      "redirect": false,
+      "title": "That page moved, or never existed",
+      "description": "Search at the top, or start from [Get started](/introduction). If a link on postqueen.ai brought you here, write to support@postqueen.ai and we will fix it."
+    }
+  },
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": [
+        "bash",
+        "javascript",
+        "python"
+      ]
+    }
+  },
   "redirects": [
     {
       "source": "/howitworks",
@@ -912,56 +1122,5 @@
       "source": "/mcp/clients/claude-app",
       "destination": "/agents/claude"
     }
-  ],
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
-    "href": "https://postqueen.ai"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "/support"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.postqueen.ai"
-    }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "cursor"
-    ],
-    "display": "header"
-  },
-  "thumbnails": {
-    "appearance": "dark"
-  },
-  "errors": {
-    "404": {
-      "title": "That page moved, or never existed",
-      "description": "Try the search at the top, or start from the [User Guide](/introduction). If a link on our own site brought you here, [tell us](/support) and we will fix it."
-    }
-  },
-  "seo": {
-    "metatags": {
-      "og:site_name": "PostQueen Documentation",
-      "og:description": "Agentic social media scheduler docs: schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting.",
-      "twitter:card": "summary_large_image",
-      "twitter:description": "Agentic social media scheduler docs: schedule, write and publish across 30+ networks. MCP, CLI, Cloud billing and self-hosting."
-    }
-  },
-  "footer": {
-    "socials": {
-      "github": "https://github.com/GkhanKINAY/postqueen-app",
-      "website": "https://postqueen.ai"
-    }
-  }
+  ]
 }

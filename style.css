@@ -1,10 +1,600 @@
-/* Frame draws a grey card behind every image: bg-gray-50/50 in light,
-   dark:bg-gray-800/25 in dark, plus p-2 of inset. Our illustrations already
-   carry their own panel and border, so the wrapper showed as a second, paler
-   box around the first one.
-   Dropping the fill and the inset keeps what Frame is actually for: zoom on
-   click, and a caption slot. */
+/* PostQueen docs theme.
+   Aligns Mintlify with the postqueen.ai design (canvas v31): Plus Jakarta Sans
+   (set in docs.json fonts), Instrument Serif italic accents, JetBrains Mono code;
+   violet #7C3AED / #6D28D9 / #5B21B6; lilac #EFE9FD; paper #FAF9FC; ink #15131C;
+   hairlines #E8E5EF; dark #15131C / #0E0C14, code panels #17141F on #2A2634.
+
+   Only hooks Mintlify renders today are used: the #page-title, #content,
+   #navbar and #topbar-cta-button ids, the .card, .code-block, .callout and
+   .tabs classes and data attributes such as [data-badge]. Mintlify says these
+   can change, so check every rule in `mint dev` at 1440 and 390 in both
+   themes after a Mintlify update, and drop a rule that no longer does anything.
+   Colors come from the tokens below; further down only masks and shadows
+   carry their own alpha values. */
+
+/* 1. Fonts docs.json cannot set: the serif accent and the code font.
+   Self-hosted OFL files in /fonts (licenses in fonts/OFL.txt). */
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/InstrumentSerif-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-SemiBold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+/* 2. Tokens, mirrored from the site. */
+:root {
+  --pq-ink: #15131c;
+  --pq-ink-2: #3b3745;
+  --pq-muted: #5b5766;
+  --pq-line: #e8e5ef;
+  --pq-line-2: #d9d5e2;
+  --pq-paper: #faf9fc;
+  --pq-surface: #ffffff;
+  --pq-violet: #7c3aed;
+  --pq-violet-600: #6d28d9;
+  --pq-violet-700: #5b21b6;
+  --pq-violet-900: #4c1d95;
+  --pq-violet-300: #c4b5fd;
+  --pq-tint: #f3effd;
+  --pq-lilac: #efe9fd;
+  --pq-accent: #6d28d9;
+  --pq-code-bg: #17141f;
+  --pq-code-line: #2a2634;
+  --pq-code-ink: #e9e5f2;
+  --pq-inline-ink: #4c1d95;
+  --pq-dot: rgba(21, 19, 28, 0.075);
+  --pq-glow: rgba(124, 58, 237, 0.16);
+  --pq-shadow: 0 14px 30px -18px rgba(40, 20, 80, 0.35);
+  --pq-ok: #16a34a;
+  --pq-on-violet: #ffffff;
+}
+.dark {
+  --pq-ink: #f3f0f8;
+  --pq-ink-2: #e9e5f2;
+  --pq-muted: #a39db1;
+  --pq-line: #2a2634;
+  --pq-line-2: #3a3547;
+  --pq-paper: #0e0c14;
+  --pq-surface: #15131c;
+  --pq-tint: #221f2b;
+  --pq-lilac: #26222e;
+  --pq-accent: #c4b5fd;
+  --pq-inline-ink: #ddd0fe;
+  --pq-dot: rgba(243, 240, 248, 0.07);
+  --pq-glow: rgba(124, 58, 237, 0.22);
+  --pq-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.8);
+  --pq-ok: #4ade80;
+}
+
+/* The page background runs to the bottom of long pages and under the footer. */
+html,
+body {
+  background-color: var(--pq-paper);
+}
+
+/* 3. Type. Site headings are 800 with tight tracking; docs sizes are smaller,
+   so the tracking is looser than the site's -0.045em. */
+#page-title {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+#content h2 {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+#content h3 {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* The serif accent: the violet second half of a headline, as on the site.
+   <h1>One calendar <span className="pq-serif">for every network.</span></h1> */
+.pq-serif {
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--pq-accent);
+}
+
+/* 4. Code: JetBrains Mono everywhere, dark panels like the site's code cards. */
+code,
+kbd,
+samp,
+pre,
+pre *,
+.font-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
+}
+.code-block,
+.code-group {
+  border-radius: 16px;
+  border: 1px solid var(--pq-code-line);
+  background: var(--pq-code-bg);
+}
+.code-block [data-component-part="code-block-root"] {
+  background: transparent;
+}
+/* Inline code: violet ink on a pale violet chip. */
+#content :not(pre) > code {
+  background: var(--pq-tint);
+  color: var(--pq-inline-ink);
+  border: 0;
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+}
+
+/* 5. Cards: hairline border, a larger radius, violet on hover. */
+.card {
+  border-radius: 16px;
+}
+#content .card {
+  border-color: var(--pq-line);
+  background-color: var(--pq-surface);
+}
+#content a.card:hover,
+#content .card:hover {
+  border-color: var(--pq-violet-300);
+}
+[data-component-part="card-icon"] {
+  color: var(--pq-violet);
+}
+
+/* 6. The navbar button as the site's pill (themes that draw one). */
+#topbar-cta-button a,
+#topbar-cta-button button {
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+/* 7. Callouts keep Mintlify's semantic colors, rounded like site panels. */
+.callout {
+  border-radius: 16px;
+}
+
+/* 8. Frame: our illustrations carry their own panel, so drop Frame's grey
+   wrapper and inset. Zoom on click and the caption slot still work. */
 .frame {
   background: transparent !important;
   padding: 0 !important;
+}
+
+/* 9. Tables: site hairlines. */
+#content table,
+#content th,
+#content td {
+  border-color: var(--pq-line);
+}
+
+/* 10. Badges are pills; status lines sit under the page title
+   (snippets/status-badge.mdx, snippets/agent-status.mdx). */
+[data-badge] {
+  border-radius: 999px;
+  font-weight: 700;
+}
+.pq-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--pq-ink-2);
+}
+.pq-status [data-badge] {
+  flex-shrink: 0;
+}
+
+/* 11. The docs home (introduction.mdx, mode: custom). Built from the site's
+   hero: dot grid, pill eyebrow, 800-weight headline with a serif second half,
+   pill buttons, white cards on paper. */
+.pq-home {
+  color: var(--pq-ink);
+  padding-bottom: 4rem;
+}
+.pq-home a {
+  text-decoration: none;
+}
+/* Mintlify paints <Icon> with bg-primary; on the home the icon takes the
+   color of the element around it. */
+.pq-home .icon {
+  background-color: currentColor !important;
+}
+.pq-hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 5rem 1.5rem 3.5rem;
+  overflow: hidden;
+}
+.pq-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(var(--pq-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+}
+.pq-glow {
+  position: absolute;
+  left: 50%;
+  bottom: -220px;
+  width: min(1100px, 140%);
+  height: 420px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: radial-gradient(closest-side, var(--pq-glow), transparent);
+}
+.pq-eyebrow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 34px;
+  padding: 0 14px 0 10px;
+  border: 1px solid var(--pq-line);
+  border-radius: 999px;
+  background: var(--pq-surface);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--pq-ink-2);
+}
+.pq-eyebrow svg {
+  width: 18px;
+  height: 18px;
+  color: var(--pq-violet);
+}
+.pq-hero-title {
+  position: relative;
+  margin: 1.5rem 0 0;
+  max-width: 980px;
+  font-size: clamp(2.5rem, 6vw, 4.25rem);
+  line-height: 1.04;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  color: var(--pq-ink);
+  text-wrap: balance;
+}
+.pq-hero-title .pq-serif {
+  display: block;
+  font-size: 1.12em;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+.pq-lede {
+  position: relative;
+  margin: 1.5rem 0 0;
+  max-width: 720px;
+  font-size: 1.2rem;
+  line-height: 1.55;
+  color: var(--pq-muted);
+  text-wrap: pretty;
+}
+.pq-actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 2rem;
+}
+.pq-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 52px;
+  padding: 0 26px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+}
+.pq-btn-primary {
+  background: var(--pq-violet);
+  color: var(--pq-on-violet) !important;
+  box-shadow: 0 10px 30px -12px rgba(124, 58, 237, 0.7);
+}
+.pq-btn-primary:hover {
+  background: var(--pq-violet-600);
+}
+.pq-btn-ghost {
+  border: 1.5px solid var(--pq-line-2);
+  color: var(--pq-ink-2) !important;
+  background: var(--pq-surface);
+}
+.pq-btn-ghost:hover {
+  border-color: var(--pq-ink);
+  color: var(--pq-ink) !important;
+}
+.pq-proof {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  margin-top: 1.25rem;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--pq-muted);
+}
+.pq-proof span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.pq-proof svg {
+  width: 16px;
+  height: 16px;
+  color: var(--pq-ok);
+}
+.pq-section {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 0;
+}
+.pq-kicker {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pq-violet);
+}
+.pq-h2 {
+  margin: 0.5rem 0 0;
+  font-size: clamp(1.9rem, 4vw, 2.75rem);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--pq-ink);
+  text-wrap: balance;
+}
+.pq-sub {
+  margin: 0.75rem 0 0;
+  max-width: 640px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--pq-muted);
+}
+.pq-ways {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.pq-way {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.5rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 24px;
+  background: var(--pq-surface);
+  color: var(--pq-ink) !important;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+#content .pq-home a.pq-way,
+#content .pq-home .pq-next a {
+  border: 1px solid var(--pq-line);
+}
+.pq-way:hover,
+#content .pq-home a.pq-way:hover {
+  border-color: var(--pq-violet-300);
+  box-shadow: var(--pq-shadow);
+}
+.pq-way-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--pq-lilac);
+  color: var(--pq-violet);
+}
+.pq-way-title {
+  margin-top: 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.pq-way-text {
+  flex-grow: 1;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--pq-muted);
+}
+#content code.pq-way-code,
+.pq-way-code {
+  display: block;
+  margin-top: 0.4rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--pq-code-line);
+  border-radius: 12px;
+  background: var(--pq-code-bg);
+  color: var(--pq-code-ink);
+  font-size: 12.5px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pq-way-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--pq-accent);
+}
+.pq-fit {
+  margin-top: 2rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 20px;
+  background: var(--pq-surface);
+  overflow-x: auto;
+}
+.pq-fit table {
+  width: 100%;
+  margin: 0 !important;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.pq-fit th,
+.pq-fit td {
+  padding: 0.9rem 1.1rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--pq-line);
+  color: var(--pq-ink-2);
+}
+.pq-fit th {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pq-muted);
+}
+.pq-fit tr:last-child td {
+  border-bottom: 0;
+}
+.pq-fit td:first-child {
+  font-weight: 700;
+  color: var(--pq-ink);
+  white-space: nowrap;
+}
+.pq-next {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.pq-next a {
+  display: flex;
+  gap: 0.9rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 16px;
+  background: var(--pq-surface);
+  color: var(--pq-ink) !important;
+  transition: border-color 0.15s;
+}
+.pq-next a:hover,
+#content .pq-home .pq-next a:hover {
+  border-color: var(--pq-violet-300);
+}
+.pq-next-icon {
+  flex-shrink: 0;
+  color: var(--pq-violet);
+  padding-top: 2px;
+}
+.pq-next strong {
+  display: block;
+  font-weight: 700;
+}
+.pq-next small {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--pq-muted);
+}
+.pq-home-foot {
+  max-width: 1120px;
+  margin: 3.5rem auto 0;
+  padding: 1.5rem 1.5rem 0;
+  border-top: 1px solid var(--pq-line);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--pq-muted);
+}
+.pq-home-foot a {
+  color: var(--pq-accent) !important;
+  font-weight: 600;
+}
+@media (max-width: 1023px) {
+  .pq-ways {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pq-next {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 639px) {
+  .pq-hero {
+    padding: 3rem 1rem 2.5rem;
+  }
+  .pq-lede {
+    font-size: 1.05rem;
+  }
+  .pq-section {
+    padding: 2.75rem 1rem 0;
+  }
+  .pq-ways,
+  .pq-next {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pq-home-foot {
+    padding: 1.25rem 1rem 0;
+  }
+  /* The comparison table stacks: one block per way, labelled cells. */
+  .pq-fit thead {
+    display: none;
+  }
+  .pq-fit table,
+  .pq-fit tbody,
+  .pq-fit tr,
+  .pq-fit td {
+    display: block;
+    width: 100%;
+  }
+  .pq-fit tr {
+    padding: 0.9rem 1.1rem;
+    border-bottom: 1px solid var(--pq-line);
+  }
+  .pq-fit tr:last-child {
+    border-bottom: 0;
+  }
+  .pq-fit td {
+    padding: 0.15rem 0;
+    border: 0;
+  }
+  .pq-fit td:nth-child(2)::before {
+    content: "Good for: ";
+    font-weight: 700;
+  }
+  .pq-fit td:nth-child(3)::before {
+    content: "You need: ";
+    font-weight: 700;
+  }
+  .pq-btn {
+    height: 48px;
+    padding: 0 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pq-way,
+  .pq-btn,
+  .pq-next a {
+    transition: none;
+  }
 }
