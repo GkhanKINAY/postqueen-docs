@@ -1,11 +1,25 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="logo/dark.svg">
-  <img src="logo/light.svg" width="220" alt="PostQueen">
-</picture>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.png">
+    <img src=".github/assets/banner-light.png" width="100%" alt="PostQueen docs, open for edits. The source of docs.postqueen.ai: the app, channels, AI agents, the CLI, the public API and self-hosting.">
+  </picture>
+</p>
 
-# PostQueen docs
+<p align="center">
+  The source of <a href="https://docs.postqueen.ai/introduction">docs.postqueen.ai</a>, the documentation for PostQueen, built with <a href="https://mintlify.com">Mintlify</a>.
+</p>
 
-The source of [docs.postqueen.ai](https://docs.postqueen.ai/introduction), the documentation for PostQueen, built with [Mintlify](https://mintlify.com).
+<p align="center">
+  <a href="https://postqueen.ai"><b>Website</b></a> ·
+  <a href="https://docs.postqueen.ai/introduction"><b>Docs</b></a> ·
+  <a href="https://postqueen.ai/pricing"><b>Pricing</b></a> ·
+  <a href="https://api.postqueen.ai/docs"><b>API reference</b></a>
+</p>
+
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-7C3AED?labelColor=15131C" alt="License: MIT"></a>
+  <a href="https://mintlify.com"><img src="https://img.shields.io/badge/built%20with-Mintlify-7C3AED?labelColor=15131C" alt="Built with Mintlify"></a>
+</p>
 
 PostQueen is a social media scheduler with an AI copilot. It schedules posts to 30+ networks from the app, from AI agents over MCP, from the `postqueen` CLI and from the public API.
 
@@ -19,7 +33,7 @@ PostQueen is a social media scheduler with an AI copilot. It schedules posts to 
 | Plans and trial | The hosted service's plans, trial and limits | [/cloud/overview](https://docs.postqueen.ai/cloud/overview) |
 | AI agents and MCP | Connecting Claude, ChatGPT, Cursor, Codex and other agents | [/agents/overview](https://docs.postqueen.ai/agents/overview) · [/mcp/introduction](https://docs.postqueen.ai/mcp/introduction) |
 | CLI | The `postqueen` command line | [/cli/introduction](https://docs.postqueen.ai/cli/introduction) |
-| Public API | Every public endpoint, with examples | [/public-api/introduction](https://docs.postqueen.ai/public-api/introduction) |
+| Public API | How to authenticate, and the main endpoints with examples | [/public-api/introduction](https://docs.postqueen.ai/public-api/introduction) |
 | Self-hosting | Docker Compose, Kubernetes, configuration and reverse proxies | [/installation/overview](https://docs.postqueen.ai/installation/overview) · [/configuration/reference](https://docs.postqueen.ai/configuration/reference) |
 | Troubleshooting | Common failures and how to fix them | [/troubleshooting/overview](https://docs.postqueen.ai/troubleshooting/overview) |
 
@@ -48,7 +62,7 @@ Report a mistake in the docs as an issue here. Report a bug in the app itself on
 ## Privacy and security
 
 - Channels connect through each network's official OAuth sign-in where the network offers one.
-- Some networks, such as Bluesky, Lemmy, WordPress and Nostr, need an app password or a key that you paste in.
+- Some networks, such as Bluesky, Lemmy, WordPress and Nostr, need an app password, an account password or a key that you paste in.
 - PostQueen stores these credentials so it can post for you, and replaces them when you remove the channel.
 - Read the [privacy policy](https://postqueen.ai/privacy-policy), or [delete your account](https://postqueen.ai/delete-my-account).
 
