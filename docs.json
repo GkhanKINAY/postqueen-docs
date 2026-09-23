@@ -269,7 +269,6 @@
       {
         "tab": "API",
         "icon": "code",
-        "openapi": "public-api/openapi.json",
         "groups": [
           {
             "group": "Get started",
@@ -327,13 +326,6 @@
                 ]
               },
               {
-                "group": "AI video",
-                "pages": [
-                  "public-api/video/generate",
-                  "public-api/video/function"
-                ]
-              },
-              {
                 "group": "Notifications",
                 "pages": [
                   "public-api/notifications/list"
@@ -382,6 +374,7 @@
             "group": "Build on PostQueen",
             "pages": [
               "public-api/oauth",
+              "public-api/oauth/register",
               "public-api/oauth/authorize",
               "public-api/oauth/token"
             ]
@@ -1120,6 +1113,14 @@
     },
     {
       "source": "/public-api",
+      "destination": "/public-api/introduction"
+    },
+    {
+      "source": "/public-api/video/generate",
+      "destination": "/public-api/introduction"
+    },
+    {
+      "source": "/public-api/video/function",
       "destination": "/public-api/introduction"
     }
   ]
