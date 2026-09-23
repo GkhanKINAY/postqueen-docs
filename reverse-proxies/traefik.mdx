@@ -4,6 +4,9 @@ description: 'Configure Traefik as a reverse proxy for PostQueen'
 icon: 'route'
 ---
 
+import ComposePublicUrls from '/snippets/compose-public-urls.mdx';
+import RestartService from '/snippets/restart-service.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: same as main except dropping `version: …; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 Traefik is configured with labels on the container rather than a separate config file, which
@@ -75,11 +78,11 @@ Both numbers are right, for different routes to the same place.
     Routing alone is not enough. She also has to know the address people use, because sign-in
     origins and every social network's return address are built from it. Put them in `.env`:
 
-    <Snippet file="compose-public-urls.mdx" />
+    <ComposePublicUrls />
 
     Apply it:
 
-    <Snippet file="restart-service.mdx" />
+    <RestartService />
   </Step>
 
   <Step title="Check it">

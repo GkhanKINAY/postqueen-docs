@@ -4,6 +4,8 @@ description: 'Turn on in-app image and video editing in PostQueen with the Polot
 icon: 'palette'
 ---
 
+import RestartService from '/snippets/restart-service.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: same as main; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 You crop the photo and fix the headline without ever leaving the post
@@ -56,7 +58,7 @@ work.
     PostQueen reads `NEXT_PUBLIC_POLOTNO` on the server for each
     request, so recreating the container picks up the new value:
 
-    <Snippet file="restart-service.mdx" />
+    <RestartService />
 
     Running from source, restart the dev server.
   </Step>

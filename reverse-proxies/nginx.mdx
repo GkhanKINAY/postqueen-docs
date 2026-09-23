@@ -4,6 +4,9 @@ description: 'Configure Nginx as a reverse proxy for PostQueen'
 icon: 'server'
 ---
 
+import ComposePublicUrls from '/snippets/compose-public-urls.mdx';
+import RestartService from '/snippets/restart-service.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 Nginx puts PostQueen on your domain with HTTPS. It takes more configuration than
@@ -270,11 +273,11 @@ sudo systemctl reload nginx
     sign-in origins and every social network's return address from these values. Put them in
     `.env`:
 
-    <Snippet file="compose-public-urls.mdx" />
+    <ComposePublicUrls />
 
     Then apply the change:
 
-    <Snippet file="restart-service.mdx" />
+    <RestartService />
 
     <Warning>
     Skipping this step is the most common way to end up with a working padlock and a site you

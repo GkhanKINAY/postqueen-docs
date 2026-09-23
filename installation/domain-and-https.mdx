@@ -4,6 +4,10 @@ description: 'What a reverse proxy is, why PostQueen needs one, and how to choos
 icon: 'lock'
 ---
 
+import ComposePublicUrls from '/snippets/compose-public-urls.mdx';
+import RestartService from '/snippets/restart-service.mdx';
+import NextStepsSelfhost from '/snippets/next-steps-selfhost.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same as main; audit: selfhost), main:reverse-proxies/caddy.mdx (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 If you followed [Deploy to a server](/installation/production), PostQueen is running but only
@@ -88,7 +92,7 @@ host, so it uses 5000 even under Compose.
 Setting up the proxy is only half of it. She also has to know what address people use, because
 she builds sign-in origins and every social network's return address from it.
 
-<Snippet file="compose-public-urls.mdx" />
+<ComposePublicUrls />
 
 Three rules that cover nearly every problem people hit here:
 
@@ -102,7 +106,7 @@ Three rules that cover nearly every problem people hit here:
 If you followed [Deploy to a server](/installation/production), these three URLs are already
 in `.env`. Apply a change with a recreate, not a whole-stack teardown:
 
-<Snippet file="restart-service.mdx" />
+<RestartService />
 
 ## Check that it worked
 
@@ -123,4 +127,4 @@ renews itself, and sign-in holds between page loads.
 
 ## Next Steps
 
-<Snippet file="next-steps-selfhost.mdx" />
+<NextStepsSelfhost />

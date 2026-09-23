@@ -4,6 +4,9 @@ description: 'Register the TikTok application and give PostQueen its keys'
 icon: /images/channels/tiktok.svg
 ---
 
+import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+
 {/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 On your own instance the TikTok app is yours: register it on TikTok for Developers, then put its client key and secret in your environment.
@@ -64,7 +67,7 @@ Every extra scope has to be shown in your review video, so adding more only slow
 
     Nothing else is needed. Share Kit, Webhooks, Data Portability and the Research API are not used by PostQueen.
 
-    <Snippet file="oauth2redirect.mdx" />
+    <Oauth2redirect />
 
     **Your TikTok redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/tiktok`
@@ -100,7 +103,7 @@ TIKTOK_CLIENT_SECRET="your-client-secret"
   </Step>
 
   <Step title="Restart and connect">
-    <Snippet file="restart-and-add-channel.mdx" />
+    <RestartAndAddChannel />
 
     Pick the **TikTok** card, not TikTok Business, and approve all six scopes.
 

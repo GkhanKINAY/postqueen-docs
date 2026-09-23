@@ -4,6 +4,8 @@ description: 'Send activation and password reset mail through Resend or your own
 icon: 'mail'
 ---
 
+import RestartService from '/snippets/restart-service.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same as main; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 Someone asks for a password reset and the mail is waiting in their inbox. She sends it through
@@ -87,7 +89,7 @@ the provider **and** its credentials, or leave activation off.
   </Step>
 
   <Step title="Apply and test">
-    <Snippet file="restart-service.mdx" />
+    <RestartService />
 
     Then use the password reset form with an address you can read. The mail should arrive within
     a minute. If it does not, the logs will say why:

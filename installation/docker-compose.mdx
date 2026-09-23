@@ -12,6 +12,10 @@ keywords:
   - agentic social media scheduler
 ---
 
+import InstallationPreReqs from '/snippets/installation-pre-reqs.mdx';
+import RestartService from '/snippets/restart-service.mdx';
+import NextStepsSelfhost from '/snippets/next-steps-selfhost.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost), main:installation/docker.mdx (merge; WIP: same as main; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 Docker Compose is the supported way to self-host PostQueen. One file describes her and the
@@ -22,7 +26,7 @@ change them. If you want to be walked through an install instead, use
 [Try her locally](/installation/quickstart-local) or
 [Deploy to a server](/installation/production).
 
-<Snippet file="installation-pre-reqs.mdx" />
+<InstallationPreReqs />
 
 ## First three commands
 
@@ -111,7 +115,7 @@ it.** A file placed there is never opened. Use the sibling `.env` or the `enviro
 
 ## Applying a change
 
-<Snippet file="restart-service.mdx" />
+<RestartService />
 
 ## The settings you are most likely to change
 
@@ -178,4 +182,4 @@ switch to migrations instead.
 
 ## Next Steps
 
-<Snippet file="next-steps-selfhost.mdx" />
+<NextStepsSelfhost />

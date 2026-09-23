@@ -4,6 +4,8 @@ description: 'Run PostQueen on your own machine in about five minutes'
 icon: 'laptop'
 ---
 
+import RestartService from '/snippets/restart-service.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 This is the fastest way to see PostQueen working. Everything runs on your own machine, nothing
@@ -136,7 +138,7 @@ want a public HTTPS redirect. Two pieces, in order:
 1. Put the provider keys in the same `.env` you just wrote (`LINKEDIN_CLIENT_ID` and
    `LINKEDIN_CLIENT_SECRET`, and so on). Then recreate only the app container:
 
-   <Snippet file="restart-service.mdx" />
+   <RestartService />
 
 2. If the network refuses `http://localhost:4007/integrations/social/...`, you need a domain
    and HTTPS. That is the [production](/installation/production) path, bridged from here by
@@ -188,7 +190,7 @@ want a public HTTPS redirect. Two pieces, in order:
 
 Changed environment variables need the app container recreated, not a whole-stack teardown:
 
-<Snippet file="restart-service.mdx" />
+<RestartService />
 
 When you are finished experimenting on a machine that runs **only** this stack:
 

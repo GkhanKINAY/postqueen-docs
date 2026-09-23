@@ -4,6 +4,9 @@ description: 'How to add Skool to PostQueen'
 icon: /images/channels/skool.svg
 ---
 
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
 {/* OVERHAUL-TODO(B5): write it from _templates/channel.mdx. Sources: this file, moved from providers/skool (rewrite; WIP: partly better; audit: providers). Row in page-status-2026-09-23.md. */}
 
 <img src="/images/channels/skool.svg" alt="Skool" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
@@ -12,7 +15,7 @@ icon: /images/channels/skool.svg
 **Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
 </Warning>
 
-<Snippet file="never-share.mdx" />
+<NeverShare />
 
 Skool is a **cookie-based** integration that uses the PostQueen browser extension to connect. Unlike OAuth-based providers, Skool authentication works by extracting session cookies from your browser.
 
@@ -120,5 +123,5 @@ The channel is in the left sidebar with its avatar and name. That is the whole c
 - **"Cannot post to this label"**: The selected label may have restrictions. Try a different label or the default.
 - **Session expires**: If your session expires, reconnect the integration. The extension will attempt to refresh cookies automatically every 24 hours.
 
-<Snippet file="next-steps-provider.mdx" />
+<NextStepsChannel />
 

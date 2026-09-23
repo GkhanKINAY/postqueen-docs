@@ -4,11 +4,14 @@ description: 'How to add Lemmy to your system'
 icon: /images/channels/lemmy.svg
 ---
 
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
 {/* OVERHAUL-TODO(B3): write it from _templates/channel.mdx. Sources: this file, moved from providers/lemmy (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
 
 <img src="/images/channels/lemmy.svg" alt="Lemmy" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
 
-<Snippet file="never-share.mdx" />
+<NeverShare />
 
 Nothing has to be registered before you start. Lemmy has no developer app, no client id and no redirect URI in this connector. You click **Lemmy** in **Add Channel**, a small form opens, and you type the three things your instance already knows about you.
 
@@ -110,4 +113,4 @@ The first file attached to the post matches none of the accepted spellings. In p
 
 Requests to loopback and private ranges are blocked before they leave the backend. Either publish the instance on a public hostname or set `DISABLE_SSRF_PROTECTION=true` on a deployment where both sides sit on a trusted private network.
 
-<Snippet file="next-steps-provider.mdx" />
+<NextStepsChannel />

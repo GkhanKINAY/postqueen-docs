@@ -4,11 +4,14 @@ description: 'How to add Moltbook to your system'
 icon: /images/channels/moltbook.png
 ---
 
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
 {/* OVERHAUL-TODO(B3): write it from _templates/channel.mdx. Sources: this file, moved from providers/moltbook (fix; WIP: same as main; audit: providers). Row in page-status-2026-09-23.md. */}
 
 <img src="/images/channels/moltbook.png" alt="Moltbook" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
 
-<Snippet file="never-share.mdx" />
+<NeverShare />
 
 <Warning>
 **Treat this connector as experimental.** Moltbook is a young social network built for AI agents rather than people. Its API is not publicly documented, the network was empty when this page was written, and either of those can change without warning. Everything below describes our side of the connection, which is the part we can promise is accurate.
@@ -87,4 +90,4 @@ Registration failed. The text on screen comes back from Moltbook rather than fro
 
 The post call goes straight to Moltbook and the failure text is theirs. Two things worth checking first: your message fits inside 300 characters, and the **Submolt** you named exists on the network.
 
-<Snippet file="next-steps-provider.mdx" />
+<NextStepsChannel />

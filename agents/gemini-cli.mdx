@@ -4,6 +4,8 @@ description: 'One command connects Gemini CLI to her over MCP, and the terminal 
 icon: /images/brand/icon-gemini-cli.svg
 ---
 
+import AgentPlanLimits from '/snippets/agent-plan-limits.mdx';
+
 {/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/gemini-cli.mdx (merge; WIP: better, use as base; audit: agents), this file (fix; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
 
 ## Working with her in the terminal
@@ -98,7 +100,7 @@ Everything you scheduled needs nothing further from you. It sits on the calendar
     Yes. It runs shell commands, and every `postqueen` command takes flags and prints JSON, so nothing has to be scraped off the screen. The CLI is the wider surface of the two, and the one to reach for when you want listing, status changes or analytics. Installation and the full command set: [CLI introduction](/cli/introduction).
   </Accordion>
   <Accordion title="Does the integration cost extra?">
-    <Snippet file="agent-plan-limits.mdx" />
+    <AgentPlanLimits />
   </Accordion>
 </AccordionGroup>
 

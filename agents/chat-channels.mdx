@@ -4,6 +4,8 @@ description: 'Message her from WhatsApp or Telegram on your phone, or from Slack
 icon: 'messages-square'
 ---
 
+import AgentPlanLimits from '/snippets/agent-plan-limits.mdx';
+
 {/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: this file (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
 
 Hold the mic button in WhatsApp and say "the espresso tonic is back, put it on Instagram and X for
@@ -264,7 +266,7 @@ The same switch runs the other way with `--status draft`, which also stops any p
     For chat alone they are close, so pick the runtime you would rather have on the machine: OpenClaw runs on Node.js, Hermes on Python. Hermes goes further once you want one brief turned into a planned week, which is covered on its own page.
   </Accordion>
   <Accordion title="Does this cost extra?">
-    <Snippet file="agent-plan-limits.mdx" />
+    <AgentPlanLimits />
 
     OpenClaw and Hermes are both open source, so the only outside cost is the model provider you run them with.
   </Accordion>

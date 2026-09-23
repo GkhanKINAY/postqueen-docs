@@ -4,6 +4,9 @@ description: 'How to add Kick to your system'
 icon: /images/channels/kick.svg
 ---
 
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
 {/* OVERHAUL-TODO(B4): write it from _templates/channel.mdx. Sources: this file, moved from providers/kick (fix; WIP: same as main; audit: providers). Row in page-status-2026-09-23.md. */}
 
 <img src="/images/channels/kick.svg" alt="Kick" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
@@ -12,7 +15,7 @@ icon: /images/channels/kick.svg
 **Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
 </Warning>
 
-<Snippet file="never-share.mdx" />
+<NeverShare />
 
 <Warning>
 Kick here is a chat connector, not a feed. What she sends arrives as a chat message in your own Kick channel. Media never rides along, and anything past 500 characters is refused when you save it rather than trimmed. If you are connecting Kick expecting a post that sits on a profile, this is not that.
@@ -52,4 +55,4 @@ Running your own instance? You register the application yourself:
 [Set up Kick on your own instance](/installation/providers/kick).
 </Info>
 
-<Snippet file="next-steps-provider.mdx" />
+<NextStepsChannel />

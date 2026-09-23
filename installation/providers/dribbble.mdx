@@ -4,6 +4,8 @@ description: 'Register the Dribbble application and give PostQueen its keys'
 icon: /images/channels/dribbble.svg
 ---
 
+import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+
 {/* OVERHAUL-TODO(B4): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 Register your own Dribbble application, put its client id and secret in your environment, and connect the channel.
@@ -17,7 +19,7 @@ Register your own Dribbble application, put its client id and secret in your env
     * **Website:** `https://example.com`
     * **Redirect URI:** your PostQueen callback URL, shown in the next step
 
-    <Snippet file="oauth2redirect.mdx" />
+    <Oauth2redirect />
 
     **Your Dribbble OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/dribbble`

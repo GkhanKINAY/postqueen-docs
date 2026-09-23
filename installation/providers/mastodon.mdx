@@ -4,6 +4,8 @@ description: 'Register the Mastodon application and give PostQueen its keys'
 icon: /images/channels/mastodon.svg
 ---
 
+import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+
 {/* OVERHAUL-TODO(B4): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 On your own instance you register the Mastodon client yourself and put its keys in your environment.
@@ -18,7 +20,7 @@ The examples on this page use `https://mastodon.social` as the default Mastodon 
 
 <Steps>
   <Step title="Register your client">
-    <Snippet file="oauth2redirect.mdx" />
+    <Oauth2redirect />
 
     **Your Mastodon OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/mastodon`

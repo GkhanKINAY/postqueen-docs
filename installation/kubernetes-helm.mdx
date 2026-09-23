@@ -4,9 +4,13 @@ description: 'Install PostQueen on Kubernetes with the official Helm chart'
 icon: 'ship-wheel'
 ---
 
+import Earlydoc from '/snippets/earlydoc.mdx';
+import InstallationRecommendedOptions from '/snippets/installation-recommended-options.mdx';
+import NextStepsSelfhost from '/snippets/next-steps-selfhost.mdx';
+
 {/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: stale; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
-<Snippet file="earlydoc.mdx" />
+<Earlydoc />
 
 Helm is a package manager for Kubernetes. It is to a cluster roughly what Docker Compose is to
 a single machine: one command installs the app and the things it needs.
@@ -15,7 +19,7 @@ This page is for people who already operate a Kubernetes cluster. If you do not,
 certainly want [Docker Compose](/installation/docker-compose) instead, which is the supported
 path and considerably less work.
 
-<Snippet file="installation-recommended-options.mdx" />
+<InstallationRecommendedOptions />
 
 ## Before you start
 
@@ -164,5 +168,5 @@ full list of values is in
 
 ## Next Steps
 
-<Snippet file="next-steps-selfhost.mdx" />
+<NextStepsSelfhost />
 

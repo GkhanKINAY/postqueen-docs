@@ -4,6 +4,9 @@ description: 'Register the Tumblr application and give PostQueen its keys'
 icon: /images/channels/tumblr.png
 ---
 
+import Oauth2redirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+
 {/* OVERHAUL-TODO(B4): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
 
 Register the application on Tumblr, check the two scopes it asks for, and put the consumer key and secret in your environment.
@@ -18,7 +21,7 @@ Register the application on Tumblr, check the two scopes it asks for, and put th
   </Step>
 
   <Step title="Set the callback URL">
-    <Snippet file="oauth2redirect.mdx" />
+    <Oauth2redirect />
 
     **Your Tumblr OAuth2 Redirect URI:**
     - Production: `https://postqueen.example.com/integrations/social/tumblr`
@@ -48,7 +51,7 @@ TUMBLR_CLIENT_SECRET=""
   </Step>
 
   <Step title="Restart and add the Tumblr channel">
-    <Snippet file="restart-and-add-channel.mdx" />
+    <RestartAndAddChannel />
 
     <Note>
     Tumblr adds a second screen after you authorize: a list of the blogs on your account, with
