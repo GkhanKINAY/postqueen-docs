@@ -1,184 +1,151 @@
 ---
-title: Backups and Upgrades
-description: 'Which volumes carry real data, how to restore them, and how to move her to a newer image'
-icon: 'archive'
+title: "Backups and upgrades"
+description: "Which Docker volumes of a self-hosted PostQueen hold data you cannot rebuild, how to back them up and restore them, and how to move to a newer image safely."
+icon: "archive"
 ---
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+A Compose install keeps its data in Docker volumes. Three of them hold what no reinstall brings back, and those are what to back up before every upgrade.
 
-Run `docker volume ls` after a Compose install and six volumes come back. Two of them you could delete tonight and never notice, and a third is empty until you put something in it. The remaining three carry what no reinstall brings back, so those are the ones worth your disk space and your attention.
+## What to back up
 
-## What you cannot rebuild
+| Volume | What it holds | Back it up |
+|---|---|---|
+| `postgres-volume` | The PostQueen database: accounts, workspaces, channels and their tokens, posts, settings | Always |
+| `temporal-postgres-data` | Temporal's database, with the scheduled work that has not run yet | Always |
+| `postqueen-uploads` | Uploaded media, while `STORAGE_PROVIDER` is `local` | With local storage. On R2 it stays empty: [back up the bucket](#if-your-media-is-in-r2) |
+| `postqueen-redis-data` | Caches and counters | No, it rebuilds itself |
+| `temporal-elasticsearch-data` | Temporal's search index | No, Temporal recreates it at start |
+| `postqueen-config` | Nothing: the image never reads `/config` | No |
 
-| Volume | What is inside |
-|---|---|
-| `postgres-volume` | Her main database: your account, your connected channels, every post and draft |
-| `temporal-postgres-data` | Temporal's database, which carries the scheduled work that has not run yet |
-| `postqueen-uploads` | Media you uploaded, while `STORAGE_PROVIDER` is `local`. On R2 this volume stays empty and [the bucket is what you back up](#if-your-media-is-in-r2) |
+Keep your `.env` file and your edited `docker-compose.yaml` too. They are ordinary files in the folder you cloned, and `.env` holds `JWT_SECRET` and `ENCRYPTION_KEY`: a database restored without the same `ENCRYPTION_KEY` cannot read its stored secrets.
 
-<Note>
-A fourth volume, `postqueen-config`, is mounted at `/config` and on a stock install it is empty. The shipped image reads its configuration from the container environment and from `/app/.env`, and nothing in it looks at `/config`. Back it up only if you put a file there yourself and you know what reads it.
-</Note>
+Compose prefixes each volume with the project name, the folder you cloned into, so the full names are usually `postqueen-docker-compose_postgres-volume` and so on. `docker volume ls` shows them.
 
-## What rebuilds itself
+## Back up
 
-`postqueen-redis-data` is a cache. `temporal-elasticsearch-data` is the search index behind the Temporal UI at http://localhost:8080, and the `temporalio/auto-setup` image sets that index up again when it starts against an empty cluster. Leave both out of your backup.
+Stop the stack first, so PostgreSQL is not writing while you copy its files:
 
-One more thing lives outside Docker entirely. The directory you cloned holds your edited `docker-compose.yaml` and the `dynamicconfig` folder that Temporal bind-mounts from it. Those are ordinary files on the host, so whatever already backs up your home directory covers them.
-
-<Note>
-Compose prefixes volume names with the project name, which is the directory you
-cloned into. The commands below assume the default `postqueen-docker-compose_`
-prefix. Check `docker volume ls` and use the exact names you see.
-</Note>
-
-## Back up a volume
-
-Stop her first. Postgres writes to `postgres-volume` the whole time she is up, and a tar of a live data directory can catch a half-written page.
-
-<Warning>
-This is one of the few times you stop the whole Compose project. On a machine that runs only PostQueen, `docker compose down` is fine. On a shared host, stop only her services by name. Never run a bare `docker compose down` on a box that also runs other Compose projects.
-</Warning>
-
-```
+```bash
 docker compose down
 ```
 
-Then archive each volume with a throwaway container that mounts the volume at `/data` and your current directory at `/backup`:
+Then archive each volume with a throwaway container that mounts it at `/data` and the current folder at `/backup`:
 
-```
-docker run --rm -v postqueen-docker-compose_postgres-volume:/data -v "$(pwd)":/backup alpine tar czf /backup/postgres-volume.tar.gz -C /data .
-```
-
-Run that line again for `temporal-postgres-data` and `postqueen-uploads`, changing the volume name and the archive name each time. Add `postqueen-config` to the list only if you put a file in it. Once the archives are on disk, bring her back:
-
-```
+```bash
+for v in postgres-volume temporal-postgres-data postqueen-uploads; do
+  docker run --rm \
+    -v postqueen-docker-compose_$v:/data \
+    -v "$(pwd)":/backup \
+    alpine tar czf /backup/$v.tar.gz -C /data .
+done
 docker compose up -d
 ```
 
-## Restore from that backup
+<Warning>
+`docker compose down` stops every service in the project. On a host where other services share that project, stop the PostQueen services by name instead: `docker compose stop postqueen postqueen-postgres temporal temporal-postgresql`.
+</Warning>
 
-Same trip, reversed. Replace the volume rather than untarring over a populated one, so nothing from the old contents survives underneath:
+Copy the archives off the server. A backup on the same disk is lost with the disk.
 
-```
+## Restore
+
+Replace a volume rather than unpacking over a used one, so nothing of the old contents stays underneath:
+
+```bash
 docker compose down
 docker volume rm postqueen-docker-compose_postgres-volume
 docker volume create postqueen-docker-compose_postgres-volume
-docker run --rm -v postqueen-docker-compose_postgres-volume:/data -v "$(pwd)":/backup alpine tar xzf /backup/postgres-volume.tar.gz -C /data
+docker run --rm \
+  -v postqueen-docker-compose_postgres-volume:/data \
+  -v "$(pwd)":/backup \
+  alpine tar xzf /backup/postgres-volume.tar.gz -C /data
 docker compose up -d
 ```
 
+Repeat for the other volumes. Restore all three from the same backup, so the schedule in Temporal matches the posts in the database.
+
 <Warning>
-A Postgres data directory only opens under the major version that wrote it. The
-bundled Compose runs `postgres:17-alpine` for her database and `postgres:16` for
-Temporal's. Restore each archive into the image it came from.
+A PostgreSQL data folder opens only under the major version that wrote it. The Compose file runs `postgres:17-alpine` for PostQueen and `postgres:16` for Temporal: restore each archive under the same image.
 </Warning>
 
-A backup you have never restored is a guess. Try one on a spare machine before you need it for real.
+A backup you have never restored is a guess. Try a restore on a spare machine before you need one.
 
 ## If your media is in R2
 
-Everything above assumes `STORAGE_PROVIDER=local`. Move media to
-[Cloudflare R2](/configuration/r2) and `postqueen-uploads` stops filling up —
-along with it, a volume backup stops containing your media. The bucket becomes
-the thing to protect.
+With [Cloudflare R2](/configuration/r2), `postqueen-uploads` stays empty and the bucket holds the media. The database stores only each file's address, so back up the bucket and the database together and restore them from the same moment: a database from Monday next to a bucket from Friday leaves the posts in between with missing images, and nothing reports an error.
 
-<Warning>
-**Back up the database and the bucket as one.** Postgres stores only the *URL*
-of each media file, never the bytes. Restore a database from Monday next to a
-bucket from Friday and every post in between opens with broken media — nothing
-errors, the images are simply gone. Take them under the same timestamp and
-restore them together.
-</Warning>
+Copy the bucket to a second bucket, for example with [rclone](https://rclone.org/s3/#cloudflare-r2):
 
-Copying a bucket is a bucket-to-bucket copy, which R2 performs server-side —
-nothing travels through your machine and there is no egress to pay for:
-
-```
+```bash
 rclone copy r2:your-media-bucket r2:your-backup-bucket/media
 ```
 
-<Note>
-`copy` rather than `sync`. A file deleted from the live bucket should stay in
-the backup, which is the entire reason for having one.
-</Note>
+Use `copy`, not `sync`: a file deleted from the live bucket should stay in the backup. Give the backup job its own R2 token, allowed to read the media bucket and write the backup bucket, so it cannot delete the media it protects.
 
-Give that job **its own R2 token**, scoped to those two buckets: write where
-backups go, read the media. Reusing the application's token hands your backup
-tool the ability to delete the media it exists to protect, and reusing an
-account-wide token hands it everything else you keep in R2.
+## Upgrade
 
-One thing R2 handles for you: an interrupted multipart upload leaves parts
-behind that appear in no listing but still occupy storage. Every bucket ships
-with a lifecycle rule that aborts them after seven days, under
-**Settings → Object lifecycle rules**.
+<Steps>
+  <Step title="Back up">
+    Back up `postgres-volume` and `temporal-postgres-data` as above. The next step can change the database.
+  </Step>
+  <Step title="Move the image forward">
+    With a pinned tag, raise it in `docker-compose.yaml` to a newer tag from the [app's tags](https://github.com/GkhanKINAY/postqueen-app/tags):
 
-## Upgrading to a new image
+    ```yaml
+    image: ghcr.io/gkhankinay/postqueen-app:vX.Y.Z
+    ```
 
-The Compose file points at `ghcr.io/gkhankinay/postqueen-app:latest`. Two commands move you to a newer build:
+    With `latest`, nothing changes in the file.
+  </Step>
+  <Step title="Pull and recreate">
+    ```bash
+    docker compose pull
+    docker compose up -d
+    docker compose logs -f postqueen
+    ```
 
-```
-docker compose pull
-docker compose up -d
-```
+    `up -d` recreates the containers whose image changed. Watch the log until `Backend started successfully on port 3000`.
+  </Step>
+</Steps>
 
-`pull` fetches the new image, and `up -d` recreates the containers whose image changed. Nothing in your Compose file has to change.
+<Warning>
+**Only move forward.** Never start an image older than the one that last ran against the database: its schema step can drop the columns the newer release added.
+</Warning>
 
-Back up `postgres-volume` before you pull. The next section is why.
+### Where the schema changes
 
-### Where migrations run
-
-You never run a migration by hand. Her image starts `pnpm run pm2`, which clears the old pm2 processes, applies the Prisma schema, then starts backend, frontend and orchestrator. So the first thing a freshly pulled container does is reshape the database to match the schema that build expects, before anything is listening.
-
-Which command does the reshaping depends on one variable:
+You never run a database migration by hand. Every time the container starts, it applies the image's Prisma schema before starting the app. The variable `PRISMA_MIGRATE` decides how:
 
 | `PRISMA_MIGRATE` | What runs |
 |---|---|
-| unset, empty, `false`, `False`, `FALSE` or `0` | `prisma db push --accept-data-loss` |
-| anything else at all | `prisma migrate deploy` |
+| Unset, empty, `false`, `False`, `FALSE` or `0` (the default) | `prisma db push --accept-data-loss` |
+| Any other value, for example `true` | `prisma migrate deploy` |
 
-The comparison is a literal string match against that short list, so it is stricter than it looks. `no` and `off` both read as true here and select `prisma migrate deploy`, and so does `false ` with a trailing space.
+`db push` makes the database match the schema, and `--accept-data-loss` lets it drop a column or table the schema no longer has, with its contents, without asking. That is why a backup comes before every upgrade, and why an older image is dangerous. The match is exact text, so `no`, `off` or `false ` with a trailing space select `migrate deploy`.
 
-`--accept-data-loss` means she carries on instead of stopping to warn you, so a column the new schema dropped goes away with its contents. That is the whole argument for taking the backup first. The repository ships a single migration, `0_init`, so the default `db push` path is the one nearly every install follows. Leave the variable alone unless you have a reason.
+`migrate deploy` applies the repository's migrations in order instead, a `0_init` baseline and one per later schema change, and never drops what a migration does not say to. A database built by `db push` has no record of those migrations, so switching takes one step: with the current image running, and so the database matching its schema, mark every migration that image ships as applied, then set the variable and recreate the container.
 
-Watch the first minute of the upgrade:
-
-```
-docker compose logs -f postqueen
-```
-
-### Pinning a version instead
-
-Every release publishes twice, once under its version tag and once as `latest`. Pinning the version tag in your Compose file turns an upgrade into a deliberate edit rather than something `docker compose pull` decides for you:
-
-```yaml
-image: ghcr.io/gkhankinay/postqueen-app:v3.5.9
+```bash
+docker compose exec postqueen sh -c \
+  'for m in libraries/nestjs-libraries/src/database/prisma/migrations/*/; do
+     npx prisma migrate resolve --applied "$(basename "$m")"
+   done'
 ```
 
-## The one flag that destroys everything
+```env
+PRISMA_MIGRATE=true
+```
+
+Marking only `0_init` is not enough on a database that already has later changes: `migrate deploy` would then try to add columns that exist and stop the start. Back up first either way.
+
+## The command that deletes everything
 
 <Warning>
-`docker compose down -v` deletes the volumes along with the containers. Her
-database and your uploads go in that one command, with no prompt and no undo,
-and the scheduled posts sitting in Temporal go with them.
-Plain `docker compose down` leaves every volume where it is. That is the command
-for a backup window, not for a variable change. Env changes recreate one
-service: see [Applying a change](/installation/docker-compose#applying-a-change).
+`docker compose down -v` deletes the volumes with the containers: the database, the uploads and the scheduled work, with no prompt and no undo. Plain `docker compose down` keeps every volume. For a settings change, recreate the one container instead: see [Docker Compose](/installation/docker-compose#apply-a-change).
 </Warning>
 
-## Next Steps
+## Related
 
-<CardGroup cols={2}>
-  <Card title="Docker Compose" icon="container" href="/installation/docker-compose">
-    The install this page assumes, start to finish
-  </Card>
-  <Card title="Configure uploads" icon="cloud-upload" href="/configuration/r2">
-    Move media to Cloudflare R2 and shrink what you back up
-  </Card>
-  <Card title="System requirements" icon="server" href="/installation/overview">
-    Disk, RAM and the services she needs
-  </Card>
-  <Card title="Support" icon="life-buoy" href="/support">
-    When a restore or an upgrade does not go your way
-  </Card>
-</CardGroup>
+- [Docker Compose](/installation/docker-compose)
+- [Cloudflare R2](/configuration/r2)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
