@@ -5,7 +5,7 @@
    hairlines #E8E5EF; dark #15131C / #0E0C14, code panels #17141F on #2A2634.
 
    Only hooks Mintlify renders today are used: the #page-title, #content,
-   #navbar and #topbar-cta-button ids, the .card, .code-block, .callout and
+   #content-area, #navbar and #topbar-cta-button ids, the .card, .code-block, .callout and
    .tabs classes and data attributes such as [data-badge]. Mintlify says these
    can change, so check every rule in `mint dev` at 1440 and 390 in both
    themes after a Mintlify update, and drop a rule that no longer does anything.
@@ -93,13 +93,19 @@ body {
   font-weight: 800;
   letter-spacing: -0.035em;
 }
-#content h2 {
+#content-area h2 {
   font-weight: 800;
   letter-spacing: -0.025em;
 }
-#content h3 {
+#content-area h3 {
   font-weight: 700;
   letter-spacing: -0.015em;
+}
+/* Step titles are headings for their step. Mintlify sets them at body
+   weight, which makes a page of <Steps> read as one grey column. */
+[data-component-part="step-title"] {
+  font-weight: 700;
+  color: var(--pq-ink);
 }
 
 /* The serif accent: the violet second half of a headline, as on the site.
@@ -130,8 +136,9 @@ pre *,
 .code-block [data-component-part="code-block-root"] {
   background: transparent;
 }
-/* Inline code: violet ink on a pale violet chip. */
-#content :not(pre) > code {
+/* Inline code: violet ink on a pale violet chip. #content-area rather than
+   #content, so API reference pages (which render no #content) match. */
+#content-area :not(pre) > code {
   background: var(--pq-tint);
   color: var(--pq-inline-ink);
   border: 0;
@@ -143,12 +150,12 @@ pre *,
 .card {
   border-radius: 16px;
 }
-#content .card {
+#content-area .card {
   border-color: var(--pq-line);
   background-color: var(--pq-surface);
 }
-#content a.card:hover,
-#content .card:hover {
+#content-area a.card:hover,
+#content-area .card:hover {
   border-color: var(--pq-violet-300);
 }
 [data-component-part="card-icon"] {
@@ -174,11 +181,36 @@ pre *,
   padding: 0 !important;
 }
 
-/* 9. Tables: site hairlines. */
-#content table,
-#content th,
-#content td {
+/* 9. Tables: site hairlines and a header row that reads as one.
+   Mintlify gives every cell a 150px minimum. That squeezes the text column
+   of a four-column table into a narrow strip and pushes a three-column table
+   past a phone screen, so the minimum is smaller and the browser sizes the
+   columns by their content. */
+#content-area table,
+#content-area th,
+#content-area td {
   border-color: var(--pq-line);
+}
+#content-area th {
+  font-weight: 700;
+  color: var(--pq-ink);
+}
+#content-area td {
+  min-width: 6rem;
+}
+/* Mintlify lets inline code break between any two letters, which splits a
+   field name such as is_trial_reel across lines and lets the browser give its
+   column almost no width. Code in a cell keeps whole words; it still wraps if
+   the column has no room left. */
+#content-area td code {
+  word-break: normal;
+}
+/* On a phone even 6rem a cell pushes a four-column table off screen and
+   leaves its text column a word wide; the columns size to their content. */
+@media (max-width: 639px) {
+  #content-area td {
+    min-width: 0;
+  }
 }
 
 /* 10. Badges are pills; status lines sit under the page title
@@ -186,6 +218,12 @@ pre *,
 [data-badge] {
   border-radius: 999px;
   font-weight: 700;
+}
+/* The surface badge ("From the vendor's docs") is white on white without
+   an edge; a hairline keeps it a badge. */
+[data-badge][data-color="surface"] {
+  box-shadow: inset 0 0 0 1px var(--pq-line-2);
+  color: var(--pq-ink-2);
 }
 .pq-status {
   display: flex;
@@ -358,7 +396,9 @@ pre *,
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--pq-violet);
+  /* The accent, not the raw violet: #7C3AED on the dark paper is under 4.5:1
+     for text this small. */
+  color: var(--pq-accent);
 }
 .pq-h2 {
   margin: 0.5rem 0 0;
@@ -450,6 +490,14 @@ pre *,
   border-radius: 20px;
   background: var(--pq-surface);
   overflow-x: auto;
+}
+/* Mintlify wraps a table in a scroll area with a negative margin and its own
+   padding; the fit panel draws its own edge, so both go. */
+.pq-fit > div {
+  --page-padding: 0px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 .pq-fit table {
   width: 100%;
@@ -597,7 +645,7 @@ pre *,
   }
 }
 
-/* 9. Header: a solid bar with a hairline, as on postqueen.ai, and the banner
+/* 12. Header: a solid bar with a hairline, as on postqueen.ai, and the banner
    as news in the brand's lilac rather than a dark strip that reads like a
    warning. Tabs are ink at 600; the open one is violet with a 2px rule.
    Pricing is a plain link, Log in an outlined pill, Start the violet pill. */
