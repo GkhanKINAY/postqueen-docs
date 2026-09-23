@@ -1,6 +1,6 @@
-Put her public address in a `.env` file next to `docker-compose.yaml`. The shipped Compose file
-loads that file (`env_file`) and interpolates `${VAR:-default}` in `environment:`, so the
-values reach the container without editing the YAML:
+Put the public address in the `.env` file next to `docker-compose.yaml`. The shipped Compose file
+reads that file and fills these three values into the `postqueen` service, so there is no YAML to
+edit:
 
 ```env
 MAIN_URL=https://postqueen.example.com
@@ -8,5 +8,6 @@ FRONTEND_URL=https://postqueen.example.com
 NEXT_PUBLIC_BACKEND_URL=https://postqueen.example.com/api
 ```
 
-Keep `/api` on the last one, and leave no trailing slashes. Leave `BACKEND_INTERNAL_URL` alone:
-it stays `http://localhost:3000` inside the container.
+Keep `/api` on the last one, and leave off trailing slashes. Leave `BACKEND_INTERNAL_URL` as it
+ships, `http://localhost:3000`: it is the path from the web app to the API inside the container,
+not a public address.

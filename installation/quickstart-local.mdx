@@ -1,224 +1,131 @@
 ---
-title: Try her locally
-description: 'Run PostQueen on your own machine in about five minutes'
-icon: 'laptop'
+title: "Try it locally"
+description: "Run PostQueen on your own computer with Docker Compose in about five minutes, sign in, and remove it again with one command."
+icon: "laptop"
 ---
 
 import RestartService from '/snippets/restart-service.mdx';
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
-
-This is the fastest way to see PostQueen working. Everything runs on your own machine, nothing
-is exposed to the internet, and one command removes all of it when you are finished.
+This runs the whole stack on your own computer, over plain HTTP on `http://localhost:4007`. Nothing is exposed to the internet, and one command removes it when you are done.
 
 <Warning>
-**This is not a production install.** It runs over plain HTTP with `NOT_SECURED=true` so the
-browser will store a login cookie. It is perfect for looking around, and it is not something
-to put on a public address. When you are ready for that, follow
-[Deploy to a server](/installation/production): drop `NOT_SECURED`, set `ENCRYPTION_KEY`, and
-put HTTPS in front.
+**Not for a server.** This setup turns on `NOT_SECURED=true` so the login cookie works without HTTPS. For an install other people use, follow [Deploy to a server](/installation/production) instead.
 </Warning>
 
-<Info>
-**Before you start.** You need Docker, and about **4 GB** of free memory. Docker Desktop covers
-macOS and Windows, and on Linux you want Docker Engine with the Compose plugin.
-</Info>
+## Before you start
 
-## Install and run
+| | |
+|---|---|
+| Docker | [Docker Desktop](https://www.docker.com/products/docker-desktop/) on macOS or Windows, or [Docker Engine](https://docs.docker.com/engine/install/) with the Compose plugin on Linux |
+| Compose | v2.24 or newer. Check with `docker compose version` |
+| Memory | About 4 GB free for Docker. In Docker Desktop, set it under **Settings > Resources** |
+| Ports | 4007, 7233 and 8080 free on your computer |
+
+## Start PostQueen
 
 <Steps>
-  <Step title="Install Docker">
-    Download [Docker Desktop](https://www.docker.com/products/docker-desktop/) for macOS or
-    Windows and start it. On Linux, follow
-    [Docker Engine's install page](https://docs.docker.com/engine/install/) for your
-    distribution.
-
-    Check it is running:
-
-    ```bash
-    docker --version
-    docker compose version
-    ```
-
-    Both commands should print a version number. If `docker compose version` fails but
-    `docker --version` works, you have Docker without the Compose plugin, and the install page
-    above has the extra step for it.
-  </Step>
-
-  <Step title="Clone, write `.env`, start her">
+  <Step title="Clone the Compose repository">
     ```bash
     git clone https://github.com/GkhanKINAY/postqueen-docker-compose
     cd postqueen-docker-compose
-    printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nNOT_SECURED=true\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env && docker compose up -d
     ```
 
-    <Note>
-    Do not skip the `cd`. Every command from here on runs inside that folder, because that is
-    where `docker-compose.yaml` and `.env` live. Cloning also gives you the `dynamicconfig`
-    folder, which Temporal reads on startup, so copying just the YAML out of this page would
-    leave her without it.
-    </Note>
-
-    The sibling `.env` is how Compose is meant to be configured: the file loads it
-    (`env_file`) and interpolates `${VAR:-default}` into the app service.
-    `NOT_SECURED=true` is required for reliable HTTP login (Safari, and anything that is not
-    treated as localhost). Compose does not set that flag for you.
-
-    <Frame>
-      <img src="/images/brand/compose-up.svg" alt="docker compose up: the PostQueen stack starts and is ready on localhost 4007" />
-    </Frame>
-
-    The first run downloads several images and takes a few minutes. You will see a lot of
-    output, ending with each container reported as `Healthy` or `Started`:
-
-    ```
-     ✔ Container postqueen-postgres   Healthy
-     ✔ Container postqueen-redis      Healthy
-     ✔ Container temporal             Healthy
-     ✔ Container temporal-ui          Started
-     ✔ Container postqueen            Started
-    ```
-
-    Eight containers start in total: PostQueen, her database and Redis, and the four that make
-    up Temporal plus its dashboard.
-
-    The `-d` means she keeps running in the background after you close the terminal.
+    Run every command on this page from this folder. It holds `docker-compose.yaml` and the `dynamicconfig` folder that Temporal reads when it starts, so clone it rather than copying the YAML alone.
   </Step>
+  <Step title="Write the .env file">
+    ```bash
+    printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nNOT_SECURED=true\n' \
+      "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
+    ```
 
-  <Step title="Wait for her to be ready">
-    She needs a minute or two on first boot to set up her database. Watch for it:
+    The Compose file reads `.env` from this folder. `JWT_SECRET` signs sessions, `ENCRYPTION_KEY` encrypts the credentials PostQueen stores, and `NOT_SECURED=true` lets the login cookie work over HTTP. Everything else keeps the Compose file's defaults, which point PostQueen at `http://localhost:4007`.
+  </Step>
+  <Step title="Start the stack">
+    ```bash
+    docker compose up -d
+    ```
 
+    The first run downloads the images, which takes a few minutes. Eight containers start: `postqueen`, its PostgreSQL and Redis, and five for Temporal (the server, its PostgreSQL and Elasticsearch, the admin tools and the web UI).
+  </Step>
+  <Step title="Wait for the backend">
     ```bash
     docker compose logs -f postqueen
     ```
 
-    You are waiting for a line like:
+    On first boot PostQueen creates its database schema, then starts. Wait for this line, then press `Ctrl+C` to stop following the log (the container keeps running):
 
-    ```
-    postqueen  | Backend started successfully on port 3000
-    ```
-
-    Press `Ctrl+C` to stop following the logs. That does not stop her, it only stops printing.
-
-    You can also just ask whether everything is healthy:
-
-    ```bash
-    docker compose ps
+    ```text
+    Backend started successfully on port 3000
     ```
 
-    <Check>
-    Every container reads `Up`, and the log line above has appeared. She is running.
-    </Check>
+    A few lines later the backend checks its settings. `Configuration check completed without any issues` means the basics are right. A `Configuration issue` line names the variable to fix.
   </Step>
-
-  <Step title="Open her">
-    Go to **http://localhost:4007** in your browser.
-
-    Create the first account. It becomes the owner of this install, so use an address you will
-    remember. There is no email server configured here, so no confirmation mail is sent and the
-    account is active straight away.
+  <Step title="Create the first account">
+    Open **http://localhost:4007** and sign up. No mail server is configured, so the account is active at once.
 
     <Check>
-    **You are in.** The calendar loads, empty, with no channels in the sidebar. That is a healthy
-    fresh install, not a broken one.
+    PostQueen opens the calendar, and a short tour of the app may start. There are no channels yet. That is a healthy fresh install.
     </Check>
 
-    <Tip>
-    To watch the scheduler do its work, the Temporal dashboard is at **http://localhost:8080**.
-    It is optional and you can happily ignore it.
-    </Tip>
+    The Temporal web UI is at http://localhost:8080 if you want to watch scheduled work. You do not need it.
   </Step>
 </Steps>
 
-## Connect a channel from this laptop
+## Connect a channel
 
-The empty calendar is as far as a purely local install goes for most Cloud networks. They
-want a public HTTPS redirect. Two pieces, in order:
+Eight networks need nothing from you: Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr and WordPress take a key or a login in the connect form. Open **Channels** in the left rail, choose **Add Channel** and pick one.
 
-1. Put the provider keys in the same `.env` you just wrote (`LINKEDIN_CLIENT_ID` and
-   `LINKEDIN_CLIENT_SECRET`, and so on). Then recreate only the app container:
-
-   <RestartService />
-
-2. If the network refuses `http://localhost:4007/integrations/social/...`, you need a domain
-   and HTTPS. That is the [production](/installation/production) path, bridged from here by
-   [Domain and HTTPS](/installation/domain-and-https). Per-network keys:
-   [Providers](/channels/overview).
-
-## Common first-run problems
-
-<AccordionGroup>
-  <Accordion title="The page will not load at localhost:4007">
-    Give her another minute. On a first boot she creates the database schema before the web
-    interface answers. `docker compose logs -f postqueen` tells you where she is. If the log
-    keeps repeating and restarting, jump to [Troubleshooting](/troubleshooting/common-errors).
-  </Accordion>
-
-  <Accordion title="I signed in and was bounced straight back">
-    Login cookies default to `Secure`. On plain HTTP, Safari and some non-localhost URLs
-    refuse them. Confirm `.env` contains `NOT_SECURED=true`, then recreate the app container
-    with the snippet above. Never set that flag on a server other people can reach.
-  </Accordion>
-
-  <Accordion title="A port is already in use">
-    Something else on your machine is using 4007, 8080 or 7233. Either stop that program, or
-    change the left-hand number in the `ports:` line of the service in `docker-compose.yaml`.
-    For example `"4017:5000"` would put her on http://localhost:4017 instead.
-  </Accordion>
-
-  <Accordion title="Containers keep restarting or get killed">
-    That is almost always memory. The full stack, including Temporal and its Elasticsearch,
-    wants roughly **4 GB**. In Docker Desktop, raise the memory limit under
-    **Settings → Resources**.
-  </Accordion>
-
-  <Accordion title="Uploading an image works but nothing appears on the social network">
-    Some networks fetch your media from a public URL rather than accepting the file from her.
-    On a laptop install there is no public URL, so those posts will fail. This is expected
-    here and it goes away on a real domain. [Uploads and Storage](/configuration/uploads)
-    explains which networks behave this way.
-  </Accordion>
-</AccordionGroup>
-
-## Stopping, starting and removing
-
-| Command | What it does |
-|---|---|
-| `docker compose stop` | Pauses her, keeps everything |
-| `docker compose start` | Brings her back |
-| Recreate the app service | Picks up `.env` changes. See [Applying a change](/installation/docker-compose#applying-a-change) |
-
-Changed environment variables need the app container recreated, not a whole-stack teardown:
+The other networks need a developer app that you register with the network. Put its keys in `.env` and recreate the app container:
 
 <RestartService />
 
-When you are finished experimenting on a machine that runs **only** this stack:
+Many networks refuse an `http://localhost` redirect address, and some fetch your media from its URL, which a laptop cannot serve to the internet. For those, use a domain and HTTPS: [Deploy to a server](/installation/production). [Channel developer apps](/installation/providers/overview) lists each network's variables and setup page.
 
-```bash
-docker compose down -v
-```
+## If something goes wrong
+
+<AccordionGroup>
+  <Accordion title="localhost:4007 does not load">
+    Give the first boot a minute or two: the schema is created before the web app answers. `docker compose ps` shows each container's state, and `docker compose logs -f postqueen` shows where the start is.
+  </Accordion>
+  <Accordion title="Signing in sends me back to the login page">
+    The browser dropped the `Secure` login cookie over HTTP. Check that `.env` has `NOT_SECURED=true`, then recreate the `postqueen` container with the command above.
+  </Accordion>
+  <Accordion title="A port is already in use">
+    Another program uses 4007, 7233 or 8080. Stop it, or change the left-hand number of that port in `docker-compose.yaml`. With `"4017:5000"`, PostQueen answers on `http://localhost:4017`, and `MAIN_URL`, `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` in `.env` must use the same port.
+  </Accordion>
+  <Accordion title="Containers restart or get killed">
+    Almost always memory. Give Docker about 4 GB, then run `docker compose up -d` again.
+  </Accordion>
+</AccordionGroup>
+
+[Self-hosting troubleshooting](/troubleshooting/self-host) covers more.
+
+## Stop or remove it
+
+| Command | What it does |
+|---|---|
+| `docker compose stop` | Stops the containers and keeps all data |
+| `docker compose start` | Starts them again |
+| `docker compose down` | Removes the containers and keeps the data volumes |
+| `docker compose down -v` | Removes the containers **and deletes every volume**: the database, uploads and scheduled work |
 
 <Warning>
-The `-v` deletes the volumes, which means the database and every uploaded file. There is no
-undo. Leave `-v` off if you might want your test data back. On a shared host, never run a
-bare `docker compose down`. Recreate one service instead.
+`-v` cannot be undone. Leave it off if you might want the test data back.
 </Warning>
 
 ## Next steps
 
-You have a working PostQueen, connected to nothing.
-
 <CardGroup cols={2}>
-  <Card title="Put her on a server" icon="server" href="/installation/production">
-    Your own domain, HTTPS, and an install other people can use
+  <Card title="Deploy to a server" icon="server" href="/installation/production">
+    Your own domain and HTTPS, for an install other people use.
   </Card>
-  <Card title="Connect a channel" icon="plug" href="/channels/overview">
-    Bring your own app keys and try a real post
+  <Card title="Channel developer apps" icon="key-round" href="/installation/providers/overview">
+    Every network's variables, redirect path and setup page.
   </Card>
-  <Card title="Write your first post" icon="square-pen" href="/using/create-a-post">
-    The editor, per-channel settings, and what happens when you schedule
+  <Card title="Docker Compose" icon="container" href="/installation/docker-compose">
+    What the Compose file starts, and where each setting lives.
   </Card>
-  <Card title="Self-host troubleshooting" icon="wrench" href="/troubleshooting/self-host">
-    The failures that come up most often, and what fixes them
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Write once for several channels, then schedule it.
   </Card>
 </CardGroup>

@@ -1,14 +1,14 @@
-Restart PostQueen so the new variables are read. A plain `docker restart` or `docker compose restart`
-reuses the old container and its old environment.
+Recreate the app container so it reads the new variables. A plain `docker restart` or
+`docker compose restart` keeps the old container and its old environment.
 
-Recreate only the app service (the name in your compose file is usually `postqueen` or `backend`):
+In the folder that holds `docker-compose.yaml`, recreate only the `postqueen` service:
 
 ```bash
-docker compose up -d --no-deps --force-recreate SERVICE
+docker compose up -d --no-deps --force-recreate postqueen
 ```
 
-`docker compose down` then `up -d` also works on a machine that runs nothing else. On a shared host it
-stops every Compose service in the project. Do not use it there.
+The database, Redis and Temporal keep running. Avoid `docker compose down` for a settings change: on
+a host that runs other Compose services in the same project, it stops them too.
 
 Then open PostQueen, go to **Channels**, choose **Add Channel** and pick this network. You are
 sent to its login to authorize PostQueen, and the channel appears in your channel list once you

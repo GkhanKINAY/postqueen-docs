@@ -1,105 +1,126 @@
 ---
-title: Self-Hosting Overview
-sidebarTitle: Overview
-description: 'What you are installing, which path to take, and what she needs to run'
-icon: 'compass'
+title: "Self-hosting overview"
+sidebarTitle: "Overview"
+description: "What a self-hosted PostQueen runs, the machine it needs, the ports and outbound hosts, and which install guide to follow."
+icon: "compass"
 keywords:
-  - postqueen
   - self host
   - install
-  - docker
-  - compose
+  - docker compose
   - temporal
-  - agentic social media scheduler
 ---
 
 import NextStepsSelfhost from '/snippets/next-steps-selfhost.mdx';
 
-{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost), main:installation/system-requirements.mdx (merge; WIP: better, use as base for the outbound-ho…; audit: selfhost). Row in page-status-2026-09-23.md. */}
+PostQueen runs as one container image next to three services: PostgreSQL, Redis and Temporal. The official Docker Compose file starts all four, so a working install is a clone, a short `.env` file and one command.
 
-PostQueen is yours to run. Put her on your laptop to try her out, or on a small server so
-your whole team can reach her. Either way the posts, the connected channels and the media
-stay on hardware you control.
+This page covers what runs, what the machine needs and which guide to follow. To start right away, go to [Try it locally](/installation/quickstart-local) or [Deploy to a server](/installation/production).
 
-This page shows what she is made of and helps you pick a path. If you already know you want
-the normal one, go straight to [Try her locally](/installation/quickstart-local) or
-[Deploy to a server](/installation/production).
-
-## What you are installing
-
-PostQueen ships as one container image. Inside it a small proxy sits in front of three Node
-processes, so from the outside there is only ever one port to think about. Next to her she
-needs three services: a PostgreSQL database, Redis, and Temporal, which is the scheduler that
-actually fires your posts at the right minute.
-
-```mermaid
-graph TD;
-	A[Your Browser] -->|HTTPS 443/tcp| B[Your Reverse Proxy]
-	B -->|HTTP 4007/tcp| C["Internal Proxy (nginx, port 5000)"]
-
-	subgraph "PostQueen Container"
-	C -->|4200/tcp| D[Frontend]
-	C -->|3000/tcp| E[Backend API]
-	C -->|/uploads| F[Uploaded media on disk]
-	end
-
-	E -->|5432/tcp| G[PostgreSQL]
-	E -->|6379/tcp| H[Redis]
-	E -->|7233/tcp| I[Temporal]
-```
-
-The official Docker Compose file starts all of that for you, which is why it is the path we
-recommend to almost everyone. You do not have to install PostgreSQL, Redis or Temporal by hand.
-
-## Which path is for you
+## Pick a path
 
 <CardGroup cols={2}>
-  <Card title="I just want to see it" icon="play" href="/installation/quickstart-local">
-    Docker Compose on your own machine. Around five minutes, nothing permanent, delete it
-    afterwards with one command.
+  <Card title="Try it locally" icon="laptop" href="/installation/quickstart-local">
+    Docker Compose on your own computer, over plain HTTP. About five minutes, and one command removes it.
   </Card>
-  <Card title="I want to run it for real" icon="server" href="/installation/production">
-    Docker Compose on a small server, on your own domain, with HTTPS. Start here if other
-    people will use it.
+  <Card title="Deploy to a server" icon="server" href="/installation/production">
+    Docker Compose on a virtual machine, on your own domain, with HTTPS. The path for an install other people use.
   </Card>
-  <Card title="I want to change the code" icon="code" href="/installation/development">
-    Run her from source with hot reload, so you can edit the frontend or add a provider.
+  <Card title="Kubernetes with Helm" icon="ship-wheel" href="/installation/kubernetes-helm">
+    The Helm chart, for a cluster you already run. You bring the Temporal server.
   </Card>
-  <Card title="I already run Kubernetes" icon="ship-wheel" href="/installation/kubernetes-helm">
-    A Helm chart, for people who already have a cluster and know they want one.
+  <Card title="Run from source" icon="code" href="/installation/development">
+    Hot reload for changing the code, with a dev container if you prefer.
   </Card>
 </CardGroup>
 
-## What those other options in the sidebar mean
+[Docker Compose](/installation/docker-compose) is the reference for the Compose file itself, and it also covers running the image on its own when you already have PostgreSQL, Redis and Temporal.
 
-The sidebar lists a few more install methods. You almost certainly do not need them, but here
-is what each one is, so you can stop wondering.
+## What runs
 
-| Option | What it is | Pick it when |
-| --- | --- | --- |
-| [Docker Compose](/installation/docker-compose) | One file that starts PostQueen and all three services she depends on. | Almost always. This is the supported path. |
-| [Docker](/installation/docker-compose) | The PostQueen container on its own, with no database or scheduler. You bring your own. | You already run PostgreSQL, Redis and Temporal somewhere, and only want the app. |
-| [Helm](/installation/kubernetes-helm) | A package for Kubernetes. Helm is to a cluster roughly what Compose is to a single machine: one command installs the whole app. | You already operate a Kubernetes cluster. If that sentence did not sound familiar, this is not your path. |
-| [Development Environment](/installation/development) | The source code running on your machine with hot reload. | You are writing code for PostQueen. |
-| [Dev Container](/installation/development) | The development environment above, prebuilt inside a container, so your editor sets it up for you. | You want to contribute without installing Node and pnpm yourself. |
+```mermaid
+graph TD;
+  A[Browser] -->|HTTPS 443| B[Your reverse proxy]
+  B -->|HTTP 4007 on the host| C["nginx, port 5000"]
 
-## What she needs to run
+  subgraph "postqueen container"
+    C -->|"/api/"| E[Backend, port 3000]
+    C -->|"/uploads/"| F[Uploaded files on disk]
+    C -->|everything else| D[Frontend, port 4200]
+    J[Orchestrator: Temporal workers]
+  end
 
-A small virtual machine is enough. Two vCPUs and **4 GB of RAM** is the floor for Compose:
-Temporal plus Elasticsearch will OOM a 2 GB box. The full numbers, including disk and
-the outbound addresses she needs to reach, are on
-[System Requirements](/installation/overview).
+  E --> G[(PostgreSQL)]
+  E --> H[(Redis)]
+  E --> I[Temporal]
+  J --> I
+  J --> G
+```
 
-You will also need Docker. Both install guides walk you through getting it.
+The image holds four processes:
 
-<Note>
-**One thing worth knowing before you start.** PostQueen marks her login cookies as secure,
-which means a real install needs HTTPS. Locally that is handled for you. On a server you
-put a reverse proxy in front of her, and
-[Domain and HTTPS](/installation/domain-and-https) explains what that means and does it
-with you step by step.
-</Note>
+| Process | What it does |
+|---|---|
+| nginx | Listens on port 5000, the only port the container exposes. It sends `/api/` to the backend with the prefix removed, serves `/uploads/` from disk and sends everything else to the frontend. |
+| Frontend | The Next.js web app, on port 4200 inside the container. |
+| Backend | The NestJS API on port 3000: the web app's API, the public API, MCP and the OAuth callbacks. It starts workflows in Temporal but does not run them. |
+| Orchestrator | The Temporal worker. It publishes posts, refreshes channel tokens, syncs analytics, sends mail and converts uploaded video. It takes no requests from outside. |
 
-## Next Steps
+On every start the container first applies the database schema, then starts the three Node processes under pm2. [Backups and upgrades](/installation/backups-and-upgrades#where-the-schema-changes) explains what that step does to your data.
+
+| Service | Role | In the Compose file |
+|---|---|---|
+| PostgreSQL | All PostQueen data | `postgres:17-alpine` |
+| Redis | Caching, rate-limit counters, short-lived state | `redis:7.2` |
+| Temporal | Runs the schedule: a post goes out when its workflow fires | `temporalio/auto-setup`, with its own PostgreSQL and Elasticsearch |
+
+<Warning>
+**Temporal is required.** Without a reachable Temporal server the web app loads and posts can be written, but nothing is published and no mail is sent.
+</Warning>
+
+## What the machine needs
+
+| | Minimum | Comfortable |
+|---|---|---|
+| CPU | 2 vCPU | 4 vCPU |
+| Memory | 4 GB | 8 GB |
+| Disk | 20 GB | 50 GB, plus room for uploaded media |
+| System | Any Linux that runs Docker Engine with the Compose plugin v2.24 or newer. Docker Desktop on macOS and Windows for a local try. | |
+
+The Compose stack runs eight containers, and Temporal's Elasticsearch alone takes several hundred megabytes, so a 2 GB machine runs out of memory while it starts. Video conversion takes about two cores while it runs. Building the image from source needs more memory than running it.
+
+## Ports
+
+| Port | What | Reachable from |
+|---|---|---|
+| 5000 | nginx inside the container, the single entry point | The Docker network only |
+| 4007 | Where Compose publishes port 5000 on the host | The host. Your reverse proxy sends traffic here. Bind it to `127.0.0.1` on a server: see [Deploy to a server](/installation/production) |
+| 7233 | Temporal | `127.0.0.1` on the host |
+| 8080 | Temporal's web UI | `127.0.0.1` on the host |
+| 4200, 3000 | Frontend and backend | Inside the container only |
+| 5432, 6379 | PostgreSQL and Redis | The Docker network only |
+
+A proxy that reaches the container over the Docker network, such as Traefik, uses port 5000. A proxy on the host uses 4007.
+
+## Outbound connections
+
+PostQueen calls each network's API from the server, so a strict egress firewall has to allow the hosts of the networks you connect, for example:
+
+- `api.x.com` and `upload.x.com` for X
+- `graph.facebook.com`, `graph.instagram.com` and `graph.threads.net` for Meta
+- `api.linkedin.com` and `www.linkedin.com` for LinkedIn
+- `open.tiktokapis.com`, and `business-api.tiktok.com` for TikTok Business
+- `www.googleapis.com` and the `mybusiness*.googleapis.com` hosts for YouTube and Google Business Profile
+- `api.neynar.com` for Farcaster
+- the instance in `MASTODON_URL`, and the servers people enter for Bluesky, Lemmy, WordPress and Listmonk
+
+<Warning>
+**There is no outbound proxy setting.** `HTTPS_PROXY` and `HTTP_PROXY` are not read. Behind an egress proxy, allow the hosts at the network layer or use a transparent proxy.
+</Warning>
+
+## HTTPS
+
+The login cookie is marked `Secure`, so browsers send it only over HTTPS. A server install therefore needs a certificate, which a reverse proxy in front of PostQueen provides: [Domain and HTTPS](/installation/domain-and-https) walks through it. For a local try over plain HTTP, `NOT_SECURED=true` drops that requirement. Never set it on a server other people can reach.
+
+## Next steps
 
 <NextStepsSelfhost />
