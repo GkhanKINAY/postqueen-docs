@@ -48,10 +48,11 @@ This page is the catalog. For the live list on one connected channel, with each 
 | [Lemmy](#lemmy) | `subreddits` |
 | [Listmonk](#listmonk) | `list`, `templates` |
 | [Instagram](#instagram) (In review) | `audioSearch` |
+| [TikTok](#tiktok) (In review) | `creatorInfo` |
 | [TikTok Business](#tiktok-business) (In review) | `musicSearch`, `locationSearch` |
 | Soon: [Reddit](#reddit), [Pinterest](#pinterest), [Discord](#discord), [Slack](#slack), [Dribbble](#dribbble), [MeWe](#mewe), [Whop](#whop), [Skool](#skool), [Farcaster](#farcaster) | Listed below |
 
-Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook, YouTube, the standard TikTok connection, Instagram Standalone, LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr and Google Business Profile. Everything they need is in the post's settings.
+Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook, YouTube, Instagram Standalone, LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr and Google Business Profile. Everything they need is in the post's settings.
 
 ## WordPress
 
@@ -93,6 +94,12 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 | Tool | Inputs | Returns |
 |---|---|---|
 | `audioSearch` | `q`, `type` | Audio you can add to a Reel, as `{ id, title, artist, image, duration, previewUrl }`, with `duration` in milliseconds. Leave `q` empty for trending audio. `type` is `music` (the default) or `original_sound`. Facebook-linked Instagram channels only. |
+
+## TikTok
+
+| Tool | Inputs | Returns |
+|---|---|---|
+| `creatorInfo` | none | What this account may post right now, as `{ privacyLevelOptions, maxDurationSeconds, commentDisabled, duetDisabled, stitchDisabled }`. Pick `privacy_level` from `privacyLevelOptions`; until TikTok audits PostQueen's app it is `["SELF_ONLY"]`. Keep a video within `maxDurationSeconds`, and leave comments, duets or stitches off when the account has them turned off. |
 
 ## TikTok Business
 
