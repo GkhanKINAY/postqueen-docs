@@ -94,7 +94,7 @@ In your own chat you can send 100 messages every 30 seconds, and one announcemen
     The address PostQueen sent is not in **OAuth Redirect URLs**. It is exactly your `FRONTEND_URL` followed by `/integrations/social/twitch`.
   </Accordion>
   <Accordion title="Chat messages go out, announcements do not">
-    The token lacks `moderator:manage:announcements`. Twitch does not confirm an announcement, so PostQueen records it as posted anyway. Reconnect the channel and approve every permission.
+    The token lacks `moderator:manage:announcements`. PostQueen does not read Twitch's answer to an announcement, so it is recorded as posted even when Twitch refused it. Reconnect the channel and approve every permission.
   </Accordion>
 </AccordionGroup>
 

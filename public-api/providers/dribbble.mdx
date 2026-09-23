@@ -44,7 +44,8 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | The file is not an MP4 | “Does not support mp4 files” |
 | The image is exactly 400 × 300 or 800 × 600 pixels | “Invalid image size. Requires 400x300 or 800x600 px images.” |
 | Description up to 40,000 characters | “post is too long, please fix it” |
-| `title` set, `team` a string | A validation error naming the field |
+| `title` set | A validation error that says “Title is required” |
+| `team` a string | A validation error naming the field |
 
 The error body names the channel and the rule:
 

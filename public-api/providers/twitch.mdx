@@ -21,7 +21,7 @@ Every post to Twitch carries a `settings` object with `"__type": "twitch"`. A po
 | `messageType` | string | No | `message` for a chat message, `announcement` for a highlighted announcement. Left out, it is a chat message. |
 | `announcementColor` | string | No | The color of an announcement: `primary`, `blue`, `green`, `orange` or `purple`. Left out, it is `primary`. |
 
-Twitch chat is text only: media in `image` is not sent.
+Chat is text only: media on the post is not sent.
 
 ## What PostQueen checks
 
@@ -43,7 +43,7 @@ The error body names the channel and the rule:
 }
 ```
 
-Twitch's own chat rate limits are not checked first. Twitch does not confirm an announcement, so PostQueen records it as posted once it is sent.
+Twitch's own chat rate limits are not checked first. PostQueen does not read Twitch's answer to an announcement, so it is recorded as posted even when Twitch refused it.
 
 ## Examples
 

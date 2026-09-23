@@ -17,7 +17,7 @@ On a self-hosted PostQueen the Reddit app is yours. You create a **web app** on 
 | Variables | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` |
 | Redirect URI | `FRONTEND_URL` + `/integrations/social/reddit` |
 | Scopes | `read`, `identity`, `submit`, `flair` |
-| Review | Reddit's approval of your Data API access, and a separate agreement for commercial use. See Data API approval |
+| Review | Reddit's approval of your Data API access, and a separate agreement for commercial use. See App review |
 
 Reddit grants scopes on its consent screen, not on the app form. PostQueen asks for the four scopes and refuses the connect if Reddit grants fewer. `flair` is the one that lets the composer list each subreddit's flairs.
 
@@ -80,7 +80,7 @@ REDDIT_CLIENT_SECRET="your secret"
 
 Pick **Reddit**, sign in, and allow the permissions. In each post you then choose the subreddits, and a title, post type and flair for each.
 
-## Data API approval
+## App review
 
 - **Access.** Reddit asks every app to request access through its [Data API request form](https://support.reddithelp.com/hc/en-us/requests/new?ticket_form_id=14868593862164) and wait for approval. Describe what your install posts and for whom.
 - **Commercial use.** Reddit treats any use by or on behalf of a business as commercial, and that needs Reddit's written approval and an agreement. See Reddit's [Data API terms](https://redditinc.com/policies/data-api-terms).

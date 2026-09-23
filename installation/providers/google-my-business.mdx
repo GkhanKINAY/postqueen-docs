@@ -1,6 +1,5 @@
 ---
 title: "Google Business Profile setup"
-sidebarTitle: "Google Business Profile"
 description: "Register your own Google OAuth client for Google Business Profile on a self-hosted PostQueen: API access, the four APIs, scopes, redirect URI and the variables to set."
 icon: "/images/channels/google-business.svg"
 ---
@@ -110,7 +109,7 @@ GOOGLE_GMB_CLIENT_SECRET="your client secret"
 
 Pick **Google My Business**, sign in with Google and approve every permission, then choose the location. Every location in every account that Google user manages is listed. Unverified locations do not accept posts.
 
-## Testing and verification
+## App review
 
 - **Testing.** Google gives an External app in **Testing** refresh tokens that expire after 7 days, so a channel connected then has to be reconnected every week. In **Audience**, choose **Publish app** to leave Testing.
 - **Verification.** Once published, people who connect see Google's unverified-app screen until Google verifies the app in the **Verification Center**, and an unverified app that uses sensitive scopes is limited to 100 users. An install used only by you and your team can stay unverified.

@@ -50,7 +50,8 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | A video Pin carries only the video and its cover | “If posting a video you can only have two media items” |
 | The images in a multi-image Pin all have the same width and height | “Requires all images to have the same width and height” |
 | Description up to 800 characters | “post is too long, please fix it” |
-| `board` set, `title` up to 100 characters, `link` a valid URL | A validation error naming the field |
+| `board` set | A validation error that says “Board is required” |
+| `title` up to 100 characters, `link` a valid URL | A validation error naming the field |
 
 The error body names the channel and the rule:
 

@@ -51,7 +51,7 @@ The field names and values for the API are on [Google Business Profile posting s
 ## Good to know
 
 - Before a post is scheduled, PostQueen checks that it has at most one photo and no video, and that an event or an offer has its title and both dates.
-- Google's reference asks for start and end times as well as dates. Events without times, and every offer, go out without them, so Google may refuse them. Offers have not been tested end to end yet.
+- Events without start and end times, and every offer, are sent without times, and Google may refuse them.
 - Photo size and format are Google's rules, and PostQueen does not check them first: JPG or PNG, from 10 KB to 5 MB.
 - Every post is sent to Google marked as English, whatever language it is written in.
 - The link to a published post is its Google Search link when Google returns one, and the location's Business Profile page otherwise.

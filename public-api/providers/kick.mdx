@@ -19,15 +19,16 @@ Every post to Kick carries a `settings` object with `"__type": "kick"`, and noth
 |---|---|---|---|
 | `__type` | string | Yes | Always `"kick"`. PostQueen sets it from the channel you post to. |
 
-Kick chat is text only: media in `image` is dropped without a warning.
+Chat is text only: media on the post is not sent.
 
 ## What PostQueen checks
 
-A post that breaks this rule is refused with `400` before it is scheduled:
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
 | Rule | Message |
 |---|---|
 | Each entry up to 500 characters | “post is too long, please fix it” |
+| Every post except a draft, a known issue in v3.6.80 | “an unknown value was passed to the validate function” |
 
 The error body names the channel and the rule:
 

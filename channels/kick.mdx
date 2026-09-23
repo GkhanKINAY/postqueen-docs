@@ -19,7 +19,7 @@ PostQueen will post chat messages into your own Kick channel, such as a go-live 
     Up to 500 characters per message. Kick also caps a message at 2,048 bytes, so a message heavy in emoji holds fewer.
   </Card>
   <Card title="Media" icon="image">
-    None. Media on the first message is dropped without a warning.
+    None. Chat is text only: media on the post is not sent.
   </Card>
   <Card title="Post types" icon="layers">
     Chat message, with replies after it.
@@ -39,12 +39,12 @@ Kick is listed in **Add Channel**, but it cannot be connected on PostQueen yet. 
 
 ## Post settings
 
-Kick posts have no settings of their own in the composer: the message text is all a post carries. The API takes only the network's type, on [Kick posting settings](/public-api/providers/kick).
+Kick posts have no settings of their own in the composer: the message text is all a post carries. The API fields are on [Kick posting settings](/public-api/providers/kick).
 
 ## Good to know
 
 - **Add comment** adds follow-up messages, each with its own delay and no media. Each one replies to the message before it.
-- A message longer than 500 characters is refused before it is scheduled.
+- Before a post is scheduled, PostQueen checks that each message has at most 500 characters.
 - The link to a published message is your channel page, not the message.
 
 <NextStepsChannel />

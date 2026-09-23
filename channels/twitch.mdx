@@ -19,7 +19,7 @@ PostQueen will post chat messages and colored announcements into your own Twitch
     Up to 500 characters per message.
   </Card>
   <Card title="Media" icon="image">
-    None. Twitch chat is text only, and media on the first message is ignored.
+    None. Chat is text only: media on the post is not sent.
   </Card>
   <Card title="Post types" icon="layers">
     Chat message or announcement, with replies after it.
@@ -49,8 +49,8 @@ The field names and values for the API are on [Twitch posting settings](/public-
 ## Good to know
 
 - **Add comment** adds follow-up messages, each with its own delay and no media. Each chat message replies to the one before. When the post is an announcement, the follow-ups are announcements too.
-- A message longer than 500 characters is refused before it is scheduled.
-- Twitch does not confirm an announcement, so PostQueen records it as posted once it is sent.
+- Before a post is scheduled, PostQueen checks that each message has at most 500 characters.
+- PostQueen does not read Twitch's answer to an announcement, so it is recorded as posted even when Twitch refused it.
 - The link to a published message is your channel page, not the message.
 
 <NextStepsChannel />

@@ -23,7 +23,7 @@ Every post to Google Business Profile carries a `settings` object with `"__type"
 | `callToActionUrl` | string | No | Where the button goes. A button other than `CALL` is sent only when this is set. `CALL` takes no link: it dials the phone number verified on the profile. |
 | `eventTitle` | string | For events and offers | The title of the event or the offer. |
 | `eventStartDate`, `eventEndDate` | string | For events and offers | The first and last day, as `YYYY-MM-DD`. |
-| `eventStartTime`, `eventEndTime` | string | No | Start and end times as `HH:MM`, in 24-hour time. |
+| `eventStartTime`, `eventEndTime` | string | No | Start and end times of an event or an offer, as `HH:MM` in 24-hour time. |
 | `offerCouponCode` | string | No | A coupon code shown on the offer. |
 | `offerRedeemUrl` | string | No | Where the offer is redeemed online. Must be a valid URL. |
 | `offerTerms` | string | No | The offer's terms and conditions. |
@@ -56,7 +56,7 @@ The error body names the channel and the rule:
 }
 ```
 
-Google's own rules are not checked first: photos in JPG or PNG of 10 KB to 5 MB. Google's reference also asks for start and end times on events and offers. An event without times, and every offer, goes out without them and may be refused by Google. Offers have not been tested end to end yet. Every post is sent with its language set to English.
+Google's own rules are not checked first: photos in JPG or PNG of 10 KB to 5 MB. An event or an offer sent without `eventStartTime` and `eventEndTime` goes out without times, and Google may refuse it. Every post is sent with its language set to English.
 
 ## Examples
 

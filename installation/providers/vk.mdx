@@ -4,7 +4,6 @@ description: "Register your own VK ID app for a self-hosted PostQueen: the trust
 icon: "/images/channels/vk.svg"
 ---
 
-import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
 On a self-hosted PostQueen the VK ID app is yours. You create a **Web** app in the VK ID business account, add PostQueen's trusted redirect URL, and give PostQueen the app ID. VK ID signs in with PKCE, so there is no secret to set. Posting to a wall also needs an access right that VK grants only on request.
@@ -17,7 +16,7 @@ On a self-hosted PostQueen the VK ID app is yours. You create a **Web** app in t
 | Variable | `VK_ID` |
 | Redirect URI | `FRONTEND_URL` + `/integrations/social/vk` when it starts with `https`. Otherwise `https://redirectmeto.com/` + `FRONTEND_URL` + `/integrations/social/vk` |
 | Scopes | `vkid.personal_info`, `email`, `wall`, `status`, `docs`, `photos`, `video` |
-| Review | VK's approval of the extended access rights, such as `wall`, `photos` and `video`, and verification of your business profile. See Access rights |
+| Review | VK's approval of the extended access rights, such as `wall`, `photos` and `video`, and verification of your business profile. See App review |
 
 PostQueen does not check the granted scopes when a channel connects.
 
@@ -39,8 +38,6 @@ PostQueen does not check the granted scopes when a channel connects.
     | Docker on your machine | `redirectmeto.com` | `https://redirectmeto.com/http://localhost:4007/integrations/social/vk` |
 
     Choose **Создать приложение** (Create application).
-
-    <OAuthRedirect />
   </Step>
   <Step title="Turn on email">
     Under **Доступы** (Access), switch on **Почта** (email) and save. PostQueen asks for the `email` scope.
@@ -64,7 +61,7 @@ PostQueen sends it on the sign-in, on the token exchange and on every wall call,
 
 Pick **VK**, sign in with VK ID and approve access. Posts go to that account's own wall.
 
-## Access rights
+## App review
 
 - **Extended rights.** VK ID grants `vkid.personal_info`, `email` and `phone` to any app. The others PostQueen asks for, `wall`, `photos`, `video`, `docs` and `status`, are extended rights that VK grants only in exceptional cases. Request them by email to `devsupport@corp.vk.com`, saying what your app posts and why. Until VK grants them, the sign-in can stop with `invalid_scope`.
 - **Business verification.** VK asks accounts created after December 15, 2025 to verify their business profile within 60 days of their first app, or the apps are blocked.
@@ -74,7 +71,7 @@ Pick **VK**, sign in with VK ID and approve access. Posts go to that account's o
 
 <AccordionGroup>
   <Accordion title="VK stops with invalid_scope">
-    The app does not have every right PostQueen asks for. Request the extended rights as described in Access rights, then connect again.
+    The app does not have every right PostQueen asks for. Request the extended rights as described in App review, then connect again.
   </Accordion>
   <Accordion title="VK says the redirect URL does not match">
     The trusted redirect URL is not exactly the one PostQueen sent. With a plain `http` `FRONTEND_URL`, register the `redirectmeto.com` address from step 2, not the bare `localhost` one.
