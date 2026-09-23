@@ -1,143 +1,90 @@
 ---
-title: Third-Party Integrations
-sidebarTitle: Integrations
-description: 'Paste one API key and a service you already pay for turns up inside the media picker'
-icon: 'puzzle'
+title: "AI images and media integrations"
+sidebarTitle: "AI images"
+description: "Generate an image for a post with AI, and connect HeyGen or Reel.Farm to bring their media into PostQueen."
+icon: "sparkles"
 ---
 
-{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file, moved from using/third-party-integrations (rewrite; WIP: same as main; audit: guide). Row in page-status-2026-09-23.md. */}
+**Where:** **AI Image** under the post editor in **Create Post**. Media integrations are in **Settings > Integrations**, in the More group.
 
-You already pay for the avatar tool. The finished clips are already sitting in another dashboard. Getting either of them into a post means a download, a rename, then an upload, and by the time that is done the idea has gone cold. An integration removes the trip. You paste an API key once, and from then on the service is waiting at the exact spot where you were reaching for media anyway.
+PostQueen can draw an image from a short description and attach it to your post. Every paid plan includes a monthly number of AI images. You can also connect two outside services with your own account: HeyGen and Reel.Farm.
 
-Two ship today. Both are media services, and both work the same way.
-
-<Note>
-The app menu calls this **Integrations**. This page says third-party integrations to keep them apart from the channels she posts to. A channel is somewhere she publishes. An integration is somewhere she pulls media from, and adding one changes nothing about what goes out or when.
-</Note>
-
-## Add one
-
-Open **Integrations** from the more menu, or go to `/settings?tab=integrations`. The screen splits in two. Your connected accounts run down the left rail, and everything available to add fills the space on the right. Before you add anything the rail reads *No Integrations Yet*.
+## Generate an image for a post
 
 <Steps>
-  <Step title="Click the service card">
-    Each card carries the service icon, its one-line description, and an **Add** button. Clicking anywhere on the card opens a window headed *Add API key for HeyGen*.
+  <Step title="Open AI Image">
+    In **Create Post**, choose **AI Image** under the post editor. The **Generate AI Image** window shows how many credits you have left this month.
   </Step>
-  <Step title="Paste the key">
-    One field, labeled **API Key**. You get it from that service's own dashboard.
+  <Step title="Describe the image">
+    Under **Prompt**, describe what the picture should show: the subject, the setting, the mood.
   </Step>
-  <Step title="Add Integration">
-    She calls the service with your key before she stores a thing. If the call comes back clean the toast reads *Integration added successfully*, and the account appears in the left rail.
+  <Step title="Pick a style and a shape">
+    Choose a **Style**: Realistic, Cartoon, Anime, Minimalist, Sketch or Watercolor. Then choose an **Orientation**: **Square**, **Portrait** or **Landscape**. PostQueen preselects the shape that suits the first channel on the post.
+  </Step>
+  <Step title="Generate">
+    Choose **Generate**. The image is attached to the post and saved in [Media](/using/media-library).
   </Step>
 </Steps>
 
-That check is a real request, and the name it returns is the name you will see in the rail from then on.
+You can also ask for an image in the [AI Copilot](/using/ai-copilot): **Generate image** in its message box, **Add image** on a post card, or a request in the **AI Copilot** tab of Create Post.
 
-| Service | Check she runs | Name that lands in the rail |
-|---|---|---|
-| HeyGen | `GET https://api.heygen.com/v1/user/me` | Your HeyGen first and last name |
-| Reel.Farm | `GET https://reel.farm/api/v1/videos?limit=1` | *Reel.Farm* |
+## AI image credits
 
-A key the service rejects is never stored. The window stays open with **Invalid API key** under the field, so you can fix the paste and try again.
+- Each image uses one credit. The number your plan includes each month is on [Plans and limits](/cloud/plans).
+- Credits reset every month, counted from the day your subscription started, on yearly plans too. Unused credits do not carry over.
+- The free trial includes your plan's full monthly credits.
+- Writing and rewriting text with the AI Copilot does not use credits.
 
-The key you typed is encrypted before it reaches the database. The row your browser reads back carries the id, the name and the identifier from the database, with the provider's own title, description and position added on top. The key itself never comes back down to the page you typed it on.
+## Connect HeyGen or Reel.Farm
 
-Removing one is the three dots next to its name in the rail, then **Delete Integration**. A confirm dialog asks first.
+<Steps>
+  <Step title="Open Integrations">
+    Open **Settings** and choose **Integrations** under More. The **More** group in the left rail links there too.
+  </Step>
+  <Step title="Add the key">
+    On the service's card, choose **Add API key**. Paste the API key from your account with that service into **API Key**.
+  </Step>
+  <Step title="Save">
+    Choose **Add Integration**. PostQueen checks the key with the service before saving it, and the card then reads **Connected**.
+  </Step>
+</Steps>
 
-## Where each one shows up
+What each service does once it is connected:
 
-Every provider declares a position in its own source, and the position decides which button it lives behind.
+- **HeyGen** makes an avatar video from your post's text in your own HeyGen account. In Create Post, choose **Integrations** under the post editor, then HeyGen.
+- **Reel.Farm** brings videos from your Reel.Farm account into your library. On the Media page, choose **Import**, then **Browse** on Reel.Farm.
 
-| Position | Button | Where it sits | Ships today |
-|---|---|---|---|
-| `media` | **Integrations** | The media row under the post editor, next to Insert Media and Design Media | HeyGen |
-| `media-library` | **Import** | The media library toolbar, both on the **Media** page and in the Insert Media window | Reel.Farm |
+**Update key** replaces a saved key. **Disconnect** removes it after you confirm "Are you sure you want to delete this integration?".
 
-Both buttons are conditional. Connect nothing at a position and that button does not render at all, which is worth remembering the first time you go looking for it. The Integrations button appears in the editor the day you add HeyGen. The Import button appears the day you add Reel.Farm.
+## Good to know
 
-## HeyGen, a video built from the post you just wrote
+- **AI Image** appears on every paid plan, the free trial included. A workspace with no active plan does not see it.
+- The key you add belongs to the workspace, and PostQueen uses it only to call that service. Anything the service charges for comes from your account with that service.
+- The plan card on Billing lists an Advanced Picture Editor. It is not available in the app yet.
 
-The card describes it as a platform for creating AI-generated avatar videos. Here is what that looks like from inside a post.
+## If something goes wrong
 
-Write your text first, then click **Integrations** in the media row. The window lists your connected media services as `HeyGen: <your name>`. Press **Use** and the form opens.
-
-The button worth finding early is **Generate Voice From My Post Text**. It takes the text of the post you are writing, sends it through her writing model, and hands back a spoken version of it, the kind with pauses in it that sounds like a person rather than a caption. A dialog warns you first, because it replaces whatever is already in the script box.
-
-| Field | What it takes |
+| Message | What to do |
 |---|---|
-| Aspect Ratio | **Portrait** or **Story** |
-| Generate Captions | **Yes** or **No** |
-| Script box | The words the avatar says, at least 20 characters long |
-| Select Avatar | A grid of the avatars on your own HeyGen account. Public HeyGen avatars are not listed |
-| Select Voice | The first 20 voices HeyGen returns, each shown with its language |
-
-The two aspect ratios send fixed dimensions:
-
-| Aspect Ratio | Dimensions sent to HeyGen |
-|---|---|
-| Story | 720 by 1280 |
-| Portrait | 1280 by 720 |
-
-Then **Generate Video**, and the screen goes dark with *Grab a coffee and relax, this may take a while...*. Behind that overlay she is asking HeyGen whether the render is done, once every three seconds, up to 180 times. Roughly nine minutes of patience, and then she stops and tells you the generation timed out.
-
-<Warning>
-The overlay says *DO NOT CLOSE THIS WINDOW!* and means it. The wait is held open by the page you are on. The overlay also points out that you can watch the same render progress in your HeyGen dashboard.
-</Warning>
-
-When it lands, the finished video is pulled into your own storage, saved into your media library, and attached to the post you were writing. No download, no re-upload.
-
-## Reel.Farm, the clips you already made
-
-The card describes it as importing UGC and greenscreen videos from your Reel.Farm account, and that is precisely the scope.
-
-Making your clips somewhere else and posting them here? This is the button that saves you the round trip.
-
-Open **Media**, or the Insert Media window inside a post, and click **Import**. The window is headed *Import From*. Pick the Reel.Farm card and a grid of your videos loads.
-
-What she asks for is narrow, so it is worth stating plainly. Completed videos only, of two kinds, `ugc` and `greenscreen`, twenty to a page. Each tile shows a thumbnail with its kind printed across the corner, which is why the clips come through labeled ugc or greenscreen rather than by filename.
-
-Click the tiles you want and each one picks up a numbered badge in the order you chose it. **Import Selected** copies them over with the count beside it. Every URL has to be a public HTTPS address, and anything pointing at an internal network is turned away. What arrives sits in your media library like any upload, and behaves like one from that moment on.
-
-## The two side by side
-
-| | HeyGen | Reel.Farm |
-|---|---|---|
-| Identifier | `heygen` | `reelfarm` |
-| Position | `media` | `media-library` |
-| Makes something new | Yes, a video rendered on request | No |
-| Brings existing files across | No | Yes |
-| Where the result lands | Your media library and the open post | Your media library |
-| Time to wait | Up to nine minutes per video | As long as the copy takes |
-
-## What is not here yet
-
-Two honest limits. The provider interface allows a third position called `webhook`, and nothing ships in it today. And integrations live in the app only: there is no public API endpoint and no MCP tool for them, so adding, using, and removing them all happen on the screens above.
-
-<CardGroup cols={3}>
-  <Card title="Writing a post" icon="pen-tool" href="/using/create-a-post">
-    The editor and the media row where the Integrations button waits.
-  </Card>
-  <Card title="Uploads and storage" icon="cloud-upload" href="/configuration/uploads">
-    Where generated and imported files are actually kept.
-  </Card>
-  <Card title="All channels" icon="layout-grid" href="/channels/overview">
-    The other kind of connection, the networks she publishes to.
-  </Card>
-</CardGroup>
+| "You are out of AI credits for this month." | Wait for your credits to reset, or move to a plan with more in **Billing**. |
+| "Please type your prompt" | Describe the image under **Prompt**, then choose **Generate** again. |
+| "AI generation failed, please try again later." | Try again in a few minutes. If it keeps failing, change the prompt. |
+| "Invalid API key" | Copy a fresh key from the service and paste it again. |
+| "Integration Already Exists" | The service is already connected. Use **Update key** on its card instead. |
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Media and design" icon="image" href="/using/media-library">
-    Where the imported files turn up
+  <Card title="Upload and manage media" icon="images" href="/using/media-library">
+    Find generated and imported files, add alt text, or delete them.
   </Card>
-  <Card title="Uploads and storage" icon="cloud-upload" href="/configuration/uploads">
-    Where the files are kept
+  <Card title="AI Copilot" icon="wand-sparkles" href="/using/ai-copilot">
+    Ask for a post, an image or a rewrite in plain words.
   </Card>
-  <Card title="Settings" icon="sliders-horizontal" href="/using/settings">
-    The tab these keys live in
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Attach the image and schedule the post.
   </Card>
-  <Card title="Automation" icon="zap" href="/introduction">
-    Bringing content in from a workflow instead
+  <Card title="Plans" icon="credit-card" href="/cloud/plans">
+    The AI image credits on each plan.
   </Card>
 </CardGroup>

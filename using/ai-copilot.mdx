@@ -1,185 +1,91 @@
 ---
-title: 'Your assistant in the app'
-description: 'She is already inside PostQueen: pick your channels, type a sentence, and watch the calendar fill.'
-icon: 'wand-sparkles'
+title: "Draft and schedule posts with the AI Copilot"
+sidebarTitle: "AI Copilot"
+description: "Ask the AI Copilot to write, change and schedule posts, add images and read your post analytics, on its own page or inside Create Post."
+icon: "wand-sparkles"
 ---
 
-{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file, moved from using/assistant (rewrite; WIP: better, use as base; audit: guide). Row in page-status-2026-09-23.md. */}
+import TrialLocks from '/snippets/trial-locks.mdx';
 
-You do not need a terminal to talk to her. Open the app, click **Agent** in the menu, and there she is: your channels down the left, the conversation in the middle, everything you asked her last week down the right. Tell her what you want the world to see. She writes it, makes the picture and puts it on the calendar.
+**Where:** **AI Copilot** in the left rail. Inside **Create Post**, the **AI Copilot** tab in the right column.
 
-## The Agent tab
+The AI Copilot is a chat that writes posts for your channels. It shows each post on a card, and nothing reaches your calendar until you choose an action on that card.
 
-The screen is three columns and each one has a job.
+<TrialLocks />
 
-| Column | What it is for |
-| --- | --- |
-| Left, **Select Channels** | Every connected channel, sorted and clickable. Selected channels are bright, the rest sit dimmed. The small arrow collapses the column to icons. |
-| Middle | The conversation, with the message box at the bottom. **Enter** sends, **Shift + Enter** starts a new line. |
-| Right | Your past conversations, newest first, under a **Start a new chat** button. |
+## Draft a post
 
-Opening the tab starts a fresh conversation. Clicking any title on the right reopens that one exactly where you left it.
+<Steps>
+  <Step title="Open AI Copilot">
+    Choose **AI Copilot** in the left rail. Your channels are on the left under **Select Channels**, the chat is in the middle, and your **Chats** are on the right.
+  </Step>
+  <Step title="Pick the channels">
+    Click the channels the post is for. The message box lists them after "Posting to".
+  </Step>
+  <Step title="Describe the post">
+    Say what you want to post and when, then press Enter. Shift + Enter starts a new line.
+  </Step>
+  <Step title="Check the card">
+    The Copilot reads each network's rules and shows a **Post Preview** card. It reads "Checking channel rules" until the check is done.
+  </Step>
+  <Step title="Choose what happens">
+    Choose **Schedule**, or **Schedule next free slot** when you gave no time. The arrow next to it has **Post now**, **Save as draft**, **Add image** or **Change image**, and **Remove image**. **Edit in Create Post** opens the post in the composer to finish by hand.
+  </Step>
+</Steps>
 
-## Pick your channels first
+A card with several posts also offers **Schedule all**. The next free slot is the first free quarter hour one to four hours from now, the same time **Create Post** starts from.
 
-Click the avatars on the left for the accounts this conversation is about. That selection rides along with every message you send, carrying each channel's id, platform and posting settings, so she always knows what she is writing for.
+## Change a post you already have
 
-She does not guess the rules. Before she schedules anything she looks up that platform's character limit, its required settings and its restrictions, then follows them even if you ask her not to.
+Ask in plain words, for example "move Friday's Bluesky post to 10:00". The Copilot finds the post and shows an **Update Existing Post** card. **Save changes** saves the edit and keeps the post's date; the arrow also has **Schedule** and **Delete Post**. The Copilot never deletes a post itself: you do it from the card, after "Are you sure you want to delete this post?".
 
-Running an agency? Ask her for your groups and she lists your customers, then narrows the channels down to the one you name.
+## What else you can ask
 
-<Info>
-MCP clients get 21 tools with an API key: most of the assistant's tools, plus three upload widget tools and `ask_postqueen`, which lets an MCP client hand a whole job to the assistant. In the app you already *are* talking to the assistant, so `ask_postqueen` is not listed here. [Agents overview](/agents/overview) and [MCP introduction](/mcp/introduction).
-</Info>
+- **Images:** make one for a post, or use one from [Media](/using/media-library). Each generated image uses an AI image credit.
+- **Analytics:** totals for posts published in the last 7, 30 or 90 days, your top posts, or one post's numbers, from the [networks that report analytics](/using/analytics).
+- **Settings:** change a scheduled post's or a draft's network settings without touching its text or time.
 
-## What she can reach from the chat
+## In Create Post
 
-Sixteen tools sit behind the conversation. You never call them by name, but this is the honest list of what she can touch:
+The right column has two tabs, **Post Preview** and **AI Copilot**, and opens on **AI Copilot** until the post has text or media. There the Copilot works on the open post only:
 
-| Tool | What it does |
-| --- | --- |
-| List Integrations | Every connected channel, optionally filtered to one group |
-| List Groups | Your groups, the customers you have set up |
-| Get Integration Schema | A platform's rules, settings and maximum length |
-| Trigger Integration Tool | Values only the platform knows, like the ids a setting asks for |
-| Schedule Social Media Post | Writes the post to your calendar |
-| List Posts | Every post in a date window, whatever its state, with its current settings |
-| Update Post Settings | Changes the settings of a post that has not gone out yet. The content and the time stay |
-| Generate Image | Makes a picture from a prompt and saves it to your media |
-| Generate Video | Starts a video. It takes a few minutes to render |
-| Video Generation Status | Tells her whether that video is still rendering, finished or failed |
-| List Video Generation Options | The video types this install can make |
-| Video Function Helper | Extra values a video type needs, such as a voice id |
-| Upload Media From URL | Pulls an external image or video into your media library |
-| Analytics Summary | Workspace totals for published posts |
-| List Post Analytics | Ranked post performance |
-| One Post Analytics | Lifetime totals for one published post |
+- **Quick edits**: **Rephrase**, **Shorten**, **Expand**, **More Casual** and **More Formal**. A suggestion comes on a card with **Apply**, and **Undo** takes it back.
+- Ask for an image and choose **Use in this post** to attach it, or ask for a comment to wait a few minutes after the post.
+- To schedule, use the composer's own buttons.
 
-Generating a video draws on the video credits of your plan.
+## Generate Posts from a brief
 
-## Hand her a photo
+Open the arrow next to **Create Post** in the header and choose **AI post**. Write at least 10 characters under **Write anything** (links are fine), pick an **Output format** and a **Tone**, check **Add pictures?** for images, and choose **Generate**. The composer opens with the result to check and schedule.
 
-Just above the message box there is a media bar. **Insert Media** opens your Media Library, where you can pick something you already uploaded or upload something new. **Design Media** opens the designer. On a plan that includes AI you also get buttons for an AI image and an AI video.
+## Good to know
 
-Whatever you attach travels with your next message, and it shows up inside that message in the conversation: pictures as pictures, mp4 files as a player you can press.
+- Every paid plan includes the AI Copilot.
+- Chats are saved for the workspace, so everyone in it sees the same list. **New chat** starts a fresh one.
+- Chatting and rewriting do not use credits. Only images do.
+- A network's rules always win. If a draft breaks one, the card reads "Copilot is fixing this draft" while the Copilot corrects it.
 
-## From chat to calendar
+## If something goes wrong
 
-Before she schedules, she reads the whole thing back to you: the text, the media, the date and time, the platform and the account. Say yes and she offers you two ways to land it.
-
-- **Schedule it now.** She writes the post straight to your calendar and tells you it is there.
-- **Open it in the editor.** She fills the post editor with the content and media she wrote, one editor per channel, and hands it to you unfinished. Nothing is on the calendar until you finish in the editor.
-
-Ask for several posts at once and the shape depends on the platform.
-
-| Platform family | What a list of posts becomes |
-| --- | --- |
-| Threads, Bluesky, X | Each item is a separate post in one thread |
-| LinkedIn, Facebook | The first item is the post, the rest become comments underneath |
-
-A post she writes can be scheduled for later, published immediately, or saved as a draft. A draft is a state, not a queue: it sits on your calendar unscheduled until you publish it yourself.
-
-## Your conversations stay
-
-Every conversation is saved with a title she writes for it, and the right column keeps them in order. Reopen one and the messages come back from the server, not from your browser, so the same history is there on your laptop and on your phone.
-
-Threads are stored against your organization rather than your personal login. Anyone on your team who opens the Agent tab sees the same list of conversations.
-
-## Generate Posts
-
-Some mornings you do not want a conversation. You shipped a thing, you have a link, and you want posts about it.
-
-On the calendar, in the channels column beside the button that opens a new post, there is a small sparkle button. It appears once you have at least one channel connected and your plan includes AI. Click it and the **Generate Posts** window opens with four fields.
-
-| Field | What it takes |
-| --- | --- |
-| Write anything | Your brief, ten characters minimum. Links are welcome, and she will go read them |
-| Output format | `Short post`, `Long post`, `A thread with short posts` or `A thread with long posts` |
-| Output format (the second list) | Both selects carry the same label. This one sets the person she writes in: `Personal voice ("I am happy to announce")` or `Company voice ("We are happy to announce")` |
-| Add pictures? | A checkbox. Leave it off and she skips image generation entirely |
-
-Press **Generate** and she works in the open. The line above the form names each step as it runs:
-
-| Step | What is happening |
-| --- | --- |
-| Agent starting | She reads your brief |
-| Researching your content... | She searches the web around it and keeps what she finds |
-| Understanding the category... | She classifies the material |
-| Finding the topic... | She narrows the category to a topic |
-| Finding popular posts to match with... | She pulls hooks that already worked in that topic |
-| Generating hook... | The first line or two, written to stop the scroll |
-| Generating content... | The body, in your chosen format and voice |
-| Generating pictures... | One image per post, from a prompt she wrote for it |
-| Uploading pictures... | The images land in your media library |
-| Finding time to post... | She picks the next free slot in your posting times |
-
-Then the post editor opens with the hook sitting on top of the first post, the pictures attached and the date already chosen. Change anything you like before it goes out.
-
-Short formats aim for around 200 characters so they fit X. Thread formats always come back as at least two posts. She writes no hashtags and tends to end on a call to action.
-
-<Note>
-**Self-hosting and cannot find the sparkle button?** That one is deliberate. Every click runs a research step, a writing step and an image step. The button appears only when your plan includes AI **and** billing is switched on. An install with billing off is unlimited in every other way. The chat in the Agent tab is not gated like this: give the install a writing model key (see [Configuration Reference](/configuration/reference)) and she answers there with billing off.
-</Note>
-
-## What she needs to run
-
-On Cloud, chat belongs to the plans that include AI, so a free organization cannot open a conversation with her. Self-hosted installs need the writing and research keys named in the [Configuration Reference](/configuration/reference). Without a writing key the chat answers `AI features are not configured on this installation.` Without a research key, Generate Posts writes from your brief alone.
-
-## When she does not answer
-
-<AccordionGroup>
-  <Accordion title="The chat replies that AI features are not configured">
-    That is the literal message when the writing model key is unset on a self-hosted install. Set it,
-    recreate the container (see [Self-hosting](/installation/overview)), and the chat answers. Nothing else is required for the chat: unlike
-    the sparkle button, it is not gated on billing.
-  </Accordion>
-
-  <Accordion title="There is no sparkle button on the calendar">
-    Three things have to be true before it appears: at least one channel connected, a plan that
-    includes AI, and, on a self-hosted install, billing switched on with both Stripe keys set.
-    That gate is deliberate, because each click is several paid model calls on somebody's key.
-  </Accordion>
-
-  <Accordion title="Generate runs and then stops partway">
-    She names each step as it goes, so the last line on screen tells you where it stopped. A
-    research or image step that fails is usually the model provider refusing the call: a spent
-    quota, or a key without access to that model. If the chat still answers using the same key,
-    the problem is the specific model rather than the key itself.
-  </Accordion>
-
-  <Accordion title="Video generation says there are no credits">
-    Video draws on your plan's video credits, which are a separate counter from the AI allowance.
-    Room for images does not mean room for a video.
-  </Accordion>
-</AccordionGroup>
-
-## Keep going
-
-<CardGroup cols={3}>
-  <Card title="Talk to her outside the app" icon="messages-square" href="/agents/overview">
-    The same assistant, reached from your chat apps, your editor or your terminal
-  </Card>
-  <Card title="Connect your own AI tools" icon="plug" href="/agents/overview">
-    Copy the MCP address from Connections and your MCP client gets the same tools, and a few more
-  </Card>
-  <Card title="Drive her from the terminal" icon="terminal" href="/cli/introduction">
-    Every command and flag, with clean JSON on the way back
-  </Card>
-</CardGroup>
+| Message | What to do |
+|---|---|
+| "AI Copilot unlocks after your trial" | Choose **End free trial to unlock AI Copilot**, or wait for your plan to start. |
+| "Copilot could not fix this draft" | Answer the Copilot's question, or choose **Edit in Create Post** and fix the post yourself. |
+| "The date of this post has passed; say when it should go out." | Give the Copilot a new date and time. |
+| "You are out of AI credits for this month." | Wait for your image credits to reset, or move to a larger plan in **Billing**. |
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Talk to her outside the app" icon="bot" href="/agents/overview">
-    Claude, ChatGPT or any assistant, on the same calendar
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Finish a draft by hand in the composer.
   </Card>
-  <Card title="Writing a post" icon="square-pen" href="/using/create-a-post">
-    What the composer does once she hands the draft over
+  <Card title="AI images and media integrations" icon="sparkles" href="/using/ai-images-and-video">
+    Styles, shapes and monthly image credits.
   </Card>
-  <Card title="Media and design" icon="image" href="/using/media-library">
-    The images and video she can generate for a post
+  <Card title="Use your own AI agent" icon="bot" href="/agents/overview">
+    Post from Claude, ChatGPT or another agent through PostQueen's MCP server.
   </Card>
-  <Card title="Plans and limits" icon="credit-card" href="/cloud/plans">
-    Which plans include the AI features
+  <Card title="Free trial" icon="credit-card" href="/cloud/trial">
+    What unlocks when your paid plan starts.
   </Card>
 </CardGroup>

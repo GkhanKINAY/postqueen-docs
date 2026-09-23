@@ -1,11 +1,97 @@
 ---
 title: "Connections"
-description: "The API key, the agent cards with their MCP address, the apps you approved, and the Developers page."
+description: "Connect an AI agent, the CLI or your own code to PostQueen: the agent cards with your MCP address, the API key, OAuth apps and the apps you approved."
 icon: "cable"
+keywords:
+  - connections
+  - connect postqueen
+  - api key
+  - mcp address
+  - approved apps
+  - oauth apps
 ---
 
-{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: none on main, a new page. Row in page-status-2026-09-23.md. */}
+import McpAddresses from '/snippets/mcp-addresses.mdx';
 
-<Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
-</Note>
+**Where:** **Connect PostQueen** at the top of the left rail. It opens **Connections**.
+
+Connections is where anything outside the app plugs into your workspace: AI agents over MCP, the `postqueen` CLI, the public API and automation tools. All of them use the workspace API key, and the cards show the address or header with your key already filled in.
+
+## Connect an agent
+
+<Steps>
+  <Step title="Find its card">
+    Under **Connectors**, pick a card from **Featured** or from a category, or type its name in **Search connectors**.
+  </Step>
+  <Step title="Follow How to connect">
+    The card opens on **How to connect**: the agent's own steps, with the commands to copy.
+  </Step>
+  <Step title="Copy your address">
+    The **API key** tab shows your key and, for an agent, the **MCP URL** with the key in it. Paste what the steps ask for into the agent.
+  </Step>
+  <Step title="Try it">
+    When the card has **Examples**, try one of its prompts in the agent.
+  </Step>
+</Steps>
+
+Only a workspace Admin or Super Admin sees the key. Other members see it masked, and pressing **Reveal** explains that "The API key is managed by admins". Ask an admin to connect the agent, or to share the address with you.
+
+The agent pages in these docs say which setups PostQueen has tested: start at [AI agents](/agents/overview).
+
+## What Connections holds
+
+| Section | What is in it |
+|---|---|
+| **Connectors** | **Featured** cards for Claude, ChatGPT, Cursor and Grok, **Any MCP client**, then the **Agents**, **Bots**, **Chat**, **Editors** and **Automation** groups |
+| **Automation** | n8n; Zapier and Make, marked **Soon**; **Webhooks** and **RSS AutoPost**, which open their tab in Settings |
+| **Develop** | **Public API**, **CLI** and **Node SDK**, each with its setup steps |
+| **Account** | **API Keys**, **Developers** and **Approved Apps** |
+
+## Rotate the API key
+
+<Steps>
+  <Step title="Open API Keys">
+    In Connections, choose **API Keys** in the Account group.
+  </Step>
+  <Step title="Rotate">
+    Choose **Rotate key**, then **Rotate** to confirm. PostQueen makes a new key at once.
+  </Step>
+  <Step title="Update what used it">
+    The old key stops working right away, so paste the new one, or the new MCP address, into every agent, script and n8n credential that used it.
+  </Step>
+</Steps>
+
+A workspace has one key. Only an admin can reveal or rotate it.
+
+## Your MCP address
+
+<McpAddresses />
+
+## Developers and Approved Apps
+
+- **Developers** is for building your own product on PostQueen. An admin chooses **Create OAuth App** and fills in **App Name**, **Description**, **Profile Picture** and **Redirect URL**. The **Client Secret** is shown only when the app is created or the secret is rotated, so copy it then. A workspace has one OAuth app. See [OAuth apps](/public-api/oauth).
+- **Approved Apps** lists the apps you approved, with the date. Only an Admin or Super Admin can approve an app, and an approved app can act for the whole workspace. Choose **Revoke** to cut an app off.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| "The API key is managed by admins" | Only an Admin or Super Admin can reveal or rotate the key. Ask one. |
+| "OAuth apps are managed by admins" | Only an Admin or Super Admin can create or change the OAuth app. |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="AI agents" icon="bot" href="/agents/overview">
+    Every agent PostQueen works with, and what each one can do.
+  </Card>
+  <Card title="MCP server" icon="network" href="/mcp/introduction">
+    The addresses, the tools and what an agent cannot do.
+  </Card>
+  <Card title="CLI" icon="terminal" href="/cli/introduction">
+    Install `postqueen` and run a first command.
+  </Card>
+  <Card title="Public API" icon="code" href="/public-api/introduction">
+    Call PostQueen from your own code.
+  </Card>
+</CardGroup>
