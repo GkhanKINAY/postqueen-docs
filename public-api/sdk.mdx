@@ -1,6 +1,6 @@
 ---
 title: "Node.js SDK"
-description: "Install @postqueen/node, schedule a post from TypeScript or JavaScript, and fill in the fields its 1.0.4 types ask for."
+description: "Install @postqueen/node, schedule a post from TypeScript or JavaScript, upload media and read your channels."
 icon: "package"
 keywords:
   - postqueen
@@ -15,7 +15,7 @@ import NextStepsApi from '/snippets/next-steps-api.mdx';
 
 [`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) is a small typed client for the [PostQueen API](/public-api/introduction). It sends your API key and calls five endpoints for you: list channels, create a post, list posts, upload a file and delete a post. Everything else in the API is a plain HTTPS call, shown [below](#calls-the-sdk-does-not-wrap).
 
-This page describes version 1.0.4. Run `npm ls @postqueen/node` to see yours.
+This page describes version 1.0.5. Run `npm ls @postqueen/node` to see yours.
 
 ## Before you start
 
@@ -68,14 +68,10 @@ This page describes version 1.0.4. Run `npm ls @postqueen/node` to see yours.
       const created = await postqueen.post({
         type: 'schedule',
         date: '2026-10-01T09:00:00.000Z',
-        shortLink: false,
-        tags: [],
         posts: [
           {
             integration: { id: bluesky.id },
-            group: '',
-            settings: { __type: 'bluesky' },
-            value: [{ id: '', content: 'Shipping the new calendar today.', image: [], delay: 0 }],
+            value: [{ content: 'Shipping the new calendar today.' }],
           },
         ],
       });
@@ -91,7 +87,7 @@ This page describes version 1.0.4. Run `npm ls @postqueen/node` to see yours.
 </Steps>
 
 <Note>
-`group: ''`, `id: ''` and `delay: 0` are there because the 1.0.4 types require them, not because the API does. The next section explains each one.
+The SDK fills in `shortLink`, `tags` and each part's `image` when you leave them out. [Fields you can leave out](#fields-you-can-leave-out) lists the rest.
 </Note>
 
 ### In an ES module
@@ -105,17 +101,20 @@ const PostQueen = pkg.default;
 const postqueen = new PostQueen(process.env.POSTQUEEN_API_KEY!);
 ```
 
-## Fields the 1.0.4 types require
+## Fields you can leave out
 
-The types of version 1.0.4 mark a few fields as required that the API treats as optional, so TypeScript refuses a call without them. Send these values:
+From 1.0.5 the types follow what the API needs, so the smallest post is a channel, a date and some text.
 
-| Field | Send | What the API does with it |
-|---|---|---|
-| `posts[].group` | `''` | An empty group creates new posts. A group id that already exists replaces the posts that have it, so never reuse an old one by accident. |
-| `posts[].settings` | The network's settings, or `{ __type: 'bluesky' }` for a network with none | PostQueen sets `__type` from the channel. What has to match is the shape of the settings. |
-| `posts[].value[].id` | `''` | An empty id creates a new post. The id of an existing post changes that post instead. |
-| `posts[].value[].delay` | `0` | Minutes to wait after the previous entry of a thread. |
-| `postList({ customer })` | `''` | An empty customer lists the posts of every channel. |
+| Field | When you leave it out |
+|---|---|
+| `shortLink`, `tags` | The SDK sends `false` and `[]`. |
+| `posts[].value[].image` | The SDK sends `[]`. |
+| `posts[].group` | PostQueen creates new posts. A group id that already exists replaces the posts that have it, so never reuse an old one by accident. |
+| `posts[].settings` | Fine for a network with no required settings. PostQueen sets `__type` from the channel. |
+| `posts[].value[].id` | PostQueen creates a new post. The id of an existing post changes that post instead. |
+| `posts[].value[].delay` | No wait after the previous entry of a thread. The value is in minutes. |
+
+`postList()` still takes the API's filter type, which asks for `customer`: send `''` to list the posts of every channel. Version 1.0.4 also asked for `group: ''`, `id: ''` and `delay: 0`; update with `npm install @postqueen/node@latest`.
 
 Which settings each network takes is on [Posting settings by network](/public-api/providers/overview).
 
@@ -149,16 +148,12 @@ async function main() {
   await postqueen.post({
     type: 'schedule',
     date: '2026-10-01T09:00:00.000Z',
-    shortLink: false,
-    tags: [],
     posts: [
       {
         integration: { id: 'YOUR_CHANNEL_ID' },
-        group: '',
-        settings: { __type: 'bluesky' },
         value: [
-          { id: '', content: 'The new calendar is live.', image: [{ id: media.id, path: media.path }], delay: 0 },
-          { id: '', content: 'Drag a post to move it.', image: [], delay: 5 },
+          { content: 'The new calendar is live.', image: [{ id: media.id, path: media.path }] },
+          { content: 'Drag a post to move it.', delay: 5 },
         ],
       },
     ],
@@ -168,7 +163,7 @@ async function main() {
 main();
 ```
 
-`upload()` sends the file with a content type taken from the extension you pass: `png`, `jpg` and `gif` are mapped, anything else is sent as JPEG. That label does not matter. PostQueen reads the real type from the file itself, so an MP4 or MOV uploads fine. A video comes back with `status: "processing"`: wait until [Get media status](/public-api/uploads/media-status) says `ready` before you post it.
+`upload()` sends the file with a content type taken from the extension you pass: `png`, `jpg`, `jpeg`, `gif`, `webp`, `mp4` and `mov` are mapped, anything else is sent as JPEG. PostQueen reads the real type from the file itself either way. A video comes back with `status: "processing"`. An MP4 can go into a post right away; a MOV has to reach `ready` in [Get media status](/public-api/uploads/media-status) first, since a post takes no MOV.
 
 ### One post on two networks with settings
 
@@ -183,20 +178,16 @@ async function main() {
   await postqueen.post({
     type: 'schedule',
     date: '2026-10-01T09:00:00.000Z',
-    shortLink: false,
-    tags: [],
     posts: [
       {
         integration: { id: 'YOUR_WORDPRESS_CHANNEL_ID' },
-        group: '',
         settings: { __type: 'wordpress', title: 'A calendar that shows everything', type: 'posts', status: 'publish' },
-        value: [{ id: '', content: '<p>Drafts now sit next to scheduled posts.</p>', image: [], delay: 0 }],
+        value: [{ content: '<p>Drafts now sit next to scheduled posts.</p>' }],
       },
       {
         integration: { id: 'YOUR_DEV_CHANNEL_ID' },
-        group: '',
         settings: { __type: 'devto', title: 'Why we rebuilt the calendar', tags: [] },
-        value: [{ id: '', content: '## Why we rebuilt the calendar\n\nThree things changed.', image: [], delay: 0 }],
+        value: [{ content: '## Why we rebuilt the calendar\n\nThree things changed.' }],
       },
     ],
   });
@@ -244,14 +235,10 @@ async function main() {
   const result = await postqueen.post({
     type: 'schedule',
     date: '2026-10-01T09:00:00.000Z',
-    shortLink: false,
-    tags: [],
     posts: [
       {
         integration: { id: 'YOUR_CHANNEL_ID' },
-        group: '',
-        settings: { __type: 'bluesky' },
-        value: [{ id: '', content: 'Shipping the new calendar today.', image: [], delay: 0 }],
+        value: [{ content: 'Shipping the new calendar today.' }],
       },
     ],
   });
