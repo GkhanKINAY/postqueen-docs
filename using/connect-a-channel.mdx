@@ -54,13 +54,32 @@ Both are under **Access** on the channel's page.
 
 Posts you wrote for several channels at once keep their copies on your other channels.
 
+## Channel settings
+
+Choose a channel on **Channels** to open its page. Its settings are rows under **Channel** and **Access**:
+
+| Row | What it does | Shown for |
+|---|---|---|
+| **Edit Time Slots** | Sets the times of day the channel posts at. See [Posting times](/using/posting-times). | Every channel |
+| **Move / add to group** | Puts the channel in a customer group. See [Customers](/using/customers). | Every channel |
+| **Custom URL** | Opens the form you filled in to connect, with the fields that network asks for. Change them and choose **Connect**. | Channels you connected by entering details: Bluesky, DEV, Hashnode, Lemmy, Listmonk, Nostr and WordPress |
+| **Copy channel ID** | Copies the ID that the API, MCP and the CLI use for the channel. | Every channel |
+| **Update Credentials** | Takes you to the network's sign-in again. On a channel you connected by entering details, it opens the same form as **Custom URL**. | Every channel |
+| **Disable Channel**, **Enable Channel** and **Delete channel** | See [Disable or delete a channel](#disable-or-delete-a-channel). | Every channel |
+
+Some networks add controls above these rows:
+
+- On X, **X options** holds the publishing option **Long posts**. Turn it on when the account has X Premium, so the composer allows 4,000 characters instead of 280. **Edit** opens **Publishing options**: flip the switch and choose **Save**.
+- **Bot name & avatar**, under the channel's name on Slack and Discord, opens **Change Bot Picture**. On Slack, set the **Profile Picture** with **Upload** and the **Nickname** that your posts show. On Discord, set the bot's **Nickname** in your server. Choose **Save**.
+
+On **Analytics**, the ⋮ menu next to a channel offers these actions too. There the publishing options are under **Additional Settings**, and the bot identity is under **Change Bot Picture / Nickname** on Slack or **Change Bot Nickname** on Discord.
+
 ## Channel limits
 
 Each plan allows a number of channels; [Plans and limits](/cloud/plans) has the numbers. Connecting a new channel counts every channel except those that need reconnecting. Disabled channels count too, so disabling one does not make room. Moving to a plan with fewer channels disables the newest channels over the limit; see [Manage your subscription](/cloud/subscription).
 
 ## Good to know
 
-- The channel's page also holds **Edit Time Slots** ([Posting times](/using/posting-times)), **Move / add to group** ([Customers](/using/customers)), **Update Credentials**, and the channel ID for the API, MCP and the CLI.
 - **New post** on the channel's page opens Create Post with that channel selected. It is off while the channel needs reconnecting.
 - During the free trial, X cannot be connected yet. Its setup step shows "X unlocks after your trial", with **End free trial to unlock X**. See [Free trial](/cloud/trial).
 

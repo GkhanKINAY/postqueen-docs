@@ -38,6 +38,29 @@ Click a channel's avatar in the row above the editor, then **Edit content**. Tha
 
 On a channel's own tab you can also type `@` and two or more characters to look up accounts on networks that support mentions.
 
+## Format the text
+
+Select text, then use the buttons under the editor:
+
+- **Bold Text** (Ctrl+B, or ⌘B on a Mac) and **Underline** (Ctrl+U, or ⌘U). Text is bold or underlined, not both: turning one on turns the other off.
+- **Link**, **Bullets** and **Title** (headings 1 to 3) appear only on a channel's own tab, for WordPress, Listmonk, DEV, Hashnode, Discord, Whop and X.
+
+Each network receives the formatting it can show:
+
+| Network | What arrives |
+|---|---|
+| WordPress, Listmonk | HTML: headings, bullet lists, bold, underline and links stay formatted. |
+| DEV, Hashnode, Discord, Whop | Markdown: `#` headings, `**bold**`, `__underline__`, `-` bullet lists and `[text](link)` links. |
+| Telegram | Bold and underline stay formatted. Other formatting is removed and its text kept. |
+| X | Articles keep their formatting, as described on [X](/channels/x-twitter). Posts and threads arrive as plain text, like the row below. |
+| Every other network | Plain text. Bold and underline are sent as Unicode bold and underlined characters, bullet lists become lines that start with `-`, and links show as their address. |
+
+Only the letters A to Z and the digits 0 to 9 have a Unicode bold or underlined form. Accented letters, other alphabets and symbols stay as you typed them.
+
+## Put media in order
+
+Drag a thumbnail under the editor to move it. The files are published in this order: it is the slide order of an Instagram carousel, and the first image is the cover of a TikTok photo post.
+
 ## The other controls at the bottom
 
 | Control | What it does |

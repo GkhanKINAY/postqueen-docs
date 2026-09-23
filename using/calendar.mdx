@@ -70,6 +70,24 @@ Click a card to open it in the composer. Hover it for these actions:
 
 In the Posts list, a published post also has **Post Statistics**. Channel-wide numbers are on [Analytics](/using/analytics).
 
+### Connect a TikTok post to its video
+
+A TikTok post sent with **Upload content to TikTok without posting it** goes to your TikTok inbox, and TikTok does not tell PostQueen which video it becomes. The post counts as published, but PostQueen cannot read its numbers until you connect it to the video.
+
+<Steps>
+  <Step title="Publish the video in TikTok">
+    Finish the post in the TikTok app and publish it.
+  </Step>
+  <Step title="Open Connect Post">
+    In the Posts list, choose **Post Statistics** on the post. Instead of the numbers, the **Connect Post** window opens with "Select the content that matches this post:" and the channel's 20 most recent TikTok videos.
+  </Step>
+  <Step title="Pick the video">
+    Click the video's cover, then choose **Connect Post**. The **Statistics** window opens with the post's numbers.
+  </Step>
+</Steps>
+
+If you skip this, or choose **Cancel**, the post stays published but has no statistics, and [Analytics](/using/analytics) leaves it out of **Performance per post** and your top posts. You can connect it later, while the video is still among the 20 most recent. To do the same from the CLI, see [Fix a missing release ID](/cli/analytics#fix-a-missing-release-id); with the API, use [Get missing content](/public-api/posts/missing-content) and then [Update release ID](/public-api/posts/update-release-id).
+
 ## Start a post from an empty slot
 
 Click an empty slot to open the composer at that time; in the current hour it starts ten minutes from now. A day in Month view starts at a random hour, so set the time before you save. With no channels connected, the calendar offers **Add your first channel** instead.
@@ -86,6 +104,8 @@ Click an empty slot to open the composer at that time; in the current hour it st
 |---|---|
 | “Could not move this post, please try again” | The card goes back to its old time. Try again, or open the post and change the date there. |
 | “Could not delete the post.” | Reload the page and try again. |
+| “No content found from this provider. The provider may not support this feature.” | TikTok returned no videos for the channel. Publish the video in the TikTok app first, then open **Connect Post** again. |
+| “Failed to connect post” | The video was not connected. Reload the page and try again. |
 | A card with the **Error** status | The post did not go out. See [A post did not go out](/troubleshooting/post-failed). |
 
 ## Next steps

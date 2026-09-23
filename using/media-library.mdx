@@ -34,6 +34,17 @@ Media holds every image and video in your workspace: what you upload, what you i
 
 One upload can be up to 1 GB, counting every file you add at once. Each network sets its own, smaller limits on what it publishes: the network's page under [Channels](/channels/overview) lists them.
 
+### How PostQueen prepares a video
+
+While a video shows **Processing**, PostQueen checks it. A video that already meets all of these is not re-encoded:
+
+- H.264 video in 8-bit 4:2:0 color, and AAC audio or no audio
+- At most 1080 pixels on the short side and 1920 on the long side
+- At most 60 frames per second
+- Upright, with no rotation flag, and not HDR
+
+Any other video is converted to an MP4 that meets them: it is scaled down without changing its shape, capped at 60 frames per second, turned upright, and HDR is converted to standard color. A video that already fits keeps its encoding, and is only repackaged when needed as an MP4 that starts playing at once. To keep your own encoding, export the video with these settings before you upload it.
+
 ## Find and preview a file
 
 - **All**, **Images** and **Video** filter the library. **Grid** and **List** switch the view; the list shows each file's alt text, format, upload date and size.
