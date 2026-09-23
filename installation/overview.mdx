@@ -13,6 +13,8 @@ keywords:
   - agentic social media scheduler
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost), main:installation/system-requirements.mdx (merge; WIP: better, use as base for the outbound-ho…; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 PostQueen is yours to run. Put her on your laptop to try her out, or on a small server so
 your whole team can reach her. Either way the posts, the connected channels and the media
 stay on hardware you control.
@@ -74,17 +76,17 @@ is what each one is, so you can stop wondering.
 | Option | What it is | Pick it when |
 | --- | --- | --- |
 | [Docker Compose](/installation/docker-compose) | One file that starts PostQueen and all three services she depends on. | Almost always. This is the supported path. |
-| [Docker](/installation/docker) | The PostQueen container on its own, with no database or scheduler. You bring your own. | You already run PostgreSQL, Redis and Temporal somewhere, and only want the app. |
+| [Docker](/installation/docker-compose) | The PostQueen container on its own, with no database or scheduler. You bring your own. | You already run PostgreSQL, Redis and Temporal somewhere, and only want the app. |
 | [Helm](/installation/kubernetes-helm) | A package for Kubernetes. Helm is to a cluster roughly what Compose is to a single machine: one command installs the whole app. | You already operate a Kubernetes cluster. If that sentence did not sound familiar, this is not your path. |
 | [Development Environment](/installation/development) | The source code running on your machine with hot reload. | You are writing code for PostQueen. |
-| [Dev Container](/installation/devcontainer) | The development environment above, prebuilt inside a container, so your editor sets it up for you. | You want to contribute without installing Node and pnpm yourself. |
+| [Dev Container](/installation/development) | The development environment above, prebuilt inside a container, so your editor sets it up for you. | You want to contribute without installing Node and pnpm yourself. |
 
 ## What she needs to run
 
 A small virtual machine is enough. Two vCPUs and **4 GB of RAM** is the floor for Compose:
 Temporal plus Elasticsearch will OOM a 2 GB box. The full numbers, including disk and
 the outbound addresses she needs to reach, are on
-[System Requirements](/installation/system-requirements).
+[System Requirements](/installation/overview).
 
 You will also need Docker. Both install guides walk you through getting it.
 

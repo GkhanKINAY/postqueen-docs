@@ -4,9 +4,11 @@ description: 'Configure Traefik as a reverse proxy for PostQueen'
 icon: 'route'
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: same as main except dropping `version: …; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 Traefik is configured with labels on the container rather than a separate config file, which
 makes it a natural fit if you already run it in front of your other containers. If you do not,
-[Caddy](/reverse-proxies/caddy) is less work for the same result.
+[Caddy](/installation/domain-and-https) is less work for the same result.
 
 If you are not sure what a reverse proxy is or why she needs one,
 [Domain and HTTPS](/installation/domain-and-https) explains it first.
@@ -97,7 +99,7 @@ Both numbers are right, for different routes to the same place.
     [ACME documentation](https://doc.traefik.io/traefik/https/acme/) has the entrypoint and storage
     settings that go with it.
 
-    [Caddy](/reverse-proxies/caddy) does this part for you, which is why it is the shorter path.
+    [Caddy](/installation/domain-and-https) does this part for you, which is why it is the shorter path.
     </Warning>
 
     <Warning>
@@ -110,13 +112,13 @@ Both numbers are right, for different routes to the same place.
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Caddy" icon="shield" href="/reverse-proxies/caddy">
+  <Card title="Caddy" icon="shield" href="/installation/domain-and-https">
     The shorter path, with certificates handled for you.
   </Card>
   <Card title="Nginx" icon="server" href="/reverse-proxies/nginx">
     The right choice when you already run Nginx for other things.
   </Card>
-  <Card title="WebSockets and dev tunnels" icon="bolt" href="/reverse-proxies/websockets-and-dev">
+  <Card title="WebSockets and dev tunnels" icon="bolt" href="/reverse-proxies/split-deployments">
     Path routing for split deployments, and HMR behind a tunnel.
   </Card>
   <Card title="Self-host gotchas" icon="wrench" href="/troubleshooting/self-host">

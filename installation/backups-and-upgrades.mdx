@@ -4,6 +4,8 @@ description: 'Which volumes carry real data, how to restore them, and how to mov
 icon: 'box-archive'
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 Run `docker volume ls` after a Compose install and six volumes come back. Two of them you could delete tonight and never notice, and a third is empty until you put something in it. The remaining three carry what no reinstall brings back, so those are the ones worth your disk space and your attention.
 
 ## What you cannot rebuild
@@ -173,7 +175,7 @@ service: see [Applying a change](/installation/docker-compose#applying-a-change)
   <Card title="Configure uploads" icon="cloud-arrow-up" href="/configuration/r2">
     Move media to Cloudflare R2 and shrink what you back up
   </Card>
-  <Card title="System requirements" icon="server" href="/installation/system-requirements">
+  <Card title="System requirements" icon="server" href="/installation/overview">
     Disk, RAM and the services she needs
   </Card>
   <Card title="Support" icon="life-ring" href="/support">

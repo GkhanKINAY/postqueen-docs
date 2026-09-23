@@ -11,12 +11,11 @@ keywords:
   - schedule
 ---
 
+{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file (rewrite; WIP: better, use as base; audit: guide). Row in page-status-2026-09-23.md. */}
+
 Three steps and your first post is on the calendar with a time on it. She sends it whether your
 laptop is open or not.
 
-<Frame>
-  <img src="/images/brand/calendar.svg" alt="A week of scheduled posts across several connected channels on the PostQueen calendar" />
-</Frame>
 
 <Tip>
 **About 5 minutes** on PostQueen Cloud. Self-hosting adds the install itself, which is 10 to 15
@@ -45,7 +44,7 @@ not about what she can do.
     ends, or right away if you end the trial early. [Free trial](/cloud/trial) has the details.
 
     Not every network can be connected yet. Some are marked **Soon** or **In review** on PostQueen:
-    see the [status of every network](/providers/overview#status-on-postqueen).
+    see the [status of every network](/channels/overview#status-on-postqueen).
     </Note>
   </Tab>
 
@@ -63,7 +62,7 @@ not about what she can do.
     <Warning>
     On your own install, most networks stay hidden in **Add Channel** until you register an OAuth
     app with that platform and put its keys in your environment. That is one setup per network, and
-    [Providers](/providers/overview) walks through each. Plan for it before you promise a client a
+    [Providers](/channels/overview) walks through each. Plan for it before you promise a client a
     channel.
     </Warning>
   </Tab>
@@ -95,7 +94,7 @@ A channel is one social account she can post to. Until one exists, a post has no
     - **A smaller group asks for a credential in the form.** Bluesky takes an app password, and
       WordPress takes a site URL and an application password.
 
-    [Providers](/providers/overview) says which kind each network is, and what it wants.
+    [Providers](/channels/overview) says which kind each network is, and what it wants.
   </Step>
 
   <Step title="Check it arrived">
@@ -183,7 +182,7 @@ it until you press **Schedule**.
 
 <AccordionGroup>
   <Accordion title="The network I want is not in Add Channel" icon="plug-circle-xmark">
-    Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet. The [status of every network](/providers/overview#status-on-postqueen) says which. On a self-hosted install a network only appears once its OAuth app is registered and the instance has been restarted. [Providers](/providers/overview) has the Cloud connect flow; [self-hosting provider pages](/installation/providers/instagram) have the OAuth app setup.
+    Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet. The [status of every network](/channels/overview#status-on-postqueen) says which. On a self-hosted install a network only appears once its OAuth app is registered and the instance has been restarted. [Providers](/channels/overview) has the Cloud connect flow; [self-hosting provider pages](/installation/providers/instagram) have the OAuth app setup.
   </Accordion>
 
   <Accordion title="The post went to Drafts instead of being scheduled" icon="file-pen">
@@ -209,23 +208,23 @@ it until you press **Schedule**.
   <Accordion title="My agent connected but cannot see any channels" icon="robot">
     Almost always the key. Check it was pasted in full, and if you are self-hosting, that
     `POSTQUEEN_API_URL` points at your backend including the `/api` suffix most single-domain
-    installs use. [CLI authentication](/cli/authentication) has the exact shape.
+    installs use. [CLI authentication](/cli/introduction) has the exact shape.
   </Accordion>
 </AccordionGroup>
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="The composer in full" icon="pen" href="/using/writing-a-post">
+  <Card title="The composer in full" icon="pen" href="/using/create-a-post">
     Threads, per-channel versions, repeat schedules and what she checks before saving.
   </Card>
   <Card title="Let her pick the times" icon="clock" href="/using/posting-times">
     Set the slots once and she fills them.
   </Card>
-  <Card title="Connect more channels" icon="plug" href="/providers/overview">
+  <Card title="Connect more channels" icon="plug" href="/channels/overview">
     Every network she posts to, and the OAuth app each one wants.
   </Card>
-  <Card title="Run her from anywhere" icon="terminal" href="/which-interface">
+  <Card title="Run her from anywhere" icon="terminal" href="/introduction">
     CLI, MCP, the API or an automation platform, and how to tell which is yours.
   </Card>
 </CardGroup>

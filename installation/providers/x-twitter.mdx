@@ -4,6 +4,8 @@ description: 'Register the X (Twitter) application and give PostQueen its keys'
 icon: /images/channels/x.svg
 ---
 
+{/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 On your own instance the X app is yours: create it in the X Developer Console, then put its consumer key and secret in your environment.
 
 PostQueen connects X accounts with **OAuth 1.0a** (three-legged) and publishes through the X API v2. It reads only the app's **consumer key and secret** (`X_API_KEY`, `X_API_SECRET`). The OAuth 2.0 client id and secret, the bearer token and your own account's access token are not used; do not put them in those variables.
@@ -91,21 +93,21 @@ Full list: [configuration reference](/configuration/reference).
 | 403 or "not permitted" on posting | App permission is read-only; set **Read and write**, then reconnect the channel |
 | A usage-capped or 402 answer | The developer account has no credits left, or hit its spending limit |
 
-See also [connect errors](/troubleshooting/oauth-connect).
+See also [connect errors](/troubleshooting/common-errors).
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="What PostQueen can post to X" icon="/images/channels/x.svg" href="/providers/x-twitter">
+  <Card title="What PostQueen can post to X" icon="/images/channels/x.svg" href="/channels/x-twitter">
     Limits, post types and settings
   </Card>
   <Card title="Configuration reference" icon="list" href="/configuration/reference">
     Every variable PostQueen reads
   </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/common-errors">
     Invalid state, invalid_grant and the rest
   </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
+  <Card title="Another channel" icon="plug" href="/channels/overview">
     Every network, and what each one asks for
   </Card>
 </CardGroup>

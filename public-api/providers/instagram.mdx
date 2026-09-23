@@ -3,6 +3,8 @@ title: Instagram Settings
 description: 'API settings for posting to Instagram'
 ---
 
+{/* OVERHAUL-TODO(B2): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api), main:public-api/providers/instagram-standalone.mdx (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+
 Instagram posts use one settings block. `post_type` chooses a feed post or a Story. Collaborators, trial reels and Reel audio are optional additions on top.
 
 Creating the OAuth app and connecting a channel: [Instagram setup guide](/installation/providers/instagram).
@@ -313,10 +315,10 @@ Create a carousel by adding multiple images:
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Connect the channel" icon="plug" href="/providers/instagram">
+  <Card title="Connect the channel" icon="plug" href="/channels/instagram">
     Create the OAuth app and link the Instagram account.
   </Card>
-  <Card title="Standalone accounts" icon="instagram" href="/public-api/providers/instagram-standalone">
+  <Card title="Standalone accounts" icon="instagram" href="/public-api/providers/instagram">
     The settings for channels connected without Facebook Business.
   </Card>
   <Card title="Search for audio" icon="bolt" href="/public-api/integrations/trigger">

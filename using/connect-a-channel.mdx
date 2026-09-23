@@ -4,6 +4,8 @@ description: 'Where Add Channel lives, what happens when you click it, and what 
 icon: 'plug'
 ---
 
+{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file (rewrite; WIP: better, use as base; audit: guide), main:troubleshooting/channel-limits.mdx (merge; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+
 A channel is one social account she can post to. Nothing is connected when you start, and until
 one is, there is nowhere for a post to go. This is the first thing to do in the app and it takes
 about a minute per account.
@@ -26,7 +28,7 @@ about a minute per account.
       and WordPress takes a site URL and an application password.
       You paste it and you are done.
 
-    [Providers](/providers/overview) says which kind each network is.
+    [Providers](/channels/overview) says which kind each network is.
   </Step>
 
   <Step title="Check it arrived">
@@ -36,7 +38,7 @@ about a minute per account.
 </Steps>
 
 <Info>
-Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet, and a few are **In review** with a limit until the platform approves PostQueen's app. The [status of every network](/providers/overview#status-on-postqueen) says which. Running your own instance? Some networks only appear after you register an OAuth app and restart. Each [self-hosting provider page](/installation/providers/instagram) walks through that.
+Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet, and a few are **In review** with a limit until the platform approves PostQueen's app. The [status of every network](/channels/overview#status-on-postqueen) says which. Running your own instance? Some networks only appear after you register an OAuth app and restart. Each [self-hosting provider page](/installation/providers/instagram) walks through that.
 </Info>
 
 ## The red exclamation mark
@@ -53,7 +55,7 @@ To fix it, click the avatar, or open the three dots menu next to the channel and
 the **Refresh Channel** button under the empty chart does the same job.
 
 [When a post fails](/troubleshooting/post-failed) covers what a dead token does to a week of
-scheduled work, and [connect errors](/troubleshooting/oauth-connect) has the message-by-message
+scheduled work, and [connect errors](/troubleshooting/common-errors) has the message-by-message
 list when the reconnect itself refuses.
 
 ## Disable or delete
@@ -74,7 +76,7 @@ history, with their comments. Its scheduled posts will not go out, and there is 
 the posts, disable the channel instead.
 </Warning>
 
-[Plans and limits](/using/plans-and-limits) has the caps that make Disable worth knowing about.
+[Plans and limits](/cloud/plans) has the caps that make Disable worth knowing about.
 
 ## Channels for clients
 
@@ -86,10 +88,10 @@ including the invite link that lets a client connect their own accounts without 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Write your first post" icon="pen" href="/using/writing-a-post">
+  <Card title="Write your first post" icon="pen" href="/using/create-a-post">
     The editor, per-channel versions and what each network accepts
   </Card>
-  <Card title="Set up a network's app" icon="plug" href="/providers/overview">
+  <Card title="Set up a network's app" icon="plug" href="/channels/overview">
     The OAuth app each network wants, network by network
   </Card>
   <Card title="The calendar" icon="calendar" href="/using/calendar">

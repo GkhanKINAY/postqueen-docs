@@ -4,6 +4,8 @@ description: 'Complete reference for all PostQueen MCP tools'
 icon: 'screwdriver-wrench'
 ---
 
+{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+
 These are the tools PostQueen answers over MCP, with every parameter and every field they send back. Your agent reads these schemas on connect, so you never call one by hand.
 
 ## How many tools you get
@@ -14,7 +16,7 @@ The count depends on the address your client connects to.
 |---|---|---|
 | `https://api.postqueen.ai/mcp/YOUR_API_KEY` | **21** | The API key in the URL. The address to start with |
 | `https://api.postqueen.ai/mcp` with `Authorization: Bearer YOUR_API_KEY` | **21** | The same tools, with the key (or a `pos_` OAuth token) in a header |
-| `https://api.postqueen.ai/sse/YOUR_API_KEY` | **21** | Legacy [SSE transport](/mcp/limits-and-troubleshooting#transports-you-may-notice-and-should-not-build-on). Prefer the two addresses above |
+| `https://api.postqueen.ai/sse/YOUR_API_KEY` | **21** | Legacy [SSE transport](/agents/troubleshooting). Prefer the two addresses above |
 | `https://api.postqueen.ai/mcp-oauth-dynamic` | **20** | Sign in instead of pasting a key. Everything except `ask_postqueen`. Not tested by PostQueen yet |
 
 The sign-in address is an option for clients that support MCP OAuth. Your client registers itself, you sign in to PostQueen, and a workspace admin approves the connection. The access does not expire on its own: revoke it under **Connections > Approved Apps**. No client has completed this sign-in in PostQueen's own tests yet, so the API key address is the one to start with, and some clients cannot use the sign-in at all. Each agent's setup page says which address to use.
@@ -559,4 +561,4 @@ Two things follow from that. It can write to your calendar, so treat it with the
 
 ## What these tools cannot do
 
-Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Deleting a post is one. Moving one to a new time is another, because `postSettingsTool` changes settings and nothing else. Analytics for published posts is in this set (`analyticsSummaryTool`, `analyticsPostsTool`, `analyticsPostTool`); channel numbers such as follower growth are on the API and the CLI. [Limits and Troubleshooting](/mcp/limits-and-troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach PostQueen at all.
+Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Deleting a post is one. Moving one to a new time is another, because `postSettingsTool` changes settings and nothing else. Analytics for published posts is in this set (`analyticsSummaryTool`, `analyticsPostsTool`, `analyticsPostTool`); channel numbers such as follower growth are on the API and the CLI. [Limits and Troubleshooting](/agents/troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach PostQueen at all.

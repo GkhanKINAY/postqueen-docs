@@ -4,6 +4,8 @@ description: 'Your numbers per channel and per post, on the nine networks that r
 icon: 'chart-line'
 ---
 
+{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file (rewrite; WIP: partly better; audit: guide). Row in page-status-2026-09-23.md. */}
+
 <Frame>
   <img src="/images/brand/analytics.svg" alt="PostQueen analytics: engagement chart, followers, impressions and video views" />
 </Frame>
@@ -28,7 +30,7 @@ PostQueen posts to more than 30 networks. Nine of them send numbers back. Measur
 | X (Twitter) | 7, 30 or 90 days | Yes |
 | YouTube | 7, 30 or 90 days | Yes |
 
-Google Business Profile, LinkedIn Page and Pinterest are marked Soon on PostQueen: they cannot be connected yet. Facebook, Instagram, Threads, TikTok, X and YouTube are In review, with the limits on their [channel pages](/providers/overview#status-on-postqueen).
+Google Business Profile, LinkedIn Page and Pinterest are marked Soon on PostQueen: they cannot be connected yet. Facebook, Instagram, Threads, TikTok, X and YouTube are In review, with the limits on their [channel pages](/channels/overview#status-on-postqueen).
 
 <Warning>
 Every other network posts perfectly well and reports nothing. Bluesky, Nostr and WordPress publish on time and stay silent afterwards, so a blank analytics view there is the platform being quiet rather than your install being broken. Those channels do not appear in the Analytics sidebar at all.
@@ -44,7 +46,7 @@ Every other network posts perfectly well and reports nothing. Bluesky, Nostr and
 </AccordionGroup>
 
 <Note>
-Set `DISABLE_X_ANALYTICS` and she stops asking X for numbers entirely. The X channel drops out of the Analytics sidebar and the Statistics icon disappears from X posts on the calendar. Useful when your X plan does not include analytics access. See [X (Twitter)](/providers/x-twitter).
+Set `DISABLE_X_ANALYTICS` and she stops asking X for numbers entirely. The X channel drops out of the Analytics sidebar and the Statistics icon disappears from X posts on the calendar. Useful when your X plan does not include analytics access. See [X (Twitter)](/channels/x-twitter).
 </Note>
 
 ## What each channel returns
@@ -188,7 +190,7 @@ Everything on these screens is the same payload the CLI and the API return, so a
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Auto Actions" icon="robot" href="/using/auto-actions">
+  <Card title="Auto Actions" icon="robot" href="/using/auto-plugs">
     Turn a number into an action she takes for you
   </Card>
   <Card title="Analytics over the API" icon="code" href="/public-api/analytics/platform">
@@ -197,7 +199,7 @@ Everything on these screens is the same payload the CLI and the API return, so a
   <Card title="From the terminal" icon="terminal" href="/cli/analytics">
     `analytics:platform` and `analytics:post`
   </Card>
-  <Card title="Your channels" icon="plug" href="/providers/overview">
+  <Card title="Your channels" icon="plug" href="/channels/overview">
     Which ten report numbers back
   </Card>
 </CardGroup>

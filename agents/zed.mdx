@@ -1,0 +1,85 @@
+---
+title: Zed
+description: 'Connect Zed to PostQueen over MCP'
+icon: /images/brand/icon-zed.svg
+---
+
+{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: this file, moved from mcp/clients/zed (merge; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+
+Zed stores MCP servers under **`context_servers`**, not `mcpServers`. Add a remote server from **Settings → AI → MCP Servers**, or edit the settings file.
+
+<Info>
+You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
+</Info>
+
+<Warning>
+If a remote server has no `Authorization` header, Zed starts the standard MCP **OAuth** flow. PostQueen `/mcp` with an API key is not that flow. Always send `Authorization: Bearer YOUR_API_KEY`. Putting the key in the URL is not enough on its own: without the header, Zed still tries OAuth.
+</Warning>
+
+## Option A: Zed UI
+
+<Steps>
+  <Step title="Open MCP Servers">
+    **Settings → AI → MCP Servers**. The same page is under `agent: open settings`, then **MCP Servers**.
+  </Step>
+  <Step title="Add a remote server">
+    Click **Add Server → Add Remote Server**. Name it `postqueen`. Paste the MCP URL and the Bearer header.
+  </Step>
+</Steps>
+
+## Option B: settings.json
+
+Open the settings file with `zed: open settings file`.
+
+<Tabs>
+  <Tab title="Bearer header (recommended)">
+    ```json
+    {
+      "context_servers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer YOUR_API_KEY"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="API key in URL">
+    ```json
+    {
+      "context_servers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
+          "headers": {
+            "Authorization": "Bearer YOUR_API_KEY"
+          }
+        }
+      }
+    }
+    ```
+
+    The header still matters. Without it, Zed tries OAuth even when the key is already in the URL.
+  </Tab>
+</Tabs>
+
+<Note>
+Shape per Zed's [MCP documentation](https://zed.dev/docs/ai/mcp). A green indicator next to `postqueen` on the MCP Servers page means the server is active.
+</Note>
+
+<Warning>
+Your API key can post to every account you have connected. Settings files are plain text. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
+</Warning>
+
+## Self-hosted
+
+Swap the host for your `NEXT_PUBLIC_BACKEND_URL`. Most self-hosted setups serve the backend under `/api`, so the path sits at `/api/mcp`. The reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/configuration/mcp).
+
+## Verify
+
+In the Agent Panel, ask:
+
+> "List my connected social media accounts"
+
+Your channel names come back when Zed calls `integrationList`. If the indicator is not green, open **Settings → AI → MCP Servers** and confirm the `Authorization` header is present.

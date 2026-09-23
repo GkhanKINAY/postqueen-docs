@@ -1,0 +1,77 @@
+---
+title: Whop
+description: 'How to add Whop to PostQueen'
+icon: /images/channels/whop.svg
+---
+
+{/* OVERHAUL-TODO(B5): write it from _templates/channel.mdx. Sources: this file, moved from providers/whop (fix; WIP: slightly better; audit: providers). Row in page-status-2026-09-23.md. */}
+
+<img src="/images/channels/whop.svg" alt="Whop" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Warning>
+**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
+</Warning>
+
+<Snippet file="never-share.mdx" />
+
+<Info>
+This integration requires that you have a [Whop](https://whop.com) account with at least one company and a forum experience set up.
+</Info>
+
+## What she can post to Whop
+
+Whop is where she writes long. Fifty thousand characters of Markdown into a forum, files attached, and the comments you queued waiting underneath.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    50,000 characters, written in the Markdown editor.
+  </Card>
+  <Card title="Media" icon="paperclip">
+    Any file. Each upload is watched until Whop marks it ready, for up to about nine minutes, before the post is created.
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    A forum post with an optional title, then comments threaded underneath it.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None. Nine networks report analytics to PostQueen, and Whop is not one of them.
+  </Card>
+</CardGroup>
+
+| Area | Detail |
+|---|---|
+| Post settings | `company` and `experience` are both required, `title` is optional: [Whop settings](/public-api/providers/whop). |
+| Connect flow | One step, OAuth2 with PKCE. A client id is enough, there is no client secret. |
+| Automations | None on this network. |
+| Publish rate | One post at a time. |
+
+<Warning>
+The company and forum pickers read the first 50 of each, so a very large Whop account may not show every option.
+
+A large attachment can hold a post back: if Whop has not finished processing the file after roughly nine minutes, she stops with **"File upload timed out"** rather than publishing a post with a broken attachment.
+</Warning>
+
+## Self-hosting
+
+<Info>
+Running your own instance? You register the application yourself:
+[Set up Whop on your own instance](/installation/providers/whop).
+</Info>
+
+## Features
+
+- **Post to forums**: Publish posts to any Whop forum you have access to.
+- **Markdown support**: Write posts using full Markdown formatting.
+- **Comments**: Schedule threaded comments on your posts.
+- **File attachments**: Attach images and files to posts and comments.
+- **Token refresh**: PostQueen automatically refreshes your Whop access token to keep the connection alive.
+
+## Troubleshooting
+
+- **"Invalid token, please re-authenticate"**: Your access token has expired or been revoked. Reconnect the integration by removing and re-adding the Whop channel.
+- **"Insufficient permissions"**: Your Whop account may not have the required scopes. Re-authenticate to grant the necessary permissions.
+- **"Forum or experience not found"**: The selected forum may have been deleted or you no longer have access to it. Select a different forum.
+- **No companies appear**: Make sure your Whop account owns or manages at least one company.
+- **No forums appear**: The selected company must have at least one forum experience created. Set up a forum in your Whop company dashboard first.
+
+<Snippet file="next-steps-provider.mdx" />
+

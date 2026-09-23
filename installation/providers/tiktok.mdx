@@ -4,6 +4,8 @@ description: 'Register the TikTok application and give PostQueen its keys'
 icon: /images/channels/tiktok.svg
 ---
 
+{/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 On your own instance the TikTok app is yours: register it on TikTok for Developers, then put its client key and secret in your environment.
 
 PostQueen has two TikTok cards in **Add Channel**, and each needs its own app:
@@ -155,16 +157,16 @@ Both are described in the [configuration reference](/configuration/reference).
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="What PostQueen can post to TikTok" icon="/images/channels/tiktok.svg" href="/providers/tiktok">
+  <Card title="What PostQueen can post to TikTok" icon="/images/channels/tiktok.svg" href="/channels/tiktok">
     Limits, post types and settings
   </Card>
   <Card title="Configuration reference" icon="list" href="/configuration/reference">
     Every variable PostQueen reads
   </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/common-errors">
     Invalid state, invalid_grant and the rest
   </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
+  <Card title="Another channel" icon="plug" href="/channels/overview">
     Every network, and what each one asks for
   </Card>
 </CardGroup>

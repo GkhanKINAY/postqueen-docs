@@ -4,6 +4,8 @@ description: 'Register the Pinterest application and give PostQueen its keys'
 icon: /images/channels/pinterest.svg
 ---
 
+{/* OVERHAUL-TODO(B4): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 <img src="/images/channels/pinterest.svg" alt="Pinterest" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
 
 On your own instance the Pinterest app is yours: create it in the Pinterest developer dashboard, wait for approval, then put its app id and secret in your environment.
@@ -66,16 +68,16 @@ PINTEREST_CLIENT_SECRET=""
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="What she can post to Pinterest" icon="/images/channels/pinterest.svg" href="/providers/pinterest">
+  <Card title="What she can post to Pinterest" icon="/images/channels/pinterest.svg" href="/channels/pinterest">
     Limits, post types and settings
   </Card>
   <Card title="Configuration reference" icon="list" href="/configuration/reference">
     Every variable she reads
   </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/common-errors">
     Invalid state, invalid_grant and the rest
   </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
+  <Card title="Another channel" icon="plug" href="/channels/overview">
     Every network, and what each one asks for
   </Card>
 </CardGroup>

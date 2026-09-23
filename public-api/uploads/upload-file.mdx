@@ -4,6 +4,8 @@ description: 'Upload a local image or MP4 and receive the hosted path attachment
 openapi: 'POST /upload'
 ---
 
+{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+
 Upload a media file by multipart form. Returns an `id` and `path` you can pass into a post's `image` array.
 
 ## Accepted MIME types
@@ -21,7 +23,7 @@ The backend inspects the file's actual content (not just the extension) and reje
 | TIFF | `image/tiff` |
 | MP4 video | `video/mp4` |
 
-PDFs are not accepted. Limits and recommended video formats: [Uploads troubleshooting](/troubleshooting/uploads).
+PDFs are not accepted. Limits and recommended video formats: [Uploads troubleshooting](/troubleshooting/common-errors).
 
 ## Example
 

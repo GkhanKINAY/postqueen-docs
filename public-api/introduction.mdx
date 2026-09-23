@@ -10,6 +10,8 @@ keywords:
   - oauth
 ---
 
+{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: partly better, and it is the base; audit: api). Row in page-status-2026-09-23.md. */}
+
 Scheduling, media and analytics are all public API calls, which is why agents drive her so well. REST at `https://api.postqueen.ai/public/v1`, with your API key in the `Authorization` header. That key is the only setup: your first scheduled post is one `POST` away.
 
 <Frame>
@@ -22,19 +24,19 @@ Scheduling, media and analytics are all public API calls, which is why agents dr
   <Card title="NodeJS SDK" icon="node-js" href="/public-api/sdk">
     Call the API from Node with the official typed client.
   </Card>
-  <Card title="n8n Node" icon="/images/brand/icon-n8n.svg" href="/automation/n8n">
+  <Card title="n8n Node" icon="/images/brand/icon-n8n.svg" href="/public-api/n8n">
     Drop the community node into any workflow, no code needed.
   </Card>
-  <Card title="Zapier" icon="/images/brand/icon-zapier.svg" href="/automation/zapier">
+  <Card title="Zapier" icon="/images/brand/icon-zapier.svg" href="/public-api/zapier-and-make">
     Wire posts into thousands of apps with a webhook and your key.
   </Card>
-  <Card title="Make" icon="/images/brand/icon-make.svg" href="/automation/make">
+  <Card title="Make" icon="/images/brand/icon-make.svg" href="/public-api/zapier-and-make">
     Call her from any scenario with the built-in HTTP module.
   </Card>
-  <Card title="Webhooks" icon="webhook" href="/automation/webhooks">
+  <Card title="Webhooks" icon="webhook" href="/using/webhooks">
     She calls your endpoint the moment a post goes live.
   </Card>
-  <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
+  <Card title="RSS AutoPost" icon="rss" href="/using/rss-auto-post">
     She reads the feed hourly and turns the newest item into a draft.
   </Card>
 </CardGroup>
@@ -100,7 +102,7 @@ The rate limit is one global value for the whole instance, and it is the same on
 | `401 Unauthorized` | `Authorization` header is missing or the API key is unrecognized. |
 | `402 Payment Required` | Your plan is out of monthly posts or channels. |
 | `404 Not Found` | The endpoint does not exist, or the path parameter (integration ID, post ID) was correct format but no row matched. |
-| `413 Payload Too Large` | Your request body exceeded the default JSON limit of roughly 100 kB. The 50 MB limit you may have read about is on the internal routes the web UI uses, not on this one, so inlining a single base64 image is enough to trip it. Upload first and send the returned `path`. See [Uploads troubleshooting](/troubleshooting/uploads). |
+| `413 Payload Too Large` | Your request body exceeded the default JSON limit of roughly 100 kB. The 50 MB limit you may have read about is on the internal routes the web UI uses, not on this one, so inlining a single base64 image is enough to trip it. Upload first and send the returned `path`. See [Uploads troubleshooting](/troubleshooting/common-errors). |
 | `429 Too Many Requests` | You exceeded `API_LIMIT` per hour on the create-post endpoint, or `UPLOAD_LIMIT` on uploads, which are counted separately. |
 | `5xx` | Server error: retry with exponential backoff. Also what you get when you name a row belonging to another organization: it is invisible rather than forbidden, so the handler fails on the empty result. There is no `403` on this API. |
 

@@ -5,6 +5,8 @@ description: 'Exchange an authorization code for a pos_ access token.'
 openapi: 'POST /oauth/token'
 ---
 
+{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+
 The user approved your app and PostQueen sent them back to you with a code on the query string. Trade it here for the `pos_` token you will use on every call after this one.
 
 Two things about that code are worth planning around. It is good for ten minutes, and it works exactly once, because the exchange clears it as it hands you the token. Run the same request twice and the second one comes back as `invalid_grant`.

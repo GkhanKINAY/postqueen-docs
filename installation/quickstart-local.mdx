@@ -4,6 +4,8 @@ description: 'Run PostQueen on your own machine in about five minutes'
 icon: 'laptop'
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 This is the fastest way to see PostQueen working. Everything runs on your own machine, nothing
 is exposed to the internet, and one command removes all of it when you are finished.
 
@@ -139,7 +141,7 @@ want a public HTTPS redirect. Two pieces, in order:
 2. If the network refuses `http://localhost:4007/integrations/social/...`, you need a domain
    and HTTPS. That is the [production](/installation/production) path, bridged from here by
    [Domain and HTTPS](/installation/domain-and-https). Per-network keys:
-   [Providers](/providers/overview).
+   [Providers](/channels/overview).
 
 ## Common first-run problems
 
@@ -147,7 +149,7 @@ want a public HTTPS redirect. Two pieces, in order:
   <Accordion title="The page will not load at localhost:4007">
     Give her another minute. On a first boot she creates the database schema before the web
     interface answers. `docker compose logs -f postqueen` tells you where she is. If the log
-    keeps repeating and restarting, jump to [Troubleshooting](/troubleshooting/overview).
+    keeps repeating and restarting, jump to [Troubleshooting](/troubleshooting/common-errors).
   </Accordion>
 
   <Accordion title="I signed in and was bounced straight back">
@@ -208,10 +210,10 @@ You have a working PostQueen, connected to nothing.
   <Card title="Put her on a server" icon="server" href="/installation/production">
     Your own domain, HTTPS, and an install other people can use
   </Card>
-  <Card title="Connect a channel" icon="plug" href="/providers/overview">
+  <Card title="Connect a channel" icon="plug" href="/channels/overview">
     Bring your own app keys and try a real post
   </Card>
-  <Card title="Write your first post" icon="pen-to-square" href="/using/writing-a-post">
+  <Card title="Write your first post" icon="pen-to-square" href="/using/create-a-post">
     The editor, per-channel settings, and what happens when you schedule
   </Card>
   <Card title="Self-host troubleshooting" icon="wrench" href="/troubleshooting/self-host">

@@ -4,6 +4,8 @@ description: 'The four states, the red badge on the calendar, how many times she
 icon: 'triangle-exclamation'
 ---
 
+{/* OVERHAUL-TODO(B10): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: 3 attempts \; audit: Two minutes apart ... 15 attempts" -> the publish call is never retried automatically (`maximumAttempts: 1`). The workflow mak… / [OTHER] "Most of the time that tooltip reads *An error occurred while publishing*" -> the tooltip shows the stored error, with that text only as a fallback (`launches/…). Row in page-status-2026-09-23.md. */}
+
 A red ring on a calendar card means a publish attempt came back with a failure. Nothing is waiting
 on your approval, because there is no approval step: whatever is scheduled goes out at its minute.
 
@@ -194,7 +196,7 @@ One dead token can therefore take out a week of scheduled posts without a single
 </Steps>
 
 If the reconnect itself throws an error rather than a dead token,
-[OAuth and channel connect errors](/troubleshooting/oauth-connect) has the message-by-message list.
+[OAuth and channel connect errors](/troubleshooting/common-errors) has the message-by-message list.
 
 ## Getting the post out
 
@@ -272,13 +274,13 @@ Put these four things in the message:
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Your provider's page" icon="plug" href="/providers/overview">
+  <Card title="Your provider's page" icon="plug" href="/channels/overview">
     Platform-specific rejections, settings and limits, network by network
   </Card>
-  <Card title="Reconnecting a channel" icon="link" href="/troubleshooting/oauth-connect">
+  <Card title="Reconnecting a channel" icon="link" href="/troubleshooting/common-errors">
     Invalid state, invalid_grant and fetch failed during the connect flow
   </Card>
-  <Card title="Notifications" icon="bell" href="/using/notifications">
+  <Card title="Notifications" icon="bell" href="/using/settings">
     The bell and the inbox, and which emails you can turn off
   </Card>
   <Card title="Support" icon="life-ring" href="/support">

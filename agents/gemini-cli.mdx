@@ -4,6 +4,8 @@ description: 'One command connects Gemini CLI to her over MCP, and the terminal 
 icon: /images/brand/icon-gemini-cli.svg
 ---
 
+{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/gemini-cli.mdx (merge; WIP: better, use as base; audit: agents), this file (fix; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+
 ## Working with her in the terminal
 
 The release is cut, the terminal is still open, and the only thing standing between you and the announcement is a browser tab you do not want to open. One line of setup later, Gemini CLI can see your channels, ask each one what it accepts and write the posts onto your calendar without you leaving the prompt.
@@ -24,7 +26,7 @@ Your key comes from the app at [app.postqueen.ai](https://app.postqueen.ai), und
 **Connections > API Keys** (only a workspace admin can reveal it). Then run `/mcp` inside Gemini CLI: `postqueen` should
 show as connected with 21 tools.
 
-<Card title="Full setup: Gemini CLI over MCP" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
+<Card title="Full setup: Gemini CLI over MCP" icon="/images/brand/icon-gemini-cli.svg" href="/agents/gemini-cli">
   Scope options, the `settings.json` block, the header variant, self-hosted URLs, and why an entry
   written with `url` instead of `httpUrl` connects to nothing
 </Card>
@@ -103,7 +105,7 @@ Everything you scheduled needs nothing further from you. It sits on the calendar
 ## Learn more
 
 <CardGroup cols={2}>
-  <Card title="Gemini CLI over MCP" icon="plug" href="/mcp/clients/gemini-cli">
+  <Card title="Gemini CLI over MCP" icon="plug" href="/agents/gemini-cli">
     The `settings.json` block, the Bearer variant and self-hosted URLs.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">

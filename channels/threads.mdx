@@ -1,0 +1,60 @@
+---
+title: Threads
+description: 'How to add Threads to your system'
+icon: /images/channels/threads.svg
+---
+
+{/* OVERHAUL-TODO(B2): write it from _templates/channel.mdx. Sources: this file, moved from providers/threads (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+
+<img src="/images/channels/threads.svg" alt="Threads" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Warning>
+**In review.** Only Threads testers can connect until Meta approves PostQueen's app. [Status of every network](/channels/overview#status-on-postqueen)
+</Warning>
+
+<Snippet file="never-share.mdx" />
+
+## What she can post to Threads
+
+Five hundred characters, and one setting: a thread finisher you can switch on to append a closing post automatically. Threads is the shortest hop between a written thought and a published one, and she can keep replying to her own post to build the thread out.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    500 characters
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Optional. One image, one video, or a carousel
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Text post, media post, carousel, reply
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the account and for each post
+  </Card>
+</CardGroup>
+
+Numbers come back as views, likes and replies, plus reposts and quotes, at both the account and the post level.
+
+| | |
+|---|---|
+| **Post settings** | None. Threads takes `__type` and nothing else, as shown in the [Threads settings reference](/public-api/providers/threads) |
+| **Connect flow** | One step. You authorize the account and she attaches it |
+| **Automations** | Auto plug post, which adds a follow-up reply once the post passes a like count you choose |
+
+<Warning>
+What Threads sends back when something does not fit:
+
+- **Post text exceeds 500 characters limit.**
+- **One of the media URLs is invalid or inaccessible.** Threads fetches media by URL, so upload it to PostQueen first and the URL resolves.
+- **Error from Meta: We restrict certain activity to protect our community.** Slow down and try again later.
+</Warning>
+
+## Self-hosting
+
+<Info>
+Running your own instance? You register the application yourself:
+[Set up Threads on your own instance](/installation/providers/threads).
+</Info>
+
+<Snippet file="next-steps-provider.mdx" />
+

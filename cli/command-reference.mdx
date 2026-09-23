@@ -4,6 +4,8 @@ description: 'Every PostQueen CLI command, flag, and default on one page'
 icon: 'book'
 ---
 
+{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+
 Every command she answers, every flag and every default, on one page. When you are hunting for the exact shape of a call, this is the page to keep open.
 
 ```bash
@@ -31,7 +33,7 @@ postqueen integrations:list | tail -n +2 | jq '.[].id'
 |----------|---------|--------------|
 | `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Connections > API Keys**, then **Reveal**. Only a workspace admin can reveal it. |
 | `POSTQUEEN_API_URL` | `https://api.postqueen.ai` | API base. The CLI appends `/public/v1/...` to whatever you set. Running her yourself? Set this to your `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api`. |
-| `POSTQUEEN_AUTH_SERVER` | none | A device-flow auth server you run yourself. PostQueen runs none, so there is no default; see [Authentication](/cli/authentication). |
+| `POSTQUEEN_AUTH_SERVER` | none | A device-flow auth server you run yourself. PostQueen runs none, so there is no default; see [Authentication](/cli/introduction). |
 
 <Note>
 Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `❌ Error: No authentication found.`, an `Options:` header, then the API key option with where to find the key, and the own-auth-server option. All of it goes to stderr, so redirect with `2>&1` if you want them in a log.
@@ -46,7 +48,7 @@ Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over 
 | `postqueen auth:logout` | - | Deletes the stored credentials file. Prints `No stored credentials found.` if there was nothing to remove. |
 
 <Warning>
-On the hosted service the CLI signs in with an API key only. PostQueen runs no auth server; the device flow is only for one you run yourself ([Authentication](/cli/authentication)). Every command works identically either way.
+On the hosted service the CLI signs in with an API key only. PostQueen runs no auth server; the device flow is only for one you run yourself ([Authentication](/cli/introduction)). Every command works identically either way.
 </Warning>
 
 ## Integrations
@@ -233,7 +235,7 @@ You drop a `posts:create` into a deploy script, it works from your terminal, and
 
 **A header line comes before the JSON.** `integrations:list` opens with `🔌 Connected Integrations:` and `upload` opens with `✅ File uploaded successfully!`, so `jq` chokes on the first token. Strip line one with `tail -n +2`. Two commands break the pattern: `posts:missing` prints bare JSON and pipes straight through, and `posts:delete` prints a confirmation line with no JSON at all.
 
-**Anything that fails exits `1`.** Errors go to stderr behind a `❌` and results stay on stdout, so a failed command falls out of your pipeline instead of feeding it half a result. `set -e` catches it. Every message and its cause: [Troubleshooting](/cli/troubleshooting).
+**Anything that fails exits `1`.** Errors go to stderr behind a `❌` and results stay on stdout, so a failed command falls out of your pipeline instead of feeding it half a result. `set -e` catches it. Every message and its cause: [Troubleshooting](/agents/troubleshooting).
 
 <Warning>
 `auth:status` is the exception. It prints `❌ Not authenticated.` on stdout and still exits `0`, which makes it worthless as a gate. Gate on a command that really calls the API:
@@ -281,7 +283,7 @@ POSTQUEEN_API_KEY=your_api_key
   <Card title="Managing Posts" icon="calendar" href="/cli/managing-posts">
     Threads, campaigns, and the full JSON file format
   </Card>
-  <Card title="Troubleshooting" icon="wrench" href="/cli/troubleshooting">
+  <Card title="Troubleshooting" icon="wrench" href="/agents/troubleshooting">
     Every CLI error message and its fix
   </Card>
   <Card title="Platform Examples" icon="grid-2" href="/cli/platform-examples">

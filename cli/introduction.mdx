@@ -13,11 +13,10 @@ keywords:
   - mcp
 ---
 
+{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: cli-help), main:cli/authentication.mdx (rewrite; WIP: partly better; audit: cli-help). Row in page-status-2026-09-23.md. */}
+
 The PostQueen CLI puts her one command away in your terminal. Schedule a post, upload the image that goes with it or pull last week's numbers, from a shell script, a CI job or an AI agent. Underneath it is the same [Public API](/public-api/introduction) the SDK and the n8n node run on. The data commands print JSON.
 
-<Frame>
-  <img src="/images/brand/terminal-claude.svg" alt="Claude Code schedules two launch posts to X and LinkedIn with the postqueen CLI" />
-</Frame>
 
 ## Installation
 
@@ -52,7 +51,7 @@ In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys**
 export POSTQUEEN_API_KEY=your_api_key_here
 ```
 
-Self-hosted: set `POSTQUEEN_API_URL` to your `NEXT_PUBLIC_BACKEND_URL` (often `https://postqueen.example.com/api`). Device-flow OAuth is for people running their own auth server: [Authentication](/cli/authentication).
+Self-hosted: set `POSTQUEEN_API_URL` to your `NEXT_PUBLIC_BACKEND_URL` (often `https://postqueen.example.com/api`). Device-flow OAuth is for people running their own auth server: [Authentication](/cli/introduction).
 
 ## Your first post
 
@@ -69,10 +68,10 @@ postqueen posts:list
 
 Repeat `-c` for a thread. `-s` is required. Full flags: [Command Reference](/cli/command-reference).
 
-The CLI reaches **14 of 23** Public API routes. The other nine, including connect, notifications and video generation, live on the API: [Limits](/cli/limits).
+The CLI reaches **14 of 23** Public API routes. The other nine, including connect, notifications and video generation, live on the API: [Limits](/agents/troubleshooting).
 
 <CardGroup cols={2}>
-  <Card title="Get your key in place" icon="key" href="/cli/authentication">
+  <Card title="Get your key in place" icon="key" href="/cli/introduction">
     Where the key lives, and the self-hosted URL shape that trips people up.
   </Card>
   <Card title="Schedule a post" icon="paper-plane" href="/cli/managing-posts">
@@ -81,7 +80,7 @@ The CLI reaches **14 of 23** Public API routes. The other nine, including connec
   <Card title="Every flag" icon="book" href="/cli/command-reference">
     The full reference, including which commands print plain text.
   </Card>
-  <Card title="What it cannot do" icon="gauge" href="/cli/limits">
+  <Card title="What it cannot do" icon="gauge" href="/agents/troubleshooting">
     Fourteen of the API's twenty-three routes, and where the other nine live.
   </Card>
 </CardGroup>

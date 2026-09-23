@@ -4,6 +4,8 @@ description: 'What a reverse proxy is, why PostQueen needs one, and how to choos
 icon: 'lock'
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same as main; audit: selfhost), main:reverse-proxies/caddy.mdx (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 If you followed [Deploy to a server](/installation/production), PostQueen is running but only
 answers on the server itself, on port 4007. This page is the last piece: giving her your
 domain name and a certificate, so people can reach her at `https://postqueen.example.com`.
@@ -49,7 +51,7 @@ session cookies travel in the clear, so do not.
 ## Which proxy should you use
 
 <CardGroup cols={2}>
-  <Card title="Caddy" icon="feather" href="/reverse-proxies/caddy">
+  <Card title="Caddy" icon="feather" href="/installation/domain-and-https">
     **Pick this if you have no preference.** Three lines of configuration, and it gets and
     renews your certificate on its own with nothing to schedule.
   </Card>
@@ -61,7 +63,7 @@ session cookies travel in the clear, so do not.
     Configured with labels on the container rather than a file. Natural if you already run it
     in front of your other containers.
   </Card>
-  <Card title="Something else" icon="circle-question" href="/reverse-proxies/websockets-and-dev">
+  <Card title="Something else" icon="circle-question" href="/reverse-proxies/split-deployments">
     Cloudflare Tunnel, a load balancer, a split deployment. What any proxy has to get right.
   </Card>
 </CardGroup>
@@ -73,7 +75,7 @@ This trips people up, so it is worth being exact.
 | How you installed her | Send the proxy to |
 | --- | --- |
 | [Docker Compose](/installation/docker-compose), the normal path | `localhost:4007` |
-| [Docker on its own](/installation/docker) | `localhost:5000` |
+| [Docker on its own](/installation/docker-compose) | `localhost:5000` |
 | Traefik, which reaches the container over the container network | port `5000` on the service |
 
 Inside the container she always listens on **5000**. The Compose file publishes that as

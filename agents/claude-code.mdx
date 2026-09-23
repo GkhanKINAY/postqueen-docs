@@ -4,13 +4,12 @@ description: 'Run your calendar from the terminal you already have open: install
 icon: /images/brand/icon-claude-code.svg
 ---
 
+{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/claude-code.mdx (merge; WIP: better, use as base; audit: agents), this file (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+
 ## Working with her in the terminal
 
-Claude Code is Anthropic's agentic coding tool. It lives in your terminal, runs real commands and speaks the Model Context Protocol, which is everything she needs to join the session you already have open. It is not the Claude chat apps on claude.ai, Desktop, iOS or Android — that product uses a [custom connector](/agents/claude-apps). Same pairing as Codex vs ChatGPT. You finish the feature, you say what you want the world to see, and the announcement is on your calendar before you have switched windows.
+Claude Code is Anthropic's agentic coding tool. It lives in your terminal, runs real commands and speaks the Model Context Protocol, which is everything she needs to join the session you already have open. It is not the Claude chat apps on claude.ai, Desktop, iOS or Android — that product uses a [custom connector](/agents/claude). Same pairing as Codex vs ChatGPT. You finish the feature, you say what you want the world to see, and the announcement is on your calendar before you have switched windows.
 
-<Frame>
-  <img src="/images/brand/terminal-claude.svg" alt="Claude Code in a terminal: you ask in plain words and it runs the postqueen CLI to schedule the launch posts" />
-</Frame>
 
 ## Set up
 
@@ -56,7 +55,7 @@ Two routes lead to the same place. The postqueen skill teaches Claude Code the `
   <Step title="Or connect over MCP">
     Prefer tool calls to shell commands? It is one `claude mcp add` line, and the scoping options,
     the header variant and self-hosted URLs are all on
-    [Claude Code over MCP](/mcp/clients/claude-code).
+    [Claude Code over MCP](/agents/claude-code).
   </Step>
 </Steps>
 
@@ -133,10 +132,10 @@ Over MCP the conversation is the same and only the plumbing changes. Claude Code
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
     The `postqueen` CLI that Claude Code drives, with installation and the full command set.
   </Card>
-  <Card title="Claude Code over MCP" icon="plug" href="/mcp/clients/claude-code">
+  <Card title="Claude Code over MCP" icon="plug" href="/agents/claude-code">
     Project config, the Authorization-header variant and self-hosted URLs.
   </Card>
-  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
+  <Card title="Why agents love her" icon="robot" href="/agents/overview">
     Why an agent can drive her without guesswork, and the two rules that matter most.
   </Card>
   <Card title="Agents overview" icon="compass" href="/agents/overview">

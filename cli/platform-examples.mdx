@@ -4,6 +4,8 @@ description: 'A working command for every network, with the settings each one in
 icon: 'lightbulb'
 ---
 
+{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+
 Every network wants something slightly different. X wants to know who may reply, Reddit wants a
 flair decision even when the answer is no, TikTok wants eight fields and refuses a shorter object.
 This page has a command you can paste for each of them, and says what that network will reject you
@@ -45,7 +47,7 @@ Throughout this page, replace `x-id`, `reddit-id` and the rest with the real val
 
 <Note>
 Not sure what a network accepts? `postqueen integrations:settings <channel-id>` prints its rules,
-character limit and settings schema. [Integrations](/cli/integrations) shows the output.
+character limit and settings schema. [Integrations](/cli/managing-posts) shows the output.
 </Note>
 
 ## Checking it worked
@@ -58,7 +60,7 @@ postqueen posts:list
 
 Your new post is in the list with a `state`. `QUEUE` means it is waiting for its time, `PUBLISHED`
 means it has gone out, `ERROR` means the network refused it. If you see `ERROR`, the reason is on
-the post, and [Troubleshooting](/cli/troubleshooting) covers the common ones.
+the post, and [Troubleshooting](/agents/troubleshooting) covers the common ones.
 
 ---
 
@@ -146,7 +148,7 @@ postqueen posts:create \
 <Note>
 One post can target several subreddits: `subreddit` is an array. The comment feature is the
 exception, it only works when you target a single subreddit.
-[Reddit](/providers/reddit) explains why.
+[Reddit](/channels/reddit) explains why.
 </Note>
 
 ---
@@ -204,7 +206,7 @@ except the post content is silently discarded. `duet` and `stitch` apply to vide
 <Note>
 An unapproved TikTok app can only post privately. If your posts come back with
 `App not approved for public posting, contact support`, that is TikTok's audit gate rather than
-anything in this command. [TikTok](/providers/tiktok) covers it.
+anything in this command. [TikTok](/channels/tiktok) covers it.
 </Note>
 
 ---
@@ -406,16 +408,16 @@ for this file is in [Managing Posts](/cli/managing-posts#complex-posts-with-json
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="What the CLI cannot do" icon="circle-minus" href="/cli/limits">
+  <Card title="What the CLI cannot do" icon="circle-minus" href="/agents/troubleshooting">
     The gaps, and which surface covers each one
   </Card>
   <Card title="Command reference" icon="terminal" href="/cli/command-reference">
     Every command and flag, including the two that mean different things
   </Card>
-  <Card title="Troubleshooting" icon="life-ring" href="/cli/troubleshooting">
+  <Card title="Troubleshooting" icon="life-ring" href="/agents/troubleshooting">
     What the errors mean and how to clear them
   </Card>
-  <Card title="Provider setup" icon="plug" href="/providers/overview">
+  <Card title="Provider setup" icon="plug" href="/channels/overview">
     Creating the OAuth app each network needs
   </Card>
 </CardGroup>

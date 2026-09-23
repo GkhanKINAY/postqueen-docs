@@ -4,6 +4,8 @@ description: 'Message her from WhatsApp or Telegram on your phone, or from Slack
 icon: 'comments'
 ---
 
+{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: this file (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+
 Hold the mic button in WhatsApp and say "the espresso tonic is back, put it on Instagram and X for
 tomorrow morning." Both posts are on the calendar before you reach your desk, photo attached, time
 set.
@@ -57,7 +59,7 @@ Whichever app you pick, the same groundwork comes first. It is a one-time job on
 | OpenClaw or Hermes, installed and onboarded | The process that connects to your chat app. OpenClaw runs on Node.js, while the Hermes installer pulls `uv` and Python 3.11 |
 | A model provider API key | The agent asks for one during onboarding, for example Anthropic or OpenAI |
 | The `postqueen` CLI: `npm install -g postqueen` | The agent runs real shell commands, so the CLI has to be on the same machine |
-| Her skill | Teaches the agent her full command set, so it works from documented flags instead of guessing. See [Install the skill](/agents/skill-install) |
+| Her skill | Teaches the agent her full command set, so it works from documented flags instead of guessing. See [Install the skill](/agents/skill) |
 | `POSTQUEEN_API_KEY` exported where the gateway runs | Her credentials. `POSTQUEEN_API_URL` too, if you self-host PostQueen |
 
 Confirm the bottom half of that stack before you go near a chat app:
@@ -277,7 +279,7 @@ The same switch runs the other way with `--status draft`, which also stops any p
   <Card title="Hermes" icon="/images/brand/icon-hermes.svg" href="/agents/hermes">
     Hand it one brief and it plans, writes and schedules your week over the same CLI.
   </Card>
-  <Card title="Install the skill" icon="graduation-cap" href="/agents/skill-install">
+  <Card title="Install the skill" icon="graduation-cap" href="/agents/skill">
     The one-time step that teaches either agent her full command set.
   </Card>
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">

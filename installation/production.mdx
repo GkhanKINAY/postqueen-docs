@@ -4,6 +4,8 @@ description: 'From an empty virtual machine to PostQueen running on your own dom
 icon: 'server'
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 From an empty virtual machine to PostQueen running on your own domain, over HTTPS. No prior
 server experience is needed. Every command is written out. Set aside about thirty minutes, most
 of it waiting for downloads.
@@ -233,7 +235,7 @@ Three things, and the guide helps you get all of them.
     [Domain and HTTPS](/installation/domain-and-https) explains what that means and why she
     needs it. The URL values already live in `.env` from the step above. If you want the short
     version, Caddy does the whole job in three lines:
-    [Caddy](/reverse-proxies/caddy).
+    [Caddy](/installation/domain-and-https).
 
     Come back here when `https://postqueen.example.com` loads in your browser.
   </Step>
@@ -267,7 +269,7 @@ Three things, and the guide helps you get all of them.
 
 Most networks need a public HTTPS callback. Put the provider keys in the same `.env` (for
 example `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`), recreate the app container, then
-Add Channel. Per-network walkthroughs: [Providers](/providers/overview). Redirect URLs and
+Add Channel. Per-network walkthroughs: [Providers](/channels/overview). Redirect URLs and
 HTTPS: [Domain and HTTPS](/installation/domain-and-https).
 
 <Snippet file="restart-service.mdx" />
@@ -299,7 +301,7 @@ HTTPS: [Domain and HTTPS](/installation/domain-and-https).
     Every network builds its return address from `FRONTEND_URL`, so if that value is wrong or
     was changed after you registered the app, the redirect will not match what the network has
     on file. Keys belong in `.env`, then recreate the app container.
-    [OAuth connect errors](/troubleshooting/oauth-connect) covers the specific messages.
+    [OAuth connect errors](/troubleshooting/common-errors) covers the specific messages.
   </Accordion>
 
   <Accordion title="Containers restart in a loop">
@@ -325,7 +327,7 @@ Worth doing soon rather than eventually.
   <Card title="Back up your data" icon="box-archive" href="/installation/backups-and-upgrades">
     Which volumes hold data you cannot rebuild, and how to restore one
   </Card>
-  <Card title="Connect your channels" icon="plug" href="/providers/overview">
+  <Card title="Connect your channels" icon="plug" href="/channels/overview">
     Each network needs its own app keys, created by you
   </Card>
   <Card title="Sort out media storage" icon="cloud-arrow-up" href="/configuration/uploads">

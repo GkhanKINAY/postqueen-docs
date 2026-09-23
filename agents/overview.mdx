@@ -13,6 +13,8 @@ keywords:
   - chatgpt
 ---
 
+{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: partly better; audit: agents), main:agents/why-agents.mdx (fix; WIP: better, use as base; audit: agents), main:mcp/setup.mdx (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+
 Any assistant that can run a command or call a tool can put posts on your calendar. OpenClaw and Hermes live on your machine. Grok Bot is the cloud agent. Claude, ChatGPT and the rest connect over MCP.
 
 The calendar stays yours: everything is visible before it publishes. A draft is saved and never scheduled.
@@ -41,7 +43,7 @@ The calendar stays yours: everything is visible before it publishes. A draft is 
   <Card title="Agent skill + CLI" icon="terminal" href="/cli/introduction">
     Install the skill and your agent drives the postqueen CLI, with clean JSON on every command
   </Card>
-  <Card title="MCP" icon="plug" href="/mcp/setup">
+  <Card title="MCP" icon="plug" href="/agents/overview">
     Point any MCP client at your key address for 21 tools, including post analytics and `ask_postqueen`. A sign-in address (20 tools) is an option, not tested yet
   </Card>
   <Card title="Public API" icon="code" href="/public-api/introduction">
@@ -54,7 +56,7 @@ The calendar stays yours: everything is visible before it publishes. A draft is 
 These reach PostQueen over MCP (or the CLI skill) instead of as a bot product. [Muse Code](/agents/muse) connects over MCP. Muse, Meta's personal agent, is a different agent that connects through a custom connector, not tested yet: [Muse](/agents/muse#muse-the-personal-agent).
 
 <CardGroup cols={3}>
-  <Card title="Claude" icon="/images/brand/icon-claude.svg" href="/agents/claude-apps">
+  <Card title="Claude" icon="/images/brand/icon-claude.svg" href="/agents/claude">
     claude.ai, Desktop and mobile. One custom connector, not Claude Code
   </Card>
   <Card title="Claude Code" icon="/images/brand/icon-claude-code.svg" href="/agents/claude-code">
@@ -84,10 +86,10 @@ These reach PostQueen over MCP (or the CLI skill) instead of as a bot product. [
   <Card title="Gemini CLI" icon="/images/brand/icon-gemini-cli.svg" href="/agents/gemini-cli">
     One command in the terminal, and the release notes write themselves
   </Card>
-  <Card title="VS Code" icon="/images/brand/icon-vscode.svg" href="/mcp/clients/vscode">
+  <Card title="VS Code" icon="/images/brand/icon-vscode.svg" href="/agents/vscode">
     Copilot Chat. servers plus type http, not Cursor mcpServers
   </Card>
-  <Card title="Any MCP client" icon="/images/brand/icon-other-clients.svg" href="/mcp/clients/other-clients">
+  <Card title="Any MCP client" icon="/images/brand/icon-other-clients.svg" href="/agents/other-mcp-clients">
     One URL, one header, and PostQueen is a tool the agent can call. Also Devin Desktop and Zed
   </Card>
 </CardGroup>
@@ -97,16 +99,16 @@ These reach PostQueen over MCP (or the CLI skill) instead of as a bot product. [
 </Info>
 
 <CardGroup cols={2}>
-  <Card title="Install the skill" icon="download" href="/agents/skill-install">
+  <Card title="Install the skill" icon="download" href="/agents/skill">
     `npx skills add GkhanKINAY/postqueen-agent` teaches the CLI before it runs a command
   </Card>
-  <Card title="Connect over MCP" icon="plug" href="/mcp/setup">
+  <Card title="Connect over MCP" icon="plug" href="/agents/overview">
     One URL, 21 tools. Copy-paste for Claude, ChatGPT, Grok Bot and the rest
   </Card>
   <Card title="Every tool" icon="wrench" href="/mcp/tools">
     All 21, with the parameters each one takes
   </Card>
-  <Card title="Why agents love her" icon="lightbulb" href="/agents/why-agents">
+  <Card title="Why agents love her" icon="lightbulb" href="/agents/overview">
     What makes the calendar easy for an assistant to drive
   </Card>
 </CardGroup>

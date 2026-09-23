@@ -5,6 +5,8 @@ description: 'Environment variables reference for PostQueen'
 icon: 'list'
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base, but strip the clip…; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 She reads everything she needs from environment variables. Change one and restart her
 before you expect it to take effect.
 
@@ -61,7 +63,7 @@ A long random string used to sign session JWTs.
 It has a second job that decides how dangerous rotating it is. When `ENCRYPTION_KEY` is unset, this same value also encrypts the secrets PostQueen holds for you: your API keys, the OAuth client secrets and codes she issues, saved provider credentials, and cookie-based logins such as Skool. Change it in that state and those rows can no longer be decrypted, so the connections that depend on them break and re-entering each one by hand is the only way back.
 
 <Note>
-**What this does not cover.** A channel's own access and refresh tokens, the ones a social network hands back at the end of its OAuth flow, are stored as the network returned them. They are not encrypted with this key, so rotating it does not invalidate them, and the database is the security boundary for those. Treat a database dump accordingly. [Compliance](/compliance) says the same thing from the other direction.
+**What this does not cover.** A channel's own access and refresh tokens, the ones a social network hands back at the end of its OAuth flow, are stored as the network returned them. They are not encrypted with this key, so rotating it does not invalidate them, and the database is the security boundary for those. Treat a database dump accordingly. [Compliance](/security-and-privacy) says the same thing from the other direction.
 </Note>
 
 Read [`ENCRYPTION_KEY`](#encryption-key) before you rotate this. Setting it is what makes rotating this variable safe, and on a fresh install it costs you nothing to do now.
@@ -334,7 +336,7 @@ same way the social networks' callbacks are wrapped, so register the wrapped for
 
 PostQueen uses Temporal for scheduled posts and background workflows.
 Self-host deployments need to run a Temporal stack (the official docker-compose
-ships with one). The scheduling architecture: [How PostQueen works](/howitworks).
+ships with one). The scheduling architecture: [How PostQueen works](/introduction).
 
 | Variable | Purpose |
 |---|---|
@@ -371,7 +373,7 @@ ships with one). The scheduling architecture: [How PostQueen works](/howitworks)
 | `ELEVENSLABS_API_KEY` | ElevenLabs API key for voice generation. |
 | `FAL_KEY` | fal.ai API key for image/video models. |
 | `TAVILY_API_KEY` | Tavily search API key used by the research tool. |
-| `EVOLINK_API_KEY` | EvoLink API key. Setting it turns on the Seedance 2.0 engine in [AI video](/using/media-and-design#ai-video). |
+| `EVOLINK_API_KEY` | EvoLink API key. Setting it turns on the Seedance 2.0 engine in [AI video](/using/media-library#ai-video). |
 | `TRANSLOADIT_AUTH` | Transloadit auth key for video pipelines. |
 | `TRANSLOADIT_SECRET` | Transloadit signing secret. |
 | `TRANSLOADIT_TEMPLATE` | Transloadit template ID used by the video generator. |
@@ -547,13 +549,13 @@ for them:
 Moltbook needs no environment variable either. It has a connect screen of its own
 that registers the channel and issues its key for you.
 
-Every network in [Providers](/providers/overview) connects from Add Channel whether
+Every network in [Providers](/channels/overview) connects from Add Channel whether
 or not it has a row in this table.
 
 | Provider | Variables | Setup |
 |---|---|---|
 | X (Twitter) | `X_API_KEY`, `X_API_SECRET`, `X_URL`, `DISABLE_X_ANALYTICS`, `STRIP_LINKS_FROM_X_POSTS` | [/installation/providers/x-twitter](/installation/providers/x-twitter) |
-| LinkedIn | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | [/installation/providers/linkedin](/installation/providers/linkedin), [/installation/providers/linkedin-page](/installation/providers/linkedin-page) |
+| LinkedIn | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` | [/installation/providers/linkedin](/installation/providers/linkedin), [/installation/providers/linkedin-page](/installation/providers/linkedin) |
 | Facebook / Instagram (FB) | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | [/installation/providers/facebook](/installation/providers/facebook), [/installation/providers/instagram](/installation/providers/instagram) |
 | Instagram (Standalone) | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` | [/installation/providers/instagram](/installation/providers/instagram) |
 | Threads | `THREADS_APP_ID`, `THREADS_APP_SECRET` | [/installation/providers/threads](/installation/providers/threads) |
@@ -628,7 +630,7 @@ signup email is ever forwarded anywhere.
 in Add Channel to publish campaigns asks for its URL, username and password in the
 connect form, and it ignores these variables completely. Setting them will not make
 the channel appear, and leaving them unset will not stop it working. See
-[Listmonk](/providers/listmonk) for the channel. There is no Beehiiv channel at
+[Listmonk](/channels/listmonk) for the channel. There is no Beehiiv channel at
 all: Beehiiv exists only as a sender for the list above.
 </Warning>
 

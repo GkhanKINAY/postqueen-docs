@@ -5,6 +5,8 @@ description: "Look up an OAuth client's name and picture before drawing the cons
 openapi: 'GET /oauth/authorize'
 ---
 
+{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+
 You are building the consent step and you want to know whether the `client_id` you are holding is real before you send anyone anywhere. This is the call that tells you.
 
 PostQueen's own consent page calls it too. Redirecting a user to `https://app.postqueen.ai/oauth/authorize` is the normal path, and that page hits this endpoint to draw your app's name, description and picture on the screen they approve. Walk the whole flow on [OAuth2 Authentication](/public-api/oauth).

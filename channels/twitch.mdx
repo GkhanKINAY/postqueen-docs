@@ -1,0 +1,77 @@
+---
+title: Twitch
+description: 'How to add Twitch to your system'
+icon: /images/channels/twitch.svg
+---
+
+{/* OVERHAUL-TODO(B4): write it from _templates/channel.mdx. Sources: this file, moved from providers/twitch (fix; WIP: same as main; audit: providers). Row in page-status-2026-09-23.md. */}
+
+<img src="/images/channels/twitch.svg" alt="Twitch" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Warning>
+**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
+</Warning>
+
+<Snippet file="never-share.mdx" />
+
+<Warning>
+Twitch here is a chat connector, not a feed. She writes into your own channel chat, media never rides along, and anything past 500 characters is refused when you save it rather than trimmed.
+</Warning>
+
+## What she can post to Twitch
+
+The stream starts at eight and you would rather not type the same reminder every week. Schedule the line once, and she drops it into your chat on time, either as a normal message or as the colored announcement banner.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    500 characters. A longer post is refused when you save it, not trimmed
+  </Card>
+  <Card title="Media" icon="photo-film">
+    None. Twitch chat takes text only, so anything you attach is left behind
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Chat message, announcement, reply
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    None
+  </Card>
+</CardGroup>
+
+She waits two seconds before every write, on the post and on each comment, and she keeps Twitch to one job at a time. That pause is deliberate. Twitch chat punishes bursts, and a queue that arrives politely gets through.
+
+| | |
+|---|---|
+| **Post settings** | `messageType` and `announcementColor`. Full schema in the [Twitch settings reference](/public-api/providers/twitch) |
+| **Connect flow** | One step. She reads your Twitch user after the authorization round trip, and that account is both the sender and the channel |
+| **Automations** | None. A comment on a normal message posts as a reply. A comment on an announcement goes out as another announcement, because announcements have nothing to reply to |
+
+<Note>
+Announcements are quieter than normal messages in one specific way. Twitch answers an announcement with no message id, so she stores a placeholder and nothing links back to it in chat. She does not read that answer for a failure either, which means an announcement Twitch turned down still records as posted. Watch your first announcement land in your own chat before you trust a run of them. A normal chat message returns a real id and a real sent flag, so it reports honestly.
+</Note>
+
+## Post settings
+
+Open the settings bar on a Twitch post and one select is waiting for you. A second one appears once you change your mind about the first.
+
+**Message Type** starts on **Chat Message**, which sends a normal chat line. Switch it to **Announcement** and the same text goes out as a highlighted banner instead. The API takes those two as `message` and `announcement`.
+
+**Announcement Color** is the select that appears, and it appears only while Message Type reads Announcement. Go back to a chat message and the field leaves the screen rather than sitting there greyed out.
+
+| The dropdown reads | The API takes |
+|---|---|
+| Primary (Default) | `primary` |
+| Blue | `blue` |
+| Green | `green` |
+| Orange | `orange` |
+| Purple | `purple` |
+
+Leave both alone and she sends a normal chat message in the default color.
+
+## Self-hosting
+
+<Info>
+Running your own instance? You register the application yourself:
+[Set up Twitch on your own instance](/installation/providers/twitch).
+</Info>
+
+<Snippet file="next-steps-provider.mdx" />

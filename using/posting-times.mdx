@@ -4,6 +4,8 @@ description: 'Give a channel the times of day it posts at, and she takes the nex
 icon: 'clock'
 ---
 
+{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file (rewrite; WIP: partly better; audit: guide). Row in page-status-2026-09-23.md. */}
+
 Twenty to seven on a Tuesday and your LinkedIn post goes out. You were on a train. She did not check with you first, because you had already told her: 06:40 is one of the times this channel posts at.
 
 That short list of times is what the product calls a slot. Every channel keeps its own list. Press **Create Post** and the date already sitting on the button is not a guess, it is the first slot on your calendar that nothing else has claimed.
@@ -86,7 +88,7 @@ The slot lookup is quiet work. It happens behind a button you already press, and
 | **Duplicate Post** on a post card | Every channel in the workspace |
 | The browser extension composer | Every channel in the workspace, unless the extension opened for all platforms at once, where she uses the current time instead |
 | **Generate Posts** | Every channel in the workspace, at the *Finding time to post...* step |
-| [RSS AutoPost](/automation/rss-autopost) | Every channel in the workspace, once per hourly check |
+| [RSS AutoPost](/using/rss-auto-post) | Every channel in the workspace, once per hourly check |
 | [`GET /find-slot/{id}`](/public-api/integrations/find-slot) | The channel whose id you pass |
 
 In every case the date lands in the editor or on the post as a starting point. Change it and she does what you say. Nothing about a slot forces a post to stay in it.
@@ -117,7 +119,7 @@ An empty row there is a slot with nothing in it. Hover and the avatars of the ch
   <Card title="The calendar" icon="calendar" href="/using/calendar">
     Where the slots show up, and how to drag a post out of one
   </Card>
-  <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
+  <Card title="RSS AutoPost" icon="rss" href="/using/rss-auto-post">
     A feed item becomes a draft in your next open slot, once an hour
   </Card>
   <Card title="Find Available Slot" icon="code" href="/public-api/integrations/find-slot">
@@ -131,13 +133,13 @@ An empty row there is a slot with nothing in it. Hover and the avatars of the ch
   <Card title="The calendar" icon="calendar" href="/using/calendar">
     Where the slots you set show up
   </Card>
-  <Card title="Writing a post" icon="pen-to-square" href="/using/writing-a-post">
+  <Card title="Writing a post" icon="pen-to-square" href="/using/create-a-post">
     How a post takes the next open slot
   </Card>
   <Card title="Find a slot over the API" icon="code" href="/public-api/integrations/find-slot">
     The same answer, in JSON
   </Card>
-  <Card title="RSS AutoPost" icon="rss" href="/automation/rss-autopost">
+  <Card title="RSS AutoPost" icon="rss" href="/using/rss-auto-post">
     A feed that fills those slots on its own
   </Card>
 </CardGroup>

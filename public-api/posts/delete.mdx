@@ -4,6 +4,8 @@ description: 'Delete one post by id, including every part of its thread.'
 openapi: 'DELETE /posts/{id}'
 ---
 
+{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+
 <Warning>
 **A post that does not exist comes back as `500`, not `404`.** The handler looks the post up and
 then reads its group without checking it found one, so a missing id throws rather than returning

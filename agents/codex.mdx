@@ -4,6 +4,8 @@ description: 'Teach OpenAI Codex her CLI and the announcement ships with the cod
 icon: /images/brand/icon-codex.svg
 ---
 
+{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/codex.mdx (merge; WIP: better, use as base; audit: agents), this file (rewrite; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+
 ## Working with her in the repo
 
 Codex is OpenAI's software engineering agent. It is not ChatGPT — same pairing as Claude Code vs Claude. It works inside a repo, runs real commands and checks its own results, which is exactly the shape her CLI was built for. Point Codex at `postqueen` and shipping a release stops being two jobs: the code goes out and the launch posts land on the calendar in the same session.
@@ -51,7 +53,7 @@ Because Codex runs commands rather than clicking a dashboard, it fits the places
 </Steps>
 
 <Note>
-Prefer tool calls to shell commands? The Codex CLI speaks MCP natively, so you can register her hosted server in `~/.codex/config.toml` and skip the local install. The [Codex MCP page](/mcp/clients/codex) has both the URL form and the bearer-token form, which keeps your key out of the config file.
+Prefer tool calls to shell commands? The Codex CLI speaks MCP natively, so you can register her hosted server in `~/.codex/config.toml` and skip the local install. The [Codex MCP page](/agents/codex) has both the URL form and the bearer-token form, which keeps your key out of the config file.
 </Note>
 
 ## 👑 One campaign file, a whole launch
@@ -173,13 +175,13 @@ She runs on your terms. Leave the schedule alone and she is a true autopilot: wh
 ## Learn more
 
 <CardGroup cols={2}>
-  <Card title="Codex MCP setup" icon="plug" href="/mcp/clients/codex">
+  <Card title="Codex MCP setup" icon="plug" href="/agents/codex">
     Register her hosted server in `~/.codex/config.toml`, with or without the key in the URL
   </Card>
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
     The `postqueen` CLI that Codex drives: installation, authentication and the full command set
   </Card>
-  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
+  <Card title="Why agents love her" icon="robot" href="/agents/overview">
     Why her command line reads well to something that parses flags and JSON
   </Card>
   <Card title="Create Post API" icon="code" href="/public-api/posts/create">

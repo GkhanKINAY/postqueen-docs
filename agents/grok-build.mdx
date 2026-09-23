@@ -4,6 +4,8 @@ description: 'Run your calendar from Grok Build in the terminal: one grok mcp ad
 icon: /images/brand/icon-grok.svg
 ---
 
+{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/grok-build.mdx (merge; WIP: better, use as base; audit: agents), this file (fix; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+
 ## Working with her in the terminal
 
 Grok Build is xAI's coding agent. It lives in the terminal, runs commands, and speaks MCP. It is not Grok chat on grok.com, iOS or Android, and it is not [Grok Bot](/agents/grok-bot). Same pairing as Claude Code vs Claude, or Codex vs ChatGPT.
@@ -16,7 +18,7 @@ Two routes lead to the same place. MCP hands Grok Build PostQueen's 21 hosted to
 
 <Steps>
   <Step title="Connect over MCP">
-    One command writes `~/.grok/config.toml`. The scoping options, the header variant and self-hosted URLs are on [Grok Build over MCP](/mcp/clients/grok-build).
+    One command writes `~/.grok/config.toml`. The scoping options, the header variant and self-hosted URLs are on [Grok Build over MCP](/agents/grok-build).
 
     ```bash
     grok mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
@@ -60,7 +62,7 @@ Posts land on the calendar at [app.postqueen.ai](https://app.postqueen.ai). You 
 ## Learn more
 
 <CardGroup cols={2}>
-  <Card title="Grok Build MCP setup" icon="plug" href="/mcp/clients/grok-build">
+  <Card title="Grok Build MCP setup" icon="plug" href="/agents/grok-build">
     grok mcp add, config.toml, and the Bearer form
   </Card>
   <Card title="Grok chat" icon="/images/brand/icon-grok.svg" href="/agents/grok">

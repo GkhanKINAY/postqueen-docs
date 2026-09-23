@@ -3,6 +3,8 @@ title: TikTok Settings
 description: 'API settings for posting to TikTok'
 ---
 
+{/* OVERHAUL-TODO(B2): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+
 Every TikTok post carries a settings block, and `content_posting_method` is the field that matters most: it decides whether the post publishes or lands in the account's app inbox.
 
 The same schema serves both TikTok connections. A channel connected through TikTok Business takes `"__type": "tiktok-business"` and adds two optional fields of its own, [`music` and `location`](#tiktok-business).
@@ -267,7 +269,7 @@ A photo post with a chosen track and a location tag.
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Connect the channel" icon="plug" href="/providers/tiktok">
+  <Card title="Connect the channel" icon="plug" href="/channels/tiktok">
     Create the OAuth app and link the TikTok account.
   </Card>
   <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">

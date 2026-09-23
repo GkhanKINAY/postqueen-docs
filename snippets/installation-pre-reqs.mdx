@@ -41,7 +41,7 @@ That is deliberate: one port is harder to misconfigure than three.
 **5000 or 4007?** Both, depending on where you are standing. She always listens on 5000 inside
 the container. The Compose file publishes that as 4007 on the host, so a reverse proxy running
 on the host uses **4007**. If you run PostQueen with
-[Docker on its own](/installation/docker) and map `-p 5000:5000`, the host port is 5000
+[Docker on its own](/installation/docker-compose) and map `-p 5000:5000`, the host port is 5000
 instead. A proxy that reaches her over the Docker network, such as Traefik, uses 5000 either
 way.
 </Note>

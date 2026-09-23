@@ -1,0 +1,95 @@
+---
+title: Instagram
+description: 'How to add Instagram to your system'
+icon: /images/channels/instagram.svg
+---
+
+{/* OVERHAUL-TODO(B2): write it from _templates/channel.mdx. Sources: this file, moved from providers/instagram (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+
+<img src="/images/channels/instagram.svg" alt="Instagram" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+
+<Warning>
+**In review.** Until Meta approves PostQueen's app, only accounts added to the app can connect. [Status of every network](/channels/overview#status-on-postqueen)
+</Warning>
+
+<Snippet file="never-share.mdx" />
+
+## What she can post to Instagram
+
+A carousel of ten photos, a Reel with trending audio behind it, a story that vanishes in a day. She builds all of it from the same editor and sends it on the schedule you set.
+
+<CardGroup cols={2}>
+  <Card title="Character limit" icon="text-width">
+    2,200 characters in the caption
+  </Card>
+  <Card title="Media" icon="photo-film">
+    Always required. Up to 10 items in a carousel
+  </Card>
+  <Card title="Post types" icon="layer-group">
+    Feed post, carousel, Reel, story
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Yes, for the account and for each post
+  </Card>
+</CardGroup>
+
+Account numbers come back as follower count, reach and views. Engagement sits beside them: likes, comments and shares, plus saves and replies. Per post she reads views, reach and saves, plus likes, comments and shares.
+
+| | |
+|---|---|
+| **Post settings** | `post_type`, `is_trial_reel`, `graduation_strategy`, `collaborators`, `audio`. Full schema in the [Instagram settings reference](/public-api/providers/instagram) |
+| **Connect flow** | Two steps. You authorize the Meta app, then pick which Instagram account to attach. The account must be a business account connected to a Facebook page. The standalone flow attaches the account in a single step |
+| **Automations** | None. Instagram does carry an audio search tool, used to find music or original sounds for a Reel |
+
+<Warning>
+Instagram refuses some combinations before she ever calls the API:
+
+- **Should have at least one media.** A caption on its own is not a post here.
+- **Instagram carousel only supports up to 10 media attachments.**
+- **Trial Reels can only have one video**, and **Trial Reels must be a video**.
+- **Audio can only be added to Reels, not to Stories**, only to **a single video Reel**, and only on the Facebook Business connection.
+
+Stories do not support carousels. Attach several items to a story and each one publishes as its own separate story.
+</Warning>
+
+## Connection Options
+
+There are two ways to connect to an Instagram account: by using a Facebook Business or through a standalone flow that connects directly to an Instagram account.
+
+<Info>
+**What PostQueen supports on Instagram:**
+
+- Feed posts (single image, carousel, video / Reels).
+- Stories (image and video).
+- Attaching audio (music or original sounds) to Reels: Facebook Business connection only, the [Instagram Audio API](https://developers.facebook.com/docs/instagram-platform/content-publishing/audio-api/) is not available for standalone connections.
+- Replying to comments via an explicit user action.
+
+**What PostQueen does not support:**
+
+- Story link stickers / swipe-up links: the Instagram Graph API does not offer interactive sticker payloads, so PostQueen can only upload the story media.
+- Automatic comment auto-reply: there is no agent that watches for incoming comments and replies on your behalf. You can post a reply through the API, but each reply is an explicit action.
+</Info>
+
+<Warning>
+Please note that standalone option requires a professional Instagram account.
+</Warning>
+
+Once the channel is in, it stays in. The short lived code from that login is traded for a long lived token good for 58 days, and a background job wakes when the clock runs out, refreshes the token and goes back to sleep. You never re-authorize the channel by hand.
+
+Analytics come through as well. Both the account numbers and the per post numbers listed at the top of this page are read straight from `graph.instagram.com`, so a standalone channel charts the same as one attached through a Facebook page.
+
+<Note>
+Two things do not carry over. Attaching audio to a Reel runs through the Facebook Business connection only, so a Reel from a standalone channel goes out without an added track.
+
+The ten item carousel guard is the other one. A standalone channel checks only that you attached at least one piece of media and that a Trial Reel is a single video. An eleventh carousel item sails past her and comes back as a rejection from Instagram instead.
+</Note>
+
+## Self-hosting
+
+<Info>
+Running your own instance? You register the application yourself:
+[Set up Instagram on your own instance](/installation/providers/instagram).
+</Info>
+
+<Snippet file="next-steps-provider.mdx" />
+

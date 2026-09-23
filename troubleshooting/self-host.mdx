@@ -4,6 +4,8 @@ description: 'Common problems specific to running PostQueen yourself'
 icon: 'server'
 ---
 
+{/* OVERHAUL-TODO(B9): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 The things that catch people out on their own install. Find your symptom and open it.
 
 <AccordionGroup>
@@ -17,7 +19,7 @@ The things that catch people out on their own install. Find your symptom and ope
     <Warning>
     Do not set the heap above the VM's actual memory. That trades an OOM in Node for being killed
     by the kernel. On a 2 GB box, build the image elsewhere and deploy the artifact.
-    [System requirements](/installation/system-requirements) has the minimums.
+    [System requirements](/installation/overview) has the minimums.
     </Warning>
   </Accordion>
 
@@ -35,7 +37,7 @@ The things that catch people out on their own install. Find your symptom and ope
     | How you run her | Ports |
     |---|---|
     | Official image `ghcr.io/gkhankinay/postqueen-app` | One port, `5000`. The shipped compose maps it to `4007:5000`, so you reach her at `http://localhost:4007/` |
-    | From source, `pnpm dev` | Frontend `4200`, backend `3000` (override with `PORT`). Put a [reverse proxy](/reverse-proxies/caddy) in front for one URL |
+    | From source, `pnpm dev` | Frontend `4200`, backend `3000` (override with `PORT`). Put a [reverse proxy](/installation/domain-and-https) in front for one URL |
 
     Temporal listens on `7233`, and its UI on `8080`, either way.
   </Accordion>

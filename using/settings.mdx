@@ -4,6 +4,8 @@ description: 'Every tab, what lives in it, and why some of them are missing for 
 icon: 'sliders'
 ---
 
+{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: main:using/notifications.mdx (fix; WIP: same as main; audit: guide), this file (rewrite; WIP: same as main; audit: guide). Row in page-status-2026-09-23.md. */}
+
 Settings is one page with a row of tabs, and which tabs you see depends on your plan and your
 role. That is the part that confuses people: a tab named in a guide can be genuinely absent from
 your own screen, and nothing explains why.
@@ -30,7 +32,7 @@ these docs send you to a specific one.
 <Note>
 **Self-hosting with billing off?** Every plan gate above passes, because your account reports
 itself as AGENCY, the tier labelled Ultimate, when no Stripe keys are set. So you see all of them.
-[Plans and limits](/using/plans-and-limits) has the rule.
+[Plans and limits](/cloud/plans) has the rule.
 </Note>
 
 ## Why a tab is missing
@@ -115,19 +117,19 @@ to Global Settings rather than erroring.
   <Card title="Your API key" icon="key" href="/public-api/introduction">
     Connections > API Keys. The key the CLI, MCP and the public API all use
   </Card>
-  <Card title="Teams" icon="users" href="/using/teams-and-collaboration">
+  <Card title="Teams" icon="users" href="/using/team">
     Who you invite, and what each role can do
   </Card>
-  <Card title="Auto Post from a feed" icon="rss" href="/automation/rss-autopost">
+  <Card title="Auto Post from a feed" icon="rss" href="/using/rss-auto-post">
     One check takes one item, which is the thing to know before setting it up
   </Card>
-  <Card title="Webhooks" icon="bolt" href="/automation/webhooks">
+  <Card title="Webhooks" icon="bolt" href="/using/webhooks">
     What she sends, and what happens when your endpoint is slow
   </Card>
-  <Card title="Sets and signatures" icon="bookmark" href="/using/reusable-content">
+  <Card title="Sets and signatures" icon="bookmark" href="/using/sets-signatures-and-tags">
     Social Sets and the text appended to posts
   </Card>
-  <Card title="Notifications" icon="bell" href="/using/notifications">
+  <Card title="Notifications" icon="bell" href="/using/settings">
     What she tells you about, and where it arrives
   </Card>
 </CardGroup>

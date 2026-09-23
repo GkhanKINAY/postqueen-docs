@@ -4,6 +4,8 @@ description: 'Register the Kick application and give PostQueen its keys'
 icon: /images/channels/kick.svg
 ---
 
+{/* OVERHAUL-TODO(B4): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+
 Create an OAuth application on Kick and put its keys in your environment so your own instance can connect the channel.
 
 <Steps>
@@ -61,16 +63,16 @@ The channel is in the left sidebar with its avatar and name. That is the whole c
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="What she can post to Kick" icon="/images/channels/kick.svg" href="/providers/kick">
+  <Card title="What she can post to Kick" icon="/images/channels/kick.svg" href="/channels/kick">
     Limits, post types and settings
   </Card>
   <Card title="Configuration reference" icon="list" href="/configuration/reference">
     Every variable she reads
   </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
+  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/common-errors">
     Invalid state, invalid_grant and the rest
   </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
+  <Card title="Another channel" icon="plug" href="/channels/overview">
     Every network, and what each one asks for
   </Card>
 </CardGroup>
