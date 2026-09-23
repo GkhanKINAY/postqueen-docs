@@ -1,18 +1,14 @@
 ---
-title: 'Exchange Code for Token'
-sidebarTitle: Token
-description: 'Exchange an authorization code for a pos_ access token.'
-openapi: 'POST /oauth/token'
+title: "Get an access token"
+sidebarTitle: "Access token"
+description: "Exchange the code from your callback for a pos_ access token."
+openapi: "POST /oauth/token"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+Call it from your server: the request carries your Client Secret, which does not belong in a browser or an app people download. Send the secret in the body, or the Client ID and Secret as HTTP Basic credentials in `Authorization`.
 
-The user approved your app and PostQueen sent them back to you with a code on the query string. Trade it here for the `pos_` token you will use on every call after this one.
+The code works once, for 10 minutes: the exchange spends it. Run the same request twice and the second answers `400 invalid_grant`. A wrong secret and an unknown Client ID both answer `401 invalid_client`, so the answer does not say which one is wrong.
 
-Two things about that code are worth planning around. It is good for ten minutes, and it works exactly once, because the exchange clears it as it hands you the token. Run the same request twice and the second one comes back as `invalid_grant`.
+A client that registered itself with `token_endpoint_auth_method: none` sends no secret. It sends the PKCE `code_verifier` and the `redirect_uri` it used on the consent URL instead.
 
-<Warning>
-Make this call from your server. It carries your client secret, which never belongs in a browser or a mobile binary. A wrong secret and an unknown `client_id` both answer `401` with `invalid_client`, so the response will not tell you which of the two you got wrong.
-</Warning>
-
-The token that comes back does not expire on a clock. It stops working when the user revokes your app from **Settings > Approved Apps**. Full flow, including how to register the app in the first place, on [OAuth2 Authentication](/public-api/oauth).
+Send the token on `/public/v1` as `Authorization: pos_...`, with no prefix, even though `token_type` says `bearer`. When it stops working is on [OAuth apps](/public-api/oauth#how-long-a-token-lasts).

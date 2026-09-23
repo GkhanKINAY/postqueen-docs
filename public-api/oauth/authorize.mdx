@@ -1,16 +1,14 @@
 ---
-title: 'Get Consent Screen Details'
-sidebarTitle: Consent
-description: "Look up an OAuth client's name and picture before drawing the consent screen."
-openapi: 'GET /oauth/authorize'
+title: "Check an authorization request"
+sidebarTitle: "Consent screen"
+description: "Check a Client ID and get the app name and picture PostQueen shows on its consent screen."
+openapi: "GET /oauth/authorize"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+You do not need this call to run the OAuth flow. Send people to `https://app.postqueen.ai/oauth/authorize` with your `client_id`, `response_type=code` and `state`: that page makes this call, shows your app's name, description and picture, and asks the person to **Authorize** or **Deny**. The whole flow is on [OAuth apps](/public-api/oauth).
 
-You are building the consent step and you want to know whether the `client_id` you are holding is real before you send anyone anywhere. This is the call that tells you.
-
-PostQueen's own consent page calls it too. Redirecting a user to `https://app.postqueen.ai/oauth/authorize` is the normal path, and that page hits this endpoint to draw your app's name, description and picture on the screen they approve. Walk the whole flow on [OAuth2 Authentication](/public-api/oauth).
+It is useful to check a Client ID from your own code: a valid one answers `200` with the app's details, and an unknown one `400 Invalid client_id`.
 
 <Note>
-This endpoint sits outside `/public/v1` and takes no API key. A `client_id` that does not resolve comes back as a `400` reading `Invalid client_id`.
+This endpoint is outside `/public/v1` and takes no API key. A client that registered itself must also send one of its `redirect_uris`, and one without a secret must send a PKCE `code_challenge` with method `S256`.
 </Note>
