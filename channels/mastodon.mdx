@@ -1,61 +1,51 @@
 ---
-title: Mastodon
-description: 'How to add Mastodon to your system'
-icon: /images/channels/mastodon.svg
+title: "Mastodon"
+description: "What PostQueen will post to Mastodon, and the limits it checks before a post is scheduled."
+icon: "/images/channels/mastodon.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B4): write it from _templates/channel.mdx. Sources: this file, moved from providers/mastodon (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/mastodon.svg" alt="Mastodon" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post public Mastodon posts and threads with images, video and alt text, and wait for your server to finish processing a video before it posts.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to Mastodon
-
-Your instance sets the house rules and she works inside them. Five hundred characters, media uploaded through the instance itself, and every status public.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    500 characters per status.
+  <Card title="Text" icon="type">
+    Up to 500 characters, even on a server that allows more.
   </Card>
   <Card title="Media" icon="image">
-    Images and video, uploaded to your instance media endpoint with alt text kept. She adds no count limit of her own, so the instance rules apply.
+    Images and MP4 video, with alt text. How many a post can carry is your server's rule, usually 4 images or 1 video.
   </Card>
   <Card title="Post types" icon="layers">
-    A status, then replies threaded underneath it as comments.
+    Post and thread. Every post is public.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None. Nine networks report analytics to PostQueen, and Mastodon is not one of them.
+    No analytics for Mastodon.
   </Card>
 </CardGroup>
 
-| Area | Detail |
-|---|---|
-| Post settings | Nothing beyond `__type`: [Mastodon settings](/public-api/providers/mastodon). |
-| Which instance | The default connector posts to the instance named at install time. **Add Channel** also offers **M. Instance** (`mastodon-custom`): you type that account's instance URL in the connect form, and she registers the app there. |
-| Connect flow | Default: one step OAuth2 against the instance configured for the install, with the scopes `write:statuses`, `profile` and `write:media`. Custom instance: paste the instance URL in **Add Channel**. |
-| Automations | None on this network. |
-| Publish rate | Five posts at a time, since Mastodon instances are usually generous. |
+**Not supported:** unlisted, followers-only and direct posts, content warnings, polls, quote posts, and accounts on other servers.
 
-<Warning>
-Every status she sends is posted with visibility `public`. There is no unlisted, followers-only or direct option on this connector.
+## Connect Mastodon
 
-If the instance turns your account off, reconnecting is the only fix, and the message you will see is **"Your login is currently disabled"**.
-</Warning>
+<Note>
+Mastodon is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will connect accounts on one Mastodon server: accounts on other servers cannot be connected.
+</Note>
 
-## Self-hosting
+## Post settings
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Mastodon on your own instance](/installation/providers/mastodon).
-</Info>
+Mastodon posts have no settings of their own in the composer: the text, the media and each file's alt text are all a post carries. The API takes only the network's type, on [Mastodon posting settings](/public-api/providers/mastodon).
+
+## Good to know
+
+- **Continue thread** adds parts to the post. Each part is posted as a reply to the part before, can carry its own media and has its own delay.
+- PostQueen waits until your server has processed a video before it creates the post. Media in later thread parts is posted without that wait, so a part with a large video can fail.
+- The number of files per post is not checked first: your server refuses a post that carries more than it allows.
+- The first post carries a key that stops Mastodon from publishing it twice when the request is retried.
 
 <NextStepsChannel />
-

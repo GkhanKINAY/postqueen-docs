@@ -1,69 +1,55 @@
 ---
-title: MeWe
-description: 'How to add MeWe to your system'
-icon: /images/channels/mewe.svg
+title: "MeWe"
+description: "What PostQueen will post to MeWe, and the limits it checks before a post is scheduled."
+icon: "/images/channels/mewe.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B4): write it from _templates/channel.mdx. Sources: this file, moved from providers/mewe (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/mewe.svg" alt="MeWe" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post text and photos to your MeWe timeline or to one of your MeWe groups.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to MeWe
-
-You get room to write here. Sixty three thousand characters, photos alongside, and a choice between your own timeline and any group you belong to.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    63,206 characters per post.
+  <Card title="Text" icon="type">
+    Up to 63,206 characters.
   </Card>
   <Card title="Media" icon="image">
-    Photos only, uploaded one by one before the post goes out. Video files are dropped from the post rather than sent.
+    Photos. MP4 video is left out of the post.
   </Card>
   <Card title="Post types" icon="layers">
-    A single post, to your timeline or to one group. No threaded comments on this network.
+    Timeline post, or a post to one group you belong to.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None. Nine networks report analytics to PostQueen, and MeWe is not one of them.
+    No analytics for MeWe.
   </Card>
 </CardGroup>
 
-| Area | Detail |
-|---|---|
-| Post settings | `postType` of `timeline` or `group`, plus a `group` id when you pick a group. Field shapes for every network sit in the [Create Post](/public-api/posts/create) reference. |
-| Connect flow | One step. MeWe returns a login request token, and she trades it for an API token using your app id and API key. |
-| Automations | None on this network. |
-| Publish rate | One post at a time. |
+**Not supported:** video, MeWe pages, several groups in one post, and comments or follow-ups.
 
-<Warning>
-The group picker walks through every page of your MeWe groups, so long lists are fine, but a post to a group fails if you leave the group id empty.
+## Connect MeWe
 
-Three messages come back from MeWe itself. **"Access token expired, please re-authenticate"** means the channel needs reconnecting, **"Insufficient permissions for this action"** means the app is missing a permission, and **"Rate limited, retrying..."** means MeWe asked her to slow down.
-</Warning>
+<Note>
+MeWe is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will connect by approving PostQueen on MeWe.
+</Note>
 
-## Posting Options
+## Post settings
 
-When creating a post for MeWe in PostQueen, you can configure:
+Each MeWe post in the composer has these settings:
 
-- **My Timeline**: posts directly to your personal MeWe timeline.
-- **Group**: posts to a specific MeWe group you belong to. You will be prompted to select the target group from a dropdown.
+- **Post To**: **My Timeline** or **Group**. It starts on **My Timeline**.
+- **Select Group**: the group to post to, for a **Group** post. Required there: a group post without one is refused with "Select a group to post to".
 
-MeWe supports text posts with optional photo attachments. Video uploads are not currently supported through this integration.
+The field names and values for the API are on [MeWe posting settings](/public-api/providers/mewe).
 
-## Self-hosting
+## Good to know
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up MeWe on your own instance](/installation/providers/mewe).
-</Info>
+- Only MP4 files are left out. Any other file, a MOV video included, is sent to MeWe as a photo, and MeWe may refuse it.
+- The link to a published post opens your timeline or the group, not the post itself.
+- The connection lasts until MeWe's sign-in expires, or 30 days, and cannot be renewed on its own. Reconnect the channel when it asks.
 
 <NextStepsChannel />
-
