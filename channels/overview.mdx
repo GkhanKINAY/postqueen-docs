@@ -1,245 +1,254 @@
 ---
-title: Providers Overview
-description: 'Every network PostQueen posts to, its status on PostQueen, the nine that report analytics, and where each one is documented'
-icon: 'plug'
+title: "Channels"
+sidebarTitle: "All channels"
+description: "Every network PostQueen posts to, grouped by kind: its status today, what you can post to it and its text limit."
+icon: "plug"
 keywords:
-  - postqueen
-  - platforms
-  - providers
-  - character limit
   - channels
-  - instagram
-  - tiktok
-  - mastodon
+  - networks
+  - character limit
+  - available
+  - in review
+  - soon
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelBadge } from '/snippets/status-badge.mdx';
 
-{/* OVERHAUL-TODO(B3): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file, moved from providers/overview (rewrite; WIP: partly better; audit: providers). Row in page-status-2026-09-23.md. */}
+PostQueen posts to {{networks}} networks from one calendar. Pick a network to see what you can publish there, the limits PostQueen checks before a post is scheduled, and how to connect it. Every network is listed in **Add Channel** on the **Channels** page, and [Connect a channel](/using/connect-a-channel) covers the steps they share.
 
-30+ networks, one calendar. She posts to all of them, and each one connects on its own terms: an OAuth login for most, a credential form for Bluesky and WordPress, the browser extension for Skool.
+## Status today
 
-Nothing is connected by default, and every network is added the same way, from **Add Channel**. What changes is whether the network sends you to its own login or asks you to paste a key in the form.
-
-<Info>
-Running your own instance? Each OAuth network needs an application you create yourself, then a restart. Walkthroughs live under [Connect your channels](/installation/providers/instagram).
-</Info>
-
-A smaller group takes the credential in the connect form, so you paste an API key or a login there and you are done. The card for each one below says which kind it is.
-
-<NeverShare />
-
-## Status on PostQueen
-
-Every network below is listed in **Add Channel**, but not every one can be connected on PostQueen today.
-
-| Status | What it means | Networks |
+| Status | Networks | What it means |
 |---|---|---|
-| **Available** | Connect it from Add Channel today | Bluesky, DEV, Hashnode (needs Hashnode Pro on the publication), Lemmy, Listmonk, Moltbook (posts may stay hidden from feeds), Nostr, WordPress |
-| **In review** | Connects, with a limit until the platform approves PostQueen's app | Facebook and Instagram (only accounts added to PostQueen's Meta app), Threads (Threads testers only), TikTok (posts publish as Self only), YouTube (uploads stay private), X (connects once your trial ends) |
-| **Soon** | Listed in Add Channel, but it cannot be connected on PostQueen yet | LinkedIn, LinkedIn Page, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop, TikTok Business, Telegram, Farcaster, Skool |
+| <ChannelBadge status="available" /> | 8 | Connect it from **Add Channel** today. |
+| <ChannelBadge status="in-review" /> | 6 | It connects, with a limit, until the network approves PostQueen's app. The limit is below and on the network's page. |
+| <ChannelBadge status="soon" /> | 17 | Listed in **Add Channel**, but it cannot be connected on PostQueen yet. Its page says what it will post. |
 
-## Every network she posts to
-
-<Frame caption="Every network PostQueen posts to. Each one has its own setup page below">
-<div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "10px" }}>
-  <img src="/images/channels/x.svg" alt="X" height="28" />
-  <img src="/images/channels/instagram.svg" alt="Instagram" height="28" />
-  <img src="/images/channels/linkedin.svg" alt="LinkedIn" height="28" />
-  <img src="/images/channels/facebook.svg" alt="Facebook" height="28" />
-  <img src="/images/channels/tiktok.svg" alt="TikTok" height="28" />
-  <img src="/images/channels/youtube.svg" alt="YouTube" height="28" />
-  <img src="/images/channels/threads.svg" alt="Threads" height="28" />
-  <img src="/images/channels/pinterest.svg" alt="Pinterest" height="28" />
-  <img src="/images/channels/reddit.svg" alt="Reddit" height="28" />
-  <img src="/images/channels/discord.svg" alt="Discord" height="28" />
-  <img src="/images/channels/slack.svg" alt="Slack" height="28" />
-  <img src="/images/channels/telegram.svg" alt="Telegram" height="28" />
-  <img src="/images/channels/mastodon.svg" alt="Mastodon" height="28" />
-  <img src="/images/channels/bluesky.svg" alt="Bluesky" height="28" />
-  <img src="/images/channels/nostr.svg" alt="Nostr" height="28" />
-  <img src="/images/channels/farcaster.svg" alt="Farcaster" height="28" />
-  <img src="/images/channels/lemmy.svg" alt="Lemmy" height="28" />
-  <img src="/images/channels/vk.svg" alt="VK" height="28" />
-  <img src="/images/channels/mewe.svg" alt="MeWe" height="28" />
-  <img src="/images/channels/twitch.svg" alt="Twitch" height="28" />
-  <img src="/images/channels/kick.svg" alt="Kick" height="28" />
-  <img src="/images/channels/dribbble.svg" alt="Dribbble" height="28" />
-  <img src="/images/channels/devto.svg" alt="Dev.to" height="28" />
-  <img src="/images/channels/hashnode.svg" alt="Hashnode" height="28" />
-  <img src="/images/channels/wordpress.svg" alt="WordPress" height="28" />
-  <img src="/images/channels/skool.svg" alt="Skool" height="28" />
-  <img src="/images/channels/whop.svg" alt="Whop" height="28" />
-  <img src="/images/channels/listmonk.svg" alt="Listmonk" height="28" />
-  <img src="/images/channels/google-business.svg" alt="Google Business Profile" height="28" />
-  <img src="/images/channels/moltbook.png" alt="Moltbook" height="28" />
-</div>
-</Frame>
-
-Most of them take about five minutes. Pick the one you want and the page tells you exactly what it asks for:
+## Social networks
 
 <CardGroup cols={3}>
-  <Card title="X (Twitter)" icon="/images/channels/x.svg" href="/channels/x-twitter">
-    In review. Connects once your trial ends
-  </Card>
-  <Card title="LinkedIn" icon="/images/channels/linkedin.svg" href="/channels/linkedin">
-    Soon
-  </Card>
-  <Card title="LinkedIn Page" icon="/images/channels/linkedin.svg" href="/channels/linkedin">
-    Soon
-  </Card>
-  <Card title="Facebook" icon="/images/channels/facebook.svg" href="/channels/facebook">
-    In review. Accounts added to PostQueen's Meta app only
-  </Card>
   <Card title="Instagram" icon="/images/channels/instagram.svg" href="/channels/instagram">
-    In review. Accounts added to PostQueen's Meta app only
-  </Card>
-  <Card title="Threads" icon="/images/channels/threads.svg" href="/channels/threads">
-    In review. Threads testers only
-  </Card>
-  <Card title="Bluesky" icon="/images/channels/bluesky.svg" href="/channels/bluesky">
-    No app keys needed
-  </Card>
-  <Card title="Mastodon" icon="/images/channels/mastodon.svg" href="/channels/mastodon">
-    Soon
-  </Card>
-  <Card title="YouTube" icon="/images/channels/youtube.svg" href="/channels/youtube">
-    In review. Uploads stay private for now
-  </Card>
-  <Card title="Google My Business" icon="/images/channels/google-business.svg" href="/channels/google-my-business">
-    Soon
+    <ChannelBadge status="in-review" />
+
+    Feed photos, carousels of up to 10, Reels and Stories. 2,200 characters.
   </Card>
   <Card title="TikTok" icon="/images/channels/tiktok.svg" href="/channels/tiktok">
-    In review. Posts publish as Self only
+    <ChannelBadge status="in-review" />
+
+    Videos and photo posts of up to 35 images, or a draft in your TikTok inbox. 2,000 characters.
+  </Card>
+  <Card title="Facebook" icon="/images/channels/facebook.svg" href="/channels/facebook">
+    <ChannelBadge status="in-review" />
+
+    Page posts with text, links, photos or video, and Page Stories. 63,206 characters.
+  </Card>
+  <Card title="X" icon="/images/channels/x.svg" href="/channels/x-twitter">
+    <ChannelBadge status="in-review" />
+
+    Posts, threads, images, GIFs and video, Community posts and Articles. 280 characters, 4,000 on verified accounts.
+  </Card>
+  <Card title="LinkedIn" icon="/images/channels/linkedin.svg" href="/channels/linkedin">
+    <ChannelBadge status="soon" />
+
+    Posts to your profile and company pages, with images, video and document carousels. 3,000 characters.
+  </Card>
+  <Card title="Threads" icon="/images/channels/threads.svg" href="/channels/threads">
+    <ChannelBadge status="in-review" />
+
+    Posts, photos, videos, carousels of up to 20 and threads. 500 bytes.
+  </Card>
+  <Card title="Bluesky" icon="/images/channels/bluesky.svg" href="/channels/bluesky">
+    <ChannelBadge status="available" />
+
+    Posts and threads with up to 4 images or 1 video. 300 characters.
   </Card>
   <Card title="Reddit" icon="/images/channels/reddit.svg" href="/channels/reddit">
-    Soon
+    <ChannelBadge status="soon" />
+
+    Text, link, image and video posts to one or more subreddits. 10,000 characters.
   </Card>
-  <Card title="Pinterest" icon="/images/channels/pinterest.svg" href="/channels/pinterest">
-    Soon
+  <Card title="Mastodon" icon="/images/channels/mastodon.svg" href="/channels/mastodon">
+    <ChannelBadge status="soon" />
+
+    Public posts and threads with images and video. 500 characters.
   </Card>
-  <Card title="Discord" icon="/images/channels/discord.svg" href="/channels/discord">
-    Soon
-  </Card>
-  <Card title="Slack" icon="/images/channels/slack.svg" href="/channels/slack">
-    Soon
-  </Card>
-  <Card title="Telegram" icon="/images/channels/telegram.svg" href="/channels/telegram">
-    Soon
-  </Card>
-  <Card title="Dribbble" icon="/images/channels/dribbble.svg" href="/channels/dribbble">
-    Soon
-  </Card>
-  <Card title="Skool" icon="/images/channels/skool.svg" href="/channels/skool">
-    Soon
-  </Card>
-  <Card title="Whop" icon="/images/channels/whop.svg" href="/channels/whop">
-    Soon
-  </Card>
-  <Card title="MeWe" icon="/images/channels/mewe.svg" href="/channels/mewe">
-    Soon
-  </Card>
-  <Card title="Farcaster" icon="/images/channels/farcaster.svg" href="/channels/farcaster">
-    Soon
-  </Card>
-  <Card title="Twitch" icon="/images/channels/twitch.svg" href="/channels/twitch">
-    Soon
-  </Card>
-  <Card title="Kick" icon="/images/channels/kick.svg" href="/channels/kick">
-    Soon
+  <Card title="Tumblr" icon="/images/channels/tumblr.png" href="/channels/tumblr">
+    <ChannelBadge status="soon" />
+
+    Long posts with a title, link and tags, up to 30 images and a video. 32,768 characters.
   </Card>
   <Card title="VK" icon="/images/channels/vk.svg" href="/channels/vk">
-    Soon
+    <ChannelBadge status="soon" />
+
+    Posts with photos to your own wall, and comments. 2,048 characters.
   </Card>
-  <Card title="Dev.to" icon="/images/channels/devto.svg" href="/channels/devto">
-    An API key, no app
-  </Card>
-  <Card title="Hashnode" icon="/images/channels/hashnode.svg" href="/channels/hashnode">
-    An API key, no app
-  </Card>
-  <Card title="WordPress" icon="/images/channels/wordpress.svg" href="/channels/wordpress">
-    Your site URL and a login
-  </Card>
-  <Card title="Lemmy" icon="/images/channels/lemmy.svg" href="/channels/lemmy">
-    Instance URL and a login
+  <Card title="Farcaster" icon="/images/channels/farcaster.svg" href="/channels/farcaster">
+    <ChannelBadge status="soon" />
+
+    Casts with up to 4 images, to your feed or into channels. 1,024 bytes.
   </Card>
   <Card title="Nostr" icon="/images/channels/nostr.svg" href="/channels/nostr">
-    Your private key, nothing else
+    <ChannelBadge status="available" />
+
+    Notes and threads, with images linked by address. 100,000 characters.
   </Card>
-  <Card title="Listmonk" icon="/images/channels/listmonk.svg" href="/channels/listmonk">
-    Your own Listmonk server
+  <Card title="Lemmy" icon="/images/channels/lemmy.svg" href="/channels/lemmy">
+    <ChannelBadge status="available" />
+
+    Titled posts with a link and a cover image, in one or more communities. 10,000 characters.
   </Card>
-  <Card title="Moltbook" icon="/images/channels/moltbook.png" href="/channels/moltbook">
-    Registers itself on connect
+  <Card title="MeWe" icon="/images/channels/mewe.svg" href="/channels/mewe">
+    <ChannelBadge status="soon" />
+
+    Timeline and group posts with photos. 63,206 characters.
   </Card>
 </CardGroup>
 
-## Analytics reaches nine of them
+## Video and live
 
-Posting is the wide part of PostQueen. Measuring is the narrow one. Nine networks report numbers back to PostQueen per channel, and eight of those also per post. Google My Business is the exception: it reports at the location level and has nothing per post. Every other platform publishes without a scoreboard. So an empty analytics view on Reddit or Telegram is the platform being quiet, not your setup being broken.
+<CardGroup cols={3}>
+  <Card title="YouTube" icon="/images/channels/youtube.svg" href="/channels/youtube">
+    <ChannelBadge status="in-review" />
 
-- Facebook Page
-- Google My Business
-- Instagram (both cards)
-- LinkedIn Page
-- Pinterest
-- Threads
-- TikTok
-- X (Twitter)
-- YouTube
+    Video uploads with a title, tags and your own thumbnail. 5,000 bytes of description.
+  </Card>
+  <Card title="Twitch" icon="/images/channels/twitch.svg" href="/channels/twitch">
+    <ChannelBadge status="soon" />
 
-Two things catch people out. LinkedIn personal profiles are not on that list, only LinkedIn Pages report back. And Google My Business answers only for verified profiles inside the date range it allows, so it returns an empty payload rather than an error.
+    Messages and colored announcements in your own chat. 500 characters.
+  </Card>
+  <Card title="Kick" icon="/images/channels/kick.svg" href="/channels/kick">
+    <ChannelBadge status="soon" />
 
-One more, on purpose: set `DISABLE_X_ANALYTICS` and she stops asking X for numbers at all, which is what you want when your X plan does not include analytics access. See [X (Twitter)](/channels/x-twitter).
+    Messages in your own chat, with replies. 500 characters.
+  </Card>
+</CardGroup>
 
-## Which page covers which platform
+## Business and discovery
 
-Thirty-four cards for 31 networks show up in the Add Channel list. None of them is API-only, but not every one can be connected on PostQueen yet: the Status column says which. Limits below are the code `maxLength` (X has extra verified and article ceilings). Connect is what **Add Channel** does in the Cloud app; OAuth app registration for self-host is a separate [install page](/installation/providers/instagram).
+<CardGroup cols={3}>
+  <Card title="Pinterest" icon="/images/channels/pinterest.svg" href="/channels/pinterest">
+    <ChannelBadge status="soon" />
 
-| Platform | Status | Limit | Connect | API `__type` | Guide | Analytics |
-|---|---|---|---|---|---|---|
-| Bluesky | Available | 300 | App password in the form | `bluesky` | [Guide](/channels/bluesky) | No |
-| Dev.to | Available | 100,000 | API key in the form | `devto` | [Guide](/channels/devto) | No |
-| Discord | Soon | 1,980 | Bot, then pick a server | `discord` | [Guide](/channels/discord) | No |
-| Dribbble | Soon | 40,000 | One-step OAuth | `dribbble` | [Guide](/channels/dribbble) | No |
-| Facebook | In review | 63,206 | Auth, then pick a page | `facebook` | [Guide](/channels/facebook) | Yes |
-| Farcaster | Soon | 800 | Neynar | `wrapcast` | [Guide](/channels/farcaster) | No |
-| Google My Business | Soon | 1,500 | Auth, then pick a location | `gmb` | [Guide](/channels/google-my-business) | Yes |
-| Hashnode | Available | 10,000 | PAT in the form | `hashnode` | [Guide](/channels/hashnode) | No |
-| Instagram | In review | 2,200 | Meta, then pick an account | `instagram` | [Guide](/channels/instagram) | Yes |
-| Instagram (Standalone) | In review | 2,200 | Standalone product connect | `instagram-standalone` | [Guide](/channels/instagram) | Yes |
-| Kick | Soon | 500 | One-step OAuth | `kick` | [Guide](/channels/kick) | No |
-| Lemmy | Available | 10,000 | Instance URL, name, password | `lemmy` | [Guide](/channels/lemmy) | No |
-| LinkedIn | Soon | 3,000 | One-step OAuth | `linkedin` | [Guide](/channels/linkedin) | No |
-| LinkedIn Page | Soon | 3,000 | Auth, then pick a company page | `linkedin-page` | [Guide](/channels/linkedin) | Yes |
-| Listmonk | Available | very large | URL, user, token in the form | `listmonk` | [Guide](/channels/listmonk) | No |
-| Mastodon | Soon | 500 | OAuth to the install instance | `mastodon` | [Guide](/channels/mastodon) | No |
-| MeWe | Soon | 63,206 | One-step OAuth | `mewe` | [Guide](/channels/mewe) | No |
-| Moltbook | Available | 300 | In-app | `moltbook` | [Guide](/channels/moltbook) | No |
-| Nostr | Available | 100,000 | Hex key in the form | `nostr` | [Guide](/channels/nostr) | No |
-| Pinterest | Soon | 500 | One-step OAuth | `pinterest` | [Guide](/channels/pinterest) | Yes |
-| Reddit | Soon | 10,000 | One-step OAuth | `reddit` | [Guide](/channels/reddit) | No |
-| Skool | Soon | 5,000 | Chrome extension | `skool` | [Guide](/channels/skool) | No |
-| Slack | Soon | 400,000 | One-step OAuth | `slack` | [Guide](/channels/slack) | No |
-| Telegram | Soon | 4,096 | Add bot, paste in the form | `telegram` | [Guide](/channels/telegram) | No |
-| Threads | In review | 500 | One-step OAuth | `threads` | [Guide](/channels/threads) | Yes |
-| TikTok | In review | 2,000 | One-step OAuth | `tiktok` | [Guide](/channels/tiktok) | Yes |
-| TikTok Business | Soon | 2,200 | Business API app | `tiktok-business` | [Guide](/channels/tiktok) | Yes |
-| Tumblr | Soon | 32,768 | Auth, then pick a blog | `tumblr` | [Guide](/channels/tumblr) | No |
-| Twitch | Soon | 500 | One-step OAuth | `twitch` | [Guide](/channels/twitch) | No |
-| VK | Soon | 2,048 | One-step PKCE | `vk` | [Guide](/channels/vk) | No |
-| Whop | Soon | 50,000 | One-step OAuth PKCE | `whop` | [Guide](/channels/whop) | No |
-| WordPress | Available | 100,000 | Domain, user, application password | `wordpress` | [Guide](/channels/wordpress) | No |
-| X (Twitter) | In review | 280 / 4,000 verified / 100,000 article | One-step OAuth | `x` | [Guide](/channels/x-twitter) | Yes |
-| YouTube | In review | 5,000 | Auth, then pick a channel | `youtube` | [Guide](/channels/youtube) | Yes |
+    Image, multi-image and video Pins on the board you pick. 800 characters.
+  </Card>
+  <Card title="Google Business Profile" icon="/images/channels/google-business.svg" href="/channels/google-my-business">
+    <ChannelBadge status="soon" />
 
-Settings schemas: [Public API providers](/public-api/providers/x). MeWe is the one row still missing a dedicated settings page; its post settings are listed in the [Public API introduction](/public-api/introduction). Self-host OAuth app keys: [Configuration Reference](/configuration/reference).
+    Updates, events and offers for a location you manage. 1,500 characters.
+  </Card>
+  <Card title="Dribbble" icon="/images/channels/dribbble.svg" href="/channels/dribbble">
+    <ChannelBadge status="soon" />
+
+    Shots of one 400 x 300 or 800 x 600 image, for you or a team. 40,000 characters.
+  </Card>
+</CardGroup>
+
+## Chat and communities
+
+<CardGroup cols={3}>
+  <Card title="Telegram" icon="/images/channels/telegram.svg" href="/channels/telegram">
+    <ChannelBadge status="soon" />
+
+    Messages, photos, videos and albums in your channels and groups. 4,096 characters, 1,024 with media.
+  </Card>
+  <Card title="Discord" icon="/images/channels/discord.svg" href="/channels/discord">
+    <ChannelBadge status="soon" />
+
+    Messages with attachments and mentions in text and announcement channels. 1,980 characters.
+  </Card>
+  <Card title="Slack" icon="/images/channels/slack.svg" href="/channels/slack">
+    <ChannelBadge status="soon" />
+
+    Messages and images in public and private channels, with thread replies. 150,000 characters.
+  </Card>
+  <Card title="Skool" icon="/images/channels/skool.svg" href="/channels/skool">
+    <ChannelBadge status="soon" />
+
+    Titled posts with attachments in your groups, with comments. 5,000 characters.
+  </Card>
+  <Card title="Whop" icon="/images/channels/whop.svg" href="/channels/whop">
+    <ChannelBadge status="soon" />
+
+    Forum posts with images or video, and threaded replies. 50,000 characters.
+  </Card>
+  <Card title="Moltbook" icon="/images/channels/moltbook.png" href="/channels/moltbook">
+    <ChannelBadge status="available" />
+
+    Text posts in a submolt, with threaded comments. Experimental. 300 characters.
+  </Card>
+</CardGroup>
+
+## Blogs and newsletters
+
+<CardGroup cols={3}>
+  <Card title="WordPress" icon="/images/channels/wordpress.svg" href="/channels/wordpress">
+    <ChannelBadge status="available" />
+
+    Posts, pages and custom types with a featured image, categories and tags. 100,000 characters.
+  </Card>
+  <Card title="DEV (dev.to)" icon="/images/channels/devto.svg" href="/channels/devto">
+    <ChannelBadge status="available" />
+
+    Markdown articles with a cover image, tags and a canonical URL. 100,000 characters.
+  </Card>
+  <Card title="Hashnode" icon="/images/channels/hashnode.svg" href="/channels/hashnode">
+    <ChannelBadge status="available" />
+
+    Markdown articles in your publication, with a cover and tags. Needs Hashnode Pro. 10,000 characters.
+  </Card>
+  <Card title="Listmonk" icon="/images/channels/listmonk.svg" href="/channels/listmonk">
+    <ChannelBadge status="available" />
+
+    Email campaigns to one list on your own Listmonk server. 300,000 characters.
+  </Card>
+</CardGroup>
+
+## How the available networks connect
+
+None of them sends you to a sign-in page. You type a key or a login into the connect form, or, for Moltbook, register an agent.
+
+| Network | What you enter | Where you get it |
+|---|---|---|
+| [Bluesky](/channels/bluesky) | Your handle and an app password | Bluesky: **Settings** > **Privacy and security** > **App passwords** |
+| [Nostr](/channels/nostr) | Your private key, in hex | Your Nostr client |
+| [Lemmy](/channels/lemmy) | Your instance, username and password | The account you use on that instance |
+| [Moltbook](/channels/moltbook) | A name for your agent | PostQueen registers it, and you claim it on Moltbook |
+| [WordPress](/channels/wordpress) | Your site address, username and an Application Password | WordPress admin: **Users** > **Profile** > **Application Passwords** |
+| [DEV](/channels/devto) | An API key | DEV: **Settings** > **Extensions** |
+| [Hashnode](/channels/hashnode) | A personal access token | Hashnode: **Settings** > **Developer**, on a publication with Hashnode Pro |
+| [Listmonk](/channels/listmonk) | Your server address, an API user and its token | Listmonk: **Admin** > **Users** |
+
+## What In review means for each network
+
+Each of these networks connects today, within this limit, until it approves PostQueen's app:
+
+| Network | The limit today |
+|---|---|
+| [Instagram](/channels/instagram) | Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect and publish. |
+| [TikTok](/channels/tiktok) | Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet. |
+| [Facebook](/channels/facebook) | Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish. |
+| [X](/channels/x-twitter) | X can be connected once the free trial ends, or right away if you end the trial early. |
+| [Threads](/channels/threads) | Until Meta approves PostQueen's Threads app, only accounts added as Threads testers on it can connect and publish. |
+| [YouTube](/channels/youtube) | Until Google's audit of PostQueen's app passes, every upload is private, and all PostQueen customers share a limit of 100 uploads a day. |
+
+## Analytics
+
+Nine networks report numbers back to PostQueen: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. The available networks above publish normally but send no numbers back. [Analytics](/using/analytics) shows what each one reports.
 
 ## Next steps
 
-<CardGroup cols={1}>
-  <Card title="Connect your first one" icon="rocket" href="/quickstart">
-    Pick the network your audience actually reads, and put a post on the calendar.
+<CardGroup cols={2}>
+  <Card title="Connect a channel" icon="plug" href="/using/connect-a-channel">
+    Add a network account, reconnect it when it drops, and disable or delete it.
+  </Card>
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Write once for several channels, then schedule it, save a draft or post now.
+  </Card>
+  <Card title="Posting settings by network" icon="sliders-horizontal" href="/public-api/providers/overview">
+    The settings each network takes when you post through the API.
+  </Card>
+  <Card title="Post from an AI agent" icon="bot" href="/agents/overview">
+    Ask Claude, ChatGPT, Grok Bot or another agent to schedule the post for you.
   </Card>
 </CardGroup>
-
