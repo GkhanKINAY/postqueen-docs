@@ -711,3 +711,25 @@ pre *,
 #banner button svg path {
   stroke: var(--pq-accent);
 }
+
+/* 13. The tabs sit in the middle of the header on wide screens, like the
+   site's menu, instead of piling up against the buttons with an empty
+   stretch after the logo. The wrapper Mintlify marks relative is made
+   static, so the tab row centres on the full header row. Below 1280px the
+   row keeps Mintlify's layout: there is no room to centre without
+   touching the logo or the buttons. */
+@media (min-width: 1280px) {
+  #navbar div:has(> div > .nav-tabs) {
+    position: static;
+  }
+  #navbar div:has(> .nav-tabs) {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+  }
+  #navbar .nav-tabs-item {
+    white-space: nowrap;
+  }
+}
