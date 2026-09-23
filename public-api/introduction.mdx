@@ -12,7 +12,6 @@ keywords:
 ---
 
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
-import NextStepsApi from '/snippets/next-steps-api.mdx';
 
 The public API does what the app does with posts: schedule and publish them on your channels, upload media, read analytics and manage channels. It is plain HTTPS and JSON, and everything in it acts on one workspace.
 
@@ -33,12 +32,12 @@ The public API does what the app does with posts: schedule and publish them on y
     <CodeGroup>
 
     ```bash curl
-    curl "https://api.postqueen.ai/public/v1/integrations" \
+    curl "{{apiBase}}/integrations" \
       -H "Authorization: YOUR_API_KEY"
     ```
 
     ```js Node.js
-    const res = await fetch("https://api.postqueen.ai/public/v1/integrations", {
+    const res = await fetch("{{apiBase}}/integrations", {
       headers: { Authorization: process.env.POSTQUEEN_API_KEY },
     });
     console.log(await res.json());
@@ -48,7 +47,7 @@ The public API does what the app does with posts: schedule and publish them on y
     import os, requests
 
     res = requests.get(
-        "https://api.postqueen.ai/public/v1/integrations",
+        "{{apiBase}}/integrations",
         headers={"Authorization": os.environ["POSTQUEEN_API_KEY"]},
     )
     print(res.json())
@@ -120,6 +119,12 @@ Each network has an identifier, such as `bluesky`, `wordpress` or `devto`, retur
   <Card title="Analytics" icon="chart-line" href="/public-api/analytics/platform">
     Channel metrics, one post's metrics, and ranked lists and totals.
   </Card>
+  <Card title="Posting settings by network" icon="sliders-horizontal" href="/public-api/providers/overview">
+    The settings a post takes on each network, with examples.
+  </Card>
+  <Card title="OAuth apps" icon="key-round" href="/public-api/oauth">
+    Let other PostQueen workspaces sign in to your product.
+  </Card>
 </CardGroup>
 
 ## Limits
@@ -129,7 +134,7 @@ Each network has an identifier, such as `bluesky`, `wordpress` or `devto`, retur
 ## Tools that use the API
 
 <CardGroup cols={2}>
-  <Card title="Node SDK" icon="package" href="/public-api/sdk">
+  <Card title="Node.js SDK" icon="package" href="/public-api/sdk">
     `@postqueen/node`, a typed client for the most used endpoints.
   </Card>
   <Card title="n8n" icon="workflow" href="/public-api/n8n">
@@ -143,4 +148,3 @@ Each network has an identifier, such as `bluesky`, `wordpress` or `devto`, retur
   </Card>
 </CardGroup>
 
-<NextStepsApi />

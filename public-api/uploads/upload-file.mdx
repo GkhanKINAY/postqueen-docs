@@ -1,6 +1,5 @@
 ---
 title: "Upload a file"
-sidebarTitle: "Upload a file"
 description: "Upload an image or video from disk and get the id and path a post's media takes."
 openapi: "POST /upload"
 ---
@@ -10,7 +9,7 @@ Send the file as multipart form data in a field named `file`. The answer's `id` 
 <CodeGroup>
 
 ```bash curl
-curl -X POST "https://api.postqueen.ai/public/v1/upload" \
+curl -X POST "{{apiBase}}/upload" \
   -H "Authorization: YOUR_API_KEY" \
   -F "file=@launch-banner.png"
 ```
@@ -21,7 +20,7 @@ import { readFile } from "node:fs/promises";
 const form = new FormData();
 form.append("file", new Blob([await readFile("launch-banner.png")]), "launch-banner.png");
 
-const res = await fetch("https://api.postqueen.ai/public/v1/upload", {
+const res = await fetch("{{apiBase}}/upload", {
   method: "POST",
   headers: { Authorization: process.env.POSTQUEEN_API_KEY },
   body: form,
@@ -58,5 +57,5 @@ PostQueen reads the type from the file's bytes, not its name, and stores files u
 A video answers with `"status": "processing"` while PostQueen prepares it for the networks. Poll [Get media status](/public-api/uploads/media-status) until it is `ready`, then use the `path` that call returns: a converted file has a new one. Images are `ready` at once.
 
 <Note>
-Uploads have their own limit, 300 an hour per workspace, apart from the posting limit. See [Limits and errors](/public-api/limits-and-errors).
+`POST /upload` allows 300 requests an hour per workspace, counted apart from Upload from a URL and from the posting limit. See [Limits and errors](/public-api/limits-and-errors).
 </Note>

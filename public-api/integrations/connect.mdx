@@ -1,6 +1,5 @@
 ---
 title: "Get a connect URL"
-sidebarTitle: "Connect a channel"
 description: "The sign-in URL that starts connecting a network, for a person to open in a browser."
 openapi: "GET /social/{integration}"
 ---
@@ -11,11 +10,11 @@ This returns a URL and nothing more. The network shows its own consent screen to
 
 It is for networks that sign in on their own consent page. On PostQueen today those are the networks **In review**: Instagram, Facebook, Threads, X, TikTok and YouTube. Each works with the limit on its [channel page](/channels/overview) until the network approves PostQueen's app.
 
-| How the network connects | Networks | What to do |
-|---|---|---|
-| Its own consent page | Instagram (`instagram`, `instagram-standalone`), Facebook, Threads, X, TikTok, YouTube | Open the `url` this returns |
-| A handle, key or password | Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress | Connect from **Add Channel** in the app. The `url` returned here is only an internal state value |
-| Soon | Every other network | Cannot be connected on PostQueen yet, whatever this returns |
+| Networks | What to do |
+|---|---|
+| Instagram (`instagram`, `instagram-standalone`), Facebook, Threads, X, TikTok, YouTube | They sign in on their own consent page: open the `url` this returns |
+| Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress | They connect with a handle, key or password: use **Add Channel** in the app. The `url` returned here is only an internal state value |
+| Every other network | Soon: cannot be connected on PostQueen yet, whatever this returns |
 
 The `{integration}` value is the network's identifier, in lower case: `youtube`, `threads`, `instagram-standalone`. It is not always the display name.
 

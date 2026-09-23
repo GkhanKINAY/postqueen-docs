@@ -1,6 +1,5 @@
 ---
 title: "Upload from a URL"
-sidebarTitle: "Upload from a URL"
 description: "Have PostQueen fetch an image or video from a public HTTPS URL into the media library."
 openapi: "POST /upload-from-url"
 ---
@@ -8,7 +7,7 @@ openapi: "POST /upload-from-url"
 Use this when the file already sits on the web, on a CDN or in public storage, and you do not want to download it and upload it again.
 
 ```bash
-curl -X POST "https://api.postqueen.ai/public/v1/upload-from-url" \
+curl -X POST "{{apiBase}}/upload-from-url" \
   -H "Authorization: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"url": "https://example.com/launch-banner.png"}'

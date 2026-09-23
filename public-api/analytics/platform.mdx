@@ -1,6 +1,5 @@
 ---
 title: "Get channel analytics"
-sidebarTitle: "Channel analytics"
 description: "A channel's metrics over time, such as followers and impressions, read from the network."
 openapi: "GET /analytics/{integration}"
 ---
@@ -9,12 +8,12 @@ openapi: "GET /analytics/{integration}"
 
 ```bash
 curl -H "Authorization: YOUR_API_KEY" \
-  "https://api.postqueen.ai/public/v1/analytics/YOUR_CHANNEL_ID?date=30"
+  "{{apiBase}}/analytics/YOUR_CHANNEL_ID?date=30"
 ```
 
 ## Which channels report
 
-Nine networks return channel metrics: Instagram, TikTok, YouTube, Facebook Page, X, LinkedIn Page, Threads, Pinterest and Google Business Profile. Every other channel answers `[]`. The app offers 7, 30 and 90 days, and 7 and 30 on Instagram, Threads and TikTok; the API passes your number to the network as it is. An answer is kept for an hour per channel and range, so asking again within the hour returns the same numbers.
+Nine networks return channel metrics: Instagram, TikTok, YouTube, Facebook Page, X, LinkedIn Page, Threads, Pinterest and Google Business Profile. Every other channel answers `[]`, and that includes every network Available on PostQueen today. The app offers 7, 30 and 90 days, and 7 and 30 on Instagram, Threads and TikTok; the API passes your number to the network as it is. An answer is kept for an hour per channel and range, so asking again within the hour returns the same numbers.
 
 ## If it fails
 

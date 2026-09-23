@@ -1,6 +1,5 @@
 ---
 title: "List post analytics"
-sidebarTitle: "Post analytics list"
 description: "Your published posts in a range with their latest metrics, sorted and paged."
 openapi: "GET /analytics/posts"
 ---
@@ -9,7 +8,7 @@ Where [Get post analytics](/public-api/analytics/post) asks the network about on
 
 - `date` picks posts **by publish date**: the last 1 to 90 days, 30 by default.
 - The numbers are each post's latest lifetime totals, not growth inside the range. `null` means the network does not report that metric, not zero.
-- Only networks with post metrics are included: Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube and Pinterest. Facebook reports no comments, and Pinterest no reactions or comments.
+- Only networks with post metrics are included: Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube and Pinterest. Facebook reports no comments, and Pinterest no reactions or comments. None of the networks Available on PostQueen today is among them.
 - Stored numbers older than an hour start a refresh in the background. The answer still comes at once, with `syncing: true`: ask again a little later for newer numbers.
 
 Narrow the list with `integrationIds` (comma separated), `platform` or `q` (text in the content or the channel name). Sort with `sort` (`reactions`, `comments`, `impressions`, `engagement` or `published`) and `dir`. `topReactions` and `topComments` always hold the five best posts of the whole filtered range, whatever page you ask for.

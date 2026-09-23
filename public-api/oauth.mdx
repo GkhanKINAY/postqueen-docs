@@ -39,7 +39,7 @@ sequenceDiagram
     | **Profile Picture** | Optional. Shown on the consent screen |
     | **Redirect URL** | Where PostQueen sends people after they choose **Authorize** or **Deny** |
 
-    You get a **Client ID** (`pca_...`) and a **Client Secret** (`pcs_...`). A workspace has one OAuth app, and only a workspace admin can create, edit or delete it.
+    You get a **Client ID** (`pca_...`) and a **Client Secret** (`pcs_...`). A workspace has one OAuth app, and only a workspace Admin or Super Admin can create, edit or delete it.
 
     <Warning>
     The Client Secret is shown once. Copy it and keep it on your server. If you lose it, choose **Rotate Secret**.
@@ -60,7 +60,7 @@ sequenceDiagram
     The person signs in if they need to, sees your app's name, description and picture, and chooses **Authorize** or **Deny**.
 
     <Note>
-    Only an admin of the workspace can authorize an app. The token acts with full rights on the workspace, like its API key, so a regular member cannot hand one out.
+    Only a workspace Admin or Super Admin can authorize an app. The token acts with full rights on the workspace, like its API key, so a regular member cannot hand one out.
     </Note>
   </Step>
 
@@ -106,7 +106,7 @@ sequenceDiagram
   <Step title="Call the API">
     ```bash
     curl -H "Authorization: pos_YOUR_ACCESS_TOKEN" \
-      "https://api.postqueen.ai/public/v1/integrations"
+      "{{apiBase}}/integrations"
     ```
 
     <Check>
@@ -193,7 +193,7 @@ app.get("/callback", async (req, res) => {
   const { access_token } = await tokenRes.json();
 
   // Store access_token for this user. Then, for example, list their channels:
-  const channels = await fetch("https://api.postqueen.ai/public/v1/integrations", {
+  const channels = await fetch("{{apiBase}}/integrations", {
     headers: { Authorization: access_token },
   }).then((r) => r.json());
 

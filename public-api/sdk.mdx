@@ -21,7 +21,7 @@ This page describes version 1.0.4. Run `npm ls @postqueen/node` to see yours.
 
 - **Node.js 20.19 or newer.** On Node.js 22, use 22.12 or newer. The package loads its HTTP library with `require`, which older versions refuse.
 - **A PostQueen workspace on a trial or a paid plan**, with at least one connected channel.
-- **The API key.** Only a workspace Admin or Super Admin can reveal it.
+- **The API key**, from the box below.
 
 <ApiKeyLocation />
 
@@ -168,7 +168,7 @@ async function main() {
 main();
 ```
 
-`upload()` sends the file with a content type taken from the extension you pass: `png`, `jpg` and `gif` are mapped, anything else is sent as JPEG. That label does not matter. PostQueen reads the real type from the file itself, so an MP4 or MOV uploads fine. A video comes back with `status: "processing"`: wait until [media status](/public-api/uploads/media-status) says `ready` before you post it.
+`upload()` sends the file with a content type taken from the extension you pass: `png`, `jpg` and `gif` are mapped, anything else is sent as JPEG. That label does not matter. PostQueen reads the real type from the file itself, so an MP4 or MOV uploads fine. A video comes back with `status: "processing"`: wait until [Get media status](/public-api/uploads/media-status) says `ready` before you post it.
 
 ### One post on two networks with settings
 
@@ -272,7 +272,7 @@ main();
 Every other endpoint is a plain HTTPS call with the same header. Send the key as it is, with no `Bearer` prefix. This one checks whether an uploaded video is ready:
 
 ```typescript media-status.ts
-const API = 'https://api.postqueen.ai/public/v1';
+const API = '{{apiBase}}';
 
 type MediaStatus = { id: string; path: string; status: 'ready' | 'processing' | 'failed'; processingError: string | null };
 

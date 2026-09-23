@@ -1,10 +1,9 @@
 ---
 title: "List channels"
-sidebarTitle: "List channels"
-description: "Every channel connected to the workspace, with the integration id that every other call takes."
+description: "Every channel connected to the workspace, with the id every other call takes."
 openapi: "GET /integrations"
 ---
 
-The `id` of each channel is what Create a post, Get a channel's settings, Trigger a tool and the analytics endpoints take. `identifier` names the network, such as `bluesky` or `wordpress`; the settings each network takes are on [Posting settings by network](/public-api/providers/overview).
+The `id` of each channel is what [Create a post](/public-api/posts/create), [Get a channel's settings](/public-api/integrations/settings), [Trigger a tool](/public-api/integrations/trigger) and the [analytics](/public-api/analytics/platform) endpoints take. `identifier` names the network, such as `bluesky` or `wordpress`; the settings each network takes are on [Posting settings by network](/public-api/providers/overview).
 
 A channel with `disabled: true` is switched off in the app and does not publish until someone turns it back on.

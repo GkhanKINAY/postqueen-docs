@@ -21,7 +21,7 @@ This page describes version 1.0.2 of the node.
 
 - **An n8n instance you run, where you are the Owner or an Admin.** n8n installs community nodes from npm only there. n8n Cloud installs only the community nodes n8n has verified, and this one is not verified yet. On n8n Cloud, call the API with the HTTP Request node instead, as shown in [Calls the node does not make](#calls-the-node-does-not-make).
 - **A PostQueen workspace on a trial or a paid plan**, with at least one connected channel.
-- **The API key.** Only a workspace Admin or Super Admin can reveal it.
+- **The API key**, from the box below.
 
 <ApiKeyLocation />
 
@@ -100,7 +100,7 @@ What each network needs is on [Posting settings by network](/public-api/provider
 ### Other fields
 
 - **Get Posts:** **Start Date (UTC)**, **End Date (UTC)** and an optional **Customer** id.
-- **Upload File:** **Binary Property**, the name of the binary field that holds the file. Most nodes that read files call it `data`. The node returns the stored file with its `id`, `path` and `status`. A video comes back `processing`: wait until it is `ready` before you post it (see [media status](/public-api/uploads/media-status)).
+- **Upload File:** **Binary Property**, the name of the binary field that holds the file. Most nodes that read files call it `data`. The node returns the stored file with its `id`, `path` and `status`. A video comes back `processing`: wait until it is `ready` before you post it (see [Get media status](/public-api/uploads/media-status)).
 - **Delete Post:** **Post ID**. When it works, the node outputs `{ "error": true }`: that is the API's answer to a successful delete. A post that does not exist stops the node with a 404.
 
 ## Build a workflow: new blog post to Bluesky
@@ -138,14 +138,14 @@ Each run of **Create Post** counts against the hourly limit per workspace for cr
 
 ## Calls the node does not make
 
-For any other endpoint, such as [media status](/public-api/uploads/media-status) or [analytics](/public-api/analytics/platform), use n8n's **HTTP Request** node:
+For any other endpoint, such as [Get media status](/public-api/uploads/media-status) or [analytics](/public-api/analytics/platform), use n8n's **HTTP Request** node:
 
 1. Set **Authentication** to **Generic Credential Type** and **Generic Auth Type** to **Header Auth**.
 2. Create a Header Auth credential with **Name** `Authorization` and **Value** your API key, as it is, with no `Bearer` prefix.
-3. Set the URL to the endpoint under `https://api.postqueen.ai/public/v1`, for example:
+3. Set the URL to the endpoint under `{{apiBase}}`, for example:
 
 ```text
-https://api.postqueen.ai/public/v1/media/{{ $json.id }}/status
+{{apiBase}}/media/{{ $json.id }}/status
 ```
 
 This also works on n8n Cloud, where the community node cannot be installed.

@@ -57,7 +57,7 @@
         "operationId": "listIntegrations",
         "responses": {
           "200": {
-            "description": "List of integrations",
+            "description": "The channels",
             "content": {
               "application/json": {
                 "schema": {
@@ -242,7 +242,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "The integration ID",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -250,7 +250,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Settings and tools for the integration",
+            "description": "The channel's settings and tools",
             "content": {
               "application/json": {
                 "schema": {
@@ -331,14 +331,14 @@
           "Channels"
         ],
         "summary": "Trigger a tool",
-        "description": "Runs one of a network's helper tools on a channel, such as listing Discord channels or Pinterest boards, to get the ids a post's `settings` need. Get a channel's settings lists each channel's tools with their `methodName` and `dataSchema`. The tools of every network are on [Provider tools](/public-api/integrations/provider-tools).",
+        "description": "Runs one of a network's helper tools on a channel, such as listing WordPress post types or Hashnode publications, to get the ids a post's `settings` need. Get a channel's settings lists each channel's tools with their `methodName` and `dataSchema`. The tools of every network are on [Provider tools](/public-api/integrations/provider-tools).",
         "operationId": "triggerIntegrationTool",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "The integration ID",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -450,14 +450,14 @@
           "Channels"
         ],
         "summary": "Delete a channel",
-        "description": "Deletes a channel and, first, every post of that channel in PostQueen, whatever its state: scheduled, drafts, published records and failed posts. Pending publishing for them is cancelled. Posts of other channels are not touched, and nothing already published is taken down from the network. Connecting the account again does not bring the posts back.",
+        "description": "Deletes a channel and, first, every post of that channel in PostQueen, whatever its state: scheduled, drafts, published records and failed posts. Pending publishing for them is canceled. Posts of other channels are not touched, and nothing already published is taken down from the network. Connecting the account again does not bring the posts back.",
         "operationId": "deleteChannel",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Integration ID of the channel",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -556,7 +556,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Integration ID",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -601,7 +601,7 @@
             "name": "startDate",
             "in": "query",
             "required": true,
-            "description": "Start date in UTC ISO format",
+            "description": "Start of the range, UTC, ISO 8601",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -612,7 +612,7 @@
             "name": "endDate",
             "in": "query",
             "required": true,
-            "description": "End date in UTC ISO format",
+            "description": "End of the range, UTC, ISO 8601",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -969,7 +969,7 @@
             "$ref": "#/components/responses/Unauthorized"
           },
           "402": {
-            "description": "The workspace has no posts left on its plan",
+            "description": "The workspace's plan allows no more posts. Current plans have no monthly post limit",
             "content": {
               "application/json": {
                 "schema": {
@@ -995,14 +995,14 @@
           "Posts"
         ],
         "summary": "Delete a post",
-        "description": "Deletes the post's whole group: the post and every entry of its thread or comments on that channel. The id of a comment deletes its whole group too. Pending publishing is cancelled. Nothing already published is taken down from the network.",
+        "description": "Deletes the post's whole group: the post and every entry of its thread or comments on that channel. The id of a comment deletes its whole group too. Pending publishing is canceled. Nothing already published is taken down from the network.",
         "operationId": "deletePost",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "The post id",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1053,7 +1053,7 @@
             "name": "group",
             "in": "path",
             "required": true,
-            "description": "The group id",
+            "description": "The post's `group`, from List posts",
             "schema": {
               "type": "string"
             }
@@ -1089,7 +1089,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1138,7 +1138,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1224,7 +1224,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1317,7 +1317,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1609,7 +1609,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Media id returned by an upload",
+            "description": "The media id from an upload",
             "schema": {
               "type": "string"
             }
@@ -1712,7 +1712,7 @@
             "name": "integration",
             "in": "path",
             "required": true,
-            "description": "Integration ID",
+            "description": "The channel's id, from List channels",
             "schema": {
               "type": "string"
             }
@@ -1730,7 +1730,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Analytics data for the integration",
+            "description": "The channel's metrics",
             "content": {
               "application/json": {
                 "schema": {
@@ -1819,7 +1819,7 @@
             "name": "postId",
             "in": "path",
             "required": true,
-            "description": "Post ID",
+            "description": "The post's id",
             "schema": {
               "type": "string"
             }
@@ -1837,7 +1837,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Analytics data for the post",
+            "description": "The post's metrics, `[]`, or `{ \"missing\": true }`",
             "content": {
               "application/json": {
                 "schema": {
@@ -1944,7 +1944,7 @@
             "name": "platform",
             "in": "query",
             "required": false,
-            "description": "Provider identifier to limit the report to, such as x or instagram",
+            "description": "The network's identifier, such as x or instagram",
             "schema": {
               "type": "string",
               "maxLength": 64
@@ -2122,7 +2122,7 @@
             "name": "platform",
             "in": "query",
             "required": false,
-            "description": "Provider identifier to limit the report to, such as x or instagram",
+            "description": "The network's identifier, such as x or instagram",
             "schema": {
               "type": "string",
               "maxLength": 64
@@ -2236,7 +2236,7 @@
             "name": "page",
             "in": "query",
             "required": false,
-            "description": "Page number (0-indexed). Defaults to 0.",
+            "description": "Page number, starting at 0",
             "schema": {
               "type": "integer",
               "minimum": 0,
@@ -2344,7 +2344,7 @@
             "name": "code_challenge",
             "in": "query",
             "required": false,
-            "description": "PKCE challenge. Required for public dynamically registered clients",
+            "description": "PKCE challenge. Required for a registered client without a secret",
             "schema": {
               "type": "string"
             }
@@ -2353,7 +2353,7 @@
             "name": "code_challenge_method",
             "in": "query",
             "required": false,
-            "description": "PKCE method. Only `S256` is accepted for dynamically registered clients",
+            "description": "PKCE method. A registered client must use `S256`",
             "schema": {
               "type": "string"
             }
@@ -2792,7 +2792,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Integration ID. Every other call that names a channel takes this id"
+            "description": "The channel's id. Every other call that names a channel takes it"
           },
           "name": {
             "type": "string",
@@ -3145,7 +3145,7 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Integration ID"
+                "description": "The channel's id, from List channels"
               }
             }
           },

@@ -1,11 +1,10 @@
 ---
 title: "Trigger a tool"
-sidebarTitle: "Trigger a tool"
-description: "Run a network's helper tool on a channel, such as listing WordPress post types or Discord channels."
+description: "Run a network's helper tool on a channel, such as listing WordPress post types or Hashnode publications."
 openapi: "POST /integration-trigger/{id}"
 ---
 
-Some settings take an id you cannot guess: a WordPress post type, a Hashnode publication, a Discord channel. The network's helper tools look them up for you.
+Some settings take an id you cannot guess: a WordPress post type, a Hashnode publication, a Lemmy community. The network's helper tools look them up for you.
 
 <Steps>
   <Step title="Find the tool">
@@ -20,7 +19,7 @@ Some settings take an id you cannot guess: a WordPress post type, a Hashnode pub
 </Steps>
 
 ```bash
-curl -X POST "https://api.postqueen.ai/public/v1/integration-trigger/YOUR_CHANNEL_ID" \
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
   -H "Authorization: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"methodName": "postTypes", "data": {}}'

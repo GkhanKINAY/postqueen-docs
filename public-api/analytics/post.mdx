@@ -1,13 +1,12 @@
 ---
 title: "Get post analytics"
-sidebarTitle: "Post analytics"
 description: "Live metrics for one published post, read from the network."
 openapi: "GET /analytics/post/{postId}"
 ---
 
 Pass the PostQueen post id and `date`, the number of days to look back. The numbers are read live from the network, so they are what that network reports for one post: likes, comments, views, shares and the like.
 
-Eight networks have post metrics: Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube and Pinterest. The answer is `[]` when:
+Eight networks have post metrics: Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube and Pinterest. None of the networks Available on PostQueen today reports them. The answer is `[]` when:
 
 - the post has not been published yet,
 - its network has no post metrics, or

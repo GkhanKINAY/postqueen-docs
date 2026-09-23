@@ -1,10 +1,9 @@
 ---
 title: "Delete a post by group"
-sidebarTitle: "Delete by group"
 description: "Delete one channel's post with its thread or comments, by group id."
 openapi: "DELETE /posts/group/{group}"
 ---
 
 A group is one channel's post together with its thread or comments. It is not the whole multi-channel request: when you post to three channels in one [Create a post](/public-api/posts/create) call, each channel gets its own group. Read a post's `group` from [List posts](/public-api/posts/list).
 
-The answer is `200` with `{ "error": true }` whether or not any post had that group, so this call cannot tell you the group existed. Nothing already published is taken down from the network.
+Since the answer is the same whether or not any post had that group, this call cannot tell you the group existed. Nothing already published is taken down from the network.

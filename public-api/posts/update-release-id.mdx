@@ -1,6 +1,5 @@
 ---
 title: "Update release ID"
-sidebarTitle: "Update release ID"
 description: "Connect a TikTok post to the video it became, so its analytics can be read."
 openapi: "PUT /posts/{id}/release-id"
 ---
@@ -8,5 +7,5 @@ openapi: "PUT /posts/{id}/release-id"
 Take the `id` from [Get missing content](/public-api/posts/missing-content) and send it as `releaseId`.
 
 <Warning>
-Anything that does not match answers `500`, not `400` or `404`: an unknown post id, a post of another workspace, or a post whose release id is not `missing`. The body is not checked either, so a request without `releaseId` stores the text `undefined`. Check the post and your body before you call it.
+The body is not checked: a request without `releaseId` stores the text `undefined` on the post. Check your body before you send it.
 </Warning>

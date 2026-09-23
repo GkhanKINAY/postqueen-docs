@@ -1,7 +1,7 @@
 ---
 title: "Zapier and Make"
 description: "Official Zapier and Make apps are coming soon. Until then, call the PostQueen API from Webhooks by Zapier or Make's HTTP module."
-icon: "workflow"
+icon: "zap"
 keywords:
   - postqueen
   - zapier
@@ -11,9 +11,10 @@ keywords:
 ---
 
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsApi from '/snippets/next-steps-api.mdx';
 
-<Badge color="gray" shape="pill">Soon</Badge>
+<ChannelStatus status="soon">The official apps are not out yet.</ChannelStatus>
 
 Official PostQueen apps for Zapier and Make are coming soon. Today both tools can call the [PostQueen API](/public-api/introduction) directly: Zapier with **Webhooks by Zapier**, Make with its **HTTP** app. What you build that way does not depend on the apps. For n8n there is already a node: see [n8n](/public-api/n8n).
 
@@ -21,7 +22,7 @@ Official PostQueen apps for Zapier and Make are coming soon. Today both tools ca
 
 | Part | What to send |
 |---|---|
-| **URL** | `https://api.postqueen.ai/public/v1/posts` to create a post. Other endpoints are under the same base. |
+| **URL** | `{{apiBase}}/posts` to create a post. Other endpoints are under the same base. |
 | **Method** | `POST` |
 | **Headers** | `Authorization` set to your API key as it is, with no `Bearer` prefix, and `Content-Type` set to `application/json` |
 | **Body** | JSON, as below |
@@ -56,7 +57,7 @@ The channel id comes from [List channels](/public-api/integrations/list). A netw
     Add a **Webhooks by Zapier** action and choose the **Custom Request** event. The plain POST event cannot send the nested JSON a post needs.
   </Step>
   <Step title="Fill in the request">
-    Set **Method** to `POST`, **URL** to `https://api.postqueen.ai/public/v1/posts`, and **Data** to the JSON body. Under **Headers**, add `Authorization` with your API key and `Content-Type` with `application/json`.
+    Set **Method** to `POST`, **URL** to `{{apiBase}}/posts`, and **Data** to the JSON body. Under **Headers**, add `Authorization` with your API key and `Content-Type` with `application/json`.
   </Step>
   <Step title="Test the step">
     A working request answers with `[{ "postId": "...", "integration": "..." }]`, and the post appears on your calendar.
@@ -74,7 +75,7 @@ Webhooks by Zapier is on Zapier's Professional, Team and Enterprise plans, not t
     Add the **HTTP** app and choose **Make a request**.
   </Step>
   <Step title="Fill in the request">
-    Set **URL** to `https://api.postqueen.ai/public/v1/posts` and **Method** to `POST`. Under **Headers**, add `Authorization` with your API key. Set **Body content type** to `application/json`, **Body input method** to **JSON string**, and paste the body into **Body content**.
+    Set **URL** to `{{apiBase}}/posts` and **Method** to `POST`. Under **Headers**, add `Authorization` with your API key. Set **Body content type** to `application/json`, **Body input method** to **JSON string**, and paste the body into **Body content**.
   </Step>
   <Step title="Parse the answer">
     Set **Parse response** to **Yes**, so the returned `postId` can be mapped into later modules. Run the module once to check it.

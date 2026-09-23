@@ -1,13 +1,10 @@
 ---
 title: "Delete a post"
-sidebarTitle: "Delete a post"
 description: "Delete a post by id, with its whole thread or comments on that channel."
 openapi: "DELETE /posts/{id}"
 ---
 
 A delete removes the post's **group**: the post on one channel with every entry of its thread or its comments. Deleting the first entry of a thread removes the whole thread, and so does the id of one of its comments. The same content on your other channels is not touched, because each channel entry of a create request gets its own group.
-
-A successful delete answers `200` with the body `{ "error": true }`. The name is a quirk of the code, not a failure: judge the call by its status code.
 
 <Tip>
 An id that is unknown or already deleted answers `404 Post not found`. A client that retries deletes can treat that `404` as done.

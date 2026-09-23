@@ -1,26 +1,10 @@
 ---
 title: "Create a post"
-sidebarTitle: "Create a post"
 description: "Schedule a post, publish it now or save a draft, on one channel or several, with media and threads."
 openapi: "POST /posts"
 ---
 
-Every request carries the same five fields: `type`, `date`, `shortLink`, `tags` and `posts`. Each entry in `posts` is one channel, and each item in its `value` list is one part of the post: the first is the post, the rest are its thread or comments.
-
-```json
-{
-  "type": "schedule",
-  "date": "2026-10-01T09:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": { "id": "YOUR_CHANNEL_ID" },
-      "value": [{ "content": "Shipping the new calendar today.", "image": [] }]
-    }
-  ]
-}
-```
+Every request carries the same five fields: `type`, `date`, `shortLink`, `tags` and `posts`. Each entry in `posts` is one channel, and each item in its `value` list is one part of the post: the first is the post, the rest are its thread or comments. The request examples on this page show whole requests for Bluesky, Nostr, WordPress and DEV.
 
 A step-by-step guide, from finding the channel id to checking the result, is [Schedule a post with the API](/public-api/schedule-a-post).
 
@@ -37,30 +21,12 @@ A step-by-step guide, from finding the channel id to checking the result, is [Sc
 A draft is checked too: the body, and each network's required settings. The network's rules on length and media are checked only when the post is set to go out (`schedule`, `now` and `update`). So a draft you schedule later is already complete.
 </Note>
 
-## The request
+## Two fields that are easy to miss
 
-| Field | Required | What it does |
-|---|---|---|
-| `type` | Yes | `schedule`, `now`, `draft` or `update`, as above |
-| `date` | Yes | When the post goes out, in UTC, ISO 8601 |
-| `shortLink` | Yes | `true` replaces links with PostQueen short links. Send `false` to keep them as they are |
-| `tags` | Yes | Tags to attach, as `{ value, label }`. PostQueen attaches only tags that already exist in the workspace. Send `[]` for none |
-| `posts` | Yes | One entry per channel, described below |
-| `inter` | No | Repeat the post every this many days |
-| `republish` | No | `true` to publish again a post that was already published |
+- **`image` is required on every item of `value`.** Send `[]` for text only. Leaving it out answers `400` with `posts.0.value.0.image must be an array`.
+- **`group` deletes.** Leave it out for a new post. When it names an existing group, every post of that group that the request does not resend is deleted.
 
-Each entry in `posts`:
-
-| Field | Required | What it does |
-|---|---|---|
-| `integration.id` | Yes | The channel, from [List channels](/public-api/integrations/list) |
-| `value` | Yes | The post, then its thread or comments. Each item has `content`, `image`, and optionally `delay` and `id` |
-| `value[].content` | Yes | The text. It may be empty only when the item has media |
-| `value[].image` | Yes | Media, as `{ id, path }` from an upload. Send `[]` for text only |
-| `value[].delay` | No | Minutes to wait after the previous item of a thread |
-| `value[].id` | No | An existing post's id, to change that post in place |
-| `settings` | Depends on the network | The network's settings: see the table below |
-| `group` | No | Leave it out for a new post. With an existing group, every post of that group you do not resend is deleted |
+Every field, with its type, is in the body schema on this page.
 
 Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`, and a video must be `ready`: see [Upload a file](/public-api/uploads/upload-file).
 
@@ -68,32 +34,32 @@ Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.
 
 `settings.__type` is always set from the channel, so you may leave it out; what matters is the shape of the rest. Networks without required settings need no `settings` at all. Every field of every network, with examples: [Posting settings by network](/public-api/providers/overview).
 
-| Network | Required settings | On PostQueen |
-|---|---|---|
-| Bluesky, Nostr | None | Available |
-| WordPress | `title`, `type` (`posts`, `pages` or another post type from the `postTypes` tool) | Available |
-| DEV | `title` | Available |
-| Hashnode | `title`, `publication`, at least one `tags` entry | Available |
-| Lemmy | `subreddit` list, each with a community and a title | Available |
-| Listmonk | `subject`, `preview`, `list` | Available |
-| Moltbook | `submolt` | Available |
-| X | `who_can_reply_post`, or `article_title` and `article_status` for an article | In review |
-| Instagram | `post_type` | In review |
-| YouTube | `title`, `type` | In review |
-| TikTok | Eight fields, from `privacy_level` to `content_posting_method`: see [TikTok settings](/public-api/providers/tiktok) | In review |
-| Facebook, Threads | None | In review |
-| Reddit | `subreddit` list, each with a subreddit, title, type and flair choice | Soon |
-| Pinterest | `board` | Soon |
-| Dribbble | `title` | Soon |
-| Discord, Slack | `channel` | Soon |
-| Skool | `group`, `label`, `title` | Soon |
-| Whop | `company`, `experience` | Soon |
-| MeWe | `postType`, and `group` for a group post | Soon |
-| Farcaster | `subreddit` list of channels | Soon |
-| Google Business Profile | None; an event or offer needs `eventTitle`, `eventStartDate` and `eventEndDate` | Soon |
-| LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr | None | Soon |
+| Network | Required settings |
+|---|---|
+| Bluesky, Nostr | None |
+| WordPress | `title`, `type` (`posts`, `pages` or another post type from the `postTypes` tool) |
+| DEV | `title` |
+| Hashnode | `title`, `publication`, at least one `tags` entry |
+| Lemmy | `subreddit` list, each with a community and a title |
+| Listmonk | `subject`, `preview`, `list` |
+| Moltbook | `submolt` |
+| X (In review) | `who_can_reply_post`, or `article_title` and `article_status` for an article |
+| Instagram (In review) | `post_type` |
+| YouTube (In review) | `title`, `type` |
+| TikTok (In review) | Eight fields, from `privacy_level` to `content_posting_method`: see [TikTok settings](/public-api/providers/tiktok) |
+| Facebook, Threads (In review) | None |
+| Reddit (Soon) | `subreddit` list, each with a subreddit, title, type and flair choice |
+| Pinterest (Soon) | `board` |
+| Dribbble (Soon) | `title` |
+| Discord, Slack (Soon) | `channel` |
+| Skool (Soon) | `group`, `label`, `title` |
+| Whop (Soon) | `company`, `experience` |
+| MeWe (Soon) | `postType`, and `group` for a group post |
+| Farcaster (Soon) | `subreddit` list of channels |
+| Google Business Profile (Soon) | None; an event or offer needs `eventTitle`, `eventStartDate` and `eventEndDate` |
+| LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr (Soon) | None |
 
-What **In review** and **Soon** mean for each network is on [Channels](/channels/overview).
+Networks without a mark are Available. What **In review** and **Soon** mean for each network is on [Channels](/channels/overview).
 
 ## What comes back
 
@@ -122,7 +88,7 @@ Every status the endpoint returns, and what to do about it, is on [Limits and er
 - **Publish a post again.** `schedule` or `now` with the id of a post that was already published is refused with `400`. Add `"republish": true` if you mean it.
 - **Copy a post.** There is no copy endpoint. Read the post with [List posts](/public-api/posts/list), parse its `settings` and `image` (they come back as JSON strings), and send the content as a new post without any post ids or `group`.
 
-## Body size
+## Size and rate limits
 
 <Warning>
 Do not put file data in the body. This endpoint takes about 100 kB of JSON, which one base64 image exceeds, and answers `413` before anything is checked. Upload the file first and send its `id` and `path`.

@@ -5,14 +5,14 @@ description: "Every helper tool a network offers, what it takes and what it retu
 icon: "wrench"
 ---
 
-Some settings need a value you cannot know in advance: which board to pin to, which WordPress post type, which Discord channel. A network's helper tools fetch those values for you, so nobody has to copy an id out of a web page.
+Some settings need a value you cannot know in advance: which WordPress post type, which Hashnode publication, which Lemmy community. A network's helper tools fetch those values for you, so nobody has to copy an id out of a web page.
 
 The API, the CLI and the MCP server all run the same tools:
 
 <CodeGroup>
 
 ```bash API
-curl -X POST "https://api.postqueen.ai/public/v1/integration-trigger/YOUR_CHANNEL_ID" \
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
   -H "Authorization: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"methodName": "postTypes", "data": {}}'
@@ -35,7 +35,7 @@ postqueen integrations:trigger YOUR_CHANNEL_ID postTypes
 The API takes the inputs as an object in `data`, such as `{"word": "design"}`. The MCP `triggerTool` takes them as a list of `{ key, value }` pairs.
 
 <Note>
-This page is the catalogue. For the live list on one connected channel, with each tool's inputs, call [Get a channel's settings](/public-api/integrations/settings). Networks marked **Soon** cannot be connected on PostQueen yet; their tools are listed for when they can. Status per network: [Channels](/channels/overview).
+This page is the catalog. For the live list on one connected channel, with each tool's inputs, call [Get a channel's settings](/public-api/integrations/settings). Networks marked **Soon** cannot be connected on PostQueen yet; their tools are listed for when they can. Status per network: [Channels](/channels/overview).
 </Note>
 
 ## Which networks have tools
@@ -47,8 +47,8 @@ This page is the catalogue. For the live list on one connected channel, with eac
 | [Hashnode](#hashnode) | `tagsList`, `publications` |
 | [Lemmy](#lemmy) | `subreddits` |
 | [Listmonk](#listmonk) | `list`, `templates` |
-| [Instagram](#instagram) | `audioSearch` |
-| [TikTok Business](#tiktok-business) | `musicSearch`, `locationSearch` |
+| [Instagram](#instagram) (In review) | `audioSearch` |
+| [TikTok Business](#tiktok-business) (In review) | `musicSearch`, `locationSearch` |
 | Soon: [Reddit](#reddit), [Pinterest](#pinterest), [Discord](#discord), [Slack](#slack), [Dribbble](#dribbble), [MeWe](#mewe), [Whop](#whop), [Skool](#skool), [Farcaster](#farcaster) | Listed below |
 
 Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook, YouTube, the standard TikTok connection, Instagram Standalone, LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr and Google Business Profile. Everything they need is in the post's settings.
@@ -72,7 +72,7 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 
 | Tool | Inputs | Returns |
 |---|---|---|
-| `tagsList` | none | Hashnode's tag catalogue, 1,000 entries, as `{ name, slug, objectID }`, some with a `logo`. It is a fixed list inside PostQueen, so it answers at once. |
+| `tagsList` | none | Hashnode's tag catalog, 1,000 entries, as `{ name, slug, objectID }`, some with a `logo`. It is a fixed list inside PostQueen, so it answers at once. |
 | `publications` | none | The publications you can post to, as `{ id, name }`. Send the id as `publication`. |
 
 ## Lemmy
@@ -160,16 +160,16 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 
 ## Tools that take another tool's answer
 
-Whop's `experiences` needs a company id from `companies`, Skool's `label` needs a group id from `groups`, and Reddit's `restrictions` needs a `name` from `subreddits`. Call them in that order:
+Whop's `experiences` needs a company id from `companies`, Skool's `label` needs a group id from `groups`, and Reddit's `restrictions` needs a `name` from `subreddits`. All three networks are Soon on PostQueen; when they can be connected, call the tools in that order:
 
 ```bash
 # 1. The companies you administer
-curl -X POST "https://api.postqueen.ai/public/v1/integration-trigger/YOUR_WHOP_CHANNEL_ID" \
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_WHOP_CHANNEL_ID" \
   -H "Authorization: YOUR_API_KEY" -H "Content-Type: application/json" \
   -d '{"methodName": "companies", "data": {}}'
 
 # 2. The forums of the company you picked
-curl -X POST "https://api.postqueen.ai/public/v1/integration-trigger/YOUR_WHOP_CHANNEL_ID" \
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_WHOP_CHANNEL_ID" \
   -H "Authorization: YOUR_API_KEY" -H "Content-Type: application/json" \
   -d '{"methodName": "experiences", "data": {"id": "COMPANY_ID"}}'
 ```
@@ -181,13 +181,13 @@ When the last call returns, you have the ids the post's settings ask for.
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Trigger a tool" icon="zap" href="/public-api/integrations/trigger">
+  <Card title="Trigger a tool" icon="play" href="/public-api/integrations/trigger">
     The endpoint behind every example on this page.
   </Card>
   <Card title="Get a channel's settings" icon="sliders-horizontal" href="/public-api/integrations/settings">
     The live list of tools on one connected channel, with their inputs.
   </Card>
-  <Card title="Posting settings by network" icon="list" href="/public-api/providers/overview">
+  <Card title="Posting settings by network" icon="sliders-horizontal" href="/public-api/providers/overview">
     Where each id goes once you have it.
   </Card>
   <Card title="The CLI" icon="terminal" href="/cli/command-reference">

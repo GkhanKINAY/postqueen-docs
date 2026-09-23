@@ -16,7 +16,7 @@ You need an API key and at least one connected channel. To connect one, see [Con
 ## 1. Check the key
 
 ```bash
-curl "https://api.postqueen.ai/public/v1/is-connected" \
+curl "{{apiBase}}/is-connected" \
   -H "Authorization: YOUR_API_KEY"
 ```
 
@@ -25,7 +25,7 @@ curl "https://api.postqueen.ai/public/v1/is-connected" \
 ## 2. Find the channel
 
 ```bash
-curl "https://api.postqueen.ai/public/v1/integrations" \
+curl "{{apiBase}}/integrations" \
   -H "Authorization: YOUR_API_KEY"
 ```
 
@@ -47,7 +47,7 @@ Keep the `id` of the channel you want. It is `YOUR_CHANNEL_ID` below.
 ## 3. Read what the network needs
 
 ```bash
-curl "https://api.postqueen.ai/public/v1/integration-settings/YOUR_CHANNEL_ID" \
+curl "{{apiBase}}/integration-settings/YOUR_CHANNEL_ID" \
   -H "Authorization: YOUR_API_KEY"
 ```
 
@@ -68,7 +68,7 @@ Bluesky takes up to 300 characters, up to four pictures or one video, and no set
 A WordPress channel answers with a `settings` schema that requires `title` and `type`. `type` is a post type such as `posts`, and the `postTypes` tool lists them:
 
 ```bash
-curl -X POST "https://api.postqueen.ai/public/v1/integration-trigger/YOUR_CHANNEL_ID" \
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
   -H "Authorization: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"methodName": "postTypes", "data": {}}'
@@ -84,7 +84,7 @@ The post then carries `"settings": { "title": "...", "type": "posts" }`. Every n
 ## 4. Upload the image
 
 ```bash
-curl -X POST "https://api.postqueen.ai/public/v1/upload" \
+curl -X POST "{{apiBase}}/upload" \
   -H "Authorization: YOUR_API_KEY" \
   -F "file=@launch-banner.png"
 ```
@@ -110,7 +110,7 @@ Pick a time in UTC. To use the channel's next free posting time instead, [Find a
 <CodeGroup>
 
 ```bash curl
-curl -X POST "https://api.postqueen.ai/public/v1/posts" \
+curl -X POST "{{apiBase}}/posts" \
   -H "Authorization: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -135,7 +135,7 @@ curl -X POST "https://api.postqueen.ai/public/v1/posts" \
 ```
 
 ```js Node.js
-const res = await fetch("https://api.postqueen.ai/public/v1/posts", {
+const res = await fetch("{{apiBase}}/posts", {
   method: "POST",
   headers: {
     Authorization: process.env.POSTQUEEN_API_KEY,
@@ -182,7 +182,7 @@ To post the same thing on several channels, add one entry per channel to `posts`
 List the posts of that day:
 
 ```bash
-curl "https://api.postqueen.ai/public/v1/posts?startDate=2026-10-01T00:00:00.000Z&endDate=2026-10-01T23:59:59.000Z" \
+curl "{{apiBase}}/posts?startDate=2026-10-01T00:00:00.000Z&endDate=2026-10-01T23:59:59.000Z" \
   -H "Authorization: YOUR_API_KEY"
 ```
 
@@ -193,7 +193,7 @@ Find your `postId` and read its `state`:
 | `QUEUE` | Scheduled, not published yet |
 | `PUBLISHED` | Live. `releaseURL` links to it on the network |
 | `ERROR` | Publishing failed. `error` has the network's reason |
-| `DRAFT` | Saved without a time to go out |
+| `DRAFT` | A draft. It keeps its date, and nothing publishes it |
 
 <Check>
 `PUBLISHED` with a `releaseURL` means the post is live on Bluesky.
@@ -222,7 +222,7 @@ To be told the moment a post goes out instead of asking, add a [webhook](/using/
   <Card title="Limits and errors" icon="gauge" href="/public-api/limits-and-errors">
     The hourly limits, and what each status code means.
   </Card>
-  <Card title="Node SDK" icon="package" href="/public-api/sdk">
+  <Card title="Node.js SDK" icon="package" href="/public-api/sdk">
     The same calls from JavaScript or TypeScript.
   </Card>
 </CardGroup>
