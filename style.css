@@ -71,6 +71,11 @@
   --pq-shadow: 0 14px 30px -18px rgba(40, 20, 80, 0.35);
   --pq-ok: #16a34a;
   --pq-on-violet: #ffffff;
+  /* The panels behind the site's pictures (Main on the canvas). */
+  --pq-tint-lilac: #f3effd;
+  --pq-tint-peach: #fdf0ea;
+  --pq-tint-blue: #e9f0fa;
+  --pq-tint-green: #eaf6f1;
 }
 .dark {
   --pq-ink: #f3f0f8;
@@ -88,6 +93,10 @@
   --pq-glow: rgba(124, 58, 237, 0.22);
   --pq-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.8);
   --pq-ok: #4ade80;
+  --pq-tint-lilac: #221d2f;
+  --pq-tint-peach: #2a211e;
+  --pq-tint-blue: #1b212d;
+  --pq-tint-green: #1a2622;
 }
 
 /* The page background runs to the bottom of long pages and under the footer. */
@@ -259,9 +268,12 @@ pre *,
   flex-shrink: 0;
 }
 
-/* 11. The docs home (introduction.mdx, mode: custom). Built from the site's
-   hero: dot grid, pill eyebrow, 800-weight headline with a serif second half,
-   pill buttons, white cards on paper. */
+/* 11. The docs home (introduction.mdx, mode: custom). The site's look (Main
+   and Mcp on the design canvas) laid out as a docs index: every block starts
+   on the same left edge; a two-column top with the app window; the four ways
+   as the site's picture cards; topic lists; the channel tiles. The pictures
+   are captures of the canvas on a transparent ground (images/site), and the
+   tinted panel behind each one is drawn here, so it follows the theme. */
 .pq-home {
   color: var(--pq-ink);
   padding-bottom: 4rem;
@@ -269,18 +281,20 @@ pre *,
 .pq-home a {
   text-decoration: none;
 }
+#content .pq-home a {
+  border-bottom: 0;
+}
+.pq-home img {
+  display: block;
+  margin: 0;
+}
 /* Mintlify paints <Icon> with bg-primary; on the home the icon takes the
    color of the element around it. */
 .pq-home .icon {
   background-color: currentColor !important;
 }
-.pq-hero {
+.pq-top {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 5rem 1.5rem 3.5rem;
   overflow: hidden;
 }
 .pq-dots {
@@ -292,18 +306,17 @@ pre *,
   -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
   mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
 }
-.pq-glow {
-  position: absolute;
-  left: 50%;
-  bottom: -220px;
-  width: min(1100px, 140%);
-  height: 420px;
-  transform: translateX(-50%);
-  pointer-events: none;
-  background: radial-gradient(closest-side, var(--pq-glow), transparent);
+.pq-top-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  align-items: center;
+  gap: 3rem;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 4.5rem 1.5rem 0.5rem;
 }
 .pq-eyebrow {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -321,56 +334,47 @@ pre *,
   height: 18px;
   color: var(--pq-violet);
 }
-.pq-hero-title {
-  position: relative;
-  margin: 1.5rem 0 0;
-  max-width: 980px;
-  font-size: clamp(2.5rem, 6vw, 4.25rem);
+.pq-top-title {
+  margin: 1.25rem 0 0;
+  font-size: clamp(2.5rem, 5vw, 3.75rem);
   line-height: 1.04;
   font-weight: 800;
   letter-spacing: -0.045em;
   color: var(--pq-ink);
-  text-wrap: balance;
 }
-.pq-hero-title .pq-serif {
-  display: block;
-  font-size: 1.12em;
-  line-height: 1.02;
+.pq-top-title .pq-serif {
+  font-size: 1.1em;
   letter-spacing: -0.02em;
 }
 .pq-lede {
-  position: relative;
-  margin: 1.5rem 0 0;
-  max-width: 720px;
-  font-size: 1.2rem;
-  line-height: 1.55;
+  margin: 1.25rem 0 0;
+  max-width: 520px;
+  font-size: 1.125rem;
+  line-height: 1.6;
   color: var(--pq-muted);
   text-wrap: pretty;
 }
 .pq-actions {
-  position: relative;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.75rem 1rem;
-  margin-top: 2rem;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
 }
 .pq-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  height: 52px;
-  padding: 0 26px;
+  height: 46px;
+  padding: 0 20px;
   border-radius: 999px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
+  white-space: nowrap;
   transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
 .pq-btn-primary {
   background: var(--pq-violet);
   color: var(--pq-on-violet) !important;
-  box-shadow: 0 10px 30px -12px rgba(124, 58, 237, 0.7);
 }
 .pq-btn-primary:hover {
   background: var(--pq-violet-600);
@@ -380,214 +384,246 @@ pre *,
   color: var(--pq-ink-2) !important;
   background: var(--pq-surface);
 }
-.pq-btn-ghost:hover {
+#content .pq-home .pq-btn-ghost {
+  border: 1.5px solid var(--pq-line-2);
+}
+.pq-btn-ghost:hover,
+#content .pq-home .pq-btn-ghost:hover {
   border-color: var(--pq-ink);
   color: var(--pq-ink) !important;
 }
-.pq-proof {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem 1.25rem;
-  margin-top: 1.25rem;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--pq-muted);
-}
-.pq-proof span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-.pq-proof svg {
-  width: 16px;
-  height: 16px;
-  color: var(--pq-ok);
+/* The capture keeps 40px of shadow around the 1200px window; the picture is
+   widened by that much so the window itself meets the column's edges. */
+.pq-top-visual img {
+  width: 106.667%;
+  max-width: none;
+  margin: -3.333%;
 }
 .pq-section {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 3.5rem 1.5rem 0;
-}
-.pq-kicker {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  /* The accent, not the raw violet: #7C3AED on the dark paper is under 4.5:1
-     for text this small. */
-  color: var(--pq-accent);
+  padding: 4rem 1.5rem 0;
 }
 .pq-h2 {
-  margin: 0.5rem 0 0;
-  font-size: clamp(1.9rem, 4vw, 2.75rem);
-  line-height: 1.08;
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.125rem);
+  line-height: 1.15;
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   color: var(--pq-ink);
-  text-wrap: balance;
 }
 .pq-sub {
-  margin: 0.75rem 0 0;
+  margin: 0.6rem 0 0;
   max-width: 640px;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   line-height: 1.6;
   color: var(--pq-muted);
 }
 .pq-ways {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.75rem;
 }
-.pq-way {
+.pq-way,
+#content .pq-home a.pq-way {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: 1.5rem;
+  padding: 12px;
   border: 1px solid var(--pq-line);
-  border-radius: 24px;
+  border-radius: 26px;
   background: var(--pq-surface);
   color: var(--pq-ink) !important;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
-}
-#content .pq-home a.pq-way,
-#content .pq-home .pq-next a {
-  border: 1px solid var(--pq-line);
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 .pq-way:hover,
 #content .pq-home a.pq-way:hover {
   border-color: var(--pq-violet-300);
   box-shadow: var(--pq-shadow);
 }
-.pq-way-icon {
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--pq-lilac);
-  color: var(--pq-violet);
+.pq-way-visual {
+  display: block;
+  aspect-ratio: 564 / 300;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.pq-way-visual img {
+  width: 100%;
+  height: auto;
+}
+/* A window capture (the app, the terminal) sits inside the panel and runs
+   off its bottom edge, like the phone on the site. */
+.pq-way-window img {
+  width: 88%;
+  margin: 6% auto 0;
+}
+.pq-tint-lilac {
+  background: var(--pq-tint-lilac);
+}
+.pq-tint-peach {
+  background: var(--pq-tint-peach);
+}
+.pq-tint-blue {
+  background: var(--pq-tint-blue);
+}
+.pq-tint-green {
+  background: var(--pq-tint-green);
+}
+.pq-way-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem 0.6rem;
+}
+.pq-way-logos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pq-way-logos img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+.pq-way-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--pq-line-2);
+  border-radius: 6px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pq-ink-2);
 }
 .pq-way-title {
-  margin-top: 0.4rem;
-  font-size: 1.15rem;
+  margin-top: 0.35rem;
+  font-size: 1.3rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 .pq-way-text {
-  flex-grow: 1;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   line-height: 1.55;
-  color: var(--pq-muted);
+  color: var(--pq-ink-2);
 }
-#content code.pq-way-code,
-.pq-way-code {
-  display: block;
-  margin-top: 0.4rem;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--pq-code-line);
-  border-radius: 12px;
-  background: var(--pq-code-bg);
-  color: var(--pq-code-ink);
-  font-size: 12.5px;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
+.pq-way-need {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--pq-muted);
 }
 .pq-way-more {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.9rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: var(--pq-accent);
 }
-.pq-fit {
-  margin-top: 2rem;
-  border: 1px solid var(--pq-line);
-  border-radius: 20px;
-  background: var(--pq-surface);
-  overflow-x: auto;
-}
-/* Mintlify wraps a table in a scroll area with a negative margin and its own
-   padding; the fit panel draws its own edge, so both go. */
-.pq-fit > div {
-  --page-padding: 0px !important;
-  width: 100% !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-.pq-fit table {
-  width: 100%;
-  margin: 0 !important;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-}
-.pq-fit th,
-.pq-fit td {
-  padding: 0.9rem 1.1rem;
-  text-align: left;
-  vertical-align: top;
-  border-bottom: 1px solid var(--pq-line);
-  color: var(--pq-ink-2);
-}
-.pq-fit th {
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--pq-muted);
-}
-.pq-fit tr:last-child td {
-  border-bottom: 0;
-}
-.pq-fit td:first-child {
-  font-weight: 700;
-  color: var(--pq-ink);
-  white-space: nowrap;
-}
-.pq-next {
+.pq-topics {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1.75rem;
 }
-.pq-next a {
+.pq-topic {
   display: flex;
-  gap: 0.9rem;
-  padding: 1.1rem 1.25rem;
+  flex-direction: column;
+  padding: 1.25rem 1.35rem 1rem;
   border: 1px solid var(--pq-line);
-  border-radius: 16px;
+  border-radius: 20px;
   background: var(--pq-surface);
+}
+.pq-topic a {
+  padding: 0.3rem 0;
+  font-size: 0.95rem;
+  color: var(--pq-ink-2) !important;
+}
+.pq-topic a:hover {
+  color: var(--pq-accent) !important;
+}
+.pq-topic a.pq-topic-head,
+#content .pq-home .pq-topic a.pq-topic-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.5rem;
+  padding: 0 0 0.9rem;
+  border-bottom: 1px solid var(--pq-line);
+  font-size: 1.05rem;
+  font-weight: 800;
   color: var(--pq-ink) !important;
+}
+.pq-topic-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--pq-lilac);
+  color: var(--pq-violet);
+}
+.pq-head-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+.pq-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--pq-accent) !important;
+}
+.pq-channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+.pq-channels a,
+#content .pq-home .pq-channels a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 14px;
+  background: var(--pq-surface);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--pq-ink-2) !important;
   transition: border-color 0.15s;
 }
-.pq-next a:hover,
-#content .pq-home .pq-next a:hover {
+.pq-channels a:hover,
+#content .pq-home .pq-channels a:hover {
   border-color: var(--pq-violet-300);
+  color: var(--pq-ink) !important;
 }
-.pq-next-icon {
+.pq-channels img {
   flex-shrink: 0;
-  color: var(--pq-violet);
-  padding-top: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
 }
-.pq-next strong {
-  display: block;
-  font-weight: 700;
+.pq-channels span {
+  line-height: 1.25;
 }
-.pq-next small {
-  display: block;
-  margin-top: 0.2rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--pq-muted);
-}
+/* The rule spans the text, not the 1120px box around it, so it starts on
+   the same left edge as every block above. */
 .pq-home-foot {
-  max-width: 1120px;
-  margin: 3.5rem auto 0;
-  padding: 1.5rem 1.5rem 0;
+  max-width: 1072px;
+  margin: 4rem max(1.5rem, calc((100% - 1072px) / 2)) 0;
+  padding: 1.5rem 0 0;
   border-top: 1px solid var(--pq-line);
   font-size: 0.9rem;
   line-height: 1.6;
@@ -598,69 +634,49 @@ pre *,
   font-weight: 600;
 }
 @media (max-width: 1023px) {
-  .pq-ways {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .pq-top-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-top: 3.5rem;
   }
-  .pq-next {
+  .pq-topics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+@media (max-width: 767px) {
+  .pq-ways {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 @media (max-width: 639px) {
-  .pq-hero {
-    padding: 3rem 1rem 2.5rem;
+  .pq-top-inner {
+    padding: 2.75rem 1rem 0;
   }
   .pq-lede {
     font-size: 1.05rem;
   }
   .pq-section {
-    padding: 2.75rem 1rem 0;
+    padding: 3rem 1rem 0;
   }
-  .pq-ways,
-  .pq-next {
+  .pq-topics {
     grid-template-columns: minmax(0, 1fr);
   }
+  .pq-channels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .pq-home-foot {
-    padding: 1.25rem 1rem 0;
-  }
-  /* The comparison table stacks: one block per way, labelled cells. */
-  .pq-fit thead {
-    display: none;
-  }
-  .pq-fit table,
-  .pq-fit tbody,
-  .pq-fit tr,
-  .pq-fit td {
-    display: block;
-    width: 100%;
-  }
-  .pq-fit tr {
-    padding: 0.9rem 1.1rem;
-    border-bottom: 1px solid var(--pq-line);
-  }
-  .pq-fit tr:last-child {
-    border-bottom: 0;
-  }
-  .pq-fit td {
-    padding: 0.15rem 0;
-    border: 0;
-  }
-  .pq-fit td:nth-child(2)::before {
-    content: "Good for: ";
-    font-weight: 700;
-  }
-  .pq-fit td:nth-child(3)::before {
-    content: "You need: ";
-    font-weight: 700;
+    margin-inline: 1rem;
+    padding-top: 1.25rem;
   }
   .pq-btn {
-    height: 48px;
-    padding: 0 22px;
+    height: 44px;
+    padding: 0 18px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .pq-way,
   .pq-btn,
-  .pq-next a {
+  .pq-channels a {
     transition: none;
   }
 }
@@ -782,4 +798,38 @@ pre *,
 html[data-page-mode="wide"] #content-area {
   max-width: 64rem;
   margin-inline: auto;
+}
+
+/* 15. The site's pictures on inner pages: a capture from images/site on the
+   tinted panel it sits on in the site's cards (tints in section 2). A window
+   or card capture keeps its shadow margin, which pads it inside the panel;
+   pq-visual-fill is for a capture that is a whole panel already, and
+   pq-visual-wide lets a window grow on a wide page. */
+.pq-visual {
+  display: flex;
+  justify-content: center;
+  margin: 1.75rem 0 2rem;
+  padding: 12px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.pq-visual img {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.pq-visual-fill {
+  padding: 0;
+}
+.pq-visual-fill img {
+  max-width: none;
+}
+/* On a wide page (agents/overview) the app window fills more of the panel. */
+.pq-visual-wide img {
+  max-width: 920px;
 }

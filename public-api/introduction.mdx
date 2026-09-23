@@ -15,6 +15,10 @@ import ApiKeyLocation from '/snippets/api-key-location.mdx';
 
 The public API does what the app does with posts: schedule and publish them on your channels, upload media, read analytics and manage channels. It is plain HTTPS and JSON, and everything in it acts on one workspace.
 
+<div className="pq-visual pq-visual-fill pq-tint-green">
+  <img noZoom src="/images/site/api-flow.webp" alt="A new blog post from an RSS trigger goes to PostQueen with POST /public/v1/posts, and PostQueen posts it to X, LinkedIn and Bluesky" />
+</div>
+
 | | |
 |---|---|
 | Base URL | `{{apiBase}}` |
