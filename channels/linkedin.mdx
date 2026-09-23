@@ -1,63 +1,75 @@
 ---
-title: LinkedIn
-description: 'How to add LinkedIn to your system'
-icon: /images/channels/linkedin.svg
+title: "LinkedIn"
+description: "What PostQueen will post to LinkedIn profiles and company pages, and the limits it checks before a post is scheduled."
+icon: "/images/channels/linkedin.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): write it from _templates/channel.mdx. Sources: this file, moved from providers/linkedin (fix; WIP: better, use as base; audit: providers), main:providers/linkedin-page.mdx (merge; WIP: better; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Not available on PostQueen Cloud yet.</ChannelStatus>
 
-<img src="/images/channels/linkedin.svg" alt="LinkedIn" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+LinkedIn posts to your personal profile and to the company pages you manage: text, images, multi-image posts of up to 20 images, MP4 video, and swipeable document carousels built from your images.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to LinkedIn
-
-Hand her a stack of images and tick one box, and she stitches them into a PDF and posts it as a swipeable carousel. That is the trick LinkedIn is known for, and it is a single setting on the post.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    3,000 characters
+  <Card title="Text" icon="type">
+    Up to 3,000 characters. A link stays plain text: LinkedIn does not build a preview card from it.
   </Card>
-  <Card title="Media" icon="images">
-    Optional. Several images, or one video
+  <Card title="Media" icon="image">
+    One image, up to 20 in a multi-image post, or one MP4 video on its own. Large images are resized to fit LinkedIn's limits.
   </Card>
   <Card title="Post types" icon="layers">
-    Text post, image post, video post, PDF carousel
+    Text post, image post, multi-image post, video post and document carousel, on profiles and company pages.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    No numbers from a personal profile
+    Company pages only, over 7, 30 or 90 days: page views, clicks, shares, engagement, comments and daily follower gains, plus impressions, clicks, likes, comments, shares and engagement for each post. No analytics for personal profiles.
   </Card>
 </CardGroup>
 
-Nine networks report analytics back to PostQueen, and a LinkedIn profile is not one of them. The [LinkedIn Page](/channels/linkedin) connector does report, so attach the company page if figures are what you are after. Large images are scaled down to fit inside 6000 by 6000 pixels before upload, since LinkedIn rejects anything past its pixel cap.
+**Not supported:** polls, link preview cards, uploading your own PDF, mentions of people (company pages can be mentioned), and visibility choices: every post is public.
 
-| | |
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
 |---|---|
-| **Post settings** | `post_as_images_carousel`, `carousel_name`. Full schema in the [LinkedIn settings reference](/public-api/providers/linkedin) |
-| **Connect flow** | One step. You authorize the LinkedIn app and she attaches the profile |
-| **Automations** | Add comments by a different account, and Add Re-posters, both of which draw on your other connected LinkedIn channels |
+| A document carousel needs 2 or more images and no video | “Carousel can only be created with 2 or more images and no videos.” |
+| A video is the only media in its post | “Can have maximum 1 media when selecting a video.” |
+| At most 20 images in a multi-image post | “LinkedIn multi-image posts can have up to 20 images.” |
+| Comments are text only | “Comments can only contain text.” |
 
-<Warning>
-Where LinkedIn draws its lines:
+The text is also held to 3,000 characters. Video length and size are LinkedIn's rules, and PostQueen does not check them first: LinkedIn takes MP4 files from 3 seconds to 30 minutes and up to 500 MB.
 
-- **Carousel can only be created with 2 or more images and no videos.**
-- **Can have maximum 1 media when selecting a video.**
-- **Comments can only contain text.** Media on a comment is dropped before it goes out.
-</Warning>
+## Connect LinkedIn
 
-## Self-hosting
+<Note>
+LinkedIn is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will have two tiles: **LinkedIn** for your personal profile, and **LinkedIn Page** for a company page where you are an administrator or content administrator.
+</Note>
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up LinkedIn on your own instance](/installation/providers/linkedin).
-</Info>
+## Post settings
+
+Each LinkedIn post in the composer has these settings:
+
+- **Post as images carousel**: **Post** or **Carousel**. **Carousel** turns 2 or more images into one swipeable document post. It works on profiles and company pages.
+- **Carousel slide name**: the title of the document carousel. Left empty, it is `slides`.
+
+The field names and values for the API are on [LinkedIn posting settings](/public-api/providers/linkedin).
+
+## Comments and threads
+
+**Add comment** schedules your own comments under the post. They are text only, each has its own delay, and each is posted as a comment on the main post. LinkedIn has no threads.
+
+## Good to know
+
+- Mention a company page by typing `@` and the page's vanity name, the part after `linkedin.com/company/` in its address.
+- Images larger than LinkedIn allows are scaled down to fit inside 6,000 by 6,000 pixels. Formats other than JPEG, PNG and GIF are converted to JPEG. A GIF goes up unchanged.
+- PostQueen waits until LinkedIn has processed the media before it creates the post.
+- The connection renews itself with LinkedIn's refresh token.
+- In the composer, **Add comments by a different account** and **Add Re-posters** let your other LinkedIn profiles and pages comment on the post or reshare it.
+- On company pages, the [Auto-Plugs](/using/auto-plugs) **Auto Repost Posts** and **Auto plug post** reshare the post, or add a comment to it, once it reaches a like count you set. The post is checked every 6 hours, up to 3 times.
 
 <NextStepsChannel />
-
