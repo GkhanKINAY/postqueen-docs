@@ -1,0 +1,11 @@
+| Address | How it signs in | Tools |
+|---|---|---|
+| `{{mcpKeyUrl}}` | The API key is part of the address | {{mcpToolsKey}} |
+| `https://api.postqueen.ai/mcp` | Header `Authorization: Bearer YOUR_API_KEY` | {{mcpToolsKey}} |
+| `{{mcpOauthUrl}}` | Sign in with PostQueen, approved by a workspace admin | {{mcpToolsOauth}}, all but `ask_postqueen` |
+
+The key address is the one PostQueen has tested. The sign-in address has not been tested end to end yet. Clients that still use the older SSE transport can connect to `https://api.postqueen.ai/sse/YOUR_API_KEY`.
+
+<Warning>
+`docs.postqueen.ai/mcp` is a different server: it searches these docs and cannot post. Use an address from the table above.
+</Warning>

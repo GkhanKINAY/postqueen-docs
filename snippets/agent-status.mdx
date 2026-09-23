@@ -1,0 +1,27 @@
+{/*
+  Tested status, one line under an agent page's title. `status` and `label`
+  must equal the agent's status and badge in facts/facts.json
+  (npm run check:facts compares them):
+    tested         green    "Tested by PostQueen (2026-09-19)"
+    partly-tested  green    the exact badge text in facts.json
+    vendor-docs    surface  "From the vendor's docs, not tested by PostQueen yet"
+    not-possible   gray     "Not possible yet"
+
+  import { AgentStatus } from '/snippets/agent-status.mdx';
+  <AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
+*/}
+
+export const AgentStatus = ({ status, label, children }) => {
+  const look = {
+    tested: { color: 'green', icon: 'badge-check' },
+    'partly-tested': { color: 'green', icon: 'badge-check' },
+    'vendor-docs': { color: 'surface', icon: 'book-open' },
+    'not-possible': { color: 'gray', icon: 'circle-slash' },
+  }[status] || { color: 'gray', icon: 'circle-question-mark' };
+  return (
+    <div className="pq-status not-prose" data-status={status}>
+      <Badge color={look.color} shape="pill" size="md" icon={look.icon}>{label}</Badge>
+      {children ? <span className="pq-status-note">{children}</span> : null}
+    </div>
+  );
+};
