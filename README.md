@@ -21,6 +21,19 @@
   <a href="https://mintlify.com"><img src="https://img.shields.io/badge/built%20with-Mintlify-7C3AED?labelColor=15131C" alt="Built with Mintlify"></a>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/NEW-7C3AED?style=flat-square" height="18" alt="New">&nbsp; <b>Connect Claude, ChatGPT, Grok Bot or any AI agent to your socials.</b> <a href="https://docs.postqueen.ai/agents/overview">See every agent →</a>
+</p>
+
+<p align="center">
+  <a href="https://docs.postqueen.ai/channels/overview"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/channels-row-dark.png"><img src="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/channels-row-light.png" width="100%" alt="Posts to 30+ networks: Instagram, TikTok, YouTube, X, LinkedIn, Facebook, Threads, Pinterest, Reddit, Bluesky, Mastodon, Discord, Telegram, Slack, Twitch, Kick, Google Business Profile, Dribbble, Tumblr, WordPress, DEV, Hashnode, VK, MeWe, Lemmy, Nostr, Farcaster, Moltbook, Listmonk, Whop and Skool"></picture></a>
+</p>
+
+<p align="center">
+  <a href="https://docs.postqueen.ai/agents/overview"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/agents-row-dark.png"><img src="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/agents-row-light.png" width="100%" alt="Works with the AI agent you already use: Claude, ChatGPT, Grok Bot (new), Grok, Perplexity, Muse (new), Claude Code, Codex, Cursor, Gemini CLI, VS Code, Devin Desktop, Zed, OpenClaw, Hermes, NanoClaw, Paperclip and any MCP app"></picture></a>
+</p>
+
+
 PostQueen is a social media scheduler with an AI copilot. It schedules posts to 30+ networks from the app, from AI agents over MCP, from the `postqueen` CLI and from the public API.
 
 ## What it covers
