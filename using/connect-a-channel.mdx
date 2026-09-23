@@ -13,7 +13,7 @@ about a minute per account.
 <Steps>
   <Step title="Open Add Channel">
     Your channels live in the **left sidebar**. **Add Channel** sits with them, and it is the same
-    button for every network: X, a WordPress blog, a Discord server, all of it.
+    button for every network: X, a WordPress blog, a Bluesky account, all of it.
   </Step>
 
   <Step title="Pick the network">
@@ -23,7 +23,7 @@ about a minute per account.
     - **Most networks send you to their own login.** You approve PostQueen there, the browser
       comes back, and the channel appears. Nothing to type.
     - **A smaller group asks for a credential in the form itself.** Bluesky takes an app password,
-      WordPress takes a site URL and an application password, Mastodon needs its instance address.
+      and WordPress takes a site URL and an application password.
       You paste it and you are done.
 
     [Providers](/providers/overview) says which kind each network is.
@@ -36,7 +36,7 @@ about a minute per account.
 </Steps>
 
 <Info>
-On PostQueen Cloud every supported network is already in **Add Channel**. Running your own instance? Some networks only appear after you register an OAuth app and restart. Each [self-hosting provider page](/installation/providers/instagram) walks through that.
+Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet, and a few are **In review** with a limit until the platform approves PostQueen's app. The [status of every network](/providers/overview#status-on-postqueen) says which. Running your own instance? Some networks only appear after you register an OAuth app and restart. Each [self-hosting provider page](/installation/providers/instagram) walks through that.
 </Info>
 
 ## The red exclamation mark
@@ -60,17 +60,18 @@ list when the reconnect itself refuses.
 
 Two different things, both in the three dots menu next to a channel.
 
-**Disable Channel** takes it out of rotation and frees the slot against your plan's channel
-limit, without giving up the connection or touching your posts. The same menu turns it back on
-later. This is the one you want when you are at a channel limit and expect to come back to the
-account.
+**Disable Channel** takes it out of rotation without giving up the connection or deleting its
+posts. The same menu turns it back on later. A disabled channel still counts toward your plan's
+channel limit when you connect a new one: disabling only makes room to turn another disabled
+channel back on. A post that comes due on a disabled channel is not sent. It fails with
+*Channel disabled*.
 
 **Delete Channel** removes it for good.
 
 <Warning>
-Deleting refuses while posts still reference the channel: *"You have to delete all the posts
-associated with this channel before deleting it."* Clear its posts from the calendar first, or
-use Disable instead, which has no such requirement.
+Deleting a channel also deletes all of that channel's posts: scheduled posts, drafts and published
+history, with their comments. Its scheduled posts will not go out, and there is no undo. To keep
+the posts, disable the channel instead.
 </Warning>
 
 [Plans and limits](/using/plans-and-limits) has the caps that make Disable worth knowing about.

@@ -1,51 +1,45 @@
 ---
 title: Compliance
-description: 'How she authenticates with each social network, and where your tokens live'
+description: 'How PostQueen connects to each social network, and what happens to your credentials'
 icon: 'shield-halved'
 ---
 
 Before you connect a real account you want to know what happens to the keys. This is that answer,
 in the detail a security or platform review asks for.
 
-## How she connects
+## How PostQueen connects
 
 | | |
 |---|---|
-| **Official OAuth, where the platform offers it** | You log in on the platform's own screen and approve the scopes. She receives only what you approved |
+| **Official OAuth, where the platform offers it** | You log in on the platform's own screen and approve the scopes. PostQueen receives only what you approved |
 | **Publishing and analytics APIs** | No headless browser, no crawling, no scraping |
-| **A credential, where OAuth does not exist** | Bluesky app password, WordPress application password, Nostr key. Lemmy and Listmonk take the account's own username and password, because that is what those instances accept |
-| **One cookie-based exception** | Skool has no public API, so it uses your own browser session through the [Chrome extension](/configuration/chrome-extension). Opt-in, and it carries its own terms-of-service warning |
-| **Open source and self-hostable** | Run her on your own infrastructure and read every line that touches your accounts |
+| **A credential, where OAuth does not exist** | Bluesky app password, WordPress application password, DEV API key, Hashnode personal access token, Nostr key. Lemmy takes the account's own username and password, and Listmonk an API user and token from your own server, because that is what those instances accept |
+| **One browser-extension exception** | Skool has no public API, so it connects through your own browser session and the PostQueen browser extension. It carries its own terms-of-service warning, and it is marked Soon on PostQueen: it cannot be connected yet |
 
 ## Where credentials live
 
-<Warning>
-**The two are not stored the same way, and the difference matters for a review.**
+PostQueen keeps the credentials and tokens a channel needs on its servers, so it can publish for
+you at the time you picked. A key, app password or private key goes into the channel's connect form
+in PostQueen and nowhere else. Nobody from PostQueen will ask you to send one by email or chat.
 
-Anything **you type in** is encrypted with AES-256 before it reaches the database: the credentials
-above, the Skool session cookie, your organization's API key, and the client secrets of any OAuth
-app you register.
+## When you remove a channel
 
-Tokens the **platform issues** through an OAuth flow are stored as the platform returned them. For
-those the database is the security boundary, so encrypt the volume and keep access to it narrow.
-</Warning>
+Deleting a channel replaces the sign-in PostQueen stored for it, so it can no longer publish, and
+deletes that channel's posts. Deleting your account does the same for every channel.
+
+Nothing is revoked at the network itself. To cut PostQueen off completely, also remove its access
+in the network's own settings, in the list of apps or sessions connected to your account.
 
 ## What that means for you
 
-<CardGroup cols={3}>
+<CardGroup cols={2}>
   <Card title="On the cloud" icon="cloud">
     The token is issued by the platform through its own screen, carrying only the scopes you approved
-  </Card>
-  <Card title="Self-hosting" icon="server">
-    Tokens and post content live where you put them, and the boundary above is yours to act on
   </Card>
   <Card title="Building on top" icon="code">
     The [API](/public-api/introduction) and [MCP](/mcp/introduction) use the same authenticated flows and the same platform limits
   </Card>
 </CardGroup>
-
-Storage settings and `ENCRYPTION_KEY`: [Configuration reference](/configuration/reference). Setting
-up your own provider credentials: [OAuth configuration](/configuration/oauth).
 
 ## Reporting a concern
 
