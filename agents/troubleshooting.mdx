@@ -148,8 +148,8 @@ Upload errors are on [upload media](/cli/media-upload#if-an-upload-fails). A pos
   <Accordion title="It works in my terminal, not in the job or the agent" icon="clock">
     The job or the agent runs in its own environment and does not read your shell profile. Set `POSTQUEEN_API_KEY` there, and send stderr to the log (`2>&1`) so the error is not lost.
   </Accordion>
-  <Accordion title="auth:status says the key is fine, the script still stops" icon="circle-alert">
-    `auth:status` exits `0` even when it reports a problem, so a script cannot rely on its exit code. Check with `postqueen integrations:list > /dev/null || exit 1` instead.
+  <Accordion title="A script checks the key with auth:status" icon="circle-alert">
+    From 2.0.24, `auth:status` exits `1` when no key is set, when the API refuses it, and when it could not be checked, so `postqueen auth:status > /dev/null || exit 1` works. Older versions exit `0` in every case: update with `npm install -g postqueen@latest`.
   </Accordion>
   <Accordion title="A file path or a link in -m" icon="image">
     `-m` takes only a `path` returned by `postqueen upload`. Upload the file first. For a video, wait until it is ready: see [upload media](/cli/media-upload#wait-for-a-video).

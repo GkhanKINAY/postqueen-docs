@@ -11,7 +11,7 @@ keywords:
   - cron
 ---
 
-`postqueen` 2.0.23 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
+`postqueen` 2.0.24 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
 
 ```bash
 postqueen <command> [options]
@@ -118,7 +118,7 @@ Most commands print one status line, then the JSON result. Drop the first line w
 
 `posts:missing` prints JSON with no status line. `posts:delete` prints only `✅ Post <id> deleted successfully!`. The `auth:` commands print plain text.
 
-A command that fails prints a line starting with `❌` to stderr and exits with code `1`. `auth:status` is the exception: it reports `❌ Not authenticated.` on stdout and exits `0`.
+A command that fails prints a line starting with `❌` to stderr and exits with code `1`. `auth:status` prints its result on stdout, and exits `1` when no key is set, when the API refuses it, or when it could not be checked.
 
 ## The API route behind each command
 
