@@ -1,108 +1,84 @@
 ---
-title: RSS AutoPost
-description: 'Point PostQueen at an RSS feed and she checks it hourly, turning the newest item into a draft on your calendar'
-icon: 'rss'
+title: "RSS Auto Post"
+sidebarTitle: "RSS Auto Post"
+description: "Turn each new item in an RSS or Atom feed into a draft or a scheduled post on your channels."
+icon: "rss"
 ---
 
-{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file, moved from automation/rss-autopost (rewrite; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+**Where:** **Settings** > **Auto Post**, in the More group. The rail's **More** group links there too.
 
-Publish a blog post and PostQueen notices. AutoPost watches an RSS feed for you, and when a new item shows up she writes a short caption, adds the link, and puts a draft on your calendar in your next open slot. You come back later, read it, and send it out.
-
-An AutoPost item is created as a draft, so it sits on the calendar unscheduled until you open it and schedule or publish it. Each hourly check takes one item, the newest one, so a feed that publishes in bursts leaves the older items behind.
-
-
-## 👑 What happens on a new item
-
-<Steps>
-  <Step title="She checks the feed">
-    While a feed is active she reads it about once an hour. The first check runs right after you turn it on.
-  </Step>
-  <Step title="She looks at the newest item">
-    She picks the item with the newest publication date and compares its link with the last link she posted for this feed. The same link means nothing new, and she goes back to sleep.
-  </Step>
-  <Step title="She writes the caption">
-    With **Autogenerate content** set to Yes she reads the item and writes a short caption for it. Set it to No and she uses the text you wrote in the form for every item.
-  </Step>
-  <Step title="She adds a picture, if you asked for one">
-    With **Generate Picture?** set to Yes she generates an image from the item and attaches it to the post.
-  </Step>
-  <Step title="She creates the draft">
-    The post is the caption, a blank line, then the link to the item. It goes to the channels you picked, at the next open slot in your posting schedule, as a draft badged *Auto-posted by system*. Links in an AutoPost draft are left as they are rather than shortened.
-  </Step>
-</Steps>
+Auto Post checks a feed every hour. When the feed has a new item, PostQueen writes a post with the item's link and puts it on your calendar, as a draft for you to review or as a scheduled post. Every paid plan includes it.
 
 ## Add a feed
 
 <Steps>
-  <Step title="Open Settings, then Auto Post">
-    In [app.postqueen.ai](https://app.postqueen.ai) open **Settings** and pick the **Auto Post** tab. It deep links as `/settings?tab=autopost`.
+  <Step title="Choose Add an autopost">
+    The form has four steps: **Feed**, **Timing**, **Content** and **Channels**. You need a connected channel first.
   </Step>
-  <Step title="Click Add an autopost">
-    A form opens in a modal. Existing feeds sit above it in a list with Edit, Delete and an Active toggle.
+  <Step title="Feed: name it and test it">
+    Enter a **Title** for your own use and the feed's **URL**, then choose **Send Test**. "RSS valid!" means PostQueen can read the feed. **Save** stays locked until the test passes.
   </Step>
-  <Step title="Fill in the form">
-    Give it a title, paste the feed URL, and pick the channels she posts to.
+  <Step title="Timing and Content">
+    Choose **Next** and answer each question, as in the table below.
   </Step>
-  <Step title="Hit Send Test">
-    She fetches the feed and tells you whether she can read it. A feed she cannot parse shows a warning, and the **Save** button only appears once the test passes.
+  <Step title="Channels">
+    Choose **All channels**, or **Specific channels** and tick the ones you want.
   </Step>
-  <Step title="Save">
-    The feed joins the list and starts checking straight away if you left it active.
+  <Step title="Choose Save">
+    "Autopost added successfully" confirms it. The first check runs right away.
   </Step>
 </Steps>
 
-### Fields
+| Step | Question | What the answers do |
+|---|---|---|
+| Timing | **Should we sync the current last post?** | **Yes** posts the item at the top of the feed on the first check. **No** marks it as seen, so only items published after it are posted. |
+| Timing | **When should we post it?** | **Post on the next available slot** or **Post Immediately**. Today both put the post at the next free posting time. |
+| Timing | **What should we do with new items?** | **Create a draft for review** (the default) or **Publish automatically**. See below. |
+| Content | **Autogenerate content** | **Yes**: PostQueen writes a short post of about 100 characters from the item. **No**: every item uses your text from **Post content**. |
+| Content | **Generate Picture?** | **Yes**: PostQueen generates an image for each item. |
 
-| Field | What it does |
-| --- | --- |
-| **Title** | Your own name for the feed. It shows in the feed list. |
-| **URL** | The RSS feed address. It has to be a public HTTPS URL. Addresses that resolve to localhost or to private, loopback or link-local ranges are rejected. |
-| **Should we sync the current last post?** | Yes posts the item that is currently at the top of the feed on the first check. No records that item as already seen, so only items published from that point on go out. |
-| **When should we post it?** | Offers "Post on the next available slot" and "Post Immediately". Both options currently behave the same: the item lands as a draft in your next open slot. The choice is stored with the feed. |
-| **Autogenerate content** | Yes generates the caption from the item text. No opens a **Post content** box where you write one text that every item reuses. |
-| **Generate Picture?** | Yes generates an image for each item and attaches it to the draft. |
-| **Integrations** | **All integrations** posts to every connected channel. **Specific integrations** opens the channel picker so you choose which ones. |
+## What happens to each new item
 
-<Note>
-Caption writing and picture generation call OpenAI. On a self-hosted install, set `OPENAI_API_KEY` in your environment before turning those on. With **Autogenerate content** set to No and **Generate Picture?** set to No, AutoPost runs without any AI key.
-</Note>
-
-## How often she checks
-
-Each active feed runs its own hourly loop. Turning a feed on starts a check immediately, then she waits an hour and checks again, for as long as the feed stays active.
-
-One check takes one item: the newest one. If four posts go live in the same hour, she takes the newest, records it as the last item she posted, and the other three stay in the feed without drafts of their own. For a feed that publishes in bursts, that is worth knowing before you switch it on.
-
-## Control tips
-
-<AccordionGroup>
-  <Accordion title="Pause a feed without losing its setup">
-    Flip the **Active** toggle off in the feed list. The hourly loop stops and the feed keeps its settings. Turning it back on starts the loop again with a check right away, so an item that arrived while it was paused can still go out if it is the newest one.
-  </Accordion>
-  <Accordion title="Skip the backlog when you add a feed">
-    Answer No to **Should we sync the current last post?**. She marks the item at the top of the feed as seen, and your calendar stays clear of anything you already published.
-  </Accordion>
-  <Accordion title="Keep the channel list current">
-    If you picked **Specific integrations** and those channels are later removed, there is nothing left for her to post to and the feed quietly skips its turn. Open the feed with Edit and pick the channels again after any reconnect.
-  </Accordion>
-  <Accordion title="Review the drafts">
-    Drafts sit on your calendar at the slot she chose. Open one, adjust the wording, and schedule or publish it. A draft that you leave alone stays a draft.
-  </Accordion>
-  <Accordion title="Write your own caption when the feed is repetitive">
-    For release notes or a changelog feed, set **Autogenerate content** to No and write one line in **Post content**. Every item then goes out with that line plus its own link.
-  </Accordion>
-</AccordionGroup>
+- Each hour PostQueen takes the newest item in the feed. If it took that item last time, nothing happens. When several items appear within one hour, only the newest is posted.
+- The post is the text, a blank line, then the item's link.
+- It goes on your calendar at the next free [posting time](/using/posting-times).
+- With **Create a draft for review**, every chosen channel gets a draft. Nothing goes out until you open the draft and schedule it.
+- With **Publish automatically**, the post is scheduled on each channel where it passes that network's checks. A channel that needs settings of its own, such as a title, gets a draft instead, and a notification names it. Channels that are disabled or need reconnecting are skipped.
 
 <Tip>
-The **Auto Post** tab appears on the Team, Pro and Ultimate plans. A self-hosted install with billing switched off runs at the top tier, so the tab is there for you as well.
-
-Adding a feed draws on the same allowance as webhooks, so if you have already used every webhook slot on your plan, the save is refused with a webhook limit message. Free one up or upgrade, then add the feed.
+For **Publish automatically**, pick channels that need nothing but text and a link, such as Bluesky or Nostr. A network that asks for a title or other settings on every post always falls back to a draft.
 </Tip>
+
+## Good to know
+
+- Each saved feed has a toggle that pauses the hourly check and keeps the setup.
+- **Test connection** on a saved feed reads it again and changes nothing.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| "Could not use this RSS feed" | The address is not a feed PostQueen can read, or the newest item has no link. Open the address in a browser and check it. |
+| "URL must be a public HTTPS URL and cannot point to internal network addresses" | Use the feed's public `https://` address. |
+| "Run Send Test on the Feed step before saving." | Go back to **Feed** and choose **Send Test**. |
+| "Pick at least one channel." | Tick a channel, or choose **All channels**. |
+| "Autopost saved drafts instead of publishing" (notification) | The channels it names could not publish without their own settings. Open the drafts on the calendar and finish them. |
+| "Autopost has no channel to post to" (notification) | None of the feed's channels can be used. Reconnect them, or edit the feed and pick other channels. |
+| "Your subscription does not include Auto Post. Please upgrade your subscription to post from a feed automatically." | Auto Post needs a paid plan. See [Plans](/cloud/plans). |
 
 ## Next steps
 
-AutoPost is deliberately simple: one feed, one caption style, one draft per check. If you want AI captions from your own model or prompt, or custom routing that sends each item to a different channel, use the n8n RSS workflow instead. It can also pick up several items in one run and filter them by category first.
-
-<Card title="RSS to PostQueen in n8n" icon="/images/brand/icon-n8n.svg" href="/public-api/n8n">
-  An RSS trigger, your own caption step, then Create Post.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Posting times" icon="clock" href="/using/posting-times">
+    Set the time slots that feed items land on.
+  </Card>
+  <Card title="The calendar" icon="calendar" href="/using/calendar">
+    Review the drafts Auto Post creates.
+  </Card>
+  <Card title="Webhooks" icon="webhook" href="/using/webhooks">
+    The other direction: tell your tools when a post goes live.
+  </Card>
+  <Card title="n8n" icon="workflow" href="/public-api/n8n">
+    Build your own feed workflow when you need more control.
+  </Card>
+</CardGroup>
