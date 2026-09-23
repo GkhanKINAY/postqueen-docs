@@ -4349,7 +4349,20 @@
           },
           "percentageChange": {
             "type": "number",
-            "description": "Percentage change over the selected period"
+            "description": "Not computed today: each network sends a fixed `0` or `5`. Ignore it."
+          },
+          "average": {
+            "type": "boolean",
+            "description": "When `true`, the figure for the range is the average of the days, not their sum. Set on daily rates and daily unique counts, such as engagement rate and average daily reach."
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "percent",
+              "seconds",
+              "count"
+            ],
+            "description": "How to show an averaged series. Absent on series that are summed."
           }
         }
       },

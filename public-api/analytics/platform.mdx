@@ -15,10 +15,14 @@ curl -H "Authorization: YOUR_API_KEY" \
 
 Nine networks return channel metrics: Instagram, TikTok, YouTube, Facebook Page, X, LinkedIn Page, Threads, Pinterest and Google Business Profile. Every other channel answers `[]`, and that includes every network Available on PostQueen today. The app offers 7, 30 and 90 days, and 7 and 30 on Instagram, Threads and TikTok; the API passes your number to the network as it is. An answer is kept for an hour per channel and range, so asking again within the hour returns the same numbers.
 
+## Reading the numbers
+
+Each series has one value per day. For the whole range, add the days up, unless the series has `average: true`: then take their average, and `unit` says whether it is a percentage, seconds or a count. Engagement and click rates, average view duration and average daily reach are averaged, since adding up a rate or a daily unique count gives a number that means nothing. Series labelled **New Followers** count the followers won each day, so their sum is the followers won in the range, not the account's total. `percentageChange` is not computed today: each network sends a fixed `0` or `5`.
+
 ## If it fails
 
 | Answer | What it means |
 |---|---|
-| `500` | No channel with that id in your workspace. A network name or a display name lands here too |
+| `404 Channel not found` | No channel with that id in your workspace. A network name or a display name lands here too |
 | `400 This channel needs to be refreshed` | The token expired and could not be renewed, or a permission is missing. Reconnect the channel |
 | `200` with `[]` | The network has no channel metrics in PostQueen, or it answered with nothing PostQueen could read |
