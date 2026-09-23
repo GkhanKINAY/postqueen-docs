@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
+  "theme": "almond",
   "name": "PostQueen Docs",
   "description": "How to schedule posts with PostQueen: from the app, from AI agents over MCP, from the postqueen CLI and from the public API.",
   "colors": {
