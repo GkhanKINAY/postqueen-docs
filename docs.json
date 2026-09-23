@@ -205,44 +205,39 @@
             ]
           },
           {
-            "group": "Chat assistants",
+            "group": "Assistants and bots",
             "pages": [
               "agents/claude",
-              "agents/claude-cowork",
               "agents/chatgpt",
-              "agents/grok",
+              "agents/claude-cowork",
               "agents/grok-bot",
+              "agents/muse",
+              "agents/openclaw",
+              "agents/hermes",
+              "agents/grok",
               "agents/perplexity-computer",
-              "agents/muse"
+              "agents/nanoclaw",
+              "agents/chat-channels"
             ]
           },
           {
-            "group": "Coding agents and editors",
+            "group": "Coding agents",
             "pages": [
               "agents/claude-code",
               "agents/codex",
               "agents/cursor",
               "agents/gemini-cli",
               "agents/grok-build",
+              "agents/paperclip"
+            ]
+          },
+          {
+            "group": "Editors and more",
+            "pages": [
               "agents/vscode",
               "agents/devin-desktop",
               "agents/zed",
-              "agents/muse-code"
-            ]
-          },
-          {
-            "group": "Agents you run",
-            "pages": [
-              "agents/openclaw",
-              "agents/hermes",
-              "agents/nanoclaw",
-              "agents/paperclip",
-              "agents/chat-channels"
-            ]
-          },
-          {
-            "group": "Other clients",
-            "pages": [
+              "agents/muse-code",
               "agents/other-mcp-clients"
             ]
           },
