@@ -980,3 +980,43 @@ footer a.max-w-36 {
   overflow: visible;
   text-overflow: clip;
 }
+
+/* 17. Footer: the product line under the logo, and the one footer social
+   (the trial link in docs.json) drawn as the site's Start pill instead of
+   a bare globe. */
+footer a.select-none::after {
+  content: "Agentic social media scheduler";
+  display: block;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--pq-muted);
+}
+footer a[href^="https://app.postqueen.ai/auth"] {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: var(--pq-violet);
+  color: #fff;
+  font-size: 14.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+footer a[href^="https://app.postqueen.ai/auth"]:hover {
+  background: var(--pq-violet-600);
+}
+footer a[href^="https://app.postqueen.ai/auth"] svg {
+  display: none;
+}
+footer a[href^="https://app.postqueen.ai/auth"]::after {
+  content: "Start for $0 \2192";
+}
+@media (prefers-reduced-motion: reduce) {
+  footer a[href^="https://app.postqueen.ai/auth"] {
+    transition: none;
+  }
+}
