@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Telegram cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Telegram channel will take.
 
-Every post to Telegram carries a `settings` object with `"__type": "telegram"`. Telegram has no other settings. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Telegram carries a `settings` object with `"__type": "telegram"`. Telegram has no other settings. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"telegram"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"telegram"`. PostQueen sets it from the channel you post to, so it can be left out. |
 
 The chat is the one the channel was connected to, so a post names no chat of its own.
 

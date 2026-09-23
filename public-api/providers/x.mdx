@@ -9,13 +9,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="in-review">X can be connected once the free trial ends, or right away if you end the trial early.</ChannelStatus>
 
-Every post to X carries a `settings` object with `"__type": "x"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to X carries a `settings` object with `"__type": "x"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"x"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"x"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `who_can_reply_post` | string | Yes, except on an Article | Who can reply: `everyone`, `following`, `mentionedUsers`, `subscribers` or `verified`. The last two need X Premium. |
 | `community` | string | No | An X Community link, `https://x.com/i/communities/<id>`, or an empty string. The post goes into that Community and is also shown to your followers. |
 | `post_type` | string | No | `post` (the default) or `article`, a long-form X Article. Articles need X Premium. |

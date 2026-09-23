@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Whop cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Whop channel will take.
 
-Every post to Whop carries a `settings` object with `"__type": "whop"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Whop carries a `settings` object with `"__type": "whop"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"whop"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"whop"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `company` | string | Yes | The id of the Whop company the forum belongs to. PostQueen uses it to list the forums; the post goes to `experience`. |
 | `experience` | string | Yes | The id of the forum to post in, which Whop calls an experience. |
 | `title` | string | No | The post's title. Left out, the post has none. |

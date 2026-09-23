@@ -9,13 +9,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish.</ChannelStatus>
 
-Every post to a Facebook Page carries a `settings` object with `"__type": "facebook"`. Every other field is optional: a plain text post needs nothing more. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to a Facebook Page carries a `settings` object with `"__type": "facebook"`. Every other field is optional: a plain text post needs nothing more. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"facebook"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"facebook"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `post_type` | string | No | `post` (the default) or `story`. A story needs at least one photo or video, and each item goes out as its own story. |
 | `url` | string | No | A link attached to the post. It must be a valid URL. Not used on stories. |
 | `text_format_preset_id` | string | No | A background preset id from the list below, for a text-only post. |

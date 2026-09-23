@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Slack cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Slack channel will take.
 
-Every post to Slack carries a `settings` object with `"__type": "slack"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Slack carries a `settings` object with `"__type": "slack"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"slack"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"slack"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `channel` | string | Yes | The id of the Slack channel to post in, public or private. For a private channel, invite the app to it first. |
 
 One PostQueen channel is one Slack workspace. To post in two channels of the same workspace, send two posts.

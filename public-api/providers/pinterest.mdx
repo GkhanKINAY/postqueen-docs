@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Pinterest cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Pinterest channel will take.
 
-Every post to Pinterest carries a `settings` object with `"__type": "pinterest"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Pinterest carries a `settings` object with `"__type": "pinterest"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"pinterest"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"pinterest"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `board` | string | Yes | The id of the board the Pin is saved to. See below. |
 | `title` | string | No | The Pin title, up to 100 characters. |
 | `link` | string | No | Where the Pin sends people who click it. Must be a valid URL. |

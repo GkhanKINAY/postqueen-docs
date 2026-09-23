@@ -9,13 +9,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="in-review">Until Google's audit of PostQueen's app passes, every upload is private, and all PostQueen customers share a limit of 100 uploads a day.</ChannelStatus>
 
-Every post to YouTube carries a `settings` object with `"__type": "youtube"`. The post text in `value[0].content` is the video's description. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to YouTube carries a `settings` object with `"__type": "youtube"`. The post text in `value[0].content` is the video's description. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"youtube"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"youtube"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `title` | string | Yes | The video title, 2 to 100 characters, with no `<` or `>`. |
 | `type` | string | Yes | Who can watch: `public`, `private` or `unlisted`. Until Google's audit of PostQueen's app passes, YouTube keeps every upload private whatever you send. |
 | `selfDeclaredMadeForKids` | string | No | `yes` or `no`. Left out, the video is declared not made for kids. |

@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Dribbble cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Dribbble channel will take.
 
-Every post to Dribbble carries a `settings` object with `"__type": "dribbble"`. A post is a shot: one image, a title, and the post text as its description. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Dribbble carries a `settings` object with `"__type": "dribbble"`. A post is a shot: one image, a title, and the post text as its description. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"dribbble"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"dribbble"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `title` | string | Yes | The shot title, at least 1 character. |
 | `team` | string | No | The numeric id of one of your teams, as a string, to post the shot for that team. Anything that is not a number, a team URL included, is ignored and the shot goes on your own profile. |
 

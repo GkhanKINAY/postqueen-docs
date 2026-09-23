@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Twitch cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Twitch channel will take.
 
-Every post to Twitch carries a `settings` object with `"__type": "twitch"`. A post is a message in the chat of the channel that connected. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Twitch carries a `settings` object with `"__type": "twitch"`. A post is a message in the chat of the channel that connected. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"twitch"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"twitch"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `messageType` | string | No | `message` for a chat message, `announcement` for a highlighted announcement. Left out, it is a chat message. |
 | `announcementColor` | string | No | The color of an announcement: `primary`, `blue`, `green`, `orange` or `purple`. Left out, it is `primary`. |
 

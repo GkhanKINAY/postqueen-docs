@@ -16,13 +16,13 @@ Every post to Instagram carries a `settings` object. Instagram has two tiles, an
 | Instagram (Facebook Business) | `instagram` |
 | Instagram (Standalone) | `instagram-standalone` |
 
-Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | `"instagram"` or `"instagram-standalone"`. PostQueen sets it from the channel you post to, so it always matches the tile. |
+| `__type` | string | No | `"instagram"` or `"instagram-standalone"`. PostQueen sets it from the channel you post to, so it always matches the tile and can be left out. |
 | `post_type` | string | Yes | `post`, `reel` or `story`. See below. |
 | `is_trial_reel` | boolean | No | `true` publishes the Reel as a Trial Reel, shown to people who don't follow you first. Needs exactly one MP4. |
 | `graduation_strategy` | string | No | How a Trial Reel reaches your followers: `MANUAL` or `SS_PERFORMANCE` (automatically, based on performance). Left out, a Trial Reel uses `MANUAL`. |

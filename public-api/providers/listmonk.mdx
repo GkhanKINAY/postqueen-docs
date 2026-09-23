@@ -9,7 +9,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="available" />
 
-Every post to Listmonk carries a `settings` object with `"__type": "listmonk"`, a subject, preview text and a list. At the scheduled time PostQueen creates a campaign on your Listmonk server and starts sending it. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Listmonk carries a `settings` object with `"__type": "listmonk"`, a subject, preview text and a list. At the scheduled time PostQueen creates a campaign on your Listmonk server and starts sending it. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Listmonk channel connects with your server's address, an API user and its token, which only the app's connect form takes. [Connect it in the app](/channels/listmonk) first, then post to it here.
 
@@ -17,7 +17,7 @@ A Listmonk channel connects with your server's address, an API user and its toke
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"listmonk"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"listmonk"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `subject` | string | Yes | The email subject, at least 1 character. The campaign is named after it. |
 | `preview` | string | Yes | The preview text inboxes show next to the subject, added as hidden text at the top of the email. Send `""` for none. |
 | `list` | string | Yes | The id of the one list that receives the campaign, from the `list` tool, as a string. |

@@ -18,13 +18,13 @@ Every post to LinkedIn carries a `settings` object. LinkedIn has two tiles, and 
 | LinkedIn | Your personal profile | `linkedin` |
 | LinkedIn Page | A company page | `linkedin-page` |
 
-Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | `"linkedin"` or `"linkedin-page"`. PostQueen sets it from the channel you post to, so it always matches the tile. |
+| `__type` | string | No | `"linkedin"` or `"linkedin-page"`. PostQueen sets it from the channel you post to, so it always matches the tile and can be left out. |
 | `post_as_images_carousel` | boolean | No | `true` turns the images into one PDF document that LinkedIn shows as a swipeable carousel. Needs 2 or more images and no video. `false` or left out: one image is an image post and 2 to 20 images are a multi-image post. |
 | `carousel_name` | string | No | The title of the document carousel. Used only when `post_as_images_carousel` is `true`. Left out, the title is `slides`. |
 

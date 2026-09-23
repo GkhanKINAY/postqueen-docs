@@ -9,7 +9,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="available" />
 
-Every post to WordPress carries a `settings` object with `"__type": "wordpress"`, a title and a post type. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to WordPress carries a `settings` object with `"__type": "wordpress"`, a title and a post type. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A WordPress channel connects with the site address, a username and an Application Password, which only the app's connect form takes. [Connect it in the app](/channels/wordpress) first, then post to it here.
 
@@ -17,7 +17,7 @@ A WordPress channel connects with the site address, a username and an Applicatio
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"wordpress"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"wordpress"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `title` | string | Yes | The post title, at least 2 characters. The slug is made from it. |
 | `type` | string | Yes | The REST base of the post type: `posts` for posts, `pages` for pages, or a custom type's base. The `postTypes` tool lists them. Not `post`. |
 | `status` | string | No | `publish` (the default), `draft`, `pending` or `private`. |

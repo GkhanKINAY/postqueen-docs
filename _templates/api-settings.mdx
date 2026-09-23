@@ -25,13 +25,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="STATUS">STATUS_NOTE_FROM_FACTS_JSON</ChannelStatus>
 
-Every post to NETWORK carries a `settings` object with `"__type": "TYPE"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to NETWORK carries a `settings` object with `"__type": "TYPE"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"TYPE"`. |
+| `__type` | string | No | Always `\"TYPE\"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `FIELD` | TYPE | Yes or no | What it does. Allowed values: `VALUE`, `VALUE`. |
 
 ## What PostQueen checks

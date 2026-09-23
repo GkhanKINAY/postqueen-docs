@@ -9,7 +9,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="available" />
 
-Every post to Lemmy carries a `settings` object with `"__type": "lemmy"` and the communities to post in. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Lemmy carries a `settings` object with `"__type": "lemmy"` and the communities to post in. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Lemmy channel connects with your instance, username and password, which only the app's connect form takes. [Connect it in the app](/channels/lemmy) first, then post to it here.
 
@@ -17,7 +17,7 @@ A Lemmy channel connects with your instance, username and password, which only t
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"lemmy"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"lemmy"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `subreddit` | array | Yes | The communities to post in, at least one. The name is historical: each entry is a Lemmy community on the channel's instance. |
 | `subreddit[].value.subreddit` | string | Yes | The community's name as the `subreddits` tool returns it, at least 2 characters. PostQueen shows it in the app; Lemmy is sent the id. |
 | `subreddit[].value.id` | string | Yes | The community's numeric id, as a string. |

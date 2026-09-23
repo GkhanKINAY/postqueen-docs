@@ -9,7 +9,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="available" />
 
-Every post to Bluesky carries a `settings` object with `"__type": "bluesky"`. Bluesky has no other settings. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Bluesky carries a `settings` object with `"__type": "bluesky"`. Bluesky has no other settings. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Bluesky channel connects with a handle and an app password, which only the app's connect form takes. [Connect it in the app](/channels/bluesky) first, then post to it here.
 
@@ -17,7 +17,7 @@ A Bluesky channel connects with a handle and an app password, which only the app
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"bluesky"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"bluesky"`. PostQueen sets it from the channel you post to, so it can be left out. |
 
 ### Thread replies
 

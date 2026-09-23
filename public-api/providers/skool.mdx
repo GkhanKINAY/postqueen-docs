@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Skool cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Skool channel will take.
 
-Every post to Skool carries a `settings` object with `"__type": "skool"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Skool carries a `settings` object with `"__type": "skool"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"skool"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"skool"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `group` | string | Yes | The id of the Skool group to post in. |
 | `label` | string | Yes | The id of the category the post is filed under. `"none"` posts without a category, and it is the only value the `label` tool offers for a group that has no categories. |
 | `title` | string | Yes | The post's title. |

@@ -9,7 +9,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="available">Needs Hashnode's Pro plan on the publication you connect.</ChannelStatus>
 
-Every post to Hashnode carries a `settings` object with `"__type": "hashnode"`, a title, a publication and at least one tag. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Hashnode carries a `settings` object with `"__type": "hashnode"`, a title, a publication and at least one tag. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Hashnode channel connects with a personal access token, which only the app's connect form takes. [Connect it in the app](/channels/hashnode) first, then post to it here. Hashnode answers only for publications on its Pro plan, so a post to one without Pro fails when it is published.
 
@@ -17,7 +17,7 @@ A Hashnode channel connects with a personal access token, which only the app's c
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"hashnode"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"hashnode"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `title` | string | Yes | The article title, at least 6 characters. |
 | `subtitle` | string | No | A subtitle, at least 2 characters when you send one. |
 | `main_image` | object | No | The cover image, `{ "id": "...", "path": "..." }` as [upload a file](/public-api/uploads/upload-file) returns it. Hashnode is sent its address. |

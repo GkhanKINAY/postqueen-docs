@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Farcaster cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Farcaster channel will take.
 
-Every post to Farcaster carries a `settings` object with `"__type": "wrapcast"`, the API's name for Farcaster. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Farcaster carries a `settings` object with `"__type": "wrapcast"`, the API's name for Farcaster. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"wrapcast"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"wrapcast"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `subreddit` | array | No | The Farcaster channels to cast into, despite the field's name. Each item is `{ "value": { "id": "CHANNEL_ID" } }`, where the id is a Farcaster channel id such as `dev`. Left out or empty, the cast goes to your home feed. |
 
 With channels, PostQueen publishes one cast in each, and the post's id and link come back as comma-separated lists. Each extra entry in `value` is a follow-up, posted after its `delay` in minutes as a reply to the cast before it, in every channel the post went to. Links in the text stay plain text, with no embed or frame.

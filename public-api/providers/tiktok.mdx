@@ -9,7 +9,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 <ChannelStatus status="in-review">Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet.</ChannelStatus>
 
-Every post to TikTok carries a `settings` object with `"__type": "tiktok"`. Most of its fields are required, even the ones TikTok ignores in Upload mode, so send them all. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to TikTok carries a `settings` object with `"__type": "tiktok"`. Most of its fields are required, even the ones TikTok ignores in Upload mode, so send them all. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 <Warning>
 Until TikTok audits PostQueen's app, send `"privacy_level": "SELF_ONLY"`. TikTok refuses every other level at publish time, after the post was accepted and scheduled.
@@ -19,7 +19,7 @@ Until TikTok audits PostQueen's app, send `"privacy_level": "SELF_ONLY"`. TikTok
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"tiktok"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"tiktok"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `content_posting_method` | string | Yes | `DIRECT_POST` publishes the post. `UPLOAD` does not publish: it sends the media to the account's TikTok inbox, where the owner finishes and publishes it in the TikTok app within 24 hours. |
 | `privacy_level` | string | Yes | Who can see the post: `PUBLIC_TO_EVERYONE`, `MUTUAL_FOLLOW_FRIENDS`, `FOLLOWER_OF_CREATOR` or `SELF_ONLY`. Only `SELF_ONLY` works until TikTok's audit. Ignored with `UPLOAD`. |
 | `comment` | boolean | Yes | Allow comments. Ignored with `UPLOAD`. |

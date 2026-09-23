@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 VK cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a VK channel will take.
 
-Every post to VK carries a `settings` object with `"__type": "vk"`, and nothing else: VK has no settings of its own. Posts go to the connected account's own wall. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to VK carries a `settings` object with `"__type": "vk"`, and nothing else: VK has no settings of its own. Posts go to the connected account's own wall. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"vk"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"vk"`. PostQueen sets it from the channel you post to, so it can be left out. |
 
 Photos in `image` are uploaded to VK and attached to the wall post. Video is not supported yet: attach photos only.
 

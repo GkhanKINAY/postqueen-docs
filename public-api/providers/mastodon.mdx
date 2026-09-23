@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Mastodon cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Mastodon channel will take.
 
-Every post to Mastodon carries a `settings` object with `"__type": "mastodon"`, and nothing else: Mastodon has no settings of its own. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Mastodon carries a `settings` object with `"__type": "mastodon"`, and nothing else: Mastodon has no settings of its own. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"mastodon"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"mastodon"`. PostQueen sets it from the channel you post to, so it can be left out. |
 
 Every post is public. Alt text goes on each file in `image`, as `alt`, and PostQueen sends it to Mastodon as the file's description.
 

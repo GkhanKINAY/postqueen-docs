@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Kick cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Kick channel will take.
 
-Every post to Kick carries a `settings` object with `"__type": "kick"`, and nothing else: Kick has no settings of its own. A post is a message in the chat of the channel that connected. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Kick carries a `settings` object with `"__type": "kick"`, and nothing else: Kick has no settings of its own. A post is a message in the chat of the channel that connected. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"kick"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"kick"`. PostQueen sets it from the channel you post to, so it can be left out. |
 
 Chat is text only: media on the post is not sent.
 

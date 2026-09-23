@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Tumblr cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Tumblr channel will take.
 
-Every post to Tumblr carries a `settings` object with `"__type": "tumblr"`. Each channel is one blog, chosen when it connects. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Tumblr carries a `settings` object with `"__type": "tumblr"`. Each channel is one blog, chosen when it connects. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"tumblr"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"tumblr"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `title` | string | No | A heading at the top of the post, 1 to 4,096 characters. |
 | `link` | string | No | A link block added after the text. Must be a valid URL. |
 | `sourceUrl` | string | No | The source credited on the post. Must be a valid URL. |

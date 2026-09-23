@@ -11,13 +11,13 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 MeWe cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a MeWe channel will take.
 
-Every post to MeWe carries a `settings` object with `"__type": "mewe"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to MeWe carries a `settings` object with `"__type": "mewe"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
-| `__type` | string | Yes | Always `"mewe"`. PostQueen sets it from the channel you post to. |
+| `__type` | string | No | Always `"mewe"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `postType` | string | Yes | `timeline` posts to your own timeline, `group` to one of your groups. |
 | `group` | string | For `group` | The id of the group. See below. |
 
