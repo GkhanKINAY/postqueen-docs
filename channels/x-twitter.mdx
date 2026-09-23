@@ -1,74 +1,126 @@
 ---
-title: X (Twitter)
-description: 'How to add X to your system'
-icon: /images/channels/x.svg
+title: "X"
+description: "Connect X to PostQueen, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/x.svg"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): write it from _templates/channel.mdx. Sources: this file, moved from providers/x-twitter (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="in-review">X can be connected once the free trial ends, or right away if you end the trial early.</ChannelStatus>
 
-<img src="/images/channels/x.svg" alt="X" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+Schedule X posts, threads, images, GIFs and MP4 video, post into X Communities and publish long-form Articles. PostQueen publishes them through X's official API when their time comes.
 
-<Warning>
-**In review.** Connects once your trial ends. X's review of PostQueen's app is in progress. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to X
-
-X is the network she paces herself on. One post goes out at a time, because X allows 300 posts per three hours, and a thread is simply the first post followed by replies she chains onto it.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    280 characters, or 4,000 on a channel marked Verified. An article takes up to 100,000
+  <Card title="Text" icon="type">
+    280 characters, or 4,000 on a channel marked Verified, counted the way X counts them: a link is 23, most emoji and CJK characters are 2. Articles take up to 100,000.
   </Card>
-  <Card title="Media" icon="images">
-    Optional. Up to 4 pictures, or one video. Pictures only in an article
+  <Card title="Media" icon="image">
+    Up to 4 pictures, or 1 GIF, or 1 MP4 video per post, never mixed. Every picture is resized to 1,000 px wide and sent as a GIF.
   </Card>
   <Card title="Post types" icon="layers">
-    Post, reply, thread, community post, long-form article
+    Post, thread, Community post and long-form Article, with optional Made with AI and Paid partnership labels.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    Yes, unless you set `DISABLE_X_ANALYTICS`
+    7, 30 or 90 days: impressions, likes, retweets, replies, quotes and bookmarks for each post, and the same six totaled over your own posts. No follower count.
   </Card>
 </CardGroup>
 
-The Verified flag is read from your X profile when the channel connects, and it lives on the channel as a checkbox you can correct later. Account numbers come back as impressions, likes and retweets, plus replies, quotes and bookmarks. Per post she reads the same six.
+**Not supported:** polls, quote posts, replies to other people's posts, and alt text.
 
-| | |
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer. The post and every thread reply are checked on their own.
+
+| Rule | Message |
 |---|---|
-| **Post settings** | `who_can_reply_post`, `community`, `made_with_ai`, `paid_partnership`, plus `post_type`, `article_title`, `article_status` and `article_cover` for an article. Full schema in the [X settings reference](/public-api/providers/x) |
-| **Connect flow** | One step. She logs in as whichever account is signed in on X, so switch accounts there first if you want a different one |
-| **Automations** | Auto Repost Posts, Auto plug post, and Add Re-posters, which pulls in your other connected X channels to repost for you. The first two read like counts, so they turn off with `DISABLE_X_ANALYTICS` |
+| At most 4 pictures | “X allows up to 4 pictures per post” |
+| A GIF or a video goes alone | “X allows one video or one GIF per post, without other media” |
+| Text within 280, 4,000 on a Verified channel, or 100,000 in an Article | “post is too long, please fix it” |
+| A Community link in the right format | “Invalid X community URL. It should be in the format: https://x.com/i/communities/1493446837214187523” |
+| An Article has a title | “Article title is required” |
+| An Article takes images only | “X articles only support images” |
+| A draft Article has no thread replies | “A draft article cannot have thread replies, remove them or publish the article” |
 
-<Warning>
-What X sends back when a post will not fly:
+Video length and file size are X's rules, and PostQueen does not check them first. Some X accounts may not post a video longer than 2 minutes. X also limits unverified accounts to 50 posts and 200 replies a day across every app, and allows 1 cashtag per post.
 
-- **There must be a maximum of 4 items per post.**
-- **There can be maximum of one cashtag ($SYMBOL) per post.**
-- **You are not allowed to create a post with duplicate content.** Reword it and try again.
-- **The video you are trying to post is longer than 2 minutes, which is not allowed for this account.**
-</Warning>
+## Connect X
 
-## Post Settings
+<Note>
+X is in review, and connecting it is locked during the free trial. On the X step in **Add Channel**, choose **End free trial to unlock X** to start your plan now, or wait for the trial to end. X channels you connected before keep working.
+</Note>
 
-When creating a post for X, you can configure the following options:
+<Steps>
+  <Step title="Sign in on x.com">
+    PostQueen connects whichever account is signed in on x.com in your browser. Switch to the account you want to post to first.
+  </Step>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **X**.
+  </Step>
+  <Step title="Authorize PostQueen">
+    Approve the request on X.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
-- **Who can reply**: Control who can reply to your post. The options are everyone, accounts you follow, mentioned accounts, subscribers, or verified accounts.
-- **Post to a community**: Optionally share your post to an X community by providing the community URL.
-- **Made with AI**: Mark your post as containing AI-generated content. When enabled, the post will be labeled accordingly on X.
-- **Paid partnership**: Mark your post as a paid promotion. When enabled, the post will be labeled as a paid partnership on X.
-- **Post type**: Switch from a regular post to **Article (long-form)** and she publishes an X article instead. You give it a title, choose whether it goes out published or lands in your X drafts, and can add a cover image. Articles keep their headings, lists and links, take pictures but no video, and a draft article cannot carry thread replies.
+The **Verified** setting, which raises the limit to 4,000 characters, is read from X when you connect. Change it later in the channel's menu under **Additional Settings**.
 
-## Self-hosting
+## Post settings
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up X (Twitter) on your own instance](/installation/providers/x-twitter).
-</Info>
+Each X post in the composer has these settings:
+
+- **Post Type**: **Post** or **Article (long-form)**. It starts on **Post**.
+- **Who can reply to this post?**: **Everyone**, **Accounts you follow**, **Mentioned accounts**, **Subscribers** or **Verified accounts**. It starts on **Everyone**.
+- **Community**: paste a Community link such as `https://x.com/i/communities/1493446837214187523` to post into that Community. X also shows the post to your followers.
+- **Made with AI** and **Paid partnership**: label the post on X.
+- For an Article: **Article title**, **Article status** (**Save as draft** saves it to your X drafts, **Publish** publishes it) and an optional **Cover image**. The Article keeps its headings, bullet lists, bold text and links, and the pictures you attach are placed at its end. Video is not allowed.
+
+**Subscribers**, **Verified accounts** and **Article (long-form)** need an X Premium subscription. When X reports that the account has none, the composer hides them and says "Restricted reply audiences and Articles need an X Premium subscription, and this account has none, so they are not offered here."
+
+The field names and values for the API are on [X posting settings](/public-api/providers/x).
+
+## Comments and threads
+
+**Continue thread** adds parts to the post. Each part is posted as a reply to the part before, can carry its own media and has its own delay. Every part is held to the same media rule as the first post.
+
+The X settings also show an **Add a thread finisher** switch. PostQueen does not publish it, so write a closing post as the last part of the thread instead.
+
+Automations work with X too. In the channel's **Automations** on the **Channels** page, **Auto Repost Posts** reposts a post once it reaches a number of likes you set, and **Auto plug post** replies to it with a post you write in advance. Each checks the post every 6 hours, up to 3 times. In the composer, **Add Re-posters** has your other X channels repost the post.
+
+## Good to know
+
+- Every picture is resized to 1,000 px wide and re-encoded as a GIF before upload, which can lower photo quality.
+- PostQueen publishes up to 10 X posts at the same time.
+- X has no way to tell whether a post that was interrupted went out. PostQueen then stops and asks you to check the account instead of posting twice.
+- The Premium check uses what X reports. A Basic subscriber, or an account whose check fails, still sees every option, and X may refuse it when the post is published.
+- While you write an Article, the composer's counter still measures against 280 or 4,000 and can turn red. When you schedule, the Article is held to 100,000.
+- During the free trial, an X account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="X unlocks when your free trial ends. End the trial to connect it now.">
+    Your workspace is still in its free trial. End the trial from the X step in **Add Channel**, or wait for it to end, then connect X.
+  </Accordion>
+  <Accordion title="There is a problem posting, please edit your post and check character count and media attachments">
+    X refused the post. Check the length and the media, then schedule it again.
+  </Accordion>
+  <Accordion title="You are not allowed to create a post with duplicate content">
+    X refuses a post identical to one you published recently. Reword it and schedule it again.
+  </Accordion>
+  <Accordion title="The video you are trying to post is longer than 2 minutes, which is not allowed for this account">
+    This X account may not post long videos. Trim the video to 2 minutes or less.
+  </Accordion>
+  <Accordion title="There can be maximum of one cashtag ($SYMBOL) per post">
+    Keep one cashtag in the post and remove the others.
+  </Accordion>
+  <Accordion title="X authentication has expired, please reconnect your account">
+    Choose **Reconnect channel** in the channel's menu and authorize PostQueen again.
+  </Accordion>
+</AccordionGroup>
 
 <NextStepsChannel />
-
