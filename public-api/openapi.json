@@ -678,7 +678,7 @@
           "Posts"
         ],
         "summary": "Create a post",
-        "description": "Schedules, publishes or saves posts on one or more channels. Each entry in `posts` is one channel: its text, media, thread and the network's `settings`. PostQueen checks every entry against the network's rules before it saves anything, drafts included for the basics.\n\nThe settings of each network are on [Posting settings by network](/public-api/providers/overview).",
+        "description": "Schedules, publishes or saves posts on one or more channels. Each entry in `posts` is one channel: its text, media, thread and the network's `settings`. PostQueen checks every entry before it saves anything: the body and each network's required settings always, and for everything but a draft also the network's rules on length and media.\n\nThe settings of each network are on [Posting settings by network](/public-api/providers/overview).",
         "operationId": "createPost",
         "requestBody": {
           "required": true,
@@ -3159,10 +3159,10 @@
           },
           "group": {
             "type": "string",
-            "description": "Ignored on create: every channel entry gets a new group id, returned by List posts"
+            "description": "Leave it out for a new post. When set, every post in that group that this request does not resend is deleted, and the entry is saved under a new group id. Use it with `value[].id` to change a post and drop the thread parts you leave out"
           },
           "settings": {
-            "description": "The network's settings. `__type` is always set from the channel, so what matters is the shape. May be left out for networks with no required settings, such as Bluesky and Nostr. Not checked for a draft.",
+            "description": "The network's settings. `__type` is always set from the channel, so what matters is the shape. May be left out for networks with no required settings, such as Bluesky and Nostr. Its required fields are checked for drafts too.",
             "anyOf": [
               {
                 "$ref": "#/components/schemas/XSettings"
