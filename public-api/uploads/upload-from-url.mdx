@@ -1,37 +1,41 @@
 ---
-title: 'Upload from URL'
-description: 'Fetch a public media URL into the library and return a hosted path.'
-openapi: 'POST /upload-from-url'
+title: "Upload from a URL"
+sidebarTitle: "Upload from a URL"
+description: "Have PostQueen fetch an image or video from a public HTTPS URL into the media library."
+openapi: "POST /upload-from-url"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: api). Row in page-status-2026-09-23.md. */}
-
-Fetch a remote URL and store the result as a PostQueen media asset. Useful when your media already lives on a CDN or external storage and you do not want to round-trip it through your client.
-
-## Requirements for the source URL
-
-- Must be reachable from the PostQueen backend (publicly resolvable HTTPS, no auth required).
-- The URL path, ignoring any query string, must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. This is checked before the fetch, so AVIF, BMP and TIFF cannot be pulled from a URL at all even though [Upload File](/public-api/uploads/upload-file) accepts them.
-- The downloaded bytes are then sniffed and must also land in that same allowlist.
-- PostQueen performs an [SSRF-safe fetch](https://github.com/nodejs/undici): private IP ranges, link-local addresses, and `localhost` are rejected. A self-hosted instance on a trusted private network can switch this off with [`DISABLE_SSRF_PROTECTION`](/configuration/reference#disable_ssrf_protection).
-
-## Example
+Use this when the file already sits on the web, on a CDN or in public storage, and you do not want to download it and upload it again.
 
 ```bash
 curl -X POST "https://api.postqueen.ai/public/v1/upload-from-url" \
-  -H "Authorization: your-api-key" \
+  -H "Authorization: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/photo.jpg"}'
+  -d '{"url": "https://example.com/launch-banner.png"}'
 ```
 
-Response shape matches [Upload File](/public-api/uploads/upload-file).
+The answer has the same shape as [Upload a file](/public-api/uploads/upload-file): put its `id` and `path` on the post.
 
-## When to prefer multipart upload
+## What the URL must be
 
-If your source URLs are slow or unreliable, the round-trip through PostQueen can fail or take a long time. For best results:
+- A public `https://` URL that needs no sign-in. Plain `http` is refused.
+- Its path, without the query string, ends in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. AVIF, BMP, TIFF and MOV files cannot be fetched this way; send them to [Upload a file](/public-api/uploads/upload-file).
+- It does not point at a private, local or internal address. PostQueen checks the address again when it connects.
 
-- Cache stable, fast HTTPS source URLs, such as S3, R2 or Cloudflare Images.
-- For one-off uploads, pre-download the file locally and POST it to [`/public/v1/upload`](/public-api/uploads/upload-file) instead.
-- Do not link to signed URLs that may expire before PostQueen fetches them.
+## How the file is fetched
 
-Common failure modes: [Uploads troubleshooting](/troubleshooting/common-errors).
+PostQueen streams the file to storage, up to 1 GB and for at most 5 minutes. A server that declares a larger file is refused before the download starts. Once the file is in, PostQueen reads its type from the bytes, so a `.png` URL that serves an HTML page fails with `Unsupported file type.` A video comes back `processing`, as an upload does: poll [Get media status](/public-api/uploads/media-status) before you post it.
+
+## If it fails
+
+| Answer | What to do |
+|---|---|
+| `400` with a `message` list | The URL is not https, has another extension, or points at an address PostQueen will not fetch |
+| `400 Failed to fetch URL` | The server did not answer with the file in time, or answered with an error. Check that the link opens without signing in |
+| `400 File is too large.` | Over 1 GB |
+| `400 Unsupported file type.` | The bytes are not an image or video PostQueen accepts |
+| `429` | Over 300 uploads from URLs this hour. See [Limits and errors](/public-api/limits-and-errors) |
+
+<Tip>
+Use stable links. A signed link that expires before PostQueen fetches it fails with `Failed to fetch URL`.
+</Tip>

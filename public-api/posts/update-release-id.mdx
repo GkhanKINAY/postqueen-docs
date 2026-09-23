@@ -1,22 +1,12 @@
 ---
-title: 'Update Release ID'
-sidebarTitle: Release ID
-description: "Attach a published item's id so post analytics can resolve."
-openapi: 'PUT /posts/{id}/release-id'
+title: "Update release ID"
+sidebarTitle: "Update release ID"
+description: "Connect a TikTok post to the video it became, so its analytics can be read."
+openapi: "PUT /posts/{id}/release-id"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
-
-This reconnects a post that already exists on a network to its entry on your calendar, so her
-analytics can find it. Pair it with [Missing Content](/public-api/posts/missing-content), which
-lists what the provider has that she has not matched up yet.
+Take the `id` from [Get missing content](/public-api/posts/missing-content) and send it as `releaseId`.
 
 <Warning>
-**Validation failures surface as `500`, not `400`.** A malformed body reaches the handler before
-anything rejects it cleanly, so you get a server error rather than a message naming the field
-that was wrong. Validate on your side first.
+Anything that does not match answers `500`, not `400` or `404`: an unknown post id, a post of another workspace, or a post whose release id is not `missing`. The body is not checked either, so a request without `releaseId` stores the text `undefined`. Check the post and your body before you call it.
 </Warning>
-
-The release id is whatever the network calls its own published item: a tweet id on X, a media id
-on Instagram, a video id on YouTube. [Missing Content](/public-api/posts/missing-content) returns
-them in the shape each provider uses, so taking the value straight from there avoids guessing.

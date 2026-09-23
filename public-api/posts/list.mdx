@@ -1,8 +1,16 @@
 ---
-title: 'List Posts'
-description: 'List posts in a date window, including drafts, queued, published and failed.'
-openapi: 'GET /posts'
+title: "List posts"
+sidebarTitle: "List posts"
+description: "Posts in a date range, drafts included, with their state, network and group."
+openapi: "GET /posts"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+Both `startDate` and `endDate` are required. Every post whose publish date falls between them comes back, whatever its state: `QUEUE`, `PUBLISHED`, `ERROR` or `DRAFT`.
 
+- Only the first post of each thread is listed, not its comments or later thread entries.
+- Posts of a channel you deleted are left out.
+- A repeating post appears once for each time it goes out in the range, each copy with `actualDate` set to the original date.
+- `settings` and `image` are JSON strings. Parse them before you read them.
+- A failed post carries the network's reason in `error`.
+
+Pass `customer` with a group id from [List groups](/public-api/integrations/groups) to see one client's channels only.

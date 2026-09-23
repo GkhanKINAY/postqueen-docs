@@ -1,19 +1,33 @@
 ---
-title: 'Trigger a Tool'
-description: 'Run a platform helper such as listing Discord channels or Reddit subreddits.'
-openapi: 'POST /integration-trigger/{id}'
+title: "Trigger a tool"
+sidebarTitle: "Trigger a tool"
+description: "Run a network's helper tool on a channel, such as listing WordPress post types or Discord channels."
+openapi: "POST /integration-trigger/{id}"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (keep; WIP: same as main; audit: api). Row in page-status-2026-09-23.md. */}
+Some settings take an id you cannot guess: a WordPress post type, a Hashnode publication, a Discord channel. The network's helper tools look them up for you.
 
-Some providers offer helper tools for fetching dynamic data needed when
-constructing post settings, for example searching
-[Instagram audio](/public-api/providers/instagram#audio) to attach to a Reel,
-listing Discord channels, or fetching Reddit flairs.
+<Steps>
+  <Step title="Find the tool">
+    Call [Get a channel's settings](/public-api/integrations/settings). Its `tools` list gives each tool's `methodName`, what it does, and its inputs in `dataSchema`.
+  </Step>
+  <Step title="Run it">
+    Send `methodName`, and `data` keyed as in `dataSchema`. Send `"data": {}` for a tool with no inputs.
+  </Step>
+  <Step title="Use the result">
+    Put the id you picked into the post's `settings`, such as `"type": "posts"` for WordPress.
+  </Step>
+</Steps>
 
-Discover the tools available for a channel with the
-[settings endpoint](/public-api/integrations/settings). Each tool entry
-contains the `methodName` to pass here together with its parameter schema.
+```bash
+curl -X POST "https://api.postqueen.ai/public/v1/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"methodName": "postTypes", "data": {}}'
+```
 
-For the full catalogue of what every network offers, and what each tool gives back, see
-[Provider Tools](/public-api/integrations/provider-tools).
+The tools of every network, and what each returns, are on [Provider tools](/public-api/integrations/provider-tools).
+
+<Note>
+When the network refuses the call, the answer is a plain `500 Unexpected error`, without the network's own message. Check `data` against the tool's `dataSchema` first. `401 Channel disconnected due to expired token` means the channel has to be connected again.
+</Note>

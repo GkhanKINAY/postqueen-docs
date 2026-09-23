@@ -1,11 +1,12 @@
 ---
-title: "Analytics summary"
-description: "Totals for your workspace over a time window."
-icon: "chart-column"
+title: "Get an analytics summary"
+sidebarTitle: "Analytics summary"
+description: "Totals across your published posts in a range, per channel and per weekday."
+openapi: "GET /analytics/summary"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: none on main, a new page. Row in page-status-2026-09-23.md. */}
+The same stored metrics as [List post analytics](/public-api/analytics/posts), added up for the posts published in the range: how many posts, their reactions, comments and impressions, a row per channel, and how many posts went out on each weekday (Monday first, by the UTC publish date).
 
-<Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
-</Note>
+A total is `null` when any post in the range does not report that metric, so a range that mixes networks, such as Pinterest and X, can show `null` reactions. `engagementMix` adds up what is known anyway.
+
+It takes the same filters as the list: `date`, `integrationIds`, `platform` and `q`.

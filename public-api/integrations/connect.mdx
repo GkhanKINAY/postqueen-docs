@@ -1,48 +1,32 @@
 ---
-title: 'Connect Channel (OAuth)'
-sidebarTitle: Connect
-description: 'Return the OAuth URL that starts a human channel-connect flow.'
-openapi: 'GET /social/{integration}'
+title: "Get a connect URL"
+sidebarTitle: "Connect a channel"
+description: "The sign-in URL that starts connecting a network, for a person to open in a browser."
+openapi: "GET /social/{integration}"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+This returns a URL and nothing more. The network shows its own consent screen to a person, so a channel cannot be connected without someone clicking through it.
 
-This returns the URL to send a person to. It does not connect anything on its own, because the
-network shows a consent screen to a human and then redirects back.
+## Which networks it is for
 
-<Info>
-There is no headless way to add a channel, and that is the network's rule rather than ours.
-</Info>
+It is for networks that sign in on their own consent page. On PostQueen today those are the networks **In review**: Instagram, Facebook, Threads, X, TikTok and YouTube. Each works with the limit on its [channel page](/channels/overview) until the network approves PostQueen's app.
 
-## Two ways this returns 400
+| How the network connects | Networks | What to do |
+|---|---|---|
+| Its own consent page | Instagram (`instagram`, `instagram-standalone`), Facebook, Threads, X, TikTok, YouTube | Open the `url` this returns |
+| A handle, key or password | Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress | Connect from **Add Channel** in the app. The `url` returned here is only an internal state value |
+| Soon | Every other network | Cannot be connected on PostQueen yet, whatever this returns |
 
-Both arrive before any request reaches the network, so they are quick to tell apart from a real
-OAuth failure.
+The `{integration}` value is the network's identifier, in lower case: `youtube`, `threads`, `instagram-standalone`. It is not always the display name.
 
-| Message | What it means |
-| --- | --- |
-| `Integration not allowed` | The `{integration}` value is not one she can connect this way. Check the spelling against the identifiers in [Provider Tools](/public-api/integrations/provider-tools); they are lowercase and not always the display name |
-| `This integration requires an external URL and is not supported via the public API` | The network needs you to say *where* it lives before it can start, which this endpoint has no way to ask for |
+## After the sign-in
 
-<Warning>
-**Mastodon and other self-hosted networks are not connectable through this endpoint.** They need
-an instance URL, and the only place that asks for one is **Add Channel** in the app. That is what
-the second message above means in practice.
-</Warning>
-
-## Refreshing an existing channel
-
-<Tip>
-Pass `?refresh=<integration-id>` and the flow reconnects that channel instead of adding a new one.
-Use it when a channel has gone red because the network expired its token rather than because
-someone revoked access.
-</Tip>
-
-## After the redirect
-
-The person lands back on your `FRONTEND_URL`.
+The person lands back in the PostQueen app, which finishes the connection. The sign-in state lives for one hour, so generate a new URL for a link that sat unused longer than that.
 
 <Check>
-The channel appears in [List Channels](/public-api/integrations/list). That is the check worth
-polling for, since this endpoint only ever hands out a URL.
+The new channel appears in [List channels](/public-api/integrations/list). Poll that, since this endpoint only hands out a URL.
 </Check>
+
+<Tip>
+To reconnect a channel whose token expired, pass its id as `refresh`. PostQueen reconnects that channel instead of adding a new one, and a reconnect does not count against the plan's channel limit.
+</Tip>

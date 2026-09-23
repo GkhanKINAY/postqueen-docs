@@ -1,164 +1,118 @@
 ---
-title: 'Create Post'
-description: 'Create a draft, a scheduled post, or publish immediately across channels.'
-openapi: 'POST /posts'
+title: "Create a post"
+sidebarTitle: "Create a post"
+description: "Schedule a post, publish it now or save a draft, on one channel or several, with media and threads."
+openapi: "POST /posts"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
-
-## Post type: `now`, `schedule`, or `draft`
-
-The top-level `type` field controls when (and whether) the post is published:
-
-| Value | Behaviour |
-|---|---|
-| `"now"` | Publish immediately. `date` is ignored. |
-| `"schedule"` | Publish at the time given in `date` (ISO 8601). |
-| `"draft"` | Save as a draft. The post is created and stored against the integration but not scheduled or published. You can promote it to a real post later from the PostQueen UI. |
-
-Drafts are how you stage content via the API without committing to a publish time, useful for content review workflows or pre-filling a calendar from an external CMS.
-
-<Note>
-  `posts` is required for every `type`, drafts included. Each entry must include an `integration.id`, or the request returns `400 Bad Request` with the message `All posts must have an integration id`. A draft still has to be attached to at least one channel. There is no way to create a channel-less draft via the API.
-</Note>
-
-## Duplicating a post
-
-There is no dedicated duplicate / clone endpoint. To copy an existing post, fetch it with `GET /posts` and submit the content as a new `POST /posts` request.
-
-<Warning>
-Strip the server-managed fields from the fetched object before you re-submit. Re-sending them either causes validation errors or, worse, accidentally updates the original. At minimum drop:
-
-- `id` and any nested post IDs
-- `createdAt`, `updatedAt`, and any other timestamps
-- `state` / `status` / `releaseId` (these are assigned by the scheduler)
-- Anything else the API did not ask you for when you originally created the post
-</Warning>
-
-Then set a fresh `type` (`now`, `schedule`, or `draft`) and `date`, and `POST` the cleaned object.
-
-## Provider-Specific Settings
-
-When creating posts, each social media platform requires different settings. The `settings` object must include a `__type` field that identifies the platform.
-
-### Supported Platforms
-
-<Tabs>
-  <Tab title="Social Platforms">
-    | Platform | `__type` | Required Settings |
-    |----------|----------|-------------------|
-    | X (Twitter) | `x` | `who_can_reply_post` (optional: `community`, `made_with_ai`, `paid_partnership`) |
-    | LinkedIn | `linkedin` | - |
-    | LinkedIn Page | `linkedin-page` | - |
-    | Facebook | `facebook` | - (optional: `url`) |
-    | Instagram (FB-linked) | `instagram` | `post_type` |
-    | Instagram Standalone | `instagram-standalone` | `post_type` |
-    | Threads | `threads` | - |
-    | Bluesky | `bluesky` | - |
-    | Mastodon | `mastodon` | - |
-    | Warpcast (Farcaster) | `wrapcast` | - (optional: `subreddit[]` for channels) |
-    | Nostr | `nostr` | - |
-    | VK | `vk` | - |
-  </Tab>
-  <Tab title="Video Platforms">
-    | Platform | `__type` | Required Settings |
-    |----------|----------|-------------------|
-    | YouTube | `youtube` | `title`, `type` |
-    | TikTok | `tiktok` | `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle`, `content_posting_method` |
-
-    TikTok honours these settings only when `content_posting_method` is `DIRECT_POST`, with `UPLOAD` it keeps only the post content/title. `duet`, `stitch`, and `video_made_with_ai` apply to video posts only; `autoAddMusic` to photo posts only. Every field: [TikTok settings](/public-api/providers/tiktok).
-  </Tab>
-  <Tab title="Community Platforms">
-    | Platform | `__type` | Required Settings |
-    |----------|----------|-------------------|
-    | Reddit | `reddit` | `subreddit[]` (array) |
-    | Lemmy | `lemmy` | `subreddit[]` (array) |
-    | Discord | `discord` | `channel` |
-    | Slack | `slack` | `channel` |
-    | Telegram | `telegram` | - |
-  </Tab>
-  <Tab title="Design Platforms">
-    | Platform | `__type` | Required Settings |
-    |----------|----------|-------------------|
-    | Pinterest | `pinterest` | `board` |
-    | Dribbble | `dribbble` | `title` |
-  </Tab>
-  <Tab title="Blogging Platforms">
-    | Platform | `__type` | Required Settings |
-    |----------|----------|-------------------|
-    | Dev.to | `devto` | `title` |
-    | Hashnode | `hashnode` | `title`, `tags[]` |
-    | WordPress | `wordpress` | `title`, `type` |
-  </Tab>
-  <Tab title="Business">
-    | Platform | `__type` | Required Settings |
-    |----------|----------|-------------------|
-    | Google My Business | `gmb` | - (optional: `topicType`, `callToActionType`) |
-    | Listmonk (Newsletters) | `listmonk` | `subject`, `preview`, `list` |
-  </Tab>
-</Tabs>
-
-### Platforms Without Custom Settings
-
-These platforms only need the `__type` field:
+Every request carries the same five fields: `type`, `date`, `shortLink`, `tags` and `posts`. Each entry in `posts` is one channel, and each item in its `value` list is one part of the post: the first is the post, the rest are its thread or comments.
 
 ```json
 {
-  "settings": {
-    "__type": "threads"
-  }
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [{ "content": "Shipping the new calendar today.", "image": [] }]
+    }
+  ]
 }
 ```
 
-Platforms: `threads`, `mastodon`, `bluesky`, `telegram`, `nostr`, `vk`
+A step-by-step guide, from finding the channel id to checking the result, is [Schedule a post with the API](/public-api/schedule-a-post).
 
-## Detailed Provider Settings
+## `type`
 
-Schemas and examples for each platform: [Provider Settings](/public-api/providers/x).
+| Value | What happens |
+|---|---|
+| `schedule` | The post goes out at `date`, in UTC. |
+| `now` | The post goes out at once. `date` is still required, and PostQueen stamps the current minute instead. |
+| `draft` | Saved on the channel's calendar without publishing. Move it to scheduled later with [Change post status](/public-api/posts/change-status). |
+| `update` | Changes existing posts in place, named by `value[].id`, without starting a new publish. |
+
+<Note>
+A draft is checked too: the body, and each network's required settings. The network's rules on length and media are checked only when the post is set to go out (`schedule`, `now` and `update`). So a draft you schedule later is already complete.
+</Note>
+
+## The parts of a post
+
+| Field | Required | What it does |
+|---|---|---|
+| `posts[].integration.id` | Yes | The channel, from [List channels](/public-api/integrations/list) |
+| `posts[].value[].content` | Yes | The text. It may be empty only when the entry has media |
+| `posts[].value[].image` | Yes | Media, as `{ id, path }` from an upload. Send `[]` for text only |
+| `posts[].value[].delay` | No | Minutes to wait after the previous part of a thread |
+| `posts[].value[].id` | No | An existing post's id, to change that post in place |
+| `posts[].group` | No | Leave it out for a new post. With an existing group, every post of that group you do not resend is deleted |
+| `posts[].settings` | Depends on the network | The network's settings. See the table below |
+| `shortLink` | Yes | `true` replaces links with PostQueen short links. Send `false` to keep them as they are |
+| `tags` | Yes | Tags to attach, as `{ value, label }`. PostQueen attaches only tags that already exist in the workspace. Send `[]` for none |
+| `inter` | No | Repeat the post every this many days |
+
+Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`, and a video must be `ready`: see [Upload a file](/public-api/uploads/upload-file).
+
+## Settings by network
+
+`settings.__type` is always set from the channel, so you may leave it out; what matters is the shape of the rest. Networks without required settings need no `settings` at all. Every field of every network, with examples: [Posting settings by network](/public-api/providers/overview).
+
+| Network | Required settings | On PostQueen |
+|---|---|---|
+| Bluesky, Nostr | None | Available |
+| WordPress | `title`, `type` (`posts`, `pages` or another post type from the `postTypes` tool) | Available |
+| DEV | `title` | Available |
+| Hashnode | `title`, `publication`, at least one `tags` entry | Available |
+| Lemmy | `subreddit` list, each with a community and a title | Available |
+| Listmonk | `subject`, `preview`, `list` | Available |
+| Moltbook | `submolt` | Available |
+| X | `who_can_reply_post`, or `article_title` and `article_status` for an article | In review |
+| Instagram | `post_type` | In review |
+| YouTube | `title`, `type` | In review |
+| TikTok | `privacy_level`, `duet`, `stitch`, `comment`, `autoAddMusic`, `brand_content_toggle`, `brand_organic_toggle`, `content_posting_method` | In review |
+| Facebook, Threads | None | In review |
+| Reddit | `subreddit` list, each with a subreddit, title, type and flair choice | Soon |
+| Pinterest | `board` | Soon |
+| Dribbble | `title` | Soon |
+| Discord, Slack | `channel` | Soon |
+| Skool | `group`, `label`, `title` | Soon |
+| Whop | `company`, `experience` | Soon |
+| MeWe | `postType`, and `group` for a group post | Soon |
+| Farcaster | `subreddit` list of channels | Soon |
+| Google Business Profile | None; an event or offer needs `eventTitle`, `eventStartDate` and `eventEndDate` | Soon |
+| LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr | None | Soon |
+
+What **In review** and **Soon** mean for each network is on [Channels](/channels/overview).
+
+## What comes back
+
+A `201` with one row per channel entry. Keep the `postId`s: the other post endpoints take them.
+
+```json
+[{ "postId": "cmg1p0s7k0001qz0h4yq2a8r1", "integration": "cmg1ozx2c0000qz0h8c7w5v3n" }]
+```
+
+When a part breaks a network's rule, the call answers `400` before anything is saved, naming the network and the channel:
+
+```json
+{ "statusCode": 400, "provider": "bluesky", "name": "PostQueen", "message": "post is too long, please fix it" }
+```
+
+Every status the endpoint returns, and what to do about it, is on [Limits and errors](/public-api/limits-and-errors).
+
+## Changing or copying a post
+
+- **Change a scheduled post.** Send it again with `value[].id` set to the id of each part you keep, and its `group` from [List posts](/public-api/posts/list) so the parts you leave out are deleted. Use `update` with the post's current `date` to change its text or media without touching the schedule, or `schedule` with a new `date` to move it. To change only its settings, [Update post settings](/public-api/posts/settings) is simpler.
+- **Publish a post again.** `schedule` or `now` with the id of a post that was already published is refused with `400`. Add `"republish": true` if you mean it.
+- **Copy a post.** There is no copy endpoint. Read the post with [List posts](/public-api/posts/list), parse its `settings` and `image` (they come back as JSON strings), and send the content as a new post without any post ids or `group`.
 
 ## Body size
 
 <Warning>
-**Do not inline image data.** This endpoint falls back to the framework's default body limit of
-roughly **100 kB**, which a single base64 image clears easily, and you get a
-`413 PayloadTooLargeError` before anything is validated.
-
-The 50 MB limit you may have read about applies to the internal routes the web interface uses,
-not to this one.
+Do not put file data in the body. This endpoint takes about 100 kB of JSON, which one base64 image exceeds, and answers `413` before anything is checked. Upload the file first and send its `id` and `path`.
 </Warning>
 
-Upload first, then reference what comes back:
-
-```bash
-# 1. upload the file
-curl -X POST "https://api.postqueen.ai/public/v1/upload" \
-  -H "Authorization: your-api-key" \
-  -F "file=@photo.jpg"
-
-# 2. put the returned id and path in the post body's image array
-```
-
-<Check>
-Once the upload has returned an id and a path, reference those two values instead of the file
-itself and the post body stays inside the 100 kB limit.
-</Check>
-
-[Upload a File](/public-api/uploads/upload-file) lists the accepted types, and
-[Upload from URL](/public-api/uploads/upload-from-url) does the same for media already on the web.
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Every provider setting" icon="code" href="/public-api/providers/x">
-    The full schema each platform accepts, with a worked example.
-  </Card>
-  <Card title="Find your channel IDs" icon="plug" href="/public-api/integrations/list">
-    Every connected channel, with the `integration.id` each post entry needs.
-  </Card>
-  <Card title="Upload media first" icon="image" href="/public-api/uploads/upload-file">
-    The accepted file types, and the id and path you reference back here.
-  </Card>
-  <Card title="Read posts back" icon="list" href="/public-api/posts/list">
-    `GET /posts`, which is also step one of duplicating one.
-  </Card>
-</CardGroup>
+<Note>
+`POST /posts` has an hourly limit per workspace. One request can carry many channels and a whole thread, and it counts once. See [Limits and errors](/public-api/limits-and-errors).
+</Note>

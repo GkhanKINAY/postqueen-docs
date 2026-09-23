@@ -1,8 +1,17 @@
 ---
-title: 'Delete Channel'
-description: 'Disconnect a channel after its posts have been removed.'
-openapi: 'DELETE /integrations/{id}'
+title: "Delete a channel"
+sidebarTitle: "Delete a channel"
+description: "Remove a channel together with every post it has in PostQueen."
+openapi: "DELETE /integrations/{id}"
 ---
 
-{/* OVERHAUL-TODO(B8): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+<Warning>
+Deleting a channel deletes all of its posts in PostQueen first: scheduled posts, drafts, published records and failed posts. Pending publishing is cancelled. Connecting the same account again does not bring them back.
+</Warning>
 
+What the delete does not do:
+
+- It does not touch the same content scheduled on your other channels. Each channel has its own posts.
+- It does not take anything down from the network. Published posts stay live there.
+
+An id that is not a channel of your workspace answers `500`, not `404`. Check it against [List channels](/public-api/integrations/list) first.
