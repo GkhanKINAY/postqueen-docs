@@ -17,8 +17,8 @@
 </p>
 
 <p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-7C3AED?labelColor=15131C" alt="License: MIT"></a>
-  <a href="https://mintlify.com"><img src="https://img.shields.io/badge/built%20with-Mintlify-7C3AED?labelColor=15131C" alt="Built with Mintlify"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2563EB?labelColor=15131C" alt="License: MIT"></a>
+  <a href="https://mintlify.com"><img src="https://img.shields.io/badge/built%20with-Mintlify-0D9373?labelColor=15131C" alt="Built with Mintlify"></a>
 </p>
 
 <p align="center">
