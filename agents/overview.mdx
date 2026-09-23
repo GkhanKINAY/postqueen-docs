@@ -1,114 +1,148 @@
 ---
-title: 'Agents Overview'
-description: 'Give any assistant that can run a command or call a tool hands on your calendar: install her skill, connect over MCP or call the public API.'
-icon: 'sparkles'
+title: "AI agents"
+description: "Let an AI agent list your channels, schedule posts and read how they did. Every agent PostQueen supports, how each one connects, and what PostQueen has tested."
+icon: "bot"
+mode: "wide"
 keywords:
-  - agents
-  - grok bot
+  - ai agents
   - mcp
-  - agentic social media scheduler
-  - openclaw
-  - hermes
   - claude
   - chatgpt
+  - grok bot
+  - claude code
+  - cursor
+  - openclaw
+  - hermes
+  - agentic social media scheduler
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: partly better; audit: agents), main:agents/why-agents.mdx (fix; WIP: better, use as base; audit: agents), main:mcp/setup.mdx (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
 
-Any assistant that can run a command or call a tool can put posts on your calendar. OpenClaw and Hermes live on your machine. Grok Bot is the cloud agent. Claude, ChatGPT and the rest connect over MCP.
+An AI agent can do in PostQueen much of what you do in the app: list your channels, write and schedule posts, add images and videos, and read how published posts did. Every post it makes lands on your calendar. A draft or a scheduled post waits there, so you can check it, change it or delete it before it goes out.
 
-The calendar stays yours: everything is visible before it publishes. A draft is saved and never scheduled.
-
-<Frame>
-  <img src="/images/brand/open-agents.svg" alt="Chat apps feed OpenClaw, a one-line brief feeds Hermes, both drive the postqueen CLI and posts land on the calendar" />
-</Frame>
-
-## Pick your agent
+## Three ways to connect
 
 <CardGroup cols={3}>
-  <Card title="OpenClaw" icon="/images/brand/icon-openclaw.svg" href="/agents/openclaw">
-    Lives on your machine and turns WhatsApp and Telegram into her front door
+  <Card title="MCP server" icon="plug" href="/mcp/introduction">
+    For chat assistants and most coding agents. Paste one address and the agent gets {{mcpToolsKey}} tools. Nothing to install.
   </Card>
-  <Card title="Hermes" icon="/images/brand/icon-hermes.svg" href="/agents/hermes">
-    Hand it one brief and it plans, writes and schedules your week over the CLI
-  </Card>
-  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Cloud agent. Tell the Bot to add the MCP server
-  </Card>
-</CardGroup>
-
-## Three ways in
-
-<CardGroup cols={3}>
-  <Card title="Agent skill + CLI" icon="terminal" href="/cli/introduction">
-    Install the skill and your agent drives the postqueen CLI, with clean JSON on every command
-  </Card>
-  <Card title="MCP" icon="plug" href="/agents/overview">
-    Point any MCP client at your key address for 21 tools, including post analytics and `ask_postqueen`. A sign-in address (20 tools) is an option, not tested yet
+  <Card title="CLI and skill" icon="terminal" href="/cli/introduction">
+    For agents that run shell commands, and for your own scripts. The `postqueen` command, plus a skill that teaches it to the agent.
   </Card>
   <Card title="Public API" icon="code" href="/public-api/introduction">
-    REST for your own scripts and automations, with your API key as the only setup
+    For your own apps and automations. REST calls with your API key.
   </Card>
 </CardGroup>
 
-## Other clients
+Use MCP when your agent supports it: it finds the tools on its own. Use the CLI when the agent works in a terminal, or when you need something MCP cannot do yet.
 
-These reach PostQueen over MCP (or the CLI skill) instead of as a bot product. [Muse Code](/agents/muse) connects over MCP. Muse, Meta's personal agent, is a different agent that connects through a custom connector, not tested yet: [Muse](/agents/muse#muse-the-personal-agent).
+| What the agent needs to do | MCP | CLI | API |
+|---|---|---|---|
+| Schedule a post or save a draft | Yes | Yes | Yes |
+| Publish a post right away | Yes | With a `--json` file | Yes |
+| List posts and read one in full | Yes | List | Yes |
+| Change the settings of a post that has not gone out | Yes | Yes | Yes |
+| Move a post between draft and scheduled | No | Yes | Yes |
+| Delete a post | No | Yes | Yes |
+| Add a file from your device | In Claude, Claude Cowork and ChatGPT | Yes | Yes |
+| Add a file from a public link | Yes | No | Yes |
+| Generate an image | Yes | No | No |
+| Read how published posts did | Yes | One post at a time | Yes |
+| Totals and top posts across the workspace | Yes | No | Yes |
+| Read channel numbers, such as followers | No | Yes | Yes |
 
-<CardGroup cols={3}>
-  <Card title="Claude" icon="/images/brand/icon-claude.svg" href="/agents/claude">
-    claude.ai, Desktop and mobile. One custom connector, not Claude Code
-  </Card>
-  <Card title="Claude Code" icon="/images/brand/icon-claude-code.svg" href="/agents/claude-code">
-    One MCP command or the skill, and your coding sessions can post too
-  </Card>
-  <Card title="ChatGPT" icon="/images/brand/icon-chatgpt.svg" href="/agents/chatgpt">
-    Add her as an MCP connector and schedule posts from a chat
-  </Card>
-  <Card title="Codex" icon="/images/brand/icon-codex.svg" href="/agents/codex">
-    Teach Codex her CLI so it ships the announcement along with the code
-  </Card>
-  <Card title="Cursor" icon="/images/brand/icon-cursor.svg" href="/agents/cursor">
-    Bring her into your editor and post without leaving it
-  </Card>
-  <Card title="Grok" icon="/images/brand/icon-grok.svg" href="/agents/grok">
-    Add her as a custom connector at grok.com/connectors
-  </Card>
-  <Card title="Grok Build" icon="/images/brand/icon-grok.svg" href="/agents/grok-build">
-    Terminal coding agent. One grok mcp add command
-  </Card>
-  <Card title="Muse Code" icon="/images/brand/icon-muse.svg" href="/agents/muse">
-    Meta's coding agent. One block in its settings file. Muse, the personal agent, is covered separately
-  </Card>
-  <Card title="Chat apps" icon="smartphone" href="/agents/chat-channels">
-    WhatsApp, Telegram and the rest, through OpenClaw or Hermes
-  </Card>
-  <Card title="Gemini CLI" icon="/images/brand/icon-gemini-cli.svg" href="/agents/gemini-cli">
-    One command in the terminal, and the release notes write themselves
-  </Card>
-  <Card title="VS Code" icon="/images/brand/icon-vscode.svg" href="/agents/vscode">
-    Copilot Chat. servers plus type http, not Cursor mcpServers
-  </Card>
-  <Card title="Any MCP client" icon="/images/brand/icon-other-clients.svg" href="/agents/other-mcp-clients">
-    One URL, one header, and PostQueen is a tool the agent can call. Also Devin Desktop and Zed
-  </Card>
-</CardGroup>
+Connect channels and edit a post's text or time in the app.
 
-<Info>
-**Anything that runs a shell command.** Install the CLI (`npm install -g postqueen`), optionally add the skill playbook, export your key, and it can schedule while you work. A cron job or a CI step qualifies on the same terms.
-</Info>
+## Before you start
+
+- **A PostQueen workspace on a trial or a paid plan.** Agents post through your workspace, so its plan limits apply to them too.
+- **A workspace admin.** Only an Admin or Super Admin can reveal the API key or approve a sign-in.
+- **At least one connected channel.** An agent posts only to channels you connected in the app. See [connect a channel](/using/connect-a-channel).
+
+<ApiKeyLocation />
+
+## Every agent
+
+**How it connects** is what you set up in the agent. **Sign-in or key** says whether the agent can sign in to PostQueen or takes your API key. **Status** says what PostQueen has tested:
+
+- <Badge color="green">Tested</Badge> PostQueen connected this agent and used it on 2026-09-19.
+- <Badge color="green">Key tested</Badge> PostQueen tested the key address on 2026-09-19. The sign-in address is not tested yet.
+- <Badge color="surface">Vendor's docs</Badge> The guide follows the vendor's current documentation. PostQueen has not tested the connection yet.
+- <Badge color="gray">Not possible yet</Badge> The agent cannot connect to PostQueen today.
+
+Each guide shows the agent's full status under its title.
+
+### Assistants and bots
+
+| Agent | Made by | How it connects | Sign-in or key | Status | Guide |
+|---|---|---|---|---|---|
+| Claude | Anthropic | Custom connector | Sign-in or key | <Badge color="green">Key tested</Badge> | [Guide](/agents/claude) |
+| ChatGPT | OpenAI | Developer mode app | Sign-in or key | <Badge color="green">Key tested</Badge> | [Guide](/agents/chatgpt) |
+| Claude Cowork | Anthropic | Custom connector, the same one as Claude | Sign-in or key | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/claude-cowork) |
+| Grok Bot | xAI (runs on Cursor's cloud) | Custom MCP server, added by chat | Key only | <Badge color="green">Tested</Badge> | [Guide](/agents/grok-bot) |
+| Muse | Meta | Not possible by address yet | None yet | <Badge color="gray">Not possible yet</Badge> | [Guide](/agents/muse) |
+| OpenClaw | OpenClaw | Skill and CLI | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/openclaw) |
+| Hermes Agent | Nous Research | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/hermes) |
+| Grok | xAI | Custom connector | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/grok) |
+| Perplexity Computer | Perplexity | Custom remote connector | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/perplexity-computer) |
+| NanoClaw | NanoCo | MCP server added with `ncl`, key kept in the OneCLI vault | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/nanoclaw) |
+
+### Coding agents
+
+| Agent | Made by | How it connects | Sign-in or key | Status | Guide |
+|---|---|---|---|---|---|
+| Claude Code | Anthropic | `claude mcp add` command | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/claude-code) |
+| Codex | OpenAI | `codex mcp add` command | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/codex) |
+| Cursor | Anysphere | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/cursor) |
+| Gemini CLI | Google | `gemini mcp add` command | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/gemini-cli) |
+| Grok Build | xAI | `grok mcp add` command | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/grok-build) |
+| Paperclip | Paperclip AI | Remote MCP connection in Apps | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/paperclip) |
+
+### Editors and Muse Code
+
+| Agent | Made by | How it connects | Sign-in or key | Status | Guide |
+|---|---|---|---|---|---|
+| VS Code | Microsoft (GitHub Copilot agent mode) | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/vscode) |
+| Devin Desktop | Cognition | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/devin-desktop) |
+| Zed | Zed Industries | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/zed) |
+| Muse Code | Meta | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/muse-code) |
+
+<Note>
+Muse and Muse Code are two different Meta products. Muse Code, the coding agent, connects with the key address today. Muse, the personal agent, cannot take an MCP address yet.
+</Note>
+
+Using an agent that is not listed? If it can reach a remote MCP server, give it the key address: [other MCP clients](/agents/other-mcp-clients). If it runs shell commands, give it the [CLI and the skill](/agents/skill). To post from WhatsApp, Telegram, Slack or Discord, see [post from chat apps](/agents/chat-channels).
+
+## You stay in charge
 
 <CardGroup cols={2}>
-  <Card title="Install the skill" icon="download" href="/agents/skill">
-    `npx skills add GkhanKINAY/postqueen-agent` teaches the CLI before it runs a command
+  <Card title="Drafts wait for you" icon="notebook-pen">
+    Ask for drafts and they stay on your calendar until you schedule them.
   </Card>
-  <Card title="Connect over MCP" icon="plug" href="/agents/overview">
-    One URL, 21 tools. Copy-paste for Claude, ChatGPT, Grok Bot and the rest
+  <Card title="Every post on your calendar" icon="calendar-days">
+    You see each post before it goes out, and you can edit or delete it until its time.
   </Card>
-  <Card title="Every tool" icon="wrench" href="/mcp/tools">
-    All 21, with the parameters each one takes
+  <Card title="Access you can take back" icon="key-round">
+    An admin rotates the API key under **Connections > API Keys**, which stops every agent that used it, or revokes one sign-in under **Connections > Approved Apps**.
   </Card>
-  <Card title="Why agents love her" icon="lightbulb" href="/agents/overview">
-    What makes the calendar easy for an assistant to drive
+  <Card title="No social passwords" icon="shield-check">
+    The agent never sees the passwords of your social accounts. It works through PostQueen, which posts with each network's own API.
+  </Card>
+</CardGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="The MCP server" icon="plug" href="/mcp/introduction">
+    The three addresses, what each one gives an agent, and how to check it works.
+  </Card>
+  <Card title="The MCP tools" icon="wrench" href="/mcp/tools">
+    What each of the {{mcpToolsKey}} tools does, and what an agent cannot do.
+  </Card>
+  <Card title="The CLI" icon="terminal" href="/cli/introduction">
+    Install `postqueen`, set the key and schedule a first post from a terminal.
+  </Card>
+  <Card title="Troubleshooting agents" icon="life-buoy" href="/agents/troubleshooting">
+    What to do when a connection or a command fails.
   </Card>
 </CardGroup>

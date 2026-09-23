@@ -1,301 +1,263 @@
 ---
-title: Managing Posts
-description: 'Create, list, and delete social media posts from the command line'
-icon: 'send'
+title: "Posts and channels"
+description: "Find your channel IDs, read what each network needs, then create, list, change and delete posts with the postqueen CLI."
+icon: "calendar-plus"
+keywords:
+  - posts:create
+  - posts:list
+  - posts:delete
+  - posts:status
+  - posts:settings
+  - integrations:list
+  - integrations:settings
+  - integrations:trigger
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: cli-help), main:cli/integrations.mdx (fix; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+Every post names the channels it goes to, by their IDs. This page starts with the channel commands, then covers the life of a post: create, list, change, delete. Every command and flag is also on the [command reference](/cli/command-reference).
 
-One command puts a post on her calendar. From there she runs on your terms: a scheduled post goes out on time without another word from you, and `-t draft` saves the post without scheduling it, so it stays put until you promote it.
-
-## Creating Posts
-
-Use `posts:create` to schedule or draft posts to one or more platforms.
-
-### Simple Post
+## Find your channels
 
 ```bash
-postqueen posts:create \
-  -c "Hello world!" \
-  -s "2026-08-01T09:00:00Z" \
-  -i "your-integration-id"
+postqueen integrations:list
 ```
 
-### Options
+```text
+🔌 Connected Integrations:
+[
+  {
+    "id": "cmf1abc2d0001",
+    "name": "PostQueen Bakery",
+    "identifier": "bluesky",
+    "picture": "https://...",
+    "disabled": false,
+    "profile": "postqueenbakery.bsky.social",
+    "customer": { "id": "cmf0cust00001", "name": "Bakery" }
+  }
+]
+```
 
-| Flag | Description |
-|------|-------------|
-| `-c, --content` | Post content. Use multiple times for threads/comments. |
-| `-s, --date` | Schedule date in ISO 8601 format (required) |
-| `-t, --type` | `schedule` (default) or `draft` |
-| `-m, --media` | Comma-separated media URLs (use after uploading) |
-| `-i, --integrations` | Comma-separated integration IDs (required) |
-| `-d, --delay` | Delay between comments in minutes (default: 0) |
-| `--shortLink` | Use short links (default: true) |
-| `--settings` | Platform-specific settings as JSON |
-| `-j, --json` | Path to a JSON file for complex posts |
+`id` is what `-i` takes. `identifier` is the network, such as `bluesky`, `wordpress` or `devto`. `customer` appears when the channel is sorted into a customer. A channel with `"disabled": true` is turned off in the app and does not publish.
 
-### Draft Post
+<CodeGroup>
+
+```bash IDs and networks
+postqueen integrations:list | tail -n +2 | jq -r '.[] | "\(.identifier)\t\(.id)\t\(.name)"'
+```
+
+```bash One network
+BLUESKY_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="bluesky") | .id' | head -n 1)
+```
+
+```bash One customer
+postqueen integrations:groups
+postqueen integrations:list --group "cmf0cust00001"
+```
+
+</CodeGroup>
+
+`integrations:groups` lists your customers as `id` and `name`.
+
+## Read what a network needs
 
 ```bash
-postqueen posts:create \
-  -c "Review this before publishing" \
-  -s "2026-08-01T09:00:00Z" \
-  -t draft \
-  -i "your-integration-id"
+postqueen integrations:settings <channel-id>
 ```
 
-### Post with Media
+The answer is an `output` object:
 
-Upload your media first with the [`upload`](/cli/media-upload) command, then reference the returned URL:
+| Field | What it is |
+|---|---|
+| `rules` | The network's posting rules, in plain words |
+| `maxLength` | The character limit of a post or comment on this channel |
+| `settings` | The schema for `--settings`, with the required fields in a `required` list, or `No additional settings required` |
+| `tools` | Helpers `integrations:trigger` can run to look up values, each with a `methodName` and the inputs it takes |
+
+Bluesky and Nostr need no settings. WordPress needs a `title` and a post `type`, and DEV needs a `title`. Read the schema before you post to a network for the first time: [examples by network](/cli/platform-examples) shows the settings each one takes.
+
+## Look up a value
+
+Some settings take a value only the network knows, such as a WordPress post type or a DEV tag. Run the helper that `integrations:settings` lists under `tools`:
 
 ```bash
-postqueen posts:create \
-  -c "Check out this photo!" \
-  -m "https://uploads.postqueen.ai/your-image.jpg" \
-  -s "2026-08-01T09:00:00Z" \
-  -i "your-integration-id"
+postqueen integrations:trigger <channel-id> postTypes
 ```
 
-### Threads and Comments
-
-Pass `-c` multiple times to create a thread. Comments are automatically converted to threads or replies based on the platform:
-
-- **Twitter/X**: Thread of tweets
-- **Reddit**: Comment replies
-- **LinkedIn**: Comment on post
-- **Instagram**: First comment
-
-Each comment can have its own media with a corresponding `-m` flag. They pair by index, so leaving one out in the middle shifts every later media value onto the wrong item:
-
-```bash
-postqueen posts:create \
-  -c "Thread 1/3" -m "https://uploads.postqueen.ai/image1.jpg" \
-  -c "Thread 2/3" -m "https://uploads.postqueen.ai/image2.jpg" \
-  -c "Thread 3/3" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"who_can_reply_post":"everyone"}' \
-  -i "twitter-integration-id"
-```
-
-Use `-d` to control the delay between comments (in minutes):
-
-```bash
-postqueen posts:create \
-  -c "First tweet" \
-  -c "Second tweet" \
-  -c "Third tweet" \
-  -s "2026-08-01T09:00:00Z" \
-  -d 5 \
-  --settings '{"who_can_reply_post":"everyone"}' \
-  -i "twitter-integration-id"
-```
-
-### Multi-Platform Post
-
-Send the same content to multiple platforms by passing comma-separated integration IDs:
-
-```bash
-postqueen posts:create \
-  -c "Posting everywhere!" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"who_can_reply_post":"everyone"}' \
-  -i "twitter-id,linkedin-id,facebook-id"
-```
-
-### Platform-Specific Settings
-
-Some platforms require additional settings. Pass them as JSON with `--settings`:
-
-```bash
-postqueen posts:create \
-  -c "Check out this discussion" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Post","type":"self","url":"","is_flair_required":false}}]}' \
-  -i "reddit-integration-id"
-```
-
-<Tip>
-Use `postqueen integrations:settings <id>` to discover what settings are available for each platform. Full walkthrough: [Integrations](/cli/managing-posts).
-</Tip>
-
-### Complex Posts with JSON
-
-For campaigns with per-platform content and settings, use a JSON file instead of flags:
-
-```bash
-postqueen posts:create --json campaign.json
-```
-
-The file is the request body her API receives. It carries the top-level `type`, `date`, `shortLink` and `tags`, then one `posts` entry per channel. Each entry has its own `integration.id`, a `value` array (the first item is the main post, additional items become comments or thread items) and an optional `settings` object.
-
-Example `campaign.json`:
-
-```json
+```text
+🔧 Tool result for postTypes:
 {
-  "type": "schedule",
-  "date": "2026-08-01T09:00:00.000Z",
-  "shortLink": true,
-  "tags": [],
-  "posts": [
-    {
-      "integration": { "id": "twitter-123" },
-      "value": [
-        {
-          "content": "Tweet version",
-          "image": [
-            { "id": "img-1", "path": "https://uploads.postqueen.ai/twitter-image.jpg" }
-          ]
-        }
-      ],
-      "settings": { "who_can_reply_post": "everyone" }
-    },
-    {
-      "integration": { "id": "linkedin-456" },
-      "value": [
-        {
-          "content": "LinkedIn version with more context...",
-          "image": [
-            { "id": "img-2", "path": "https://uploads.postqueen.ai/linkedin-image.jpg" }
-          ]
-        }
-      ],
-      "settings": { "post_as_images_carousel": false }
-    },
-    {
-      "integration": { "id": "reddit-789" },
-      "value": [
-        {
-          "content": "Reddit version",
-          "image": []
-        }
-      ],
-      "settings": {
-        "subreddit": [{
-          "value": {
-            "subreddit": "/r/programming",
-            "title": "Post Title",
-            "type": "self",
-            "url": "",
-            "is_flair_required": false
-          }
-        }]
-      }
-    }
+  "output": [
+    { "id": "posts", "name": "Posts" },
+    { "id": "pages", "name": "Pages" }
   ]
 }
 ```
 
-<Note>
-You can omit `__type` in both cases. The backend adds it from each post's integration ID, whether the settings came from `--settings` or from a `--json` file.
+Pass a helper's inputs with `-d` as JSON, for example `-d '{"word":"baking"}'` for a Lemmy community search. A name the channel does not offer fails with `Tool not found`.
 
-`image` is required on every entry, so pass `[]` when there is no media, and each item is an object with an `id` and a `path` returned by `postqueen upload`. Run `postqueen integrations:settings <id>` to see the real settings schema for a channel.
-</Note>
+## Create a post
 
-## Listing Posts
+```bash
+postqueen posts:create \
+  -c "Our spring menu is live. Come by this weekend." \
+  -s "2026-10-01T09:00:00Z" \
+  -i "cmf1abc2d0001"
+```
+
+`-s` is required: the publish time in ISO 8601. The post is scheduled for that time. The answer lists one `postId` for each channel.
+
+<AccordionGroup>
+  <Accordion title="Save a draft" icon="notebook-pen">
+    ```bash
+    postqueen posts:create -c "Draft for review" -s "2026-10-01T09:00:00Z" -t draft -i "cmf1abc2d0001"
+    ```
+
+    A draft keeps its date and waits on your calendar until you schedule it. The CLI checks a draft's settings too, so pass them now.
+  </Accordion>
+  <Accordion title="Add images or a video" icon="image">
+    Upload each file first, then pass the returned `path` with `-m`. Separate several files with commas:
+
+    ```bash
+    IMG=$(postqueen upload spring-menu.jpg | tail -n +2 | jq -r '.path')
+    postqueen posts:create -c "Spring menu" -m "$IMG" -s "2026-10-01T09:00:00Z" -i "cmf1abc2d0001"
+    ```
+
+    A video has to finish processing first: see [upload media](/cli/media-upload).
+  </Accordion>
+  <Accordion title="Post a thread or add comments" icon="messages-square">
+    Repeat `-c`. The first is the post, and each one after it is a reply or a comment. `-m` pairs with the `-c` in the same position, and `-d` sets the minutes to wait between items:
+
+    ```bash
+    postqueen posts:create \
+      -c "Three things we changed in the spring menu." \
+      -c "First: every dish now has a smaller size." -m "$IMG" \
+      -d 5 \
+      -s "2026-10-01T09:00:00Z" \
+      -i "cmf1abc2d0001"
+    ```
+
+    The extra items become a thread on Bluesky, Nostr, X and Threads, and comments on Facebook, Instagram and Lemmy. YouTube, TikTok, WordPress, DEV, Hashnode and Listmonk publish the first item only. More in [comments and threads](/using/comments-and-threads).
+
+    Because `-m` pairs by position, leaving it out on a middle item moves every later file onto the wrong item. Use a `--json` file for that.
+  </Accordion>
+  <Accordion title="Post to several channels" icon="layers">
+    List the IDs with commas. Each channel gets its own post:
+
+    ```bash
+    postqueen posts:create -c "Open on Sunday this week." -s "2026-10-01T09:00:00Z" -i "bluesky-id,nostr-id"
+    ```
+
+    One `--settings` object goes to every channel in `-i`, so mix only channels that take the same settings. For different text or settings per channel, use a `--json` file.
+  </Accordion>
+  <Accordion title="Pass a network's settings" icon="sliders-horizontal">
+    ```bash
+    postqueen posts:create \
+      -c "<p>Every dish now comes in a smaller size.</p>" \
+      -s "2026-10-01T09:00:00Z" \
+      --settings '{"title":"Our spring menu","type":"posts"}' \
+      -i "wordpress-id"
+    ```
+
+    Wrap the JSON in single quotes. PostQueen adds the network's type marker (`__type`) itself, so leave it out.
+  </Accordion>
+  <Accordion title="Describe the whole post in a file" icon="file-code">
+    ```bash
+    postqueen posts:create --json campaign.json
+    ```
+
+    The file is the request body the API receives. It needs `type`, `date`, `shortLink` and `tags` at the top, and one entry in `posts` per channel, each with its own text and settings. Every item in `value` needs an `image` list, empty when there is no media, and each image is the `id` and `path` from `postqueen upload`.
+
+    ```json campaign.json
+    {
+      "type": "schedule",
+      "date": "2026-10-01T09:00:00Z",
+      "shortLink": true,
+      "tags": [],
+      "posts": [
+        {
+          "integration": { "id": "bluesky-id" },
+          "value": [{ "content": "Our spring menu is live.", "image": [] }]
+        },
+        {
+          "integration": { "id": "wordpress-id" },
+          "value": [{ "content": "<p>Every dish now comes in a smaller size.</p>", "image": [] }],
+          "settings": { "title": "Our spring menu", "type": "posts" }
+        }
+      ]
+    }
+    ```
+
+    `type` also takes `now`, which publishes at once. The flags only offer `schedule` and `draft`.
+  </Accordion>
+</AccordionGroup>
+
+### Good to know
+
+- Before it saves anything, PostQueen checks each post the way the app does: the settings, the length and the media. A refused post names the channel and the reason; see [troubleshooting](/agents/troubleshooting#a-cli-command-fails).
+- `--shortLink` is on by default, which lets PostQueen swap links in the text for short links. Pass `--no-shortLink` to keep every link exactly as written.
+- The date is required even for a draft: it is the time the post goes out once you schedule it.
+
+## List posts
 
 ```bash
 postqueen posts:list
 ```
 
-### Filter by Date Range
+Without dates it lists 30 days back to 30 days ahead. Narrow it with `--startDate` and `--endDate` in ISO 8601, and to one customer with `--customer`. The answer is an object with a `posts` list:
 
 ```bash
-postqueen posts:list \
-  --startDate "2026-07-01T00:00:00Z" \
-  --endDate "2026-07-31T23:59:59Z"
+postqueen posts:list --startDate "2026-10-01T00:00:00Z" --endDate "2026-10-31T23:59:59Z" \
+  | tail -n +2 | jq '.posts[] | {id, state, publishDate, channel: .integration.name}'
 ```
 
-### Filter by Customer
+Each post has its `id`, `content`, `publishDate`, `state` (`QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR`), `settings` (as a JSON string), `releaseURL` once published, `error` when it failed, and its `integration`.
 
-```bash
-postqueen posts:list --customer "customer-id"
-```
+## Change a post
 
-## Connecting Missing Posts
+<Tabs>
+  <Tab title="Its settings">
+    ```bash
+    postqueen posts:settings <post-id> --settings '{"status":"pending"}'
+    ```
 
-Some platforms do not return a post ID immediately after publishing (the `releaseId` is set to `"missing"`). When this happens, you can fetch recent content from the provider and connect the correct one to your post. This is what makes analytics work for that post.
+    Only the keys you pass change, and the text and time stay as they are. It works on drafts and on scheduled posts whose time has not passed. Pass the ID of the post itself, not of one of its comments. If you copy settings from `posts:list`, leave out `__type`.
+  </Tab>
+  <Tab title="Draft or scheduled">
+    ```bash
+    postqueen posts:status <post-id> --status draft      # stop it from going out
+    postqueen posts:status <post-id> --status schedule   # queue it for its date
+    ```
 
-### List Available Content
+    The date does not change. A post that was published or failed cannot change status: `Cannot change status of a published or errored post`.
+  </Tab>
+</Tabs>
 
-```bash
-postqueen posts:missing <post-id>
-```
+To change a post's text or time, edit it on the calendar in the app.
 
-Returns an array of recent content items from the provider with their ID and thumbnail URL:
-
-```json
-[
-  {
-    "id": "7321456789012345678",
-    "url": "https://p16-sign.tiktokcdn-us.com/obj/cover-image.jpeg"
-  },
-  {
-    "id": "7321456789012345679",
-    "url": "https://p16-sign.tiktokcdn-us.com/obj/cover-image2.jpeg"
-  }
-]
-```
-
-<Note>
-This only works for posts where the `releaseId` is `"missing"`. Returns an empty array if the provider does not support this feature.
-</Note>
-
-### Connect a Post
-
-Once you have identified the correct content, update the release ID:
-
-```bash
-postqueen posts:connect <post-id> --release-id "7321456789012345678"
-```
-
-After connecting, the post will support full analytics via `postqueen analytics:post`.
-
-### Full Workflow
-
-```bash
-# 1. Find posts with missing release IDs (tail -n +2 drops the header line)
-postqueen posts:list | tail -n +2 | jq '.posts[] | select(.releaseId == "missing") | {id, content}'
-
-# 2. Get available content from the provider
-postqueen posts:missing <post-id>
-
-# 3. Connect the correct content
-postqueen posts:connect <post-id> --release-id "7321456789012345678"
-
-# 4. Verify analytics now work
-postqueen analytics:post <post-id>
-```
-
-## Changing Post Status
-
-Move a post between `draft` and `schedule` without changing its date.
-
-```bash
-postqueen posts:status <post-id> --status draft
-postqueen posts:status <post-id> --status schedule
-```
-
-- `--status schedule` promotes a draft into the publishing queue and (re)starts the workflow so it will publish at its stored date.
-- `--status draft` moves a scheduled post back to draft **and terminates any running publishing workflow**, so it will not publish.
-
-<Note>
-Use this when you want to pause a scheduled post without deleting it, or hand a draft off to the scheduler once it is ready.
-</Note>
-
-## Deleting Posts
+## Delete a post
 
 ```bash
 postqueen posts:delete <post-id>
 ```
 
-## Next Steps
+This deletes the post and its comments or thread items on that channel, and stops it from going out. When one `posts:create` went to several channels, each channel has its own post, and the others stay. A post that was already published stays on the network: delete it there.
+
+## Connect a published post
+
+Sometimes a network does not return a post's ID after publishing, and analytics cannot find the post. This happens with TikTok. `postqueen analytics:post` then answers `{"missing": true}`. [Analytics](/cli/analytics#fix-a-missing-release-id) shows how to connect the post with `posts:missing` and `posts:connect`.
+
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Command Reference" icon="terminal" href="/cli/command-reference">
-    Every command and flag on one page
+  <Card title="Examples by network" icon="layout-grid" href="/cli/platform-examples">
+    A command for each network, with the settings it needs.
   </Card>
-  <Card title="Troubleshooting" icon="wrench" href="/agents/troubleshooting">
-    Fixes for common CLI errors
+  <Card title="Upload media" icon="cloud-upload" href="/cli/media-upload">
+    Images and videos, and waiting for a video to be ready.
+  </Card>
+  <Card title="Command reference" icon="square-terminal" href="/cli/command-reference">
+    Every command and flag on one page.
+  </Card>
+  <Card title="Troubleshooting" icon="life-buoy" href="/agents/troubleshooting">
+    What each error means and how to fix it.
   </Card>
 </CardGroup>

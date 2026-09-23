@@ -1,78 +1,107 @@
 ---
-title: Connect with MCP
-description: 'Connect AI agents to PostQueen using the Model Context Protocol (MCP)'
-icon: 'info'
+title: "MCP server"
+description: "Connect an AI agent to PostQueen over MCP: the key address, the Bearer header and the sign-in address, what each one gives the agent, and how to check that it works."
+icon: "plug"
 keywords:
   - postqueen
   - mcp
+  - mcp server
   - model context protocol
-  - claude
-  - cursor
-  - grok bot
-  - agentic social media scheduler
+  - ai agent
   - integrationSchedulePostTool
   - ask_postqueen
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+import McpAddresses from '/snippets/mcp-addresses.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Point a client at your MCP address and your agent gets **21 tools** to list channels, upload media, schedule posts and read post analytics. Nothing to install.
+PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Protocol, is how AI agents use outside tools. Give your agent one address and it can list your channels, schedule posts, add media and read how your posts did. There is nothing to install or run on your side.
 
-<Note>
-**You do not have to run or install anything.** In the protocol's own words PostQueen is the "server" and your AI client is the "client", but PostQueen is already running at a URL. Setup is pasting that URL into your client.
-</Note>
+## Pick an address
 
-<Frame>
-  <img src="/images/brand/chat-claude.svg" alt="Claude with PostQueen over MCP: it plans a five-post launch week and schedules every post to X and LinkedIn" />
-</Frame>
+<McpAddresses />
 
-## Authentication
+<Tabs>
+  <Tab title="Key address">
+    The API key is part of the address, so there is nothing else to fill in. Most agents take this one. PostQueen tested it with Claude and ChatGPT.
 
-Start with the API key address. Two forms, the same 21 tools:
+    ```text
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+  </Tab>
+  <Tab title="Bearer header">
+    For agents with a header field. The key stays out of the address, which helps when the config file is shared or committed.
 
-| Form | URL | Header |
+    ```text
+    URL:           https://api.postqueen.ai/mcp
+    Authorization: Bearer YOUR_API_KEY
+    ```
+
+    The header also takes an access token (it starts with `pos_`) from a [PostQueen OAuth app](/public-api/oauth).
+  </Tab>
+  <Tab title="Sign-in address">
+    For agents that can sign in to an MCP server, such as Claude, Claude Cowork and ChatGPT. No key goes into the agent, and the agent gets every tool except `ask_postqueen`. How it works: [sign in instead of a key](#sign-in-instead-of-a-key).
+  </Tab>
+</Tabs>
+
+Each agent's guide says which address to use and where it goes. The list is on [AI agents](/agents/overview).
+
+## Where the key is
+
+<ApiKeyLocation />
+
+Anyone with the key can post to every channel in the workspace, so treat it like a password. If it leaks, an admin chooses **Rotate key** under **Connections > API Keys**. The old key stops working at once, in every agent that used it, so update each one with the new key.
+
+## Sign in instead of a key
+
+<Steps>
+  <Step title="Add the sign-in address">
+    Paste `{{mcpOauthUrl}}` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen.
+  </Step>
+  <Step title="Sign in and approve">
+    The agent opens PostQueen in your browser. Sign in and approve the access. Only a workspace Admin or Super Admin can approve it.
+  </Step>
+  <Step title="Use it">
+    The access does not expire on its own. To end it, open **Connections > Approved Apps** in PostQueen and revoke it.
+  </Step>
+</Steps>
+
+<Warning>
+Gemini CLI, Grok, Grok Bot, Perplexity Computer and NanoClaw cannot sign in. Give them the API key, in the key address or the Bearer header.
+</Warning>
+
+## What the agent can do
+
+The tools come in six groups. The agent picks the ones it needs from what you ask.
+
+| Group | Tools | What they do |
 |---|---|---|
-| Key in the URL | `https://api.postqueen.ai/mcp/YOUR_API_KEY` | none |
-| Bearer | `https://api.postqueen.ai/mcp` | `Authorization: Bearer YOUR_API_KEY` (or a `pos_` OAuth token) |
+| Channels | 4 | List your channels and customers, read each network's rules and settings, look up values a setting needs |
+| Posts | 4 | Create a draft, a scheduled post or a post that goes out now; list posts; read one in full; change the settings of one that has not gone out |
+| Analytics | 3 | Totals for your published posts over 7, 30 or 90 days, your best posts, and the numbers for one post |
+| Uploads | 4 | Bring an image or video in from a link, or open an upload panel in Claude, Claude Cowork and ChatGPT |
+| Images and video | 5 | Create an image for a post, or start a video job and follow it. Creating an image or a video uses your plan's monthly AI credits |
+| Agent | 1 | `ask_postqueen`: hand over a request in plain words and let PostQueen's own agent run the other tools |
 
-The URL form accepts API keys only. The key is under **Connections > API Keys** in the app. Only a workspace admin can reveal it, and each workspace has one. Building for other users: [OAuth2](/public-api/oauth). Self-hosted: swap the host for your `NEXT_PUBLIC_BACKEND_URL`.
+Every tool, with what it takes and what it returns: [MCP tools](/mcp/tools).
 
-### Sign in instead of a key (not tested yet)
+### What it cannot do yet
 
-Clients that support MCP OAuth can use `https://api.postqueen.ai/mcp-oauth-dynamic` with no key. The client registers itself, you sign in to PostQueen, and a workspace admin approves the connection. It exposes 20 tools, everything except `ask_postqueen`. The access does not expire on its own; revoke it under **Connections > Approved Apps**. PostQueen has not completed this sign-in in its own tests yet, and some clients cannot use it, so each agent page says which address to use.
+- Delete a post.
+- Change a post's text or time, or move a draft to scheduled. It can change a post's settings.
+- Read channel numbers such as follower counts.
 
-Tool names, parameters, and how many tools each address exposes: [Tools Reference](/mcp/tools#how-many-tools-you-get).
+Do those in the app, or with the [CLI](/cli/introduction) or the [API](/public-api/introduction).
 
-## Connect your client
+## Check that it works
 
-<CardGroup cols={3}>
-  <Card title="Connect your client" icon="plug" href="/agents/overview">
-    The URL, both auth forms, and the steps for each client
-  </Card>
-  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Tell the Bot to add the MCP server. Not grok.com/connectors
-  </Card>
-  <Card title="Claude" icon="/images/brand/icon-claude.svg" href="/agents/claude">
-    Paste the MCP URL once for claude.ai, Desktop and mobile
-  </Card>
-  <Card title="ChatGPT" icon="/images/brand/icon-chatgpt.svg" href="/agents/chatgpt">
-    Developer mode, then add the MCP URL as a new app
-  </Card>
-  <Card title="Cursor" icon="/images/brand/icon-cursor.svg" href="/agents/cursor">
-    One `.cursor/mcp.json` entry, or the Settings UI
-  </Card>
-  <Card title="Every tool" icon="wrench" href="/mcp/tools">
-    All 21, with the parameters each one takes
-  </Card>
-</CardGroup>
+Ask your agent:
 
-Ask it to list your connected accounts. If the names come back, `integrationList` worked and the rest of the tools are there too.
+```text
+List my PostQueen channels.
+```
 
-<CardGroup cols={2}>
-  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
-    Discord channels, video voices, and the flows that need a lookup first
-  </Card>
-  <Card title="Limits and troubleshooting" icon="gauge" href="/agents/troubleshooting">
-    No delete, no reschedule, no channel analytics. What a bad key looks like
-  </Card>
-</CardGroup>
+It calls `integrationList` and answers with the channels you connected. Channels that are turned off or need to be reconnected are left out. If the agent shows no PostQueen tools, or the connection fails, see [troubleshooting agents](/agents/troubleshooting).
+
+<NextStepsAgent />

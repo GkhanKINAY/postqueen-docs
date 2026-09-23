@@ -1,63 +1,36 @@
 ---
-title: Other Clients
-description: 'Connect any MCP-compatible client to PostQueen with one URL'
-icon: /images/brand/icon-other-clients.svg
+title: "Other MCP clients"
+description: "Connect any MCP client that is not on the agents list: the address, the header, the config shapes clients use, and a bridge for clients that only run local servers."
+icon: "/images/brand/icon-other-clients.svg"
+keywords:
+  - mcp client
+  - streamable http
+  - mcp-remote
+  - bearer header
+  - mcpServers
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file, moved from mcp/clients/other-clients (fix; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+import McpAddresses from '/snippets/mcp-addresses.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-She speaks MCP over streamable HTTP, so any client that can reach a remote MCP server connects with a single URL, with no local process and no wrapper package. Whatever the client calls the field, it wants the same three things: an endpoint, your API key and a name.
+Any client that can reach a remote MCP server over streamable HTTP can use PostQueen. Whatever the client calls its fields, it needs the same three things: a name for the server, the address, and your API key, either in the address or in a header. PostQueen has not tested clients that are not on [the agents list](/agents/overview).
 
-<Info>
-You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
-</Info>
+<ApiKeyLocation />
 
-<Warning>
-Your API key can post to every account you have connected, so treat it like a password. Whether it sits in the URL or in an `Authorization` header, it ends up in a config file on your machine, so keep those files out of version control and off shared screens. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
-</Warning>
+## The addresses
 
-<CardGroup cols={3}>
-  <Card title="Streamable HTTP" icon="link" href="#streamable-http-url">
-    One endpoint with the key in the path.
-  </Card>
-  <Card title="Bearer header" icon="key" href="#bearer-header">
-    The same endpoint, key in an Authorization header.
-  </Card>
-  <Card title="Stdio only" icon="terminal" href="#stdio-only-clients">
-    For clients that cannot reach a remote server yet.
-  </Card>
-</CardGroup>
+<McpAddresses />
 
+Start with the key address. It needs no header and no sign-in, so it works in almost every client. Use the Bearer header when the client has a header field and you want the key out of the address. The sign-in address works only in clients that support MCP sign-in.
 
-## Any MCP Client
+## Config shapes
 
-For any other client, these are the only details that matter.
+Most clients take the server in one of these shapes. Check your client's docs for which one it reads.
 
-### Streamable HTTP URL
+<CodeGroup>
 
-Most clients ask for a single endpoint. Put the API key in the path:
-
-```
-https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
-
-The config key differs by client. Check which one yours expects for **streamable HTTP** (preferred). A legacy SSE pair still exists at `/sse/:id` and `/message/:id`; do not pick SSE unless the client has no HTTP option:
-
-| Client | Field |
-| --- | --- |
-| Cursor | `"url"` under `mcpServers` |
-| VS Code Copilot | `"url"` under `servers`, with `"type": "http"` |
-| Devin Desktop | `"url"` under `mcpServers` in `~/.config/devin/mcp_config.json` |
-| Zed | `"url"` under `context_servers`, plus an `Authorization` header (without it Zed starts OAuth, even if the key is in the URL) |
-| Continue | `type: streamable-http` in YAML |
-| Gemini CLI | `"httpUrl"` (`url` is SSE and will not connect) |
-| Claude Desktop `claude_desktop_config.json` | Do **not** paste a plain `"url"`. Use a [custom connector](/agents/claude) or [`mcp-remote`](/agents/claude) |
-
-Dedicated pages: [VS Code](/agents/vscode), [Devin Desktop](/agents/devin-desktop), [Zed](/agents/zed). Cline, Continue, Goose, Warp, JetBrains AI Assistant, Raycast and GitHub Copilot CLI use this generic shape.
-
-Cursor style:
-
-```json
+```json mcpServers
 {
   "mcpServers": {
     "postqueen": {
@@ -67,113 +40,90 @@ Cursor style:
 }
 ```
 
-Gemini-style:
-
-```json
+```json servers
 {
-  "mcpServers": {
+  "servers": {
     "postqueen": {
-      "httpUrl": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+      "type": "http",
+      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
     }
   }
 }
 ```
 
-### Bearer Header
-
-If your client supports custom headers, keep the key out of the URL instead:
-
-```
-URL: https://api.postqueen.ai/mcp
-Authorization: Bearer YOUR_API_KEY
-```
-
-Both forms use the same key and give you the same 21 tools. Pick whichever your client takes more cleanly.
-
-### Self-Hosted
-
-On a self-hosted instance, swap the host for your `NEXT_PUBLIC_BACKEND_URL`:
-
-```
-https://postqueen.example.com/api/mcp/YOUR_API_KEY
-```
-
-Most self-hosted setups serve the backend under `/api`, so the MCP path sits at `/api/mcp`. Use whatever `NEXT_PUBLIC_BACKEND_URL` is set to, then append `/mcp/YOUR_API_KEY`.
-
-Your reverse proxy has to forward the `/mcp` paths and stream the response rather than buffering it. The configuration, and the Nginx setting that silently breaks this, are on [MCP on a self-hosted install](/configuration/mcp).
-
-### Stdio-Only Clients
-
-Some clients only launch local processes over stdio and have no way to enter a remote URL. Bridge the gap with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which runs on your machine and forwards stdio traffic to PostQueen over HTTP. It needs [Node.js](https://nodejs.org/).
-
-<Tabs>
-  <Tab title="API Key in URL">
-    ```json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "mcp-remote",
-            "https://api.postqueen.ai/mcp/YOUR_API_KEY"
-          ]
-        }
+```json mcpServers with a header
+{
+  "mcpServers": {
+    "postqueen": {
+      "url": "https://api.postqueen.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
       }
     }
-    ```
-  </Tab>
-  <Tab title="Bearer Token">
-    ```json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "command": "npx",
-          "args": [
-            "-y",
-            "mcp-remote",
-            "https://api.postqueen.ai/mcp",
-            "--header",
-            "Authorization: Bearer YOUR_API_KEY"
-          ]
-        }
-      }
+  }
+}
+```
+
+</CodeGroup>
+
+The first shape is the one Cursor and Devin Desktop use, and the second is VS Code's. Zed reads `context_servers`, Gemini CLI writes `url` with `"type": "http"`, and Muse Code needs a `schema_version`. Their pages have the exact blocks: [Cursor](/agents/cursor), [VS Code](/agents/vscode), [Devin Desktop](/agents/devin-desktop), [Zed](/agents/zed), [Gemini CLI](/agents/gemini-cli), [Muse Code](/agents/muse-code).
+
+If the client asks for a transport, choose streamable HTTP. Choose SSE only when the client offers nothing else, and then use `https://api.postqueen.ai/sse/YOUR_API_KEY`.
+
+<Warning>
+Claude Desktop does not read a remote address from `claude_desktop_config.json`. Add PostQueen in Claude as a custom connector instead: see [Claude](/agents/claude).
+</Warning>
+
+## Clients that only run local servers
+
+Some clients can only start a program on your computer and talk to it over standard input and output (stdio). Bridge them to PostQueen with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which runs on your computer and forwards the calls. It needs [Node.js](https://nodejs.org/).
+
+<CodeGroup>
+
+```json Key address
+{
+  "mcpServers": {
+    "postqueen": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.postqueen.ai/mcp/YOUR_API_KEY"]
     }
-    ```
-  </Tab>
-</Tabs>
+  }
+}
+```
 
-Some stdio clients (Cursor and Claude Desktop on Windows) mangle spaces inside `args`. If the Bearer form fails there, put the whole header value in an environment variable and pass it without spaces, for example `"--header", "Authorization:${AUTH_HEADER}"` with `AUTH_HEADER` set to `Bearer YOUR_API_KEY` in the entry's `env` block.
+```json Bearer header
+{
+  "mcpServers": {
+    "postqueen": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://api.postqueen.ai/mcp",
+        "--header",
+        "Authorization: Bearer YOUR_API_KEY"
+      ]
+    }
+  }
+}
+```
 
-The bridge is a fallback, not an upgrade. If your client can reach a remote URL on its own, use that instead, for fewer moving parts and no Node.js dependency.
+</CodeGroup>
 
-## Verify
+Use the bridge only when the client cannot take an address. A direct connection has fewer parts that can fail.
 
-Whichever client you wired up, ask it:
+## Keep the key safe
 
-> "List my connected social media accounts"
+The key can post to every channel in your workspace. It sits in the client's config file either way, so keep that file out of version control and off shared screens. If the key leaks, an admin chooses **Rotate key** under **Connections > API Keys**, and you update every client that used it.
 
-Your channel names come back, because the agent reached for her `integrationList` tool.
+## Check that it works
 
-<AccordionGroup>
-  <Accordion title="The client shows zero tools">
-    The server connected but discovery returned nothing, which usually means the key is wrong or truncated. Reveal it again in the PostQueen app and paste it in full, with no surrounding whitespace or quotes.
-  </Accordion>
-  <Accordion title="The connection fails outright">
-    Confirm your client is using the streamable HTTP transport rather than stdio, that it kept the trailing key segment in the URL, and that nothing on your network blocks `api.postqueen.ai`. On self-hosted setups, check that the reverse proxy forwards `/mcp` and does not buffer streaming responses.
-  </Accordion>
-  <Accordion title="Tools appear but every call errors">
-    That combination means the endpoint is right but the key was rejected. Have an admin rotate the key under **Connections > API Keys** and update the config, remembering that the URL form carries the key in the path while the Bearer form carries it in the `Authorization` header. The `Bearer ` prefix itself is stripped if present, so either spelling of that header works and a missing prefix is never the cause.
-  </Accordion>
-</AccordionGroup>
+Ask the client's agent:
 
-## Next Steps
+```text
+List my PostQueen channels.
+```
 
-<CardGroup cols={2}>
-  <Card title="MCP Tools" icon="wrench" href="/mcp/tools">
-    See what all 21 tools can do
-  </Card>
-  <Card title="Examples" icon="lightbulb" href="/mcp/examples">
-    Real prompts and the tool calls they trigger
-  </Card>
-</CardGroup>
+It calls `integrationList` and answers with your connected channels. If the connection fails or no PostQueen tools appear, see [the agent will not connect over MCP](/agents/troubleshooting#the-agent-will-not-connect-over-mcp).
+
+<NextStepsAgent />

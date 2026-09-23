@@ -1,11 +1,167 @@
 ---
 title: "Troubleshooting agents"
-description: "What to do when an MCP connection or a postqueen CLI command fails, by symptom."
+description: "What to do when an MCP connection or a postqueen CLI command fails, by symptom and by the exact message you see."
 icon: "life-buoy"
+keywords:
+  - troubleshooting
+  - mcp errors
+  - invalid api key
+  - cli errors
+  - who_can_reply_post
+  - no subscription found
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: main:mcp/limits-and-troubleshooting.mdx (rewrite; WIP: partly better; audit: agents), main:cli/limits.mdx (fix; WIP: partly better; audit: cli-help), main:cli/troubleshooting.mdx (fix; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+import ReportIt from '/snippets/report-it.mdx';
 
-<Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
-</Note>
+Find the symptom or the message you see. Most failures come from the key, from a setting the network requires, or from media that was not uploaded to PostQueen first.
+
+## The agent will not connect over MCP
+
+<AccordionGroup>
+  <Accordion title="The connection fails with Invalid API Key" icon="key-round">
+    The key address answers `400` with `Invalid API Key` when it does not know the key. Copy the key again from **Connections > API Keys** and paste the whole address, `{{mcpKeyUrl}}`, with no space or quote around the key. Only a workspace Admin or Super Admin can reveal the key; other members see it masked.
+  </Accordion>
+  <Accordion title="The connection fails with 401" icon="shield-x">
+    With the Bearer header on `{{mcpBearerUrl}}`, `Missing Authorization header` means the agent sent no header, and `Invalid API Key or OAuth token` means the key in it is wrong. The header must read `Authorization: Bearer YOUR_API_KEY`.
+  </Accordion>
+  <Accordion title="It worked before, and stopped" icon="rotate-ccw">
+    An admin may have rotated the key under **Connections > API Keys**, which stops the old key everywhere at once, or revoked a sign-in under **Connections > Approved Apps**. Put the new key in every agent that used the old one, or sign in again.
+  </Accordion>
+  <Accordion title="Connected, but no PostQueen tools" icon="wrench">
+    Many agents load their tools when a session starts. Start a new session, or reload the servers: `/mcp` in Claude Code, `/reload-mcp` in Hermes Agent, a restart in most editors. Then ask the agent to list your PostQueen channels.
+  </Accordion>
+  <Accordion title="The agent asks to sign in on the key address" icon="log-in">
+    Some agents start a sign-in when a server refuses them, so a wrong key can look like a sign-in request. Check the key first. If the agent supports it, you can use the [sign-in address](/mcp/introduction#sign-in-instead-of-a-key) instead.
+  </Accordion>
+  <Accordion title="The sign-in fails" icon="lock-keyhole">
+    - Only a workspace Admin or Super Admin can approve the sign-in. Ask one to connect the agent.
+    - Paste `{{mcpOauthUrl}}` with no slash at the end, and leave any client ID and secret fields empty.
+    - Gemini CLI, Grok, Grok Bot, Perplexity Computer and NanoClaw cannot sign in. Give them the API key, in the key address or the Bearer header.
+
+    PostQueen has not completed this sign-in end to end yet. If it fails, use the key address.
+  </Accordion>
+  <Accordion title="The agent answers from the docs but cannot post" icon="book-open">
+    It is connected to `docs.postqueen.ai/mcp`, which searches these docs only. Connect it to an address from [MCP server](/mcp/introduction) instead.
+  </Accordion>
+</AccordionGroup>
+
+## An MCP tool returns an error
+
+| What the agent reports | What it means | What to do |
+|---|---|---|
+| `This channel needs to be reconnected before you can schedule posts. Please reconnect it from Channels.` | The channel's sign-in to its network expired, or it is turned off | Reconnect or turn on the channel on the **Channels** page, then ask again |
+| A channel is missing from the list | `integrationList` leaves out channels that are turned off, need to be reconnected or were not finished connecting | Fix the channel on the **Channels** page |
+| `No posts are left on this plan this month. ...` | The workspace has no active trial or plan | Start or renew the plan in **Billing**. See [plans](/cloud/plans) |
+| `<channel>: ... please fix it, and try integrationSchedulePostTool again.` | The post is missing a setting, or is too long for the network | The agent should read `integrationSchema` for that network and try again |
+| `Your post should have at least one character or one image.` | An item in the post is empty | Give every item text or media |
+| `File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4` | An attachment is not a supported file | Bring the file in with `uploadFromUrlTool`, the upload panel or `generateImageTool`, and use the `path` it returns |
+| `Method "..." not found for this integration, ...` | The agent asked for a helper this network does not have | The agent should use a `methodName` from `integrationSchema` |
+| `The channel was disconnected because its token expired, ...` | The network no longer accepts the channel's sign-in | Reconnect the channel on the **Channels** page |
+| `Only scheduled posts that were not published yet (or drafts) can be updated` | `postSettingsTool` was used on a published or failed post | Settings can only change before a post goes out |
+| `The publish time of this post already passed, it cannot be updated` | The post is due or going out now | Nothing to change: check it on the calendar |
+| `This id belongs to a comment, pass the id of the main post` | The agent used a comment's ID | Use the post's own ID from `postsListTool` |
+| `No AI image credits are available on this account.` | The plan's image credits for the month are used up | Wait for the next month, or move to a plan with more. See [plans](/cloud/plans) |
+| `missing_release` from `analyticsPostTool` | PostQueen does not know the post's ID on the network | Connect the post to its published copy, then ask again. See [analytics](/cli/analytics#fix-a-missing-release-id) |
+
+<AccordionGroup>
+  <Accordion title="No upload panel appears" icon="cloud-upload">
+    The **Upload Media** panel shows only in apps that can display MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere, give the agent a public link to the file so it can use `uploadFromUrlTool`.
+  </Accordion>
+  <Accordion title="The agent says it deleted or moved a post" icon="trash">
+    No MCP tool can delete a post, change its text or time, or move it between draft and scheduled. Check the calendar, and do it there, or with the [CLI](/cli/managing-posts) or the [API](/public-api/introduction).
+  </Accordion>
+  <Accordion title="A video post failed" icon="film">
+    A video is prepared after it is uploaded, and its file can change when that is done. From the upload panel, wait until `uploadWidgetStatusTool` says `ready` before the post goes out. For a video from a link, check the post on your calendar before its time.
+  </Accordion>
+</AccordionGroup>
+
+## A CLI command fails
+
+A failed command prints one line to stderr and exits with code `1`. The line says which command gave up, then what the API answered:
+
+```text wrap
+❌ Failed to create post: Request failed: API Error (400): {"statusCode":400,"provider":"bluesky","name":"PostQueen Bakery","message":"post is too long, please fix it"}
+```
+
+| In the message | What it points to |
+|---|---|
+| `API Error (401)` | The key, or the workspace's plan |
+| `API Error (404)` | A wrong ID |
+| `API Error (400)` | A post or a setting the API refused |
+| `API Error (429)` | The hourly limit |
+| `Request failed` with no `API Error` | The API was not reached: check your connection |
+
+### The key
+
+| Message | What to do |
+|---|---|
+| `❌ Error: No authentication found.` | `POSTQUEEN_API_KEY` is not set where the command runs. `export POSTQUEEN_API_KEY=your_api_key` there. A scheduled job or an agent needs it in its own environment |
+| `❌ Not authenticated.` | The same, reported by `auth:status` |
+| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong or was rotated. Copy it again from **Connections > API Keys** |
+| `❌ Credentials are expired or invalid. Please re-authenticate.` | `auth:status` checked the key and the API refused it. Same fix |
+| `API Error (401): {"msg":"No subscription found"}` | The workspace has no active trial or plan. Start or renew it in **Billing** |
+| `API Error (401): {"msg":"Invalid OAuth token"}` | A saved `auth:login` token no longer works. Run `postqueen auth:logout` and use the API key |
+
+`auth:status` names the method it uses. If it says `OAuth2` although you set a key, a saved login in `~/.postqueen/credentials.json` is overriding the key: `postqueen auth:logout` removes it.
+
+### Flags
+
+These are caught before anything is sent.
+
+| Message | What to do |
+|---|---|
+| `Either --content or --json is required` | Pass `-c "text"`, or `--json file.json` |
+| `--integrations is required when not using --json` | Add `-i` with channel IDs from `integrations:list` |
+| `--date is required when not using --json` | Add `-s "2026-10-01T09:00:00Z"`. There is no default date |
+| `At least one integration ID is required` | `-i` is empty, often from a stray comma |
+| `❌ Failed to parse settings JSON: ...` | The `--settings` JSON is broken, usually by shell quoting. Wrap it in single quotes |
+| `❌ JSON file not found: ...` | Check the path you gave `--json` |
+| `Invalid values: Argument: status, ...` | `posts:status` takes `draft` or `schedule` only |
+| `Not enough non-option arguments: got 0, need at least 1` | A required ID or file is missing, such as the `<id>` of `posts:delete` |
+
+### Posts
+
+| Message | What to do |
+|---|---|
+| `Integration with id ... not found` | The channel ID is wrong or the channel was removed. Run `integrations:list` |
+| `posts.0.settings.who_can_reply_post must be one of the following values: ...` | A required setting is missing, here X's. The path names the channel entry and the field. `integrations:settings <id>` lists the required ones, drafts included |
+| `"provider":"...","message":"Please fix your settings"` | A setting the network requires is wrong. Match `integrations:settings <id>` |
+| `post is too long, please fix it` | The text is over the channel's `maxLength` |
+| `Your post should have at least one character or one image.` | An item has no text and no media |
+| `File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4` | Pass a `path` from `postqueen upload`, of a type posts accept. See [upload media](/cli/media-upload) |
+| `type must be one of: draft, schedule, now, update` | The `type` in your `--json` file is wrong. Use `schedule`, `draft` or `now` |
+| `Cannot change status of a published or errored post` | `posts:status` works only before a post goes out |
+| `API Error (404): {"msg":"Tool not found"}` | `integrations:trigger` got a helper name the channel does not have. The names are under `tools` in `integrations:settings` |
+| `API Error (429)` | You reached the hourly limit for creating posts, or the one for uploads. Wait, and put several channels in one `-i` rather than one command per channel |
+
+Upload errors are on [upload media](/cli/media-upload#if-an-upload-fails). A post whose analytics answer `{"missing": true}` is fixed on [analytics](/cli/analytics#fix-a-missing-release-id).
+
+### Common mistakes
+
+<AccordionGroup>
+  <Accordion title="jq fails on the first line" icon="terminal">
+    Most commands print a status line before the JSON. Drop it: `postqueen integrations:list | tail -n +2 | jq '.'`. `posts:missing` prints JSON only, so it needs no `tail`.
+  </Accordion>
+  <Accordion title="The same letter means two things" icon="triangle-alert">
+    `-s` is the date on `posts:create` and the status on `posts:status`. `-d` is minutes between items on `posts:create`, days on the analytics commands, and JSON input on `integrations:trigger`.
+  </Accordion>
+  <Accordion title="It works in my terminal, not in the job or the agent" icon="clock">
+    The job or the agent runs in its own environment and does not read your shell profile. Set `POSTQUEEN_API_KEY` there, and send stderr to the log (`2>&1`) so the error is not lost.
+  </Accordion>
+  <Accordion title="auth:status says the key is fine, the script still stops" icon="circle-alert">
+    `auth:status` exits `0` even when it reports a problem, so a script cannot rely on its exit code. Check with `postqueen integrations:list > /dev/null || exit 1` instead.
+  </Accordion>
+  <Accordion title="A file path or a link in -m" icon="image">
+    `-m` takes only a `path` returned by `postqueen upload`. Upload the file first. For a video, wait until it is ready: see [upload media](/cli/media-upload#wait-for-a-video).
+  </Accordion>
+</AccordionGroup>
+
+## Something the route cannot do
+
+Some things are not a failure: the route you use does not offer them yet. What MCP, the CLI and the API can each do is on [AI agents](/agents/overview#three-ways-to-connect).
+
+## Still stuck?
+
+<ReportIt />
+
+Send the exact command or prompt, the agent you use and the full message. Never send your API key.

@@ -1,76 +1,116 @@
 ---
-title: Media Upload
-description: 'Upload images, videos, and other media files for use in posts'
-icon: 'cloud-upload'
+title: "Upload media"
+description: "Upload images and videos with postqueen upload, attach them to a post, and wait for a video to finish processing before it goes out."
+icon: "cloud-upload"
+keywords:
+  - postqueen upload
+  - media
+  - video processing
+  - media status
+  - file types
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+A post takes media only from your PostQueen media library. A file on your disk or a link to another site is refused, so every image and video goes through `postqueen upload` first. The upload returns a `path`, and that path is what `-m` takes.
 
-Media has to live on a PostQueen domain before she can attach it, so every image and video goes through her first.
-
-## Uploading Files
-
-Upload a local file and receive a URL you can use in posts:
+## Upload a file
 
 ```bash
-postqueen upload <file-path>
+postqueen upload spring-menu.jpg
 ```
 
-The command returns a JSON response with the uploaded file's URL:
-
-```json
+```text
+✅ File uploaded successfully!
 {
-  "id": "img-123",
-  "path": "https://uploads.postqueen.ai/your-file.jpg"
+  "id": "cmf2med0a0007",
+  "name": "a1b2c3d4e5.jpg",
+  "originalName": null,
+  "path": "https://.../a1b2c3d4e5.jpg",
+  "thumbnail": null,
+  "alt": null,
+  "status": "ready",
+  ...
 }
 ```
 
-<Warning>
-You must upload media files to PostQueen before using them in posts. Many platforms (TikTok, Instagram, YouTube) require verified URLs and will reject external links.
-</Warning>
+The answer is the new media item. You need two fields: `path`, which goes into a post, and `id`, which you use to check a video. The file also appears in the app's media library.
 
-## Upload and Post Workflow
+## Attach it to a post
 
 ```bash
-# 1. Upload the file (tail -n +2 drops the header line, which is not JSON)
-IMG=$(postqueen upload photo.jpg | tail -n +2 | jq -r '.path')
+IMG=$(postqueen upload spring-menu.jpg | tail -n +2 | jq -r '.path')
 
-# 2. Use the URL in a post
 postqueen posts:create \
-  -c "Check out this photo!" \
+  -c "Our spring menu is live." \
   -m "$IMG" \
-  -s "2026-08-01T09:00:00Z" \
-  -i "your-integration-id"
+  -s "2026-10-01T09:00:00Z" \
+  -i "your-channel-id"
 ```
 
-## Supported File Types
+`tail -n +2` drops the status line so `jq` gets JSON. For several files, separate the paths with commas: `-m "$IMG1,$IMG2"`. In a `--json` file, each image is an object with the `id` and `path` from the upload.
 
-The API inspects the file's bytes rather than its extension, and accepts:
+## What you can upload
 
-- **Images:** JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF (10 MB cap)
-- **Video:** MP4 (1 GB cap)
+| What | Limit |
+|---|---|
+| Images | JPEG, PNG, GIF, WebP, AVIF, BMP, TIFF |
+| Video | MP4, MOV (converted to MP4) |
+| Size | Up to 1 GB per file |
+| Attach to a post | Only `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` and `.mp4` paths |
 
-Anything else returns `Unsupported file type.`
+PostQueen reads the file's contents to tell its type, so renaming a file does not change what it is. AVIF, BMP and TIFF upload fine but a post refuses them with `File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4`: convert them to JPEG or PNG before you upload. Each network also has its own, much smaller limits on what it publishes; `postqueen integrations:settings <channel-id>` lists them under `rules`.
 
-<Warning>
-Only `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` and `.mp4` paths can be attached to a post. AVIF, BMP and TIFF upload successfully and are then rejected by `posts:create` with `File must have a valid extension`. Convert those before uploading.
-</Warning>
+## Wait for a video
 
-## Video Upload Example
+An image is ready as soon as the upload returns. A video comes back with `"status": "processing"` while PostQueen checks it and, when needed, converts it into an MP4 the networks accept. That takes from a few seconds to a few minutes. A converted video gets a new `path`, and the original file is removed, so do not post the `path` from the upload answer.
 
-Platforms like TikTok, YouTube, and Instagram require video uploads through PostQueen:
+The CLI has no command for this step. Ask the API's [media status](/public-api/uploads/media-status) route until the status changes, then take the `path` from its answer:
 
 ```bash
-# Upload the video
-VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
+VIDEO_ID=$(postqueen upload launch.mov | tail -n +2 | jq -r '.id')
 
-# Post to TikTok
-postqueen posts:create \
-  -c "New video! #fyp" \
-  -m "$VIDEO_URL" \
-  -s "2026-08-01T09:00:00Z" \
-  --settings '{"content_posting_method":"DIRECT_POST","privacy_level":"PUBLIC_TO_EVERYONE","duet":true,"stitch":true,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false}' \
-  -i "tiktok-integration-id"
+STATUS=processing
+while [ "$STATUS" = "processing" ]; do
+  sleep 5
+  MEDIA=$(curl -s "https://api.postqueen.ai/public/v1/media/$VIDEO_ID/status" \
+    -H "Authorization: $POSTQUEEN_API_KEY")
+  STATUS=$(echo "$MEDIA" | jq -r '.status')
+done
+
+if [ "$STATUS" != "ready" ]; then
+  echo "$MEDIA" | jq -r '.processingError // .' >&2
+  exit 1
+fi
+
+VIDEO=$(echo "$MEDIA" | jq -r '.path')
 ```
 
-`privacy_level` and the other TikTok settings apply only when `content_posting_method` is `"DIRECT_POST"`, with `"UPLOAD"` (send to the TikTok app inbox instead of publishing) TikTok keeps only the post content.
+The API takes the key as it is in the `Authorization` header, with no `Bearer` in front. When the status is `failed`, `processingError` says why. A MOV that fails is removed from the library.
+
+## Upload from a link
+
+The CLI uploads files from your disk only. To bring in an image or video from a public link, call the API's [upload from URL](/public-api/uploads/upload-from-url) route, or ask an agent connected over [MCP](/mcp/tools#uploadfromurltool).
+
+## Limits
+
+Uploads count against an hourly allowance per workspace, separate from the one for creating posts. [Limits and errors](/public-api/limits-and-errors) has the details.
+
+## If an upload fails
+
+| Message | What to do |
+|---|---|
+| `Failed to upload file: ENOENT: no such file or directory` | The path is wrong, so nothing was sent. `upload` takes a file on your disk, not a link |
+| `Upload failed (400): ... Unsupported file type.` | The file is not one of the types above. Convert it; renaming it does not help |
+| `Upload failed (413): ... File too large` | The file is over 1 GB. Export a smaller version |
+| `File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4` (on `posts:create`) | The file uploaded, but posts do not take its type. Convert it and upload again |
+| A video post fails, or its file is gone | The video was still processing when you posted its first `path`. Wait for `ready` and use the new `path` |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Posts and channels" icon="calendar-plus" href="/cli/managing-posts">
+    Create, list, change and delete posts.
+  </Card>
+  <Card title="Examples by network" icon="layout-grid" href="/cli/platform-examples">
+    Video posts for TikTok and YouTube, image posts for Instagram, and more.
+  </Card>
+</CardGroup>

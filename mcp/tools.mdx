@@ -1,564 +1,318 @@
 ---
-title: Tools Reference
-description: 'Complete reference for all PostQueen MCP tools'
-icon: 'wrench'
+title: "MCP tools"
+description: "Every tool PostQueen's MCP server gives an agent, by group: what it does, what it takes and what it returns, and what the sign-in address leaves out."
+icon: "wrench"
+keywords:
+  - mcp tools
+  - integrationList
+  - integrationSchema
+  - integrationSchedulePostTool
+  - postsListTool
+  - analyticsPostsTool
+  - uploadWidgetTool
+  - ask_postqueen
 ---
 
-{/* OVERHAUL-TODO(B6): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-These are the tools PostQueen answers over MCP, with every parameter and every field they send back. Your agent reads these schemas on connect, so you never call one by hand.
+These are the tool names your agent sees when it connects, so you can match them to what it shows in a session. You never call them yourself: you ask in plain words and the agent picks the tools.
 
-## How many tools you get
-
-The count depends on the address your client connects to.
-
-| Address | Tools | Notes |
-|---|---|---|
-| `https://api.postqueen.ai/mcp/YOUR_API_KEY` | **21** | The API key in the URL. The address to start with |
-| `https://api.postqueen.ai/mcp` with `Authorization: Bearer YOUR_API_KEY` | **21** | The same tools, with the key (or a `pos_` OAuth token) in a header |
-| `https://api.postqueen.ai/sse/YOUR_API_KEY` | **21** | Legacy [SSE transport](/agents/troubleshooting). Prefer the two addresses above |
-| `https://api.postqueen.ai/mcp-oauth-dynamic` | **20** | Sign in instead of pasting a key. Everything except `ask_postqueen`. Not tested by PostQueen yet |
-
-The sign-in address is an option for clients that support MCP OAuth. Your client registers itself, you sign in to PostQueen, and a workspace admin approves the connection. The access does not expire on its own: revoke it under **Connections > Approved Apps**. No client has completed this sign-in in PostQueen's own tests yet, so the API key address is the one to start with, and some clients cannot use the sign-in at all. Each agent's setup page says which address to use.
-
-The API key is under **Connections > API Keys** in the app. Only a workspace admin can reveal it, and each workspace has one.
-
-## The 21 tools
-
-| Group | Tools |
+| Address | Tools |
 |---|---|
-| Channels | `integrationList`, `groupList`, `integrationSchema`, `triggerTool` |
-| Posts | `integrationSchedulePostTool`, `postsListTool`, `postReadTool`, `postSettingsTool` |
-| Analytics | `analyticsSummaryTool`, `analyticsPostsTool`, `analyticsPostTool` |
-| Media | `generateImageTool`, `uploadFromUrlTool`, `uploadWidgetTool`, `uploadWidgetTicketTool`, `uploadWidgetStatusTool` |
-| Video | `generateVideoOptions`, `videoFunctionTool`, `generateVideoTool`, `videoStatusTool` |
-| Agent | `ask_postqueen` (key and Bearer addresses only) |
+| `{{mcpKeyUrl}}` (key address) | {{mcpToolsKey}} |
+| `{{mcpBearerUrl}}` with `Authorization: Bearer YOUR_API_KEY` (Bearer header) | {{mcpToolsKey}} |
+| `https://api.postqueen.ai/sse/YOUR_API_KEY` (older SSE clients) | {{mcpToolsKey}} |
+| `{{mcpOauthUrl}}` (sign-in address) | {{mcpToolsOauth}}: every tool except `ask_postqueen` |
 
-The in-app AI Copilot runs most of the same tools. The three upload widget tools and `ask_postqueen` exist only over MCP.
+How to connect: [MCP server](/mcp/introduction).
 
-## integrationList
+## The order an agent follows
 
-List all connected social media accounts (channels) for your organization.
+<Steps>
+  <Step title="Find the channel">
+    `integrationList` gives the channel's `id` and its network (`platform`).
+  </Step>
+  <Step title="Read the network's rules">
+    `integrationSchema` returns the rules, the character limit and the settings a post needs. If a setting needs a value only the network knows, such as a WordPress post type, `triggerTool` looks it up.
+  </Step>
+  <Step title="Bring in media, if the post has any">
+    `uploadFromUrlTool`, the upload panel (`uploadWidgetTool`) or `generateImageTool` puts the file in your media library and returns its `path`.
+  </Step>
+  <Step title="Create the post">
+    `integrationSchedulePostTool` saves a draft, schedules the post or publishes it now, and returns the new post's ID.
+  </Step>
+</Steps>
 
-**Parameters:**
+## Channels
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `group` | string | No | Group (customer) ID from `groupList`. When provided, only channels belonging to that group are returned |
+### `integrationList`
 
-**Returns:**
+Lists the channels the agent can post to. Channels that are turned off, need to be reconnected or were not finished connecting are left out.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Integration ID (use this when scheduling posts) |
-| `name` | string | Display name of the account |
-| `picture` | string | Profile picture URL |
-| `platform` | string | Platform identifier (e.g., `x`, `linkedin`, `facebook`) |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `group` | string | No | A customer ID from `groupList`, to list only that customer's channels |
 
-Four fields and no more. The list leaves out channels that are disabled, need a reconnect, or are not fully connected yet, so every channel it returns can take a post. A channel's group and profile never reach your client. Read those from [`GET /integrations`](/public-api/integrations/list) instead.
+**Returns** `output`, a list of channels: `id`, `name`, `platform` (the network, such as `bluesky` or `x`), `picture`, `display` (the account handle), `type` and `customer` (`id` and `name`, when the channel belongs to one).
 
----
+### `groupList`
 
-## groupList
+Lists your customers, the groups your channels are sorted into. Takes no input.
 
-List all groups (customers) for your organization. Use a group's `id` with `integrationList` to filter channels down to a single group.
+**Returns** `output`, a list of `id` and `name`.
 
-**Parameters:** None
+### `integrationSchema`
 
-**Returns:**
+Returns a network's rules and the settings a post to it needs. The agent calls it before it writes a post for a network.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Group (customer) ID (pass to `integrationList` as `group`) |
-| `name` | string | Group (customer) display name |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `platform` | string | Yes | The network, as `platform` in `integrationList` shows it |
+| `isPremium` | boolean | Yes | Whether the X account has Premium, which allows longer posts. `false` for every other network |
 
----
+**Returns** `output` with:
 
-## integrationSchema
+| Field | What it is |
+|---|---|
+| `rules` | The network's posting rules, in plain words |
+| `maxLength` | The character limit of a post or comment |
+| `settings` | The settings schema, or `No additional settings required` |
+| `tools` | Helpers `triggerTool` can run for this network, each with a `methodName`, a `description` and the inputs it takes (`dataSchema`) |
 
-Get the posting rules, character limits, and required settings for a specific platform. The response also lists the platform's helper tools. Call this before scheduling a post to understand what the platform expects.
+### `triggerTool`
 
-**Parameters:**
+Runs one of a network's helpers to look up a value a setting needs, such as a list of WordPress post types or DEV tags.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `isPremium` | boolean | Yes | Whether the user has a premium subscription |
-| `platform` | string | Yes | Platform identifier (e.g., `x`, `linkedin`, `reddit`, `discord`) |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `integrationId` | string | Yes | The channel's `id` |
+| `methodName` | string | Yes | A `methodName` from the `tools` that `integrationSchema` returned |
+| `dataSchema` | list | Yes | The helper's inputs as `key` and `value` pairs. An empty list when it takes none |
 
-**Returns:**
+**Returns** `output`, whatever the network answered: usually a list of `id` and `name` pairs. If the channel's sign-in has expired, the tool tries to renew it. When that fails, the channel is marked to be reconnected and the tool says so.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `rules` | string | Platform-specific posting rules and best practices |
-| `maxLength` | number | Maximum character length for posts |
-| `settings` | object | JSON schema of required settings for this platform |
-| `tools` | array | Platform-specific helper tools (see `triggerTool`) |
+## Posts
 
-The `tools` array contains helper functions specific to the platform. For example, Discord returns a tool to list available channels, Reddit returns a tool to search for subreddits, and Pinterest returns a tool to list boards.
+### `integrationSchedulePostTool`
 
-Each tool in the array has:
+Creates posts: a draft, a post scheduled for a time, or a post that goes out now. PostQueen checks each post the way the app does before it saves anything.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `methodName` | string | Function name to pass to `triggerTool` |
-| `description` | string | What the tool does |
-| `dataSchema` | array | Parameters the tool accepts |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `socialPost` | list | Yes | One entry per post, each with the fields below |
+| `integrationId` | string | Yes | The channel's `id` |
+| `isPremium` | boolean | Yes | Whether the X account has Premium. `false` for other networks |
+| `date` | string | Yes | When to publish, in UTC |
+| `type` | string | Yes | `draft`, `schedule` or `now` |
+| `shortLink` | boolean | Yes | Whether to shorten the links in the text |
+| `postsAndComments` | list | Yes | The post, then its comments or thread items. Each has `content` (HTML: `p`, `h1` to `h3`, `strong`, `u`, `ul`, `li`), `attachments` (a list of media paths) and an optional `delay`, the minutes to wait after the item before it |
+| `settings` | list | Yes | The network's settings as `key` and `value` pairs, from `integrationSchema`. An empty list when it needs none |
 
----
+**Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again.
 
-## triggerTool
+- Settings and length are checked for scheduled posts and posts that go out now. Over MCP, a draft is saved even when a required setting is missing, so add it before the draft is scheduled. The CLI and the API check a draft's settings too.
+- Attachments must be media paths that end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. Bring a file in with an upload tool first.
+- What extra items in `postsAndComments` become depends on the network: see [comments and threads](/using/comments-and-threads).
 
-Execute a platform-specific helper function. These are discovered through `integrationSchema` and are used to fetch dynamic data like channel lists, subreddit suggestions, or page IDs. Every tool each network offers is catalogued in [Provider Tools](/public-api/integrations/provider-tools).
+### `postsListTool`
 
-**Parameters:**
+Lists your posts between two dates, whatever their state.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `integrationId` | string | Yes | The integration ID from `integrationList` |
-| `methodName` | string | Yes | The function name from `integrationSchema` tools |
-| `dataSchema` | array | Yes | Key-value pairs of parameters for the function |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `startDate` | string | Yes | Start of the window, in UTC |
+| `endDate` | string | Yes | End of the window, in UTC |
+| `customer` | string | No | A customer ID, to list only posts on that customer's channels |
 
-Each item in `dataSchema`:
+**Returns** `output.posts`, each with `id`, `publishDate` (UTC), `state` (`QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR`), `content`, `settings`, `group`, `integrationId`, `platform` and `integrationName`.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `key` | string | Parameter name |
-| `value` | string | Parameter value |
+### `postReadTool`
 
-**Example use cases:**
-- Get the list of Discord channels for a server
-- Search for Reddit subreddits
-- List Pinterest boards
-- List Slack channels
-- Search Instagram audio (`audioSearch`) to attach to a Reel (available only on Facebook Business-linked Instagram channels)
+Reads one post in full.
 
----
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `id` | string | Yes | The post's `id` from `postsListTool` |
 
-## integrationSchedulePostTool
+**Returns** `output` with the post's `id`, `group`, `integrationId`, `platform`, `integrationName`, `state`, `publishDate` and `settings`, and `posts`: the post and each comment or thread item, with its `id`, `content`, `delay` and `attachments`. An unknown ID returns `error`.
 
-Schedule, draft, or immediately publish posts to social media platforms. This is the main tool for creating content.
+### `postSettingsTool`
 
-The name your client sees, and the name in validation errors ("try `integrationSchedulePostTool` again"), is **`integrationSchedulePostTool`**.
+Changes the network settings of a post that has not gone out. The text and the publish time stay as they are.
 
-**Parameters:**
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `id` | string | Yes | The post's `id`. Use the post itself, not one of its comments |
+| `settings` | list | Yes | The settings to change, as `key` and `value` pairs. Settings you leave out keep their values |
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `socialPost` | array | Yes | Array of posts to create |
+**Returns** `output` with `postId` and `publishDate`, or `errors`. It works on drafts and on scheduled posts whose time has not passed.
 
-Each item in `socialPost`:
+## Analytics
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `integrationId` | string | Yes | Integration ID from `integrationList` |
-| `isPremium` | boolean | Yes | Whether the user has premium |
-| `date` | string | Yes | UTC datetime (e.g., `2026-08-01T09:00:00.000Z`) |
-| `shortLink` | boolean | Yes | Whether to shorten links in the post |
-| `type` | string | Yes | `draft`, `schedule`, or `now` |
-| `postsAndComments` | array | Yes | The post content and optional comments |
-| `settings` | array | Yes | Platform-specific settings from `integrationSchema` |
+The three analytics tools read your published posts on the networks that report numbers: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. Only some of these can be connected today: see the status column on [CLI analytics](/cli/analytics#which-networks-report-numbers).
 
-Each item in `postsAndComments`:
+- The window (7, 30 or 90 days) picks which posts count, by publish date. The numbers are each post's totals so far, not only what happened inside the window.
+- `null` means the network does not report that number. Facebook gives no comment counts, Pinterest gives impressions only, and Google Business Profile gives no numbers per post.
+- `syncing` is `true` while PostQueen is still fetching the latest numbers.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `content` | string | HTML content (see formatting rules below) |
-| `attachments` | array | Array of image/media URLs |
-| `delay` | number | Optional. Minutes to wait after the previous item before this comment or thread item goes out. `0` or omitted means right after |
+### `analyticsSummaryTool`
 
-Each item in `settings`:
+Totals for the posts you published in the window.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `key` | string | Setting name |
-| `value` | any | Setting value (prefer IDs over labels when available) |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `date` | number | No | `7`, `30` or `90` days. Default `30` |
+| `integrationId` | string | No | One channel's `id` |
+| `platform` | string | No | One network, such as `instagram` |
 
-### Content Formatting
+**Returns** `output` with `syncing`, `date`, `posts` (how many), `reactions`, `comments`, `impressions` and `notes`.
 
-Content must be HTML with these allowed tags only:
+### `analyticsPostsTool`
 
-| Tag | Usage |
-|-----|-------|
-| `<p>` | Wrap each line |
-| `<h1>`, `<h2>`, `<h3>` | Headings |
-| `<strong>` | Bold text |
-| `<u>` | Underlined text |
-| `<ul>`, `<li>` | Lists |
+Ranks your posts, or searches them, by how they did.
 
-<Warning>
-You cannot combine `<u>` and `<strong>` in the same element. Each line of text must be wrapped in `<p>` tags.
-</Warning>
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `date` | number | No | `7`, `30` or `90` days. Default `30` |
+| `sort` | string | No | `reactions` (default), `comments`, `impressions`, `engagement` or `published` |
+| `dir` | string | No | `desc` (default) or `asc` |
+| `page` | number | No | The page, from `0` |
+| `limit` | number | No | Posts per page, 1 to 20. Default `5` |
+| `integrationId` | string | No | One channel's `id` |
+| `platform` | string | No | One network |
+| `q` | string | No | Search the text, the channel name, the network or the post ID |
 
-### Posts vs Comments
+**Returns** `output` with `total`, `page`, `limit`, `posts`, and `topReactions` and `topComments` (the five strongest in the window, whatever the sort). Each post has `id`, `content`, `publishDate`, `releaseURL`, `integrationId`, `platform`, `channelName`, `impressions`, `reactions`, `comments`, `shares` and `engagementRate`.
 
-The `postsAndComments` array behavior depends on the platform:
+### `analyticsPostTool`
 
-- **Thread-based platforms** (X, Threads, Bluesky): Each array item becomes a separate post in a thread
-- **Comment-based platforms** (LinkedIn, Facebook): First item is the post, remaining items are comments
+The numbers for one published post.
 
-### Multiple Posts
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `postId` | string | Yes | A post ID from `postsListTool` or `analyticsPostsTool` |
 
-To schedule multiple posts (e.g., 20 posts across different days), add multiple items to the `socialPost` array, each with its own `date` and `integrationId`.
+**Returns** `output.post` with the same fields as a post in `analyticsPostsTool`, or `output.error`: `not_found`, `not_published`, `unsupported`, or `missing_release` when PostQueen does not know the post's ID on the network yet. Connect the post to its published copy in the app, or with [`postqueen posts:connect`](/cli/analytics#fix-a-missing-release-id).
 
-**Returns:** An array of results, one per post in `socialPost`, each with:
+## Uploads
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `postId` | string | The created post ID |
-| `integration` | string | The integration it was posted to |
+A post takes media from your PostQueen media library. These tools put a file there and return its `path` for `attachments`.
 
-If validation fails, returns `{ errors: string }` with details about what went wrong (e.g., content exceeds character limit).
+### `uploadFromUrlTool`
 
----
+Brings an image or video in from a public link.
 
-## postsListTool
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `url` | string | Yes | A public link to the image or video |
 
-List the posts scheduled between two dates, whatever their state: scheduled, draft, published or failed. It reads the same posts as [List Posts](/public-api/posts/list), with the channel flattened into three fields instead of a nested object, and each item carries the post's current settings. To see everything upcoming, pass a wide window starting now.
+**Returns** the file's `id`, `path` and `status`, or `error`. An image is ready at once. An MP4 comes back as `processing` while PostQueen prepares it, and its `path` can change when it is done. A MOV is converted to MP4 first, and the tool waits for that, up to about four minutes.
 
-**Parameters:**
+### `uploadWidgetTool`
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `startDate` | string | Yes | Start of the window, UTC (e.g., `2026-07-20T00:00:00`) |
-| `endDate` | string | Yes | End of the window, UTC (e.g., `2026-08-20T00:00:00`) |
-| `customer` | string | No | Group (customer) ID from `groupList`, to keep only that group's channels |
+Opens an **Upload Media** panel in the chat, where you add photos or videos from your device. It works in apps that can show MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere no panel appears: use `uploadFromUrlTool` with a public link instead. Takes no input.
 
-**Returns:** `posts`, an array with one item per post:
+**Returns** a `sessionId`. What you upload through the panel is reported in the chat, and `uploadWidgetStatusTool` lists it.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Post ID (pass it to `postReadTool` or `postSettingsTool`) |
-| `publishDate` | string | UTC time the post is set for |
-| `state` | string | `QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR` |
-| `content` | string | The post content |
-| `settings` | object | The post's current platform settings |
-| `group` | string | Group ID of the post and its comments or thread items |
-| `integrationId` | string | ID of the channel the post goes to |
-| `platform` | string | Platform identifier (e.g., `x`, `linkedin`) |
-| `integrationName` | string | Display name of the channel |
+### `uploadWidgetTicketTool`
 
----
+Used by the upload panel itself, not by your agent. It gets a short-lived upload ticket for the panel, so the credential never appears in the chat.
 
-## postReadTool
-
-Read one existing post in full: the post and its comments or thread items, each with its own id, content, media and delay, plus its channel, state, publish date and settings. Use it with an id from `postsListTool` before showing, changing or rescheduling a post. It only reads.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | Yes | Post ID from `postsListTool` (the first item of a thread) |
-
-**Returns:** `output`, with:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Post ID |
-| `group` | string | The post's group ID |
-| `integrationId` | string | ID of the channel the post goes to |
-| `platform` | string | Platform identifier (e.g., `x`, `bluesky`) |
-| `integrationName` | string | Display name of the channel |
-| `state` | string | `QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR` |
-| `publishDate` | string | UTC time the post is set for |
-| `settings` | object | The post's platform settings |
-| `posts` | array | The post, then each comment or thread item: `id`, `content`, `delay` (minutes after the previous item) and `attachments` (`id`, `path`) |
-
-If the post does not exist, returns `{ error: "Post not found" }`.
-
----
-
-## postSettingsTool
-
-Change the platform settings of a post that has not gone out yet: a scheduled post whose time is still ahead, or a draft. Only the settings change. The content and the publish date stay exactly as they are.
-
-The keys you pass are merged into the post's existing settings, so send only what should change. `integrationSchema` tells you which keys the platform has. A scheduled post is validated again with the merged settings, the same way a new post is.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | string | Yes | Post ID, usually from `postsListTool` |
-| `settings` | array | Yes | The keys to change |
-
-Each item in `settings`:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `key` | string | Setting name |
-| `value` | any | New value (prefer IDs over labels when available) |
-
-**Returns:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `postId` | string | The updated post ID |
-| `publishDate` | string | The post's publish date, unchanged |
-
-If the update is refused, returns `{ errors: string }` instead: the post was not found, it already published or failed, its time has passed, the id belongs to a comment rather than the main post, or the merged settings did not validate. The same operation over HTTP: [Update Post Settings](/public-api/posts/settings).
-
----
-
-## generateImageTool
-
-Generate an AI image to use as a post attachment.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `prompt` | string | Yes | Description of the image to generate |
-| `style` | string | No | Realistic, Cartoon, Anime, Minimalist, Sketch or Watercolor. Realistic when omitted |
-| `orientation` | string | No | `square`, `portrait` or `landscape`. Square when omitted |
-
-**Returns:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Media ID |
-| `path` | string | URL of the generated image |
-| `alt` | string | Alt text, when there is one |
-| `thumbnail` | string | Thumbnail URL, when there is one |
-
-On failure, returns `{ error: string }` instead, for example when the account has no AI image credits left.
-
-Use the returned `path` in the `attachments` array when scheduling a post.
-
----
-
-## uploadFromUrlTool
-
-Upload a remote image or video into the media library from a public URL. Use this before scheduling a post when the user provides an external media URL that is not already hosted on your PostQueen domain, so the attachment passes the upload-domain validation.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `url` | string | Yes | The public URL of the image or video to upload |
-
-**Returns:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Media ID |
-| `path` | string | URL of the hosted media |
-| `status` | string | `ready`, or `processing` while a video is being prepared |
-
-On failure, returns `{ error: string }` instead (for example, the URL could not be fetched, the file type is not allowed, or the file exceeds the size limit).
-
-**File types a post accepts:** PNG, JPEG, GIF and WebP images, and MP4 video. A MOV file is converted to MP4 before the tool answers. An MP4 comes back `processing` and can be attached right away.
-
-Size caps are enforced server-side.
-
-Use the returned `path` in the `attachments` array when scheduling a post.
-
----
-
-## uploadWidgetTool
-
-Show an **Upload Media** panel in the chat, where you add a photo or video from your own device to the media library. It works in clients that display MCP Apps panels, such as Claude, Claude Cowork and ChatGPT. In other clients no panel appears, so use `uploadFromUrlTool` with a public URL instead.
-
-**Parameters:** None
-
-**Returns:**
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `sessionId` | string | Identifies this upload panel. Pass it to `uploadWidgetStatusTool` |
-
-The files you upload are reported back in the conversation. On failure, returns `{ error: string }`.
-
----
-
-## uploadWidgetTicketTool
-
-Used by the upload panel itself, not by your agent: it gets a short-lived upload ticket for the `sessionId` that `uploadWidgetTool` returned. Clients that support MCP Apps keep it out of the model's view.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| Input | Type | Required | What it is |
+|---|---|---|---|
 | `sessionId` | string | Yes | The `sessionId` from `uploadWidgetTool` |
 
-**Returns:** `ticket`, or `{ error: string }`.
+**Returns** a `ticket`, or `error`.
 
----
+### `uploadWidgetStatusTool`
 
-## uploadWidgetStatusTool
+Lists what you uploaded through the panel.
 
-List what you uploaded through the upload panel.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| Input | Type | Required | What it is |
+|---|---|---|---|
 | `sessionId` | string | Yes | The `sessionId` from `uploadWidgetTool` |
 
-**Returns:** `media`, an array with one item per file:
+**Returns** `media`, each with `id`, `path` and `status`. An empty list means nothing was uploaded yet. A file that is `processing` is still being prepared: the agent waits about 10 seconds and asks again. A `ready` file can go into a post.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | string | Media ID |
-| `path` | string | URL of the hosted media |
-| `status` | string | `ready`, or `processing` while a video is being prepared. Wait about 10 seconds and call again |
-| `error` | string | Why a file could not be prepared, when that happened |
+## Images and video
 
-An empty list means nothing has been uploaded yet. A file whose status is `ready` can go in the `attachments` array when scheduling a post.
+Creating an image or a video uses your plan's monthly AI credits. The credits per plan are on [plans](/cloud/plans).
 
----
+### `generateImageTool`
 
-## generateVideoOptions
+Creates an image and puts it in your media library. Uses one AI image credit.
 
-List all available video generation types and their required parameters.
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `prompt` | string | Yes | What to draw, described as a scene rather than a caption |
+| `style` | string | No | `Realistic` (default), `Cartoon`, `Anime`, `Minimalist`, `Sketch` or `Watercolor` |
+| `orientation` | string | No | `square` (default), `portrait` or `landscape` |
 
-**Parameters:** None required (an optional `reasoning` string is accepted).
+**Returns** the image's `id`, `path`, `alt` and `thumbnail`, or `error`. With no credits left, the error is `No AI image credits are available on this account.`
 
-**Returns:** `video`, an array of video generators, each with:
+### `generateVideoOptions`
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `identifier` | string | Video type identifier (e.g., `image-text-slides`) |
-| `title` | string | Display name |
-| `description` | string | What the generator makes |
-| `trial` | boolean | Whether it works during the free trial |
-| `output` | string | Supported orientations: `vertical\|horizontal` |
-| `tools` | array | Helper functions (call with `videoFunctionTool`) |
-| `customParams` | object | JSON schema of required parameters |
+Lists the video generators your workspace can use. The agent calls it before it starts a video. An empty list means none is available.
 
-### Image Text Slides
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `reasoning` | string | No | A short note on why the agent is asking |
 
-Slide-based videos with text-to-speech. It needs a `prompt` and a `voice` (get a voice ID with `videoFunctionTool`).
+**Returns** `video`, each generator with its `identifier`, `title`, `description`, `trial` (whether it works during the free trial), `output`, `tools` and `customParams` (the inputs it needs).
 
----
+### `videoFunctionTool`
 
-## videoFunctionTool
+Looks up a value a video generator needs, such as the list of voices, with one of the helpers `generateVideoOptions` listed under `tools`.
 
-Execute helper functions for video generators. Use this to fetch required data before generating a video (e.g., listing available voices).
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `identifier` | string | Yes | The generator's `identifier` |
+| `functionName` | string | Yes | The helper's `functionName` |
+| `params` | string | No | The helper's inputs, as a JSON string |
 
-**Parameters:**
+**Returns** the helper's answer.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `identifier` | string | Yes | Video type identifier from `generateVideoOptions` |
-| `functionName` | string | Yes | Function name from the video type's `tools` array |
-| `params` | string | No | Arguments for the helper as a JSON string, when it takes any |
+### `generateVideoTool`
 
-**Example:** Call with `identifier: "image-text-slides"` and `functionName: "loadVoices"` to get available ElevenLabs voice IDs.
+Starts a video. It takes minutes, so the tool returns a job ID at once. Uses one AI video credit.
 
----
-
-## generateVideoTool
-
-Start generating a video to use as a post attachment. A video takes a few minutes, so this call only starts the job and hands back a `jobId`. `videoStatusTool` reports when it is ready.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `identifier` | string | Yes | Video type from `generateVideoOptions` |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `identifier` | string | Yes | The generator's `identifier` |
 | `output` | string | Yes | `vertical` or `horizontal` |
-| `customParams` | array | Yes | Key-value pairs of parameters for the video type |
+| `customParams` | list | Yes | The generator's inputs as `key` and `value` pairs |
 
-Each item in `customParams`:
+**Returns** a `jobId`, or `error`.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `key` | string | Parameter name |
-| `value` | any | Parameter value |
+### `videoStatusTool`
 
-**Returns:**
+Checks a video job.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `jobId` | string | Pass it to `videoStatusTool` |
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `jobId` | string | Yes | The `jobId` from `generateVideoTool` |
 
-On failure, returns `{ error: string }` instead, for example *No AI video credits are available on this account*. A job that fails to start does not use a video credit.
+**Returns** `status`: `pending` (the agent asks again in about 30 seconds), `completed` with the video's `url`, or `failed` with the `error`.
 
----
+## Agent
 
-## videoStatusTool
+### `ask_postqueen`
 
-Check on a video started with `generateVideoTool`. While the status is `pending`, the tool asks your agent to wait about 30 seconds and call again.
+Sends a request in plain words to PostQueen's own agent, which picks and runs the other tools itself. Before it schedules a new post, it writes out the draft and waits for a yes. It is on the key address and the Bearer header only.
 
-**Parameters:**
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `message` | string | Yes | What you want done |
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `jobId` | string | Yes | The `jobId` that `generateVideoTool` returned |
+**Returns** the agent's answer.
 
-**Returns:**
+## What the tools cannot do
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `status` | string | `pending`, `completed` or `failed` |
-| `id` | string | Media ID, once the video exists |
-| `url` | string | URL of the finished video |
-| `error` | string | Why the job failed |
+| You want to | Do it here |
+|---|---|
+| Delete a post | The app, [`postqueen posts:delete`](/cli/managing-posts#delete-a-post) or [the API](/public-api/posts/delete) |
+| Change a post's text or time | The app |
+| Move a post between draft and scheduled | The app, [`postqueen posts:status`](/cli/managing-posts#change-a-post) or [the API](/public-api/posts/change-status) |
+| Read channel numbers, such as followers | The app, [`postqueen analytics:platform`](/cli/analytics) or [the API](/public-api/analytics/platform) |
 
-Use the returned `url` in the `attachments` array when scheduling a post. Whatever your agent schedules with these tools lands on the PostQueen calendar, so you can still open it and change your mind.
-
----
-
-## analyticsSummaryTool
-
-Workspace totals for published posts, the same numbers as Analytics → All channels → Summary.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `date` | 7, 30 or 90 | No | Publish-date window in days. Default 30 |
-| `integrationId` | string | No | Channel id from `integrationList`, to limit to one channel |
-| `platform` | string | No | Provider identifier such as `x`, `instagram`, `linkedin-page` |
-
-**Returns:** `posts`, `reactions`, `comments` and `impressions`. Totals are current lifetime counts, not "likes that happened inside this window". Null is unknown, never zero.
-
----
-
-## analyticsPostsTool
-
-Ranked post performance, the same numbers as Analytics → Top posts and Performance per post. Use this for "top posts" or "how did the post about X do" when you do not have a post id yet.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `date` | 7, 30 or 90 | No | Publish-date window in days. Default 30 |
-| `sort` | string | No | `reactions`, `comments`, `impressions`, `engagement` or `published`. Default `reactions` |
-| `dir` | `asc` or `desc` | No | Sort direction |
-| `page` | number | No | Page index, from 0 |
-| `limit` | number | No | Page size, 1–20. Default 5 |
-| `integrationId` | string | No | Channel id from `integrationList` |
-| `platform` | string | No | Provider identifier such as `x` or `instagram` |
-| `q` | string | No | Search caption, channel name, platform or post id |
-
-Null is unknown, not zero.
-
----
-
-## analyticsPostTool
-
-Current lifetime totals for one published post. Use this when you already have a post id from `analyticsPostsTool` or `postsListTool`.
-
-**Parameters:**
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `postId` | string | Yes | Post id from `analyticsPostsTool` or `postsListTool` |
-
-If `error` is `missing_release`, the published content still needs connecting in the app (Connect Post). Do not invent numbers.
-
-## `ask_postqueen`
-
-The 21st tool is not like the 20 above. It is on the API key and Bearer addresses only, not on the sign-in address. Your client will discover it anyway, so it is worth knowing what it is.
-
-It takes one parameter, `message`, a plain-language request. Behind it sits the same assistant you talk to in the app, running server-side with the same tools listed above and the same access to your calendar. So "schedule a launch post for Thursday" is a single call rather than a sequence your own agent has to plan.
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `message` | string | Yes | What you want PostQueen to do, in your own words |
-
-Two things follow from that. It can write to your calendar, so treat it with the same care as `integrationSchedulePostTool`. And because PostQueen plans the steps itself, you get less control over exactly which tools run than you would calling them directly.
-
-## What these tools cannot do
-
-Some jobs have no tool here and need the CLI or the API alongside. `ask_postqueen` does not change this: it drives the same tools, so it has the same gaps. Deleting a post is one. Moving one to a new time is another, because `postSettingsTool` changes settings and nothing else. Analytics for published posts is in this set (`analyticsSummaryTool`, `analyticsPostsTool`, `analyticsPostTool`); channel numbers such as follower growth are on the API and the CLI. [Limits and Troubleshooting](/agents/troubleshooting) has the full list, the route to use instead of each gap, and what to check when your client says it cannot reach PostQueen at all.
+<NextStepsAgent />
