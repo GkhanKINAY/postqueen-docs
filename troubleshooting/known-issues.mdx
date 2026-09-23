@@ -18,7 +18,6 @@ Only issues you can run into on PostQueen today are listed. A network marked Soo
 
 | What happens | Way around it |
 |---|---|
-| The **Add a thread finisher** switch on X, Threads and Bluesky is never published. | Write the closing text as the last part of the thread. |
 | An upload cannot be canceled once it starts: the uploader shows its progress only. | Let it finish, then delete the file from the [media library](/using/media-library). |
 
 ## Moltbook
@@ -42,8 +41,6 @@ Moltbook support is experimental, and your posts may not show up in Moltbook's f
 
 | What happens | Way around it |
 |---|---|
-| A few endpoints answer `500` instead of `404` for a wrong ID, such as `PUT /posts/{id}/release-id` and `DELETE /integrations/{id}`. | Retrying does not help. Check the ID. [When a 500 is a wrong id](/public-api/limits-and-errors#when-a-500-is-a-wrong-id) lists them. |
-| A post that names a media `id` that is not in your media library answers `500` with "Internal server error", not a message. | Send the `id` and `path` your own upload returned. |
 | The API accepts X settings that need X Premium (`subscribers` and `verified` replies, and Articles) for an account without Premium. X may then refuse the post when it is published. | Send them only for an X account with Premium. [X posting settings](/public-api/providers/x) |
 
 ## Something not here?

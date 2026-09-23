@@ -493,16 +493,15 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
-          "500": {
+          "404": {
             "description": "No channel with that id in your workspace",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/NestError"
+                  "$ref": "#/components/schemas/MessageError"
                 },
                 "example": {
-                  "statusCode": 500,
-                  "message": "Internal server error"
+                  "msg": "Channel not found"
                 }
               }
             }
@@ -1131,7 +1130,7 @@
           "Posts"
         ],
         "summary": "Update release ID",
-        "description": "Sets the network id of a post whose `releaseId` is `missing`, so its analytics can be read. Only TikTok posts end up in that state. The body is not validated: send `releaseId` as a string. A post that is not in your workspace or not `missing` answers 500.",
+        "description": "Sets the network id of a post whose `releaseId` is `missing`, so its analytics can be read. Only TikTok posts end up in that state. `releaseId` must be a non-empty string. A post that already has its id answers 400, and an id that is not a post in your workspace answers 404.",
         "operationId": "updateReleaseId",
         "parameters": [
           {
@@ -1194,16 +1193,32 @@
           "401": {
             "$ref": "#/components/responses/Unauthorized"
           },
-          "500": {
-            "description": "No post in your workspace with that id and a `missing` release id",
+          "400": {
+            "description": "`releaseId` missing or empty, or `This post is not waiting for a release id`",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NestError"
                 },
                 "example": {
-                  "statusCode": 500,
-                  "message": "Internal server error"
+                  "statusCode": 400,
+                  "message": "This post is not waiting for a release id",
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Post not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Post not found",
+                  "error": "Not Found"
                 }
               }
             }
@@ -1799,22 +1814,23 @@
               }
             }
           },
-          "500": {
-            "description": "No channel with that id in your workspace",
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Channel not found",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NestError"
                 },
                 "example": {
-                  "statusCode": 500,
-                  "message": "Internal server error"
+                  "statusCode": 404,
+                  "message": "Channel not found",
+                  "error": "Not Found"
                 }
               }
             }
-          },
-          "401": {
-            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }

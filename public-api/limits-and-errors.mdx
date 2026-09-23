@@ -115,13 +115,10 @@ The body of an error has one of four shapes. Read the status code first, then wh
 
 ### When a 500 is a wrong id
 
-A few endpoints answer `500` instead of `404` when the id is wrong. Retrying will not help:
+Two endpoints answer `500` when the network, not PostQueen, refuses the call. Retrying the same request will not help:
 
 | Endpoint | Cause |
 |---|---|
-| `DELETE /integrations/{id}` | No channel with that id in your workspace |
-| `GET /analytics/{integration}` | No channel with that id. A network name such as `bluesky` lands here too |
-| `PUT /posts/{id}/release-id` | The post is not in your workspace or its release id is not `missing` |
 | `POST /integration-trigger/{id}` | `Unexpected error`: the network refused the call, or `data` did not fit the tool |
 | `GET /social/{integration}` | `Failed to generate auth URL`: the network refused to start the sign-in |
 

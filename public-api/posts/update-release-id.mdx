@@ -6,6 +6,4 @@ openapi: "PUT /posts/{id}/release-id"
 
 Take the `id` from [Get missing content](/public-api/posts/missing-content) and send it as `releaseId`.
 
-<Warning>
-The body is not checked: a request without `releaseId` stores the text `undefined` on the post. Check your body before you send it.
-</Warning>
+Only a post whose release id is `missing` takes one. A post that already has its id answers `400`, and an id that is not a post in your workspace answers `404`.
