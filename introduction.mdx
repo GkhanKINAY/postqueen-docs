@@ -1,108 +1,121 @@
 ---
-title: 'Introduction'
-description: 'Tell her what to share. She writes it, designs it and publishes it across 30+ networks, on time.'
-icon: 'house'
+title: "PostQueen docs"
+sidebarTitle: "Introduction"
+description: "Schedule posts from the PostQueen app, from AI agents over MCP, from the postqueen CLI and from the public API. Every post lands on one calendar."
+icon: "house"
+mode: "custom"
 keywords:
   - postqueen
-  - agentic social media scheduler
   - social media scheduler
-  - social media scheduling tool
-  - grok bot
+  - schedule posts
   - mcp
-  - calendar
+  - ai agent
   - cli
-  - self-host
-  - hashtag
-  - calendar tags
-  - n8n
+  - api
 ---
 
-<Frame>
-  <img src="/images/brand/header.svg" alt="PostQueen, your AI social media manager. You talk, she writes, designs and schedules" noZoom />
-</Frame>
+<div className="pq-home">
 
-Ask her from whatever you already have open: OpenClaw, Hermes, Claude, ChatGPT, Codex, Cursor,
-Grok or Grok Bot. Muse Code connects over MCP; Muse, Meta's personal agent, connects a different way that is not tested yet.
+<section className="pq-hero">
+  <div className="pq-dots" />
+  <div className="pq-glow" />
+  <a className="pq-eyebrow" href="/quickstart">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6.6 20.4 L8.2 10.6 L12.4 14.4 L16 8 L19.6 14.4 L23.8 10.6 L25.4 20.4 Z" fill="currentColor" /><rect x="7" y="21.8" width="18" height="2.6" rx="1.3" fill="currentColor" /></svg>
+    <span>PostQueen documentation</span>
+  </a>
+  <h1 className="pq-hero-title">Schedule every post <span className="pq-serif">from wherever you work.</span></h1>
+  <p className="pq-lede">Write a post in the app, ask your AI agent, run a command or call the API. PostQueen publishes each post at the time you pick and keeps every post on one calendar.</p>
+  <div className="pq-actions">
+    <a className="pq-btn pq-btn-primary" href="/quickstart">Schedule your first post <Icon icon="arrow-right" size={18} /></a>
+    <a className="pq-btn pq-btn-ghost" href="/agents/overview">Connect your agent</a>
+  </div>
+  <div className="pq-proof">
+    <span><Icon icon="check" size={16} />{{trialDays}}-day free trial</span>
+    <span><Icon icon="check" size={16} />$0 today, card required</span>
+    <span><Icon icon="check" size={16} />Full refund within {{refundDays}} days of a charge</span>
+  </div>
+</section>
 
-She creates and schedules the post they already decided. The calendar is where you see every
-post and manage the process.
+<section className="pq-section">
+  <p className="pq-kicker">Four ways to post</p>
+  <h2 className="pq-h2">One calendar, <span className="pq-serif">four ways in.</span></h2>
+  <p className="pq-sub">Pick the one that fits the moment. A post scheduled from an agent, the CLI or the API shows up on the same calendar as one you wrote in the app.</p>
+  <div className="pq-ways">
+    <a className="pq-way" href="/quickstart">
+      <span className="pq-way-icon"><Icon icon="calendar-days" size={22} /></span>
+      <span className="pq-way-title">The app</span>
+      <span className="pq-way-text">Connect your channels, write a post once and schedule it for each of them on the calendar.</span>
+      <code className="pq-way-code">app.postqueen.ai</code>
+      <span className="pq-way-more">Quickstart <Icon icon="arrow-right" size={15} /></span>
+    </a>
+    <a className="pq-way" href="/agents/overview">
+      <span className="pq-way-icon"><Icon icon="bot" size={22} /></span>
+      <span className="pq-way-title">An AI agent</span>
+      <span className="pq-way-text">Ask Claude, ChatGPT, Grok Bot or another agent in plain words. It posts through PostQueen's MCP server.</span>
+      <code className="pq-way-code">{"{{mcpKeyUrl}}"}</code>
+      <span className="pq-way-more">Connect your agent <Icon icon="arrow-right" size={15} /></span>
+    </a>
+    <a className="pq-way" href="/cli/introduction">
+      <span className="pq-way-icon"><Icon icon="terminal" size={22} /></span>
+      <span className="pq-way-title">The CLI</span>
+      <span className="pq-way-text">Schedule posts, upload media and read analytics from a terminal, a script or a coding agent.</span>
+      <code className="pq-way-code">npm install -g postqueen</code>
+      <span className="pq-way-more">Install the CLI <Icon icon="arrow-right" size={15} /></span>
+    </a>
+    <a className="pq-way" href="/public-api/introduction">
+      <span className="pq-way-icon"><Icon icon="code" size={22} /></span>
+      <span className="pq-way-title">The API</span>
+      <span className="pq-way-text">Call the public API from your own code, or build an app that other workspaces approve.</span>
+      <code className="pq-way-code">POST /public/v1/posts</code>
+      <span className="pq-way-more">Read the API <Icon icon="arrow-right" size={15} /></span>
+    </a>
+  </div>
 
-## Who is she for?
+  <div className="pq-fit">
 
-If posting is part of your job but not your whole job, she is for you.
+| Way | Good for | What you need |
+|---|---|---|
+| The app | Planning, writing and checking posts yourself | A PostQueen account and a browser |
+| An AI agent | Asking for posts in the chat or editor you already use | An agent that speaks MCP, and the MCP address a workspace admin copies from **Connections** |
+| The CLI | Scripts, scheduled jobs and coding agents | Node.js and the workspace API key |
+| The API | Your own product or backend | The workspace API key, or an OAuth app that a workspace approves |
 
-<Frame>
-  <img src="/images/brand/personas.svg" alt="Six kinds of user: creators, business owners, developers, agent-first teams, automation teams, and agencies with several brands" />
-</Frame>
+  </div>
+</section>
 
-## Start here
+<section className="pq-section">
+  <p className="pq-kicker">Where to go next</p>
+  <h2 className="pq-h2">Start with what you need <span className="pq-serif">today.</span></h2>
+  <div className="pq-next">
+    <a href="/using/connect-a-channel">
+      <span className="pq-next-icon"><Icon icon="plug" size={20} /></span>
+      <span><strong>Connect a channel</strong><small>Add a network, reconnect one or remove it.</small></span>
+    </a>
+    <a href="/channels/overview">
+      <span className="pq-next-icon"><Icon icon="layout-grid" size={20} /></span>
+      <span><strong>Channels and their status</strong><small>Which networks you can connect today, and what each one posts.</small></span>
+    </a>
+    <a href="/using/create-a-post">
+      <span className="pq-next-icon"><Icon icon="square-pen" size={20} /></span>
+      <span><strong>Create a post</strong><small>Write once for several channels, then schedule it.</small></span>
+    </a>
+    <a href="/mcp/introduction">
+      <span className="pq-next-icon"><Icon icon="network" size={20} /></span>
+      <span><strong>The MCP server</strong><small>The addresses an agent connects to, and what its tools can do.</small></span>
+    </a>
+    <a href="/cloud/plans">
+      <span className="pq-next-icon"><Icon icon="credit-card" size={20} /></span>
+      <span><strong>Plans and billing</strong><small>Prices, the free trial, refunds and changing your plan.</small></span>
+    </a>
+    <a href="/support">
+      <span className="pq-next-icon"><Icon icon="life-buoy" size={20} /></span>
+      <span><strong>Get help</strong><small>Common errors, known issues and how to reach a person.</small></span>
+    </a>
+  </div>
+</section>
 
-<CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Connect a channel and put your first post on the calendar. About five minutes
-  </Card>
-  <Card title="How it works" icon="workflow" href="/introduction">
-    What happens between pressing schedule and the post going out
-  </Card>
-</CardGroup>
+<div className="pq-home-foot">
+  PostQueen is an open-source fork of [Postiz](https://github.com/gitroomhq/postiz-app), under AGPL-3.0. Running PostQueen on your own server? Start with [Self-hosting](/installation/overview).
+</div>
 
-## Reach her from anywhere
-
-Every route below rides the same public API, so a post lands on the same calendar whichever one you
-choose. [Which interface](/introduction) weighs them against each other.
-
-<CardGroup cols={3}>
-  <Card title="Agents" icon="bot" href="/agents/overview">
-    Ask Claude, ChatGPT or Grok Bot for a post instead of writing one
-  </Card>
-  <Card title="Automation" icon="zap" href="/introduction">
-    n8n, Zapier and Make, or an RSS feed she watches herself
-  </Card>
-  <Card title="CLI" icon="terminal" href="/cli/introduction">
-    Sixteen commands, clean JSON, at home in a CI job
-  </Card>
-  <Card title="MCP" icon="network" href="/mcp/introduction">
-    One URL, and your assistant can post for you. Nothing to install
-  </Card>
-  <Card title="Public API" icon="code" href="/public-api/introduction">
-    REST for your own code, and the layer the others ride on
-  </Card>
-  <Card title="Self-hosting" icon="server" href="/installation/overview">
-    Your server, your database, your tokens. AGPL-3.0
-  </Card>
-</CardGroup>
-
-## Or just send her a voice note
-
-OpenClaw and Hermes run on your own machine and put her inside the chat apps you already have open.
-Hold the mic button on WhatsApp, say what you want, and she writes it, makes the picture and puts
-both posts on the calendar.
-
-<Frame>
-  <img src="/images/brand/chat-agent.svg" alt="A voice note in a chat app becoming a generated visual and two scheduled posts" />
-</Frame>
-
-<CardGroup cols={3}>
-  <Card title="OpenClaw" icon="/images/brand/icon-openclaw.svg" href="/agents/openclaw">
-    WhatsApp, Telegram, Slack and Discord, through a gateway you run
-  </Card>
-  <Card title="Hermes" icon="/images/brand/icon-hermes.svg" href="/agents/hermes">
-    Hand it one brief and it plans, writes and schedules your week
-  </Card>
-  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Ask the Bot to connect PostQueen, then type your key in its secure prompt, never in the chat
-  </Card>
-</CardGroup>
-
-OpenClaw and Hermes are open source, and both drive the same CLI, so the only outside cost is the
-model provider you point them at.
-
-<CardGroup cols={1}>
-  <Card title="Stuck on something?" icon="circle-question-mark" href="/support">
-    Troubleshooting sorted by symptom, the questions that come up most, and how to reach a human
-  </Card>
-</CardGroup>
-
-<Note>
-PostQueen is an open-source fork of [Postiz](https://github.com/gitroomhq/postiz-app), AGPL-3.0.
-</Note>
+</div>
