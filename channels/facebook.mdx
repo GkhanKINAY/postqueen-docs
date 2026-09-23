@@ -9,7 +9,7 @@ import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
 <ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish.</ChannelStatus>
 
-Schedule posts to the Facebook Pages you manage: text, links, photos, multi-photo posts, video and Page Stories. PostQueen publishes them through Facebook's official Graph API.
+Schedule posts to the Facebook Pages you manage: text, links, photos, multi-photo posts, video and Page Stories. PostQueen publishes them through Facebook's official API when their time comes.
 
 ## What you can post
 
@@ -37,8 +37,7 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | Rule | Message |
 |---|---|
 | A story has at least one photo or video | “Story should have at least one media” |
-
-The text is also held to 63,206 characters.
+| Text up to 63,206 characters | “post is too long, please fix it” |
 
 Photo size and video length are Facebook's rules, and PostQueen does not check them first. Facebook takes photos in JPEG, PNG, GIF, BMP or TIFF up to 10 MB, and story videos up to 60 seconds. When Facebook refuses a post, PostQueen shows its reason, for example "You are posting too fast, please slow down".
 

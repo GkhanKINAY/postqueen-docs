@@ -7,17 +7,18 @@ icon: "/images/channels/linkedin.svg"
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-On a self-hosted PostQueen you register your own LinkedIn app. One app serves both tiles in **Add Channel**: **LinkedIn** for a personal profile and **LinkedIn Page** for a company page. PostQueen reads the app's keys from two variables.
+On a self-hosted PostQueen the LinkedIn app is yours. One app serves both tiles in **Add Channel**: **LinkedIn** for a personal profile and **LinkedIn Page** for a company page. PostQueen reads the app's keys from two variables.
 
 ## Before you start
 
-| What | Value |
+| | |
 |---|---|
-| Developer portal | [linkedin.com/developers/apps](https://www.linkedin.com/developers/apps) |
+| Developer portal | [LinkedIn Developer Portal](https://www.linkedin.com/developers/apps), with a LinkedIn account |
 | Variables | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` |
 | Redirect URIs | `FRONTEND_URL` + `/integrations/social/linkedin`, and `FRONTEND_URL` + `/integrations/social/linkedin-page` |
 | Products | Share on LinkedIn, Sign In with LinkedIn using OpenID Connect, Advertising API |
 | You also need | A LinkedIn Page for your organization, its super admin to verify the app, a privacy policy URL and a logo |
+| Review | LinkedIn's approval of the Advertising API or Community Management API request before the company-page permissions work. See App review |
 
 Both tiles request the same seven scopes, and PostQueen refuses the connect if LinkedIn grants fewer:
 
@@ -58,15 +59,28 @@ The personal **LinkedIn** tile needs the organization scopes as well, so the Adv
   <Step title="Add both redirect URLs">
     On the **Auth** tab, add both addresses under **Authorized redirect URLs for your app**:
 
-    <OAuthRedirect />
+    <CodeGroup>
 
-    | Where PostQueen runs | Redirect URLs |
-    |---|---|
-    | Production | `https://postqueen.example.com/integrations/social/linkedin` and `https://postqueen.example.com/integrations/social/linkedin-page` |
-    | Local development | `http://localhost:4200/integrations/social/linkedin` and `http://localhost:4200/integrations/social/linkedin-page` |
-    | Docker on your machine | `http://localhost:4007/integrations/social/linkedin` and `http://localhost:4007/integrations/social/linkedin-page` |
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/linkedin
+    https://postqueen.example.com/integrations/social/linkedin-page
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/linkedin
+    http://localhost:4200/integrations/social/linkedin-page
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/linkedin
+    http://localhost:4007/integrations/social/linkedin-page
+    ```
+
+    </CodeGroup>
 
     LinkedIn ignores query parameters when it compares the address, so a reconnect that adds one still matches.
+
+    <OAuthRedirect />
   </Step>
   <Step title="Copy the client ID and secret">
     The **Auth** tab also shows the app's **Client ID** and its client secret. Copy both, and keep the secret private.
@@ -75,7 +89,7 @@ The personal **LinkedIn** tile needs the organization scopes as well, so the Adv
 
 ## Set the variables
 
-Add the two values to PostQueen's environment:
+Add the two keys to your environment:
 
 ```env
 LINKEDIN_CLIENT_ID="your client id"

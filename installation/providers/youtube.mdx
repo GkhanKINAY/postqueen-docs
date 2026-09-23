@@ -65,11 +65,21 @@ PostQueen checks all eight scopes when a channel connects. A missing one stops t
 
     Under **Authorized JavaScript origins**, add your `FRONTEND_URL` with no path. Under **Authorized redirect URIs**, add:
 
-    | Where PostQueen runs | Redirect URI |
-    |---|---|
-    | Your domain | `https://postqueen.example.com/integrations/social/youtube` |
-    | Local development | `http://localhost:4200/integrations/social/youtube` |
-    | Docker on your machine | `http://localhost:4007/integrations/social/youtube` |
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/youtube
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/youtube
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/youtube
+    ```
+
+    </CodeGroup>
 
     Google accepts only `https`, except for `localhost`. If this client also serves Google Business Profile, add the same addresses ending in `/integrations/social/gmb`: see [Google My Business setup](/installation/providers/google-my-business).
   </Step>
@@ -91,7 +101,7 @@ YOUTUBE_CLIENT_SECRET="your client secret"
 
 Pick **YouTube**, sign in with Google, approve every permission, then choose the channel in **Select YouTube Channel**.
 
-## Review and quota
+## App review
 
 Two Google processes stand between a new client and everyone's public uploads:
 
@@ -123,14 +133,14 @@ Two Google processes stand between a new client and everyone's public uploads:
     Your Workspace admin restricts third-party apps. In the Google Admin console, open **Security > Access and data control > API controls > Manage App Access**, choose **Configure new app**, find the app by its client ID and set it to **Trusted**. Google says the change can take up to 24 hours.
   </Accordion>
   <Accordion title="Every upload is private">
-    Your project has not passed the YouTube API audit. Request it with the form in step 2 of Review and quota.
+    Your project has not passed the YouTube API audit. Request it with the form in step 2 of App review.
   </Accordion>
 </AccordionGroup>
 
 ## Related
 
+- [Google My Business setup](/installation/providers/google-my-business): can share this client.
 - [Channel developer apps](/installation/providers/overview)
-- [Google My Business setup](/installation/providers/google-my-business): can share this client
 - [Configuration reference](/configuration/reference)
 - [Self-hosting troubleshooting](/troubleshooting/self-host)
 - [YouTube posting settings](/public-api/providers/youtube)

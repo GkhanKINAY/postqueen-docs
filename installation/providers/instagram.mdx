@@ -7,17 +7,21 @@ icon: "/images/channels/instagram.svg"
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-Instagram has two tiles in **Add Channel**, and each logs in through a different Meta app. Set up one or both.
+On a self-hosted PostQueen the Meta apps are yours. Instagram has two tiles in **Add Channel**, and each logs in through a different Meta app. Set up one or both.
+
+## Before you start
 
 | | Instagram (Facebook Business) | Instagram (Standalone) |
 |---|---|---|
+| Developer console | [Meta for Developers](https://developers.facebook.com/apps) | [Meta for Developers](https://developers.facebook.com/apps) |
 | Login | Facebook Login for Business | Instagram Login |
 | Meta app | The [Facebook app](/installation/providers/facebook), shared with Facebook Page | A separate app of its own |
 | Variables | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` | `INSTAGRAM_APP_ID`, `INSTAGRAM_APP_SECRET` |
-| Redirect URI | `FRONTEND_URL` + `/integrations/social/instagram` | `FRONTEND_URL` + `/integrations/social/instagram-standalone`, `https` only |
-| Permissions | `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments`, `instagram_manage_insights`, `pages_show_list`, `pages_read_engagement`, `business_management` | `instagram_business_basic`, `instagram_business_content_publish`, `instagram_business_manage_comments`, `instagram_business_manage_insights` |
+| Redirect path | `/integrations/social/instagram` | `/integrations/social/instagram-standalone`, `https` only |
+| Permissions | Four `instagram_*` and three Page permissions, listed below | Four `instagram_business_*` permissions, listed below |
 | Account needed | Business or Creator, linked to a Facebook Page | Business or Creator, no Page needed |
 | Music on Reels | Yes | No |
+| Review | None for accounts you own or manage. App Review and Business Verification for anyone else's | The same |
 
 <Warning>
 Meta does not allow Facebook Login and Instagram Login on the same app. Never add **Facebook Login for Business** to the Standalone app, and never reuse the Facebook app for Standalone.
@@ -27,17 +31,14 @@ PostQueen checks every permission it asks for when an account connects. A missin
 
 ## Instagram (Facebook Business)
 
-This tile uses the Facebook app. Create it with [Facebook setup](/installation/providers/facebook), then make sure of three things on that app:
+This tile uses the Facebook app. Create it with [Facebook setup](/installation/providers/facebook), then make sure of two things on that app:
 
 <Steps>
   <Step title="Add the Instagram redirect URI">
     In **Facebook Login for Business > Settings**, **Valid OAuth Redirect URIs** lists `FRONTEND_URL` + `/integrations/social/instagram`, for example `https://postqueen.example.com/integrations/social/instagram`. The tile sends `FRONTEND_URL` as it is, so the URI stays plain, `http` included.
   </Step>
   <Step title="Check the Instagram permissions">
-    **App Review > Permissions and Features** lists `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments` and `instagram_manage_insights`, next to the Page permissions the Facebook setup added.
-  </Step>
-  <Step title="Connect the channel">
-    With `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` set, pick **Instagram (Facebook Business)** in **Add Channel**, log in with Facebook and share the Page linked to the Instagram account. In **Select Instagram Account**, pick the accounts and choose **Save**.
+    **App Review > Permissions and Features** lists `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments` and `instagram_manage_insights`. The tile also asks for `pages_show_list`, `pages_read_engagement` and `business_management`, which the Facebook setup added.
   </Step>
 </Steps>
 
@@ -64,18 +65,23 @@ The callback URLs set on the Facebook app cover this tile too.
 
     <OAuthRedirect />
 
-    With `FRONTEND_URL` set to `https://postqueen.example.com`, the redirect URL is:
+    Instagram Login accepts only `https` redirects. When `FRONTEND_URL` is plain `http`, PostQueen sends the callback through `https://redirectmeto.com/` first, and that wrapped address is the one to register:
 
-    ```text
+    <CodeGroup>
+
+    ```text Your domain
     https://postqueen.example.com/integrations/social/instagram-standalone
     ```
 
-    Instagram Login accepts only `https` redirects. When `FRONTEND_URL` is plain `http`, PostQueen sends the callback through `https://redirectmeto.com/` first, and that wrapped address is the one to register. For local development, and for Docker on port 4007:
-
-    ```text
+    ```text Local development
     https://redirectmeto.com/http://localhost:4200/integrations/social/instagram-standalone
+    ```
+
+    ```text Docker on your machine
     https://redirectmeto.com/http://localhost:4007/integrations/social/instagram-standalone
     ```
+
+    </CodeGroup>
   </Step>
   <Step title="Set the callback URLs">
     In the same **Business login settings**, set:
@@ -109,14 +115,14 @@ INSTAGRAM_APP_SECRET="your instagram app secret"
 
 <RestartAndAddChannel />
 
-Pick **Instagram (Standalone)** or **Instagram (Facebook Business)**, and approve every permission on Meta's screen.
+Pick **Instagram (Standalone)** or **Instagram (Facebook Business)**, and approve every permission on Meta's screen. With the Facebook Business tile, share the Page linked to the Instagram account, then pick the accounts in **Select Instagram Account** and choose **Save**.
 
 ## App review
 
 Both apps start in **Development** mode. Until they are reviewed, only accounts with a role on the app can connect, and posts made in development are visible only to those accounts.
 
 - **Your own accounts.** Standard Access is enough for accounts you own or manage. Switch **App Mode** to **Live** so that everyone can see the posts. Meta asks for the display name, a contact email, a privacy policy URL and a terms of service URL in **App settings > Basic** first.
-- **Other people's accounts.** Request **Advanced Access** for each permission and verify your business portfolio. On the Standalone app, start from **4. Complete app review** in **Instagram > API setup with Instagram login**; on the Facebook app, use **App Review > Permissions and Features**. Meta asks for a description and a screen recording of how the app uses each permission, and for at least one successful API call per permission. Request only the permissions in the table above.
+- **Other people's accounts.** Request **Advanced Access** for each permission and verify your business portfolio. On the Standalone app, start from **4. Complete app review** in **Instagram > API setup with Instagram login**; on the Facebook app, use **App Review > Permissions and Features**. Meta asks for a description and a screen recording of how the app uses each permission, and for at least one successful API call per permission. Request only the permissions this page lists.
 
 ## Troubleshooting
 
@@ -125,10 +131,10 @@ Both apps start in **Development** mode. Until they are reviewed, only accounts 
     The Instagram account has no role on the Standalone app. Add it as in the last Standalone step, accept the invitation in Instagram, and connect again.
   </Accordion>
   <Accordion title="Invalid redirect_uri on Instagram's login screen">
-    The redirect URL PostQueen sent is not registered, or differs by a trailing slash. On a plain `http` install, register the `redirectmeto.com` address from the table, not the bare `localhost` one.
+    The redirect URL PostQueen sent is not registered, or differs by a trailing slash. On a plain `http` install, register the `redirectmeto.com` address from step 4, not the bare `localhost` one.
   </Accordion>
   <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
-    A permission was declined on Meta's screen, or is missing from the app. Check the permissions in the table at the top, then connect again and approve everything.
+    A permission was declined on Meta's screen, or is missing from the app. Check the permissions listed for the tile, then connect again and approve everything.
   </Accordion>
   <Accordion title="Invalid Scopes on Facebook's consent screen">
     The Facebook app was created through a use case. See [Facebook setup](/installation/providers/facebook): create the app through **Other**.
@@ -143,4 +149,5 @@ Both apps start in **Development** mode. Until they are reviewed, only accounts 
 - [Facebook setup](/installation/providers/facebook): the app the Facebook Business tile shares.
 - [Channel developer apps](/installation/providers/overview)
 - [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
 - [Instagram posting settings](/public-api/providers/instagram)

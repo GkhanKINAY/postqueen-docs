@@ -48,11 +48,21 @@ On a self-hosted PostQueen the X app is yours. PostQueen connects X accounts wit
 
     For X the host comes from `X_URL` when it is set, otherwise from `FRONTEND_URL`. PostQueen never wraps the X callback through `redirectmeto.com`, so a plain `http` address is registered as it is. X compares the URL exactly, trailing slash included, and takes up to 10 per app.
 
-    | Where PostQueen runs | Callback URL |
-    |---|---|
-    | Your domain | `https://postqueen.example.com/integrations/social/x` |
-    | Local development | `http://localhost:4200/integrations/social/x` |
-    | Docker on your machine | `http://localhost:4007/integrations/social/x` |
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/x
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/x
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/x
+    ```
+
+    </CodeGroup>
   </Step>
   <Step title="Copy the Consumer Keys">
     If you did not save them when the app was created, open the app's keys and tokens and regenerate the **Consumer Keys**. The API Key goes in `X_API_KEY`, the API Key Secret in `X_API_SECRET`.

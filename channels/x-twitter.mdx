@@ -32,7 +32,7 @@ Schedule X posts, threads, images, GIFs and MP4 video, post into X Communities a
 
 ## Checked before scheduling
 
-PostQueen refuses a post that breaks these rules and shows the message in the composer. The post and every thread reply are checked on their own.
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
 
 | Rule | Message |
 |---|---|
@@ -49,7 +49,7 @@ Video length and file size are X's rules, and PostQueen does not check them firs
 ## Connect X
 
 <Note>
-X is in review, and connecting it is locked during the free trial. On the X step in **Add Channel**, choose **End free trial to unlock X** to start your plan now, or wait for the trial to end. X channels you connected before keep working.
+Connecting X is locked during the free trial. On the X step in **Add Channel**, choose **End free trial to unlock X** to start your plan now, or wait for the trial to end. X channels you connected before keep working.
 </Note>
 
 <Steps>
@@ -87,14 +87,13 @@ The field names and values for the API are on [X posting settings](/public-api/p
 
 **Continue thread** adds parts to the post. Each part is posted as a reply to the part before, can carry its own media and has its own delay. Every part is held to the same media rule as the first post.
 
-The X settings also show an **Add a thread finisher** switch. PostQueen does not publish it, so write a closing post as the last part of the thread instead.
+The composer also shows an **Add a thread finisher** switch. PostQueen does not publish it, so write a closing post as the last part of the thread instead.
 
-Automations work with X too. In the channel's **Automations** on the **Channels** page, **Auto Repost Posts** reposts a post once it reaches a number of likes you set, and **Auto plug post** replies to it with a post you write in advance. Each checks the post every 6 hours, up to 3 times. In the composer, **Add Re-posters** has your other X channels repost the post.
+In the channel's **Automations** on the **Channels** page ([how automations work](/using/auto-plugs)), **Auto Repost Posts** reposts a post once it reaches a number of likes you set, and **Auto plug post** replies to it with a post you write in advance. Each checks the post every 6 hours, up to 3 times. In the composer, **Add Re-posters** has your other X channels repost the post.
 
 ## Good to know
 
 - Every picture is resized to 1,000 px wide and re-encoded as a GIF before upload, which can lower photo quality.
-- PostQueen publishes up to 10 X posts at the same time.
 - X has no way to tell whether a post that was interrupted went out. PostQueen then stops and asks you to check the account instead of posting twice.
 - The Premium check uses what X reports. A Basic subscriber, or an account whose check fails, still sees every option, and X may refuse it when the post is published.
 - While you write an Article, the composer's counter still measures against 280 or 4,000 and can turn red. When you schedule, the Article is held to 100,000.

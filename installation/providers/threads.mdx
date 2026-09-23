@@ -24,8 +24,6 @@ On a self-hosted PostQueen the Threads app is yours. Threads needs a Meta app of
 PostQueen does not check the granted Threads permissions when an account connects. With one missing, the channel connects and looks healthy, and posting, replies or analytics fail later. Add all four permissions before anyone connects.
 </Warning>
 
-The **Threads** tile is in **Add Channel** whether or not the variables are set. A missing or wrong value shows up as an error page on Threads' side, not as a message in PostQueen.
-
 ## Create the app
 
 <Steps>
@@ -47,11 +45,21 @@ The **Threads** tile is in **Add Channel** whether or not the variables are set.
 
     Threads accepts only `https` redirects. When `FRONTEND_URL` is plain `http`, PostQueen sends the callback through `https://redirectmeto.com/` first, and that wrapped address is the one to register:
 
-    | Where PostQueen runs | Redirect URI |
-    |---|---|
-    | Your domain | `https://postqueen.example.com/integrations/social/threads` |
-    | Local development | `https://redirectmeto.com/http://localhost:4200/integrations/social/threads` |
-    | Docker on your machine | `https://redirectmeto.com/http://localhost:4007/integrations/social/threads` |
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/threads
+    ```
+
+    ```text Local development
+    https://redirectmeto.com/http://localhost:4200/integrations/social/threads
+    ```
+
+    ```text Docker on your machine
+    https://redirectmeto.com/http://localhost:4007/integrations/social/threads
+    ```
+
+    </CodeGroup>
   </Step>
   <Step title="Set the callback URLs">
     In the same **Settings**, set:

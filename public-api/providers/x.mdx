@@ -33,7 +33,7 @@ Every post to X carries a `settings` object with `"__type": "x"`. Read the live 
 
 A post takes 280 characters, or 4,000 when the channel is marked Verified. The Verified mark is read from X when the channel is connected and is changed in the app, not per post. An Article takes up to 100,000. Length is counted the way X counts it: a link is 23 characters, and most emoji and CJK characters are 2.
 
-### Threads
+### Thread replies
 
 Each extra entry in `value` is posted as a reply to the entry before it, after its `delay` in minutes. Every entry is held to the same media rule as the first. A draft Article cannot have replies.
 

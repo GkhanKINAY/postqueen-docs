@@ -55,7 +55,7 @@ curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
   -d '{ "methodName": "audioSearch", "data": { "q": "summer", "type": "music" } }'
 ```
 
-The answer is `{ "output": [ { "id", "title", "artist", "image", "duration", "previewUrl" } ] }`. Put the chosen `id` in `settings.audio.id`. Instagram returns only audio cleared for use by other apps, so the list can be shorter than in the Instagram app.
+The response is `{ "output": [ { "id", "title", "artist", "image", "duration", "previewUrl" } ] }`. Put the chosen `id` in `settings.audio.id`. Instagram returns only audio cleared for use by other apps, so the list can be shorter than in the Instagram app.
 
 ## What PostQueen checks
 

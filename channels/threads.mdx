@@ -32,7 +32,7 @@ Schedule Threads posts, photos, videos, carousels and multi-part threads that pu
 
 ## Checked before scheduling
 
-PostQueen refuses a post that breaks these rules and shows the message in the composer. The post and every reply in the thread are checked on their own.
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
 
 | Rule | Message |
 |---|---|
@@ -56,31 +56,30 @@ Threads is in review. Until Meta approves PostQueen's Threads app, only accounts
     Open **Channels** and choose **Add Channel**, then **Threads**.
   </Step>
   <Step title="Sign in to Threads">
-    Sign in with the Threads profile you want to post to, and approve the permissions.
+    Sign in with the Threads profile you want to post to, and approve every permission you are asked for. PostQueen needs all of them.
   </Step>
   <Step title="Check that it connected">
     The channel appears in the **Channels** list with its avatar and name.
   </Step>
 </Steps>
 
-The connection renews itself, so you do not need to reconnect it on a schedule.
-
 ## Post settings
 
 Threads has no post settings. The API takes `"__type": "threads"` and nothing else, as [Threads posting settings](/public-api/providers/threads) shows.
-
-The composer shows an **Add a thread finisher** switch for Threads. PostQueen does not publish it, so write a closing post as the last part of the thread instead.
 
 ## Comments and threads
 
 **Continue thread** adds parts to the post. Each part is posted as a reply to the part before, can carry an image, a video or a carousel, and has its own delay. Every part is held to the same limits as the first post.
 
-In the channel's **Automations** on the **Channels** page, **Auto plug post** adds a reply you write in advance once the post passes a number of likes you set. It checks the post every 6 hours, up to 3 times.
+The composer also shows an **Add a thread finisher** switch. PostQueen does not publish it, so write a closing post as the last part of the thread instead.
+
+In the channel's **Automations** on the **Channels** page ([how automations work](/using/auto-plugs)), **Auto plug post** adds a reply you write in advance once the post passes a number of likes you set. It checks the post every 6 hours, up to 3 times.
 
 ## Good to know
 
 - Threads downloads each file from PostQueen when the post is published, so attach media from the PostQueen media library.
 - When Threads takes too long to process the media of a reply, the post fails with "Threads took too long to process the media, please try again". Schedule it again.
+- The connection renews itself.
 - During the free trial, a Threads account that another PostQueen workspace already connected is refused until you end the trial.
 
 ## Troubleshooting

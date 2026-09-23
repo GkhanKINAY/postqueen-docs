@@ -36,11 +36,23 @@ PostQueen checks all six scopes when an account connects. A missing one stops th
 
     <OAuthRedirect />
 
-    | Where PostQueen runs | Redirect URI |
-    |---|---|
-    | Your domain | `https://postqueen.example.com/integrations/social/tiktok` |
-    | Local development | `https://redirectmeto.com/http://localhost:4200/integrations/social/tiktok` |
-    | Docker on your machine | `https://redirectmeto.com/http://localhost:4007/integrations/social/tiktok` |
+    For the **TikTok** tile the URI has no trailing slash. **TikTok Business** is the exception and needs one: see [TikTok Business](#tiktok-business-optional).
+
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/tiktok
+    ```
+
+    ```text Local development
+    https://redirectmeto.com/http://localhost:4200/integrations/social/tiktok
+    ```
+
+    ```text Docker on your machine
+    https://redirectmeto.com/http://localhost:4007/integrations/social/tiktok
+    ```
+
+    </CodeGroup>
 
     TikTok accepts only `https` redirect URIs with no query string. That is why PostQueen wraps a plain `http` address through `redirectmeto.com`: register the wrapped address, character for character.
   </Step>
@@ -98,7 +110,7 @@ TikTok has two separate gates, and passing the first does not open the second.
   </Step>
 </Steps>
 
-Until the audit passes, choose **Self only** as the audience in each post. Any other audience is refused at publish time with: "This TikTok app has not passed TikTok's review yet, so it can only publish with the "Self only" privacy level. Choose Self only, or submit the app for review in the TikTok developer portal."
+Until the audit passes, choose **Self only** as the audience in each post. Any other audience is refused at publish time with: “This TikTok app has not passed TikTok's review yet, so it can only publish with the "Self only" privacy level. Choose Self only, or submit the app for review in the TikTok developer portal.”
 
 ## TikTok Business (optional)
 
@@ -117,7 +129,7 @@ TIKTOK_BUSINESS_CLIENT_SECRET="your business client secret"
 ```
 
 <Warning>
-In the web editor, the audience picker is loaded through a call only the **TikTok** tile implements, so a direct post on a **TikTok Business** channel cannot get its audience from the editor. Posts sent through the API or an AI agent set `privacy_level` themselves.
+In the composer, the audience picker is loaded through a call only the **TikTok** tile implements, so a direct post on a **TikTok Business** channel cannot get its audience from the editor. Posts sent through the API or an AI agent set `privacy_level` themselves.
 </Warning>
 
 To move existing channels from one tile to the other, `MIGRATE_PROVIDERS="tiktok:tiktok-business"` sends a reconnect of the old tile through the new tile's login and keeps the channel and its posts, and `HIDDEN_PROVIDERS="tiktok"` takes the old tile out of **Add Channel**. Both are in the [configuration reference](/configuration/reference).

@@ -15,9 +15,9 @@ On a self-hosted PostQueen the Meta app is yours. One app, logged in through **F
 |---|---|
 | Developer console | [Meta for Developers](https://developers.facebook.com/apps), with a Meta developer account |
 | Variables | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` |
-| Redirect URIs | `FRONTEND_URL` + `/integrations/social/facebook`, and `FRONTEND_URL` + `/integrations/social/instagram` if you also connect Instagram (Facebook Business) |
-| Permissions | `pages_show_list`, `business_management`, `pages_manage_posts`, `pages_manage_engagement`, `pages_read_engagement`, `pages_read_user_content`, `read_insights`. Add `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments` and `instagram_manage_insights` for Instagram (Facebook Business) |
-| Callback URLs | `NEXT_PUBLIC_BACKEND_URL` + `/integrations/facebook/platform-deletion` and `/integrations/facebook/platform-deauthorize` |
+| Redirect URIs | Two paths on `FRONTEND_URL`: `/integrations/social/facebook`, and `/integrations/social/instagram` for Instagram (Facebook Business) |
+| Permissions | Seven for Facebook Page, and four more for Instagram (Facebook Business). The list is in step 6 |
+| Callback URLs | Two paths on `NEXT_PUBLIC_BACKEND_URL`, for data deletion and deauthorize requests. See step 7 |
 | Review | None for Pages you own or manage. App Review and Business Verification for anyone else's Pages |
 
 PostQueen checks every permission it asks for when a Page connects. A missing one stops the connect.
@@ -48,23 +48,36 @@ PostQueen checks every permission it asks for when a Page connects. A missing on
   <Step title="Add the redirect URIs">
     Open **Facebook Login for Business > Settings**. Under **Client OAuth settings**, add the redirect URIs to **Valid OAuth Redirect URIs** and save.
 
-    <Frame>
-      <img src="/images/providers/facebook/facebook-redirect-uri.png" alt="Client OAuth settings in Facebook Login for Business, with a redirect URI in Valid OAuth Redirect URIs" />
-    </Frame>
-
     <OAuthRedirect />
 
-    With `FRONTEND_URL` set to `https://postqueen.example.com`, add:
+    <CodeGroup>
 
-    ```text
+    ```text Your domain
     https://postqueen.example.com/integrations/social/facebook
     https://postqueen.example.com/integrations/social/instagram
     ```
 
-    Both tiles send `FRONTEND_URL` as it is, so a local install uses the same paths on `http://localhost:4200` (development) or `http://localhost:4007` (Docker). Add the second line only if you connect Instagram (Facebook Business).
+    ```text Local development
+    http://localhost:4200/integrations/social/facebook
+    http://localhost:4200/integrations/social/instagram
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/facebook
+    http://localhost:4007/integrations/social/instagram
+    ```
+
+    </CodeGroup>
+
+    Both tiles send `FRONTEND_URL` as it is, so the URIs stay plain, `http` included. Add the `/instagram` line only if you connect Instagram (Facebook Business).
   </Step>
   <Step title="Check the permissions">
-    Open **App Review > Permissions and Features**. Every permission in the table above must be listed. While the app is in development, people with a role on it can grant all of them.
+    Open **App Review > Permissions and Features** and check that these are listed:
+
+    - **Facebook Page**: `pages_show_list`, `business_management`, `pages_manage_posts`, `pages_manage_engagement`, `pages_read_engagement`, `pages_read_user_content` and `read_insights`.
+    - **Instagram (Facebook Business)** adds `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments` and `instagram_manage_insights`.
+
+    While the app is in development, people with a role on it can grant all of them.
 
     Do not add Instagram (Standalone) permissions (`instagram_business_*`) or Threads permissions (`threads_*`) to this app: they belong to separate apps. Do not request messaging, ads or `pages_manage_metadata` permissions either: PostQueen does not use them.
 
@@ -107,7 +120,7 @@ A new app starts in **Development** mode:
 
 To publish to Pages you own or manage, Standard Access is enough: switch **App Mode** to **Live** at the top of the dashboard. Meta asks for the display name, a contact email, a privacy policy URL and a terms of service URL in **App settings > Basic** first.
 
-To let anyone else connect their Pages, request **Advanced Access** for each permission in **App Review > Permissions and Features**, and verify your business portfolio. Meta asks for a description and a screen recording of how the app uses each permission. Request only the permissions in the table above.
+To let anyone else connect their Pages, request **Advanced Access** for each permission in **App Review > Permissions and Features**, and verify your business portfolio. Meta asks for a description and a screen recording of how the app uses each permission. Request only the permissions in step 6.
 
 ## Troubleshooting
 
@@ -134,4 +147,5 @@ To let anyone else connect their Pages, request **Advanced Access** for each per
 - [Instagram setup](/installation/providers/instagram): the Instagram (Facebook Business) tile uses this app; Instagram (Standalone) needs its own.
 - [Channel developer apps](/installation/providers/overview)
 - [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
 - [Facebook posting settings](/public-api/providers/facebook)
