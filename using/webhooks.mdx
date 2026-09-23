@@ -8,6 +8,10 @@ icon: "webhook"
 
 A webhook sends a `POST` request to a URL you own each time a post goes live. Use it to start a workflow in Zapier, Make or n8n, or to update a sheet, a team chat or your own system.
 
+<Frame>
+  <img className="pq-shot" src="/images/app/webhooks.webp" alt="Settings open on Webhooks, with one webhook named Post published and its Send Test button" />
+</Frame>
+
 ## Add a webhook
 
 <Steps>
@@ -82,10 +86,10 @@ At the limit, **Add a webhook** is switched off and the pane says "Your plan is 
 
 | Message | What to do |
 |---|---|
-| "Webhook URL must be a public HTTPS URL and cannot point to internal network addresses" | Use a public `https://` address. For a service on your own computer, put a public HTTPS tunnel in front of it. |
-| "The endpoint did not accept the test webhook", or an HTTP status such as `HTTP 404` | Check that the URL is right and that your endpoint accepts a JSON `POST`. |
-| "Pick at least one channel." | Select a channel, or choose **All channels**. |
-| "You have reached the maximum number of webhooks for your subscription. Please upgrade your subscription to add more webhooks." | Delete a webhook you no longer use, or move to a bigger plan. |
+| “Webhook URL must be a public HTTPS URL and cannot point to internal network addresses” | Use a public `https://` address. For a service on your own computer, put a public HTTPS tunnel in front of it. |
+| “The endpoint did not accept the test webhook”, or an HTTP status such as `HTTP 404` | Check that the URL is right and that your endpoint accepts a JSON `POST`. |
+| “Pick at least one channel.” | Select a channel, or choose **All channels**. |
+| “You have reached the maximum number of webhooks for your subscription. Please upgrade your subscription to add more webhooks.” | Delete a webhook you no longer use, or move to a bigger plan. |
 
 ## Next steps
 

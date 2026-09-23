@@ -150,10 +150,10 @@ Creating posts has an hourly limit per workspace, and uploads have their own. On
     A scheduled job does not read your shell profile, so an `export` in `~/.zshrc` never reaches it. Set `POSTQUEEN_API_KEY` in the job's own environment. Without it the command stops with `❌ Error: No authentication found.` on stderr, so send stderr to your log too (`2>&1`).
   </Step>
   <Step title="Stop early on a bad key">
-    `auth:status` exits `0` even when the key is missing, so do not use it as a check. Use a command that calls the API:
+    `auth:status` exits `1` when no key is set or the API refuses it, so it works as the first line of the job:
 
     ```bash
-    postqueen integrations:list > /dev/null || exit 1
+    postqueen auth:status > /dev/null || exit 1
     ```
   </Step>
   <Step title="Parse only the JSON">
@@ -188,7 +188,7 @@ POSTQUEEN_API_KEY=your_api_key
   <Card title="Posts and channels" icon="calendar-plus" href="/cli/managing-posts">
     The commands in use, with the campaign file format.
   </Card>
-  <Card title="Troubleshooting" icon="life-buoy" href="/agents/troubleshooting">
+  <Card title="Troubleshooting agents" icon="life-buoy" href="/agents/troubleshooting">
     What each error means and how to fix it.
   </Card>
 </CardGroup>

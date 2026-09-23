@@ -1,46 +1,26 @@
-# Screenshot pipeline
+# App screenshots
 
-Capture **one dark-theme screenshot per docs page** (Postiz-style). Agents brand SVGs stay in the docs; this pipeline is for product UI shots in the User Guide.
+The Guide pages carry one screenshot each, in `images/app/`. They were taken on 2026-09-23 from app v3.6.81.
 
-This PR ships the script and this README. It does **not** fail CI when you have no login. Do not block a docs merge on missing Cloud credentials.
+## How they were made
 
-## What you need
+- **The app ran locally from a git worktree of `postqueen-app` main.** It used its own ports, and a scratch Postgres database created only for the shots and dropped afterwards. Nobody's real database or account was touched.
+- **The workspace was a fictional café, "Harbor Street Café", with a demo user.** Its eight channels were fake Integration rows with placeholder tokens, so nothing could reach a network. The analytics numbers were written to the cache by hand, and the images were generated posters.
+- **Capture settings:** light theme, a 1440×900 viewport at 2× scale, and the UTC time zone.
+- **Output:** each shot was saved as WebP at quality 90, 1600 px wide, or cropped to its dialog. Each file is under 400 KB (most are under 100 KB).
+- **The API key is blurred** in `connections.webp`.
 
-- Node 20+
-- Playwright (`npx playwright install chromium`)
-- A PostQueen Cloud (or staging) account
-- Optional env:
+## Rules for a new or retaken shot
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `PQ_APP_URL` | `https://app.postqueen.ai` | App origin |
-| `PQ_EMAIL` | unset | Login email |
-| `PQ_PASSWORD` | unset | Login password |
-| `PQ_STORAGE_STATE` | unset | Playwright `storageState` JSON if you already have a session |
-| `PQ_OUT` | `scripts/screenshots/out` | Output directory |
+- Never photograph a real account, and never use production or the owner's development database.
+- A page gets at most one shot. Put it after the page's opening lines, in a `<Frame>` with the `pq-shot` class and alt text that says what the screen shows:
 
-If neither `PQ_STORAGE_STATE` nor both login vars are set, the script prints how to capture and exits **0**.
+  ```mdx
+  <Frame>
+    <img className="pq-shot" src="/images/app/calendar-week.webp" alt="The calendar in Week view, with the Posts panel listing scheduled posts on the left" />
+  </Frame>
+  ```
 
-## Run
+- Retake a shot when its screen changes. A label in the picture that no longer matches the page text is worse than having no picture.
 
-```bash
-cd postqueen-docs
-npx playwright install chromium
-PQ_EMAIL='you@example.com' PQ_PASSWORD='…' node scripts/screenshots/capture.mjs
-```
-
-Or pass a saved session:
-
-```bash
-PQ_STORAGE_STATE=./playwright.auth.json node scripts/screenshots/capture.mjs
-```
-
-Shots land in `scripts/screenshots/out/` as `{slug}.png`. Copy the ones you want into `images/guide/` (create that folder when you first commit real UI) and reference one `<Frame>` per page.
-
-## Rules
-
-- Dark appearance (`body.dark` / app dark class)
-- Viewport 1440×900
-- One shot per listed route
-- Keep existing brand SVGs on Agents pages
-- Provider OAuth PNGs stay under `images/providers/` for Self-Hosting
+`capture.mjs` is an older helper that logs in to a live account. Do not use it for docs images.
