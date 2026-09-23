@@ -180,6 +180,17 @@ pre *,
   background: transparent !important;
   padding: 0 !important;
 }
+/* App screenshots (images/app/, one per Guide page) are white on the white
+   paper, so they get the site's hairline edge, radius and soft shadow. */
+.pq-shot,
+.frame img.pq-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--pq-line);
+  border-radius: 14px;
+  box-shadow: var(--pq-shadow);
+}
 
 /* 9. Tables: site hairlines and a header row that reads as one.
    Mintlify gives every cell a 150px minimum. That squeezes the text column
