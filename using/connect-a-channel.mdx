@@ -1,103 +1,90 @@
 ---
-title: Connect a channel
-description: 'Where Add Channel lives, what happens when you click it, and what the red mark means later'
-icon: 'plug'
+title: "Connect a channel"
+description: "Add a network account to PostQueen, reconnect it when it drops, and disable or delete it."
+icon: "plug"
 ---
 
-{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file (rewrite; WIP: better, use as base; audit: guide), main:troubleshooting/channel-limits.mdx (merge; WIP: better, use as base; audit: cli-help). Row in page-status-2026-09-23.md. */}
+import NeverShare from '/snippets/never-share.mdx';
 
-A channel is one social account she can post to. Nothing is connected when you start, and until
-one is, there is nowhere for a post to go. This is the first thing to do in the app and it takes
-about a minute per account.
+**Where:** **Channels** in the left rail > **Add Channel**.
 
-## Adding one
+A channel is one account on one network that PostQueen posts to. Connect at least one before you create a post. [Channels](/channels/overview) lists which networks you can connect today and which are **In review** or **Soon**.
+
+## Add a channel
 
 <Steps>
   <Step title="Open Add Channel">
-    Your channels live in the **left sidebar**. **Add Channel** sits with them, and it is the same
-    button for every network: X, a WordPress blog, a Bluesky account, all of it.
+    Open **Channels** in the left rail and choose **Add Channel**. With no channels yet, the **Add a channel** pane opens by itself, and **Create Post** in the header opens it too.
   </Step>
-
   <Step title="Pick the network">
-    You get the list of everything she can post to. What happens next depends on the network, and
-    there are two kinds:
-
-    - **Most networks send you to their own login.** You approve PostQueen there, the browser
-      comes back, and the channel appears. Nothing to type.
-    - **A smaller group asks for a credential in the form itself.** Bluesky takes an app password,
-      and WordPress takes a site URL and an application password.
-      You paste it and you are done.
-
-    [Providers](/channels/overview) says which kind each network is.
+    Choosing a network opens a short setup step that says what it needs.
   </Step>
-
-  <Step title="Check it arrived">
-    The channel appears in the sidebar with its avatar and name. That is the whole confirmation:
-    if it is in the list, she can post to it.
+  <Step title="Sign in, or enter the details">
+    Most networks show **Continue to** and the network's name, which takes you to that network's own sign-in to approve PostQueen. Networks that connect with a key or password, such as Bluesky, WordPress, DEV and Nostr, show **Enter details**: fill in the form and choose **Connect**.
+  </Step>
+  <Step title="Check that it arrived">
+    You land back on **Channels** with the new channel selected and a **Connected** badge. If the network asks you to pick a page or account after you sign in, finish that step first.
   </Step>
 </Steps>
 
-<Info>
-Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet, and a few are **In review** with a limit until the platform approves PostQueen's app. The [status of every network](/channels/overview#status-on-postqueen) says which. Running your own instance? Some networks only appear after you register an OAuth app and restart. Each [self-hosting provider page](/installation/providers/instagram) walks through that.
-</Info>
+<NeverShare />
 
-## The red exclamation mark
+### Let the account owner connect it
 
-Sooner or later a channel wears a red `!` in the sidebar. It means the connection to that network
-has gone stale, usually because the platform expired the token or someone changed the account's
-password.
+When a client owns the account, choose **Invite by link** instead of **Connect myself**, pick the network and choose **Copy Link**. The link works for one hour, and the channel lands in your workspace when the owner finishes. Only networks that sign in on their own page are offered this way.
 
-It matters more than it looks: a dead token stops that channel's scheduled posts, and they do not
-resume on their own once you fix it. Reschedule anything that was waiting.
+## Reconnect a channel
 
-To fix it, click the avatar, or open the three dots menu next to the channel and pick
-**Reconnect channel**, then walk the same connect flow again. If analytics are what alerted you,
-the **Refresh Channel** button under the empty chart does the same job.
+When a network's sign-in expires or is revoked, the channel shows **Needs reconnecting** in the list, and its page says "This channel lost its connection and will not publish until you reconnect it." Choose **Reconnect** and sign in again. A network that uses a key or password asks for the details again. The channel keeps its posts and time slots.
 
-[When a post fails](/troubleshooting/post-failed) covers what a dead token does to a week of
-scheduled work, and [connect errors](/troubleshooting/common-errors) has the message-by-message
-list when the reconnect itself refuses.
+## Disable or delete a channel
 
-## Disable or delete
+Both are under **Access** on the channel's page.
 
-Two different things, both in the three dots menu next to a channel.
-
-**Disable Channel** takes it out of rotation without giving up the connection or deleting its
-posts. The same menu turns it back on later. A disabled channel still counts toward your plan's
-channel limit when you connect a new one: disabling only makes room to turn another disabled
-channel back on. A post that comes due on a disabled channel is not sent. It fails with
-*Channel disabled*.
-
-**Delete Channel** removes it for good.
+- **Disable Channel** keeps the channel but stops publishing to it. A post that comes due on a disabled channel fails with "Channel disabled". **Enable Channel** turns it back on while your enabled channels are under your plan's limit.
+- **Delete channel** removes the channel and its posts. The confirm dialog says exactly what goes:
 
 <Warning>
-Deleting a channel also deletes all of that channel's posts: scheduled posts, drafts and published
-history, with their comments. Its scheduled posts will not go out, and there is no undo. To keep
-the posts, disable the channel instead.
+"Deleting this channel also deletes all of its posts in PostQueen, including scheduled posts, drafts and published posts. Scheduled posts will not go out, and reconnecting the channel later does not bring the posts back. Posts that were already published are not taken down from the platform."
 </Warning>
 
-[Plans and limits](/cloud/plans) has the caps that make Disable worth knowing about.
+Posts you wrote for several channels at once keep their copies on your other channels.
 
-## Channels for clients
+## Channel limits
 
-Running an agency? Channels can be grouped under a customer, and a small person icon joins the
-calendar toolbar once your channels span more than one. Picking a customer narrows both the
-calendar and the channel list to theirs. [Customers](/using/customers) covers the whole flow,
-including the invite link that lets a client connect their own accounts without seeing yours.
+Each plan allows a number of channels; [Plans and limits](/cloud/plans) has the numbers. Connecting a new channel counts every channel except those that need reconnecting. Disabled channels count too, so disabling one does not make room. Moving to a plan with fewer channels disables the newest channels over the limit; see [Manage your subscription](/cloud/subscription).
+
+## Good to know
+
+- The channel's page also holds **Edit Time Slots** ([Posting times](/using/posting-times)), **Move / add to group** ([Customers](/using/customers)), **Update Credentials**, and the channel ID for the API, MCP and the CLI.
+- **New post** on the channel's page opens Create Post with that channel selected. It is off while the channel needs reconnecting.
+- During the free trial, X cannot be connected yet. Its setup step shows "X unlocks after your trial", with **End free trial to unlock X**. See [Free trial](/cloud/trial).
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels." | Delete a channel you no longer need, or move to a bigger plan on **Billing**. |
+| "This social channel was connected previously to another PostQueen account." | This check runs during the free trial. End the trial with **Fast track - Charge me now**, or connect a different account. |
+| "Could not connect to the platform" | Try again. If it keeps failing, [contact support](/support). |
+| "Refresh channel needed" on a failed post | Reconnect the channel, then reschedule the post. |
+| "Channel disabled" on a failed post | Choose **Enable Channel**, then reschedule the post. |
+
+[A post did not go out](/troubleshooting/post-failed) covers failed posts in more detail.
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Write your first post" icon="pen" href="/using/create-a-post">
-    The editor, per-channel versions and what each network accepts
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Write once for several channels, then schedule it.
   </Card>
-  <Card title="Set up a network's app" icon="plug" href="/channels/overview">
-    The OAuth app each network wants, network by network
+  <Card title="Posting times" icon="clock" href="/using/posting-times">
+    The times of day a channel posts at.
   </Card>
-  <Card title="The calendar" icon="calendar" href="/using/calendar">
-    Where everything you schedule shows up
+  <Card title="Customers" icon="users" href="/using/customers">
+    Group channels by client.
   </Card>
-  <Card title="When a post fails" icon="triangle-alert" href="/troubleshooting/post-failed">
-    Dead tokens, refused posts and how to tell them apart
+  <Card title="Channels" icon="layout-grid" href="/channels/overview">
+    Every network, its status and what it posts.
   </Card>
 </CardGroup>
