@@ -1,101 +1,131 @@
 ---
-title: 'LinkedIn setup'
-description: 'Register the LinkedIn application and give PostQueen its keys'
-icon: /images/channels/linkedin.svg
+title: "LinkedIn setup"
+description: "Register your own LinkedIn developer app for a self-hosted PostQueen: products, scopes, redirect URIs and the variables to set."
+icon: "/images/channels/linkedin.svg"
 ---
 
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost), main:installation/providers/linkedin-page.mdx (merge; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen the LinkedIn app is yours. One app serves both tiles in **Add Channel**: **LinkedIn** for a personal profile and **LinkedIn Page** for a company page. PostQueen reads the app's keys from two variables.
 
-On your own instance the LinkedIn app is yours: create it on LinkedIn Developers, then put its client id and secret in your environment.
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [LinkedIn Developer Portal](https://www.linkedin.com/developers/apps), with a LinkedIn account |
+| Variables | `LINKEDIN_CLIENT_ID`, `LINKEDIN_CLIENT_SECRET` |
+| Redirect URIs | `FRONTEND_URL` + `/integrations/social/linkedin`, and `FRONTEND_URL` + `/integrations/social/linkedin-page` |
+| Products | Share on LinkedIn, Sign In with LinkedIn using OpenID Connect, Advertising API |
+| You also need | A LinkedIn Page for your organization, its super admin to verify the app, a privacy policy URL and a logo |
+| Review | LinkedIn's approval of the Advertising API or Community Management API request before the company-page permissions work. See App review |
+
+Both tiles request the same seven scopes, and PostQueen refuses the connect if LinkedIn grants fewer:
+
+| Scope | Comes from |
+|---|---|
+| `openid`, `profile` | Sign In with LinkedIn using OpenID Connect |
+| `w_member_social` | Share on LinkedIn (the Advertising API grants it too) |
+| `r_basicprofile`, `rw_organization_admin`, `w_organization_social`, `r_organization_social` | Advertising API |
+
+The personal **LinkedIn** tile needs the organization scopes as well, so the Advertising API is required even if you never connect a company page.
+
+## Create the app
 
 <Steps>
-  <Step title="Create a new app">
-    Head over to [LinkedIn developers](https://www.linkedin.com/developers/apps) and create a new app.
-    
-    <Frame>
-      <img src="/images/providers/linkedin/linkedin-001.png" alt="LinkedIn" />
-    </Frame>
+  <Step title="Create the app">
+    In the developer portal, open **My apps** and choose **Create app**. Fill in **App name**, **LinkedIn Page** (your organization's page name or URL), **Privacy policy URL** and **App logo**, accept the legal agreement and choose **Create app**.
+
+    An app stays tied to the LinkedIn Page you pick here. LinkedIn cannot move it to another page later.
   </Step>
-
-  <Step title="Add required products">
-    Fill in all the details, then head over to **Products** and add all three:
-
-    - Share on LinkedIn
-    - Advertising API
-    - Sign in with LinkedIn using OpenID connect
+  <Step title="Verify the app with your LinkedIn Page">
+    Open the app's **Settings** tab and choose **Verify**. Choose **Generate URL**, then **Copy URL**, and send the link to a super admin of the page. They approve the request from that link within 30 days. Choose **I'm done** to close the dialog.
 
     <Frame>
-      <img src="/images/providers/linkedin/linkedin-002.png" alt="LinkedIn" />
+      <img src="/images/providers/linkedin/linkedin-004.png" alt="The LinkedIn Page box on the app's Settings tab, with the Verify button and the note that the app is not verified yet" />
     </Frame>
 
-    Those three together grant the seven scopes PostQueen asks for, and the connect is refused if
-    any of them is missing:
-
-    ```
-    openid
-    profile
-    w_member_social
-    r_basicprofile
-    rw_organization_admin
-    w_organization_social
-    r_organization_social
-    ```
-
-    The last four come from the Advertising API, `w_member_social` from Share on LinkedIn, and
-    `openid` with `profile` from Sign in with LinkedIn. So the organization scopes are needed for
-    this personal channel too, not only for LinkedIn Page: both use the same app and the same set.
-
-    <Warning>
-    Request the Advertising API permissions and fill in its request form, or you will not be able
-    to refresh your tokens. That one is easy to skip because everything appears to work until the
-    first token expires.
-    </Warning>
+    Once the super admin approves, the app shows as verified in its settings.
   </Step>
+  <Step title="Add the three products">
+    Open the **Products** tab:
 
-  <Step title="Configure OAuth2 Redirect URI">
+    - Add **Share on LinkedIn** and **Sign In with LinkedIn using OpenID Connect**. Both are added as soon as you accept their terms.
+    - Choose **Request access** on **Advertising API** and complete the access form. LinkedIn reviews the request and tells you the decision by email.
+  </Step>
+  <Step title="Check the scopes">
+    Open the **Auth** tab. Once all three products are on the app, the **OAuth 2.0 scopes** list shows all seven scopes from the table above.
+  </Step>
+  <Step title="Add both redirect URLs">
+    On the **Auth** tab, add both addresses under **Authorized redirect URLs for your app**:
+
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/linkedin
+    https://postqueen.example.com/integrations/social/linkedin-page
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/linkedin
+    http://localhost:4200/integrations/social/linkedin-page
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/linkedin
+    http://localhost:4007/integrations/social/linkedin-page
+    ```
+
+    </CodeGroup>
+
+    LinkedIn ignores query parameters when it compares the address, so a reconnect that adds one still matches.
+
     <OAuthRedirect />
-
-    **Your LinkedIn OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/linkedin`
-    - Local development: `http://localhost:4200/integrations/social/linkedin`
-    - Docker: `http://localhost:4007/integrations/social/linkedin`
-
-    <Note>
-    If you are using the "LinkedIn Page" provider, replace `linkedin` with `linkedin-page` in the redirect URI.
-    </Note>
   </Step>
-
-  <Step title="Copy your credentials">
-    Copy the created `Client ID` and `Client Secret` and add them to your `.env` file.
-
-```env
-LINKEDIN_CLIENT_ID=""
-LINKEDIN_CLIENT_SECRET=""
-```
-
-    You can find those under the Auth Tab of your LinkedIn App in the developer portal.
-  </Step>
-  <Step title="Restart and add the LinkedIn channel">
-    <RestartAndAddChannel />
+  <Step title="Copy the client ID and secret">
+    The **Auth** tab also shows the app's **Client ID** and its client secret. Copy both, and keep the secret private.
   </Step>
 </Steps>
 
-## Next steps
+## Set the variables
 
-<CardGroup cols={2}>
-  <Card title="What she can post to LinkedIn" icon="/images/channels/linkedin.svg" href="/channels/linkedin">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+Add the two keys to your environment:
+
+```env
+LINKEDIN_CLIENT_ID="your client id"
+LINKEDIN_CLIENT_SECRET="your client secret"
+```
+
+<RestartAndAddChannel />
+
+For **LinkedIn Page**, you pick the company page after LinkedIn's consent screen. Only pages where your LinkedIn account is an administrator or content administrator are listed.
+
+## App review
+
+- **Advertising API.** Until LinkedIn approves the request, the app does not have the four organization scopes. Every connect, on both tiles, fails until then.
+- **Staying connected.** LinkedIn issues refresh tokens only to apps approved for its marketing products. An access token lasts 60 days and a refresh token 365 days. PostQueen renews the access token by itself; once the refresh token expires, the account has to be reconnected.
+- **Community Management API.** It grants the same organization scopes, but LinkedIn lets you request it only on a new app that has no other products, and it starts on a Development tier limited to 500 calls per app a day. The Advertising API is the simpler route for PostQueen.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    LinkedIn returned a token without all seven scopes. Open the app's **Auth** tab and check the **OAuth 2.0 scopes** list. A missing organization scope means the Advertising API is not approved yet.
+  </Accordion>
+  <Accordion title="LinkedIn shows an invalid scope error before its consent screen">
+    PostQueen asked for a scope your app does not have yet. Add the missing product, or wait for the Advertising API approval, then connect again.
+  </Accordion>
+  <Accordion title="LinkedIn says the redirect_uri does not match">
+    The address PostQueen sent is not in **Authorized redirect URLs for your app**. It is exactly your `FRONTEND_URL` followed by `/integrations/social/linkedin` or `/integrations/social/linkedin-page`. Check the scheme, the port and that there is no trailing slash.
+  </Accordion>
+  <Accordion title="The company page is not in the list">
+    LinkedIn Page lists only pages where your LinkedIn account is an administrator or content administrator. Ask a super admin of the page to give you one of those roles, then connect again.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [LinkedIn posting settings](/public-api/providers/linkedin)

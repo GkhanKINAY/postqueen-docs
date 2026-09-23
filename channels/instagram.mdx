@@ -1,98 +1,151 @@
 ---
-title: Instagram
-description: 'How to add Instagram to your system'
-icon: /images/channels/instagram.svg
+title: "Instagram"
+description: "Connect Instagram to PostQueen, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/instagram.svg"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): write it from _templates/channel.mdx. Sources: this file, moved from providers/instagram (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect and publish.</ChannelStatus>
 
-<img src="/images/channels/instagram.svg" alt="Instagram" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+Schedule Instagram feed posts, carousels of up to 10 photos and videos, Reels and Stories. PostQueen publishes them through Instagram's official API when their time comes.
 
-<Warning>
-**In review.** Until Meta approves PostQueen's app, only accounts added to the app can connect. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to Instagram
-
-A carousel of ten photos, a Reel with trending audio behind it, a story that vanishes in a day. She builds all of it from the same editor and sends it on the schedule you set.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    2,200 characters in the caption
+  <Card title="Text" icon="type">
+    Captions up to 2,200 characters, with at most 30 hashtags and 20 @mentions. Every post needs a photo or a video.
   </Card>
-  <Card title="Media" icon="images">
-    Always required. Up to 10 items in a carousel
+  <Card title="Media" icon="image">
+    Photos and MP4 videos, up to 10 items in a carousel. PNG, WebP, GIF, AVIF and TIFF are converted to JPEG. BMP is refused.
   </Card>
   <Card title="Post types" icon="layers">
-    Feed post, carousel, Reel, story
+    Feed photo, carousel, Reel, Trial Reel and Story. A single video in a feed post goes out as a Reel.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    Yes, for the account and for each post
+    7 or 30 days: followers and reach by day, views, likes, comments, shares, saves and replies, plus views, reach, saves, likes, comments and shares for each post.
   </Card>
 </CardGroup>
 
-Account numbers come back as follower count, reach and views. Engagement sits beside them: likes, comments and shares, plus saves and replies. Per post she reads views, reach and saves, plus likes, comments and shares.
+**Not supported:** text-only posts, alt text, user, product or location tags, Story stickers (link, poll, question), and replies to other people's comments.
 
-| | |
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
 |---|---|
-| **Post settings** | `post_type`, `is_trial_reel`, `graduation_strategy`, `collaborators`, `audio`. Full schema in the [Instagram settings reference](/public-api/providers/instagram) |
-| **Connect flow** | Two steps. You authorize the Meta app, then pick which Instagram account to attach. The account must be a business account connected to a Facebook page. The standalone flow attaches the account in a single step |
-| **Automations** | None. Instagram does carry an audio search tool, used to find music or original sounds for a Reel |
+| At least one photo or video | “Should have at least one media” |
+| At most 10 items in a feed post | “Instagram carousel only supports up to 10 media attachments” |
+| At most 30 hashtags in the caption | “Instagram allows up to 30 hashtags in a caption” |
+| At most 20 @mentions in the caption | “Instagram allows up to 20 @mentions in a caption” |
+| No BMP images | “Instagram only accepts JPEG images and BMP files cannot be converted, please use a JPEG or PNG” |
+| A Reel is exactly one video | “Reels must be a single video”, “Reels must be a video” |
+| A Trial Reel is exactly one video | “Trial Reels can only have one video”, “Trial Reels must be a video” |
+| Music goes on a single-video Reel only | “Audio can only be added to Reels, not to Stories”, “Audio can only be added to a single video Reel” |
+| At most 3 collaborators | “Instagram allows up to 3 collaborators” |
+| Caption up to 2,200 characters | “post is too long, please fix it” |
 
-<Warning>
-Instagram refuses some combinations before she ever calls the API:
+Both Instagram connections run the same checks. A story has no caption and no item limit, so the hashtag, @mention and 10-item checks do not apply to it.
 
-- **Should have at least one media.** A caption on its own is not a post here.
-- **Instagram carousel only supports up to 10 media attachments.**
-- **Trial Reels can only have one video**, and **Trial Reels must be a video**.
-- **Audio can only be added to Reels, not to Stories**, only to **a single video Reel**, and only on the Facebook Business connection.
+Aspect ratio, image size and video length are Instagram's rules, and PostQueen does not check them first. Instagram takes images up to 8 MB between 4:5 and 1.91:1, Reels from 3 seconds to 15 minutes and up to 300 MB, and story videos from 3 to 60 seconds and up to 100 MB. When Instagram refuses one, PostQueen shows its reason, for example "Aspect ratio not supported, must be between 4:5 to 1.91:1".
 
-Stories do not support carousels. Attach several items to a story and each one publishes as its own separate story.
-</Warning>
+## Connect Instagram
 
-## Connection Options
+Instagram has two tiles in **Add Channel**. Both need an Instagram **Business** or **Creator** account. Personal accounts cannot be connected. Switch the account to a professional one in the Instagram app first.
 
-There are two ways to connect to an Instagram account: by using a Facebook Business or through a standalone flow that connects directly to an Instagram account.
-
-<Info>
-**What PostQueen supports on Instagram:**
-
-- Feed posts (single image, carousel, video / Reels).
-- Stories (image and video).
-- Attaching audio (music or original sounds) to Reels: Facebook Business connection only, the [Instagram Audio API](https://developers.facebook.com/docs/instagram-platform/content-publishing/audio-api/) is not available for standalone connections.
-- Replying to comments via an explicit user action.
-
-**What PostQueen does not support:**
-
-- Story link stickers / swipe-up links: the Instagram Graph API does not offer interactive sticker payloads, so PostQueen can only upload the story media.
-- Automatic comment auto-reply: there is no agent that watches for incoming comments and replies on your behalf. You can post a reply through the API, but each reply is an explicit action.
-</Info>
-
-<Warning>
-Please note that standalone option requires a professional Instagram account.
-</Warning>
-
-Once the channel is in, it stays in. The short lived code from that login is traded for a long lived token good for 58 days, and a background job wakes when the clock runs out, refreshes the token and goes back to sleep. You never re-authorize the channel by hand.
-
-Analytics come through as well. Both the account numbers and the per post numbers listed at the top of this page are read straight from `graph.instagram.com`, so a standalone channel charts the same as one attached through a Facebook page.
+| | Instagram (Standalone) | Instagram (Facebook Business) |
+|---|---|---|
+| You sign in with | Instagram | Facebook, then you pick the Instagram account |
+| Facebook Page needed | No | Yes, linked to the Instagram account |
+| Music on Reels | No | Yes |
+| Stays connected | Renews itself | About 59 days, then you reconnect it |
 
 <Note>
-Two things do not carry over. Attaching audio to a Reel runs through the Facebook Business connection only, so a Reel from a standalone channel goes out without an added track.
-
-The ten item carousel guard is the other one. A standalone channel checks only that you attached at least one piece of media and that a Trial Reel is a single video. An eleventh carousel item sails past her and comes back as a rejection from Instagram instead.
+Instagram is in review. Until Meta approves PostQueen's app, only accounts with a role on that app can finish these steps.
 </Note>
 
-## Self-hosting
+<Tabs>
+  <Tab title="Instagram (Standalone)">
+    <Steps>
+      <Step title="Open Add Channel">
+        Open **Channels** and choose **Add Channel**, then **Instagram (Standalone)**.
+      </Step>
+      <Step title="Sign in to Instagram">
+        Sign in with the Instagram account you want to post to, and approve every permission you are asked for. PostQueen needs all of them.
+      </Step>
+      <Step title="Check that it connected">
+        The channel appears in the **Channels** list with its avatar and name.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="Instagram (Facebook Business)">
+    <Steps>
+      <Step title="Open Add Channel">
+        Open **Channels** and choose **Add Channel**, then **Instagram (Facebook Business)**.
+      </Step>
+      <Step title="Log in with Facebook">
+        Log in with the Facebook account that manages the Page linked to your Instagram account. Share that Page when Facebook asks which ones to include, and approve every permission. Pages you manage through Business Manager are listed as well.
+      </Step>
+      <Step title="Pick the Instagram account">
+        In **Select Instagram Account**, pick one or more accounts and choose **Save**. When there is only one, choose **Connect this channel**.
+      </Step>
+      <Step title="Check that it connected">
+        The channel appears in the **Channels** list with its avatar and name.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Instagram on your own instance](/installation/providers/instagram).
-</Info>
+## Post settings
+
+Each Instagram post in the composer has these settings:
+
+- **Post Type**: **Post**, **Reel** or **Story**. It starts on **Post**. A feed post with several items is a carousel.
+- **Collaborators (max 3)**: invite up to 3 public accounts to a post, carousel or Reel. Not offered on stories.
+- **Audio**: add music or original sound to a single-video Reel, with trending audio suggested, and set the music and video volumes. Only on the Instagram (Facebook Business) tile.
+- **Trial Reel**: show a Reel to people who don't follow you first. **Graduation Strategy** decides how it reaches your followers: **Manual**, or **Auto (based on performance)**.
+- **Cover**: open a video's **Media Settings** and use **Create Thumbnail** to pick the frame Instagram shows as its cover. A separate cover image is not supported.
+
+The field names and values for the API are on [Instagram posting settings](/public-api/providers/instagram).
+
+## Comments and threads
+
+**Add comment** schedules your own comments under the post. They are text only, each has its own delay, and each is posted as a comment on the published post. Instagram has no threads.
+
+## Good to know
+
+- A channel connected through **Instagram (Facebook Business)** keeps its connection for about 59 days. After that it shows **Needs reconnecting**: choose **Reconnect channel** in its menu. A Standalone channel renews itself.
+- Images are converted to JPEG when the post is published, not when you schedule it. An animated GIF goes out as a still image.
+- Instagram itself caps an account at 100 posts published through its API in any 24 hours.
+- Stories published through the API are confirmed by Meta for Business accounts. Meta's pages do not confirm them for Creator accounts.
+- During the free trial, an Instagram account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    A permission was switched off on Meta's screen. Connect the channel again and approve every permission.
+  </Accordion>
+  <Accordion title="Your Instagram account is not a business account, please convert it to a business account">
+    Switch the account to a Business or Creator account in the Instagram app, then reconnect the channel.
+  </Accordion>
+  <Accordion title="Facebook rejected the post due to missing permissions">
+    Seen on the Facebook Business tile. Make sure your Facebook account has full content access to the Page linked to the Instagram account, then reconnect the channel.
+  </Accordion>
+  <Accordion title="We couldn't find any business connected to the selected pages.">
+    Seen on the Facebook Business tile when no shared Page has an Instagram account linked. Link the Instagram account to a Facebook Page, then connect again and share that Page, and every business, when Facebook asks.
+  </Accordion>
+  <Accordion title="Aspect ratio not supported, must be between 4:5 to 1.91:1">
+    Instagram refused the image. Crop it to between 4:5 (portrait) and 1.91:1 (landscape) and schedule the post again.
+  </Accordion>
+  <Accordion title="You have reached the maximum number of posts per day allowed for your account">
+    Instagram's own daily cap was reached. Move the post to a later time.
+  </Accordion>
+  <Accordion title="This account doesn't support Trial Reels">
+    Instagram does not offer Trial Reels to this account. Switch **Trial Reel** off and schedule the Reel again.
+  </Accordion>
+</AccordionGroup>
 
 <NextStepsChannel />
-

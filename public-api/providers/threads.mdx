@@ -1,129 +1,128 @@
 ---
-title: Threads Settings
-description: 'API settings for posting to Threads'
+title: "Threads posting settings"
+sidebarTitle: "Threads"
+description: "The settings object a post to Threads takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/threads.svg"
 ---
 
-{/* OVERHAUL-TODO(B2): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: partly better; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Threads setup guide](/installation/providers/threads).
+<ChannelStatus status="in-review">Until Meta approves PostQueen's Threads app, only accounts added as Threads testers on it can connect and publish.</ChannelStatus>
 
-## Settings Schema
-
-When creating a post for Threads, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "threads"
-  }
-}
-```
-
-<Note>
-Threads has no provider-specific settings beyond `__type`. Post content,
-images, and the schedule are configured at the post level - see the
-[Create Post](/public-api/posts/create) reference.
-</Note>
+Every post to Threads carries a `settings` object with `"__type": "threads"`. Threads has no other settings. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `threads` |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"threads"`. PostQueen sets it from the channel you post to. |
 
----
+### Thread replies
 
-## Complete Example
+Each extra entry in `value` is posted as a reply to the entry before it, after its `delay` in minutes. Every entry can carry text, one image or video, or a carousel of up to 20 items, and is checked on its own.
 
-### Text Post
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| At most 20 items in each entry | “Threads carousels can have up to 20 items” |
+| JPEG or PNG images only (GIF, WebP, AVIF, BMP and TIFF are refused) | “Threads accepts JPEG or PNG images only” |
+| At most 5 different links in each entry | “Threads allows up to 5 links per post” |
+| Each entry within 500 UTF-8 bytes | “post is too long, please fix it” |
+
+The 500 limit is counted in UTF-8 bytes for the whole text: plain ASCII letters count 1 and every other character 2 to 4, so text with accents or emoji fits fewer than 500 characters.
+
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "threads",
+  "name": "Your channel name",
+  "message": "Threads accepts JPEG or PNG images only"
+}
+```
+
+Threads' own rules are not checked first: images up to 8 MB, videos up to 5 minutes and 1 GB, and 250 posts and 1,000 replies in any 24 hours.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Text post
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-threads-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
-        {
-          "content": "Hello from the PostQueen API!",
-          "image": []
-        }
+        { "content": "What is one tool you could not work without this year?", "image": [] }
       ],
-      "settings": {
-        "__type": "threads"
-      }
+      "settings": { "__type": "threads" }
     }
   ]
 }
 ```
 
-### Thread Post
-
-Create a thread by adding multiple items to the `value` array. Each entry
-becomes a reply chained to the previous post:
-
-```json
+```json Carousel
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-threads-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "1/ Starting a thread on Threads from the API",
-          "image": []
-        },
-        {
-          "content": "2/ Each value entry becomes a reply",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "threads"
-      }
-    }
-  ]
-}
-```
-
-### Post with Image
-
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-threads-integration-id"
-      },
-      "value": [
-        {
-          "content": "Sharing today's launch screenshot",
+          "content": "The new office, room by room.",
           "image": [
-            {
-              "id": "image-id",
-              "path": "https://uploads.postqueen.ai/launch.png"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/office-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/office-2.png" },
+            { "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/office-tour.mp4" }
           ]
         }
       ],
-      "settings": {
-        "__type": "threads"
-      }
+      "settings": { "__type": "threads" }
     }
   ]
 }
 ```
+
+```json Thread
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "How we plan a week of posts in 20 minutes. 1/3",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/calendar.png" }]
+        },
+        { "content": "Monday: pick three topics and one question to ask. 2/3", "image": [], "delay": 1 },
+        { "content": "Then write every post in one sitting and schedule them. 3/3", "image": [], "delay": 1 }
+      ],
+      "settings": { "__type": "threads" }
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+## Related
+
+- [Connect Threads in the app](/channels/threads)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

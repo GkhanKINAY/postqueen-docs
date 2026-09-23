@@ -1,116 +1,128 @@
 ---
-title: 'X (Twitter) setup'
-description: 'Register the X (Twitter) application and give PostQueen its keys'
-icon: /images/channels/x.svg
+title: "X setup"
+description: "Register your own X developer app for a self-hosted PostQueen: console steps, permissions, callback URL and the variables to set."
+icon: "/images/channels/x.svg"
 ---
 
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (rewrite; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
-
-On your own instance the X app is yours: create it in the X Developer Console, then put its consumer key and secret in your environment.
-
-PostQueen connects X accounts with **OAuth 1.0a** (three-legged) and publishes through the X API v2. It reads only the app's **consumer key and secret** (`X_API_KEY`, `X_API_SECRET`). The OAuth 2.0 client id and secret, the bearer token and your own account's access token are not used; do not put them in those variables.
+On a self-hosted PostQueen the X app is yours. PostQueen connects X accounts with OAuth 1.0a and publishes through the X API v2, so it reads only the app's **Consumer Keys**. The OAuth 2.0 Client ID and secret, the Bearer token and your own account's access token are not used.
 
 ## Before you start
 
-- **A developer account with credits.** The X API is pay-per-use: you buy credits in the [Developer Console](https://console.x.com) and each request is charged against them. At the time of writing, creating a post costs $0.015 and a post that contains a URL $0.20 ([X API pricing](https://docs.x.com/x-api/getting-started/pricing)). Connecting, publishing and PostQueen's analytics reads all use credits; set a spending limit in the console if you want a cap.
+| | |
+|---|---|
+| Developer console | [X Developer Console](https://console.x.com), signed in with the X account that will own the app |
+| Variables | `X_API_KEY`, `X_API_SECRET` |
+| Callback URL | `FRONTEND_URL` + `/integrations/social/x`, or `X_URL` + `/integrations/social/x` when `X_URL` is set |
+| Permissions | OAuth 1.0a, **Read and write** |
+| Cost | Pay-per-use credits you buy in the console. X's pricing page lists $0.015 per post created and $0.20 per post that contains a URL (checked September 2026) |
+| Review | No review step in X's getting-started docs. The app works once it has credits and the settings below |
+
+## Create the app
 
 <Steps>
-  <Step title="Create the app">
-    Sign in to the [Developer Console](https://console.x.com) with the X account that will own the app, accept the Developer Agreement and create a new app.
-
-    PostQueen does not need direct messages or email access, so do not request them.
+  <Step title="Sign in to the Developer Console">
+    Open the [Developer Console](https://console.x.com) and sign in with the X account that will own the app. Accept the Developer Agreement and Policy, and fill in how you will use the API.
   </Step>
-
+  <Step title="Buy credits">
+    The X API has no free tier. Buy credits in the console before you connect anything: every post PostQueen creates is charged against them, and so are PostQueen's analytics and automation reads. Set a spending limit per billing cycle if you want a cap.
+  </Step>
+  <Step title="Create the app">
+    Create a new app and enter its name, description and use case. The console then shows the app's keys once: you only need the **API Key** and **API Key Secret**, the Consumer Keys, from it. Store them safely.
+  </Step>
   <Step title="Set up user authentication">
     Open the app's **User authentication settings** and set:
 
-    1. **App permissions:** `Read and write`. With read-only access the connect can succeed and every post then fails.
-    2. **Type of app:** `Native App`.
-    3. **Callback URI / Redirect URL:** the address below.
-    4. **Website URL:** your public website.
+    - **App permissions**: **Read and write**. PostQueen does not need Direct Messages.
+    - **Callback URI / Redirect URL**: the callback URL below.
+    - **Website URL**: your public site.
 
-    <Warning>
-    Select **Native App**. Setting the type to *Web App, Automated App or Bot* makes the OAuth 1.0a connect fail with error **32** (`Could not authenticate you`).
-    </Warning>
+    The form also asks for a type of app. That choice is for OAuth 2.0, which PostQueen does not use.
 
-    If you change the permission from read-only to read and write later, every account that already connected has to reconnect; its old token keeps the old permission.
+    If you change the permissions later, every X account that already connected has to reconnect: its token keeps the old permissions.
   </Step>
-
-  <Step title="Register the callback">
+  <Step title="Register the callback URL">
     <OAuthRedirect />
 
-    For X the host part comes from `X_URL` when it is set, otherwise from `FRONTEND_URL`, and X matches the registered callback exactly.
+    For X the host comes from `X_URL` when it is set, otherwise from `FRONTEND_URL`. PostQueen never wraps the X callback through `redirectmeto.com`, so a plain `http` address is registered as it is. X compares the URL exactly, trailing slash included, and takes up to 10 per app.
 
-    **Your X callback URL:**
-    - Production: `https://postqueen.example.com/integrations/social/x`
-    - Local development: `http://localhost:4200/integrations/social/x`
-    - Docker: `http://localhost:4007/integrations/social/x`
+    <CodeGroup>
 
-    X answers `Callback URL not approved for this client application` (error 415) when the address PostQueen sends is not on the app's list.
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/x
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/x
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/x
+    ```
+
+    </CodeGroup>
   </Step>
-
-  <Step title="Copy the consumer keys">
-    Open **Keys and tokens**, then **Consumer Keys**, and click **Regenerate** to see the key and secret.
-
-    | Console | Environment variable |
-    | --- | --- |
-    | API Key (consumer key) | `X_API_KEY` |
-    | API Key Secret (consumer secret) | `X_API_SECRET` |
-
-```env
-X_API_KEY="your-consumer-key"
-X_API_SECRET="your-consumer-secret"
-```
-  </Step>
-
-  <Step title="Restart and add the X channel">
-    <RestartAndAddChannel />
-
-    PostQueen connects whichever X account is signed in on x.com in that browser, so switch accounts on X first if you want a different one. The **Verified** setting (4,000 characters instead of 280) is read from X at connect and can be changed later under the channel menu's **Additional Settings**.
-
-    <Note>
-    If your instance runs with Stripe billing enabled, a workspace still on its trial cannot connect X. Without billing there is no such lock.
-    </Note>
+  <Step title="Copy the Consumer Keys">
+    If you did not save them when the app was created, open the app's keys and tokens and regenerate the **Consumer Keys**. The API Key goes in `X_API_KEY`, the API Key Secret in `X_API_SECRET`.
   </Step>
 </Steps>
 
-## Optional environment variables
+## Set the variables
+
+Add the two keys to your environment:
+
+```env
+X_API_KEY="your api key"
+X_API_SECRET="your api key secret"
+```
+
+Three optional variables change how X behaves:
 
 | Variable | What it does |
-| --- | --- |
-| `X_URL` | Replaces `FRONTEND_URL` as the host of the OAuth callback (`<X_URL>/integrations/social/x`). Leave it unset unless X must call back to a different address than the one users open; a wrong value breaks the connect. |
-| `DISABLE_X_ANALYTICS` | Any value turns off X analytics and the automations that read like counts, which saves the credits those reads cost. |
-| `STRIP_LINKS_FROM_X_POSTS` | Any value removes URLs from the text of every X post before it is published. |
+|---|---|
+| `X_URL` | Replaces `FRONTEND_URL` as the host of the callback. Leave it unset unless X must call back to a different address than the one people open. |
+| `DISABLE_X_ANALYTICS` | Any value turns off X analytics and the two automations that read like counts (**Auto Repost Posts** and **Auto plug post**). That saves the credits those reads cost. |
+| `STRIP_LINKS_FROM_X_POSTS` | Any value removes links from the text of every X post before it is published. |
 
-Full list: [configuration reference](/configuration/reference).
+<RestartAndAddChannel />
 
-## When something fails
+Pick **X**. PostQueen connects whichever X account is signed in on x.com in that browser, so switch accounts on X first if you want a different one. The **Verified** setting, which raises the limit from 280 to 4,000 characters, is read from X when the account connects. Change it later in the channel's menu under **Additional Settings**.
 
-| What you see | What to check |
-| --- | --- |
-| Error 32, `Could not authenticate you` | Type of app is not **Native App**, or the key and secret are not the consumer pair |
-| Error 415 on connect | The callback registered on X differs from `<X_URL or FRONTEND_URL>/integrations/social/x` |
-| 403 or "not permitted" on posting | App permission is read-only; set **Read and write**, then reconnect the channel |
-| A usage-capped or 402 answer | The developer account has no credits left, or hit its spending limit |
+<Note>
+With billing on (both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` set), a workspace still in its free trial cannot connect X until the trial ends. Without billing there is no trial, and no lock.
+</Note>
 
-See also [connect errors](/troubleshooting/common-errors).
+## App review
 
-## Next steps
+X's getting-started docs describe no review for a pay-per-use app: once it has credits and the settings above, any X account can connect through it. What X does control is spending. When the credits run out or the spending limit is reached, X refuses the requests until you add credits.
 
-<CardGroup cols={2}>
-  <Card title="What PostQueen can post to X" icon="/images/channels/x.svg" href="/channels/x-twitter">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable PostQueen reads
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+X's own account limits still apply to every account that connects: unverified accounts can publish 50 posts and 200 replies a day across every app.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Callback URL not approved for this client application">
+    The callback PostQueen sent is not in the app's list. Register `FRONTEND_URL` + `/integrations/social/x` exactly as in step 5, or the `X_URL` address if you set one.
+  </Accordion>
+  <Accordion title="X unlocks when your free trial ends. End the trial to connect it now.">
+    Billing is on and the workspace is in its free trial. End the trial in the app, or wait for it to end.
+  </Accordion>
+  <Accordion title="There is a problem posting, please edit your post and check character count and media attachments">
+    X refused the post. If every post fails this way, check that **App permissions** is **Read and write**, then reconnect the channel so its token carries the new permission.
+  </Accordion>
+  <Accordion title="Posting failed - capped reached. Please try again later">
+    X capped the app's usage. Check the credit balance and the spending limit in the Developer Console.
+  </Accordion>
+  <Accordion title="X authentication has expired, please reconnect your account">
+    X no longer accepts the account's token, for example after the app's permissions changed. Reconnect the channel.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [X posting settings](/public-api/providers/x)

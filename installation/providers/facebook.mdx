@@ -1,171 +1,151 @@
 ---
-title: 'Facebook setup'
-description: 'Register the Facebook application and give PostQueen its keys'
-icon: /images/channels/facebook.svg
+title: "Facebook setup"
+description: "Register your own Meta app for Facebook Pages on a self-hosted PostQueen: the app, the permissions, the redirect URIs, the callback URLs and the variables to set."
+icon: "/images/channels/facebook.svg"
 ---
 
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: partly better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen the Meta app is yours. One app, logged in through **Facebook Login for Business**, serves two tiles in **Add Channel**: **Facebook Page** and **Instagram (Facebook Business)**. This page creates that app. **Instagram (Standalone)** and **Threads** each need a separate Meta app: see [Instagram setup](/installation/providers/instagram) and [Threads setup](/installation/providers/threads).
 
-On your own instance the Meta app is yours: create it in Meta for Developers, then put its App ID and App Secret in your environment.
+## Before you start
 
-<Warning>
-**NOTE:** Please be advised that Instagram (Facebook Business) and Facebook can use the same app (no need to create two separate apps). Request the **union** of both providers' permissions on that shared app. That shared app is **Path A** on the [Instagram setup](/installation/providers/instagram) page. Instagram Standalone is **Path B** there: a separate Meta app — do not add Facebook Login for Business on it. Threads is a third app.
-</Warning>
+| | |
+|---|---|
+| Developer console | [Meta for Developers](https://developers.facebook.com/apps), with a Meta developer account |
+| Variables | `FACEBOOK_APP_ID`, `FACEBOOK_APP_SECRET` |
+| Redirect URIs | Two paths on `FRONTEND_URL`: `/integrations/social/facebook`, and `/integrations/social/instagram` for Instagram (Facebook Business) |
+| Permissions | Seven for Facebook Page, and four more for Instagram (Facebook Business). The list is in step 6 |
+| Callback URLs | Two paths on `NEXT_PUBLIC_BACKEND_URL`, for data deletion and deauthorize requests. See step 7 |
+| Review | None for Pages you own or manage. App Review and Business Verification for anyone else's Pages |
+
+PostQueen checks every permission it asks for when a Page connects. A missing one stops the connect.
+
+## Create the app
 
 <Steps>
-  <Step title="Create a new app">
-    Select a business portfolio, then create a [new app in Facebook developers](https://developers.facebook.com/apps/creation/).
-    
-    Please be advised that for public applications, you will need to verify your business.
-
-    <Frame>
-      <img src="/images/providers/facebook/Business-Portfolio.png" alt="Business Portfolio" />
-    </Frame>
-
-    <Frame>
-      <img src="/images/providers/facebook/Create-an-app.png" alt="Create app" />
-    </Frame>
+  <Step title="Start a new app">
+    Open [Create an app](https://developers.facebook.com/apps/creation/) in Meta for Developers. Enter the app name and a contact email, then choose **Next**.
   </Step>
-
-  <Step title="Show all use cases">
-    On the **Add use cases** screen, pick the **All** filter on the left.
+  <Step title="Choose Other, not a use case">
+    On the use case step, do not pick any of the listed use cases. Scroll to **Looking for something else?**, select **Other** and choose **Next**.
 
     <Frame>
-      <img src="/images/providers/facebook/All-use-cases.png" alt="Add use cases screen with the All filter selected" />
+      <img src="/images/providers/facebook/Other-app-use-cases.png" alt="Meta's Add use cases step, with Other selected under Looking for something else?" />
     </Frame>
-  </Step>
-
-  <Step title="Select app type">
-    Do not pick any of the use cases. Scroll to the bottom and, under **Looking for something else?**, select **Other** and click next.
 
     <Warning>
-    An app created through a use case such as Facebook Login cannot request the permissions PostQueen needs, and adding the use case later does not rescue it. The consent screen then fails straight away with **Invalid Scopes** for every scope. If that is what you see, create a new app through **Other**.
+    An app created through a use case such as Facebook Login cannot request the permissions PostQueen needs, and adding the use case later does not fix it. Facebook's consent screen then fails with **Invalid Scopes**. If you see that, create a new app through **Other**.
     </Warning>
-
-    <Frame>
-      <img src="/images/providers/facebook/Other-app-use-cases.png" alt="Other app use cases" />
-    </Frame>
   </Step>
-
-  <Step title="Select business">
-    Then select business
-
-    <Frame>
-      <img src="/images/providers/facebook/facebook-select-business.png" alt="Business" />
-    </Frame>
+  <Step title="Pick the Business type">
+    Select **Business** as the app type and choose **Next**. Connect your business portfolio now or later, then choose **Create app**.
   </Step>
-
-  <Step title="Add details and create app">
-    Add all your details and click Create App
-
-    <Frame>
-      <img src="/images/providers/facebook/facebook-create-app-details.png" alt="Create app details" />
-    </Frame>
+  <Step title="Add Facebook Login for Business">
+    In the app dashboard, choose **Add Product**, find **Facebook Login for Business** and choose **Set up**.
   </Step>
-
-  <Step title="Set up Login with Facebook">
-    <Frame>
-      <img src="/images/providers/facebook/facebook-setup-login.png" alt="Setup Login with Facebook" />
-    </Frame>
-
-    Set up login for business
-  </Step>
-
-  <Step title="Configure redirect URI">
-    Set up a redirect URI back to the application
-    
-    <Frame>
-      <img src="/images/providers/facebook/facebook-redirect-uri.png" alt="Redirect URI" />
-    </Frame>
+  <Step title="Add the redirect URIs">
+    Open **Facebook Login for Business > Settings**. Under **Client OAuth settings**, add the redirect URIs to **Valid OAuth Redirect URIs** and save.
 
     <OAuthRedirect />
 
-    **Your Facebook OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/facebook`
-    - Local development: `http://localhost:4200/integrations/social/facebook`
-    - Docker: `http://localhost:4007/integrations/social/facebook`
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/facebook
+    https://postqueen.example.com/integrations/social/instagram
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/facebook
+    http://localhost:4200/integrations/social/instagram
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/facebook
+    http://localhost:4007/integrations/social/instagram
+    ```
+
+    </CodeGroup>
+
+    Both tiles send `FRONTEND_URL` as it is, so the URIs stay plain, `http` included. Add the `/instagram` line only if you connect Instagram (Facebook Business).
   </Step>
+  <Step title="Check the permissions">
+    Open **App Review > Permissions and Features** and check that these are listed:
 
-  <Step title="Request advanced permissions">
-    <Frame>
-      <img src="/images/providers/facebook/facebook-advanced-permissions.png" alt="Advanced permissions" />
-    </Frame>
+    - **Facebook Page**: `pages_show_list`, `business_management`, `pages_manage_posts`, `pages_manage_engagement`, `pages_read_engagement`, `pages_read_user_content` and `read_insights`.
+    - **Instagram (Facebook Business)** adds `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments` and `instagram_manage_insights`.
 
-    Facebook Page and Instagram (Facebook Business) share this app. Request the **union** of both providers in one pass (11 unique), not only the Facebook list. Skip a Facebook scope and Facebook connect fails; skip an Instagram (Facebook Business) scope and Instagram connect fails — both with `Not enough scopes, when choosing a provider, please add all the scopes`.
+    While the app is in development, people with a role on it can grant all of them.
 
-    Go to advanced permission and request access for the following scopes:
-    - `pages_show_list`
-    - `business_management`
-    - `pages_manage_posts`
-    - `pages_manage_engagement`
-    - `pages_read_engagement`
-    - `pages_read_user_content`
-    - `read_insights`
-    - `instagram_basic`
-    - `instagram_content_publish`
-    - `instagram_manage_comments`
-    - `instagram_manage_insights`
-
-    Do not add Instagram Standalone (`instagram_business_*`) or Threads (`threads_*`) scopes on this app. Those belong on separate Meta apps.
+    Do not add Instagram (Standalone) permissions (`instagram_business_*`) or Threads permissions (`threads_*`) to this app: they belong to separate apps. Do not request messaging, ads or `pages_manage_metadata` permissions either: PostQueen does not use them.
 
     <Note>
-    If your PostQueen install is for personal use only these advanced permissions are not required for PostQueen to function.
-    </Note>
-
-    <Note>
-    `pages_read_user_content` is required by Meta together with `pages_manage_engagement`, which PostQueen uses to publish follow-up comments under Facebook Page posts. PostQueen requests it when connecting a Facebook Page and does not read other people's comments or posts. Do not request `pages_messaging`, `instagram_manage_messages`, `pages_manage_metadata`, or ads permissions.
+    Meta requires `pages_read_user_content` together with `pages_manage_engagement`, which PostQueen uses to publish follow-up comments under Page posts. PostQueen does not read other people's comments or posts.
     </Note>
   </Step>
+  <Step title="Set the callback URLs">
+    When someone removes your app on Facebook, or asks for their data to be deleted, Meta calls your server. PostQueen answers both calls: removing the app flags that person's channels for reconnection, and a deletion request deletes their channels and those channels' posts.
 
-  <Step title="Set app mode to Live">
-    Change the App Mode from 'Development' to 'Live'. If you do not do this then posts made via the API will display for yourself but will not be visible for other users.
+    - In **App settings > Basic**, under **User data deletion**, choose the data deletion callback URL and enter `NEXT_PUBLIC_BACKEND_URL` + `/integrations/facebook/platform-deletion`.
+    - In **Facebook Login for Business > Settings**, set **Deauthorize callback URL** to `NEXT_PUBLIC_BACKEND_URL` + `/integrations/facebook/platform-deauthorize`.
+
+    With the backend at `https://postqueen.example.com/api`, the first is `https://postqueen.example.com/api/integrations/facebook/platform-deletion`. One pair of URLs covers both tiles on this app. Meta only calls a public `https` address, so skip this step on a local install.
   </Step>
-
-  <Step title="Copy your credentials">
-    <Frame>
-      <img src="/images/providers/facebook/facebook-app-keys.png" alt="Keys" />
-    </Frame>
-
-    Go to basic permissions copy your App ID and App Secret and paste them in your `.env` file
-
-```env
-FACEBOOK_APP_ID="app id"
-FACEBOOK_APP_SECRET="app secret"
-```
-
-    Facebook should now be working!
-  </Step>
-  <Step title="Restart and add the Facebook channel">
-    <RestartAndAddChannel />
+  <Step title="Copy the App ID and App secret">
+    Open **App settings > Basic** and copy the **App ID** and the **App secret** (choose **Show**).
   </Step>
 </Steps>
 
+## Set the variables
+
+Add the two keys to your environment:
+
+```env
+FACEBOOK_APP_ID="your app id"
+FACEBOOK_APP_SECRET="your app secret"
+```
+
+<RestartAndAddChannel />
+
+Pick **Facebook Page**, log in with Facebook and share the Page. In **Select Page**, pick one or more Pages and choose **Save**. Pages you manage through Business Manager are listed too.
+
+## App review
+
+A new app starts in **Development** mode:
+
+- Only people with a role on the app (administrator, developer or tester) can connect their Pages. Add people under **App roles > Roles**.
+- Posts the app publishes are visible only to people with a role on the app until you switch it to **Live**. Everyone else sees nothing, or sees a post without its image.
+
+To publish to Pages you own or manage, Standard Access is enough: switch **App Mode** to **Live** at the top of the dashboard. Meta asks for the display name, a contact email, a privacy policy URL and a terms of service URL in **App settings > Basic** first.
+
+To let anyone else connect their Pages, request **Advanced Access** for each permission in **App Review > Permissions and Features**, and verify your business portfolio. Meta asks for a description and a screen recording of how the app uses each permission. Request only the permissions in step 6.
+
 ## Troubleshooting
 
-### Image is missing from the published post
+<AccordionGroup>
+  <Accordion title="Invalid Scopes on Facebook's consent screen">
+    The app was created through a use case. Create a new app through **Other**, as in step 2, and move the keys over.
+  </Accordion>
+  <Accordion title="URL Blocked on Facebook's login screen">
+    The redirect URI PostQueen sent is not in **Valid OAuth Redirect URIs**. Add it exactly as in step 5, with the scheme and port your `FRONTEND_URL` uses.
+  </Accordion>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    A permission was declined on the consent screen, or is missing from the app. Check the list in step 6, then connect again and approve everything.
+  </Accordion>
+  <Accordion title="PostQueen is not authorized to publish as this page, please reconnect the channel">
+    The Page was not shared during the login. Reconnect the channel and include the Page when Facebook asks which Pages to share.
+  </Accordion>
+  <Accordion title="Posts show for you but not for anyone else">
+    The app is still in **Development** mode. Switch **App Mode** to **Live**.
+  </Accordion>
+</AccordionGroup>
 
-Check the **App Mode** of your Facebook app. In **Development** mode, posts with media are only visible to app developers/testers. Everyone else sees the post without the image. Switch the app to **Live** mode to make the image visible to all users.
+## Related
 
-### Facebook posts work for you but not for other users
-
-Same root cause as above: the app is in Development mode. Only roles you have explicitly added (developers, testers, admins) can see content published via the API. Set the app to Live.
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="What she can post to Facebook" icon="/images/channels/facebook.svg" href="/channels/facebook">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+- [Instagram setup](/installation/providers/instagram): the Instagram (Facebook Business) tile uses this app; Instagram (Standalone) needs its own.
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Facebook posting settings](/public-api/providers/facebook)

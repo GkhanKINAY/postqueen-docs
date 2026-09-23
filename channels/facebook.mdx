@@ -1,63 +1,112 @@
 ---
-title: Facebook
-description: 'How to add Facebook to your system'
-icon: /images/channels/facebook.svg
+title: "Facebook"
+description: "Connect a Facebook Page to PostQueen, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/facebook.svg"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B2): write it from _templates/channel.mdx. Sources: this file, moved from providers/facebook (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish.</ChannelStatus>
 
-<img src="/images/channels/facebook.svg" alt="Facebook" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+Schedule posts to the Facebook Pages you manage: text, links, photos, multi-photo posts, video and Page Stories. PostQueen publishes them through Facebook's official API when their time comes.
 
-<Warning>
-**In review.** Until Meta approves PostQueen's app, only accounts added to the app can connect. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to Facebook
-
-Facebook is the one network where the caption almost never runs out of room. Sixty-three thousand characters, with or without a photo, and she can still drop a background behind the short ones.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    63,206 characters
+  <Card title="Text" icon="type">
+    Up to 63,206 characters. A text-only post of 130 characters or fewer can sit on a colored background.
   </Card>
-  <Card title="Media" icon="images">
-    Optional. Text alone, photos, or one video
+  <Card title="Media" icon="image">
+    Any number of photos in one post, or one MP4 video. Facebook takes photos up to 10 MB.
   </Card>
   <Card title="Post types" icon="layers">
-    Feed post, photo set, Reel, story, background text post
+    Text, link, photo, multi-photo and video posts, and Page Stories with photos or videos.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    Yes, for the page and for each post
+    7, 30 or 90 days: Page reach, media views, post engagement and new follows by day, plus reach, clicks and reactions for each post, and plays, reactions, comments and shares for each Reel.
   </Card>
 </CardGroup>
 
-Page numbers come back as impressions, media views and post engagement, plus follower count. Per post she reads impressions, clicks and reactions.
+**Not supported:** personal profiles and Groups, Reels as a post type (a video goes to the Page's videos), polls, events, and location or feeling tags.
 
-| | |
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
 |---|---|
-| **Post settings** | `post_type`, `url`, `text_format_preset_id`. Full schema in the [Facebook settings reference](/public-api/providers/facebook) |
-| **Connect flow** | Two steps. You authorize the Meta app, then pick which page to attach |
-| **Automations** | None |
+| A story has at least one photo or video | “Story should have at least one media” |
+| Text up to 63,206 characters | “post is too long, please fix it” |
 
-<Warning>
-A few shapes Facebook will not take:
+Photo size and video length are Facebook's rules, and PostQueen does not check them first. Facebook takes photos in JPEG, PNG, GIF, BMP or TIFF up to 10 MB, and story videos up to 60 seconds. When Facebook refuses a post, PostQueen shows its reason, for example "You are posting too fast, please slow down".
 
-- **Story should have at least one media.** Feed posts run fine on text alone, stories do not.
-- Background presets apply to text-only posts on a page, capped at 130 characters. Attach a photo or write past the cap and the post publishes as plain text instead.
-- **Photos should be smaller than 4 MB and saved as JPG, PNG.**
-</Warning>
+## Connect Facebook
 
-## Self-hosting
+You need a Facebook Page and a role on it that can create posts. Personal profiles and Groups cannot be connected.
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Facebook on your own instance](/installation/providers/facebook).
-</Info>
+<Note>
+Facebook is in review. Until Meta approves PostQueen's app, only accounts with a role on that app can finish these steps.
+</Note>
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Facebook Page**.
+  </Step>
+  <Step title="Log in with Facebook">
+    Log in with the Facebook account that manages the Page. Share the Page when Facebook asks which ones to include, and approve every permission. PostQueen needs all of them.
+  </Step>
+  <Step title="Pick the Page">
+    In **Select Page**, pick one or more Pages and choose **Save**. Pages you manage through Business Manager are listed as well. When there is only one, choose **Connect this channel**.
+  </Step>
+  <Step title="Check that it connected">
+    The Page appears in the **Channels** list with its picture and name.
+  </Step>
+</Steps>
+
+## Post settings
+
+Each Facebook post in the composer has these settings:
+
+- **Post Type**: **Post** or **Story**. It starts on **Post**. A story needs a photo or a video, and each item goes out as its own story.
+- **Embedded URL (only for text Post)**: a link attached to the post.
+- **Background**: a colored or illustrated background behind a text-only post of 130 characters or fewer, chosen from 74 presets. Facebook publishes no official list, so the colors are approximate, and a background Facebook no longer accepts is dropped: the post goes out as plain text.
+
+The field names, values and preset ids for the API are on [Facebook posting settings](/public-api/providers/facebook).
+
+## Comments and threads
+
+**Add comment** schedules follow-up comments under the post. Each one replies to the comment before it, has its own delay, and can carry one image. Facebook takes images on comments, not video, and only the first attached item is sent.
+
+## Good to know
+
+- The connection lasts about 59 days. After that the Page shows **Needs reconnecting**: choose **Reconnect channel** in its menu.
+- When the first attached item is a video, only that video is published and the other items are ignored. When a photo comes first, every item is sent as a photo.
+- Several items in one story post go out as separate stories, one at a time. If a story post is interrupted, PostQueen stops rather than risk posting twice and asks you to check the Page.
+- The follower numbers are new follows per day, not a running total. Comments and shares are counted for Reels only.
+- During the free trial, a Page that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    A permission was switched off on Facebook's screen. Connect the Page again and approve every permission.
+  </Accordion>
+  <Accordion title="PostQueen is not authorized to publish as this page, please reconnect the channel">
+    The Page was not shared with PostQueen during the login. Reconnect the channel and include the Page when Facebook asks which Pages to share.
+  </Accordion>
+  <Accordion title="Facebook rejected the post due to missing permissions">
+    Make sure your Facebook account has full content access to the Page, then reconnect the channel.
+  </Accordion>
+  <Accordion title="Photos should be smaller than 4 MB and saved as JPG, PNG">
+    Facebook refused a photo. Use a smaller JPG or PNG and schedule the post again.
+  </Accordion>
+  <Accordion title="Confirm your identity before you can publish as this Page">
+    Facebook wants an identity check for the Page. Open the Facebook app on your phone and follow its instructions, then schedule the post again.
+  </Accordion>
+  <Accordion title="You are posting too fast, please slow down">
+    Facebook throttled the Page. Space the posts out and try again later.
+  </Accordion>
+</AccordionGroup>
 
 <NextStepsChannel />
-
