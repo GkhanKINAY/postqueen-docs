@@ -4,16 +4,16 @@ description: 'Add PostQueen as a custom MCP connector in Grok chat on the web, i
 icon: /images/brand/icon-grok.svg
 ---
 
-Grok on the web, iOS and Android can call remote MCP servers. Add PostQueen at [grok.com/connectors](https://grok.com/connectors), and Grok can list your channels, generate media and schedule posts through her [14 MCP tools](/mcp/tools).
+Grok on the web, iOS and Android can call remote MCP servers. Add PostQueen at [grok.com/connectors](https://grok.com/connectors), and Grok can list your channels, generate media and schedule posts through PostQueen's [21 MCP tools](/mcp/tools).
 
 This page is Grok chat only. [Grok Bot](/mcp/clients/grok-bot) is the cloud agent. [Grok Build](/mcp/clients/grok-build) is the terminal coding agent. Connecting here does not install PostQueen on either.
 
 <Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 </Info>
 
 <Warning>
-With this setup, your API key travels inside the connector URL, so the URL itself is a secret. Anyone who has it can post from your accounts. Do not screenshot the connector settings. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+With this setup, your API key travels inside the connector URL, so the URL itself is a secret. Anyone who has it can post from your accounts. Do not screenshot the connector settings. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
 </Warning>
 
 ## Setup
@@ -61,6 +61,6 @@ Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY
     Terminal agent. grok mcp add, not grok.com/connectors.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 14 tools Grok gains, with every parameter
+    All 21 tools Grok gains, with every parameter
   </Card>
 </CardGroup>

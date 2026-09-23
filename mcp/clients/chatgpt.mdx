@@ -4,7 +4,7 @@ description: 'Connect ChatGPT to PostQueen over MCP in Developer mode'
 icon: /images/brand/icon-chatgpt.svg
 ---
 
-ChatGPT talks to PostQueen over MCP. She is not in the ChatGPT app store or GPT store. You turn on Developer mode, create a custom MCP app, and paste the MCP URL. Once it is set up, you can ask ChatGPT to list your connected accounts, generate images and schedule posts. It calls her [17 MCP tools](/mcp/tools) behind the scenes.
+ChatGPT talks to PostQueen over MCP. PostQueen is not in the ChatGPT app store or GPT store. You turn on Developer mode, create a custom MCP app, and paste the MCP URL. Once it is set up, you can ask ChatGPT to list your connected accounts, generate images and schedule posts. It calls PostQueen's [21 MCP tools](/mcp/tools) behind the scenes.
 
 <Note>
 This is ChatGPT the chat product. Codex, OpenAI's coding agent, is a different product — same split as Claude vs Claude Code. Codex setup: [Codex](/mcp/clients/codex).
@@ -18,10 +18,10 @@ This is ChatGPT the chat product. Codex, OpenAI's coding agent, is a different p
 
 - **A paid ChatGPT plan, on the web.** Custom MCP apps require Developer mode. PostQueen is not listed in the ChatGPT app store; searching Apps will not find her. Developer mode is not on the Free plan and it is not in the ChatGPT mobile apps. Plus and Pro can usually turn it on; on Business, Enterprise and Edu an admin controls who gets it. Availability changes, so if you do not see the option, check OpenAI's [developer mode help article](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt).
 - **Write tools are plan-gated.** OpenAI's Help Center currently says full MCP, including modify/write actions such as scheduling, is for Business and Enterprise/Edu. Pro (and Plus) can connect MCP with read/fetch. OpenAI's older developer-mode API guide still lists Plus/Pro with write. Treat connect as likely on Plus/Pro, and `integrationSchedulePostTool` as maybe blocked until your plan has write.
-- **Your PostQueen API key.** In the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+- **Your PostQueen API key.** In the PostQueen app at [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 
 <Warning>
-With this setup, your API key travels inside the MCP URL, so the URL itself is a secret. Anyone who has it can post from your accounts. Do not share screenshots of the app settings. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+With this setup, your API key travels inside the MCP URL, so the URL itself is a secret. Anyone who has it can post from your accounts. Do not share screenshots of the app settings. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
 </Warning>
 
 ## Setup
@@ -74,7 +74,7 @@ Your channel names come back, because ChatGPT reached for her `integrationList` 
 
 <CardGroup cols={2}>
   <Card title="MCP Tools" icon="wrench" href="/mcp/tools">
-    See what all 17 tools can do
+    See what all 21 tools can do
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     Real prompts and the tool calls they trigger

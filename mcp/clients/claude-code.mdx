@@ -7,10 +7,10 @@ icon: /images/brand/icon-claude-code.svg
 Claude Code is Anthropic's terminal and IDE agent. It is not claude.ai or Claude Desktop — that
 chat product uses a [custom connector](/mcp/clients/claude). Same pairing as Codex vs ChatGPT.
 
-Claude Code connects to her over streamable HTTP with a single `claude mcp add` command, and her 14 tools are there in the terminal you already have open.
+Claude Code connects to PostQueen over streamable HTTP with a single `claude mcp add` command, and PostQueen's 21 tools are there in the terminal you already have open.
 
 <Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 </Info>
 
 ## Add via CLI
@@ -59,7 +59,7 @@ claude mcp add --transport http postqueen https://api.postqueen.ai/mcp --header 
 ```
 
 <Warning>
-Your API key grants full access to your PostQueen workspace: treat it like a password, and use the `${POSTQUEEN_API_KEY}` form above in any `.mcp.json` you check in. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key grants full access to your PostQueen workspace: treat it like a password, and use the `${POSTQUEEN_API_KEY}` form above in any `.mcp.json` you check in. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
 </Warning>
 
 ## Self-hosted
@@ -81,14 +81,14 @@ Your channel names come back, because the agent reached for her `integrationList
 </Check>
 
 <Tip>
-Her skill teaches Claude Code the `postqueen` CLI as well, which reaches the analytics and the post edits MCP has no tool for. Both routes can run side by side: see [Claude Code as an agent](/agents/claude-code).
+The postqueen skill teaches Claude Code the `postqueen` CLI as well, which reaches what MCP has no tool for: channel analytics, deleting posts, moving a draft to scheduled and uploading a local file. Both routes can run side by side: see [Claude Code as an agent](/agents/claude-code).
 </Tip>
 
 ## Next steps
 
 <CardGroup cols={2}>
   <Card title="Tools reference" icon="screwdriver-wrench" href="/mcp/tools">
-    Every parameter of the 14 tools Claude Code just discovered
+    Every parameter of the 21 tools Claude Code just discovered
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     The flows where she has to look something up before she can post

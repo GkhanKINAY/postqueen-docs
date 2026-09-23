@@ -9,8 +9,8 @@ PostQueen speaks MCP over streamable HTTP, so any MCP-compatible client connects
 ## Add her to your client
 
 <Info>
-**Get your key first.** In [app.postqueen.ai](https://app.postqueen.ai), open **Settings →
-API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
+**Get your key first.** In [app.postqueen.ai](https://app.postqueen.ai), open **Connections >
+API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Swap it for `YOUR_API_KEY` below.
 </Info>
 
 <Tabs>
@@ -59,10 +59,10 @@ API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
     In the Bot chat, send:
 
     ```
-    Add this MCP server: https://api.postqueen.ai/mcp/YOUR_API_KEY
+    Connect PostQueen as an MCP server at https://api.postqueen.ai/mcp
     ```
 
-    Not grok.com/connectors, and not Cursor `mcp.json`: [Grok Bot](/mcp/clients/grok-bot).
+    Choose **Connect** on the card the Bot shows, then paste your API key into its secure prompt. Never paste the key into the chat itself. Not grok.com/connectors, and not Cursor `mcp.json`: [Grok Bot](/mcp/clients/grok-bot).
   </Tab>
 
   <Tab title="Grok Build">
@@ -102,18 +102,18 @@ API Keys** and click **Reveal**. Swap it for `YOUR_API_KEY` below.
   </Tab>
 
   <Tab title="Any other client">
-    Field names differ. Cursor uses `mcpServers.url`. VS Code uses `servers` plus `"type": "http"`. Windsurf uses `serverUrl`. Zed uses `context_servers` plus a Bearer header.
+    Field names differ. Cursor uses `mcpServers.url`. VS Code uses `servers` plus `"type": "http"`. Devin Desktop uses `mcpServers.url` in `~/.config/devin/mcp_config.json`. Zed uses `context_servers` plus a Bearer header.
 
     ```
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
 
-    Dedicated pages: [VS Code](/mcp/clients/vscode), [Windsurf](/mcp/clients/windsurf), [Zed](/mcp/clients/zed). Everything else: [Other clients](/mcp/clients/other-clients).
+    Dedicated pages: [VS Code](/mcp/clients/vscode), [Devin Desktop](/mcp/clients/windsurf), [Zed](/mcp/clients/zed). Everything else: [Other clients](/mcp/clients/other-clients).
   </Tab>
 </Tabs>
 
 <Warning>
-The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+The connector URL contains your API key, and that key can post to every channel you have connected. Treat it like a password. If the key leaks, an admin rotates it under **Connections > API Keys**; then update every client that uses it.
 </Warning>
 
 ## Pick your client
@@ -143,8 +143,8 @@ The connector URL contains your API key, and that key can post to every channel 
   <Card title="VS Code" icon="/images/brand/icon-vscode.svg" href="/mcp/clients/vscode">
     `servers` plus `"type": "http"`, not Cursor `mcpServers`
   </Card>
-  <Card title="Windsurf" icon="/images/brand/icon-windsurf.svg" href="/mcp/clients/windsurf">
-    Cascade `mcp_config.json` with `serverUrl`
+  <Card title="Devin Desktop" icon="laptop-code" href="/mcp/clients/windsurf">
+    One `devin mcp add` command, or `mcp_config.json` with `url`
   </Card>
   <Card title="Zed" icon="/images/brand/icon-zed.svg" href="/mcp/clients/zed">
     `context_servers` plus a Bearer header
@@ -220,7 +220,7 @@ Nothing else to install.
   </Accordion>
 
   <Accordion title="It worked yesterday">
-    Check whether the API key was regenerated. Rotating it in **Settings → API Keys** takes the old one out immediately and every client still holding it stops mid
+    Check whether the API key was regenerated. Rotating it under **Connections > API Keys** takes the old one out immediately and every client still holding it stops mid
     conversation. PostQueen keys never rotate on their own.
   </Accordion>
 </AccordionGroup>
@@ -229,7 +229,7 @@ Nothing else to install.
 
 <CardGroup cols={2}>
   <Card title="Tools Reference" icon="screwdriver-wrench" href="/mcp/tools">
-    Every parameter and every field the fourteen tools send back
+    Every parameter and every field the 21 tools send back
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     Discord channels, video voices, and the flows that need a lookup first

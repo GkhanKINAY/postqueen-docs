@@ -1,23 +1,21 @@
 ---
-title: Muse
-description: 'Muse Code already talks to PostQueen over MCP. The consumer Muse app is coming soon.'
+title: Muse Code and Muse
+description: "Muse Code, Meta's coding agent, connects to PostQueen over MCP. Muse, the personal agent, connects through a custom connector and is not tested yet."
 icon: /images/brand/icon-muse.svg
 ---
 
-## Two Muse products
+Meta ships two different agents with the Muse name, and they connect to PostQueen in different ways.
 
-Meta ships Muse as a personal agent in the Muse app (and WhatsApp) and as **Muse Code**, a coding agent. They do not connect the same way.
-
-- **Muse Code** loads remote MCP servers from `~/.config/muse/settings.json` over streamable HTTP. Point it at PostQueen and her [14 MCP tools](/mcp/tools) show up. This works today.
-- **The Muse app** has Connectors, including custom connectors built from API details Muse walks you through. That is not a paste-an-MCP-URL flow. First-class MCP for the Muse app is coming soon.
-
-<Warning>
-Do not paste `https://api.postqueen.ai/mcp/YOUR_API_KEY` into Muse Settings → Connectors expecting it to work like Claude or Grok. It will not. Use Muse Code, or another MCP client, until Meta ships that.
-</Warning>
+- **Muse Code** is Meta's coding agent for the terminal and CI. It reads PostQueen's MCP address from its settings file. [Set it up](#muse-code).
+- **Muse** is Meta's personal agent in the Muse app, on muse.ai and in WhatsApp. Meta does not document a place to paste an MCP address in it. [How it connects](#muse-the-personal-agent).
 
 ## Muse Code
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Then add PostQueen to `~/.config/muse/settings.json`:
+<Note>
+From Meta's docs, not tested by PostQueen yet.
+</Note>
+
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Then add PostQueen to `~/.config/muse/settings.json`:
 
 ```json
 {
@@ -32,21 +30,44 @@ Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open 
 }
 ```
 
-Restart Muse Code after saving. Ask it to list your connected social media accounts.
+Restart Muse Code after saving, then type `/mcp` to see PostQueen's [21 MCP tools](/mcp/tools). Ask it to list your connected social media accounts.
 
 <Card title="Full setup: Muse Code over MCP" icon="/images/brand/icon-muse.svg" href="/mcp/clients/muse">
-  Header auth, self-hosted URLs, and what the Muse app does instead
+  Header auth, self-hosted URLs and the settings file rules
 </Card>
 
-## Muse app
+## Muse, the personal agent
 
-Coming soon. When Meta lets you paste a remote MCP URL the way Claude and Grok do, the steps will live on [Muse over MCP](/mcp/clients/muse). Until then the honest path is Muse Code or [any other MCP client](/mcp/clients/other-clients).
+<Note>
+Not tested by PostQueen yet.
+</Note>
+
+PostQueen is not in Muse's connector list, and Meta does not document pasting an MCP address into Muse. Meta's route for a service that is not listed is a custom connector that Muse builds with you in the chat:
+
+<Steps>
+  <Step title="Get your key">
+    In PostQueen, open **Connections > API Keys** and copy the key. Only a workspace admin can reveal it.
+  </Step>
+  <Step title="Ask Muse to create a custom connector">
+    In a Muse chat, ask Muse to create a custom connector for PostQueen. Muse guides you through it.
+  </Step>
+  <Step title="Enter the key only in the secure prompt">
+    When Muse asks for your API key, enter it only in the secure prompt Muse shows, never in the chat.
+  </Step>
+  <Step title="Choose what Muse may do">
+    Muse asks your permission before a connector acts. You can change that later under **Settings > Permissions** in Muse.
+  </Step>
+</Steps>
+
+<Warning>
+The API key gives full access to your PostQueen workspace, and Meta does not review custom connectors. Grant access with care. Muse is rolling out in the US and is not available everywhere yet.
+</Warning>
 
 ## Learn more
 
 <CardGroup cols={2}>
-  <Card title="Muse MCP setup" icon="/images/brand/icon-muse.svg" href="/mcp/clients/muse">
-    Muse Code settings.json, and why the consumer app is marked soon
+  <Card title="Muse Code MCP setup" icon="/images/brand/icon-muse.svg" href="/mcp/clients/muse">
+    The Muse Code settings file, step by step
   </Card>
   <Card title="Agents overview" icon="compass" href="/agents/overview">
     Every way to put an agent in front of PostQueen

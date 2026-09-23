@@ -6,14 +6,14 @@ icon: /images/brand/icon-grok.svg
 
 Grok Bot is the cloud agent. It is not Grok chat at grok.com, it is not [Grok Build](/mcp/clients/grok-build), and it does not read connectors you added at [grok.com/connectors](https://grok.com/connectors). Cursor staff document adding a custom server **in the Bot chat**. PostQueen is not a Grok Bot marketplace plugin.
 
-The MCP URL is the same one Grok chat uses. The product and the setup are different.
+The product and the setup are different from Grok chat. This is the flow PostQueen tested with Grok Bot on 2026-09-19.
 
 <Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 </Info>
 
 <Warning>
-Your API key travels inside the connector URL, so the URL itself is a secret. Anyone who has it can post from your accounts. Do not screenshot the Bot chat while the URL is visible. If the key leaks, regenerate it in **Settings → API Keys** and add the new URL.
+Your API key can post from every account you have connected. Give it to Grok Bot only through the secure prompt the Bot shows when you choose **Connect**, never in the chat itself: the secure prompt keeps the key out of the transcript and away from the model. If the key leaks, an admin rotates it under **Connections > API Keys**; then connect again with the new key.
 </Warning>
 
 ## Setup
@@ -22,17 +22,20 @@ Your API key travels inside the connector URL, so the URL itself is a secret. An
   <Step title="Open Grok Bot">
     Use Grok Bot, not grok.com and not Cursor IDE `mcp.json`. The Bot runs on a cloud computer. A server that only listens on localhost will not connect.
   </Step>
-  <Step title="Ask it to add the MCP server">
+  <Step title="Ask it to connect PostQueen">
     In the Bot chat, send:
 
     ```
-    Add this MCP server: https://api.postqueen.ai/mcp/YOUR_API_KEY
+    Connect PostQueen as an MCP server at https://api.postqueen.ai/mcp
     ```
 
-    Confirm the URL when the Bot asks. New tools show up from the next message.
+    PostQueen is not in the Bot's catalog, so it offers to add it as a custom MCP server and shows a card with **Connect** and **Not now**.
+  </Step>
+  <Step title="Enter the key in the secure prompt">
+    Choose **Connect**, then paste your API key into the secure prompt the Bot opens. Never paste the key into the chat.
   </Step>
   <Step title="Confirm">
-    Ask it to list your connected social media accounts. Your channel names come back when it calls `integrationList`.
+    Ask it to list your connected social media accounts. Your channel names come back when it calls `integrationList`. If the tools do not show up, open **Plugins > Yours** and make sure the PostQueen server is enabled.
   </Step>
 </Steps>
 
@@ -44,11 +47,15 @@ Grok Bot reaches PostQueen from the cloud, not from your machine, so the URL has
 Teams inherit Cursor MCP allowlists. If a member sees a server disabled by a team admin, that is Cursor team policy, not a second PostQueen URL.
 </Note>
 
+<Note>
+Use the address above with your API key. The sign-in address (`/mcp-oauth-dynamic`) does not work with Grok Bot yet.
+</Note>
+
 For Grok on the web, iOS and Android, use the [Grok chat connector](/mcp/clients/grok) instead.
 
 ## Self-hosted
 
-Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY` tail. Most self-hosted setups serve the backend under `/api`, so the path sits at `/api/mcp`. The reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/mcp/self-hosting). The Bot still needs that URL on the public internet.
+Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp` tail. Most self-hosted setups serve the backend under `/api`, so the path sits at `/api/mcp`. The reverse proxy has to forward `/mcp` and stream the response: [MCP on a self-hosted install](/mcp/self-hosting). The Bot still needs that URL on the public internet.
 
 ## Next steps
 
@@ -60,6 +67,6 @@ Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY
     Terminal agent. grok mcp add, not the Bot chat.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 14 tools, with every parameter
+    All 21 tools, with every parameter
   </Card>
 </CardGroup>

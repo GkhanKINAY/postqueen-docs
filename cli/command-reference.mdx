@@ -29,12 +29,12 @@ postqueen integrations:list | tail -n +2 | jq '.[].id'
 
 | Variable | Default | What it does |
 |----------|---------|--------------|
-| `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Settings → API Keys**, then **Reveal**. |
+| `POSTQUEEN_API_KEY` | - | Your API key. Get it from [app.postqueen.ai](https://app.postqueen.ai): **Connections > API Keys**, then **Reveal**. Only a workspace admin can reveal it. |
 | `POSTQUEEN_API_URL` | `https://api.postqueen.ai` | API base. The CLI appends `/public/v1/...` to whatever you set. Running her yourself? Set this to your `NEXT_PUBLIC_BACKEND_URL`, for example `https://postqueen.example.com/api`. |
-| `POSTQUEEN_AUTH_SERVER` | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only matters if you run your own; see [Authentication](/cli/authentication). |
+| `POSTQUEEN_AUTH_SERVER` | none | A device-flow auth server you run yourself. PostQueen runs none, so there is no default; see [Authentication](/cli/authentication). |
 
 <Note>
-Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `❌ Error: No authentication found.`, an `Options:` header, then two numbered lines naming your options. All four go to stderr, so redirect with `2>&1` if you want them in a log.
+Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`; the API URL then comes from the credentials file. If neither credentials nor a key is present, any command that talks to the API exits with code `1` and prints `❌ Error: No authentication found.`, an `Options:` header, then the API key option with where to find the key, and the own-auth-server option. All of it goes to stderr, so redirect with `2>&1` if you want them in a log.
 </Note>
 
 ## Auth
@@ -42,11 +42,11 @@ Stored OAuth2 credentials in `~/.postqueen/credentials.json` take priority over 
 | Command | Flags | What it does |
 |---------|-------|--------------|
 | `postqueen auth:status` | - | Shows the active method (OAuth2 credentials or API key) and a truncated key, plus the API URL when OAuth2 credentials are in use, then verifies it by calling `/public/v1/integrations` and reports how many channels are connected. |
-| `postqueen auth:login` | `--auth-server <url>` (default `https://cli-auth.postqueen.ai`) | Starts the OAuth2 device flow: prints a one-time code and opens your browser, then saves the token to `~/.postqueen/credentials.json` with `0600` permissions. |
+| `postqueen auth:login` | `--auth-server <url>` (no default) | Without an auth server it makes no network call: it explains where the API key is and how to set `POSTQUEEN_API_KEY`, and exits `1` unless that key is set. With `--auth-server` (or `POSTQUEEN_AUTH_SERVER`) it runs the OAuth2 device flow against a server you run yourself and saves the token to `~/.postqueen/credentials.json` with `0600` permissions. |
 | `postqueen auth:logout` | - | Deletes the stored credentials file. Prints `No stored credentials found.` if there was nothing to remove. |
 
 <Warning>
-`auth:login` needs a reachable auth server, and PostQueen does not currently host one at the default `cli-auth.postqueen.ai` address. Use an API key, or [self-host the auth server](/cli/authentication). Every command works identically either way.
+On the hosted service the CLI signs in with an API key only. PostQueen runs no auth server; the device flow is only for one you run yourself ([Authentication](/cli/authentication)). Every command works identically either way.
 </Warning>
 
 ## Integrations

@@ -81,8 +81,8 @@ commands. If a thing can run a shell command, it can run your social media.
 </Note>
 
 <Tip>
-Prefer tool calls to shell commands? Connect over MCP and you get the same capabilities as 14 tools,
-with no local install. Setup: [MCP setup](/mcp/setup).
+Prefer tool calls to shell commands? Connect over MCP and you get 21 tools with no local install.
+They are not identical to the CLI: MCP adds image generation and a device upload panel in some chat apps, and has no post delete, status change or channel analytics. Setup: [MCP setup](/mcp/setup).
 </Tip>
 
 ## Two hard rules
@@ -98,7 +98,7 @@ export POSTQUEEN_API_KEY=your_api_key
 postqueen auth:status
 ```
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Treat it like a password, since it grants full access to your account.
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Treat it like a password, since it grants full access to your account.
 </Warning>
 
 <Warning>
@@ -115,7 +115,7 @@ postqueen posts:create \
 </Warning>
 
 <Note>
-`postqueen auth:login` runs an OAuth2 device flow against `cli-auth.postqueen.ai` unless you point it elsewhere with `--auth-server` or `POSTQUEEN_AUTH_SERVER`. That host is not serving yet, so on the hosted service the API key is the route to take today, and self-hosters can run the auth server themselves in the meantime.
+On the hosted service the CLI signs in with an API key only. `postqueen auth:login` explains where the key is and makes no network call, unless you point it at a device-flow auth server you run yourself with `--auth-server` or `POSTQUEEN_AUTH_SERVER`.
 </Note>
 
 ## The core workflow
@@ -203,6 +203,6 @@ takes stays a normal command with a result you can read.
     Every command and flag, with the exact syntax an agent needs.
   </Card>
   <Card title="MCP setup" icon="plug" href="/mcp/setup">
-    Connect an MCP client to her 14 hosted tools in one line.
+    Connect an MCP client to PostQueen's 21 hosted tools in one line.
   </Card>
 </CardGroup>

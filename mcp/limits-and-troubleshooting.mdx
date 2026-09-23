@@ -1,14 +1,14 @@
 ---
 title: Limits and Troubleshooting
 sidebarTitle: Limits
-description: 'What the 14 MCP tools cannot reach, and what to do when the connection misbehaves'
+description: 'What the 21 MCP tools cannot reach, and what to do when the connection misbehaves'
 icon: 'gauge'
 ---
 
-The tools she answers over MCP are built to make things: they read your channels and their rules, then create posts and media. They can also list what is on the calendar and change a scheduled post's settings. Deleting, rescheduling, analytics and anything that touches a connection live on the [Public API](/public-api/introduction) and the [CLI](/cli/introduction) instead.
+The tools PostQueen answers over MCP are built to make things: they read your channels and their rules, then create posts and media. They can also list and read what is on the calendar, change a scheduled post's settings, and report how published posts did. Deleting, rescheduling, channel analytics and anything that touches a connection live on the [Public API](/public-api/introduction) and the [CLI](/cli/introduction) instead.
 
 <Info>
-**No MCP tool deletes a post, moves one to a new time, or returns analytics.** Ask your agent to
+**No MCP tool deletes a post, moves one to a new time, or reads channel analytics such as follower growth.** Post analytics are there. Ask your agent to
 push Tuesday's post to Wednesday and it has no way to do it. Nothing is broken. Read this page
 before you build on MCP, not after.
 </Info>
@@ -23,7 +23,7 @@ before you build on MCP, not after.
 | Delete a post | No tool deletes posts | [`DELETE /posts/{id}`](/public-api/posts/delete), or `postqueen posts:delete <id>` |
 | Delete every post in a group | No tool | [`DELETE /posts/group/{group}`](/public-api/posts/delete-by-group) |
 | Move a post between draft and schedule | `integrationSchedulePostTool` sets `type` when the post is created and never again | [`PUT /posts/{id}/status`](/public-api/posts/change-status), or `postqueen posts:status <id> --status schedule` |
-| Read analytics | No tool returns metrics | [`GET /analytics/{integration}`](/public-api/analytics/platform) and [`GET /analytics/post/{postId}`](/public-api/analytics/post), or `postqueen analytics:platform <id>` |
+| Read channel analytics, such as followers | Post analytics only: `analyticsSummaryTool`, `analyticsPostsTool` and `analyticsPostTool` report how published posts did | [`GET /analytics/{integration}`](/public-api/analytics/platform), or `postqueen analytics:platform <id>` |
 | See what published and what failed | No notification tool | [`GET /notifications`](/public-api/notifications/list), 100 per page, newest first |
 | Reconnect a published post so its analytics work | No tool | [`GET /posts/{id}/missing`](/public-api/posts/missing-content) then [`PUT /posts/{id}/release-id`](/public-api/posts/update-release-id) |
 
@@ -35,7 +35,7 @@ before you build on MCP, not after.
 | Find the next open slot on a channel | No tool | [`GET /find-slot/{id}`](/public-api/integrations/find-slot) |
 | Connect a new channel | No tool | [`GET /social/{integration}`](/public-api/integrations/connect) for the OAuth URL, or the app |
 | Remove a channel | No tool | [`DELETE /integrations/{id}`](/public-api/integrations/delete), or the app |
-| Upload a file from your disk | `uploadFromUrlTool` takes a public URL only | [`POST /upload`](/public-api/uploads/upload-file), or `postqueen upload <file>` |
+| Upload a file from your disk | In Claude, Claude Cowork and ChatGPT, `uploadWidgetTool` opens an upload panel. Other clients take a public URL only, through `uploadFromUrlTool` | [`POST /upload`](/public-api/uploads/upload-file), or `postqueen upload <file>` |
 | Read or reply to comments | No tool | No interface today |
 
 Three of these deserve a longer sentence.
@@ -52,22 +52,21 @@ Three of these deserve a longer sentence.
 
 The move from draft to schedule is [`PUT /posts/{id}/status`](/public-api/posts/change-status) or `postqueen posts:status`. There is no MCP tool for that step.
 
-### Her channel list over MCP does not say which channels are switched off
+### The channel list over MCP shows only channels that can post
 
-`integrationList` returns four fields per channel and no more. The tool builds a richer row than that internally, then the declared output schema trims it on the way out.
+`integrationList` returns four fields per channel and no more, and it leaves out channels that are disabled, need a reconnect, or are not fully connected yet.
 
 | Field | `integrationList` over MCP | [`GET /integrations`](/public-api/integrations/list) |
 | --- | --- | --- |
 | `id`, `name`, `picture`, `platform` | Returned | Returned |
-| `disabled` | Trimmed off before your client sees it | Returned |
-| `profile` | Trimmed off | Returned |
-| `customer` (the owning group) | Trimmed off | Returned |
+| Disabled or reconnect-needed channels | Left out of the list | Returned, with `disabled` |
+| `profile` | Not returned | Returned |
+| `customer` (the owning group) | Not returned | Returned |
 
-<Warning>
-An agent working only through MCP cannot tell a live channel from a disabled one, and will
-happily schedule to a channel that will not publish. If that matters to your build, read the
-channel list from the API and pass the IDs to your agent.
-</Warning>
+<Note>
+A channel that disappears from your agent's list is usually disabled or waiting for a reconnect.
+Check it on the Channels page in the app.
+</Note>
 
 <Tip>
 Groups are not a dead end on MCP, they just work from the other direction. `integrationList`
@@ -76,14 +75,15 @@ come from the `groupList` tool. Your agent can therefore ask for one group's cha
 though it cannot read the group back off any channel.
 </Tip>
 
-### Media has to be reachable before she can attach it
+### Media has to be reachable before it can be attached
 
-`uploadFromUrlTool` pulls a public URL into your media library and returns a hosted `path`. That covers a link your agent found. It does not cover a file sitting on your machine, because MCP carries no file body.
+`uploadFromUrlTool` pulls a public URL into your media library and returns a hosted `path`. That covers a link your agent found. For a file on your device, clients that show MCP Apps panels (Claude, Claude Cowork and ChatGPT) can open the **Upload Media** panel with `uploadWidgetTool`. Other clients have no way to send a file body over MCP.
 
 | Where the media is | How it gets in |
 | --- | --- |
 | A public URL | `uploadFromUrlTool` over MCP |
-| A file on your machine | [`POST /upload`](/public-api/uploads/upload-file), or `postqueen upload` |
+| A file on your device, in Claude, Claude Cowork or ChatGPT | `uploadWidgetTool` opens an upload panel in the chat |
+| A file on your machine, anywhere else | [`POST /upload`](/public-api/uploads/upload-file), or `postqueen upload` |
 
 <Note>
 One thing runs the other way. `generateImageTool` is MCP only: there is no image generation
@@ -142,7 +142,7 @@ that tells you which part is at fault, are on
 
 ### After you rotate your API key
 
-Regenerating the key in **Settings → API Keys** takes the old one out immediately, and every client still holding it stops mid-conversation. PostQueen keys do not rotate on their own, so this only happens when you ask for it.
+Rotating the key under **Connections > API Keys** (admins only) takes the old one out immediately, and every client still holding it stops mid-conversation. PostQueen keys do not rotate on their own, so this only happens when you ask for it.
 
 <Steps>
   <Step title="Find every client that holds the key">
@@ -170,18 +170,17 @@ token` on `/mcp`, and `400 Invalid API Key` on `/mcp/YOUR_API_KEY`.
 
 ### Transports you may notice, and should not build on
 
-Poke at the server and you will find more than the two endpoints above. They are real, they answer, and none of them are documented as a supported path.
+Two more addresses answer besides the two endpoints above.
 
 | Path | What it is |
 | --- | --- |
-| `/mcp-oauth` | An MCP endpoint guarded by OAuth bearer-token middleware rather than a plain key check. It answers `401` with a JSON body, for example `{"error": "invalid_token", "error_description": "Could not resolve organization"}` |
-| `/.well-known/oauth-protected-resource` and `/.well-known/oauth-authorization-server` | The OAuth discovery documents that point at the same `/oauth/authorize` and `/oauth/token` endpoints described in [OAuth2 Authentication](/public-api/oauth). Some clients fetch these on their own during connect |
+| `/mcp-oauth-dynamic` | The sign-in address, an option for clients that support MCP OAuth. The client registers itself, you sign in, and a workspace admin approves; revoke access under **Connections > Approved Apps**. 20 tools, everything except `ask_postqueen`. Not tested by PostQueen yet. A missing or bad token gets `401` with a JSON body. Its discovery documents are at `/.well-known/oauth-protected-resource/mcp-oauth-dynamic` and `/.well-known/oauth-authorization-server/mcp-oauth-dynamic`; the root `/.well-known` paths answer `404` on purpose |
 | `/sse/:apiKey` paired with `/message/:apiKey` | The legacy Server-Sent Events transport that predates streamable HTTP. API keys only, and a bad one returns the same `400 Invalid API Key` |
 
 <Warning>
-Prefer `/mcp` or `/mcp/YOUR_API_KEY` over streamable HTTP. `/mcp-oauth*` is for directory OAuth
-clients and exposes a shorter tool set (see [Tools Reference](/mcp/tools#how-many-tools-you-actually-get)).
-The SSE pair is still mounted and still serves the full 14-tool set, but it is the older
+Prefer `/mcp` or `/mcp/YOUR_API_KEY` over streamable HTTP. The sign-in address exposes 20 tools
+(see [Tools Reference](/mcp/tools#how-many-tools-you-get)).
+The SSE pair is still mounted and still serves the full 21-tool set, but it is the older
 transport: reconfigure a client that falls back to it unless that client cannot speak streamable HTTP.
 </Warning>
 
@@ -195,12 +194,12 @@ transport: reconfigure a client that falls back to it unless that client cannot 
     tools. The other tools work without it.
   </Accordion>
   <Accordion title="What happens when my API key expires or is rotated?">
-    PostQueen API keys do not auto-rotate, but if you regenerate one in Settings → API Keys, every MCP client using the old key stops working until you update its config.
+    PostQueen API keys do not auto-rotate, but if an admin rotates the key under Connections > API Keys, every MCP client using the old key stops working until you update its config.
     Update the URL or the `Authorization` header in your client config and reconnect.
   </Accordion>
   <Accordion title="Can MCP read or reply to comments?">
-    Not today. The current tool set is read-only on integrations and write-only on posts and
-    media: there is no `getComments` or `replyToComment` tool. The closest feature is
+    Not today. The tools read channels, posts and post analytics, and create posts and media:
+    there is no `getComments` or `replyToComment` tool. The closest feature is
     [Auto Actions](/using/auto-actions), which can repost your own post or add a follow-up comment
     on it once it crosses the like milestone you set.
   </Accordion>

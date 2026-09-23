@@ -23,7 +23,7 @@ these docs send you to a specific one.
 | **Auto Post** | RSS feeds that turn new articles into scheduled posts on their own | Your plan includes auto posting |
 | **Social Sets** | Saved groups of channels, so you stop reselecting the same five | Any plan above Free |
 | **Signatures** | Blocks of text appended to posts, per channel | Any plan above Free |
-| **API Keys** | The workspace public API key. Reveal, copy and rotate it here | The tab is visible to every member. Revealing or rotating the key is an admin action |
+| **API Keys** | The workspace API key, the same one as on **Connections > API Keys**. Reveal, copy and rotate it here | The tab is visible to every member. Only an admin can reveal or rotate the key |
 | **Developers** | OAuth apps you build for other PostQueen users | Your plan includes the public API. Creating or rotating the client secret is an admin action |
 | **Approved Apps** | Third-party apps you have authorized against your account | Always |
 
@@ -100,21 +100,20 @@ Append `?tab=` and the tab's key:
 
 ```
 https://app.postqueen.ai/settings?tab=account
-https://app.postqueen.ai/settings?tab=api
 https://app.postqueen.ai/settings?tab=teams
 https://app.postqueen.ai/settings?tab=autopost
 ```
 
 The keys are `global_settings`, `language`, `teams`, `account`, `webhooks`, `autopost`, `sets`,
-`signatures`, `api`, `developers` and `approved_apps`. **Account** is `account`. **API Keys** is
-`api`. **Developers** (OAuth apps) is `developers`. An unrecognised or unavailable key falls back
+`signatures`, `api`, `developers` and `approved_apps`. **Account** is `account`. **Developers** (OAuth apps) is `developers`. For the API key, open
+**Connections > API Keys**. An unrecognised or unavailable key falls back
 to Global Settings rather than erroring.
 
 ## Where to go for each
 
 <CardGroup cols={2}>
   <Card title="Your API key" icon="key" href="/public-api/introduction">
-    API Keys tab. The key the CLI, MCP and the public API all use
+    Connections > API Keys. The key the CLI, MCP and the public API all use
   </Card>
   <Card title="Teams" icon="users" href="/using/teams-and-collaboration">
     Who you invite, and what each role can do

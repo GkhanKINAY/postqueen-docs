@@ -45,7 +45,7 @@ Two ways to authenticate, and both ride in the same `Authorization` header:
 
 ### API Key
 
-Get your API key from **Settings → API Keys**. The tab is there for every member of the workspace; revealing or rotating the key is an admin action. Include the key in the `Authorization` header, with no `Bearer` prefix:
+Get your API key from **Connections > API Keys** in the app. The key belongs to the whole workspace, so only a workspace admin can reveal or rotate it; members see it masked. Include the key in the `Authorization` header, with no `Bearer` prefix:
 
 ```bash
 curl -H "Authorization: your-api-key" https://api.postqueen.ai/public/v1/integrations
@@ -68,7 +68,7 @@ Both reach the same endpoints. The difference is whose account you are acting on
 | Acts as | Your own organization | The organization of the user who authorized you |
 | Good for | Your own scripts and automation | A product other PostQueen users sign in to |
 | Lifetime | No expiry | Follows the grant. The code that produced it is single-use and short-lived |
-| Rotating it | Regenerate in **Settings → API Keys**, which takes the old one out immediately | Rotate the client secret in **Settings → Developers** |
+| Rotating it | An admin rotates it under **Connections > API Keys**, which takes the old one out immediately | The user who authorized you revokes the app under **Connections > Approved Apps** |
 
 <Note>
 An API key has no expiry and nothing rotates it on a schedule. It stops working when you

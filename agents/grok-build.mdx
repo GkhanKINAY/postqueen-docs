@@ -12,7 +12,7 @@ A custom connector at [grok.com/connectors](https://grok.com/connectors) does no
 
 ## Set up
 
-Two routes lead to the same place. MCP hands Grok Build her 14 hosted tools with nothing installed locally. Her skill teaches the `postqueen` CLI when you want shell commands and JSON you can pipe.
+Two routes lead to the same place. MCP hands Grok Build PostQueen's 21 hosted tools with nothing installed locally. The postqueen skill teaches the `postqueen` CLI when you want shell commands and JSON you can pipe.
 
 <Steps>
   <Step title="Connect over MCP">
@@ -29,7 +29,7 @@ Two routes lead to the same place. MCP hands Grok Build her 14 hosted tools with
     export POSTQUEEN_API_KEY="your-api-key"
     ```
 
-    The skill is a playbook. It does not install the CLI. Get the key from [app.postqueen.ai](https://app.postqueen.ai) under **Settings → API Keys**.
+    The skill is a playbook. It does not install the CLI. Get the key from [app.postqueen.ai](https://app.postqueen.ai) under **Connections > API Keys**. Only a workspace admin can reveal it.
 
     The repo also ships a Grok Build plugin (`.grok-plugin/plugin.json` and `.grok-plugin/marketplace.json`). Add the repo as a marketplace source; the identifier is `postqueen@postqueen-agent`. It loads the same skill and does not register an MCP server.
   </Step>

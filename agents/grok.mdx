@@ -12,18 +12,18 @@ This is Grok on the web, iOS and Android. Add PostQueen as a custom connector at
 
 [Grok Bot](/agents/grok-bot) is a different product. [Grok Build](/agents/grok-build) is the terminal coding agent. Connecting here does not install her on either.
 
-What she brings into the chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts. They do not delete a post or return analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+What PostQueen brings into the chat is its [21 MCP tools](/mcp/tools). They list your channels, read what each platform accepts, schedule the posts and report how published posts did. They do not delete a post or read channel numbers such as followers, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
 
 ## Set up
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Then paste this URL as a custom connector:
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Then paste this URL as a custom connector:
 
 ```
 https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
 <Warning>
-Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
 </Warning>
 
 The full walkthrough covers Business admin provisioning and self-hosted URLs:
@@ -63,6 +63,6 @@ Want an image with a post? `generateImageTool` produces one. Not ready for one o
     Terminal agent. grok mcp add, not grok.com.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 14 tools Grok gains once the connector is on
+    All 21 tools Grok gains once the connector is on
   </Card>
 </CardGroup>

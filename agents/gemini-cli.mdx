@@ -8,9 +8,9 @@ icon: /images/brand/icon-gemini-cli.svg
 
 The release is cut, the terminal is still open, and the only thing standing between you and the announcement is a browser tab you do not want to open. One line of setup later, Gemini CLI can see your channels, ask each one what it accepts and write the posts onto your calendar without you leaving the prompt.
 
-Gemini CLI reads MCP servers from its `settings.json`, and she is already hosted at a URL, so nothing new runs on your machine. On connect it discovers her [14 tools](/mcp/tools) and reads their schemas, which is why you never type a tool call by hand.
+Gemini CLI reads MCP servers from its `settings.json`, and PostQueen is already hosted at a URL, so nothing new runs on your machine. On connect it discovers PostQueen's [21 tools](/mcp/tools) and reads their schemas, which is why you never type a tool call by hand.
 
-Those 14 tools cover discovery, media and posting, and they can read back what is already scheduled and change a scheduled post's settings. They do not delete a post or move it to a new time, and there is no analytics tool among them. Both of those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the [`postqueen` CLI](/cli/introduction), which Gemini CLI can run as a shell command like any other.
+Those 21 tools cover discovery, media, posting and analytics for published posts, and they can read back what is already scheduled and change a scheduled post's settings. They do not delete a post, move it to a new time, or read channel numbers such as followers. Those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the [`postqueen` CLI](/cli/introduction), which Gemini CLI can run as a shell command like any other.
 
 ## Set up
 
@@ -21,8 +21,8 @@ gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/
 ```
 
 Your key comes from the app at [app.postqueen.ai](https://app.postqueen.ai), under
-**Settings → API Keys**. Then run `/mcp` inside Gemini CLI: `postqueen` should
-show as connected with 14 tools.
+**Connections > API Keys** (only a workspace admin can reveal it). Then run `/mcp` inside Gemini CLI: `postqueen` should
+show as connected with 21 tools.
 
 <Card title="Full setup: Gemini CLI over MCP" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
   Scope options, the `settings.json` block, the header variant, self-hosted URLs, and why an entry
@@ -87,10 +87,10 @@ Everything you scheduled needs nothing further from you. It sits on the calendar
     The usual cause is the wrong config key. Streamable HTTP servers go under `httpUrl`, while `url` is for SSE. After that, check the API key was pasted in full with no stray whitespace, and that the entry is in the file you think it is: `gemini mcp add` writes into the project unless you pass `--scope user`.
   </Accordion>
   <Accordion title="What can she do from a Gemini CLI session?">
-    Everything her 14 MCP tools cover. She lists your channels, reads what each platform accepts and schedules posts across your 30+ networks. Along the way she can fetch dynamic values like subreddit flairs, generate an image or build a video to attach.
+    Everything PostQueen's 21 MCP tools cover. They list your channels, read what each platform accepts and schedule posts across your 30+ networks. Along the way they can fetch dynamic values like subreddit flairs, generate an image or build a video to attach.
   </Accordion>
   <Accordion title="Can it check how a post performed?">
-    Not over MCP. There is no analytics tool in the set, and no tool for deleting posts either. For those, use the calendar at [app.postqueen.ai](https://app.postqueen.ai) or the `postqueen` CLI, which carries `posts:delete` and `analytics:platform`.
+    Yes, for published posts: `analyticsPostsTool` ranks them and `analyticsPostTool` reads one. Channel numbers such as follower growth are not over MCP, and no tool deletes posts either. For those, use the calendar at [app.postqueen.ai](https://app.postqueen.ai) or the `postqueen` CLI, which carries `posts:delete` and `analytics:platform`.
   </Accordion>
   <Accordion title="Can Gemini CLI use the CLI instead of MCP?">
     Yes. It runs shell commands, and every `postqueen` command takes flags and prints JSON, so nothing has to be scraped off the screen. The CLI is the wider surface of the two, and the one to reach for when you want listing, status changes or analytics. Installation and the full command set: [CLI introduction](/cli/introduction).
@@ -107,7 +107,7 @@ Everything you scheduled needs nothing further from you. It sits on the calendar
     The `settings.json` block, the Bearer variant and self-hosted URLs.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 14 tools Gemini discovers on connect, with every parameter.
+    All 21 tools Gemini discovers on connect, with every parameter.
   </Card>
   <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
     The `postqueen` CLI, for the work MCP does not cover.
