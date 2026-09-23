@@ -1,0 +1,100 @@
+---
+title: "Nostr"
+description: "Connect Nostr to PostQueen with your private key, what you can post to it, and the relays PostQueen sends your notes to."
+icon: "/images/channels/nostr.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="available" />
+
+Sign and broadcast Nostr notes and threads on schedule, with images linked by URL. You connect with your Nostr private key, and PostQueen sends each note to five public relays.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/nostr.webp" alt="A new Nostr post in the PostQueen composer, with the post types Nostr takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 100,000 characters per note, if the relays accept that much.
+  </Card>
+  <Card title="Media" icon="image">
+    Images and videos are linked by their address at the end of the note. They are not uploaded to a relay.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Text notes and threads, with each part replying to the one before.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Nostr.
+  </Card>
+</CardGroup>
+
+**Not supported:** choosing your own relays, long-form articles, zaps and keys in `nsec` form.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks this rule and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| Text within 100,000 characters, in the note and in every reply | “post is too long, please fix it” |
+
+Each relay sets its own size limit, and PostQueen does not check it first.
+
+## Connect Nostr
+
+<Steps>
+  <Step title="Get your private key in hex">
+    PostQueen needs the private key as 64 hexadecimal characters, not the `nsec1...` form most apps show. A client such as [iris.to](https://iris.to) can show the hex version, or convert an `nsec` key for you.
+  </Step>
+  <Step title="Open Add Channel">
+    In PostQueen, open **Channels** and choose **Add Channel**, then **Nostr** and **Enter details**.
+  </Step>
+  <Step title="Paste the key">
+    Paste the hex key in **Nostr private key** and choose **Connect**.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with the name and picture of your Nostr profile. It shows **No Name** when none of the five relays has your profile.
+  </Step>
+</Steps>
+
+<NeverShare />
+
+## Post settings
+
+Nostr has no post settings. The API takes `"__type": "nostr"` and nothing else, as [Nostr posting settings](/public-api/providers/nostr) shows.
+
+## Comments and threads
+
+**Continue thread** adds parts to the note. Each part is published as a reply to the part before, with its own delay, and is held to the same limit as the first note.
+
+A reply points only at the part before it, not at the first note, so a client that follows Nostr's threading rules strictly may not show the parts as one thread.
+
+## Good to know
+
+- PostQueen signs each note with your key and sends it to five relays: `nos.lol`, `relay.damus.io`, `relay.snort.social`, `temp.iris.to` and `vault.iris.to`. A note counts as published when at least one of them accepts it. The list is fixed, so a note reaches your followers only if their clients read one of these relays.
+- Your key is stored encrypted on PostQueen's server, so that PostQueen can sign each note at the scheduled time. Treat it as you would any key that can post as you.
+- A key pasted in `nsec` form is read as hex and connects the wrong identity. Delete that channel and connect again with the hex key.
+- The link on a published note opens it on [primal.net](https://primal.net).
+- **Invite by link** does not offer Nostr, because the key is typed into PostQueen. Connect it with **Connect myself**.
+- During the free trial, a Nostr account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid credentials">
+    PostQueen could not read the key. Paste the private key in hex form, 64 characters from `0` to `9` and `a` to `f`, not the `nsec1...` form and not your public key.
+  </Accordion>
+  <Accordion title="No Nostr relay accepted the note">
+    None of the five relays took the note, so it was not published. Relays can refuse a very long note, or be down for a while. Shorten the note or try again later.
+  </Accordion>
+  <Accordion title="The channel has a different name than my profile">
+    The key belongs to another identity, often because an `nsec` key was pasted as it was. Delete the channel and connect again with the hex form of your key.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />

@@ -1,0 +1,106 @@
+---
+title: "Threads"
+description: "Connect Threads to PostQueen, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/threads.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="in-review">Until Meta approves PostQueen's Threads app, only accounts added as Threads testers on it can connect and publish.</ChannelStatus>
+
+Schedule Threads posts, photos, videos, carousels and multi-part threads that publish as one connected reply chain. PostQueen publishes them through the official Threads API when their time comes.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/threads.webp" alt="A new Threads post in the PostQueen composer, with the post types Threads takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    500 bytes per post and per reply. Plain ASCII letters count 1 and every other character 2 to 4, so text with accents or emoji fits fewer than 500 characters.
+  </Card>
+  <Card title="Media" icon="image">
+    JPEG or PNG images and MP4 videos: one item, or a carousel of 2 to 20 mixed. GIF, WebP, AVIF, BMP and TIFF are refused.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Text post, photo or video, carousel and multi-part thread, plus an automatic plug reply.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    7 or 30 days: views, likes, replies, reposts and quotes, for the account and for each post. No follower count.
+  </Card>
+</CardGroup>
+
+**Not supported:** quote posts, polls, topic tags, link attachments, reply controls and alt text.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| At most 20 items | “Threads carousels can have up to 20 items” |
+| JPEG or PNG images only | “Threads accepts JPEG or PNG images only” |
+| At most 5 different links | “Threads allows up to 5 links per post” |
+| Text within 500 bytes | “post is too long, please fix it” |
+
+The composer's counter measures a Threads post in bytes too. Threads documents byte counting for emoji only, so a post full of accented letters can be refused by PostQueen although Threads might take it.
+
+Image size and video length are Threads' rules, and PostQueen does not check them first. Threads takes images up to 8 MB and videos up to 5 minutes and 1 GB, and allows 250 posts and 1,000 replies in any 24 hours.
+
+## Connect Threads
+
+<Note>
+Threads is in review. Until Meta approves PostQueen's Threads app, only accounts added as Threads testers on that app can finish these steps.
+</Note>
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Threads**.
+  </Step>
+  <Step title="Sign in to Threads">
+    Sign in with the Threads profile you want to post to, and approve every permission you are asked for. PostQueen needs all of them.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
+
+## Post settings
+
+Threads has no post settings. The API takes `"__type": "threads"` and nothing else, as [Threads posting settings](/public-api/providers/threads) shows.
+
+## Comments and threads
+
+**Continue thread** adds parts to the post. Each part is posted as a reply to the part before, can carry an image, a video or a carousel, and has its own delay. Every part is held to the same limits as the first post.
+
+**Add a thread finisher** adds a closing post, such as a thank-you or a follow link, after the other parts. When you save, it becomes the thread's last part, which you can then edit like the others.
+
+In the channel's **Automations** on the **Channels** page ([how automations work](/using/auto-plugs)), **Auto plug post** adds a reply you write in advance once the post passes a number of likes you set. It checks the post every 6 hours, up to 3 times.
+
+## Good to know
+
+- Threads downloads each file from PostQueen when the post is published, so attach media from the PostQueen media library.
+- When Threads takes too long to process the media of a reply, the post fails with "Threads took too long to process the media, please try again". Schedule it again.
+- The connection renews itself.
+- During the free trial, a Threads account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Threads accepts JPEG or PNG images only">
+    Convert GIF, WebP, AVIF, BMP or TIFF images to JPEG or PNG, attach them again and schedule the post.
+  </Accordion>
+  <Accordion title="Error from Meta: We restrict certain activity to protect our community">
+    Meta limited the account for a while. Post less often and try again later.
+  </Accordion>
+  <Accordion title="One of the media URLs is invalid or inaccessible, make sure it's being uploaded to PostQueen first">
+    Threads could not download a file. Upload it to the PostQueen media library, attach it from there and schedule the post again.
+  </Accordion>
+  <Accordion title="Threads access token expired">
+    Choose **Reconnect channel** in the channel's menu and sign in to Threads again.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />

@@ -1,0 +1,59 @@
+---
+title: "MeWe"
+description: "What PostQueen will post to MeWe, and the limits it checks before a post is scheduled."
+icon: "/images/channels/mewe.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post text and photos to your MeWe timeline or to one of your MeWe groups.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/mewe.webp" alt="A new MeWe post in the PostQueen composer, with the post types MeWe takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 63,206 characters.
+  </Card>
+  <Card title="Media" icon="image">
+    Photos. MP4 video is left out of the post.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Timeline post, or a post to one group you belong to.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for MeWe.
+  </Card>
+</CardGroup>
+
+**Not supported:** video, MeWe pages, several groups in one post, and comments or follow-ups.
+
+## Connect MeWe
+
+<Note>
+MeWe is listed in **Add Channel**, but it cannot be connected on PostQueen yet.
+</Note>
+
+## Post settings
+
+Each MeWe post in the composer has these settings:
+
+- **Post To**: **My Timeline** or **Group**. It starts on **My Timeline**.
+- **Select Group**: the group to post to, for a **Group** post. Required there: a group post without one is refused with "Select a group to post to".
+
+The field names and values for the API are on [MeWe posting settings](/public-api/providers/mewe).
+
+## Good to know
+
+- Only MP4 files are left out. Any other file, a MOV video included, is sent to MeWe as a photo, and MeWe may refuse it.
+- The link to a published post opens your timeline or the group, not the post itself.
+- The connection lasts until MeWe's sign-in expires, or 30 days, and cannot be renewed on its own. Reconnect the channel when it asks.
+
+<NextStepsChannel />

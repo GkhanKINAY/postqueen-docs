@@ -1,71 +1,133 @@
 ---
-title: 'Listmonk Settings'
-description: 'Provider settings for Listmonk newsletter campaigns'
+title: "Listmonk posting settings"
+sidebarTitle: "Listmonk"
+description: "The settings object a post to Listmonk takes in the public API: subject, preview text, list and template, what PostQueen checks, and complete examples."
+icon: "/images/channels/listmonk.svg"
 ---
 
-Creating the OAuth app and connecting a channel: [Listmonk setup guide](/providers/listmonk).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Overview
+<ChannelStatus status="available" />
 
-Listmonk is a self-hosted newsletter and mailing list manager. When creating campaigns, you need to specify the subject, the preview text and the list, with a template as an option.
+Every post to Listmonk carries a `settings` object with `"__type": "listmonk"`, a subject, preview text and a list. At the scheduled time PostQueen creates a campaign on your Listmonk server and starts sending it. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
-## Settings Schema
+A Listmonk channel connects with your server's address, an API user and its token, which only the app's connect form takes. [Connect it in the app](/channels/listmonk) first, then post to it here.
+
+## Fields
+
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"listmonk"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `subject` | string | Yes | The email subject, at least 1 character. The campaign is named after it. |
+| `preview` | string | Yes | The preview text inboxes show next to the subject, added as hidden text at the top of the email. Send `""` for none. |
+| `list` | string | Yes | The id of the one list that receives the campaign, from the `list` tool, as a string. |
+| `template` | string | No | The id of a template from the `templates` tool, as a string. Leave it out, or send `"0"`, for Listmonk's default template. |
+
+The body comes from `value[0].content` and is sent as an HTML campaign. Media in `value` is not sent, and Listmonk has no follow-ups, so entries after the first in `value` are not published.
+
+### Find lists and templates
+
+Two tools read them from your server. Call them through [trigger a provider tool](/public-api/integrations/trigger), with no data:
+
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"methodName": "list", "data": {}}'
+```
+
+| Tool | Answers | Use it for |
+|---|---|---|
+| `list` | `[{ "id": 3, "name": "Newsletter" }, ...]` | `list`: send the `id` as a string |
+| `templates` | `[{ "id": 0, "name": "Default" }, { "id": 4, "name": "..." }, ...]` | `template`: send the `id` as a string |
+
+Each answer comes wrapped in `{ "output": ... }`.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| A subject of at least 1 character | “subject must be longer than or equal to 1 characters” |
+| `preview` is a string, empty or not | “preview must be a string” |
+| `list` is a string | “list must be a string” |
+| The body within 100,000,000 characters | “post is too long, please fix it” |
+
+The settings rules come back as a list, with each field's path:
 
 ```json
 {
-  "__type": "listmonk",
-  "subject": "Newsletter Subject Line",
-  "preview": "Preview text shown in email clients",
-  "list": "list-id",
-  "template": "template-id"
+  "statusCode": 400,
+  "message": ["posts.0.settings.list must be a string"],
+  "error": "Bad Request"
 }
 ```
 
-## Properties
+The text limit comes back with the channel's name instead, as on [posting settings by network](/public-api/providers/overview#two-error-shapes).
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"listmonk"` |
-| `subject` | string | ✅ | Email subject line (min 1 char) |
-| `preview` | string | ✅ | Preview text for email clients |
-| `list` | string | ✅ | List ID to send to |
-| `template` | string | ❌ | Template ID to use |
+The app's editor stops sooner, at 300,000 characters. A list id that your server does not have is not checked first: Listmonk refuses the campaign when it is created.
 
-## Example
+## Examples
 
-```json
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and the list and template ids with values from the tools above.
+
+<CodeGroup>
+
+```json Campaign with the default template
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-listmonk-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "<h1>Weekly Newsletter</h1>\n<p>Here's what happened this week...</p>\n\n<h2>Top Stories</h2>\n<ul>\n<li>Story 1</li>\n<li>Story 2</li>\n</ul>\n\n<p>Thanks for reading!</p>",
+          "content": "<h2>October at a glance</h2><p>Three new features, one event and a small price change. Read on for the details.</p>",
           "image": []
         }
       ],
       "settings": {
         "__type": "listmonk",
-        "subject": "🚀 Weekly Update - December 2024",
-        "preview": "Check out what's new this week!",
-        "list": "1",
-        "template": "2"
+        "subject": "October news: three new features",
+        "preview": "Plus the date of our next meetup",
+        "list": "3"
       }
     }
   ]
 }
 ```
 
-## Notes
+```json Campaign with your template
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        { "content": "<p>Your weekly digest is here.</p>", "image": [] }
+      ],
+      "settings": {
+        "__type": "listmonk",
+        "subject": "Weekly digest",
+        "preview": "",
+        "list": "3",
+        "template": "4"
+      }
+    }
+  ]
+}
+```
 
-- Get the list and template IDs from your Listmonk admin dashboard
-- Content should be HTML formatted
-- The `preview` text appears in email clients before opening the email
-- If no template is specified, the default template will be used
+</CodeGroup>
 
+## Related
+
+- [Connect Listmonk in the app](/channels/listmonk)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)

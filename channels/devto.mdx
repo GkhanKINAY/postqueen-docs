@@ -1,0 +1,109 @@
+---
+title: "DEV (dev.to)"
+sidebarTitle: "DEV"
+description: "Connect DEV (dev.to) to PostQueen with an API key, what you can publish to it, and the limits PostQueen checks before an article is scheduled."
+icon: "/images/channels/devto.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="available" />
+
+Publish Markdown articles to DEV on schedule with a title, cover image, up to 4 tags, an organization and a canonical URL. You connect with a personal DEV API key, and the article goes live at the time you pick.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/devto.webp" alt="A new DEV (dev.to) post in the PostQueen composer, with the post types DEV (dev.to) takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    An article body of up to 100,000 characters, written in Markdown, and a title of 2 to 128 characters.
+  </Card>
+  <Card title="Media" icon="image">
+    One cover image. Pictures inside the article are not uploaded.
+  </Card>
+  <Card title="Post types" icon="layers">
+    A published article, with a cover image, up to 4 tags, a canonical link and, if you like, a DEV organization.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for DEV.
+  </Card>
+</CardGroup>
+
+**Not supported:** DEV drafts (an article is always published), series, images inside the article, code-block editing in the editor, and follow-up comments.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| A title of at least 2 characters | “title must be longer than or equal to 2 characters” |
+| A title of at most 128 characters, as DEV allows | “title must be shorter than or equal to 128 characters” |
+| At most 4 tags | “tags must contain no more than 4 elements” |
+| **Canonical Link** is a web address | “Invalid URL” |
+| Text within 100,000 characters | “post is too long, please fix it” |
+
+DEV's own rules are not checked first. DEV refuses a canonical URL that another of your articles already uses, and PostQueen then shows “Canonical URL already exists”. DEV also takes about one article a second from an account.
+
+## Connect DEV
+
+<Steps>
+  <Step title="Generate an API key on DEV">
+    On DEV, open **Settings**, then **Extensions** ([dev.to/settings/extensions](https://dev.to/settings/extensions)). Under **DEV Community API Keys**, describe the key, for example `PostQueen`, and generate it. Copy it right away: DEV does not show it again.
+  </Step>
+  <Step title="Open Add Channel">
+    In PostQueen, open **Channels** and choose **Add Channel**, then **Dev.to** and **Enter details**.
+  </Step>
+  <Step title="Paste the key">
+    Paste the key in **API key** and choose **Connect**.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with your DEV avatar and name.
+  </Step>
+</Steps>
+
+<NeverShare />
+
+## Post settings
+
+Each DEV post in the composer has these settings:
+
+- **Title**: required, 2 to 128 characters.
+- **Canonical Link**: where the article first appeared. Type a web address, or choose the lightning icon next to the label to pick another post you scheduled in PostQueen: its live address is filled in when the article is published.
+- **Cover picture**: the image at the top of the article.
+- **Select organization**: publish under a DEV organization. It lists only organizations you have already published an article for, and does not show at all when there are none.
+- **Tags (Maximum 4)**: tags from DEV's list.
+
+The field names and values for the API are on [DEV posting settings](/public-api/providers/devto).
+
+## Comments and threads
+
+DEV takes no follow-up comments, so the composer shows no **Add comment** button for a DEV post.
+
+## Good to know
+
+- The article is published on DEV at the scheduled time. It is never saved as a DEV draft.
+- **Invite by link** does not offer DEV, because the API key is typed into PostQueen. Connect it with **Connect myself**.
+- If you delete the key on DEV, publishing stops. Generate a new one and enter it with **Update Credentials** under **Access** on the channel's page.
+- During the free trial, a DEV account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid credentials">
+    DEV did not accept the API key. Copy the key again from **Settings**, **Extensions**, or generate a new one, and connect again.
+  </Accordion>
+  <Accordion title="Canonical URL already exists">
+    Another article on your DEV account already uses that canonical URL. Change **Canonical Link**, or leave it empty, and schedule the article again.
+  </Accordion>
+  <Accordion title="The organization I want is not in the list">
+    **Select organization** lists only organizations you have already published for. Publish one article for that organization on DEV first, then open the post again.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />

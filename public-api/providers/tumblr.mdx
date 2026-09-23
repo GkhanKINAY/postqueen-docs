@@ -1,54 +1,121 @@
 ---
-title: Tumblr Settings
-description: 'API settings for posting to Tumblr'
+title: "Tumblr posting settings"
+sidebarTitle: "Tumblr"
+description: "The settings object a post to Tumblr takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/tumblr.png"
 ---
 
-Creating the OAuth app and connecting a blog: [Tumblr provider guide](/providers/tumblr).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Settings Schema
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-Every field is optional, so the settings object can be `__type` alone:
+Tumblr cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Tumblr channel will take.
 
-```json
-{
-  "settings": {
-    "__type": "tumblr",
-    "title": "My Post Title",
-    "link": "https://example.com",
-    "sourceUrl": "https://example.com/original",
-    "tags": "launch, product, news"
-  }
-}
-```
+Every post to Tumblr carries a `settings` object with `"__type": "tumblr"`. Each channel is one blog, chosen when it connects. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `tumblr` |
-| `title` | `string` | No | Post title, 1 to 4096 characters |
-| `link` | `string` | No | A URL the post points at. Must be a valid URL if sent |
-| `sourceUrl` | `string` | No | Attribution URL for reblogged or quoted material. Must be a valid URL if sent |
-| `tags` | `string` | No | Up to 4096 characters |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"tumblr"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `title` | string | No | A heading at the top of the post, 1 to 4,096 characters. |
+| `link` | string | No | A link block added after the text. Must be a valid URL. |
+| `sourceUrl` | string | No | The source credited on the post. Must be a valid URL. |
+| `tags` | string | No | Tags, up to 4,096 characters, sent to Tumblr as written. Separate tags with commas. |
 
-### `tags`
+The post text becomes the body. A blank line starts a new text block, and a block longer than 4,096 characters is split. Images and one video can go in the same post, and each image's `alt` in `image` is sent as its alt text. The post is published on the blog straight away when its time comes.
 
-<Warning>
-**`tags` is a plain string here, not an array.** Tumblr takes a comma-separated string, which is
-what PostQueen passes straight through. This differs from the top-level `tags` array on the post
-body, which is PostQueen's own labelling and unrelated to Tumblr's.
-</Warning>
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| At most 30 images | “Tumblr supports up to 30 images in one post.” |
+| At most one video | “Tumblr supports one uploaded video in one post.” |
+| Text up to 32,768 characters | “post is too long, please fix it” |
+| `title` 1 to 4,096 characters, `tags` up to 4,096, `link` and `sourceUrl` valid URLs | A validation error naming the field |
+
+The error body names the channel and the rule:
 
 ```json
-{ "tags": "launch, product, news" }
+{
+  "statusCode": 400,
+  "provider": "tumblr",
+  "name": "Your channel name",
+  "message": "Tumblr supports up to 30 images in one post."
+}
 ```
 
-### Media
+Tumblr's own rules are not checked first: a video of up to 500 MB and 10 minutes, and daily caps per account of 250 posts, 250 image uploads, 20 video uploads and 60 minutes of video. When a cap is reached, the post fails with a message that names it, such as “Tumblr daily posting limit reached.”
 
-Up to 30 images, or exactly one video. A video cannot be mixed with images.
+## Examples
 
-Content over roughly 4,000 characters is split into several Tumblr text blocks on the way out,
-divided on blank lines. That is Tumblr's own limit for one block; the post still reads as one
-piece. Alt text set on an image is carried through.
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-The post's character ceiling is 32,768.
+<CodeGroup>
+
+```json Text post with a title and tags
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Ten years of keeping a sketchbook, and the three habits that kept me going.\n\nFirst, a page a day, even a bad one. Second, one pen only. Third, never tear a page out.",
+          "image": []
+        }
+      ],
+      "settings": {
+        "__type": "tumblr",
+        "title": "Ten years of sketchbooks",
+        "link": "https://example.com/sketchbooks",
+        "tags": "art, sketchbook, drawing"
+      }
+    }
+  ]
+}
+```
+
+```json Images and a video
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Studio day: the finished pieces and a short clip of the glazing.",
+          "image": [
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/bowl.jpg", "alt": "A blue glazed bowl on a wooden table" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/vase.jpg", "alt": "A tall white vase with a speckled glaze" },
+            { "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/glazing.mp4" }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "tumblr",
+        "sourceUrl": "https://example.com/studio",
+        "tags": "ceramics, pottery"
+      }
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+In the first example, the blank line in `content` splits the body into two text blocks. Only the first entry in `value` is published: Tumblr takes no comments, and a later entry is marked as failed with “This channel cannot post comments”.
+
+## Related
+
+- [Tumblr in the app](/channels/tumblr)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

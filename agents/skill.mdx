@@ -1,0 +1,153 @@
+---
+title: "The postqueen skill"
+description: "Install the postqueen skill so an agent that runs shell commands uses the PostQueen CLI the right way: what the skill teaches, how to install it for each agent, and how to check it loaded."
+icon: "book-open-check"
+keywords:
+  - postqueen skill
+  - SKILL.md
+  - npx skills add
+  - claude code plugin
+  - grok build plugin
+  - openclaw
+  - hermes
+---
+
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+
+The postqueen skill is one `SKILL.md` file that teaches an AI agent to use the [PostQueen CLI](/cli/introduction). An agent that has read it lists your channels first, reads what each network needs, uploads media before it attaches it, and passes the settings each post needs. Without it, an agent tends to guess at flags and send posts the API refuses.
+
+The skill is for agents that run shell commands, such as Claude Code, Cursor, Gemini CLI, Grok Build, OpenClaw and Hermes Agent. Chat assistants such as Claude, ChatGPT and Grok do not run commands on your machine: connect them over [MCP](/mcp/introduction) instead.
+
+## What it teaches
+
+<CardGroup cols={2}>
+  <Card title="Rule 1: authenticate first" icon="key-round">
+    Check `postqueen auth:status` before anything else. Every command fails without a valid key.
+  </Card>
+  <Card title="Rule 2: upload media first" icon="cloud-upload">
+    Every file passed to `-m` goes through `postqueen upload`. A file on disk or a link to another site is refused.
+  </Card>
+  <Card title="Rule 3: TikTok publishes with DIRECT_POST" icon="send">
+    `UPLOAD` only drops the video into the TikTok app's inbox. The skill uses `DIRECT_POST` unless you ask to finish the post in TikTok.
+  </Card>
+  <Card title="Rule 4: read the settings first" icon="list-checks">
+    `postqueen integrations:settings` says what a network needs. A setting that does not apply is dropped without an error.
+  </Card>
+</CardGroup>
+
+It also carries:
+
+- **The core workflow:** authenticate, discover channels, look up values, upload, post, check analytics, and fix a post whose published copy PostQueen could not find.
+- **Which networks connect today:** the ones that work, the ones limited until the network approves PostQueen, and the ones marked Soon, so the agent does not promise a network you cannot connect.
+- **Settings by network,** with examples that pass PostQueen's checks, and the helpers that look values up.
+- **How to read the output:** one status line, then JSON, so the agent drops the first line before it parses.
+
+Read it yourself on [GitHub](https://github.com/GkhanKINAY/postqueen-agent/blob/main/SKILL.md). The same file is served at [docs.postqueen.ai/skill.md](https://docs.postqueen.ai/skill.md) for agents that look for a site's skill.
+
+## Before you start
+
+- **The CLI where the agent runs:** `npm install -g postqueen`, with Node.js 20.19 or newer. On Node.js 22, use 22.12 or newer. The skill tells the agent to install it when it is missing, but installing it first saves a step.
+- **The API key as `POSTQUEEN_API_KEY`,** in the environment the agent's commands run in. The skill carries no key.
+
+<ApiKeyLocation />
+
+## Install the skill
+
+<Tabs>
+  <Tab title="Any agent">
+    The `skills` command reads the skill from GitHub and installs it for the agents on your machine:
+
+    ```bash
+    npx skills add GkhanKINAY/postqueen-agent
+    ```
+
+    It asks which agents should get it and installs it in the current project. Add `-g` to install it for your user in every project, and `-a` to name the agent:
+
+    ```bash
+    npx skills add GkhanKINAY/postqueen-agent -g -a claude-code
+    ```
+
+    | Agent | `-a` name | Project folder | With `-g` |
+    |---|---|---|---|
+    | Claude Code | `claude-code` | `.claude/skills/` | `~/.claude/skills/` |
+    | Codex (better over [MCP](/agents/codex)) | `codex` | `.agents/skills/` | `~/.codex/skills/` |
+    | Cursor | `cursor` | `.agents/skills/` | `~/.cursor/skills/` |
+    | Gemini CLI | `gemini-cli` | `.agents/skills/` | `~/.gemini/skills/` |
+    | VS Code (GitHub Copilot) | `github-copilot` | `.agents/skills/` | `~/.copilot/skills/` |
+    | Grok Build | `grok` | `.grok/skills/` | `~/.grok/skills/` |
+    | OpenClaw | `openclaw` | `skills/` | `~/.openclaw/skills/` |
+    | Hermes Agent | `hermes-agent` | `.hermes/skills/` | `~/.hermes/skills/` |
+
+    Most agents load skills when a session starts, so start a new one after installing.
+  </Tab>
+  <Tab title="Claude Code plugin">
+    The repository is also a Claude Code plugin marketplace with one plugin, `postqueen`. Inside Claude Code:
+
+    ```text
+    /plugin marketplace add GkhanKINAY/postqueen-agent
+    /plugin install postqueen@postqueen-agent
+    ```
+
+    Claude Code asks whether to install it for you (User), for everyone in this repository (Project) or for you in this repository only (Local). Run `/reload-plugins` if it asks you to. The plugin carries the skill only, so install the CLI and set the key as well.
+  </Tab>
+  <Tab title="Grok Build plugin">
+    ```bash
+    grok plugin marketplace add GkhanKINAY/postqueen-agent
+    grok plugin install postqueen --trust
+    ```
+
+    The plugin carries the skill only, so install the CLI and set the key as well. Grok Build also connects over MCP with one command: see [Grok Build](/agents/grok-build).
+  </Tab>
+</Tabs>
+
+## Give the agent the key
+
+The agent runs `postqueen` in its own environment, which is not always your terminal.
+
+- **A coding agent in your terminal** reads the key from your shell. Add `export POSTQUEEN_API_KEY=your_api_key` to your shell profile, such as `~/.zshrc`, and open a new terminal.
+- **OpenClaw** runs as a background service that does not see your terminal. Put the key under `skills.entries.postqueen.env` in `openclaw.json`, or in the service's own environment, and restart it. See [OpenClaw](/agents/openclaw).
+- **Codex** asks before every command that uses the network, so unattended runs stop. Connect Codex over [MCP](/agents/codex) instead.
+
+## Check that it loaded
+
+Start a new session and ask:
+
+```text
+Use the postqueen skill to list my channels.
+```
+
+The agent runs `postqueen integrations:list` and shows your channels. To check the key on its own, run `postqueen auth:status`: it names the key it uses and says `Credentials are valid` when the API accepts it.
+
+| What you see | What to do |
+|---|---|
+| The agent does not know the skill | Start a new session. Check the folder in the table above for your agent |
+| `command not found: postqueen` | Install the CLI where the agent runs: `npm install -g postqueen` |
+| `❌ Error: No authentication found.` | `POSTQUEEN_API_KEY` is not set where the agent runs. Set it there, not only in your own terminal |
+
+More fixes: [troubleshooting agents](/agents/troubleshooting).
+
+## Keep it up to date
+
+```bash
+npx skills update          # update installed skills
+npx skills remove postqueen  # remove it
+```
+
+In Claude Code, `/plugin marketplace update postqueen-agent` fetches the latest version and `/plugin uninstall postqueen@postqueen-agent` removes it.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="The CLI" icon="terminal" href="/cli/introduction">
+    Install `postqueen`, set the key and schedule a first post.
+  </Card>
+  <Card title="Command reference" icon="square-terminal" href="/cli/command-reference">
+    Every command and flag the skill uses.
+  </Card>
+  <Card title="Examples by network" icon="layout-grid" href="/cli/platform-examples">
+    Commands with the settings each network needs.
+  </Card>
+  <Card title="Every agent" icon="bot" href="/agents/overview">
+    Which agents use the skill and which connect over MCP.
+  </Card>
+</CardGroup>

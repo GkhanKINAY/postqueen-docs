@@ -1,5 +1,13 @@
 ---
-title: 'Update Post Settings'
-description: 'Merge provider-specific settings onto a draft or unpublished scheduled post.'
-openapi: 'PUT /posts/{id}/settings'
+title: "Update post settings"
+description: "Change the network settings of a draft or a scheduled post without touching its text or date."
+openapi: "PUT /posts/{id}/settings"
 ---
+
+Send only the keys you want to change. For example, to change the title of a scheduled WordPress post:
+
+```json
+{ "settings": { "title": "A calendar that shows everything" } }
+```
+
+The keys each network takes are on [Posting settings by network](/public-api/providers/overview).

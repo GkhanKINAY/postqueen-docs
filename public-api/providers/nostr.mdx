@@ -1,94 +1,126 @@
 ---
-title: Nostr Settings
-description: 'API settings for posting to Nostr'
+title: "Nostr posting settings"
+sidebarTitle: "Nostr"
+description: "The settings object a post to Nostr takes in the public API: every field, what PostQueen checks, the relays, and complete examples."
+icon: "/images/channels/nostr.svg"
 ---
 
-Creating the OAuth app and connecting a channel: [Nostr setup guide](/providers/nostr).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Settings Schema
+<ChannelStatus status="available" />
 
-When creating a post for Nostr, use the following settings schema:
+Every post to Nostr carries a `settings` object with `"__type": "nostr"`. Nostr has no other settings. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
-```json
-{
-  "settings": {
-    "__type": "nostr"
-  }
-}
-```
-
-<Note>
-Nostr has no provider-specific settings beyond `__type`. The relays that the
-note publishes to are determined by the connected integration, not the
-settings block. Post content, images, and the schedule are configured at
-the post level. Full request body: [Create Post](/public-api/posts/create).
-</Note>
+A Nostr channel connects with a private key, which only the app's connect form takes. [Connect it in the app](/channels/nostr) first, then post to it here.
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `nostr` |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"nostr"`. PostQueen sets it from the channel you post to, so it can be left out. |
 
----
+### Relays
 
-## Complete Example
+The note is signed with the channel's key and sent to a fixed list of relays: `nos.lol`, `relay.damus.io`, `relay.snort.social`, `temp.iris.to` and `vault.iris.to`. It counts as published when at least one accepts it. There is no setting to choose relays.
 
-### Text Note
+### Media
+
+Images and videos are not uploaded. Their `path` addresses are added at the end of the note, each on its own line, and clients that preview links show them.
+
+### Thread replies
+
+Each extra entry in `value` is published as a reply to the entry before it, after its `delay` in minutes. A reply points only at the entry before it, so a client that follows Nostr's threading rules strictly may not show the entries as one thread.
+
+## What PostQueen checks
+
+A post that breaks this rule is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| Each entry within 100,000 characters | “post is too long, please fix it” |
+
+The error body names the channel and the rule:
 
 ```json
+{
+  "statusCode": 400,
+  "provider": "nostr",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+Each relay sets its own size limit, and PostQueen does not check it first. When no relay accepts the note, the post fails with “No Nostr relay accepted the note”.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Text note
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-nostr-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
-        {
-          "content": "Hello from the PostQueen API!",
-          "image": []
-        }
+        { "content": "Our relay list and posting schedule for this month are up on the blog.", "image": [] }
       ],
-      "settings": {
-        "__type": "nostr"
-      }
+      "settings": { "__type": "nostr" }
     }
   ]
 }
 ```
 
-### Note with Image
-
-```json
+```json Note with an image
 {
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-nostr-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Sharing today's launch screenshot",
-          "image": [
-            {
-              "id": "image-id",
-              "path": "https://uploads.postqueen.ai/launch.png"
-            }
-          ]
+          "content": "The view from the new studio.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/studio.jpg" }]
         }
       ],
-      "settings": {
-        "__type": "nostr"
-      }
+      "settings": { "__type": "nostr" }
     }
   ]
 }
 ```
+
+```json Thread
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        { "content": "Why we moved our announcements to Nostr, in three notes. 1/3", "image": [] },
+        { "content": "No single company can take the account away. 2/3", "image": [], "delay": 2 },
+        { "content": "And readers pick the client they like. 3/3", "image": [], "delay": 2 }
+      ],
+      "settings": { "__type": "nostr" }
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+## Related
+
+- [Connect Nostr in the app](/channels/nostr)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

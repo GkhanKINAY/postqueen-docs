@@ -1,203 +1,305 @@
 ---
-title: Examples
-description: 'The flows where an agent has to discover something before it can post'
-icon: 'lightbulb'
+title: "Prompts and tool calls"
+description: "Prompts that work with PostQueen's MCP server, and the tool calls an agent makes for each: posts, threads, articles, media, video, changes and analytics."
+icon: "messages-square"
+keywords:
+  - mcp examples
+  - prompts
+  - integrationSchedulePostTool
+  - triggerTool
+  - uploadFromUrlTool
+  - generateVideoTool
+  - analyticsPostsTool
 ---
 
-You never type any of this. You say what you want in plain language, your agent makes the calls,
-and she puts the result on your calendar.
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-So this page is not a list of things to copy. It is the handful of flows where the agent cannot go
-straight to posting, because it has to ask her a question first: which channel, which audio track,
-which voice. Those are the ones worth understanding, because when they go wrong the symptom is an
-agent that says it posted and a calendar that disagrees.
+You ask in plain words and the agent makes the calls. This page shows prompts that work and the calls behind them, so you can tell what went wrong when a result looks off. The examples use Bluesky, WordPress and DEV, which anyone can connect today. The analytics example uses Instagram, which is in review.
 
-For the ordinary case, where she just writes and schedules, the sequence is in
-[Introduction](/mcp/introduction). Every tool and its parameters: [Tools](/mcp/tools).
+Most requests follow the same order: find the channel with `integrationList`, read its rules with `integrationSchema`, look up any value a setting needs with `triggerTool`, bring in media, then create the post with `integrationSchedulePostTool`. Every tool is on [MCP tools](/mcp/tools).
 
-## Discord: pick a channel first
+<Tip>
+Name the channel, the day and the time, and say whether you want a draft. "Draft" keeps the post on your calendar until you schedule it yourself.
+</Tip>
 
-Discord will not accept a post without a channel id, and the ids are not something you know. The
-agent discovers them.
+## Schedule a post
 
-<Steps>
-  <Step title="Get the schema">
-    The agent calls `integrationSchema` with `platform: "discord"` and sees that this channel
-    offers a tool for listing channels.
-  </Step>
-  <Step title="List the channels">
-    The agent calls `triggerTool`:
-
-    ```json
-    {
-      "integrationId": "discord-123",
-      "methodName": "channels",
-      "dataSchema": []
-    }
-    ```
-
-    Back comes every channel the PostQueen bot can post to, as `{ id, name }`. A channel missing
-    from that list is a permissions question on the Discord side, not a PostQueen one.
-  </Step>
-  <Step title="Schedule with the channel id">
-    ```json
-    {
-      "socialPost": [
-        {
-          "integrationId": "discord-123",
-          "isPremium": false,
-          "date": "2026-08-01T09:00:00.000Z",
-          "shortLink": false,
-          "type": "now",
-          "postsAndComments": [
-            { "content": "<p>Hello Discord!</p>", "attachments": [] }
-          ],
-          "settings": [{ "key": "channel", "value": "channel-id-here" }]
-        }
-      ]
-    }
-    ```
-  </Step>
-</Steps>
-
-Pinterest works the same way with a `boards` tool, and Reddit with `restrictions` for flairs. The
-pattern is always schema, then tool, then settings.
-
-## Instagram: attach a trending audio track to a Reel
-
-Instagram offers an `audioSearch` tool for finding music or original sounds.
-
-<Steps>
-  <Step title="Search for audio">
-    An empty `q` returns trending audio:
-
-    ```json
-    {
-      "integrationId": "instagram-123",
-      "methodName": "audioSearch",
-      "dataSchema": [
-        { "key": "q", "value": "summer vibes" },
-        { "key": "type", "value": "music" }
-      ]
-    }
-    ```
-
-    ```json
-    {
-      "output": [
-        {
-          "id": "587784541076604",
-          "title": "Summer Vibes",
-          "artist": "Some Artist",
-          "duration": 30000,
-          "previewUrl": "https://..."
-        }
-      ]
-    }
-    ```
-  </Step>
-  <Step title="Schedule the Reel">
-    A Reel is a single video with `post_type: "post"`. The two volume numbers mix the track
-    against the video's own audio:
-
-    ```json
-    {
-      "socialPost": [
-        {
-          "integrationId": "instagram-123",
-          "isPremium": false,
-          "date": "2026-08-01T09:00:00.000Z",
-          "shortLink": false,
-          "type": "schedule",
-          "postsAndComments": [
-            {
-              "content": "<p>New reel with trending audio!</p>",
-              "attachments": ["https://uploads.postqueen.ai/reel.mp4"]
-            }
-          ],
-          "settings": [
-            { "key": "post_type", "value": "post" },
-            { "key": "audio", "value": { "id": "587784541076604", "audio_volume": 80, "video_volume": 20 } }
-          ]
-        }
-      ]
-    }
-    ```
-  </Step>
-</Steps>
-
-<Note>
-Audio is not available on `instagram-standalone` channels, because the Instagram Audio API
-requires Facebook Login. If the tool is missing from the schema, that is why.
-</Note>
-
-## Video: three questions before one video
-
-Video is the longest discovery chain in the tool set, because the agent has to find out which
-generator exists, then what that generator accepts, before it can ask for anything.
-
-<Steps>
-  <Step title="Which generators are available">
-    `generateVideoOptions` returns them. Which ones appear depends on the keys the install has.
-  </Step>
-  <Step title="What does this generator accept">
-    Each generator has its own parameters. For Image Text Slides, the voices come from
-    `videoFunctionTool`:
-
-    ```json
-    {
-      "identifier": "image-text-slides",
-      "functionName": "loadVoices"
-    }
-    ```
-  </Step>
-  <Step title="Generate">
-    `generateVideoTool` takes the generator's `identifier`, an `output` shape and whatever
-    `customParams` that generator declared:
-
-    ```json
-    {
-      "identifier": "image-text-slides",
-      "output": "vertical",
-      "customParams": [
-        { "key": "prompt", "value": "5 tips for better social media engagement" },
-        { "key": "voice", "value": "voice-id-here" }
-      ]
-    }
-    ```
-
-    The returned URL goes into `attachments` on the post, exactly like an uploaded file.
-  </Step>
-</Steps>
-
-An AI image is the short version of the same idea: `generateImageTool` takes a prompt and returns
-a `path`, which becomes an attachment.
-
-## One array, two meanings
-
-`postsAndComments` holds more than one item when you want more than one message. What that means
-depends on the network:
-
-- **On X**, the items are a thread. The first is the tweet, the rest are replies to it.
-- **On LinkedIn**, the first item is the post and the rest are comments underneath it.
-
-```json
-"postsAndComments": [
-  { "content": "<p>We just launched something big!</p>", "attachments": [] },
-  { "content": "<p>Check it out at example.com</p>", "attachments": [] }
-]
+```text Prompt wrap
+Schedule a Bluesky post for Thursday October 1 at 9:00 UTC: "Our spring menu is live. Come by this weekend."
 ```
 
-Same shape, and the network decides what it becomes. Bulk scheduling is the other axis: more
-entries in `socialPost`, each with its own `integrationId` and `date`.
+<Accordion title="The tool calls" icon="code">
+The agent finds the Bluesky channel, reads its rules, then creates the post.
 
-## Next steps
+```json integrationList
+{}
+```
 
-<CardGroup cols={2}>
-  <Card title="Tools" icon="wrench" href="/mcp/tools">
-    Every tool and every parameter it accepts
-  </Card>
-  <Card title="Limits" icon="circle-minus" href="/mcp/limits-and-troubleshooting">
-    What the tools cannot reach, and where those things live
-  </Card>
-</CardGroup>
+```json integrationSchema
+{ "platform": "bluesky", "isPremium": false }
+```
+
+Bluesky answers with a 300-character limit and `No additional settings required`, so `settings` stays empty:
+
+```json integrationSchedulePostTool
+{
+  "socialPost": [
+    {
+      "integrationId": "your-bluesky-channel-id",
+      "isPremium": false,
+      "date": "2026-10-01T09:00:00Z",
+      "type": "schedule",
+      "shortLink": false,
+      "postsAndComments": [
+        { "content": "<p>Our spring menu is live. Come by this weekend.</p>", "attachments": [] }
+      ],
+      "settings": []
+    }
+  ]
+}
+```
+
+It returns the new post's `postId`.
+</Accordion>
+
+## Post a thread
+
+```text Prompt wrap
+Post this as a Bluesky thread on Friday October 2 at 10:00 UTC, with the second part five minutes after the first.
+```
+
+<Accordion title="The tool calls" icon="code">
+Each item after the first in `postsAndComments` becomes a reply in the thread. `delay` is the wait in minutes after the item before it.
+
+```json integrationSchedulePostTool
+{
+  "socialPost": [
+    {
+      "integrationId": "your-bluesky-channel-id",
+      "isPremium": false,
+      "date": "2026-10-02T10:00:00Z",
+      "type": "schedule",
+      "shortLink": false,
+      "postsAndComments": [
+        { "content": "<p>Three things we changed in the spring menu.</p>", "attachments": [] },
+        { "content": "<p>First: every dish now has a smaller size.</p>", "attachments": [], "delay": 5 }
+      ],
+      "settings": []
+    }
+  ]
+}
+```
+
+On some networks the extra items become comments instead, and on others only the first item is published: see [comments and threads](/using/comments-and-threads).
+</Accordion>
+
+## Draft a WordPress article
+
+```text Prompt wrap
+Write a short WordPress article about our spring menu and save it as a draft for Friday at 8:00 UTC.
+```
+
+<Accordion title="The tool calls" icon="code">
+`integrationSchema` for `wordpress` says a post needs a `title` and a `type`, the WordPress post type, and lists the helpers that look values up. The agent asks the site for its post types:
+
+```json triggerTool
+{ "integrationId": "your-wordpress-channel-id", "methodName": "postTypes", "dataSchema": [] }
+```
+
+```json Answer
+{ "output": [ { "id": "posts", "name": "Posts" }, { "id": "pages", "name": "Pages" } ] }
+```
+
+Then it saves the draft with the `id` it picked:
+
+```json integrationSchedulePostTool
+{
+  "socialPost": [
+    {
+      "integrationId": "your-wordpress-channel-id",
+      "isPremium": false,
+      "date": "2026-10-02T08:00:00Z",
+      "type": "draft",
+      "shortLink": false,
+      "postsAndComments": [
+        { "content": "<h2>What is new</h2><p>Every dish now comes in a smaller size.</p>", "attachments": [] }
+      ],
+      "settings": [
+        { "key": "title", "value": "Our spring menu" },
+        { "key": "type", "value": "posts" }
+      ]
+    }
+  ]
+}
+```
+
+`categoriesList` and `tagsList` work the same way. Their IDs go into the `categories` and `tags` settings as numbers.
+</Accordion>
+
+## Publish a DEV article with tags
+
+```text Prompt wrap
+Publish my release notes on DEV now, titled "Version 2.4 is out", tagged webdev and javascript.
+```
+
+<Accordion title="The tool calls" icon="code">
+DEV needs a `title` and takes up to four `tags`. The agent looks the tags up:
+
+```json triggerTool
+{ "integrationId": "your-dev-channel-id", "methodName": "tags", "dataSchema": [] }
+```
+
+Each tag comes back as a `value` and a `label`, and goes into `settings` the same way:
+
+```json integrationSchedulePostTool
+{
+  "socialPost": [
+    {
+      "integrationId": "your-dev-channel-id",
+      "isPremium": false,
+      "date": "2026-09-23T12:00:00Z",
+      "type": "now",
+      "shortLink": false,
+      "postsAndComments": [
+        { "content": "<p>Version 2.4 adds offline mode and fixes the login loop.</p>", "attachments": [] }
+      ],
+      "settings": [
+        { "key": "title", "value": "Version 2.4 is out" },
+        { "key": "tags", "value": [ { "value": 1, "label": "webdev" }, { "value": 2, "label": "javascript" } ] }
+      ]
+    }
+  ]
+}
+```
+
+The tag numbers here are placeholders: the agent uses the ones `tags` returned.
+</Accordion>
+
+## Add an image
+
+A post takes media from your PostQueen media library, never a link to another site or a file on your computer. There are three ways in.
+
+<Tabs>
+  <Tab title="From a link">
+    ```text Prompt wrap
+    Use the photo at https://example.com/spring-menu.jpg for Thursday's Bluesky post.
+    ```
+
+    The agent calls `uploadFromUrlTool` with the link. It returns the file's `id`, `path` and `status`, and the `path` goes into `attachments`.
+  </Tab>
+  <Tab title="From your device">
+    ```text Prompt wrap
+    I want to add a photo from my laptop to this post.
+    ```
+
+    In Claude, Claude Cowork and ChatGPT the agent calls `uploadWidgetTool`, and an **Upload Media** panel opens in the chat. Add the file there. The agent then calls `uploadWidgetStatusTool` and uses the `path` once the file is `ready`. Other apps show no panel: give the agent a public link instead.
+  </Tab>
+  <Tab title="Generate one">
+    ```text Prompt wrap
+    Make a square image of a bright spring salad on a wooden table for this post.
+    ```
+
+    The agent calls `generateImageTool` with a `prompt` and `"orientation": "square"`. It uses one AI image credit and returns the image's `path`.
+  </Tab>
+</Tabs>
+
+A video comes back as `processing` while PostQueen prepares it, and its `path` can change when it is done. From the upload panel, the agent waits until `uploadWidgetStatusTool` says `ready` and uses that `path`. A video from a link has no status tool yet, so check that post on your calendar before it goes out.
+
+## Make a video for a post
+
+```text Prompt wrap
+Make a short vertical video of our spring salad for Thursday's Bluesky post.
+```
+
+<Accordion title="The tool calls" icon="code">
+The agent lists the generators first, to learn their identifiers and inputs:
+
+```json generateVideoOptions
+{}
+```
+
+Then it starts the video. `seedance` makes one 8-second clip with sound; `images` stays empty for a video from the prompt alone:
+
+```json generateVideoTool
+{
+  "identifier": "seedance",
+  "output": "vertical",
+  "customParams": [
+    { "key": "prompt", "value": "Slow push-in on a bowl of spring salad on a wooden table by a sunny window, warm morning light." },
+    { "key": "images", "value": [] }
+  ]
+}
+```
+
+It returns a `jobId` at once. Making the video takes minutes, so the agent asks every 30 seconds or so:
+
+```json videoStatusTool
+{ "jobId": "the-job-id" }
+```
+
+```json Answer
+{ "status": "completed", "id": "the-media-id", "url": "https://cdn.example.com/k3l4m5n6o7.mp4" }
+```
+
+The `url` goes into `attachments` of `integrationSchedulePostTool`. The video uses one AI video credit, and it is also in your media library.
+
+For a narrated slideshow, the agent uses `image-text-slides`. It gets a voice first with `videoFunctionTool` (`"identifier": "image-text-slides"`, `"functionName": "loadVoices"`) and passes its `id` as `voice`, with a `prompt`. During the free trial Seedance is locked, so the agent gets `This video is not available in trial mode` and can use `image-text-slides` instead.
+</Accordion>
+
+## Check and change what is scheduled
+
+```text Prompt wrap
+What do I have scheduled next week? Put the WordPress draft up for review instead.
+```
+
+<Accordion title="The tool calls" icon="code">
+`postsListTool` lists the posts in the window:
+
+```json postsListTool
+{ "startDate": "2026-09-28T00:00:00Z", "endDate": "2026-10-05T00:00:00Z" }
+```
+
+`postReadTool` reads the draft in full, then `postSettingsTool` changes one setting. WordPress's `status` is the state the article gets on your WordPress site when PostQueen publishes it: `publish`, `draft`, `pending` or `private`. In PostQueen the post stays a draft until you schedule it.
+
+```json postSettingsTool
+{ "id": "the-post-id", "settings": [ { "key": "status", "value": "pending" } ] }
+```
+
+Only the settings you pass change. The text and the time stay as they are.
+</Accordion>
+
+<Note>
+An agent cannot delete a post, change its text or time, or move it between draft and scheduled over MCP. Do that on the calendar, or with the [CLI](/cli/managing-posts) or the [API](/public-api/introduction).
+</Note>
+
+## Ask how posts did
+
+```text Prompt wrap
+Which of my Instagram posts did best this month, and how many impressions did my posts get in the last 90 days?
+```
+
+<Note>
+Bluesky, WordPress and DEV report no analytics, so this example uses Instagram. Instagram is [in review](/channels/instagram): until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect it.
+</Note>
+
+<Accordion title="The tool calls" icon="code">
+```json analyticsPostsTool
+{ "date": 30, "platform": "instagram", "sort": "reactions", "limit": 1 }
+```
+
+```json analyticsSummaryTool
+{ "date": 90 }
+```
+
+The window picks posts by publish date, and the numbers are each post's totals so far. `null` means the network does not report that number. The networks that report numbers are listed on [MCP tools](/mcp/tools#analytics).
+</Accordion>
+
+## Hand over the whole request
+
+```text Prompt wrap
+Ask PostQueen to plan three Bluesky posts about our spring menu, one a day from Monday at 9:00 UTC.
+```
+
+On the key address and the Bearer header, the agent can pass the request to `ask_postqueen`, PostQueen's own agent, which runs the other tools itself. It writes out the drafts and waits for your yes before it schedules them. The sign-in address has no `ask_postqueen`: there the agent makes the calls itself.
+
+<NextStepsAgent />

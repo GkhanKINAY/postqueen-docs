@@ -1,0 +1,97 @@
+---
+title: "Split deployments"
+description: "What a reverse proxy must route when the PostQueen frontend and backend run as separate services, and how to give the backend a host of its own."
+icon: "split"
+---
+
+The official image runs the frontend and the backend behind its own nginx on one port, so a proxy in front of it has a single upstream and nothing to route. This page is for the other cases: the frontend and backend run as separate services (from source, or from images you build), or the backend needs a hostname of its own, which MCP sign-in clients do.
+
+## Frontend and backend on one host
+
+The frontend listens on port 4200 and the backend on port 3000. Route by path:
+
+| Path | Send to | Notes |
+|---|---|---|
+| `/api/` and everything under it | Backend `:3000`, **with `/api` removed** | The backend has no global prefix, so `/api/auth/login` must arrive as `/auth/login`. In Nginx that is a trailing slash on `proxy_pass http://backend:3000/;`; in Traefik a `StripPrefix` middleware; in Caddy `handle_path /api/*`. |
+| Everything else | Frontend `:4200` | Includes `/auth`, `/integrations/social/...` and `/oauth/authorize`: these are pages of the web app, not backend routes. |
+
+Then set:
+
+```env
+FRONTEND_URL=https://postqueen.example.com
+NEXT_PUBLIC_BACKEND_URL=https://postqueen.example.com/api
+BACKEND_INTERNAL_URL=http://backend:3000
+```
+
+`BACKEND_INTERNAL_URL` is how the frontend's server reaches the backend directly, so it is the backend's address on your internal network, never the public one.
+
+The backend can also run on a host of its own, with `NEXT_PUBLIC_BACKEND_URL=https://api.postqueen.example.com` and no path. Keep both hosts under the same parent domain: the login cookie is set for the parent domain of `FRONTEND_URL`, so `postqueen.example.com` and `api.postqueen.example.com` share it.
+
+A Caddy example of the same split:
+
+```caddy
+postqueen.example.com {
+    handle_path /api/* {
+        reverse_proxy backend:3000
+    }
+    handle {
+        reverse_proxy frontend:4200
+    }
+}
+```
+
+<Warning>
+**`/auth` and `/integrations` belong to the frontend.** They look like backend paths, but they are the sign-in screens and the page every network returns to after authorization. Sending them to the backend leaves you with no login page and a failed connect on every network. The browser reaches the backend's own routes through `NEXT_PUBLIC_BACKEND_URL`, which is why they carry `/api`.
+</Warning>
+
+### Uploaded files
+
+With `STORAGE_PROVIDER=local`, the frontend serves `/uploads/...` itself: it passes each request to its own route, which reads the file from `UPLOAD_DIRECTORY`. So the frontend needs the uploads folder mounted as well as the backend, at the same path. With [Cloudflare R2](/configuration/r2), files come from the bucket's address and neither service needs the folder.
+
+## Give the backend its own host
+
+MCP clients that sign in with OAuth look for the authorization server's metadata at the root of its host (RFC 8414). When the backend lives under `/api`, that lookup lands on the frontend and the sign-in stops. The fix is a hostname that serves the backend at its root, for example `api.postqueen.example.com`:
+
+<Steps>
+  <Step title="Route the new host to the backend">
+    With the official image, prefix every request with `/api` so the container's nginx passes it to the backend:
+
+    ```caddy
+    api.postqueen.example.com {
+        rewrite * /api{uri}
+        reverse_proxy localhost:4007
+    }
+    ```
+
+    With separate services, send the host straight to the backend on port 3000.
+  </Step>
+  <Step title="Advertise it">
+    ```env
+    NEXT_PUBLIC_OVERRIDE_BACKEND_URL=https://api.postqueen.example.com
+    ```
+
+    MCP's OAuth discovery then names this host for the resource, the issuer and the token and registration endpoints. The web app keeps using `NEXT_PUBLIC_BACKEND_URL` and does not change. Recreate the container after the change.
+  </Step>
+</Steps>
+
+The sign-in address for MCP clients is then `https://api.postqueen.example.com/mcp-oauth-dynamic`. [MCP on your server](/configuration/mcp) covers the rest.
+
+## Routes other services call
+
+These arrive from outside the browser, all on the backend. With the image or the `/api` split they sit under `/api/`, so the rules above already cover them:
+
+| Route on the backend | Called by |
+|---|---|
+| `/public/v1/...` | Your own scripts and integrations, through the public API |
+| `/mcp` and the paths that start with it, and `/sse/<key>` with `/message/<key>` | MCP clients |
+| `/.well-known/oauth-protected-resource/...` and `/.well-known/oauth-authorization-server/...` | MCP clients discovering OAuth |
+| `/oauth/token`, `/oauth/register` | OAuth clients, after sign-in on the frontend's `/oauth/authorize` |
+| `/integrations/<network>/platform-deauthorize`, `/integrations/<network>/platform-deletion` | Meta, for Facebook, Instagram and Threads |
+| `/payment/stripe` | Stripe, only on an install with billing |
+
+## Related
+
+- [Domain and HTTPS](/installation/domain-and-https)
+- [Nginx](/reverse-proxies/nginx) and [Traefik](/reverse-proxies/traefik)
+- [Development environment](/installation/development): running the two services from source
+- [Configuration reference](/configuration/reference)

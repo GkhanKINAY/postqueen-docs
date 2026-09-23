@@ -1,126 +1,122 @@
 ---
-title: Chrome Extension
-description: 'Set up the PostQueen browser extension for cookie-based integrations'
-icon: 'puzzle-piece'
+title: "Chrome extension"
+description: "Build the PostQueen browser extension for your own domain so a self-hosted PostQueen can connect Skool: the Chrome build, the extension ID and the variables to set."
+icon: "puzzle"
 ---
 
-Skool has no public API, so she reaches it the way you do: through your own logged-in browser. The extension hands her the session cookie.
+import RestartService from '/snippets/restart-service.mdx';
 
-## How It Works
+Skool has no public API, so PostQueen connects it through the PostQueen browser extension. The extension reads the Skool session cookies from your own Chrome and hands them to your instance. It only answers pages on the domain it was built for, so on a self-hosted PostQueen you build it with your instance's address, load it into Chrome, and tell PostQueen its ID.
 
-1. You install the PostQueen Chrome Extension in your browser.
-2. When adding a cookie-based channel, the extension reads your session cookies for that platform.
-3. The cookies go to her backend, where they are stored as an encrypted JWT.
-4. The extension automatically refreshes cookies every 24 hours to keep connections alive.
+Skool is the only channel that uses the extension today.
+
+## Before you start
+
+| | |
+|---|---|
+| Browser | Chrome, or another Chromium browser, signed in to [skool.com](https://www.skool.com) |
+| Source | The [app repository](https://github.com/GkhanKINAY/postqueen-app), with Node.js 22 and pnpm |
+| Build variables | `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL`, the same values your instance runs with |
+| Instance variables | `EXTENSION_ID`, and `EXTENSION_STORE_URL` if you publish the extension |
+| Your address | Served over `https` on the default port. `localhost` works on any port |
+| Review | None for an unpacked build. A Chrome Web Store item goes through the store's review |
 
 <Warning>
-Using cookies to interact with platforms may violate their terms of service. Use this feature at your own risk.
+Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned. PostQueen shows the same notice before a Skool account connects.
 </Warning>
 
-<Note>
-The packaged PostQueen extension is coming soon to the Chrome Web Store. Until then, you build it
-from source.
-</Note>
+## How it works
 
-<Warning>
-**Until it is published, this needs an instance you administer.** `EXTENSION_ID` is read from the
-server environment, and every unpacked build gets its own ID, so the build in your browser has to
-be the one that instance was told about. On a hosted instance you do not control, your own build's
-ID will not match and the connect stops at *Extension Not Found* before anything reaches the
-network.
-</Warning>
+1. The Chrome build writes your domain and its subdomains into the extension twice: into the manifest's `externally_connectable` list, which decides which pages can reach the extension at all, and into the extension's own check of every message's origin. It also grants the extension access to your frontend and backend addresses.
+2. When someone picks **Skool** in **Add Channel**, PostQueen shows a **Browser Extension Notice**. After **I understand, continue**, the page asks the extension with the ID in `EXTENSION_ID` for the `client_id` and `auth_token` cookies of skool.com, and PostQueen stores them encrypted.
+3. From then on the extension sends fresh cookies to your backend once a day, whenever Chrome is running, so the connection stays alive.
 
-## Installation
+## Build the extension
 
 <Steps>
-  <Step title="Build the Extension">
-    Build the extension from the [PostQueen monorepo](https://github.com/GkhanKINAY/postqueen-app). The extension has no dependencies of its own, so the workspace install at the repo root has to run first:
+  <Step title="Get the source">
+    Clone the app repository and install the workspace at its root. The extension has no dependencies of its own, so the root install is what it builds with:
 
     ```bash
     git clone https://github.com/GkhanKINAY/postqueen-app
     cd postqueen-app
     pnpm install
+    ```
+  </Step>
+  <Step title="Build it for your domain">
+    Build with the Chrome configuration, passing your instance's two addresses:
+
+    ```bash
     cd apps/extension
-    pnpm build
+    FRONTEND_URL="https://postqueen.example.com" \
+    NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api" \
+    pnpm exec vite build --config vite.config.chrome.ts
     ```
 
-    Then load the `apps/extension/dist` folder as an unpacked extension in Chrome:
-    1. Navigate to `chrome://extensions/`
-    2. Enable **Developer mode** (top right toggle)
-    3. Click **Load unpacked** and select the `dist` folder
+    The build goes to `apps/extension/dist`. Its `manifest.json` lists `https://postqueen.example.com/*` and `https://*.postqueen.example.com/*` under `externally_connectable`. Nothing in the source needs editing.
+
+    <Warning>
+    **Not `pnpm build`.** That script packs the extension the way the published build is packed: it copies `manifest.json` unchanged and does not read `FRONTEND_URL`, so the result answers only pages on `localhost`, never your domain.
+    </Warning>
   </Step>
-
-  <Step title="Get the Extension ID">
-    After loading the extension, you need its **Extension ID**:
-
-    1. Go to `chrome://extensions/` in Chrome
-    2. Find the **PostQueen** extension
-    3. Copy the **ID** shown under the extension name (a 32-character string)
-
-    Each unpacked build gets its own ID, so use the value Chrome shows for your build.
+  <Step title="Load it into Chrome">
+    Open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked** and pick the `apps/extension/dist` folder.
   </Step>
-
-  <Step title="Configure the Environment Variable">
-    Add the extension ID to your PostQueen environment variables:
-
-    ```env
-    EXTENSION_ID="your-extension-id"
-    ```
-
-    Restart PostQueen after setting this variable.
+  <Step title="Copy the extension ID">
+    Chrome shows the ID under the extension's name, a string of 32 letters. An unpacked extension's ID comes from the folder it was loaded from: loading the same folder again keeps it, and loading a copy from another folder or another computer gives a new one.
   </Step>
 </Steps>
 
-## Supported Platforms
+## Set the variables
 
-Skool is the one channel that needs it today:
+Add the ID to your environment:
 
-<Card title="Skool" icon="/images/channels/skool.svg" href="/providers/skool">
-  She posts to your communities once the extension is loaded
-</Card>
-
-## Self-Hosted Considerations
-
-Running her on a domain other than `localhost` or `*.postqueen.ai`? You build a custom extension with your domain in the `externally_connectable` manifest field.
-
-Edit `apps/extension/manifest.json` and add your domain:
-
-```json
-{
-  "externally_connectable": {
-    "matches": [
-      "http://localhost/*",
-      "https://localhost/*",
-      "https://*.postqueen.ai/*",
-      "https://postqueen.example.com/*"
-    ]
-  }
-}
+```env
+EXTENSION_ID="the 32-letter id Chrome shows"
+# Optional: your own Web Store listing
+EXTENSION_STORE_URL="https://chromewebstore.google.com/detail/your-listing"
 ```
 
-Then rebuild the extension and load it as an unpacked extension in Chrome.
+`EXTENSION_ID` is one value for the whole instance, so every browser that connects Skool needs the build with that ID:
 
-The manifest field is only half of it. The extension compiles its own allowed-origin list from
-`FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` at build time, and any page outside that list is
-answered with `Unauthorized origin`.
+| Who connects Skool | What to do | `EXTENSION_ID` |
+|---|---|---|
+| One browser | Load the build unpacked, as above | The ID Chrome shows for it |
+| Several people | Zip the contents of `dist`, publish it on the Chrome Web Store (an unlisted item is enough), and set `EXTENSION_STORE_URL` to its page | The ID the Web Store gives the item |
 
-<Warning>
-**The build script does not read the repository's `.env`.** The watch build used during
-development does, the production `pnpm build` does not, so building without passing the values
-produces an extension that only trusts localhost. Pass them on the command line:
+<Tip>
+To give unpacked copies on different computers the same ID without publishing, upload the zipped build to the Chrome Web Store developer dashboard without publishing it, copy the public key it shows, and add it as `"key"` to `apps/extension/manifest.json` before you build. See Chrome's guide to the [manifest key](https://developer.chrome.com/docs/extensions/reference/manifest/key).
+</Tip>
 
-```bash
-FRONTEND_URL="https://postqueen.example.com" \
-NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api" \
-pnpm build
-```
-</Warning>
+<RestartService />
+
+Then open **Channels**, choose **Add Channel**, then **Skool**, and continue past the notice. The account appears in the **Channels** list.
+
+For local development, `pnpm run dev` at the repository root also builds the extension, in watch mode, from the repository's `.env`. That build uses the key in `apps/extension/manifest.dev.json`, which pins its ID to `gclbjdbkakfndpofanknmccecjlmleah`, and it is meant for PostQueen running on `localhost`.
 
 ## Troubleshooting
 
-- **"Extension not found"**: make sure the `EXTENSION_ID` environment variable is set and PostQueen has been restarted.
-- **"Extension not reachable"**: the extension may be disabled. Check `chrome://extensions/` and make sure PostQueen is enabled.
-- **"Unauthorized origin"**: the extension was built without your `FRONTEND_URL`. Rebuild with it set.
-- **"Could not get cookies"**: you must be logged in to the platform in the same Chrome browser where the extension is installed.
-- **Cookies expire**: the extension automatically refreshes cookies every 24 hours. If a connection drops, try reconnecting the channel.
+<AccordionGroup>
+  <Accordion title="Extension Not Found">
+    The window says "The PostQueen browser extension is not installed. You need to install it before connecting this channel." Either `EXTENSION_ID` is empty on the instance, or no enabled extension in this browser trusts the page: the build is not loaded, it is turned off, it was built for another domain or with `pnpm build`, or PostQueen is open over plain `http` on an address other than `localhost`.
+  </Accordion>
+  <Accordion title="PostQueen browser extension is not installed or not reachable.">
+    The page can reach an extension but not this one. `EXTENSION_ID` is not the ID Chrome shows for the loaded build, or the build's origin check refused the page because it was built with another `FRONTEND_URL` or PostQueen runs on a port other than 443. Fix the ID or rebuild, then recreate the container.
+  </Accordion>
+  <Accordion title="Missing required cookies: client_id, auth_token">
+    The browser is not signed in to Skool. Sign in at skool.com in the same Chrome profile, then connect again.
+  </Accordion>
+  <Accordion title="Failed to communicate with the browser extension.">
+    The extension stopped answering mid-connect. Reload it on `chrome://extensions`, reload PostQueen and try again.
+  </Accordion>
+  <Accordion title="The Skool channel disconnects after a while">
+    The daily cookie refresh only runs while Chrome is open with the extension, and the extension can only reach the backend address it was built with. Keep Chrome running, rebuild if `NEXT_PUBLIC_BACKEND_URL` changed, and reconnect the channel.
+  </Accordion>
+</AccordionGroup>
 
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Skool posting settings](/public-api/providers/skool)

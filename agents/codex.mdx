@@ -1,188 +1,135 @@
 ---
-title: Codex
-description: 'Teach OpenAI Codex her CLI and the announcement ships with the code, from your terminal or your pipeline'
-icon: /images/brand/icon-codex.svg
+title: "Codex"
+description: "Connect OpenAI Codex to PostQueen with one codex mcp add command, for the CLI, the IDE extension and the ChatGPT desktop app."
+icon: "/images/brand/icon-codex.svg"
 ---
 
-## Working with her in the repo
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Codex is OpenAI's software engineering agent. It is not ChatGPT — same pairing as Claude Code vs Claude. It works inside a repo, runs real commands and checks its own results, which is exactly the shape her CLI was built for. Point Codex at `postqueen` and shipping a release stops being two jobs: the code goes out and the launch posts land on the calendar in the same session.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-Because Codex runs commands rather than clicking a dashboard, it fits the places a person does not want to be at 6 AM. A cron entry or a CI job can hold the same session, run the same commands and report back.
+Codex is OpenAI's coding agent, available as a CLI, an IDE extension, in the ChatGPT desktop app and in the cloud. Add PostQueen once and Codex can write posts from your commits, schedule them and report how your published posts did.
 
-## Set up
+<div className="pq-visual pq-tint-blue">
+  <img noZoom src="/images/site/agents/codex.webp" alt="A sample Codex terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
+</div>
+
+## Before you start
+
+- **Plans:** every ChatGPT plan includes Codex: Free and Go (in the desktop app, as it rolls out), Plus, Pro, Business, Enterprise and Edu. Weekly limits may apply.
+- **Platforms:** the CLI, the IDE extension and the ChatGPT desktop app, which share one config, plus Codex on the web.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect Codex
 
 <Steps>
-  <Step title="Install the CLI where Codex runs">
-    Codex executes shell commands on the machine or container it lives in, so the CLI belongs there too:
+  <Step title="Add PostQueen">
+    Run this in your terminal, with your key in place of `YOUR_API_KEY`:
 
     ```bash
-    npm install -g postqueen
+    codex mcp add postqueen \
+      --url https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
+
+    Codex saves it in `~/.codex/config.toml`, which the CLI, the IDE extension and the ChatGPT desktop app all read.
   </Step>
-  <Step title="Install the PostQueen skill">
-    ```bash
-    npx skills add GkhanKINAY/postqueen-agent
-    ```
-
-    The skill hands Codex her complete command reference along with the patterns behind it, so it arrives knowing the discovery flow and the media rule instead of guessing at flags.
+  <Step title="Check the server">
+    Run `codex mcp list`, or type `/mcp` inside Codex.
   </Step>
-  <Step title="Export your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Export it in the environment Codex runs in:
-
-    ```bash
-    export POSTQUEEN_API_KEY="your-api-key"
-    ```
-
-    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
-
-    ```bash
-    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
-    ```
-  </Step>
-  <Step title="Verify the connection">
-    ```bash
-    postqueen integrations:list
-    postqueen auth:status
-    ```
-
-    A JSON list of your connected channels means she is ready, and `auth:status` confirms the credentials are valid.
+  <Step title="Restart the app you use">
+    In the IDE extension, choose **Restart extension**. In the ChatGPT desktop app, restart it. In the CLI, start a new session.
   </Step>
 </Steps>
 
-<Note>
-Prefer tool calls to shell commands? The Codex CLI speaks MCP natively, so you can register her hosted server in `~/.codex/config.toml` and skip the local install. The [Codex MCP page](/mcp/clients/codex) has both the URL form and the bearer-token form, which keeps your key out of the config file.
-</Note>
-
-## 👑 One campaign file, a whole launch
-
-For a single post, flags are enough. For a launch where each network gets its own wording, write the campaign to a file and hand the file over:
-
-```bash
-postqueen posts:create --json campaign.json
-```
-
-The file is the request body her API receives, so anything the API accepts you can put in it. Here is a two-channel launch, scheduled for the same moment:
-
-```json campaign.json
-{
-  "type": "schedule",
-  "date": "2026-08-01T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": { "id": "your-x-integration-id" },
-      "value": [
-        { "content": "Dark mode is live. Ship it at 2 AM like the rest of us 🌙", "image": [] }
-      ],
-      "settings": { "__type": "x", "who_can_reply_post": "everyone" }
-    },
-    {
-      "integration": { "id": "your-linkedin-integration-id" },
-      "value": [
-        {
-          "content": "v3.2 is out: dark mode, faster cold starts and a rewritten settings screen. Release notes in the comments.",
-          "image": []
-        }
-      ],
-      "settings": { "__type": "linkedin" }
-    }
-  ]
-}
-```
-
-Reading the shape:
-
-| Field | What it does |
-|---|---|
-| `type` | `schedule` publishes at `date`, `now` publishes immediately, `draft` saves the post without scheduling it |
-| `date` | ISO 8601, required even for a draft |
-| `shortLink` | Whether her link shortener rewrites URLs in the content |
-| `posts[].integration.id` | An integration ID from `postqueen integrations:list` |
-| `posts[].value` | The post itself, plus one entry per follow-up comment or thread item |
-| `posts[].value[].image` | Uploaded media as `{ "id", "path" }` objects, where `path` is a URL returned by `postqueen upload` |
-| `posts[].settings.__type` | The provider whose settings schema applies, such as `x`, `linkedin` or `reddit`. You can leave it out, since the backend fills it in from the integration ID |
-| `posts[].settings` | The provider's own fields. X requires `who_can_reply_post`, and the schema is validated even when `type` is `draft` |
-
-Required fields differ per network, and [Create Post](/public-api/posts/create) lists them for each one. `postqueen integrations:settings <integration-id>` reports the same thing at runtime, which is what Codex should call before writing a campaign file for a channel it has not posted to yet.
-
-<Warning>
-Every value in an `image` array has to be a URL that came back from `postqueen upload`. Raw local paths and outside links get rejected by the publishing pipeline, so upload first and paste the returned `path`:
-
-```bash
-IMAGE_URL=$(postqueen upload release-banner.png | tail -n +2 | jq -r '.path')
-```
-</Warning>
-
-## In a pipeline
-
-A campaign file is plain JSON and a CLI call is a plain command, so a release job can announce itself. Generate the file from your tag and changelog, then create the posts as a step:
-
-```yaml
-- name: Announce the release
-  env:
-    POSTQUEEN_API_KEY: ${{ secrets.POSTQUEEN_API_KEY }}
-  run: |
-    npm install -g postqueen
-    postqueen posts:create --json ./campaign.json
-```
-
-Two habits keep this pleasant to live with:
-
-- **Draft first.** Set `"type": "draft"` in the campaign file while you are getting a pipeline right. The posts appear on your calendar unscheduled, so a broken job costs you a click instead of a public apology.
-- **Watch the budget.** The create-post endpoint has an hourly limit per workspace, and a campaign file counts as one request no matter how many networks it covers. Batch the launch into a single file rather than looping over channels.
-
-The same command works from cron on a small box. Cron does not read your shell profile, so set the key in the crontab itself:
-
-```bash
-POSTQUEEN_API_KEY=your-api-key
-
-# Every weekday at 7 AM, queue the campaign file your job just generated
-0 7 * * 1-5 /usr/local/bin/postqueen posts:create --json /srv/posts/today.json
-```
-
 <Tip>
-Ask Codex to verify its own work: `postqueen posts:list` returns what is on the calendar, so the task can end with proof rather than a claim. Commands that create, read or delete data exit `1` on failure, so a pipeline can branch on the exit code. `auth:status` is informational and exits `0` even when it reports invalid credentials, so read its output rather than its status.
+**Prefer a form?** In the IDE extension, open the gear menu, then **MCP servers > Add server > Streamable HTTP**, paste the address, save and choose **Restart extension**. In the ChatGPT desktop app, open **Settings > MCP servers > Add server**, then restart.
 </Tip>
 
-## Staying in control
+## Check that it works
 
-She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever a job puts on the calendar goes out on time without another word from you. Want a closer look first? Everything is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and a campaign file with `"type": "draft"` saves each post unscheduled until you publish it there.
+Ask Codex: "List my PostQueen channels." It calls PostQueen and answers with the channels you connected.
 
-## FAQ
+## Good to know
 
-<AccordionGroup>
-  <Accordion title="Do I need Codex to use PostQueen?">
-    No. She works on her own through the dashboard, the CLI and the API. Codex is one of several ways to automate her.
-  </Accordion>
-  <Accordion title="What can Codex actually do with PostQueen?">
-    Everything the CLI can do. It can list your channels and read their settings, and it can upload media, schedule posts across your 30+ networks and pull analytics afterwards, with JSON output on every command.
-  </Accordion>
-  <Accordion title="Can I review posts before they publish?">
-    Yes. Ask Codex for drafts, or set `"type": "draft"` in the campaign file, and each post sits on the calendar unscheduled until you publish it.
-  </Accordion>
-  <Accordion title="Does the integration cost extra?">
-    <Snippet file="agent-plan-limits.mdx" />
-  </Accordion>
-  <Accordion title="Flags or a campaign file?">
-    Flags for one post to one place. A campaign file once the wording differs per network, or once a script is generating the content, because a file is easier to diff and review than a long command.
-  </Accordion>
-</AccordionGroup>
+- **Use MCP rather than the PostQueen CLI in Codex.** The default workspace-write sandbox has network access off, so every CLI call asks for approval and unattended runs fail.
+- **Codex will not connect PostQueen on its own.** It offers to guide you and asks for the address; the reliable step is the `codex mcp add` command.
+- **For one project only,** put the server in `.codex/config.toml` inside a trusted project. Codex reads that file too.
+- **ChatGPT on the web does not read this config.** Add PostQueen to ChatGPT on its own; see [ChatGPT](/agents/chatgpt).
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
-## Learn more
+## Other ways to connect
 
-<CardGroup cols={2}>
-  <Card title="Codex MCP setup" icon="plug" href="/mcp/clients/codex">
-    Register her hosted server in `~/.codex/config.toml`, with or without the key in the URL
-  </Card>
-  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
-    The `postqueen` CLI that Codex drives: installation, authentication and the full command set
-  </Card>
-  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
-    Why her command line reads well to something that parses flags and JSON
-  </Card>
-  <Card title="Create Post API" icon="code" href="/public-api/posts/create">
-    The request body a campaign file mirrors, with every provider's settings schema
-  </Card>
-</CardGroup>
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From OpenAI's docs. The route above |
+| The Bearer token, read from your environment | `{{mcpBearerUrl}}` | From OpenAI's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+
+<Tabs>
+  <Tab title="Bearer token">
+    Codex reads the key from `POSTQUEEN_API_KEY` when it starts, so it stays out of `config.toml`:
+
+    ```bash
+    export POSTQUEEN_API_KEY=YOUR_API_KEY
+    codex mcp add postqueen --url https://api.postqueen.ai/mcp \
+      --bearer-token-env-var POSTQUEEN_API_KEY
+    ```
+
+    `codex mcp add` has no header flag. Other headers go under `http_headers` in `config.toml`.
+  </Tab>
+  <Tab title="Sign in (not tested yet)">
+    ```bash
+    codex mcp add postqueen \
+      --url https://api.postqueen.ai/mcp-oauth-dynamic
+    ```
+
+    Codex detects the sign-in and opens the PostQueen sign-in page, which a workspace admin approves. `codex mcp login postqueen` runs it again. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+  </Tab>
+</Tabs>
+
+## Try this first
+
+```text wrap
+Read the last ten commits and write one short Bluesky post about what changed. Save it in PostQueen as a draft for Monday at 10am.
+```
+
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
+
+## Run it on a schedule
+
+`codex exec` runs Codex without a chat, from cron or a CI job. It reads the same `config.toml`, so the PostQueen tools come along:
+
+```bash
+codex exec "Turn the last ten commits into three PostQueen drafts for Bluesky"
+```
+
+Source: [OpenAI, non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode).
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| Every PostQueen CLI call asks for approval | The default sandbox has network access off. Use the MCP server instead of the CLI. |
+| The IDE extension does not see PostQueen | Choose **Restart extension** after you add the server. |
+| ChatGPT on the web does not see it | It does not read Codex's config. Add PostQueen to ChatGPT on its own. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+## Is it the same as ChatGPT?
+
+No. Codex lives in the ChatGPT desktop app, but ChatGPT on the web has its own setup:
+
+| Product | What it is | How it connects |
+|---|---|---|
+| **Codex** (this page) | OpenAI's coding agent: CLI, IDE extension and the ChatGPT desktop app | One `codex mcp add` command |
+| [ChatGPT](/agents/chatgpt) | OpenAI's assistant on the web | A developer mode app at chatgpt.com/plugins |
+
+The **MCP servers** setting in the ChatGPT desktop app belongs to Codex, not to the web chat.
+
+<NextStepsAgent />

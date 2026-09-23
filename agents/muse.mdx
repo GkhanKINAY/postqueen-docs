@@ -1,75 +1,97 @@
 ---
-title: Muse Code and Muse
-description: "Muse Code, Meta's coding agent, connects to PostQueen over MCP. Muse, the personal agent, connects through a custom connector and is not tested yet."
-icon: /images/brand/icon-muse.svg
+title: "Muse"
+description: "Muse, Meta's personal agent, cannot take PostQueen's address yet. What Meta documents instead, and where it stands."
+icon: "/images/brand/icon-muse.svg"
 ---
 
-Meta ships two different agents with the Muse name, and they connect to PostQueen in different ways.
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-- **Muse Code** is Meta's coding agent for the terminal and CI. It reads PostQueen's MCP address from its settings file. [Set it up](#muse-code).
-- **Muse** is Meta's personal agent in the Muse app, on muse.ai and in WhatsApp. Meta does not document a place to paste an MCP address in it. [How it connects](#muse-the-personal-agent).
+<AgentStatus status="not-possible" label="Not possible yet">PostQueen cannot be added to Muse by its address yet. The custom connector route below is not tested yet.</AgentStatus>
 
-## Muse Code
-
-<Note>
-From Meta's docs, not tested by PostQueen yet.
-</Note>
-
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Then add PostQueen to `~/.config/muse/settings.json`:
-
-```json
-{
-  "schema_version": 1,
-  "mcp_servers": {
-    "postqueen": {
-      "transport": "streamable_http",
-      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
-      "mode": "optional"
-    }
-  }
-}
-```
-
-Restart Muse Code after saving, then type `/mcp` to see PostQueen's [21 MCP tools](/mcp/tools). Ask it to list your connected social media accounts.
-
-<Card title="Full setup: Muse Code over MCP" icon="/images/brand/icon-muse.svg" href="/mcp/clients/muse">
-  Header auth, self-hosted URLs and the settings file rules
+<Card title="Looking for Muse Code?" icon="/images/brand/icon-muse.svg" href="/agents/muse-code" horizontal>
+  Muse Code, Meta's coding agent for the terminal, connects to PostQueen today with one settings entry.
 </Card>
 
-## Muse, the personal agent
+Muse is Meta's personal agent in the Muse app, on muse.ai and in WhatsApp. It launched in the US on September 8, 2026, and works on its own cloud computer at Meta, the Muse Secure VM. This page shows what Meta documents for adding a service to Muse, and what PostQueen has and has not checked.
 
-<Note>
-Not tested by PostQueen yet.
-</Note>
+<div className="pq-visual pq-tint-peach pq-visual-phone">
+  <img noZoom src="/images/site/agents/muse.webp" alt="A sample Muse chat on a phone with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
+</div>
 
-PostQueen is not in Muse's connector list, and Meta does not document pasting an MCP address into Muse. Meta's route for a service that is not listed is a custom connector that Muse builds with you in the chat:
+## Before you start
+
+- **Plans:** Muse is free with a usage limit. Power costs \$20 a month and Maximum \$100 a month. Meta does not tie connectors to a plan.
+- **Platforms:** the Muse app on iOS and Android, muse.ai on the web, WhatsApp and Mac. Muse is rolling out in the US and is not available in every location yet.
+- **A PostQueen API key**, if you try the custom connector below. A workspace admin copies it from **Connections**.
+
+<ApiKeyLocation />
+
+## Can I connect PostQueen to Muse today?
+
+Not by address. Meta documents two ways for Muse to reach a service, and neither takes an MCP address from you today:
+
+| Route | What Meta documents | Where PostQueen stands |
+|---|---|---|
+| **A listed connector** | Connectors Meta has reviewed, added under **Settings > Connectors** | PostQueen is not listed yet |
+| **A custom connector** | You ask Muse in chat to build one, from the service's API information | Not tested with PostQueen yet |
+
+## Try a custom connector (not tested yet)
+
+These are the steps Meta documents for a service that is not in the Connector list. Nobody has built a PostQueen connector this way yet, so PostQueen cannot promise it works.
 
 <Steps>
-  <Step title="Get your key">
+  <Step title="Copy your PostQueen API key">
     In PostQueen, open **Connections > API Keys** and copy the key. Only a workspace admin can reveal it.
   </Step>
   <Step title="Ask Muse to create a custom connector">
-    In a Muse chat, ask Muse to create a custom connector for PostQueen. Muse guides you through it.
+    In a Muse chat, ask Muse to create a custom connector for PostQueen. Muse guides you through it and may look up PostQueen's API information.
   </Step>
   <Step title="Enter the key only in the secure prompt">
-    When Muse asks for your API key, enter it only in the secure prompt Muse shows, never in the chat.
+    When Muse asks for your API key, enter it only in the secure prompt Muse shows, never in the chat. Muse keeps it in its Secure Credentials Store, away from the model.
   </Step>
   <Step title="Choose what Muse may do">
-    Muse asks your permission before a connector acts. You can change that later under **Settings > Permissions** in Muse.
+    Muse asks before a connector acts. Choose **Allow once**, **Allow for this task** or **Always allow**, and change it later under **Settings > Permissions**.
   </Step>
 </Steps>
 
 <Warning>
-The API key gives full access to your PostQueen workspace, and Meta does not review custom connectors. Grant access with care. Muse is rolling out in the US and is not available everywhere yet.
+Meta does not review custom connectors or how they use your information. A PostQueen API key gives full access to the workspace, so grant access with care.
 </Warning>
 
-## Learn more
+## Good to know
 
-<CardGroup cols={2}>
-  <Card title="Muse Code MCP setup" icon="/images/brand/icon-muse.svg" href="/mcp/clients/muse">
-    The Muse Code settings file, step by step
-  </Card>
-  <Card title="Agents overview" icon="compass" href="/agents/overview">
-    Every way to put an agent in front of PostQueen
-  </Card>
-</CardGroup>
+- **Meta does not say that Muse accepts an MCP address.** Pasting PostQueen's address into **Settings > Connectors** does not work the way it does in Claude: that screen lists only connectors Meta has reviewed.
+- **Only a workspace admin can connect PostQueen.** The API key is shown to admins only, and it gives full access to the workspace.
+- **If you get it working,** tell [support@postqueen.ai](mailto:support@postqueen.ai) what Muse asked for. It helps PostQueen test this route and update this page.
+
+## Try this first
+
+The first message to send is the one that starts the custom connector:
+
+```text wrap
+Create a custom connector for PostQueen, so you can schedule my social media posts. Ask me for my API key in a secure prompt, not in this chat.
+```
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| PostQueen is not under **Settings > Connectors** | It is not in Meta's reviewed directory yet. Ask Muse in chat to create a custom connector instead. |
+| Muse asks for the key in the chat | Do not paste it there; ask for the secure prompt. If the key was sent in a chat, a workspace admin rotates it under **Connections > API Keys**. |
+| You wanted Meta's terminal agent | That is Muse Code. Follow [the Muse Code page](/agents/muse-code). |
+| Muse is not available to you | Muse is rolling out in the US and is not in every location yet. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+## Is it the same as Muse Code?
+
+No. Meta ships two agents with the Muse name, and they connect to PostQueen in different ways:
+
+| Product | What it is | How it connects |
+|---|---|---|
+| **Muse** (this page) | Meta's personal agent in the Muse app, on muse.ai and in WhatsApp | Not by address yet |
+| [Muse Code](/agents/muse-code) | Meta's coding agent for the terminal and CI, built on Muse Spark | PostQueen's MCP address in its settings file |
+
+<NextStepsAgent />

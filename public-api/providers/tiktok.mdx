@@ -1,282 +1,221 @@
 ---
-title: TikTok Settings
-description: 'API settings for posting to TikTok'
+title: "TikTok posting settings"
+sidebarTitle: "TikTok"
+description: "The settings object a post to TikTok takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/tiktok.svg"
 ---
 
-Every TikTok post carries a settings block, and `content_posting_method` is the field that matters most: it decides whether the post publishes or lands in the account's app inbox.
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-The same schema serves both TikTok connections. A channel connected through TikTok Business takes `"__type": "tiktok-business"` and adds two optional fields of its own, [`music` and `location`](#tiktok-business).
+<ChannelStatus status="in-review">Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet.</ChannelStatus>
 
-Creating the OAuth app and connecting a channel: [TikTok setup guide](/installation/providers/tiktok).
-
-## Settings Schema
-
-```json
-{
-  "settings": {
-    "__type": "tiktok",
-    "title": "",
-    "privacy_level": "PUBLIC_TO_EVERYONE",
-    "duet": false,
-    "stitch": false,
-    "comment": true,
-    "autoAddMusic": "no",
-    "brand_content_toggle": false,
-    "brand_organic_toggle": false,
-    "video_made_with_ai": false,
-    "content_posting_method": "DIRECT_POST"
-  }
-}
-```
+Every post to TikTok carries a `settings` object with `"__type": "tiktok"`. Most of its fields are required, even the ones TikTok ignores in Upload mode, so send them all. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 <Warning>
-**Important:** TikTok requires media files to be publicly accessible via HTTPS. Local files or private URLs will fail. Use [Cloudflare R2](/configuration/r2) or similar storage with public access.
+Until TikTok audits PostQueen's app, send `"privacy_level": "SELF_ONLY"`. TikTok refuses every other level at publish time, after the post was accepted and scheduled. The `creatorInfo` [tool](/public-api/integrations/provider-tools#tiktok) returns the levels this account accepts right now.
 </Warning>
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | `tiktok`, or `tiktok-business` for a channel connected through TikTok Business |
-| `title` | `string` | No | Video title (max 90 characters). The only setting TikTok keeps when `content_posting_method` is `UPLOAD` |
-| `privacy_level` | `string` | Yes | Who can view the video. `DIRECT_POST` only |
-| `duet` | `boolean` | Yes | Allow duets. Video posts only; `DIRECT_POST` only |
-| `stitch` | `boolean` | Yes | Allow stitches. Video posts only; `DIRECT_POST` only |
-| `comment` | `boolean` | Yes | Allow comments. `DIRECT_POST` only |
-| `autoAddMusic` | `string` | Yes | Auto-add music. Photo posts only; `DIRECT_POST` only |
-| `brand_content_toggle` | `boolean` | Yes | Branded content disclosure. `DIRECT_POST` only |
-| `brand_organic_toggle` | `boolean` | Yes | Organic branded content. `DIRECT_POST` only |
-| `video_made_with_ai` | `boolean` | No | AI-generated content disclosure. Video posts only; `DIRECT_POST` only |
-| `music` | `object` | No | TikTok Business only. A track from TikTok's commercial music list. `DIRECT_POST` only |
-| `location` | `object` | No | TikTok Business only. A location tag. `DIRECT_POST` only |
-| `content_posting_method` | `string` | Yes | `DIRECT_POST` publishes straight away; `UPLOAD` sends it to the TikTok app inbox |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"tiktok"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `content_posting_method` | string | Yes | `DIRECT_POST` publishes the post. `UPLOAD` does not publish: it sends the media to the account's TikTok inbox, where the owner finishes and publishes it in the TikTok app within 24 hours. |
+| `privacy_level` | string | Yes | Who can see the post: `PUBLIC_TO_EVERYONE`, `MUTUAL_FOLLOW_FRIENDS`, `FOLLOWER_OF_CREATOR` or `SELF_ONLY`. Only `SELF_ONLY` works until TikTok's audit. Ignored with `UPLOAD`. |
+| `comment` | boolean | Yes | Allow comments. Ignored with `UPLOAD`. |
+| `duet` | boolean | Yes | Allow Duet. Videos only; ignored on photo posts and with `UPLOAD`. |
+| `stitch` | boolean | Yes | Allow Stitch. Videos only; ignored on photo posts and with `UPLOAD`. |
+| `autoAddMusic` | string | Yes | `yes` or `no`. `yes` lets TikTok add recommended music. Photo posts only; ignored on videos and with `UPLOAD`. |
+| `brand_organic_toggle` | boolean | Yes | Discloses that you promote yourself or your own brand. Ignored with `UPLOAD`. |
+| `brand_content_toggle` | boolean | Yes | Discloses a paid partnership with another brand. TikTok does not allow such a post to be private, so it cannot publish while only `SELF_ONLY` works. Ignored with `UPLOAD`. |
+| `title` | string | No | The title of a photo post, up to 90 characters. A video has no separate title: its caption is the post text. |
+| `video_made_with_ai` | boolean | No | Labels the video as AI-generated. Videos only; ignored with `UPLOAD`. |
 
-### What the qualifiers mean
+The caption is the post text in `value[0].content`, up to 2,000 characters. For a photo post it becomes the description under the title. With `UPLOAD`, TikTok keeps only a photo post's title and caption; a video's caption and the other fields are dropped, and the owner sets them in the TikTok app.
 
-| Qualifier | What it means |
-|-----------|---------------|
-| `DIRECT_POST` only | TikTok applies the setting only when `content_posting_method` is `DIRECT_POST`. With `UPLOAD` the field is still required by the PostQueen API, but TikTok silently discards it |
-| Video posts only | TikTok's photo posts have no duet, stitch, or AI-generated label, so these settings are discarded when the post is a picture |
-| Photo posts only | `autoAddMusic` has no effect on videos |
-
-### `privacy_level`
-
-| Value | Description |
-|-------|-------------|
-| `PUBLIC_TO_EVERYONE` | Anyone can view |
-| `MUTUAL_FOLLOW_FRIENDS` | Only mutual followers can view |
-| `FOLLOWER_OF_CREATOR` | Only your followers can view |
-| `SELF_ONLY` | Only you can view |
-
-### `autoAddMusic`
-
-| Value | Description |
-|-------|-------------|
-| `yes` | TikTok will auto-add music |
-| `no` | No automatic music |
-
-### `content_posting_method`
-
-| Value | Description |
-|-------|-------------|
-| `DIRECT_POST` | Publishes the post to TikTok. **Use this unless the user explicitly wants to review the post in the TikTok app first.** |
-| `UPLOAD` | Does **not** publish. Sends the media to the account's TikTok app inbox, where the user must manually finish and publish it within 24 hours or it is discarded. TikTok keeps only the title/content in this mode, every other setting is silently discarded. |
-
-<Check>
-`DIRECT_POST` is the mode that finishes the job. Nobody has to open the TikTok app afterwards.
-</Check>
-
-<Warning>
-A post created with `UPLOAD` is reported as **successfully published** by the PostQueen API, because the upload to TikTok did succeed. It will not appear on the TikTok profile until the account owner opens the TikTok app, finds the draft in their inbox, and publishes it manually. Choose `UPLOAD` only when that manual step is what the user asked for.
-</Warning>
+Photos are fetched by TikTok from their PostQueen address. Upload each file with [upload a file](/public-api/uploads/upload-file) first and use the `path` it returns: a photo from anywhere else fails at publish time with "You have to upload the picture/video to PostQueen when sending a URL".
 
 ### TikTok Business
 
-A TikTok Business channel reads the same fields, with these differences:
+The **TikTok Business** tile cannot be connected yet. A channel on it would take `"__type": "tiktok-business"`, the same fields as above, and two optional ones:
 
-- `privacy_level` applies to photo posts only. The Business video endpoint has no privacy field, so a video publishes with the account's default visibility.
-- `autoAddMusic: "yes"` on a photo post attaches a random track from TikTok's commercial music list and overrides `music`. Send `"no"` when you want a specific track.
-- `music` and `location` exist only here. The standard TikTok connection ignores both.
+| Field | Type | What it does |
+|---|---|---|
+| `music` | object | A track from TikTok's commercial music list: `{ "id": "...", "audio_volume": 50, "video_volume": 50 }`. Find the id with the `musicSearch` tool. Volumes run `0` to `100`, default `50`, videos only. |
+| `location` | object | A location tag: `{ "id": "...", "name": "..." }`, from the `locationSearch` tool. |
 
-Find the values with the [`musicSearch` and `locationSearch` tools](/public-api/integrations/provider-tools#tiktok-business).
+On that tile `privacy_level` and `autoAddMusic` apply to photo posts only, `autoAddMusic: "yes"` attaches a random track and overrides `music`, and captions can run to 2,200 characters.
 
-`music`:
+## What PostQueen checks
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | `string` | Yes | The `id` returned by `musicSearch` |
-| `title`, `artist`, `image` | `string` | No | For display. Only the id is sent to TikTok |
-| `audio_volume` | `number` | No | Track volume, 0 to 100. Defaults to 50. Video posts only |
-| `video_volume` | `number` | No | Volume of the video's own sound, 0 to 100. Defaults to 50. Video posts only |
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-`location`:
+| Rule | Message |
+|---|---|
+| At least one video or photo | “No video / images selected” |
+| A video goes on its own | “Only pictures are supported when selecting multiple items” |
+| At most 35 photos | “You can select up to 35 pictures” |
+| No AVIF, BMP or TIFF photos, as on every network | “File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4” |
+| Photos at most 1,080 px on the shorter side | “Image 2 is 1440x1920, TikTok allows a maximum of 1080px on the shorter side” (with the photo's number and size) |
+| Caption up to 2,000 characters | “post is too long, please fix it” |
+| Every required field is present, with an allowed value | A validation error naming the field |
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `id` | `string` | Yes | The `id` returned by `locationSearch` |
-| `name` | `string` | Yes | The `name` returned by `locationSearch`, sent to TikTok with the id |
-| `address` | `string` | No | For display only |
-
----
-
-## Complete Example
-
-<Tabs>
-  <Tab title="Public video">
-
-Interactions enabled, published straight away.
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "tiktok",
+  "name": "Your channel name",
+  "message": "You can select up to 35 pictures"
+}
+```
+
+TikTok's own rules are not checked first: the account's maximum video length, videos at least 360 px on both sides, photos up to 20 MB, about 15 direct posts a day per account, and at most 5 uploads waiting in the inbox in any 24 hours. PNG, WebP and GIF photos are converted to JPEG when the post is published. AVIF, BMP and TIFF are refused, not converted: convert them to JPEG or PNG before you upload.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns. Every example uses `SELF_ONLY`, the one level TikTok publishes until its audit of PostQueen's app passes.
+
+<CodeGroup>
+
+```json Video
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-tiktok-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Check out this awesome tip! 🔥 #tips #viral #fyp",
-          "image": [
-            {
-              "id": "video-id",
-              "path": "https://uploads.postqueen.ai/tiktok-video.mp4"
-            }
-          ]
+          "content": "Three ways to fold a fitted sheet. #lifehack",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/video.mp4" }]
         }
       ],
       "settings": {
         "__type": "tiktok",
-        "title": "Quick Productivity Tip",
-        "privacy_level": "PUBLIC_TO_EVERYONE",
-        "duet": true,
-        "stitch": true,
+        "content_posting_method": "DIRECT_POST",
+        "privacy_level": "SELF_ONLY",
         "comment": true,
+        "duet": false,
+        "stitch": false,
         "autoAddMusic": "no",
-        "brand_content_toggle": false,
         "brand_organic_toggle": false,
-        "video_made_with_ai": false,
-        "content_posting_method": "DIRECT_POST"
+        "brand_content_toggle": false,
+        "video_made_with_ai": false
       }
     }
   ]
 }
 ```
 
-  </Tab>
-  <Tab title="Branded content">
-
-```json
+```json Photo post
 {
-  "settings": {
-    "__type": "tiktok",
-    "title": "Partnership with Brand",
-    "privacy_level": "PUBLIC_TO_EVERYONE",
-    "duet": false,
-    "stitch": false,
-    "comment": true,
-    "autoAddMusic": "no",
-    "brand_content_toggle": true,
-    "brand_organic_toggle": true,
-    "video_made_with_ai": false,
-    "content_posting_method": "DIRECT_POST"
-  }
-}
-```
-
-  </Tab>
-  <Tab title="AI-generated">
-
-```json
-{
-  "settings": {
-    "__type": "tiktok",
-    "title": "AI Generated Art",
-    "privacy_level": "PUBLIC_TO_EVERYONE",
-    "duet": true,
-    "stitch": true,
-    "comment": true,
-    "autoAddMusic": "yes",
-    "brand_content_toggle": false,
-    "brand_organic_toggle": false,
-    "video_made_with_ai": true,
-    "content_posting_method": "DIRECT_POST"
-  }
-}
-```
-
-  </Tab>
-  <Tab title="Private">
-
-Visible only to you.
-
-```json
-{
-  "settings": {
-    "__type": "tiktok",
-    "title": "",
-    "privacy_level": "SELF_ONLY",
-    "duet": false,
-    "stitch": false,
-    "comment": false,
-    "autoAddMusic": "no",
-    "brand_content_toggle": false,
-    "brand_organic_toggle": false,
-    "content_posting_method": "DIRECT_POST"
-  }
-}
-```
-
-This publishes a video that only the account owner can see. To send the media to the account's TikTok app inbox instead of publishing, switch to [`content_posting_method: "UPLOAD"`](#content_posting_method), which keeps only the title/content.
-
-  </Tab>
-  <Tab title="TikTok Business">
-
-A photo post with a chosen track and a location tag.
-
-```json
-{
-  "settings": {
-    "__type": "tiktok-business",
-    "title": "Weekend at the market",
-    "privacy_level": "PUBLIC_TO_EVERYONE",
-    "duet": false,
-    "stitch": false,
-    "comment": true,
-    "autoAddMusic": "no",
-    "brand_content_toggle": false,
-    "brand_organic_toggle": false,
-    "content_posting_method": "DIRECT_POST",
-    "music": {
-      "id": "track-id-from-musicSearch"
-    },
-    "location": {
-      "id": "location-id-from-locationSearch",
-      "name": "Central Market"
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Our three best-sellers this month, in order.",
+          "image": [
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/photo-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/photo-2.jpg" },
+            { "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/photo-3.jpg" }
+          ]
+        }
+      ],
+      "settings": {
+        "__type": "tiktok",
+        "title": "September best-sellers",
+        "content_posting_method": "DIRECT_POST",
+        "privacy_level": "SELF_ONLY",
+        "comment": true,
+        "duet": false,
+        "stitch": false,
+        "autoAddMusic": "yes",
+        "brand_organic_toggle": true,
+        "brand_content_toggle": false
+      }
     }
-  }
+  ]
 }
 ```
 
-  </Tab>
-</Tabs>
+```json Upload to the inbox
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Finish this one in the TikTok app.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/video.mp4" }]
+        }
+      ],
+      "settings": {
+        "__type": "tiktok",
+        "content_posting_method": "UPLOAD",
+        "privacy_level": "SELF_ONLY",
+        "comment": true,
+        "duet": false,
+        "stitch": false,
+        "autoAddMusic": "no",
+        "brand_organic_toggle": false,
+        "brand_content_toggle": false
+      }
+    }
+  ]
+}
+```
 
-## Next steps
+```json AI-labeled video
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Made with an AI video model, edited by us.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/video.mp4" }]
+        }
+      ],
+      "settings": {
+        "__type": "tiktok",
+        "content_posting_method": "DIRECT_POST",
+        "privacy_level": "SELF_ONLY",
+        "comment": false,
+        "duet": false,
+        "stitch": false,
+        "autoAddMusic": "no",
+        "brand_organic_toggle": false,
+        "brand_content_toggle": false,
+        "video_made_with_ai": true
+      }
+    }
+  ]
+}
+```
 
-<CardGroup cols={2}>
-  <Card title="Connect the channel" icon="plug" href="/providers/tiktok">
-    Create the OAuth app and link the TikTok account.
-  </Card>
-  <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">
-    The create endpoint, field by field, with a worked request.
-  </Card>
-  <Card title="Get media on HTTPS" icon="cloud-arrow-up" href="/public-api/uploads/upload-from-url">
-    Pull a remote file into storage so TikTok can reach it.
-  </Card>
-  <Card title="When nothing appears" icon="triangle-exclamation" href="/troubleshooting/post-failed">
-    Work out why a post that reported success is not on the profile.
-  </Card>
-</CardGroup>
+</CodeGroup>
+
+A post sent with `UPLOAD` counts as published in PostQueen once it reaches the inbox, although nothing is on the profile until the owner publishes it in the TikTok app.
+
+## Related
+
+- [Connect TikTok in the app](/channels/tiktok)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

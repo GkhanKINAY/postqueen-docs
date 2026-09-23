@@ -1,98 +1,115 @@
 ---
-title: 'Discord setup'
-description: 'Register the Discord application and give PostQueen its keys'
-icon: /images/channels/discord.svg
+title: "Discord setup"
+description: "Register your own Discord application and bot for a self-hosted PostQueen: the redirect URI, the bot token, the permissions it asks for and the variables to set."
+icon: "/images/channels/discord.svg"
 ---
 
-On your own instance the Discord application is yours: create it, give it a bot, then put the client id, secret and bot token in your environment.
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+
+On a self-hosted PostQueen the Discord application is yours. Connecting a Discord channel adds your application's bot to one server, and the bot posts every message, so PostQueen needs the application's OAuth keys and the bot's token.
+
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [Discord Developer Portal](https://discord.com/developers/applications), with a Discord account |
+| Variables | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/discord` |
+| Scopes | `identify`, `guilds` and `bot` |
+| Bot permissions | **View Channel**, **Send Messages**, **Embed Links**, **Attach Files**, **Create Public Threads**, **Create Private Threads**, **Send Messages in Threads** (permissions integer `377957174272`) |
+| You also need | The **Manage Server** permission on each server you connect |
+| Review | None to start. Discord asks for verification of the app's owner once the bot is in 100 servers |
+
+PostQueen checks the `identify` and `guilds` scopes when a server connects and refuses the connect if either is missing. The bot permissions are part of the install link, so you do not set them in the portal.
+
+## Create the app
 
 <Steps>
-  <Step title="Create a Discord Application">
-    Login to Discord on the web, and then go to the [Discord Developer Portal](https://discord.com/developers/applications) and click on "New Application".
-    
-    <Frame>
-      <img src="/images/providers/discord/discord_create_app.png" alt="New Application" />
-    </Frame>
+  <Step title="Create the application">
+    In the developer portal, choose **New Application**, enter a name, accept the terms and choose **Create**.
   </Step>
+  <Step title="Set up the bot">
+    Open the **Bot** page:
 
-  <Step title="Add an App Icon">
-    <Frame>
-      <img src="/images/providers/discord/discord_add_app_icon.png" alt="App Icon" />
-    </Frame>
+    - Upload an icon for the bot. The channel's picture in PostQueen is the bot's avatar, and without one the channel connects with no picture.
+    - Choose **Reset Token** and copy the token. Discord shows it once.
+    - Keep **Public Bot** on if people other than you will connect their servers. With it off, only the application's owner can add the bot.
 
-    Upload the App Icon of your choice (1024x1024px max) and save your changes. If you do not do this, you will get 404 errors in logs when trying to add the Discord channel in the PostQueen web interface.
+    PostQueen does not use the gateway, so leave the privileged intents off.
   </Step>
+  <Step title="Add the redirect URI">
+    Open the **OAuth2** page. Under **Redirects**, choose **Add Redirect**, enter the address and save:
 
-  <Step title="Get and set your Client ID and Client Secret">
-    You can find this in the **OAuth2** section of the Discord Developer Portal.
+    <CodeGroup>
 
-    <Frame>
-      <img src="/images/providers/discord/discord_copy_keys.png" alt="Copy Keys" />
-    </Frame>
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/discord
+    ```
 
-    The authorization screen asks for three things: `identify`, `guilds` and `bot`. The first two
-    are verified on connect and refused if missing. `bot` is what installs the application into
-    your server, which is why the consent screen shows a server picker.
+    ```text Local development
+    http://localhost:4200/integrations/social/discord
+    ```
 
-    Set these in your .env file as follows;
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/discord
+    ```
 
-```env
-DISCORD_CLIENT_ID="your_client_id"
-DISCORD_CLIENT_SECRET="your_client_secret"
-```
+    </CodeGroup>
+
+    <OAuthRedirect />
   </Step>
-
-  <Step title="Add a Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Discord OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/discord`
-    - Local development: `http://localhost:4200/integrations/social/discord`
-    - Docker: `http://localhost:4007/integrations/social/discord`
-
-    You can find this in the **OAuth2** section of the Discord Developer Portal.
-
-    <Frame>
-      <img src="/images/providers/discord/discord_redirect_uri.png" alt="Redirect URI" />
-    </Frame>
-  </Step>
-
-  <Step title="Create a Bot">
-    Navigate to the "Bot" section of the Discord Developer Portal. Fill out the bot details however you like, and then click "Reset Token".
-
-    With the token that is generated, set it in your .env file as follows;
-
-```env
-DISCORD_BOT_TOKEN_ID="your_bot_token"
-```
-
-    If you do not set this, you will get 404 errors when trying to add the Discord channel in the PostQueen web interface.
-
-    Stop PostQueen if it is running, and then start it using the .env file with the Discord details.
-  </Step>
-
-  <Step title="Add a Discord channel in the PostQueen web interface">
-    Go to the PostQueen web interface, and click on the "Add Channel" button, and then select "Discord". You should be redirected to Discord to login.
+  <Step title="Copy the client ID and secret">
+    On the same **OAuth2** page, copy the **Client ID**, then choose **Reset Secret** and copy the client secret.
   </Step>
 </Steps>
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+## Set the variables
 
-## Next steps
+Add the three values to your environment:
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Discord" icon="/images/channels/discord.svg" href="/providers/discord">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+```env
+DISCORD_CLIENT_ID="your client id"
+DISCORD_CLIENT_SECRET="your client secret"
+DISCORD_BOT_TOKEN_ID="your bot token"
+```
+
+The bot token lists each server's channels and sends every post, so without it the channel picker stays empty and every post fails.
+
+<RestartAndAddChannel />
+
+Discord's consent screen asks which server to add the bot to. Only servers where your account has **Manage Server** are offered. Each post then picks a text or announcement channel of that server; forum channels are left out, because PostQueen posts plain messages and a forum only takes new threads.
+
+## App review
+
+Discord needs no review to start. Once the bot is in 100 servers, Discord requires the application's owner to verify their identity before the bot can join more. See [Discord's verification guide](https://support-dev.discord.com/hc/en-us/articles/23926564536471-How-Do-I-Get-My-App-Verified).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    Discord returned a token without `identify` or `guilds`. Connect again and approve everything on the consent screen.
+  </Accordion>
+  <Accordion title="Discord says the redirect_uri is invalid">
+    The address PostQueen sent is not listed under **Redirects**. It is exactly your `FRONTEND_URL` followed by `/integrations/social/discord`. Check the scheme, the port and that there is no trailing slash.
+  </Accordion>
+  <Accordion title="The server is not offered on the consent screen">
+    Your Discord account does not have **Manage Server** there. Ask the server's owner for that permission, or to connect it themselves.
+  </Accordion>
+  <Accordion title="The channel picker is empty">
+    `DISCORD_BOT_TOKEN_ID` is missing or wrong, or the token was reset after you copied it. Copy a fresh token from the **Bot** page and recreate the container.
+  </Accordion>
+  <Accordion title="Bot doesn't have access to this channel">
+    The channel hides itself from the bot's role. In Discord, give the bot's role **View Channel**, **Send Messages** and **Attach Files** on that channel. The same applies to "Bot lacks permission to send messages in this channel".
+  </Accordion>
+  <Accordion title="Pictures or link previews do not come through">
+    The bot was added before PostQueen asked for **Embed Links** and **Attach Files**, and keeps the permissions its server gave it then. Reconnect the channel, or give the bot's role those permissions.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Discord posting settings](/public-api/providers/discord)

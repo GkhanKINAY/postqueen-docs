@@ -1,0 +1,68 @@
+---
+title: "NETWORK posting settings"
+sidebarTitle: "NETWORK"
+description: "The settings object a post to NETWORK takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/SLUG.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+
+{/*
+  API settings page template (B2 to B5, overview by B3). Copy it to
+  public-api/providers/<api-slug>.mdx. Fields, enums and lengths come from the
+  network's settings DTO and provider on the app's origin/main; every example
+  must pass the real validation (send it through POST /posts on a test
+  workspace, or check it against the DTO line by line). Delete these comments
+  when done.
+
+  Rules for this page:
+  - The status line matches the channel page and facts/facts.json.
+  - One page per network: a second tile (Instagram Standalone, LinkedIn Page,
+    TikTok Business) is a section here, not a page.
+  - No links to self-hosting pages, no source links, no env var names.
+  - Base URL {{apiBase}}; the key goes in Authorization with no Bearer.
+*/}
+
+<ChannelStatus status="STATUS">STATUS_NOTE_FROM_FACTS_JSON</ChannelStatus>
+
+Every post to NETWORK carries a `settings` object with `"__type": "TYPE"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
+
+## Fields
+
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `\"TYPE\"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `FIELD` | TYPE | Yes or no | What it does. Allowed values: `VALUE`, `VALUE`. |
+
+## What PostQueen checks
+
+| Rule | Message |
+|---|---|
+| TEXT_LIMIT | "EXACT MESSAGE" |
+
+## Examples
+
+<CodeGroup>
+
+```json A text post
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [{ "content": "TEXT", "image": [] }],
+      "settings": { "__type": "TYPE" }
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+## Related
+
+- [Connect NETWORK in the app](/channels/DOCS_SLUG)
+- [Create a post](/public-api/posts/create)

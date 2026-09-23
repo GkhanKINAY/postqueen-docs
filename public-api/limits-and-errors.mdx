@@ -1,0 +1,155 @@
+---
+title: "Limits and errors"
+description: "The hourly limits per workspace, what a 429 means, and the status codes and bodies the API returns."
+icon: "gauge"
+---
+
+Three endpoints have an hourly limit. Every other endpoint has none. The limits count per workspace: your API key, every OAuth app your workspace approved, the CLI and the SDK all draw on the same allowance.
+
+## Rate limits
+
+| Endpoint | Requests an hour, per workspace |
+|---|---|
+| `POST /posts` | 30 |
+| `POST /upload` | 300 |
+| `POST /upload-from-url` | 300, counted apart from `POST /upload` |
+| Everything else | No limit |
+
+The posting limit counts requests, not posts. One request can carry many channels and a whole thread and counts once, so put the posts of one run in one request instead of sending them one by one. The limit does not depend on the plan, and no plan has a monthly post limit.
+
+What counts:
+
+- **Every request that gets past the key check**, including one refused with `400` for a missing setting or a post that is too long. A client that retries a refused post in a loop uses up the hour. A `401` does not count.
+- **Only `POST /posts`** among the post routes. Listing and deleting posts, and changing a post's status or settings, have no limit.
+- **An hour from the first request.** The count starts with the first request and starts again an hour later. The request that goes over the limit starts a block of one hour: until it ends, every request to that endpoint answers `429`.
+
+### Reading the headers
+
+Each answer from a limited endpoint says where you stand:
+
+| Header | What it says |
+|---|---|
+| `X-RateLimit-Limit` | Requests allowed in the hour |
+| `X-RateLimit-Remaining` | Requests left |
+| `X-RateLimit-Reset` | Seconds until the count starts again |
+
+Over the limit, the endpoint answers `429` with a `Retry-After` header, in seconds:
+
+```json
+{
+  "statusCode": 429,
+  "message": "ThrottlerException: Too Many Requests"
+}
+```
+
+<Tip>
+Wait the number of seconds in `Retry-After` before you send the next request. Retrying at once keeps the limit hit and does not bring the reset forward.
+</Tip>
+
+## Status codes
+
+| Status | What it means |
+|---|---|
+| `200` | A read, change or delete worked. |
+| `201` | A `POST` worked: a post, an upload, a tool run or a token. |
+| `400` | The request is wrong: a missing or malformed field, a post that breaks a network's rule, or an unknown channel id in a post. Read the body, fix the request and send it again. |
+| `401` | The key or token is missing or not valid, or the workspace has no subscription. See [401 messages](#401-messages). |
+| `402` | The workspace is at its plan's channel limit, when you connect a channel, or has used this month's AI videos, when you generate one. The body has the billing link. |
+| `404` | The post, media or channel is not in your workspace or was deleted, or the video generator does not exist. Check the id. |
+| `406` | The feature is locked during the free trial, such as a Seedance video. See [Free trial](/cloud/trial). |
+| `413` | The JSON body of `POST /posts` is over about 100 kB. Upload files first and send their `id` and `path`, not file data. |
+| `422` | The AI provider's safety system refused a video prompt. The message says why. Change the prompt. |
+| `429` | Over an hourly limit. Wait for `Retry-After`. |
+| `500` | An error on PostQueen's side, or for two endpoints a refusal from the network: see [When a 500 comes from the network](#when-a-500-comes-from-the-network). |
+| `503` | The feature is not switched on yet. Today that is [clipping](/public-api/clipping/start), which is Soon. |
+
+There is no `403` on this API. A post, channel or file of another workspace is not forbidden, it is invisible: it answers like an id that does not exist.
+
+### 401 messages
+
+| `msg` | What it means |
+|---|---|
+| `No API Key found` | The request has no `Authorization` header |
+| `Invalid API key` | The key is wrong, was rotated, or was sent with a `Bearer` prefix |
+| `Invalid OAuth token` | The `pos_` token was revoked, replaced, or the person who approved it left the workspace |
+| `No subscription found` | The workspace has no subscription. Any plan works, the free trial too |
+
+### Error bodies
+
+The body of an error has one of four shapes. Read the status code first, then whichever of `msg` or `message` is present.
+
+<Tabs>
+  <Tab title="Validation">
+    A field is missing or has the wrong type. `message` lists every problem:
+
+    ```json
+    {
+      "message": ["posts.0.value.0.image must be an array"],
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+    ```
+  </Tab>
+  <Tab title="A network's rule">
+    From `POST /posts`: the post breaks a rule of the network, such as its length or its media. Nothing was saved.
+
+    ```json
+    {
+      "statusCode": 400,
+      "provider": "bluesky",
+      "name": "PostQueen",
+      "message": "post is too long, please fix it"
+    }
+    ```
+  </Tab>
+  <Tab title="msg">
+    From checks the public API makes itself: the key, uploads, connecting a channel, tools.
+
+    ```json
+    { "msg": "Unsupported file type." }
+    ```
+  </Tab>
+  <Tab title="Payment">
+    From `402`, with a link to the plans:
+
+    ```json
+    {
+      "statusCode": 402,
+      "message": "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels.",
+      "url": "https://app.postqueen.ai/billing"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+### When a 500 comes from the network
+
+A post, channel or media id that is not in your workspace does not answer `500`, and neither does an unknown video generator. `DELETE /integrations/{id}` answers `404 Channel not found`, `POST /video/function` answers `404 Video generator <id> not found`, and the other endpoints answer `404`, `400` or an empty result, as their pages say. Two endpoints answer `500` when the network, not PostQueen, refuses the call. Retrying the same request will not help:
+
+| Endpoint | Cause |
+|---|---|
+| `POST /integration-trigger/{id}` | `Unexpected error`: the network refused the call, or `data` did not fit the tool |
+| `GET /social/{integration}` | `Failed to generate auth URL`: the network refused to start the sign-in |
+
+Any other `500` is an error on PostQueen's side. Retry it after a short wait, a few times, waiting longer each time. If it keeps failing, write to [support@postqueen.ai](mailto:support@postqueen.ai) with the endpoint, the time and the answer.
+
+## Deleting twice
+
+`DELETE /posts/{id}` answers `404 Post not found` for a post that is already deleted, so a client that retries deletes can treat that `404` as done. `DELETE /integrations/{id}` answers `404 Channel not found` for a channel that is already deleted, which a client can treat as done too. `DELETE /posts/group/{group}` answers `200` whether or not the group existed.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Schedule a post with the API" icon="calendar-plus" href="/public-api/schedule-a-post">
+    From listing your channels to checking that the post went out.
+  </Card>
+  <Card title="Create a post" icon="send" href="/public-api/posts/create">
+    One request for many channels and a whole thread, counted once.
+  </Card>
+  <Card title="Upload a file" icon="image" href="/public-api/uploads/upload-file">
+    What it accepts, and why a video waits for processing.
+  </Card>
+  <Card title="OAuth apps" icon="key-round" href="/public-api/oauth">
+    Tokens for products other workspaces sign in to.
+  </Card>
+</CardGroup>

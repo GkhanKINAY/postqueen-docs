@@ -1,84 +1,97 @@
 ---
-title: 'Tumblr setup'
-description: 'Register the Tumblr application and give PostQueen its keys'
-icon: /images/channels/tumblr.png
+title: "Tumblr setup"
+description: "Register your own Tumblr app for a self-hosted PostQueen: the OAuth2 redirect URL, scopes, rate limits and the variables to set."
+icon: "/images/channels/tumblr.png"
 ---
 
-Register the application on Tumblr, check the two scopes it asks for, and put the consumer key and secret in your environment.
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-## Set up Tumblr
+On a self-hosted PostQueen the Tumblr app is yours. You register it on Tumblr, add PostQueen's address as its OAuth2 redirect URL, and give PostQueen the app's consumer key and secret. Tumblr does not review apps.
+
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [Tumblr applications](https://www.tumblr.com/oauth/apps), signed in to a Tumblr account |
+| Variables | `TUMBLR_CLIENT_ID`, `TUMBLR_CLIENT_SECRET` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/tumblr` |
+| Scopes | `write`, `offline_access` |
+| Review | None |
+
+Tumblr has no scope settings on the app. PostQueen asks for the two scopes when a channel connects, and refuses the connect if Tumblr grants fewer. `offline_access` is what gives PostQueen a refresh token, so the channel keeps working after the first token expires.
+
+## Create the app
 
 <Steps>
-  <Step title="Register an application">
-    Go to [Tumblr's application registry](https://www.tumblr.com/oauth/apps) and click
-    **Register application**. Fill in the name, description and the two URL fields Tumblr asks
-    for; only the callback below has to be exact.
+  <Step title="Register the application">
+    Go to [tumblr.com/oauth/apps](https://www.tumblr.com/oauth/apps) and choose **Register application**. Fill in the name, website, description and contact email. The callback fields are the ones that matter.
   </Step>
+  <Step title="Add the OAuth2 redirect URL">
+    PostQueen signs in with OAuth 2, and Tumblr turns OAuth 2 on for an app only once it has a valid OAuth2 redirect URL. Enter the address that matches how you run PostQueen in the OAuth2 redirect URL field:
 
-  <Step title="Set the callback URL">
-    <Snippet file="oauth2redirect.mdx" />
+    <CodeGroup>
 
-    **Your Tumblr OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/tumblr`
-    - Local development: `http://localhost:4200/integrations/social/tumblr`
-    - Docker: `http://localhost:4007/integrations/social/tumblr`
-  </Step>
-
-  <Step title="Check the permissions">
-    PostQueen asks for two scopes, and the connect is refused if either is missing:
-
-    ```
-    write
-    offline_access
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/tumblr
     ```
 
-    `offline_access` is the one worth checking. Without it Tumblr issues a token that cannot be
-    refreshed, so the channel connects and then goes quiet when that token expires.
+    ```text Local development
+    http://localhost:4200/integrations/social/tumblr
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/tumblr
+    ```
+
+    </CodeGroup>
+
+    The form also asks for a default callback URL, which is an OAuth 1 setting. The same address works there.
+
+    <OAuthRedirect />
   </Step>
-
-  <Step title="Set environment variables">
-    Copy the OAuth consumer key and secret from your application page.
-
-```env
-TUMBLR_CLIENT_ID=""
-TUMBLR_CLIENT_SECRET=""
-```
-  </Step>
-
-  <Step title="Restart and add the Tumblr channel">
-    <Snippet file="restart-and-add-channel.mdx" />
-
-    <Note>
-    Tumblr adds a second screen after you authorize: a list of the blogs on your account, with
-    the primary one marked. Pick the blog this channel should post to. One PostQueen channel is
-    one blog, so connect again to add another.
-    </Note>
+  <Step title="Copy the consumer key and secret">
+    The app now shows its **OAuth consumer key** and its secret key. The consumer key is the OAuth 2 client ID, and the secret key is the client secret. Copy both, and keep the secret private.
   </Step>
 </Steps>
+
+## Set the variables
+
+Add the two keys to your environment:
+
+```env
+TUMBLR_CLIENT_ID="your OAuth consumer key"
+TUMBLR_CLIENT_SECRET="your secret key"
+```
+
+<RestartAndAddChannel />
+
+Pick **Tumblr**, sign in and approve access. Tumblr then lists the blogs on your account, with the primary one marked. Pick the blog this channel posts to. One channel is one blog, so connect again to add another.
+
+## Rate limits
+
+- **Your app.** 1,000 requests an hour and 5,000 a day for each consumer key, shared by every Tumblr channel on your install.
+- **Each Tumblr account.** 250 posts, 250 image uploads, 20 video uploads and 60 minutes of video a day. When one is reached, the post fails with a message that names it, such as “Tumblr daily posting limit reached.”
+
+See [Tumblr's API docs](https://github.com/tumblr/docs/blob/master/api.md) for the current figures.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="The channel connects and then stops working after a while">
-    Almost certainly a missing `offline_access` scope on the application. Without it there is no
-    refresh token, so posting works until the first token expires and then fails. Add the scope
-    and reconnect the channel.
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    Tumblr returned a token without both scopes. Connect again and approve access on Tumblr's screen.
+  </Accordion>
+  <Accordion title="Tumblr says the redirect URI does not match, or OAuth 2 is not available">
+    The OAuth2 redirect URL is missing from the app, or is not exactly your `FRONTEND_URL` followed by `/integrations/social/tumblr`. Edit the app and fix it.
+  </Accordion>
+  <Accordion title="Please re-authenticate your Tumblr account.">
+    Tumblr refused the stored token and the refresh failed. Choose **Reconnect channel** in the channel's menu and approve access again.
   </Accordion>
 </AccordionGroup>
 
-## Next steps
+## Related
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Tumblr" icon="/images/channels/tumblr.png" href="/providers/tumblr">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Tumblr posting settings](/public-api/providers/tumblr)

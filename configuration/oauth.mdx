@@ -1,102 +1,89 @@
 ---
-title: OIDC Configuration
-description: 'How to configure OIDC for PostQueen'
-icon: 'key'
+title: "Single sign-on (OIDC)"
+description: "Let people sign in to a self-hosted PostQueen with your own OpenID Connect provider, such as Authentik, Keycloak, Okta or Microsoft Entra ID."
+icon: "key"
 ---
 
-Point PostQueen at your own identity provider, so people sign in with the account they already
-have rather than a new password here. This is worth doing if your organisation already runs
-single sign-on, and is not needed otherwise.
+import RestartService from '/snippets/restart-service.mdx';
 
-<Note>
-This is about signing **into** PostQueen. Connecting social networks so she can post to them is
-a different thing entirely: see [Providers](/providers/overview).
-</Note>
+PostQueen can sign people in through your own identity provider, so they use the account they already have instead of a new password. Any provider that speaks OpenID Connect works: Authentik, Keycloak, Dex, Okta, Microsoft Entra ID, Auth0 and others.
 
-## Before you start
+This is about signing in to PostQueen. Connecting social networks is separate: see [Channel developer apps](/installation/providers/overview).
 
-<Warning>
-**Two things to know before you start.**
+## What changes
 
-Your OIDC provider replaces the Google and Apple buttons, and the Farcaster and wallet buttons with them. It does not replace GitHub, because GitHub sign-in and OIDC can never appear together in the first place: GitHub renders only when `IS_GENERAL` is unset, and OIDC renders only when it is set.
+| | |
+|---|---|
+| The sign-in screen | One button for your provider, labeled with the name and logo you set. It replaces the Google, Apple, Farcaster and wallet buttons. Email sign-in stays. |
+| New people | Anyone your provider lets through gets a PostQueen account on first sign-in, even with `DISABLE_REGISTRATION=true`. Control who gets in at the provider. |
+| Requirement | `IS_GENERAL` has to be set, as it is in the Compose file. Without it the screen shows only GitHub, and none of this appears. |
 
-Which means `IS_GENERAL` has to be set for any of this to appear. Configure every variable below without it and the login page will look exactly as it did before, GitHub button and all. Nothing on this page will have taken effect.
-</Warning>
+## Set it up
 
-## Setup
-
-We will use [Authentik](https://goauthentik.io/) as an OIDC provider example, with base URL `https://authentik.example.com`
+The example uses Authentik at `https://auth.example.com`.
 
 <Steps>
-  <Step title="Create an Application/Provider on the Authentik side">
-    You will find the following important information:
+  <Step title="Create the application in your provider">
+    Create an OAuth2 or OpenID Connect application of the confidential type, with:
 
-    - `redirect_uri` => `https://postqueen.example.com/settings`
-    - `client_id` => `randomclientid`
-    - `client_secret` => `randomclientsecret`
-    - `auth_url` => `https://authentik.example.com/application/o/authorize`
-    - `token_url` => `https://authentik.example.com/application/o/token`
-    - `userinfo_url`=> `https://authentik.example.com/application/o/userinfo`
+    | Setting | Value |
+    |---|---|
+    | Redirect URI | `FRONTEND_URL` + `/settings`, for example `https://postqueen.example.com/settings` |
+    | Scopes | `openid`, `profile`, `email` |
+    | Client authentication | Client secret sent in the request body (`client_secret_post`) |
 
-    <Note>
-    OIDC is a standard, so the same values come from any OIDC provider. Okta, Microsoft Entra ID, Auth0 and Google Workspace all expose them, as do self-hosted providers such as Keycloak and Dex.
-    </Note>
+    Copy the client ID, the client secret, and the authorization, token and userinfo endpoints. In Authentik they are `https://auth.example.com/application/o/authorize/`, `.../token/` and `.../userinfo/`.
   </Step>
-
-  <Step title="Configure POSTQUEEN_GENERIC_OAUTH">
+  <Step title="Set the variables">
     ```env
-    POSTQUEEN_GENERIC_OAUTH="true"
+    POSTQUEEN_GENERIC_OAUTH=true
+    NEXT_PUBLIC_POSTQUEEN_OAUTH_DISPLAY_NAME=Authentik
+    NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL=https://postqueen.example.com/sso-logo.png
+    POSTQUEEN_OAUTH_AUTH_URL=https://auth.example.com/application/o/authorize/
+    POSTQUEEN_OAUTH_TOKEN_URL=https://auth.example.com/application/o/token/
+    POSTQUEEN_OAUTH_USERINFO_URL=https://auth.example.com/application/o/userinfo/
+    POSTQUEEN_OAUTH_CLIENT_ID=your-client-id
+    POSTQUEEN_OAUTH_CLIENT_SECRET=your-client-secret
     ```
-    Set to `true` to enable OIDC login.
+
+    | Variable | What it is |
+    |---|---|
+    | `POSTQUEEN_GENERIC_OAUTH` | Turns single sign-on on. Any value turns it on, `false` included: remove the line to turn it off. |
+    | `NEXT_PUBLIC_POSTQUEEN_OAUTH_DISPLAY_NAME` | The name on the button. |
+    | `NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL` | The icon on the button, any public image URL. |
+    | `POSTQUEEN_OAUTH_AUTH_URL`, `POSTQUEEN_OAUTH_TOKEN_URL`, `POSTQUEEN_OAUTH_USERINFO_URL` | Your provider's three endpoints. |
+    | `POSTQUEEN_OAUTH_CLIENT_ID`, `POSTQUEEN_OAUTH_CLIENT_SECRET` | The application's credentials. |
+
+    The userinfo response has to include `sub` and `email`.
   </Step>
+  <Step title="Recreate the container and try it">
+    <RestartService />
 
-  <Step title="Configure display name">
-    ```env
-    NEXT_PUBLIC_POSTQUEEN_OAUTH_DISPLAY_NAME="Authentik"
-    ```
-    Will display the name of the OIDC provider on the login page.
-  </Step>
-
-  <Step title="Configure logo URL">
-    ```env
-    NEXT_PUBLIC_POSTQUEEN_OAUTH_LOGO_URL="https://postqueen.example.com/sso-logo.png"
-    ```
-    Will display the logo of the OIDC provider on the login page button. Any publicly reachable image URL works.
-  </Step>
-
-  <Step title="Configure POSTQUEEN_OAUTH_AUTH_URL">
-    ```env
-    POSTQUEEN_OAUTH_AUTH_URL="https://authentik.example.com/application/o/authorize/"
-    ```
-    The authorization URL of the OIDC provider.
-  </Step>
-
-  <Step title="Configure POSTQUEEN_OAUTH_TOKEN_URL">
-    ```env
-    POSTQUEEN_OAUTH_TOKEN_URL="https://authentik.example.com/application/o/token/"
-    ```
-    The token URL of the OIDC provider.
-  </Step>
-
-  <Step title="Configure POSTQUEEN_OAUTH_USERINFO_URL">
-    ```env
-    POSTQUEEN_OAUTH_USERINFO_URL="https://authentik.example.com/application/o/userinfo/"
-    ```
-    The userinfo URL of the OIDC provider.
-  </Step>
-
-  <Step title="Configure POSTQUEEN_OAUTH_CLIENT_ID">
-    ```env
-    POSTQUEEN_OAUTH_CLIENT_ID="randomclientid"
-    ```
-    The client ID of the OIDC provider.
-  </Step>
-
-  <Step title="Configure POSTQUEEN_OAUTH_CLIENT_SECRET">
-    ```env
-    POSTQUEEN_OAUTH_CLIENT_SECRET="randomclientsecret"
-    ```
-    The client secret of the OIDC provider.
+    <Check>
+    The sign-in screen shows your provider's button, and signing in lands you in PostQueen.
+    </Check>
   </Step>
 </Steps>
 
+<Warning>
+**Copying `.env.example` turns this on by accident.** It ships `POSTQUEEN_GENERIC_OAUTH="false"`, and because any value counts as on, the sign-in screen then shows an unconfigured single sign-on button instead of Google. Remove the line unless you use single sign-on.
+</Warning>
+
+## If it does not work
+
+<AccordionGroup>
+  <Accordion title="The button does not appear">
+    `IS_GENERAL` is not set, or the container was restarted rather than recreated.
+  </Accordion>
+  <Accordion title="The provider says the redirect URI is invalid">
+    The redirect URI registered at the provider is not exactly `FRONTEND_URL` + `/settings`: check the scheme, the host and that there is no trailing slash.
+  </Accordion>
+  <Accordion title="Sign-in comes back and fails">
+    The backend log has the reason. `POSTQUEEN_OAUTH environment variables are not set` means one of the five URL and credential variables is empty. `Token request failed` quotes your provider's error, usually a wrong secret or a client that does not accept the secret in the request body.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Configuration reference](/configuration/reference#sign-in-buttons): every sign-in button and what shows it
+- [Deploy to a server](/installation/production): closing sign-up with `DISABLE_REGISTRATION`

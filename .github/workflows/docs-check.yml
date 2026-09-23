@@ -7,10 +7,27 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      # A release run (main, or a pull request into main) also fails on any
+      # OVERHAUL-TODO marker and applies every rule to every page.
+      DOCS_RELEASE: ${{ (github.ref == 'refs/heads/main' || github.base_ref == 'main') && '1' || '0' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Check slugs and User Guide bans
-        run: python3 scripts/check-docs.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Structure, links and style rules
+        run: npm run check
+      - name: Facts against facts/facts.json and the app
+        run: npm run check:facts
+      - name: OpenAPI lint and route coverage
+        run: npm run lint:openapi
+      - name: Mintlify build validation
+        run: npm run validate
+      - name: Broken links
+        run: npm run links
+      - name: Accessibility
+        run: npm run a11y

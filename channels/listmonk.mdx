@@ -1,0 +1,107 @@
+---
+title: "Listmonk"
+description: "Connect your Listmonk server to PostQueen with an API user, what a scheduled campaign contains, and the limits PostQueen checks before it is scheduled."
+icon: "/images/channels/listmonk.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="available" />
+
+Send email campaigns from your own Listmonk server on schedule, with a subject, preview text, one list and an optional template. At the scheduled time PostQueen creates the campaign on your server and starts sending it.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/listmonk.webp" alt="A new Listmonk post in the PostQueen composer, with the post types Listmonk takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 300,000 characters in the editor, sent as an HTML email with basic formatting.
+  </Card>
+  <Card title="Media" icon="image">
+    None. Images you attach in the editor are not sent.
+  </Card>
+  <Card title="Post types" icon="layers">
+    An email campaign to one list, with a subject, preview text and your default or chosen template.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Listmonk.
+  </Card>
+</CardGroup>
+
+**Not supported:** several lists in one campaign, Markdown or plain-text campaigns, images from the editor, Listmonk's own send date, and follow-ups.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| A subject | “subject must be longer than or equal to 1 characters” |
+| A list is picked | “list must be a string” |
+| Text within 300,000 characters | “post is too long, please fix it” |
+
+A list your server no longer has is not checked first: Listmonk refuses the campaign when it is created.
+
+## Connect Listmonk
+
+Your Listmonk server has to be reachable from the internet. PostQueen talks to its API with an API user, not with your admin login.
+
+<Steps>
+  <Step title="Create an API user in Listmonk">
+    In your Listmonk admin, open **Admin**, then **Users**, and create a user of the API type. Give it a role that can read settings, lists and templates, and create and send campaigns. Copy the token Listmonk generates for it.
+  </Step>
+  <Step title="Open Add Channel">
+    In PostQueen, open **Channels** and choose **Add Channel**, then **ListMonk** and **Enter details**.
+  </Step>
+  <Step title="Enter the server and the API user">
+    Type your Listmonk root address in **URL**, for example `https://mail.example.com`, the API user's name in **Username** and its token in **Password**. Choose **Connect**.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with your Listmonk site name and logo.
+  </Step>
+</Steps>
+
+<NeverShare />
+
+## Post settings
+
+Each Listmonk post in the composer has these settings:
+
+- **Subject**: the email subject. Required.
+- **Preview**: the preview text inboxes show next to the subject. It is added to the email as hidden text and can be left empty.
+- **Select List**: who receives the campaign. Required, and one list per campaign.
+- **Select Template**: **Default**, or one of the templates on your server.
+
+The body of the post becomes the body of the email. The field names and values for the API are on [Listmonk posting settings](/public-api/providers/listmonk).
+
+## Comments and threads
+
+Listmonk takes no follow-up comments, so the composer shows no **Add comment** button for a Listmonk post.
+
+## Good to know
+
+- At the scheduled time PostQueen creates a regular campaign and sets it running, so it starts sending straight away. It is not left as a draft for you to send.
+- The campaign is named after its subject.
+- The link on a sent campaign opens its preview on your Listmonk server.
+- Only servers reachable on the public internet can be connected. An address on a private or local network is refused.
+- If you change or delete the API user's token, publishing stops. Enter the new one with **Update Credentials** under **Access** on the channel's page.
+- **Invite by link** does not offer Listmonk, because the token is typed into PostQueen. Connect it with **Connect myself**.
+- During the free trial, a Listmonk server that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid credentials">
+    Listmonk refused the API user or the token, or PostQueen could not reach the server. Check **URL**, the user's name and the token, and that the API user's role can read settings.
+  </Accordion>
+  <Accordion title="The list or template I want is not offered">
+    **Select List** and **Select Template** show what the API user may read. Give its role access to that list or to templates in Listmonk, then open the post again.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />

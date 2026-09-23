@@ -1,0 +1,178 @@
+---
+title: "AI images and video"
+sidebarTitle: "AI images and video"
+description: "Generate an image or a short video for a post with AI, and connect HeyGen or Reel.Farm to bring their media into PostQueen."
+icon: "sparkles"
+keywords:
+  - ai image
+  - ai video
+  - generate video
+  - seedance
+  - image text slides
+  - video credits
+  - heygen
+---
+
+**Where:** **AI Image** and **AI Video** under the post editor in **Create Post**. Media integrations are in **Settings > Integrations**, in the More group.
+
+PostQueen can draw an image or make a short video from a description and attach it to your post. Every paid plan includes a monthly number of AI images and AI videos. You can also connect two outside services with your own account: HeyGen and Reel.Farm.
+
+## Generate an image for a post
+
+<Steps>
+  <Step title="Open AI Image">
+    In **Create Post**, choose **AI Image** under the post editor. The **Generate AI Image** window shows how many credits you have left this month.
+  </Step>
+  <Step title="Describe the image">
+    Under **Prompt**, describe what the picture should show: the subject, the setting, the mood.
+  </Step>
+  <Step title="Pick a style and a shape">
+    Choose a **Style**: Realistic, Cartoon, Anime, Minimalist, Sketch or Watercolor. Then choose an **Orientation**: **Square**, **Portrait** or **Landscape**. PostQueen preselects the shape that suits the first channel on the post.
+  </Step>
+  <Step title="Generate">
+    Choose **Generate**. The image is attached to the post and saved in [Media](/using/media-library).
+  </Step>
+</Steps>
+
+You can also ask for an image in the [AI Copilot](/using/ai-copilot): **Generate image** in its message box, **Add image** on a post card, or a request in the **AI Copilot** tab of Create Post.
+
+## Generate a video for a post
+
+<Steps>
+  <Step title="Open AI Video">
+    In **Create Post**, choose **AI Video** under the post editor. The **Generate video** window opens.
+  </Step>
+  <Step title="Pick a generator">
+    Under **Choose a video type**, pick **Seedance 2.0 (Audio + Video)** or **Image Text Slides**. What each one makes is in the table below. Once you pick one, the window's title shows how many video credits you have left this month.
+  </Step>
+  <Step title="Pick a shape">
+    Choose **Vertical (Stories, Reels)** or **Horizontal (Normal Post)**. Vertical is selected when the window opens.
+  </Step>
+  <Step title="Describe the video">
+    Write the **Prompt**, at least 5 characters, and fill in the rest of the generator's form.
+  </Step>
+  <Step title="Generate">
+    Choose **Generate**. The window closes and PostQueen makes the video in the background.
+  </Step>
+</Steps>
+
+### The two generators
+
+| Generator | What you get | What the form asks for |
+|---|---|---|
+| **Seedance 2.0 (Audio + Video)** | One 8-second clip at 720p, with sound. Vertical is 9:16, horizontal 16:9. | **Prompt**: one scene, described by the camera, the subject, the motion, the light and the mood. Leave out on-screen text and logos. **Images (max 3)**: optional. Choose **Insert Media** to pick up to three pictures from your library for the clip to follow. Videos and any picture past the third are left out. |
+| **Image Text Slides** | A narrated slideshow. PostQueen writes three to five slides from your prompt, draws a picture for each, reads the text aloud and shows it as captions. Vertical is 1080 × 1920, horizontal 1920 × 1080. | **Prompt**: what the video should say and show. **Select a Voice**: the voice that reads it. The list reads "Loading voices..." until it arrives. **▶ Play** plays a sample and **⏹ Stop** ends it. The first voice is selected until you pick another. |
+
+### While the video is made
+
+- It takes a few minutes. The **AI Video** button shows a spinner until the video is ready.
+- You can keep writing. The channel picker, **Schedule** and **Save as draft** wait until the video arrives.
+- When it is ready, "Video ready and added to the post." appears. The video is attached to the editor you started it from and saved in [Media](/using/media-library), with a thumbnail.
+- If you close Create Post before then, the video still lands in Media when it is done. Attach it to a post from there with **Insert Media**.
+
+### Ask the AI Copilot for a video
+
+In the **AI Copilot** tab of Create Post, ask for a video for the post. The Copilot picks the generator and writes the prompt. A card in the chat shows **Generating video** with the time it has taken so far. When the video is ready, choose **Use in this post** to attach it. If you asked for the video to go on the post, it is attached as soon as it arrives. On the [AI Copilot](/using/ai-copilot) page, the card's button is **Add to card**, which puts the video on the latest post preview. **Generate video** in the Copilot page's message box opens the same window as **AI Video**.
+
+## AI image and video credits
+
+Each image uses one AI image credit and each video one AI video credit. The two are counted apart.
+
+| Plan | AI images a month | AI videos a month |
+|---|---|---|
+| Creator | 20 | 3 |
+| Growth | 100 | 10 |
+| Pro | 300 | 30 |
+| Ultimate | 500 | 60 |
+
+- Credits reset every month, counted from the day your subscription started, on yearly plans too. Unused credits do not carry over.
+- A video that fails gives its credit back. A request PostQueen refuses before it starts, such as Seedance during the trial, uses none.
+- The free trial includes your plan's full monthly credits. During the trial, Seedance waits for the paid plan: use **Image Text Slides**, or end the trial on **Billing**. See [Free trial](/cloud/trial).
+- Writing and rewriting text with the AI Copilot does not use credits.
+
+## Connect HeyGen or Reel.Farm
+
+<Steps>
+  <Step title="Open Integrations">
+    Open **Settings** and choose **Integrations** under More. The **More** group in the left rail links there too.
+  </Step>
+  <Step title="Add the key">
+    On the service's card, choose **Add API key**. Paste the API key from your account with that service into **API Key**.
+  </Step>
+  <Step title="Save">
+    Choose **Add Integration**. PostQueen checks the key with the service before saving it, and the card then reads **Connected**.
+  </Step>
+</Steps>
+
+What each service does once it is connected:
+
+- **HeyGen** makes a video of one of your HeyGen avatars reading a script, in your own HeyGen account. See [Make a HeyGen video](#make-a-heygen-video).
+- **Reel.Farm** brings videos from your Reel.Farm account into your library. On the Media page, choose **Import**, then **Browse** on Reel.Farm.
+
+**Update key** replaces a saved key. **Disconnect** removes it after you confirm "Are you sure you want to delete this integration?".
+
+## Make a HeyGen video
+
+You need a HeyGen account with at least one avatar of your own, and its API key added in **Settings > Integrations** as above.
+
+<Steps>
+  <Step title="Open HeyGen from the post">
+    In **Create Post**, write the post, then choose **Integrations** under the post editor and **Use** on HeyGen. With no service connected, the window says "No Integrations Yet" and **Go to integrations** opens Settings in a new tab, so your post stays open.
+  </Step>
+  <Step title="Pick the shape and captions">
+    Under **Aspect ratio**, **Landscape (16:9)** makes a 1280 × 720 video and **Portrait (9:16)** a 720 × 1280 vertical one. Under **Generate captions**, **Yes** has HeyGen add captions to the video.
+  </Step>
+  <Step title="Write the script">
+    **Voice script** is what the avatar says, at least 20 characters. **Fill from post text** has PostQueen's AI write the script from your post. It first asks "Are you sure? It will replace the current script text." and works once per window.
+  </Step>
+  <Step title="Pick the avatar and the voice">
+    **Select avatar** lists the avatars in your HeyGen account. HeyGen's public avatars are not offered. **Select voice** lists 20 HeyGen voices, each with its language.
+  </Step>
+  <Step title="Generate">
+    Choose **Generate video** and keep the window open while HeyGen works. You can follow it in your HeyGen dashboard too. PostQueen waits up to about 9 minutes. The finished video is saved in [Media](/using/media-library) and attached to the post.
+  </Step>
+</Steps>
+
+## Good to know
+
+- **AI Image** and **AI Video** appear on every paid plan, the free trial included. A workspace with no active plan does not see them.
+- A HeyGen video is made in your HeyGen account and does not use PostQueen's AI video credits.
+- The key you add belongs to the workspace, and PostQueen uses it only to call that service. Anything the service charges for comes from your account with that service.
+- The plan card on Billing lists an Advanced Picture Editor. It is not available in the app yet.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| “You are out of AI credits for this month.” | Wait for your image credits to reset, or move to a plan with more in **Billing**. |
+| “You have reached the maximum number of generated videos for your subscription. Please upgrade your subscription to generate more videos.” | Your video credits for this month are used up. Choose **Move to billing** for a bigger plan, or wait for the monthly reset. |
+| “You are currently on trial, in order to use the feature you must finish the trial” | Seedance waits for the paid plan. Choose **Finish the trial, charge me now**, or close the dialog and pick **Image Text Slides**. |
+| “Please type your prompt” | Describe the image under **Prompt**, then choose **Generate** again. |
+| “Please fill all required fields” | The video's **Prompt** is empty or shorter than 5 characters. |
+| “Your request was rejected by the AI safety system.” | The AI provider refused the prompt. The message names the flagged categories when the provider gives them. Describe the scene another way. |
+| “AI generation failed, please try again later.” | Try again in a few minutes. If it keeps failing, change the prompt. A failed video gives its credit back. |
+| “No AI video credits are available on this account.” | Your video credits for this month ran out before this video started, for example on another video made at the same time. Wait for the monthly reset, or upgrade. |
+| “Video generation is not available right now.” | Try again in a few minutes. |
+| “The result is no longer available here; a finished video is in the Media library.” | Look for the video in [Media](/using/media-library) and attach it with **Insert Media**. |
+| “Invalid API key” | Copy a fresh key from the service and paste it again. |
+| “Integration Already Exists” | The service is already connected. Use **Update key** on its card instead. |
+| “Voice must be at least 20 characters long” | Write a longer **Voice script** for the HeyGen video. |
+| “Avatar is required”, or no **Select avatar** list | Pick an avatar. If none is listed, create an avatar in your HeyGen account first. |
+| “Voice is required” | Pick a voice under **Select voice**. |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Upload and manage media" icon="images" href="/using/media-library">
+    Find generated and imported files, add alt text, or delete them.
+  </Card>
+  <Card title="AI Copilot" icon="wand-sparkles" href="/using/ai-copilot">
+    Ask for a post, an image, a video or a rewrite in plain words.
+  </Card>
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Attach the image or video and schedule the post.
+  </Card>
+  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
+    The AI image and video credits on each plan.
+  </Card>
+</CardGroup>

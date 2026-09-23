@@ -1,25 +1,97 @@
 ---
-title: Trial
-sidebarTitle: Trial
-description: 'Seven days on Cloud with $0 due today. A card is required. X and the AI Copilot wait until the trial ends.'
-icon: 'hourglass-start'
+title: "Free trial"
+sidebarTitle: "Free trial"
+description: "The free trial on the plan you pick: $0 today with a card, what waits for the paid plan, and how to end or cancel it."
+icon: "hourglass"
+keywords:
+  - free trial
+  - card
+  - end trial
+  - cancel trial
 ---
 
-New workspaces that qualify get **seven days**. On Billing the button is **Start 7 days free trial**.
+import TrialLocks from '/snippets/trial-locks.mdx';
 
-Checkout takes a card, and nothing is due today: it shows $0. When checkout finishes, PostQueen
-places a $1 authorization on the card and releases it at once. That is a hold, not the plan charge.
+**Where:** the plan picker that opens right after you sign up. Later, **Billing**, from the **Upgrade** row at the bottom of the left rail.
 
-Two things stay locked until the trial ends:
+Every new workspace gets one {{trialDays}}-day free trial on the plan you choose, with that plan's channels, AI image and video credits and features. Checkout asks for a card and charges $0 today.
 
-- **X.** Connecting it answers *X unlocks when your free trial ends. End the trial to connect it now.*
-- **AI Copilot**, both the chat page and the Copilot inside the composer.
+## Start the trial
 
-One AI video type also answers that it is not available in trial mode.
+<Steps>
+  <Step title="Create your account">
+    Sign up at [app.postqueen.ai](https://app.postqueen.ai). The [Quickstart](/quickstart) walks through it.
+  </Step>
+  <Step title="Choose a plan">
+    Under **Choose a Plan**, pick Creator, Growth, Pro or Ultimate, and **Monthly** or **Yearly**. [Plans and limits](/cloud/plans) compares them.
+  </Step>
+  <Step title="Add your card">
+    Enter the card and your billing address. If you have a coupon, enter it under **Have a discount coupon?** The order summary shows $0.00 under **Due today**.
+  </Step>
+  <Step title="Start the trial">
+    Choose **Pay $0 Today - Start your free trial!** The trial starts and the app opens.
+  </Step>
+</Steps>
 
-Wait it out and paid billing starts. **End free trial** starts paid billing now and unlocks both.
-Cancel before it converts and there is no plan charge. You can cancel from Billing without talking
-to a person.
+## What happens to your card
 
-Once the plan starts, a charge is refunded in full if you ask within 30 days of it: see
-[Refunds](/cloud/subscription#refunds).
+- **Today:** \$0. To check the card, PostQueen places a \$1 authorization on it and releases it at once. It is never charged, though your bank may show it as pending for a short time.
+- **When the trial ends:** the plan starts and the card is charged the plan's monthly or yearly price, plus tax where it applies. **Billing** shows the amount while the trial runs.
+- **If you cancel first:** nothing is charged. See [Cancel before the trial ends](#cancel-before-the-trial-ends).
+
+## What waits for the paid plan
+
+<TrialLocks />
+
+In **Add Channel**, X's setup step shows "X unlocks after your trial" in place of its connect button. The AI Copilot page and the **AI Copilot** tab in Create Post show "AI Copilot unlocks after your trial". In the **Generate video** window, **Generate** with **Seedance 2.0 (Audio + Video)** opens a **Trial** dialog instead of making the video, and no credit is used. The API and the MCP server answer `This video is not available in trial mode`.
+
+During the trial, PostQueen also refuses a social account that another PostQueen account connected before. End the trial to add it.
+
+Everything else works from the first day: every other channel you can connect, scheduling, analytics, AI images, AI videos with **Image Text Slides**, Auto Post, webhooks, the MCP server and the public API, and team invites on Growth and up.
+
+## End the trial early
+
+<Steps>
+  <Step title="Open Billing">
+    Choose **Upgrade** at the bottom of the left rail, or **Billing & invoices** in the account menu.
+  </Step>
+  <Step title="End the trial">
+    Choose **End free trial** on the trial banner above the plan cards. There is no second confirmation: PostQueen charges the card for the plan right away.
+  </Step>
+  <Step title="Check the result">
+    When the payment goes through, you see "Your trial is finished and your card has been charged." X, Seedance videos and the AI Copilot are unlocked.
+  </Step>
+</Steps>
+
+The **End free trial to unlock X** and **End free trial to unlock AI Copilot** buttons on the lock cards do the same thing.
+
+## Cancel before the trial ends
+
+Only a workspace Admin or Super Admin can cancel. On **Billing**, choose **Cancel subscription** and follow the steps. The trial keeps running until its last day, then ends without a charge. [Manage your subscription](/cloud/subscription#cancel) shows the whole cancel flow.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| “X unlocks when your free trial ends. End the trial to connect it now.” | End the trial on **Billing**, or wait for it to end, then connect X again. |
+| “You are currently on trial, in order to use the feature you must finish the trial” | Shown for a Seedance video. Choose **Finish the trial, charge me now** to start the paid plan, or close the dialog and make the video with **Image Text Slides**. |
+| `This video is not available in trial mode` | The API or an agent asked for a Seedance video. End the trial on **Billing**, or use `image-text-slides`. |
+| “This social channel was connected previously to another PostQueen account.” | Choose **Fast track - Charge me now** to end the trial and add the channel, or **Cancel**. |
+| “We could not charge your credit card” after **End free trial** | Choose **Update payment method**, fix the card in the billing portal, and try again. The trial stays active until the payment succeeds. |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
+    What each plan includes, and the message at each limit.
+  </Card>
+  <Card title="Manage your subscription" icon="credit-card" href="/cloud/subscription">
+    Change plan, update the card or cancel.
+  </Card>
+  <Card title="Refunds" icon="receipt" href="/cloud/refunds">
+    Any charge is refunded in full within {{refundDays}} days.
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Connect a channel and schedule your first post.
+  </Card>
+</CardGroup>

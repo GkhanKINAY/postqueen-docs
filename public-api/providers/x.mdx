@@ -1,162 +1,191 @@
 ---
-title: X (Twitter) Settings
-description: 'API settings for posting to X/Twitter'
+title: "X posting settings"
+sidebarTitle: "X"
+description: "The settings object a post to X takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/x.svg"
 ---
 
-Creating the OAuth app and connecting a channel: [X (Twitter) setup guide](/installation/providers/x-twitter).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Settings Schema
+<ChannelStatus status="in-review">X can be connected once the free trial ends, or right away if you end the trial early.</ChannelStatus>
 
-When creating a post for X (Twitter), use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "x",
-    "who_can_reply_post": "everyone",
-    "community": "",
-    "made_with_ai": false,
-    "paid_partnership": false
-  }
-}
-```
+Every post to X carries a `settings` object with `"__type": "x"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `x` |
-| `who_can_reply_post` | `string` | Yes, except on an article | Who can reply to the post |
-| `community` | `string` | No | X Community URL |
-| `made_with_ai` | `boolean` | No | Mark the post as containing AI-generated content. Defaults to `false` |
-| `paid_partnership` | `boolean` | No | Mark the post as a paid promotion. Defaults to `false` |
-| `post_type` | `string` | No | `post` (the default) or `article` |
-| `article_title` | `string` | When `post_type` is `article` | The article's title |
-| `article_status` | `string` | When `post_type` is `article` | `draft` or `published` |
-| `article_cover` | `object` | No | Cover image as `{ "id": "...", "path": "..." }`. Only read for an article |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"x"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `who_can_reply_post` | string | Yes, except on an Article | Who can reply: `everyone`, `following`, `mentionedUsers`, `subscribers` or `verified`. The last two need X Premium. |
+| `community` | string | No | An X Community link, `https://x.com/i/communities/<id>`, or an empty string. The post goes into that Community and is also shown to your followers. |
+| `post_type` | string | No | `post` (the default) or `article`, a long-form X Article. Articles need X Premium. |
+| `article_title` | string | When `post_type` is `article` | The Article's title, at least 1 character. |
+| `article_status` | string | When `post_type` is `article` | `draft` saves the Article to your X drafts, `published` publishes it. |
+| `article_cover` | object | No | A cover image for an Article, `{ "id": "...", "path": "..." }` as [upload a file](/public-api/uploads/upload-file) returns it. |
+| `made_with_ai` | boolean | No | `true` labels the post as made with AI. |
+| `paid_partnership` | boolean | No | `true` labels the post as a paid partnership. |
 
-### `who_can_reply_post`
+<Warning>
+`subscribers`, `verified` and `post_type: "article"` need an X Premium subscription on the connected account. The composer hides them when X reports that the account has none, but the API accepts them, and X may then refuse the post when it is published.
+</Warning>
 
-Controls who can reply to your post. An article carries no reply setting, so the field is not required there.
+### The text limit
 
-| Value | Description |
-|-------|-------------|
-| `everyone` | Anyone can reply |
-| `following` | Only people you follow can reply |
-| `mentionedUsers` | Only mentioned users can reply |
-| `subscribers` | Only your subscribers can reply |
-| `verified` | Only verified accounts can reply |
+A post takes 280 characters, or 4,000 when the channel is marked Verified. The Verified mark is read from X when the channel is connected and is changed in the app, not per post. An Article takes up to 100,000. Length is counted the way X counts it: a link is 23 characters, and most emoji and CJK characters are 2.
 
-### `community`
+### Thread replies
 
-Optional X Community URL. Must match the format:
+Each extra entry in `value` is posted as a reply to the entry before it, after its `delay` in minutes. Every entry is held to the same media rule as the first. A draft Article cannot have replies.
 
-```
-https://x.com/i/communities/1493446837214187523
-```
+### Articles
 
-Leave empty or omit to post to your main timeline.
+With `post_type: "article"`, `content` is HTML. X keeps these tags: `h1` and `h2` headings (an `h3` is sent as `h2`), `ul` and `li` bullet lists, `strong` for bold, and `a` links. Every other tag becomes a plain paragraph. The images attached to the entry are placed at the end of the Article. Video is not allowed.
 
-### `post_type`
+## What PostQueen checks
 
-| Value | Description |
-|-------|-------------|
-| `post` | A regular post, or a thread when `value` holds several items. The default |
-| `article` | A long-form X article, described below |
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
----
+| Rule | Message |
+|---|---|
+| At most 4 pictures in each entry | “X allows up to 4 pictures per post” |
+| A GIF or a video goes alone in its entry | “X allows one video or one GIF per post, without other media” |
+| Each entry within 280, 4,000 on a Verified channel, or 100,000 in an Article | “post is too long, please fix it” |
+| `community` empty or in the right format | “Invalid X community URL. It should be in the format: https://x.com/i/communities/1493446837214187523” |
+| `article_title` set on an Article | “Article title is required” |
+| An Article takes images only | “X articles only support images” |
+| A draft Article has no thread replies | “A draft article cannot have thread replies, remove them or publish the article” |
 
-## Complete Example
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "x",
+  "name": "Your channel name",
+  "message": "X allows one video or one GIF per post, without other media"
+}
+```
+
+X's own rules are not checked first: video length and size, 1 cashtag per post, and 50 posts and 200 replies a day for unverified accounts. Every picture is resized to 1,000 px wide and re-encoded as a GIF before upload.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Text post
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-x-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        { "content": "We just shipped dark mode. Try it and tell us what you think.", "image": [] }
+      ],
+      "settings": { "__type": "x", "who_can_reply_post": "everyone" }
+    }
+  ]
+}
+```
+
+```json Thread
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Hello from the PostQueen API! 🚀",
-          "image": []
+          "content": "Three things we learned shipping our first release. A thread.",
+          "image": [
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/chart-1.png" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/chart-2.png" }
+          ]
+        },
+        {
+          "content": "1. Ship small. Every release we cut in half went out on time.",
+          "image": [],
+          "delay": 2
+        },
+        {
+          "content": "2. Show the work. This is what the team looked like on launch day.",
+          "image": [{ "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/launch.gif" }],
+          "delay": 2
+        }
+      ],
+      "settings": { "__type": "x", "who_can_reply_post": "everyone" }
+    }
+  ]
+}
+```
+
+```json Video in a Community
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "A 60-second tour of the new editor.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/tour.mp4" }]
         }
       ],
       "settings": {
         "__type": "x",
-        "who_can_reply_post": "everyone",
-        "community": "",
+        "who_can_reply_post": "following",
+        "community": "https://x.com/i/communities/1493446837214187523",
         "made_with_ai": false,
-        "paid_partnership": false
+        "paid_partnership": true
       }
     }
   ]
 }
 ```
 
-## Thread Example
-
-Create a thread by adding multiple items to the `value` array:
-
-```json
+```json Article
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-x-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "1/ This is the first tweet in my thread",
-          "image": []
-        },
-        {
-          "content": "2/ This is the second tweet",
-          "image": []
-        },
-        {
-          "content": "3/ And this is the final tweet!",
-          "image": []
+          "content": "<h2>Why we rebuilt the scheduler</h2><p>The old one could not keep up.</p><ul><li>Posts now go out on time</li><li>Retries are safe</li></ul><p>Read the <a href=\"https://example.com/changelog\">changelog</a>.</p>",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/diagram.png" }]
         }
       ],
       "settings": {
         "__type": "x",
-        "who_can_reply_post": "everyone"
+        "post_type": "article",
+        "article_title": "Why we rebuilt the scheduler",
+        "article_status": "published",
+        "article_cover": { "id": "COVER_MEDIA_ID", "path": "https://uploads.postqueen.ai/cover.jpg" }
       }
     }
   ]
 }
 ```
 
-## Long-form articles
+</CodeGroup>
 
-Set `post_type` to `article` and she publishes an X article instead of a post. The content is then read as **HTML** rather than plain text, and these tags keep their formatting: `p`, `h1`, `h2`, `h3`, `ul`, `ol`, `li`, `strong`, `u`, `a`.
+The Article example needs X Premium on the connected account. With `"article_status": "draft"` instead, it lands in your X drafts.
 
-```json
-{
-  "settings": {
-    "__type": "x",
-    "post_type": "article",
-    "article_title": "Why we rebuilt our scheduler",
-    "article_status": "published",
-    "article_cover": {
-      "id": "img-123",
-      "path": "https://uploads.postqueen.ai/cover.jpg"
-    }
-  }
-}
-```
+## Related
 
-Four rules come with it:
-
-- The character limit rises to **100,000**.
-- Pictures only. A video in an article is refused with *X articles only support images*.
-- `article_status: "draft"` saves the article to your X drafts, and a draft cannot carry thread replies: *A draft article cannot have thread replies, remove them or publish the article*.
-- `article_title` and `article_status` are both required once `post_type` is `article`. Leaving either out is a validation error.
+- [Connect X in the app](/channels/x-twitter)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

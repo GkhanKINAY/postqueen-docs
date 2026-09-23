@@ -1,232 +1,86 @@
 ---
-title: Quickstart
-description: 'From nothing to a scheduled post, on one page'
-icon: 'rocket'
+title: "Quickstart"
+description: "Start the free trial, connect your first channel and schedule your first post."
+icon: "rocket"
 keywords:
   - postqueen
   - quickstart
   - first post
-  - calendar
+  - free trial
   - add channel
   - schedule
 ---
 
-Three steps and your first post is on the calendar with a time on it. She sends it whether your
-laptop is open or not.
+import NextStepsGuide from '/snippets/next-steps-guide.mdx';
+import TrialLocks from '/snippets/trial-locks.mdx';
 
-<Frame>
-  <img src="/images/brand/calendar.svg" alt="A week of scheduled posts across several connected channels on the PostQueen calendar" />
-</Frame>
+**Where:** [app.postqueen.ai](https://app.postqueen.ai). You need an email address and a card.
 
-<Tip>
-**About 5 minutes** on PostQueen Cloud. Self-hosting adds the install itself, which is 10 to 15
-minutes on a fresh server, plus an OAuth app for each network you want.
-</Tip>
+Three steps take you from a new account to a post on the calendar. PostQueen publishes it at the time you set, whether your computer is on or not.
 
-## 1. Get PostQueen running
+<div className="pq-visual pq-tint-peach">
+  <img noZoom src="/images/site/app-composer.webp" alt="The Create post panel next to the calendar: four channels picked, the post text, an image and the time it goes out" />
+</div>
 
-The cloud and your own server run the same code. The choice is about who keeps the machine running,
-not about what she can do.
+## 1. Start the free trial
 
-<Tabs>
-  <Tab title="PostQueen Cloud">
-    Sign up at [app.postqueen.ai](https://app.postqueen.ai). Nothing to install and nothing to keep
-    patched.
+<Steps>
+  <Step title="Create your account">
+    Open [app.postqueen.ai](https://app.postqueen.ai) and fill in **Email**, **Password** and **Organization** under **Create your account**, or sign up with one of the sign-in buttons. Choose **Sign up**. If PostQueen asks you to activate your account, open the link in the email it sends.
+  </Step>
+  <Step title="Pick a plan">
+    Under **Choose a Plan**, pick Creator, Growth, Pro or Ultimate, and **Monthly** or **Yearly**. [Plans and limits](/cloud/plans) compares them.
+  </Step>
+  <Step title="Add a card and start">
+    Enter your card and billing address, then choose **Pay $0 Today - Start your free trial!** Nothing is charged for {{trialDays}} days, and you can cancel before then.
+  </Step>
+</Steps>
 
-    **Best for:** getting a post out today, and anyone who does not want to run a server.
+<TrialLocks />
 
-    **Pros:**
-    - A 7-day trial with $0 due today. A card is required: PostQueen places a $1 authorization on it
-      and releases it at once
-    - Upgrades and security patches happen without you
-
-    <Note>
-    Two things wait for the paid plan: connecting X, and the AI Copilot. They unlock when the trial
-    ends, or right away if you end the trial early. [Free trial](/cloud/trial) has the details.
-
-    Not every network can be connected yet. Some are marked **Soon** or **In review** on PostQueen:
-    see the [status of every network](/providers/overview#status-on-postqueen).
-    </Note>
-  </Tab>
-
-  <Tab title="Your own server">
-    Follow [Production install](/installation/production) for a real deployment, or
-    [Try it locally](/installation/quickstart-local) if you just want a look first.
-
-    **Best for:** keeping your data and your tokens on hardware you control.
-
-    **Pros:**
-    - No per-channel or per-post caps beyond what you set
-    - Your OAuth tokens never leave your database
-    - AGPL-3.0, so the whole thing is yours to read and change
-
-    <Warning>
-    On your own install, most networks stay hidden in **Add Channel** until you register an OAuth
-    app with that platform and put its keys in your environment. That is one setup per network, and
-    [Providers](/providers/overview) walks through each. Plan for it before you promise a client a
-    channel.
-    </Warning>
-  </Tab>
-</Tabs>
-
-The first account created on a fresh install owns it. On the cloud, that is whoever signs up.
-
-<Check>
-You can sign in and the app loads with an empty calendar. Nothing is connected yet, which is
-exactly right.
-</Check>
+[Free trial](/cloud/trial) explains the card check, what happens on day {{trialDays}} and how to cancel before it.
 
 ## 2. Connect your first channel
 
-A channel is one social account she can post to. Until one exists, a post has nowhere to go.
+A channel is one account on a network, such as a Bluesky profile or a WordPress site. Not every network can be connected yet: [Channels and their status](/channels/overview) shows which are **Available**, **In review** or **Soon**.
+
+<Frame>
+  <img className="pq-shot" src="/images/app/add-channel.webp" alt="The Add a channel screen, with a tile for each network under Social" />
+</Frame>
 
 <Steps>
   <Step title="Open Add Channel">
-    Your channels live in the **left sidebar**, and **Add Channel** sits with them. It is the same
-    button for every network: X, a WordPress blog, a Bluesky account, all of it.
+    Choose **Channels** in the left rail, then **Add Channel** at the top of the list.
   </Step>
-
   <Step title="Pick the network">
-    Start with the one your audience actually reads. What happens next depends on the network, and
-    there are only two kinds:
-
-    - **Most send you to their own login.** You approve PostQueen there, the browser comes back, and
-      the channel appears. Nothing to type.
-    - **A smaller group asks for a credential in the form.** Bluesky takes an app password, and
-      WordPress takes a site URL and an application password.
-
-    [Providers](/providers/overview) says which kind each network is, and what it wants.
+    Choose its tile. Networks that use their own sign-in page show **Continue to** followed by the network's name; networks that need a key or an app password, such as Bluesky, show **Enter details**. The pane explains what to fill in.
   </Step>
-
-  <Step title="Check it arrived">
-    The channel appears in the sidebar with its avatar and name. That is the whole confirmation. If
-    it is in the list, she can post to it.
+  <Step title="Approve and check">
+    Sign in on the network's page, or fill in the form. You come back to **Channels** with the new channel selected and marked **Connected**.
   </Step>
 </Steps>
 
+[Connect a channel](/using/connect-a-channel) covers reconnecting, disabling, deleting and invite links.
 
-<Check>
-Your channel is in the left sidebar with its avatar. The full walkthrough, including what the red
-exclamation mark means later, is on [Connect a channel](/using/connect-a-channel).
-</Check>
-
-## 3. Write it and put it on the calendar
-
-Press **Create Post**. She has already found your next open slot, and that date is sitting on the
-button at the bottom. The editor is on the left, a live preview on the right.
+## 3. Schedule your first post
 
 <Steps>
-  <Step title="Turn on the channels this post is for">
-    Your connected channels sit across the top as round avatars. Grey means this one is sitting the
-    post out, a purple ring means it is coming along. Click to toggle.
-
-    Nothing leaves the composer until at least one is on. While the row is empty the main button
-    reads **Check the circles above** and stays disabled.
+  <Step title="Open the composer">
+    Choose **Create Post** at the top of any page. It opens on the first free quarter hour, usually one to four hours from now.
   </Step>
-
-  <Step title="Write once, or once per channel">
-    A second row appears underneath: a globe first, then one small chip per selected channel.
-
-    The **globe** is the shared text, and it is where you land. Everything you type there goes out
-    to every channel you picked. That is the whole job for most posts.
-
-    Want one channel to say something different? Click its chip, press **Edit content**, and that
-    channel takes its own copy. From then on the two are separate, and a pink dot on the chip
-    reminds you.
-
-    <Tip>
-    The badge at the end of the attachments row counts as you type, and it shows the smallest limit
-    you have not already passed. Hover it for a line per channel. It turns red the moment any
-    channel is over its own limit, so you find out while you are writing rather than on save.
-    </Tip>
+  <Step title="Pick the channels">
+    Under **Select Channels**, click the avatars of the channels the post is for. Until you pick one, the main button reads **Select Channels** and stays disabled.
   </Step>
-
-  <Step title="Add media, if you want it">
-    Drag files straight onto the editor, or paste them from your clipboard. **Insert Media** opens
-    everything you have uploaded before, and on plans that include AI, **AI Image** and **AI Video**
-    generate from a prompt you type.
-
-    Images and MP4 video are accepted, up to 1 GB per upload session. While an upload is running the
-    buttons at the bottom stay disabled, so nothing schedules halfway through a file.
+  <Step title="Write the post">
+    Type in the editor. It goes to every channel you picked. Add images or a video from the buttons under the editor if you want them.
   </Step>
-
-  <Step title="Choose how it leaves">
-    Three ways out, and the difference matters:
-
-    | Control | Where the post lands |
-    |---|---|
-    | **Add to calendar** | Scheduled. It goes out at the date on the button |
-    | **Save as Draft** | Written down at that date, published by nobody |
-    | **Post Now** | Out the door immediately. Hides behind the arrow on the main button until you hover it |
-
-    Press **Add to calendar**.
+  <Step title="Set the time and schedule">
+    Change the date and time if you need to, then choose **Schedule**. A message confirms the time. **Save as draft** keeps the post without scheduling it, and **Post now** sits in the menu next to **Schedule**.
   </Step>
 </Steps>
 
-<Warning>
-Closing the composer asks *Are you sure you want to close this modal? (all data will be lost)*, and
-it means it. Nothing is written down until you press one of those three.
-</Warning>
+## Check that it went out
 
-<Check>
-**Your post is on the calendar.** Open the calendar to see it in place. You can drag it to a new
-time, open it to edit, or delete it, right up until it goes out.
-</Check>
+Open **Calendar** in the left rail: the post sits at its time. Once it is published, it moves to **Posted** in the posts panel, and **Go to post** on the post opens it on the network. If it failed, the post says so, and [A post did not go out](/troubleshooting/post-failed) explains what to do.
 
-<Note>
-There is no approver in PostQueen, no approve step and no reject button. A draft is simply a post
-that has not been handed to the scheduler yet, and it sits on the calendar with *Draft:* in front of
-it until you press **Schedule**.
-</Note>
-
-## If something is not right
-
-<AccordionGroup>
-  <Accordion title="The network I want is not in Add Channel" icon="plug-circle-xmark">
-    Every network is listed in **Add Channel** on PostQueen, but some are marked **Soon**: they cannot be connected yet. The [status of every network](/providers/overview#status-on-postqueen) says which. On a self-hosted install a network only appears once its OAuth app is registered and the instance has been restarted. [Providers](/providers/overview) has the Cloud connect flow; [self-hosting provider pages](/installation/providers/instagram) have the OAuth app setup.
-  </Accordion>
-
-  <Accordion title="The post went to Drafts instead of being scheduled" icon="file-pen">
-    A draft is a post state rather than a queue position: it sits on the calendar at the date you
-    gave it and is never handed to the scheduler. Open it and press **Schedule**, or switch it from
-    a terminal with `postqueen posts:status <id> --status schedule`.
-  </Accordion>
-
-  <Accordion title="The save was refused and named a channel" icon="triangle-exclamation">
-    Validation runs on her server, not in your browser. Every post needs at least one character or
-    one image, drafts included. A schedule gets a harder look: each channel's settings, length limit
-    and own rules. The first failure stops the save and drops you on that channel with its settings
-    bar already open.
-  </Accordion>
-
-  <Accordion title="Reveal shows nothing under API Keys" icon="key">
-    **Connections > API Keys** is visible to every member, but only a workspace admin can reveal or
-    rotate the key; members see it masked. Calling the public API also needs a subscription, and the
-    free trial counts.
-    Self-hosted installs with billing off have it on by default.
-  </Accordion>
-
-  <Accordion title="My agent connected but cannot see any channels" icon="robot">
-    Almost always the key. Check it was pasted in full, and if you are self-hosting, that
-    `POSTQUEEN_API_URL` points at your backend including the `/api` suffix most single-domain
-    installs use. [CLI authentication](/cli/authentication) has the exact shape.
-  </Accordion>
-</AccordionGroup>
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="The composer in full" icon="pen" href="/using/writing-a-post">
-    Threads, per-channel versions, repeat schedules and what she checks before saving.
-  </Card>
-  <Card title="Let her pick the times" icon="clock" href="/using/posting-times">
-    Set the slots once and she fills them.
-  </Card>
-  <Card title="Connect more channels" icon="plug" href="/providers/overview">
-    Every network she posts to, and the OAuth app each one wants.
-  </Card>
-  <Card title="Run her from anywhere" icon="terminal" href="/which-interface">
-    CLI, MCP, the API or an automation platform, and how to tell which is yours.
-  </Card>
-</CardGroup>
-
+<NextStepsGuide />

@@ -1,85 +1,96 @@
 ---
-title: 'Whop setup'
-description: 'Register the Whop application and give PostQueen its keys'
-icon: /images/channels/whop.svg
+title: "Whop setup"
+description: "Register your own Whop app for a self-hosted PostQueen: the redirect URI, the six scopes, and the one variable to set."
+icon: "/images/channels/whop.svg"
 ---
 
-Register your own Whop OAuth application, put its client id in your environment, and connect the channel.
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+
+On a self-hosted PostQueen the Whop app is yours. PostQueen signs in to Whop with OAuth and PKCE, so it needs only the app's client ID: there is no client secret to set.
+
+## Before you start
+
+| | |
+|---|---|
+| Developer dashboard | [Whop developer dashboard](https://whop.com/dashboard/developer), with a Whop account |
+| Variable | `WHOP_CLIENT_ID` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/whop` |
+| Scopes | `openid`, `profile`, `email`, `forum:post:create`, `forum:read`, `company:basic:read` |
+| You also need | Access to a Whop company that has a forum, for each account you connect |
+| Review | None in Whop's OAuth guide |
+
+<Warning>
+PostQueen does not check the granted Whop scopes when an account connects. With one missing, the channel connects and looks healthy, and the first post fails and asks for a reconnect. Select all six scopes before anyone connects.
+</Warning>
+
+## Create the app
 
 <Steps>
-  <Step title="Create a Whop OAuth Application">
-    Go to the [Whop Developer Portal](https://dash.whop.com/settings/developer) and create a new application.
+  <Step title="Create the app">
+    Open the [Whop developer dashboard](https://whop.com/dashboard/developer) and create an app.
+  </Step>
+  <Step title="Add the redirect URI">
+    In the app's **OAuth** section, add the redirect URI. Whop compares it exactly, scheme, port and path included:
 
-    Grant it all six scopes:
+    <CodeGroup>
 
-    ```
-    openid
-    profile
-    email
-    forum:post:create
-    forum:read
-    company:basic:read
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/whop
     ```
 
-    <Warning>
-    **Whop is the one network where a missing scope does not stop the connect.** Unlike every
-    other OAuth channel here, the scopes are not verified when you connect, so the channel appears
-    and looks healthy. You find out later, when a post fails and asks you to reconnect with the
-    required permissions. Grant all six now.
-    </Warning>
+    ```text Local development
+    http://localhost:4200/integrations/social/whop
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/whop
+    ```
+
+    </CodeGroup>
+
+    <OAuthRedirect />
   </Step>
-
-  <Step title="Get and set your Client ID">
-    Copy the **Client ID** from your Whop application settings and add it to your `.env` file:
-
-```env
-WHOP_CLIENT_ID="your_client_id"
-```
+  <Step title="Select the scopes">
+    Choose **View available scopes** and select the six from the table above. PostQueen asks for exactly these: the three sign-in scopes, `forum:post:create` to post, `forum:read` to list forums and `company:basic:read` to list companies.
   </Step>
-
-  <Step title="Add a Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Whop OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/whop`
-    - Local development: `http://localhost:4200/integrations/social/whop`
-    - Docker: `http://localhost:4007/integrations/social/whop`
-
-    Add this redirect URI in your Whop application settings.
-  </Step>
-
-  <Step title="Add Whop as a Channel in PostQueen">
-    Go to the PostQueen web interface, click **Add Channel**, and select **Whop**. You will be redirected to Whop to authorize the connection.
-  </Step>
-
-  <Step title="Create a Post">
-    When creating a post for Whop, you will need to configure:
-
-    - **Company**: Select which Whop company to post under.
-    - **Forum**: Select the forum (experience) to post in.
-    - **Title**: An optional title for your forum post.
-
-    The post content supports **Markdown** formatting. You can also attach files to your post.
+  <Step title="Copy the client ID">
+    Copy the app's client ID, which looks like `app_xxxxx`. You do not need the client secret.
   </Step>
 </Steps>
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+## Set the variable
 
-## Next steps
+Add the client ID to your environment:
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Whop" icon="/images/channels/whop.svg" href="/providers/whop">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+```env
+WHOP_CLIENT_ID="app_xxxxx"
+```
+
+<RestartAndAddChannel />
+
+Each post then picks a company and one of its forums.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Insufficient permissions, please re-authenticate with required scopes">
+    The app is missing a scope, or the account did not grant it. Select all six scopes on the app, then reconnect the channel.
+  </Accordion>
+  <Accordion title="Invalid token, please re-authenticate">
+    Whop no longer accepts the channel's token. Reconnect the channel.
+  </Accordion>
+  <Accordion title="Whop shows an error about the redirect URI">
+    The address PostQueen sent is not in the app's **OAuth** section. It is exactly your `FRONTEND_URL` followed by `/integrations/social/whop`, with no trailing slash.
+  </Accordion>
+  <Accordion title="The company or forum list is empty">
+    The account has no company with a forum, or the app lacks `company:basic:read` or `forum:read`. Add a forum to the company in Whop, or add the scopes and reconnect.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Whop posting settings](/public-api/providers/whop)

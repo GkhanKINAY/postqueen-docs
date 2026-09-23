@@ -138,7 +138,7 @@ Copy the key from PostQueen > Connections > API Keys. Only workspace admins can 
 
 **Option 2: your own auth server**
 
-PostQueen runs no login server for the CLI, so `postqueen auth:login` on its own only explains the API key. If the user runs the device-flow auth server from the CLI repository's `server/` folder, log in through it:
+PostQueen runs no login server for the CLI, so `postqueen auth:login` on its own only says where to get the API key, and exits 1. If the user runs the device-flow auth server from the CLI repository's `server/` folder, log in through it:
 ```bash
 postqueen auth:login --auth-server https://auth.example.com   # or set POSTQUEEN_AUTH_SERVER
 postqueen auth:logout                                          # remove the stored credentials
@@ -783,7 +783,7 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 - [CLI documentation](https://docs.postqueen.ai/cli/introduction)
 - [Command reference](https://docs.postqueen.ai/cli/command-reference) - Every command and flag
 - [INTEGRATION_TOOLS_WORKFLOW.md](https://github.com/GkhanKINAY/postqueen-agent/blob/main/INTEGRATION_TOOLS_WORKFLOW.md) - Complete tools workflow guide
-- [Public API reference](https://api.postqueen.ai/docs)
+- [Public API reference](https://docs.postqueen.ai/public-api/introduction)
 - `postqueen integrations:settings <id>` - The settings schema, rules and tools of one channel, straight from the API. Trust it over any example here.
 
 ---
@@ -811,7 +811,7 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 # ⚠️ AUTHENTICATE FIRST - required before any other command
 postqueen auth:status                                             # Check if authenticated
 export POSTQUEEN_API_KEY=key                                      # Set the API key
-postqueen auth:login                                              # Explains the API key (or logs in via your own --auth-server)
+postqueen auth:login                                              # Says where to get the API key and exits 1 (or logs in via your own --auth-server)
 
 # Discovery (only after auth is confirmed)
 postqueen integrations:list                           # Get integration IDs

@@ -1,76 +1,97 @@
 ---
-title: 'Kick setup'
-description: 'Register the Kick application and give PostQueen its keys'
-icon: /images/channels/kick.svg
+title: "Kick setup"
+description: "Register your own Kick app for a self-hosted PostQueen: the developer settings, scopes, redirect URL and the variables to set."
+icon: "/images/channels/kick.svg"
 ---
 
-Create an OAuth application on Kick and put its keys in your environment so your own instance can connect the channel.
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+
+On a self-hosted PostQueen the Kick app is yours. You create it in your Kick developer settings and give PostQueen its client ID and secret. Kick does not review apps.
+
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [Kick developer settings](https://kick.com/settings/developer), with two-factor authentication on your Kick account |
+| Variables | `KICK_CLIENT_ID`, `KICK_SECRET` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/kick` |
+| Scopes | `chat:write`, `user:read`, `channel:read` |
+| Review | None |
+
+PostQueen signs in with OAuth 2.1 and PKCE on `id.kick.com`, and sends the secret as well. It does not check which scopes were granted.
+
+## Create the app
 
 <Steps>
-  <Step title="Create an OAuth app on Kick">
-    Sign in to Kick and create an OAuth application. You need its client id and its secret, plus the redirect URI from the next step.
-
-    She asks for three scopes, so grant all of them:
-
-```
-chat:write
-user:read
-channel:read
-```
-
-    Kick uses OAuth 2.1, which means PKCE. She generates the code verifier and the S256 challenge for you, and the whole exchange runs against `id.kick.com`.
+  <Step title="Turn on two-factor authentication">
+    Kick's developer tools need two-factor authentication on your account. Turn it on in your Kick security settings, then open **Settings > Developer** at [kick.com/settings/developer](https://kick.com/settings/developer).
   </Step>
-
-  <Step title="Configure the OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Kick OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/kick`
-    - Local development: `http://localhost:4200/integrations/social/kick`
-    - Docker: `http://localhost:4007/integrations/social/kick`
+  <Step title="Create the app">
+    Create a new app and fill in its name, description and redirect URL. Leave webhooks off: PostQueen does not use them. Tick the three scopes PostQueen asks for: reading user information (`user:read`), reading channel information (`channel:read`) and writing to chat (`chat:write`).
   </Step>
+  <Step title="Set the redirect URL">
+    Use the address that matches how you run PostQueen:
 
-  <Step title="Set environment variables">
-    Copy the client id and the secret from your Kick app into your `.env` file.
+    <CodeGroup>
 
-```env
-KICK_CLIENT_ID=""
-KICK_SECRET=""
-```
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/kick
+    ```
 
-    <Warning>
-    The second variable is `KICK_SECRET`, not `KICK_CLIENT_SECRET`. Naming it the long way is the single most common reason a Kick connection fails on the first try.
-    </Warning>
+    ```text Local development
+    http://localhost:4200/integrations/social/kick
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/kick
+    ```
+
+    </CodeGroup>
+
+    Kick compares it exactly. Use `localhost`, not `127.0.0.1`: Kick documents that sign-ins through `127.0.0.1` break.
+
+    <OAuthRedirect />
   </Step>
-
-  <Step title="Add the Kick channel">
-    Restart PostQueen so the new variables are read.
-
-    <Snippet file="restart-and-add-channel.mdx" />
-
-    In the web interface click **Add Channel** and pick **Kick**. Kick asks you to authorize, and the channel appears once you accept.
-
-    Add Channel does not check whether the two variables are set, so a missing or misspelled key shows up as a broken authorization page on the Kick side rather than a helpful message in PostQueen.
+  <Step title="Copy the client ID and secret">
+    Your developer settings show the app's **Client ID** and **Client Secret**. Copy both, and keep the secret private.
   </Step>
 </Steps>
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+## Set the variables
 
-## Next steps
+Add the two keys to your environment:
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Kick" icon="/images/channels/kick.svg" href="/providers/kick">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+```env
+KICK_CLIENT_ID="your client id"
+KICK_SECRET="your client secret"
+```
+
+<Warning>
+The second variable is `KICK_SECRET`, not `KICK_CLIENT_SECRET`. The long name is ignored, and the sign-in then fails at the token exchange.
+</Warning>
+
+<RestartAndAddChannel />
+
+Pick **Kick**, sign in, and approve the chat permission. Posts go to the chat of the channel you signed in with.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Kick shows a bare 404 page when you connect">
+    Kick shows that page when the sign-in request is missing something it needs. Check `KICK_CLIENT_ID`, and that the redirect URL on the app is exactly your `FRONTEND_URL` followed by `/integrations/social/kick`.
+  </Accordion>
+  <Accordion title="The sign-in comes back, but the channel is not added">
+    The token exchange failed. The usual cause is the secret: check that it is in `KICK_SECRET` and is the app's current secret.
+  </Accordion>
+  <Accordion title="Messages do not appear in chat">
+    The token lacks `chat:write`. Tick it on the app, then reconnect the channel and approve every permission.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Kick posting settings](/public-api/providers/kick)

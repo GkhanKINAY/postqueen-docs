@@ -1,105 +1,108 @@
 ---
-title: Reddit Settings
-description: 'API settings for posting to Reddit'
+title: "Reddit posting settings"
+sidebarTitle: "Reddit"
+description: "The settings object a post to Reddit takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/reddit.svg"
 ---
 
-A Reddit post is defined by the `subreddit` array. Each entry names one subreddit, the title to post under, and the post type.
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Reddit setup guide](/installation/providers/reddit).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Reddit cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Reddit channel will take.
 
-```json
-{
-  "settings": {
-    "__type": "reddit",
-    "subreddit": [
-      {
-        "value": {
-          "subreddit": "programming",
-          "title": "My Post Title",
-          "type": "self",
-          "url": "",
-          "is_flair_required": false,
-          "flair": null
-        }
-      }
-    ]
-  }
-}
-```
+Every post to Reddit carries a `settings` object with `"__type": "reddit"` and one entry for each subreddit the post goes to. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `reddit` |
-| `subreddit` | `array` | Yes | Array of subreddit configurations |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"reddit"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `subreddit` | array | Yes | At least one entry. Each entry is `{ "value": { ... } }` with the fields below. |
 
-### Subreddit Object
+Each `subreddit[].value` takes:
 
-Each item in the `subreddit` array contains a `value` object with:
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `subreddit` | string | Yes | The subreddit as a `/r/` path, such as `/r/homelab`. |
+| `title` | string | Yes | The post title in that subreddit, 2 to 300 characters. |
+| `type` | string | Yes | `self` for a text post, `link` for a link post, or `media` to post the first file attached to the post, one image or one MP4 video. |
+| `url` | string | For `link` | The link of a link post. Must be a valid URL. |
+| `is_flair_required` | boolean | Yes | Whether the subreddit demands flair. `true` makes `flair` required. |
+| `flair` | object | When `is_flair_required` is `true` | One of the subreddit's flairs, as `{ "id": "...", "name": "..." }`. |
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `subreddit` | `string` | Yes | Subreddit name (without r/) |
-| `title` | `string` | Yes | Post title (min 2 characters) |
-| `type` | `string` | Yes | Post type |
-| `url` | `string` | Conditional | URL for link posts |
-| `is_flair_required` | `boolean` | Yes | Whether flair is required |
-| `flair` | `object` | Conditional | Flair object (required if `is_flair_required` is true) |
+The post text, the `content` of the first entry in `value`, is the body in every subreddit. Only the title, type, link and flair change from one subreddit to the next. Reddit's Responsible Builder Policy forbids automated posting of identical or substantially similar content across subreddits.
 
-<Check>
-That is the whole schema. `__type`, one entry in `subreddit`, and a title of at least two characters make a valid Reddit post.
-</Check>
+### Finding subreddits and flairs
 
-### `type` (Post Type)
+Two tools answer through [trigger a provider tool](/public-api/integrations/trigger). `subreddits` searches public subreddits by name, and also takes a pasted `r/name` link:
 
-| Value | Description |
-|-------|-------------|
-| `self` | Text post (uses content from post value) |
-| `link` | Link post (requires `url` field) |
-| `media` | Image or video post |
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "subreddits", "data": { "word": "homelab" } }'
+```
 
-<Warning>
-A `media` post takes exactly one media item, and you have to upload the file before you attach it. PostQueen picks image or video from the extension.
-</Warning>
+The response is `{ "output": [ { "title", "name", "id" } ] }`, where `name` is the subreddit's path. `restrictions` then tells you what one subreddit accepts:
 
-### Flair Object
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "restrictions", "data": { "subreddit": "/r/homelab" } }'
+```
 
-Required when `is_flair_required` is `true`:
+The response is `{ "output": { "subreddit", "allow", "is_flair_required", "flairs": [ { "id", "name" } ] } }`. `allow` lists the types the subreddit takes, from `self`, `link` and `media`. Copy `is_flair_required` into the entry, and pick one of `flairs` when it is `true`.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| A `media` entry needs exactly one file on the post | “When posting a media post, you must attached exactly one media file.” |
+| Every MP4 on the post has a `thumbnail` | “You must attach a thumbnail to your video post.” |
+| Body text up to 10,000 characters | “post is too long, please fix it” |
+| At least one `subreddit` entry, each with `subreddit`, a `title` of 2 to 300 characters, a `type` from the list, a boolean `is_flair_required`, a `flair` when it is `true`, and a valid `url` on a `link` | A validation error naming the field |
+
+The error body names the channel and the rule:
 
 ```json
 {
-  "flair": {
-    "id": "flair-template-id",
-    "name": "Discussion"
-  }
+  "statusCode": 400,
+  "provider": "reddit",
+  "name": "Your channel name",
+  "message": "You must attach a thumbnail to your video post."
 }
 ```
 
----
+Each subreddit's own rules are not checked first: allowed post types, karma, account age and posting rates. Subreddits are posted one at a time, and when Reddit refuses one the post fails with “Reddit rejected the post to r/name:” followed by Reddit's reason.
 
-## Complete Example
+## Examples
 
-<Tabs>
-  <Tab title="Text post">
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), each flair with one from the `restrictions` tool, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-```json
+<CodeGroup>
+
+```json Text post with a comment
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-reddit-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "I've been working on this project for the past few months and wanted to share my experience.\n\n## What I learned\n\n1. Planning is crucial\n2. Start small\n3. Iterate quickly\n\nWhat are your thoughts?",
+          "content": "I moved our photo backups from a cloud drive to a small home server last month. Here is what worked, what broke, and what it costs to run.",
           "image": []
+        },
+        {
+          "content": "Happy to answer questions about the hardware in the replies.",
+          "image": [],
+          "delay": 10
         }
       ],
       "settings": {
@@ -107,12 +110,10 @@ Required when `is_flair_required` is `true`:
         "subreddit": [
           {
             "value": {
-              "subreddit": "programming",
-              "title": "My journey building a side project - lessons learned",
+              "subreddit": "/r/homelab",
+              "title": "One month of running our photo backups at home",
               "type": "self",
-              "url": "",
-              "is_flair_required": false,
-              "flair": null
+              "is_flair_required": false
             }
           }
         ]
@@ -122,23 +123,18 @@ Required when `is_flair_required` is `true`:
 }
 ```
 
-  </Tab>
-  <Tab title="Link post">
-
-```json
+```json Link post
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-reddit-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "",
+          "content": "A write-up of how we cut our build times in half.",
           "image": []
         }
       ],
@@ -147,12 +143,11 @@ Required when `is_flair_required` is `true`:
         "subreddit": [
           {
             "value": {
-              "subreddit": "technology",
-              "title": "Interesting article about AI developments",
+              "subreddit": "/r/devops",
+              "title": "How we cut our CI build times in half",
               "type": "link",
-              "url": "https://example.com/ai-article",
-              "is_flair_required": false,
-              "flair": null
+              "url": "https://example.com/faster-builds",
+              "is_flair_required": false
             }
           }
         ]
@@ -162,24 +157,19 @@ Required when `is_flair_required` is `true`:
 }
 ```
 
-  </Tab>
-  <Tab title="Required flair">
-
-```json
+```json Image post with flair
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-reddit-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Looking for advice on my situation...",
-          "image": []
+          "content": "Shot on a 50 mm lens at golden hour.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/harbor.jpg" }]
         }
       ],
       "settings": {
@@ -187,15 +177,11 @@ Required when `is_flair_required` is `true`:
         "subreddit": [
           {
             "value": {
-              "subreddit": "personalfinance",
-              "title": "Need advice on budgeting",
-              "type": "self",
-              "url": "",
+              "subreddit": "/r/itookapicture",
+              "title": "ITAP of the harbor at sunset",
+              "type": "media",
               "is_flair_required": true,
-              "flair": {
-                "id": "abc123-flair-id",
-                "name": "Budgeting"
-              }
+              "flair": { "id": "FLAIR_ID", "name": "Landscape" }
             }
           }
         ]
@@ -205,59 +191,52 @@ Required when `is_flair_required` is `true`:
 }
 ```
 
-  </Tab>
-  <Tab title="Multiple subreddits">
-
-```json
+```json Video post
 {
-  "settings": {
-    "__type": "reddit",
-    "subreddit": [
-      {
-        "value": {
-          "subreddit": "webdev",
-          "title": "New CSS feature just dropped!",
-          "type": "link",
-          "url": "https://example.com/css-news",
-          "is_flair_required": false,
-          "flair": null
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Timelapse of the build, start to finish.",
+          "image": [
+            {
+              "id": "MEDIA_ID",
+              "path": "https://uploads.postqueen.ai/build.mp4",
+              "thumbnail": "https://uploads.postqueen.ai/build-thumbnail.jpg"
+            }
+          ]
         }
-      },
-      {
-        "value": {
-          "subreddit": "frontend",
-          "title": "New CSS feature just dropped!",
-          "type": "link",
-          "url": "https://example.com/css-news",
-          "is_flair_required": false,
-          "flair": null
-        }
+      ],
+      "settings": {
+        "__type": "reddit",
+        "subreddit": [
+          {
+            "value": {
+              "subreddit": "/r/somethingimade",
+              "title": "I built a walnut desk in a weekend",
+              "type": "media",
+              "is_flair_required": false
+            }
+          }
+        ]
       }
-    ]
-  }
+    }
+  ]
 }
 ```
 
-  </Tab>
-</Tabs>
+</CodeGroup>
 
-<Tip>
-You can post to multiple subreddits simultaneously by adding multiple objects to the `subreddit` array.
-</Tip>
+In the first example, the second entry in `value` is a top-level comment, posted 10 minutes after the post. Comments on Reddit are text only, and they work on a post to one subreddit: on a post sent to several subreddits, the comments fail.
 
-## Next steps
+## Related
 
-<CardGroup cols={2}>
-  <Card title="Connect the channel" icon="plug" href="/providers/reddit">
-    Create the OAuth app and link the Reddit account.
-  </Card>
-  <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">
-    The create endpoint, field by field, with a worked request.
-  </Card>
-  <Card title="Upload media first" icon="image" href="/public-api/uploads/upload-file">
-    What a `media` post needs before you can attach it.
-  </Card>
-  <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
-    Work out why a post did not reach the subreddit.
-  </Card>
-</CardGroup>
+- [Reddit in the app](/channels/reddit)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)
+- [Trigger a provider tool](/public-api/integrations/trigger)

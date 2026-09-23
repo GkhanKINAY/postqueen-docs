@@ -1,0 +1,92 @@
+---
+title: "Draft and schedule posts with the AI Copilot"
+sidebarTitle: "AI Copilot"
+description: "Ask the AI Copilot to write, change and schedule posts, add images and read your post analytics, on its own page or inside Create Post."
+icon: "wand-sparkles"
+---
+
+import TrialLocks from '/snippets/trial-locks.mdx';
+
+**Where:** **AI Copilot** in the left rail. Inside **Create Post**, the **AI Copilot** tab in the right column.
+
+The AI Copilot is a chat that writes posts for your channels. It shows each post on a card, and nothing reaches your calendar until you choose an action on that card.
+
+<TrialLocks />
+
+## Draft a post
+
+<Steps>
+  <Step title="Open AI Copilot">
+    Choose **AI Copilot** in the left rail. Your channels are on the left under **Select Channels**, the chat is in the middle, and your **Chats** are on the right.
+  </Step>
+  <Step title="Pick the channels">
+    Click the channels the post is for. The message box lists them after "Posting to".
+  </Step>
+  <Step title="Describe the post">
+    Say what you want to post and when, then press Enter. Shift + Enter starts a new line.
+  </Step>
+  <Step title="Check the card">
+    The Copilot reads each network's rules and shows a **Post Preview** card. It reads "Checking channel rules" until the check is done.
+  </Step>
+  <Step title="Choose what happens">
+    Choose **Schedule**, or **Schedule next free slot** when you gave no time. The arrow next to it has **Post now**, **Save as draft**, **Add image** or **Change image**, and **Remove image**. **Edit in Create Post** opens the post in the composer to finish by hand.
+  </Step>
+</Steps>
+
+A card with several posts also offers **Schedule all**. The next free slot is the first free quarter hour one to four hours from now, the same time **Create Post** starts from.
+
+## Change a post you already have
+
+Ask in plain words, for example "move Friday's Bluesky post to 10:00". The Copilot finds the post and shows an **Update Existing Post** card. **Save changes** saves the edit and keeps the post's date; the arrow also has **Schedule** and **Delete Post**. The Copilot never deletes a post itself: you do it from the card, after "Are you sure you want to delete this post?".
+
+## What else you can ask
+
+- **Images:** make one for a post, or use one from [Media](/using/media-library). Each generated image uses an AI image credit.
+- **Videos:** in the **AI Copilot** tab of Create Post, ask for a video for the post. Each video uses an AI video credit. See [Ask the AI Copilot for a video](/using/ai-images-and-video#ask-the-ai-copilot-for-a-video).
+- **Analytics:** totals for posts published in the last 7, 30 or 90 days, your top posts, or one post's numbers, from the [networks that report analytics](/using/analytics).
+- **Settings:** change a scheduled post's or a draft's network settings without touching its text or time.
+
+## In Create Post
+
+The right column has two tabs, **Post Preview** and **AI Copilot**, and opens on **AI Copilot** until the post has text or media. There the Copilot works on the open post only:
+
+- **Quick edits**: **Rephrase**, **Shorten**, **Expand**, **More Casual** and **More Formal**. A suggestion comes on a card with **Apply**, and **Undo** takes it back.
+- Ask for an image and choose **Use in this post** to attach it, or ask for a comment to wait a few minutes after the post.
+- To schedule, use the composer's own buttons.
+
+## Generate Posts from a brief
+
+Open the arrow next to **Create Post** in the header and choose **AI post**. Write at least 10 characters under **Write anything** (links are fine), pick an **Output format** and a **Tone**, check **Add pictures?** for images, and choose **Generate**. The composer opens with the result to check and schedule.
+
+## Good to know
+
+- Every paid plan includes the AI Copilot.
+- Chats are saved for the workspace, so everyone in it sees the same list. **New chat** starts a fresh one.
+- Chatting and rewriting do not use credits. Only images and videos do.
+- A network's rules always win. If a draft breaks one, the card reads "Copilot is fixing this draft" while the Copilot corrects it.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| “AI Copilot unlocks after your trial” | Choose **End free trial to unlock AI Copilot**, or wait for your plan to start. |
+| “Copilot could not fix this draft” | Answer the Copilot's question, or choose **Edit in Create Post** and fix the post yourself. |
+| “The date of this post has passed; say when it should go out.” | Give the Copilot a new date and time. |
+| “You are out of AI credits for this month.” | Wait for your AI credits to reset, or move to a larger plan in **Billing**. |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Finish a draft by hand in the composer.
+  </Card>
+  <Card title="AI images and video" icon="sparkles" href="/using/ai-images-and-video">
+    Styles, shapes, the two video generators and the monthly credits.
+  </Card>
+  <Card title="Use your own AI agent" icon="bot" href="/agents/overview">
+    Post from Claude, ChatGPT or another agent through PostQueen's MCP server.
+  </Card>
+  <Card title="Free trial" icon="credit-card" href="/cloud/trial">
+    What unlocks when your paid plan starts.
+  </Card>
+</CardGroup>

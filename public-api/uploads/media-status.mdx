@@ -1,0 +1,15 @@
+---
+title: "Get media status"
+description: "Check whether an uploaded video has finished processing and is ready to post."
+openapi: "GET /media/{id}/status"
+---
+
+Both upload endpoints answer a video with `"status": "processing"` while PostQueen prepares it, which takes from a few seconds to a few minutes. Ask again with the media `id` until `status` changes:
+
+| Status | What to do |
+|---|---|
+| `processing` | Wait a few seconds and ask again |
+| `ready` | Put it on a post, with the `id` and `path` from **this** answer: a converted file has a new path |
+| `failed` | Read `processingError`, then upload another file |
+
+An id that is not in your workspace answers `404 Media not found`.

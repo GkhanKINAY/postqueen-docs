@@ -1,155 +1,59 @@
 ---
-title: Known Issues
-description: 'Bugs we have confirmed, with what we could and could not verify'
-icon: 'bug'
+title: "Known issues"
+description: "Bugs PostQueen knows about and has not fixed yet, each with what you see and a way around it."
+icon: "list-checks"
+keywords:
+  - known issues
+  - bugs
+  - workaround
 ---
 
-**Last reviewed 25 July 2026, against `v3.0.9`.** Each entry says how it was checked, because an
-entry that is quietly stale is worse than no entry: it tells you a working feature is broken.
+import ReportIt from '/snippets/report-it.mdx';
 
-<Note>
-There is no public issue tracker behind these yet. The repository has issue tracking enabled and
-nothing filed, so there is no thread to follow for status. If one of these matters to you,
-[open an issue](https://github.com/GkhanKINAY/postqueen-app/issues) and it becomes the place this
-page points to.
-</Note>
+**Last reviewed on September 23, 2026.** Each entry was checked against the app on that day. An entry is removed once its fix is live.
 
-## Confirmed in the code
+Only issues you can run into on PostQueen today are listed. A network marked Soon cannot be connected, so its bugs are not here.
 
-These were traced to the line that causes them.
+## Posts and the calendar
 
-| Issue | Where | Short answer |
-| --- | --- | --- |
-| A `500` where a `404` belongs | `DELETE /public/v1/posts/:id` | Match the `500` from this endpoint specifically |
-| A `500` that survived the original fix | `PUT /public/v1/posts/:id/release-id` | Confirm the post exists and has no release id first |
-| An upload cannot be cancelled | The uploader | Let it finish, then delete the asset |
+| What happens | Way around it |
+|---|---|
+| An upload cannot be canceled once it starts: the uploader shows its progress only. | Let it finish, then delete the file from the [media library](/using/media-library). |
 
-### `DELETE /public/v1/posts/:id` returns 500 for an id that does not exist
-
-The handler looks the post up and then reads its group without checking it found one, so a
-missing id throws instead of returning a clean `404`.
-
-<Note>
-**On the error text:** it is a plain JavaScript `TypeError` about reading `integrationId` of
-undefined, not a Prisma error. Earlier versions of this page said Prisma, which sent people
-looking for the wrong signature.
-</Note>
-
-<Tip>
-**Workaround:** if your client treats "already deleted" as success, match on the `500` from this
-endpoint specifically.
-</Tip>
+## Moltbook
 
 <Warning>
-Other `500`s here are real failures, so do not swallow the status code generally.
+Moltbook support is experimental, and your posts may not show up in Moltbook's feeds: [Moltbook](/channels/moltbook) explains why.
 </Warning>
 
-### `PUT /public/v1/posts/:id/release-id` can still return 500
+| What happens | Way around it |
+|---|---|
+| A post with no **Submolt** fails in the composer with "Could not save the post, please try again". | Fill in **Submolt**, such as `general`. |
+| Over the API, [Integration settings](/public-api/integrations/settings) answers "No additional settings required" for a Moltbook channel, but `POST /posts` needs `submolt`. | Always send `"submolt"` in the settings: [Moltbook posting settings](/public-api/providers/moltbook). |
 
-The original cause is fixed: the value is coerced to a string now, so a non-string body no longer
-produces a data-validation error.
+## Plans
 
-What remains is different. The update matches on the post id, your organization and a release id
-that is not yet set, and when nothing matches, the database error surfaces uncaught as a `500`.
-So you get it for:
+| What happens | Way around it |
+|---|---|
+| The plan card on **Billing** lists an Advanced Picture Editor. It is not available in the app yet. | Nothing to do. [AI images](/using/ai-images-and-video) covers the image tools you can use today. |
 
-- a wrong id
-- a post in another organization
-- a post whose release id is already filled in
+## API
 
-<Tip>
-**Workaround:** confirm the post exists and has no release id before calling. Validating the body
-shape, which this page used to recommend, no longer prevents the common case.
-</Tip>
-
-### An upload cannot be cancelled once it starts
-
-The uploader is rendered with its cancel, pause and retry controls hidden, and there is no abort
-path behind them.
-
-<Tip>
-**Workaround:** let it finish, then delete the asset from the post.
-</Tip>
-
-## Reported, not reproducible from the code
-
-Real reports, but we could not confirm them by reading the source, so treat them as leads. If you
-hit one, the detail in an issue would let us fix it properly.
-
-<AccordionGroup>
-  <Accordion title="TikTok connect page crashes for some accounts">
-    Reported as `cannot read properties of undefined` on the connect page. The code path was
-    substantially rewritten since the report and now guards its response parsing, so we cannot
-    point at a line.
-
-    **If it happens:** retry, and if it persists, run the connect flow in a fresh incognito
-    window.
-  </Accordion>
-
-  <Accordion title="X connect page throws t/r is not a function">
-    Those are minified names, so there is nothing to search for without the original error and a
-    source map.
-
-    **If it happens:** start again from the channel list rather than refreshing the broken screen.
-  </Accordion>
-
-  <Accordion title="Google My Business connect page shows session-recording errors">
-    Session replay is on at full sampling, so the mechanism is certainly still there. Whether the
-    overlay still appears on this page specifically, we could not confirm without running it.
-
-    **If it happens:** ignore the overlay. The authorization usually completes anyway; refresh
-    your channel list afterwards.
-  </Accordion>
-
-  <Accordion title="The calendar throws null-reference errors while loading">
-    The component uses optional chaining broadly during load and we found no unguarded access
-    that would explain it.
-
-    **If it happens:** refresh once the data has arrived.
-  </Accordion>
-
-  <Accordion title="Video generation fails">
-    This one was previously attributed to Transloadit assembly expiry. That attribution looked
-    wrong: the error text came from the Veo3 generator path, which is a different provider
-    entirely, so the old advice about shorter prompts does not follow from it. Veo3 has since been
-    replaced by Seedance 2.0.
-
-    **If it happens:** retry. We would like a report on this one, because the cause is not what
-    the page used to say.
-  </Accordion>
-</AccordionGroup>
-
-## Fixed since this page last claimed otherwise
-
-### AI image generation, `Unknown parameter: 'response_format'`
-
-<Check>
-**Fixed in May 2026.** The parameter that newer OpenAI versions rejected was removed and the
-model updated. All three routes that were affected go through the same function, so all three are
-covered.
-</Check>
-
-It is listed here rather than deleted because the page carried it for two months after the fix,
-and anyone who read it in that window was told to work around something that already worked. If
-you are on an older image than `v3.0.9`, upgrading is the fix.
+| What happens | Way around it |
+|---|---|
+| The API accepts X settings that need X Premium (`subscribers` and `verified` replies, and Articles) for an account without Premium. X may then refuse the post when it is published. | Send them only for an X account with Premium. [X posting settings](/public-api/providers/x) |
 
 ## Something not here?
 
-<Snippet file="report-it.mdx" />
+<ReportIt />
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="A post did not go out" icon="triangle-exclamation" href="/troubleshooting/post-failed">
-    The four states, the red badge, and how to send a failed post again
+  <Card title="Common errors" icon="circle-alert" href="/troubleshooting/common-errors">
+    The messages the app shows, and what to do about each.
   </Card>
-  <Card title="Uploads and media" icon="cloud-arrow-up" href="/troubleshooting/uploads">
-    Payload limits, video failures and the cancel-in-flight gap
-  </Card>
-  <Card title="Delete a post" icon="trash" href="/public-api/posts/delete">
-    The endpoint behind the first 500 above, and what it returns
-  </Card>
-  <Card title="Support" icon="headset" href="/support">
-    What to put in a report so the first reply is the useful one
+  <Card title="A post did not go out" icon="triangle-alert" href="/troubleshooting/post-failed">
+    Why a post failed, and how to send it again.
   </Card>
 </CardGroup>

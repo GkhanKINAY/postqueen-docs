@@ -1,0 +1,64 @@
+---
+title: "Google Business Profile"
+description: "What PostQueen will post to Google Business Profile, and the limits it checks before a post is scheduled."
+icon: "/images/channels/google-business.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post updates, events and offers with a photo to the Business Profile locations you manage, and add a button such as Book or Call to updates and events.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/google-business.webp" alt="A new Google Business Profile post in the PostQueen composer, with the post types Google Business Profile takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 1,500 characters.
+  </Card>
+  <Card title="Media" icon="image">
+    One photo, or none. No video.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Update, event and offer. Events and offers carry a title and start and end dates.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    For the location, over 7, 30 or 90 days: website clicks, phone calls, direction requests, and map views on desktop and on mobile. No numbers for each post, and no follower count.
+  </Card>
+</CardGroup>
+
+**Not supported:** video, product posts, comments or follow-ups, and analytics for each post.
+
+## Connect Google Business Profile
+
+<Note>
+Google Business Profile is listed in **Add Channel** as **Google My Business**, but it cannot be connected on PostQueen yet. The location has to be verified on Google: unverified locations do not accept posts.
+</Note>
+
+## Post settings
+
+Each Google Business Profile post in the composer has these settings:
+
+- **Post Type**: **Standard Update**, **Event** or **Offer**. It starts on **Standard Update**.
+- **Call to Action**: **None**, **Book**, **Order Online**, **Shop**, **Learn More**, **Sign Up** or **Call**. Every button except **Call** needs a **Call to Action URL**, and is left off the post without one. **Call** dials the phone number verified on the profile. Offers have no button choice: Google shows its own.
+- For an event, under **Event Details**: **Event Title**, **Start Date** and **End Date**, all required, then **Start Time (optional)** and **End Time (optional)**.
+- For an offer, under **Offer Details**: **Title**, **Start Date** and **End Date**, all required, then **Coupon Code (optional)**, **Redeem Online URL (optional)** and **Terms & Conditions (optional)**.
+
+The field names and values for the API are on [Google Business Profile posting settings](/public-api/providers/gmb).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it has at most one photo and no video, and that an event or an offer has its title and both dates.
+- Events without start and end times, and every offer, are sent without times, and Google may refuse them.
+- Photo size and format are Google's rules, and PostQueen does not check them first: JPG or PNG, from 10 KB to 5 MB.
+- Every post is sent to Google marked as English, whatever language it is written in.
+- The link to a published post is its Google Search link when Google returns one, and the location's Business Profile page otherwise.
+- Google may refuse a post with a phone number in the text that it cannot match to the business, and some listings cannot publish posts at all.
+
+<NextStepsChannel />

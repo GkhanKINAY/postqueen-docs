@@ -1,84 +1,101 @@
 ---
-title: 'MeWe setup'
-description: 'Register the MeWe application and give PostQueen its keys'
-icon: /images/channels/mewe.svg
+title: "MeWe setup"
+description: "Register your own MeWe app for a self-hosted PostQueen: the developer program, the app type, the login address and the variables to set."
+icon: "/images/channels/mewe.svg"
 ---
 
-MeWe hands out API access by application, so the first step here is getting into their developer program, and the rest is the app id and API key that follow.
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-<Note>
-MeWe's Developer Program is currently in beta with limited spots. Your application will be reviewed, and selected participants will be granted access to the API.
-</Note>
+On a self-hosted PostQueen the MeWe app is yours. MeWe gives API access only to apps in its developer program, so you apply first. Once you are in, you create a **Standalone** app and give PostQueen its app ID and API key.
 
-## Set up MeWe
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [MeWe for developers](https://developer.mewe.com/), with a MeWe account |
+| Variables | `MEWE_APP_ID`, `MEWE_API_KEY`, and optionally `MEWE_HOST` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/mewe`, sent with each sign-in |
+| Scopes | None. The app's permissions are set when you create it |
+| Review | Acceptance into MeWe's developer program, a beta with limited spots |
+
+## Create the app
 
 <Steps>
-  <Step title="Create a MeWe Developer Account">
-    Head over to the [MeWe Developer Portal](https://dev.mewe.com/) and sign in with your MeWe account.
-
-    Submit an application to join the MeWe Developer Program. The MeWe team will review your request and grant access once approved.
+  <Step title="Apply to the developer program">
+    Sign in at [developer.mewe.com](https://developer.mewe.com/) and choose **Sign Up for early access**. MeWe reviews applications and grants access to the participants it selects.
   </Step>
+  <Step title="Create a Standalone app">
+    Once you are accepted, choose **Add Application**, then **Create New Application**:
 
-  <Step title="Create a new application">
-    Once approved, go to your [MeWe Developer Settings](https://mewe.com/developer) and create a new application.
-
-    When selecting the application type, choose **Standalone App** since PostQueen operates as an external application that connects to MeWe's API.
-
-    Configure the permissions your application requires for posting and group access.
+    - **Application Type**: **Standalone**. PostQueen runs outside MeWe, and the type cannot be changed later.
+    - **Application Name**, **Description** and **App Icon**: all required.
+    - **Webhook URL**: leave it empty. PostQueen does not use it.
+    - **Permissions**: allow posting to your timeline and to groups, and reading your groups. They cannot be changed after the app is created.
   </Step>
-
-  <Step title="Configure OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your MeWe OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/mewe`
-    - Local development: `http://localhost:4200/integrations/social/mewe`
-    - Docker: `http://localhost:4007/integrations/social/mewe`
-
-    <Warning>
-    MeWe requires HTTPS for redirect URIs in production. Make sure your PostQueen instance is served over HTTPS.
-    </Warning>
-  </Step>
-
-  <Step title="Copy your credentials">
-    From your MeWe Developer Settings, copy the **App ID** and **API Key** for your application, and add them to your `.env` file:
-
-```env
-MEWE_APP_ID="your_app_id"
-MEWE_API_KEY="your_api_key"
-```
-
-    <Warning>
-    Keep your API Key confidential. Never expose it in client-side code or public repositories. All API requests using the API Key should originate from your backend server.
-    </Warning>
-  </Step>
-
-  <Step title="Add MeWe channel in PostQueen">
-    Restart PostQueen to apply the new environment variables.
-
-    <Snippet file="restart-and-add-channel.mdx" />
-
-    Once authorized, you can choose to post to your **Timeline** or to a specific **Group** when creating posts.
+  <Step title="Copy the app ID and API key">
+    Under your applications, copy the **App ID** and the **API Key** (choose **Show API Key** first). Keep the key private: every request PostQueen sends to MeWe carries it.
   </Step>
 </Steps>
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+The MeWe app has no redirect URI field. PostQueen sends people to MeWe's login with the address to come back to:
 
-## Next steps
+<CodeGroup>
 
-<CardGroup cols={2}>
-  <Card title="What she can post to MeWe" icon="/images/channels/mewe.svg" href="/providers/mewe">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+```text Your domain
+https://postqueen.example.com/integrations/social/mewe
+```
+
+```text Local development
+http://localhost:4200/integrations/social/mewe
+```
+
+```text Docker on your machine
+http://localhost:4007/integrations/social/mewe
+```
+
+</CodeGroup>
+
+MeWe recommends `https` for it, so serve PostQueen over HTTPS before real users connect.
+
+## Set the variables
+
+Add the app ID and the API key to your environment:
+
+```env
+MEWE_APP_ID="your app id"
+MEWE_API_KEY="your api key"
+```
+
+`MEWE_HOST` is where PostQueen sends the login and the API calls. It defaults to `https://mewe.com`, so leave it out unless MeWe gives you another host.
+
+<RestartAndAddChannel />
+
+Pick **MeWe** and approve PostQueen on MeWe when it asks. Each post then goes to your timeline, or to a group you pick in its settings.
+
+## Staying connected
+
+MeWe gives no refresh token. A connection lasts until the expiry MeWe sets, or 30 days when MeWe sets none. After that the channel asks to be reconnected.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Login request is still pending. Please approve on MeWe and try again.">
+    PostQueen came back before you approved it on MeWe. Approve the request on MeWe, then connect again.
+  </Accordion>
+  <Accordion title="Failed to exchange token. Please try again.">
+    MeWe refused the app ID or the API key. Check `MEWE_APP_ID` and `MEWE_API_KEY`, and that the app is a **Standalone** app.
+  </Accordion>
+  <Accordion title="Access token expired, please re-authenticate">
+    The MeWe sign-in expired. Choose **Reconnect channel** in the channel's menu.
+  </Accordion>
+  <Accordion title="Insufficient permissions for this action">
+    The app does not have the permission for that post, such as posting to groups. Permissions cannot be changed on an existing app, so create a new app with them.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [MeWe posting settings](/public-api/providers/mewe)

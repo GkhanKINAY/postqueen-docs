@@ -1,180 +1,142 @@
 ---
-title: Docker Compose
-description: 'The supported way to run PostQueen, and how to configure it'
-icon: 'docker'
-iconType: 'brands'
+title: "Docker Compose"
+description: "The reference for the official Compose file: what it starts, where settings live, how a change takes effect, pinning the image, and running the image without Compose."
+icon: "container"
 keywords:
-  - postqueen
   - docker compose
+  - env_file
   - self host
   - temporal
-  - redis
-  - install
-  - agentic social media scheduler
 ---
 
-Docker Compose is the supported way to self-host PostQueen. One file describes her and the
-three services she depends on, and one command starts all of them.
+import RestartService from '/snippets/restart-service.mdx';
+import NextStepsSelfhost from '/snippets/next-steps-selfhost.mdx';
 
-This page is the reference for that file: what it starts, where settings live, and how to
-change them. If you want to be walked through an install instead, use
-[Try her locally](/installation/quickstart-local) or
-[Deploy to a server](/installation/production).
+The [postqueen-docker-compose](https://github.com/GkhanKINAY/postqueen-docker-compose) repository is the supported way to run PostQueen. Its `docker-compose.yaml` starts PostQueen with PostgreSQL, Redis and Temporal. This page is the reference for that file. For a guided install, follow [Try it locally](/installation/quickstart-local) or [Deploy to a server](/installation/production).
 
-<Snippet file="installation-pre-reqs.mdx" />
+## What the stack starts
 
-## First three commands
+`docker compose up -d` starts eight containers:
 
-Clone the repository (it also carries the `dynamicconfig` folder Temporal mounts at startup),
-write a sibling `.env`, and start the stack:
+| Service | What it is | Reachable at |
+|---|---|---|
+| `postqueen` | The PostQueen image: web app, API and workers behind nginx | `localhost:4007` on the host |
+| `postqueen-postgres` | PostgreSQL 17, all PostQueen data | The Docker network only |
+| `postqueen-redis` | Redis 7.2, caches and rate-limit counters | The Docker network only |
+| `temporal` | The Temporal server that runs the schedule | `127.0.0.1:7233` |
+| `temporal-postgresql` | Temporal's own database | The Docker network only |
+| `temporal-elasticsearch` | Temporal's search index | The Docker network only |
+| `temporal-ui` | Temporal's web UI | `127.0.0.1:8080` |
+| `temporal-admin-tools` | The Temporal command-line tools, for debugging | Not published |
 
-```bash
-git clone https://github.com/GkhanKINAY/postqueen-docker-compose
-cd postqueen-docker-compose
-printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nNOT_SECURED=true\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env && docker compose up -d
-```
+A ninth service, `spotlight`, starts only with `docker compose --profile debug up -d`: a local Sentry Spotlight viewer for development.
 
-`NOT_SECURED=true` is for local HTTP login. Do not set it on a public server. Production drops
-that line, points `MAIN_URL` / `FRONTEND_URL` / `NEXT_PUBLIC_BACKEND_URL` at HTTPS, and puts a
-reverse proxy in front: [Deploy to a server](/installation/production).
+`postqueen` waits until PostgreSQL, Redis and Temporal report healthy, and has a health check of its own. On a server, change its port line to `"127.0.0.1:4007:5000"`, because Docker publishes ports past a host firewall: see [Deploy to a server](/installation/production).
 
-Open **http://localhost:4007** and register. Then add provider keys to `.env` and recreate the
-app container (see [Applying a change](#applying-a-change)).
+## Where settings live
 
-<Note>
-Clone the repository rather than copying the YAML out of this page. The file changes between
-releases, and Temporal will not start without `dynamicconfig`.
-</Note>
+Every setting is an environment variable on the `postqueen` service, and the place to put them is a `.env` file next to `docker-compose.yaml`. The Compose file reads it in two ways:
 
-## What the stack contains
+1. **`env_file`** passes every line of `.env` into the container. The file is optional (`required: false`), which needs Compose v2.24 or newer. This is how variables the YAML does not list, such as `NOT_SECURED` or `NEYNAR_APP_FID`, reach PostQueen.
+2. **`${VAR:-default}`** fills the variables the YAML does list from the same `.env`, and falls back to the default after `:-` when the file does not set them.
 
-`docker compose up -d` starts eight containers. You do not install PostgreSQL, Redis or
-Temporal separately, they come with it.
-
-| Service | What it does | Reachable at |
-| --- | --- | --- |
-| `postqueen` | The app itself, web interface and API | `localhost:4007` |
-| `postqueen-postgres` | PostgreSQL 17, all your data | container network only |
-| `postqueen-redis` | Redis, caching and rate limiting | container network only |
-| `temporal` | The scheduler that fires posts at their time | `127.0.0.1:7233` |
-| `temporal-ui` | Dashboard for watching scheduled work | `127.0.0.1:8080` |
-| `temporal-postgresql` | Temporal's own database, not yours | container network only |
-| `temporal-elasticsearch` | Temporal's search index | container network only |
-| `temporal-admin-tools` | Optional Temporal CLI. Always defined in the public Compose file; hosted prod puts it behind a `tools` profile so it does not start | not required |
-
-Only `postqueen` is published to your whole machine. Temporal's two ports are bound to
-`127.0.0.1`, so they are reachable from the server itself and not from the network.
-
-Plan for about **4 GB of RAM**. Temporal plus Elasticsearch will OOM a tight 2 GB box.
-
-## Where configuration lives
-
-Settings are environment variables on the `postqueen` service. The shipped
-[`docker-compose.yaml`](https://github.com/GkhanKINAY/postqueen-docker-compose/blob/main/docker-compose.yaml)
-does two things so a sibling `.env` reaches the container:
-
-1. **`env_file`** loads `.env` when that file exists (`required: false`, so a missing file is
-   fine). Keys that are not listed in the YAML, including `NOT_SECURED`, still inject this way.
-2. **`${VAR:-default}`** interpolates listed keys from `.env` (or `--env-file`) into
-   `environment:`. A value in `.env` is what the container gets, even for keys the YAML names.
-
-That is the default path. Put secrets and URLs in `.env` next to the Compose file:
-
-```env
-JWT_SECRET=your-long-random-string
+```env .env
+JWT_SECRET=a-long-random-string
 ENCRYPTION_KEY=another-long-random-string
-NOT_SECURED=true
-INSTAGRAM_APP_ID=12345678901234567890
+FRONTEND_URL=https://postqueen.example.com
+LINKEDIN_CLIENT_ID=your-client-id
 ```
 
-Inside `.env` the syntax is `KEY=value` with no quotes needed.
-
-You can still edit the `environment:` block in the YAML if you prefer everything in one file.
-Note the YAML style: `KEY: 'value'` with a colon.
-
-### Precedence
+The syntax is `KEY=value`, one per line. [Configuration reference](/configuration/reference) lists every variable.
 
 <Note>
-**A literal in `environment:` still wins over `env_file` for the same key.** The
-`${VAR:-default}` form is what lets a sibling `.env` fill that key instead of an empty or
-placeholder pin. Do not replace `${FRONTEND_URL:-http://localhost:4007}` with a hardcoded
-empty string if you want `.env` to keep working.
+**A literal value in `environment:` beats `.env`.** Compose gives the `environment:` block priority over `env_file` for the same key. The `${VAR:-default}` form is what lets `.env` win, so keep that form if you edit the YAML: replacing `"${FRONTEND_URL:-http://localhost:4007}"` with a fixed string means `.env` no longer changes it.
 </Note>
 
-### What does not work
-
 <Warning>
-The Compose file mounts a `postqueen-config` volume at `/config`. **Nothing in the image reads
-it.** A file placed there is never opened. Use the sibling `.env` or the `environment:` block.
+**The `postqueen-config` volume is not a settings folder.** The Compose file mounts it at `/config`, but nothing in the image reads files there. Use `.env`.
 </Warning>
 
-## Applying a change
+## Apply a change
 
-<Snippet file="restart-service.mdx" />
+<RestartService />
 
-## The settings you are most likely to change
-
-The full list of around 135 variables is in
-[Configuration Reference](/configuration/reference). These are the ones that matter for almost
-every install.
-
-| Variable | Shipped default | Change it to |
-| --- | --- | --- |
-| `JWT_SECRET` | a placeholder sentence | A long random string, from `openssl rand -hex 32`. Set once, then leave it. |
-| `ENCRYPTION_KEY` | empty (falls back to `JWT_SECRET`) | A second long random string, set on first production setup so you can rotate JWT later without disconnecting channels. |
-| `MAIN_URL` | `http://localhost:4007` | Your public HTTPS address |
-| `FRONTEND_URL` | `http://localhost:4007` | The same public address |
-| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:4007/api` | Your public address, keeping `/api` |
-| `NOT_SECURED` | unset | `true` for local HTTP login only. Never on a public server. |
-| `DISABLE_REGISTRATION` | `false` | `true`, once your own account exists |
-| `STORAGE_PROVIDER` | `local` | `cloudflare` if you use R2, see [Uploads](/configuration/uploads) |
-| `EMAIL_PROVIDER` | not set | `resend` or `nodemailer`, see [Email](/configuration/emails) |
-
-Two that people change and should not: `BACKEND_INTERNAL_URL` stays `http://localhost:3000`,
-because it describes a hop inside the container rather than a public address. `DATABASE_URL`
-and `REDIS_URL` already point at the bundled containers by service name and only need editing
-if you bring your own database.
-
-<Warning>
-**`RUN_CRON` and `IS_GENERAL` cannot be turned off by setting them to `false`.** They are
-tested for presence, not value, so the string `false` still counts as on. Leave them as they
-ship.
-</Warning>
-
-## Checking your configuration took effect
-
-She inspects her own settings at the end of startup and reports anything questionable, then
-carries on running anyway. A container that is up is not proof that the configuration is
-sound, so it is worth looking:
+Then check the backend's own verdict on the settings. It logs each problem at startup and keeps running regardless:
 
 ```bash
 docker compose logs postqueen | grep -i "configuration issue"
 ```
 
-Empty output is good news. Anything listed there names the variable it is unhappy about,
-commonly a trailing slash or a missing URL.
+No output means the required settings passed. A line such as `FRONTEND_URL should not end with /` names what to fix.
 
-## Pinning a version
+## Settings most installs change
 
-The file ships with `image: ghcr.io/gkhankinay/postqueen-app:latest`. That tag moves. On a
-real install, pin a release from the
-[releases page](https://github.com/GkhanKINAY/postqueen-app/releases) so an upgrade happens
-when you decide, not the next time a container restarts:
+| Variable | Shipped default | Set it to |
+|---|---|---|
+| `JWT_SECRET` | A placeholder sentence | A long random string, `openssl rand -hex 32`. Set once and keep. |
+| `ENCRYPTION_KEY` | Empty, so `JWT_SECRET` is used | A second long random string, set before there is data |
+| `MAIN_URL`, `FRONTEND_URL` | `http://localhost:4007` | Your public `https://` address |
+| `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:4007/api` | The same address with `/api` |
+| `NOT_SECURED` | Not set | `true` for a local try over HTTP only |
+| `DISABLE_REGISTRATION` | `false` | `true` once the people who need accounts have them |
+| `STORAGE_PROVIDER` | `local` | `cloudflare` for [Cloudflare R2](/configuration/r2) |
+| `EMAIL_PROVIDER` | Not set, so no mail | `resend` or `nodemailer`: see [Email](/configuration/emails) |
+
+Leave these as they ship:
+
+- `BACKEND_INTERNAL_URL`, `http://localhost:3000`: the web app's path to the API inside the container.
+- `DATABASE_URL`, `REDIS_URL` and `TEMPORAL_ADDRESS`: they point at the bundled services by name. Change them only to use your own.
+- `RUN_CRON`, `true`: it starts the recurring workflows, such as the sweep that picks up posts that failed to schedule. Any value turns it on, `false` included, and the YAML falls back to `true` when `.env` leaves it out. To turn it off, delete its line from `docker-compose.yaml`.
+- `UPLOAD_DIRECTORY`, `/uploads`, and `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY`, `uploads`: the image's nginx serves exactly that folder.
+
+## Pin the image
+
+The file ships with `image: ghcr.io/gkhankinay/postqueen-app:latest`, which moves with every release. On a real install, pin a release tag:
 
 ```yaml
-image: ghcr.io/gkhankinay/postqueen-app:v3.5.9
+image: ghcr.io/gkhankinay/postqueen-app:vX.Y.Z
 ```
 
-`latest` is fine while you are looking around. Replace `v3.5.9` with whatever the releases
-page currently lists as Latest.
+Tags carry a `v` and are listed on the [app's tags](https://github.com/GkhanKINAY/postqueen-app/tags) and the [image package](https://github.com/GkhanKINAY/postqueen-app/pkgs/container/postqueen-app). The GitHub Releases page is behind, so do not take the version from there. Each image is built for amd64 and arm64.
 
 <Warning>
-This matters more than usual here. She reconciles her database schema on **every** boot, so an
-unattended image change is also an unattended schema change.
-[Backups and Upgrades](/installation/backups-and-upgrades) explains what that means and how to
-switch to migrations instead.
+**Only move the tag forward.** Every start applies the image's database schema, and by default it does so with `prisma db push --accept-data-loss`. Starting an image older than the one that last ran can drop columns the newer release added. [Backups and upgrades](/installation/backups-and-upgrades) covers upgrades and the safer migration mode.
 </Warning>
 
-## Next Steps
+## Run the image without Compose
 
-<Snippet file="next-steps-selfhost.mdx" />
+If PostgreSQL, Redis and a Temporal server already run elsewhere, you can run the image on its own. Keep the settings in a file and pass it with `--env-file`:
+
+```env postqueen.env
+MAIN_URL=https://postqueen.example.com
+FRONTEND_URL=https://postqueen.example.com
+NEXT_PUBLIC_BACKEND_URL=https://postqueen.example.com/api
+BACKEND_INTERNAL_URL=http://localhost:3000
+JWT_SECRET=a-long-random-string
+ENCRYPTION_KEY=another-long-random-string
+DATABASE_URL=postgresql://user:password@your-postgres:5432/postqueen
+REDIS_URL=redis://your-redis:6379
+TEMPORAL_ADDRESS=your-temporal:7233
+IS_GENERAL=true
+RUN_CRON=true
+STORAGE_PROVIDER=local
+UPLOAD_DIRECTORY=/uploads
+NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY=uploads
+```
+
+```bash
+docker run -d --name postqueen \
+  --env-file ./postqueen.env \
+  --network your-network \
+  -v postqueen-uploads:/uploads \
+  -p 127.0.0.1:5000:5000 \
+  ghcr.io/gkhankinay/postqueen-app:vX.Y.Z
+```
+
+- **`--network`** has to be the Docker network your databases are on. On the default bridge, container names do not resolve, and the connection fails.
+- **The host port is 5000 here**, not 4007. Point your reverse proxy at `localhost:5000`.
+- **Do not start from `.env.example`** in the app repository. It is written for running from source: its addresses point at `localhost:4200`, `RUN_CRON` is commented out, and `POSTQUEEN_GENERIC_OAUTH="false"` counts as on, which replaces the Google sign-in button with an unconfigured single sign-on button.
+
+## Next steps
+
+<NextStepsSelfhost />

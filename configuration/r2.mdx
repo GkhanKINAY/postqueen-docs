@@ -1,271 +1,105 @@
 ---
-title: R2 Configuration
-description: 'How to use Cloudflare R2 for file storage'
-icon: 'cloud'
+title: "Cloudflare R2"
+description: "Store PostQueen's media in a Cloudflare R2 bucket: create the bucket and a token scoped to it, choose the address media is read from, and set the CORS policy."
+icon: "cloud"
 ---
 
-Cloudflare R2 stores your uploaded images and video outside the container, reachable over HTTPS.
-Several networks fetch your media from a URL rather than accepting the file directly, and R2 is the
-only workable option once you run more than one instance. It has a free tier that covers most
-self-hosted installs.
+import RestartService from '/snippets/restart-service.mdx';
 
-<Info>
-The bucket itself does not have to be public. PostQueen can serve media from your own domain and
-read it privately. That is decided in the **Decide where media is read from** step below, and it is
-the choice on this page most worth reading twice.
-</Info>
+Cloudflare R2 keeps uploaded images and video in a bucket instead of on the server's disk. It is the option when you run more than one PostQueen container, or want media on a CDN address. Whether you need it at all: [Uploads and storage](/configuration/uploads).
 
-<Note>
-Deciding whether you need it at all? [Uploads and Storage](/configuration/uploads) compares it with
-the local disk. This page is the setup, start to finish.
-</Note>
+## Before you start
+
+| | |
+|---|---|
+| Account | A Cloudflare account with R2 turned on. R2 has a free tier. |
+| Decision | Where media is read from: through PostQueen, a custom domain or the `r2.dev` address. See step 4. |
+| Review | None |
+
+## Set it up
 
 <Steps>
-  <Step title="Create account and login to the console">
-    Go to the [Cloudflare Dashboard](https://dash.cloudflare.com/r2/overview), and register if needed, then login.
-  </Step>
-
-  <Step title="Create a new Bucket">
-    In the dashboard sidebar, head to the R2 page.
-
-    <Frame>
-      <img src="/images/r2/r2-page.png" alt="R2 Page" />
-    </Frame>
-
-    Create a new Bucket.
-    - Choose Automatic
-    - Choose Standard
-
-    <Frame>
-      <img src="/images/r2/r2-create-bucket.png" alt="Create Bucket" />
-    </Frame>
+  <Step title="Create the bucket">
+    In the [Cloudflare dashboard](https://dash.cloudflare.com), open **R2 object storage** and choose **Create bucket**. Give it a name and keep the default location and the **Standard** storage class.
 
     <Warning>
-    If you need your media to stay in a specific region for regulatory reasons,
-    an EU jurisdiction under GDPR for instance, pick it here, under
-    **Specify jurisdiction**. A location hint is a best-effort placement, not a
-    guarantee, and jurisdiction cannot be changed after the bucket exists.
-    Jurisdictional buckets also need `CLOUDFLARE_JURISDICTION` set below.
+    If your media has to stay in one region, for example the EU, choose a **jurisdiction** now. It cannot be changed later, and a bucket with one also needs `CLOUDFLARE_JURISDICTION` below.
     </Warning>
   </Step>
+  <Step title="Create a token for this bucket only">
+    On **R2 object storage**, open **Overview** and choose **Manage** next to **API Tokens** under **Account Details**. Create an **Account API token** with the **Object Read & Write** permission, applied to this bucket only.
 
-  <Step title="Create your R2 Token">
-    Create your R2 Token by going to R2 Object Storage:
-
-    <Frame>
-      <img src="/images/r2/r2-object-storage.png" alt="R2 Object Storage" />
-    </Frame>
-
-    Click on the API dropdown, and select [Manage API tokens](https://dash.cloudflare.com/?to=/:account/r2/api-tokens):
-
-    <Frame>
-      <img src="/images/r2/r2-manage-api-tokens.png" alt="Manage API tokens" />
-    </Frame>
-
-    Copy your Account ID for later, and click on "Create an API token":
-
-    <Frame>
-      <img src="/images/r2/r2-create-api-token.png" alt="Create API Token" />
-    </Frame>
-
-    Create an Account API token:
-
-    <Frame>
-      <img src="/images/r2/r2-account-api-token.png" alt="Account API Token" />
-    </Frame>
-
-    Under "Permissions" choose "Object Read & Write" and under "Specify bucket(s)" search for your created Bucket.
-
-    <Frame>
-      <img src="/images/r2/r2-token-permissions.png" alt="Permissions" />
-    </Frame>
+    After you create it, Cloudflare shows the **Access Key ID** and the **Secret Access Key** once. Copy both, and your **Account ID** from the same page.
 
     <Warning>
-    **Scope it to this bucket, not to the account.** "Apply to all buckets"
-    hands whatever holds this token the run of your R2 account, and this one
-    lives in an environment variable on a web server.
-    </Warning>
-
-    <Note>
-    Should you later add a bucket for backups, give that its own token rather
-    than widening this one. The two jobs have no reason to share credentials,
-    and a backup tool has no business being able to delete the media it is
-    protecting.
-    </Note>
-  </Step>
-
-  <Step title="Copy your credentials">
-    After the R2 Token is created, copy your "Access Key ID" and "Secret Access Key":
-
-    <Frame>
-      <img src="/images/r2/r2-copy-credentials.png" alt="Copy Credentials" />
-    </Frame>
-
-    Paste the respective information into your configuration.
-
-```env
-CLOUDFLARE_ACCOUNT_ID="your-account-id"
-CLOUDFLARE_ACCESS_KEY="your-access-key-id"
-CLOUDFLARE_SECRET_ACCESS_KEY="your-secret-access-key"
-CLOUDFLARE_BUCKETNAME="your-bucket-name"
-CLOUDFLARE_REGION="auto"
-# Only for a bucket created with a jurisdiction, e.g. "eu"
-CLOUDFLARE_JURISDICTION=""
-```
-
-    <Note>
-    Leave `CLOUDFLARE_REGION` as `auto` unless you deliberately pinned your bucket to one
-    location when you created it, in which case use that location hint instead.
-    </Note>
-
-    <Warning>
-    `CLOUDFLARE_JURISDICTION` is separate from the region and only applies if you chose
-    **Specify jurisdiction** when creating the bucket. Such a bucket answers only on
-    `<account-id>.eu.r2.cloudflarestorage.com`; left blank, the app queries the
-    account-wide endpoint and reports the bucket as missing.
+    Do not give this token every bucket in the account. It lives in an environment variable on a web server.
     </Warning>
   </Step>
+  <Step title="Set the variables">
+    ```env .env
+    STORAGE_PROVIDER=cloudflare
+    CLOUDFLARE_ACCOUNT_ID=your-account-id
+    CLOUDFLARE_ACCESS_KEY=your-access-key-id
+    CLOUDFLARE_SECRET_ACCESS_KEY=your-secret-access-key
+    CLOUDFLARE_BUCKETNAME=your-bucket
+    CLOUDFLARE_REGION=auto
+    # Only for a bucket created with a jurisdiction, for example eu
+    CLOUDFLARE_JURISDICTION=
+    ```
 
-  <Step title="Decide where media is read from">
-    `CLOUDFLARE_BUCKET_URL` is the address stored with every media row. It is
-    not only what your browser loads: **several networks fetch it with their
-    own servers** rather than accepting the file from you. Instagram and
-    Facebook take an `image_url`, and TikTok photo posts support nothing else.
-    So this address has to be reachable from the public internet, and it is
-    worth choosing deliberately.
+    A bucket with a jurisdiction answers only on its own endpoint, `<account-id>.eu.r2.cloudflarestorage.com`. Without `CLOUDFLARE_JURISDICTION`, PostQueen asks the account-wide endpoint and reports the bucket as missing.
+  </Step>
+  <Step title="Choose where media is read from">
+    `CLOUDFLARE_BUCKET_URL` is the address stored with every file. Browsers load it, and several networks (Instagram, Facebook and Threads among them) download from it with their own servers. It has to be public HTTPS.
 
-    | Option | Value | Trade |
+    | Option | `CLOUDFLARE_BUCKET_URL` | Trade-off |
     |---|---|---|
-    | **Through PostQueen** | `https://your-host/api/uploads` | Your own domain, no rate limit, and **the bucket can stay private**. Media leaves through your server, so it uses your bandwidth. |
-    | **Custom domain** | `https://cdn.example.com` | Fastest and cheapest, served by Cloudflare's edge, never touching your server. Requires the domain to be hosted at Cloudflare. |
-    | **r2.dev URL** | `https://pub-….r2.dev` | Works with no setup, but Cloudflare rate-limits it and documents it as unfit for production, and a network that asks you to verify the domain you serve from cannot verify one that is not yours. |
+    | **Through PostQueen** | `https://postqueen.example.com/api/uploads` | Your own domain, and the bucket can stay private. Media leaves through your server, so it uses your bandwidth. |
+    | **Custom domain** | `https://cdn.example.com` | Served by Cloudflare's edge, never touching your server. The domain has to be on Cloudflare. In the bucket, open **Settings**, and under **Custom Domains** choose **Add**. |
+    | **r2.dev address** | `https://pub-<id>.r2.dev` | No setup: under **Settings > Public Development URL**, choose **Enable**. Cloudflare rate-limits it and says it is for development only. |
 
     <Warning>
-    Whichever you pick, it must **not** be the S3 API endpoint
-    (`…r2.cloudflarestorage.com`). That address refuses unsigned reads, so every
-    image would break.
+    Never use the S3 API endpoint, `<account-id>.r2.cloudflarestorage.com`. It refuses reads without a signature, so every image breaks.
     </Warning>
 
-    Serving through PostQueen needs nothing in Cloudflare, just the setting:
-
-```env
-CLOUDFLARE_BUCKET_URL="https://your-host/api/uploads"
-```
-
-    <Note>
-    The `/api` prefix is required. Inside the container nginx maps `/uploads/`
-    to a local directory and only `/api/` reaches the backend.
-    </Note>
-
-    For a custom domain, connect it to the bucket in the R2 settings and use it
-    instead:
-
-```env
-CLOUDFLARE_BUCKET_URL="https://cdn.example.com"
-```
-
-    <Frame>
-      <img src="/images/r2/r2-custom-domain.png" alt="Custom Domain" />
-    </Frame>
+    Through PostQueen, the backend reads each file from the bucket and streams it back, cached for a year. It answers only for file names PostQueen itself writes: a random name with an image, video or audio extension. Even so, keep the bucket for PostQueen media only. The `/api` in the address is required: the container's nginx serves `/uploads/` from the local disk, and only `/api/` reaches the backend.
   </Step>
+  <Step title="Set the CORS policy">
+    By default the browser uploads straight to the bucket, which is a cross-origin request the bucket has to allow. In the bucket's **Settings**, edit the **CORS Policy** and use your own address:
 
-  <Step title="Set the CORS policy (only if the browser uploads directly)">
-    By default the browser uploads to R2 itself, using a URL PostQueen signs for
-    it, and that is a cross-origin request the bucket has to allow.
+    ```json
+    [
+      {
+        "AllowedOrigins": ["https://postqueen.example.com"],
+        "AllowedMethods": ["GET", "PUT", "POST", "HEAD", "DELETE"],
+        "AllowedHeaders": ["Authorization", "x-amz-date", "x-amz-content-sha256", "content-type"],
+        "ExposeHeaders": ["ETag", "Location"],
+        "MaxAgeSeconds": 3600
+      }
+    ]
+    ```
 
-    <Info>
-    If you run with [`UPLOAD_VIA_SERVER=true`](/configuration/uploads), skip this
-    step. The browser never talks to R2 in that mode, so no CORS policy applies.
-    </Info>
+    `ETag` in `ExposeHeaders` is required: the upload is sent in parts, and the browser has to read each part's `ETag` to finish it. Skip this step if you set `UPLOAD_VIA_SERVER=true`, where the browser never talks to R2.
+  </Step>
+  <Step title="Recreate the container">
+    <RestartService />
 
-    Edit the CORS policy on the bucket and add the following, replacing the
-    origin with your own:
-
-```json
-[
-  {
-    "AllowedOrigins": [
-      "http://localhost:4200",
-      "https://postqueen.example.com"
-    ],
-    "AllowedMethods": [
-      "GET",
-      "POST",
-      "HEAD",
-      "PUT",
-      "DELETE"
-    ],
-    "AllowedHeaders": [
-      "Authorization",
-      "x-amz-date",
-      "x-amz-content-sha256",
-      "content-type"
-    ],
-    "ExposeHeaders": [
-      "ETag",
-      "Location"
-    ],
-    "MaxAgeSeconds": 3600
-  }
-]
-```
-
-    <Warning>
-    `ExposeHeaders` is not decoration: a multipart upload needs the browser to
-    read each part's `ETag`, and it cannot without this.
-    </Warning>
-
-    <Frame>
-      <img src="/images/r2/r2-cors-policy.png" alt="CORS Policy" />
-    </Frame>
+    <Check>
+    Upload an image in **Media**. It appears in the library, and the object is in the bucket.
+    </Check>
   </Step>
 </Steps>
 
-<Check>
-Credentials, a bucket URL and, where the browser uploads directly, a CORS policy are the whole of
-the R2 setup. Point `STORAGE_PROVIDER` at `cloudflare` in
-[Uploads and Storage](/configuration/uploads) and new media goes to the bucket.
-</Check>
+Files uploaded before the switch stay where they were written, on the local disk, and keep their old addresses.
 
-## Backing the bucket up
+## Good to know
 
-Media that lives in R2 is no longer in a Docker volume, so a volume backup does
-not include it. [Backups and Upgrades](/installation/backups-and-upgrades)
-covers what that changes.
+- **Back up the bucket and the database together.** The database stores only each file's address. Restore them from the same moment: [Backups and upgrades](/installation/backups-and-upgrades#if-your-media-is-in-r2).
+- **Give backups their own token**, with read access to this bucket and write access to the backup bucket, so a backup tool cannot delete the media it protects.
+- **Unfinished uploads clean themselves up.** A multipart upload that never completes leaves parts that appear in no listing. Every R2 bucket has a default lifecycle rule that aborts them after seven days.
 
-<Warning>
-Give the backup its own R2 token rather than reusing the application's. It needs
-to write to wherever backups go and to read the media bucket, nothing more. In
-particular it has no reason to be able to delete the media it exists to protect.
-</Warning>
+## Related
 
-## Unfinished uploads
-
-A multipart upload that never completes leaves its parts in the bucket. They
-appear in no object listing and are still stored, so it is the kind of thing
-that grows quietly.
-
-<Note>
-Cloudflare adds a default lifecycle rule to every bucket that aborts them after
-seven days, visible under **Settings → Object lifecycle rules**. Nothing to set
-up; worth knowing it is what keeps an interrupted upload from costing you
-indefinitely.
-</Note>
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="Uploads and storage" icon="cloud-arrow-up" href="/configuration/uploads">
-    Local disk against R2, the 1 GB limit, and what `UPLOAD_VIA_SERVER` changes
-  </Card>
-  <Card title="When an upload fails" icon="triangle-exclamation" href="/troubleshooting/uploads">
-    Payload limits, the formats that cannot be fetched from a URL, and cancel-in-flight
-  </Card>
-  <Card title="Backups and upgrades" icon="box-archive" href="/installation/backups-and-upgrades">
-    Which volumes carry real data once your media has moved out of them
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every environment variable she reads, including the `CLOUDFLARE_` set
-  </Card>
-</CardGroup>
-
+- [Uploads and storage](/configuration/uploads): local disk against R2, and `UPLOAD_VIA_SERVER`
+- [Configuration reference](/configuration/reference#storage-and-media)
+- [Cloudflare's R2 documentation](https://developers.cloudflare.com/r2/)

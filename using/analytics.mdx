@@ -1,203 +1,104 @@
 ---
-title: Analytics
-description: 'Your numbers per channel and per post, on the nine networks that report them back'
-icon: 'chart-line'
+title: "Analytics"
+description: "Read the numbers networks send back, for all your channels, for one channel and for one post."
+icon: "chart-line"
 ---
 
+**Where:** **Analytics** in the left rail.
+
+Analytics shows what the networks report about your channels and your published posts. Nine networks send numbers back. Channels on every other network publish normally but do not appear on this page.
+
 <Frame>
-  <img src="/images/brand/analytics.svg" alt="PostQueen analytics: engagement chart, followers, impressions and video views" />
+  <img className="pq-shot" src="/images/app/analytics.webp" alt="Analytics for an Instagram channel over 7 days: follower count, reach, views, likes, comments, shares and saves, and a daily follower chart" />
 </Frame>
 
-**Analytics** in the left menu opens on the first channel in the list. Every metric that platform will part with gets a card: a small chart of the window, and one big number underneath.
+## The nine networks that report numbers
 
-<Info>
-PostQueen posts to more than 30 networks. Nine of them send numbers back. Measuring is the narrow part of PostQueen, and the line is drawn by the platforms, not by PostQueen.
-</Info>
-
-## Nine networks report back
-
-| Channel | Windows you can pick | Per-post numbers |
-|---|---|---|
-| Facebook Page | 7, 30 or 90 days | Yes |
-| Google My Business | 7, 30 or 90 days | No |
-| Instagram (both cards) | 7 or 30 days | Yes |
-| LinkedIn Page | 7, 30 or 90 days | Yes |
-| Pinterest | 7, 30 or 90 days | Yes |
-| Threads | 7 or 30 days | Yes |
-| TikTok | 7 or 30 days | Yes |
-| X (Twitter) | 7, 30 or 90 days | Yes |
-| YouTube | 7, 30 or 90 days | Yes |
-
-Google Business Profile, LinkedIn Page and Pinterest are marked Soon on PostQueen: they cannot be connected yet. Facebook, Instagram, Threads, TikTok, X and YouTube are In review, with the limits on their [channel pages](/providers/overview#status-on-postqueen).
-
-<Warning>
-Every other network posts perfectly well and reports nothing. Bluesky, Nostr and WordPress publish on time and stay silent afterwards, so a blank analytics view there is the platform being quiet rather than your install being broken. Those channels do not appear in the Analytics sidebar at all.
-</Warning>
-
-<AccordionGroup>
-  <Accordion title="LinkedIn personal profiles are not on the list" icon="linkedin">
-    Only LinkedIn Pages report back. A personal LinkedIn profile posts and reports nothing.
-  </Accordion>
-  <Accordion title="Google My Business has channel numbers but no per-post ones" icon="signs-post">
-    It answers at the location level, which is why the per-post column above says no.
-  </Accordion>
-</AccordionGroup>
+| Network | Status today | Periods | Per-post numbers | Followers |
+|---|---|---|---|---|
+| [X](/channels/x-twitter) | In review | 7, 30, 90 days | Yes | No |
+| [Facebook Page](/channels/facebook) | In review | 7, 30, 90 days | Yes | Yes |
+| [Instagram](/channels/instagram) | In review | 7, 30 days | Yes | Yes |
+| [LinkedIn Page](/channels/linkedin) | Soon | 7, 30, 90 days | Yes | Yes |
+| [YouTube](/channels/youtube) | In review | 7, 30, 90 days | Yes | Subscribers |
+| [Threads](/channels/threads) | In review | 7, 30 days | Yes | No |
+| [Pinterest](/channels/pinterest) | Soon | 7, 30, 90 days | Impressions only | No |
+| [TikTok](/channels/tiktok) | In review | 7, 30 days | Yes | Yes |
+| [Google Business Profile](/channels/google-my-business) | Soon | 7, 30, 90 days | No | No |
 
 <Note>
-Set `DISABLE_X_ANALYTICS` and she stops asking X for numbers entirely. The X channel drops out of the Analytics sidebar and the Statistics icon disappears from X posts on the calendar. Useful when your X plan does not include analytics access. See [X (Twitter)](/providers/x-twitter).
+None of the networks you can connect without limits today reports analytics. A network **In review** works only within the limit its page states, and a **Soon** network cannot be connected yet. [Channels](/channels/overview) has the status of every network.
 </Note>
 
-## What each channel returns
-
-The card labels come straight from what each platform is willing to say.
-
-| Channel | Metrics on the channel page |
-|---|---|
-| Facebook Page | Page Impressions, Media views, Posts Engagement, Page followers |
-| Google My Business | Website Clicks, Phone Calls, Direction Requests, Desktop Map Views, Mobile Map Views |
-| Instagram (both connectors) | Follower Count, Reach, Likes, Views, Comments, Shares, Saves, Replies |
-| LinkedIn Page | Page Views, Clicks, Shares, Engagement, Comments, Organic Followers, Paid Followers |
-| Pinterest | Pin click rate, Impressions, Pin Clicks, Engagement, Saves |
-| Threads | Views, Likes, Replies, Reposts, Quotes |
-| TikTok | Followers, Following, Total Likes, Videos, Views, Recent Likes, Recent Comments, Recent Shares |
-| X (Twitter) | IMPRESSION, BOOKMARK, LIKE, QUOTE, REPLY, RETWEET |
-| YouTube | Estimated Minutes Watched, Average View Duration, Average View Percentage, Subscribers Gained, Subscribers Lost, Likes |
-
-<AccordionGroup>
-  <Accordion title="TikTok mixes account figures with video figures" icon="/images/channels/tiktok.svg">
-    The first four describe the account as it stands today. The four that follow, starting at Views, are added up across your twenty most recent videos, so they move as you publish rather than tracking the window you picked.
-  </Accordion>
-  <Accordion title="X shouts" icon="x-twitter">
-    Those labels arrive in capitals because they are built from the raw metric names X returns, and she prints them as they come.
-  </Accordion>
-</AccordionGroup>
-
-## Reading a card
-
-Each card carries the metric name, a chart of the window, and one large total.
-
-| On the card | What it is |
-|---|---|
-| The chart | Drawn for every metric that came back with at least one point, single figures included |
-| The total | The sum of every point in the window |
-| A lone centred zero | What a metric that came back with nothing at all looks like, because there is no chart to draw |
-| A small arrow beside the metric name | Painted by some channels. Treat the chart and the total as the numbers of record |
-
-<Note>
-Two YouTube metrics are averaged across the days instead of summed: Average View Duration and Average View Percentage.
-</Note>
-
-## The refresh control
-
-A channel that shows nothing but a clock and the line *This channel needs to be refreshed to display analytics* is not broken. Its connection to the platform has gone stale.
+## Read your numbers
 
 <Steps>
-  <Step title="She tries to renew it for you">
-    When a stored token has expired she quietly renews it before asking for numbers, and only falls back to the visible refresh when renewal is impossible.
+  <Step title="Pick what to look at">
+    With more than one reporting channel, the page opens on **All channels**. Pick a single channel in the list to see only its numbers.
   </Step>
-  <Step title="The channel asks for attention">
-    In the sidebar it wears a red exclamation mark, and clicking that warns you to refresh the integration from the calendar first.
+  <Step title="Pick the period">
+    Choose **7d**, **30d** or **90d** at the top. A channel offers only the periods its network supports.
   </Step>
-  <Step title="Press Refresh Channel">
-    The **Refresh Channel** button underneath sends you back through that platform's own login.
+  <Step title="Open one post">
+    Click one of your top posts, or choose the statistics icon on a row of **Performance per post**. From **Posts** in the left rail, choose the **Post Statistics** icon on a published post. The **Statistics** window shows that post's numbers under **Post Analytics**, for **7d**, **30d** or **90d**.
   </Step>
 </Steps>
 
-<Check>
-You land back in PostQueen with the numbers flowing again.
-</Check>
+PostQueen does not shorten links today, so the **Statistics** window has no **Short Links Statistics** table. It appears only where a link shortener is set up.
 
-<Warning>
-If the renewal fails outright, she disconnects the channel rather than leaving it half alive. Reconnect it from the calendar and the history comes back with it.
-</Warning>
+## Act on a post
 
-### How fresh the figures are
+Each top post and each row of **Performance per post** has a menu, the button with three dots:
 
-| Where | How long she holds them |
+| Item | What it does |
 |---|---|
-| Channel page | One hour, per channel and per window |
-| Self-hosted in development mode | One second, so you see every call land |
+| **Enlarge image** | Shows the post's picture full size. Only on posts with a picture. |
+| **Go to post** | Opens the post on the network, in a new tab. |
+| **Duplicate Post** | Opens a copy in the composer at the next free time. |
+| **Delete Post** | Asks "Are you sure you want to delete this post?", then deletes the post in PostQueen. It stays on the network, and it leaves Analytics. |
 
-<Note>
-Flicking between 7 and 30 days is instant, and a figure you are reading may be up to an hour old.
-</Note>
+## What each view shows
 
-## Per-post statistics
+**All channels** covers your published posts across the reporting channels:
 
-Hover a post on the calendar and a small chart icon appears, labelled **Post Statistics**. Click it and a **Statistics** window opens on that one post.
+- Your top posts, up to five, ranked by **Reactions** or **Comments**.
+- **By channel**: post impressions in this period, per channel.
+- **Posting days**: how many posts went out on each weekday.
+- **Engagement mix**: known reactions against comments.
+- **Performance per post**: a table you can sort by **Reactions**, **Comments**, **Eng. rate** and **Impressions**, with **Previous** and **Next** to page through it.
 
-<Info>
-That icon only shows up on posts that have already published, so a scheduled post or a draft has no window to open in the first place.
-</Info>
+The period picks which posts count, by the day they were published. The numbers are each post's totals so far, not only the activity inside the period.
 
-| Channel | Metrics on a single post |
+**One channel** shows a card for each metric the network returns, with a chart and a total for the period. When the network has per-post numbers, the post sections above follow for that channel alone.
+
+## Good to know
+
+- A channel marked **Needs reconnecting** cannot load numbers. Choosing it takes you to **Channels** to reconnect it.
+- The metric names on the cards come from each network, so they differ from one network to the next.
+- With no reporting channel yet, the page says "No analytics yet" and offers **Connect a channel**.
+
+## If something goes wrong
+
+| Message | What to do |
 |---|---|
-| Facebook Page | Impressions, Reactions, Clicks, Clicks by Type |
-| Instagram (both connectors) | Views, Reach, Saves, Likes, Comments, Shares |
-| LinkedIn Page | Impressions, Unique Impressions, Clicks, Likes, Comments, Shares, Engagement |
-| Pinterest | Impressions, Pin Clicks, Outbound Clicks, Saves |
-| Threads | Views, Likes, Replies, Reposts, Quotes |
-| TikTok | Views, Likes, Comments, Shares |
-| X (Twitter) | Impressions, Likes, Retweets, Replies, Quotes, Bookmarks |
-| YouTube | Views, Likes, Comments, Favorites |
-
-<Warning>
-The window picker offers 7, 30 and 90 days, and only LinkedIn Page turns that window into a day-by-day series. Every other network answers with the post's numbers as they stand right now, so the picker changes nothing on those cards.
-</Warning>
-
-<Note>
-Post numbers are read live on every open, never cached, so what you see is what the platform said a second ago.
-</Note>
-
-<Info>
-Pinterest answers for the last 90 days only, on the channel page and on the post, because that is as far back as Pinterest will look.
-</Info>
-
-### When a post cannot find itself
-
-Sometimes a platform accepts a post and then declines to say which post it became. The Statistics window notices, and instead of an empty chart it shows you a grid of your recent content from that platform with a simple instruction: *Select the content that matches this post.*
-
-<Check>
-Pick the right one, press **Connect Post**, and the statistics open immediately afterwards.
-</Check>
-
-## Short link clicks
-
-Underneath the metric cards sits a **Short Links Statistics** table with three columns.
-
-| Column | What it shows |
-|---|---|
-| Short Link | The shortened URL she generated for this post |
-| Original Link | Where it points |
-| Clicks | How many times it was opened |
-
-This section fills in only when a link shortener is configured on your install. She picks the first one whose key is present, in this order: Dub, Short.io, Kutt, LinkDrip. The keys themselves are listed in [Short links](/configuration/short-links).
-
-<Info>
-With none of them set, the table reads *No short link results* and nothing is being tracked.
-</Info>
-
-<Warning>
-Counted links are the ones on your shortener's own domain, found in the post text, including the follow-up posts in a thread. A raw link you typed by hand and left alone is not counted, because there is nothing in the middle to count it.
-</Warning>
-
-## The same numbers, elsewhere
-
-Everything on these screens is the same payload the CLI and the API return, so a weekly client report does not have to start with a screenshot. The post endpoint has its own page, [analytics for one post](/public-api/analytics/post).
+| A note that the channel needs to be refreshed, with **Refresh Channel** | Choose **Refresh Channel** and sign in to the network again. |
+| “No data in this period” | The network reported nothing for this period. Pick a longer one. |
+| “Could not load analytics” | Choose **Try again**. |
+| “Could not load your channels” | Check your connection, then choose **Try again**. |
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Auto Actions" icon="robot" href="/using/auto-actions">
-    Turn a number into an action she takes for you
+  <Card title="Connect a channel" icon="plug" href="/using/connect-a-channel">
+    Add or reconnect a channel.
+  </Card>
+  <Card title="Calendar" icon="calendar" href="/using/calendar">
+    Find your published posts and their links.
+  </Card>
+  <Card title="Analytics from the CLI" icon="terminal" href="/cli/analytics">
+    The same numbers in a terminal or a script.
   </Card>
   <Card title="Analytics over the API" icon="code" href="/public-api/analytics/platform">
-    The same figures, in JSON
-  </Card>
-  <Card title="From the terminal" icon="terminal" href="/cli/analytics">
-    `analytics:platform` and `analytics:post`
-  </Card>
-  <Card title="Your channels" icon="plug" href="/providers/overview">
-    Which ten report numbers back
+    Channel numbers as JSON.
   </Card>
 </CardGroup>

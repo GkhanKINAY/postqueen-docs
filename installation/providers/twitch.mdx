@@ -1,72 +1,106 @@
 ---
-title: 'Twitch setup'
-description: 'Register the Twitch application and give PostQueen its keys'
-icon: /images/channels/twitch.svg
+title: "Twitch setup"
+description: "Register your own Twitch app for a self-hosted PostQueen: the developer console, client type, scopes, redirect URL and the variables to set."
+icon: "/images/channels/twitch.svg"
 ---
 
-Register an application in the Twitch developer console and put its keys in your environment so your own instance can connect the channel.
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+
+On a self-hosted PostQueen the Twitch app is yours. You register it in the Twitch developer console and give PostQueen its client ID and secret. Twitch does not review apps.
+
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [Twitch developer console](https://dev.twitch.tv/console), with two-factor authentication on your Twitch account |
+| Variables | `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/twitch` |
+| Scopes | `user:write:chat`, `user:read:chat`, `moderator:manage:announcements` |
+| Review | None |
+
+Scopes are not set on the app form: PostQueen asks for the three when a channel connects, and does not check which were granted. `user:write:chat` sends chat messages and `moderator:manage:announcements` sends announcements, so approve all three on Twitch's screen.
+
+## Create the app
 
 <Steps>
-  <Step title="Register an app in the Twitch developer console">
-    Sign in to the Twitch developer console and register a new application. You need the client id and the client secret from it, and the redirect URL from the next step.
-
-    She asks for three scopes:
-
-```
-user:write:chat
-user:read:chat
-moderator:manage:announcements
-```
-
-    The third one is the one the announcement mode needs. Grant all three at registration, because adding a scope later means reconnecting the channel.
+  <Step title="Turn on two-factor authentication">
+    Twitch lets you register apps only once two-factor authentication is on. Verify your email, turn it on under **Security and Privacy** in your Twitch settings, then open the [developer console](https://dev.twitch.tv/console).
   </Step>
+  <Step title="Register the application">
+    Open **Applications** and choose **Register Your Application**:
 
-  <Step title="Configure the OAuth2 Redirect URI">
-    <Snippet file="oauth2redirect.mdx" />
+    - **Name**: a name no other Twitch app uses, such as `PostQueen Example Inc`.
+    - **OAuth Redirect URLs**: your address from the next step. Choose **Add** after typing it.
+    - **Category**: pick the closest one.
+    - **Client Type**: **Confidential**. A public client gets no secret, and the type cannot be changed later.
 
-    **Your Twitch OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/twitch`
-    - Local development: `http://localhost:4200/integrations/social/twitch`
-    - Docker: `http://localhost:4007/integrations/social/twitch`
+    Then choose **Create**.
   </Step>
+  <Step title="Set the redirect URL">
+    Use the address that matches how you run PostQueen:
 
-  <Step title="Set environment variables">
-    Copy both values into your `.env` file.
+    <CodeGroup>
 
-```env
-TWITCH_CLIENT_ID=""
-TWITCH_CLIENT_SECRET=""
-```
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/twitch
+    ```
 
-    The client id stays in use long after the connection is made. She sends it as the `Client-Id` header on every Twitch API call, so a channel that connected fine will still stop working if you clear that variable later.
+    ```text Local development
+    http://localhost:4200/integrations/social/twitch
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/twitch
+    ```
+
+    </CodeGroup>
+
+    Twitch accepts `https` addresses, and plain `http` for `localhost`.
+
+    <OAuthRedirect />
   </Step>
-
-  <Step title="Add the Twitch channel">
-    Restart PostQueen so the new variables are read.
-
-    <Snippet file="restart-and-add-channel.mdx" />
-
-    Add Channel does not check whether the two variables are set, so a missing key shows up as a broken authorization page on the Twitch side rather than a helpful message in PostQueen.
+  <Step title="Copy the client ID and a new secret">
+    In **Developer Applications**, choose **Manage** on the app. Copy the **Client ID**, then choose **New Secret** and copy the secret. A new secret replaces the previous one, so update your environment whenever you make one.
   </Step>
 </Steps>
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+## Set the variables
 
-## Next steps
+Add the two keys to your environment:
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Twitch" icon="/images/channels/twitch.svg" href="/providers/twitch">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+```env
+TWITCH_CLIENT_ID="your client id"
+TWITCH_CLIENT_SECRET="your client secret"
+```
+
+PostQueen sends the client ID with every Twitch call, so a channel stops working if you clear it later.
+
+<RestartAndAddChannel />
+
+Pick **Twitch**, sign in, and approve the chat permissions. Posts go to the chat of the channel you signed in with.
+
+## Chat limits
+
+In your own chat you can send 100 messages every 30 seconds, and one announcement every 2 seconds. PostQueen sends one Twitch message at a time and waits 2 seconds before each.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Redirection URLs must use HTTPS protocol">
+    Twitch refused the redirect URL on the app form. Use an `https` address, or `http://localhost` for a local install, and make sure no empty URL row is left on the form.
+  </Accordion>
+  <Accordion title="Twitch says the redirect_uri does not match">
+    The address PostQueen sent is not in **OAuth Redirect URLs**. It is exactly your `FRONTEND_URL` followed by `/integrations/social/twitch`.
+  </Accordion>
+  <Accordion title="Chat messages go out, announcements do not">
+    The token lacks `moderator:manage:announcements`. PostQueen does not read Twitch's answer to an announcement, so it is recorded as posted even when Twitch refused it. Reconnect the channel and approve every permission.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Twitch posting settings](/public-api/providers/twitch)

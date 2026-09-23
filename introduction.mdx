@@ -1,108 +1,281 @@
 ---
-title: 'Introduction'
-description: 'Tell her what to share. She writes it, designs it and publishes it across 30+ networks, on time.'
-icon: 'house'
+title: "PostQueen docs"
+sidebarTitle: "Introduction"
+description: "Guides for the PostQueen app, setup guides for AI agents over MCP, and the reference for the postqueen CLI and the public API."
+icon: "house"
+mode: "custom"
 keywords:
   - postqueen
-  - agentic social media scheduler
   - social media scheduler
-  - social media scheduling tool
-  - grok bot
+  - schedule posts
   - mcp
-  - calendar
+  - ai agent
   - cli
-  - self-host
-  - hashtag
-  - calendar tags
-  - n8n
+  - api
 ---
 
-<Frame>
-  <img src="/images/brand/header.svg" alt="PostQueen, your AI social media manager. You talk, she writes, designs and schedules" noZoom />
-</Frame>
+export const SearchDocs = () => (
+  <button
+    type="button"
+    className="pq-search"
+    onClick={() => (document.getElementById('search-bar-entry') || document.getElementById('search-bar-entry-mobile'))?.click()}
+  >
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+    <span>Search the docs</span>
+    <kbd>⌘K</kbd>
+  </button>
+);
 
-Ask her from whatever you already have open: OpenClaw, Hermes, Claude, ChatGPT, Codex, Cursor,
-Grok or Grok Bot. Muse Code connects over MCP; Muse, Meta's personal agent, connects a different way that is not tested yet.
+export const CopyLink = ({ value }) => {
+  const [copied, setCopied] = useState(false);
+  return (
+    <span className="pq-copy">
+      <code>{value}</code>
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard?.writeText(value).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+          });
+        }}
+      >
+        {copied ? 'Copied' : 'Copy'}
+      </button>
+    </span>
+  );
+};
 
-She creates and schedules the post they already decided. The calendar is where you see every
-post and manage the process.
+<div className="pq-home">
 
-## Who is she for?
+<section className="pq-top">
+  <div className="pq-dots" />
+  <div className="pq-top-inner">
+    <span className="pq-eyebrow">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6.6 20.4 L8.2 10.6 L12.4 14.4 L16 8 L19.6 14.4 L23.8 10.6 L25.4 20.4 Z" fill="currentColor" /><rect x="7" y="21.8" width="18" height="2.6" rx="1.3" fill="currentColor" /></svg>
+      <span>Documentation</span>
+    </span>
+    <h1 className="pq-top-title">PostQueen <span className="pq-serif">docs</span></h1>
+    <p className="pq-lede">Guides for the app, setup guides for AI agents, and the reference for the CLI and the public API.</p>
+    <SearchDocs />
+    <div className="pq-popular">
+      <span>Popular</span>
+      <a href="/quickstart">Quickstart</a>
+      <a href="/agents/overview">Connect an AI agent</a>
+      <a href="/mcp/introduction">MCP server</a>
+      <a href="/public-api/introduction">API overview</a>
+      <a href="/channels/overview">All channels</a>
+      <a href="/cloud/plans">Plans</a>
+    </div>
+  </div>
+</section>
 
-If posting is part of your job but not your whole job, she is for you.
+<section className="pq-section">
+  <h2 className="pq-h2">Four ways to post</h2>
+  <p className="pq-sub">Pick the way that fits the moment. Each guide starts from zero and ends with a scheduled post.</p>
+  <div className="pq-ways">
+    <a className="pq-way" href="/quickstart">
+      <span className="pq-way-visual pq-tint-peach pq-way-window">
+        <img noZoom src="/images/site/app-composer.webp" alt="The Create post panel next to the calendar, with four channels picked and the time the post goes out" />
+      </span>
+      <span className="pq-way-body">
+        <span className="pq-way-logos">
+          <img noZoom src="/images/channels/instagram.svg" alt="Instagram" />
+          <img noZoom src="/images/channels/tiktok.svg" alt="TikTok" />
+          <img noZoom src="/images/channels/x.svg" alt="X" />
+          <img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn" />
+          <img noZoom src="/images/channels/youtube.svg" alt="YouTube" />
+        </span>
+        <span className="pq-way-title">In the app</span>
+        <span className="pq-way-text">Connect your channels, write a post once and schedule it for each of them on the calendar.</span>
+        <span className="pq-way-need">You need a PostQueen account and a browser.</span>
+        <span className="pq-way-more">Quickstart <Icon icon="arrow-right" size={15} /></span>
+      </span>
+    </a>
+    <a className="pq-way" href="/agents/overview">
+      <span className="pq-way-visual pq-tint-lilac">
+        <img noZoom src="/images/site/chat-request.webp" alt="A chat asking for a LinkedIn post and an X thread on Tuesday at 10, and the PostQueen tool that scheduled both" />
+      </span>
+      <span className="pq-way-body">
+        <span className="pq-way-logos">
+          <img noZoom src="/images/brand/icon-claude.svg" alt="Claude" />
+          <img noZoom src="/images/brand/icon-chatgpt.svg" alt="ChatGPT" />
+          <img noZoom src="/images/brand/icon-grok-bot.svg" alt="Grok Bot" />
+          <img noZoom src="/images/brand/icon-grok.svg" alt="Grok" />
+          <img noZoom src="/images/brand/icon-muse.svg" alt="Muse" />
+        </span>
+        <span className="pq-way-title">From an AI agent</span>
+        <span className="pq-way-text">Ask Claude, ChatGPT, Grok Bot or another agent in plain words. It posts through PostQueen's MCP server.</span>
+        <span className="pq-way-need">You need an agent that supports MCP, and the MCP address from Connections.</span>
+        <span className="pq-way-more">Connect your agent <Icon icon="arrow-right" size={15} /></span>
+      </span>
+    </a>
+    <a className="pq-way" href="/cli/introduction">
+      <span className="pq-way-visual pq-tint-blue pq-way-window">
+        <img noZoom src="/images/site/cli-session.webp" alt="Claude Code scheduling a post for X and LinkedIn with the postqueen CLI" />
+      </span>
+      <span className="pq-way-body">
+        <span className="pq-way-logos">
+          <img noZoom src="/images/brand/icon-claude-code.svg" alt="Claude Code" />
+          <img noZoom src="/images/brand/icon-codex.svg" alt="Codex" />
+          <img noZoom src="/images/brand/icon-cursor.svg" alt="Cursor" />
+          <img noZoom src="/images/brand/icon-gemini-cli.svg" alt="Gemini CLI" />
+          <img noZoom src="/images/brand/icon-openclaw.svg" alt="OpenClaw" />
+        </span>
+        <span className="pq-way-title">From the CLI</span>
+        <span className="pq-way-text">Schedule posts, upload media and read analytics from a terminal, a script or a coding agent.</span>
+        <span className="pq-way-need">You need Node.js and the workspace API key.</span>
+        <span className="pq-way-more">Install the CLI <Icon icon="arrow-right" size={15} /></span>
+      </span>
+    </a>
+    <a className="pq-way" href="/public-api/introduction">
+      <span className="pq-way-visual pq-tint-green">
+        <img noZoom src="/images/site/api-flow.webp" alt="An RSS trigger sends a new blog post to the PostQueen API, which posts it to X, LinkedIn and Bluesky" />
+      </span>
+      <span className="pq-way-body">
+        <span className="pq-way-logos">
+          <img noZoom src="/images/brand/icon-n8n.svg" alt="n8n" />
+          <span className="pq-way-chip">REST</span>
+          <span className="pq-way-chip">Node SDK</span>
+        </span>
+        <span className="pq-way-title">Through the API</span>
+        <span className="pq-way-text">Call the public API from your own code, or build an app that other workspaces approve.</span>
+        <span className="pq-way-need">You need the workspace API key, or an OAuth app.</span>
+        <span className="pq-way-more">Read the API <Icon icon="arrow-right" size={15} /></span>
+      </span>
+    </a>
+  </div>
+</section>
 
-<Frame>
-  <img src="/images/brand/personas.svg" alt="Six kinds of user: creators, business owners, developers, agent-first teams, automation teams, and agencies with several brands" />
-</Frame>
+<section className="pq-section">
+  <h2 className="pq-h2">Browse the docs</h2>
+  <div className="pq-topics">
+    <div className="pq-topic">
+      <a className="pq-topic-head" href="/using/app-at-a-glance"><span className="pq-topic-icon"><Icon icon="calendar-days" size={20} /></span>Using the app</a>
+      <a href="/using/create-a-post">Create a post</a>
+      <a href="/using/calendar">The calendar</a>
+      <a href="/using/media-library">Upload and manage media</a>
+      <a href="/using/analytics">Analytics</a>
+      <a href="/using/team">Invite your team</a>
+    </div>
+    <div className="pq-topic">
+      <a className="pq-topic-head" href="/channels/overview"><span className="pq-topic-icon"><Icon icon="layout-grid" size={20} /></span>Channels</a>
+      <a href="/channels/overview">All channels and their status</a>
+      <a href="/using/connect-a-channel">Connect a channel</a>
+      <a href="/using/posting-times">Posting times</a>
+      <a href="/using/comments-and-threads">Comments and threads</a>
+      <a href="/using/customers">Customers</a>
+    </div>
+    <div className="pq-topic">
+      <a className="pq-topic-head" href="/agents/overview"><span className="pq-topic-icon"><Icon icon="bot" size={20} /></span>AI agents</a>
+      <a href="/agents/overview">Every supported agent</a>
+      <a href="/mcp/introduction">MCP server</a>
+      <a href="/agents/skill">The postqueen skill</a>
+      <a href="/agents/claude">Claude</a>
+      <a href="/agents/chatgpt">ChatGPT</a>
+    </div>
+    <div className="pq-topic">
+      <a className="pq-topic-head" href="/public-api/introduction"><span className="pq-topic-icon"><Icon icon="code" size={20} /></span>CLI and API</a>
+      <a href="/cli/introduction">PostQueen CLI</a>
+      <a href="/public-api/introduction">API overview</a>
+      <a href="/public-api/schedule-a-post">Schedule a post with the API</a>
+      <a href="/public-api/sdk">Node.js SDK</a>
+      <a href="/public-api/oauth">OAuth apps</a>
+    </div>
+    <div className="pq-topic">
+      <a className="pq-topic-head" href="/cloud/plans"><span className="pq-topic-icon"><Icon icon="credit-card" size={20} /></span>Plans and billing</a>
+      <a href="/cloud/plans">Plans and limits</a>
+      <a href="/cloud/trial">Free trial</a>
+      <a href="/cloud/subscription">Manage your subscription</a>
+      <a href="/cloud/refunds">Refunds</a>
+    </div>
+    <div className="pq-topic">
+      <a className="pq-topic-head" href="/support"><span className="pq-topic-icon"><Icon icon="life-buoy" size={20} /></span>Help</a>
+      <a href="/troubleshooting/post-failed">A post did not go out</a>
+      <a href="/troubleshooting/common-errors">Common errors</a>
+      <a href="/troubleshooting/known-issues">Known issues</a>
+      <a href="/faq">FAQ</a>
+      <a href="/support">Support</a>
+    </div>
+  </div>
+</section>
 
-## Start here
+<section className="pq-section">
+  <h2 className="pq-h2">Use these docs with AI</h2>
+  <p className="pq-sub">Give ChatGPT, Claude, Cursor or any other agent the docs themselves, so its answers come from them.</p>
+  <div className="pq-ai">
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="copy" size={20} /></span>
+      <span className="pq-ai-title">One page</span>
+      <p>The **Copy page** menu at the top of every page copies it as Markdown, or opens it in ChatGPT, Claude, Perplexity, Cursor or VS Code. Any page is also plain Markdown when you add `.md` to its address.</p>
+      <CopyLink value="https://docs.postqueen.ai/quickstart.md" />
+    </div>
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="file-text" size={20} /></span>
+      <span className="pq-ai-title">All the docs in one file</span>
+      <p>Every page in one text file. Paste the link into a chat, or save the file and attach it.</p>
+      <CopyLink value="https://docs.postqueen.ai/llms-full.txt" />
+    </div>
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="list" size={20} /></span>
+      <span className="pq-ai-title">An index for AI</span>
+      <p>Every page with its address and a one-line summary, so an agent can pick what to read.</p>
+      <CopyLink value="https://docs.postqueen.ai/llms.txt" />
+    </div>
+    <div className="pq-ai-item">
+      <span className="pq-topic-icon"><Icon icon="search" size={20} /></span>
+      <span className="pq-ai-title">Search the docs over MCP</span>
+      <p>Add this address to an MCP client, such as Claude or Cursor, and the agent can search these docs. It only reads the docs: to post, connect [PostQueen's MCP server](/mcp/introduction).</p>
+      <CopyLink value="https://docs.postqueen.ai/mcp" />
+    </div>
+  </div>
+</section>
 
-<CardGroup cols={2}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Connect a channel and put your first post on the calendar. About five minutes
-  </Card>
-  <Card title="How it works" icon="diagram-project" href="/howitworks">
-    What happens between pressing schedule and the post going out
-  </Card>
-</CardGroup>
+<section className="pq-section">
+  <div className="pq-head-row">
+    <div>
+      <h2 className="pq-h2">Channels</h2>
+      <p className="pq-sub">Every network has its own page: what you can post to it, its limits, and what to check before you connect it.</p>
+    </div>
+    <a className="pq-link" href="/channels/overview">All channels and their status <Icon icon="arrow-right" size={15} /></a>
+  </div>
+  <div className="pq-channels">
+    <a href="/channels/instagram"><img noZoom src="/images/channels/instagram.svg" alt="Instagram logo" aria-hidden="true" /><span>Instagram</span></a>
+    <a href="/channels/tiktok"><img noZoom src="/images/channels/tiktok.svg" alt="TikTok logo" aria-hidden="true" /><span>TikTok</span></a>
+    <a href="/channels/youtube"><img noZoom src="/images/channels/youtube.svg" alt="YouTube logo" aria-hidden="true" /><span>YouTube</span></a>
+    <a href="/channels/x-twitter"><img noZoom src="/images/channels/x.svg" alt="X logo" aria-hidden="true" /><span>X</span></a>
+    <a href="/channels/linkedin"><img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn logo" aria-hidden="true" /><span>LinkedIn</span></a>
+    <a href="/channels/facebook"><img noZoom src="/images/channels/facebook.svg" alt="Facebook logo" aria-hidden="true" /><span>Facebook</span></a>
+    <a href="/channels/threads"><img noZoom src="/images/channels/threads.svg" alt="Threads logo" aria-hidden="true" /><span>Threads</span></a>
+    <a href="/channels/pinterest"><img noZoom src="/images/channels/pinterest.svg" alt="Pinterest logo" aria-hidden="true" /><span>Pinterest</span></a>
+    <a href="/channels/reddit"><img noZoom src="/images/channels/reddit.svg" alt="Reddit logo" aria-hidden="true" /><span>Reddit</span></a>
+    <a href="/channels/bluesky"><img noZoom src="/images/channels/bluesky.svg" alt="Bluesky logo" aria-hidden="true" /><span>Bluesky</span></a>
+    <a href="/channels/mastodon"><img noZoom src="/images/channels/mastodon.svg" alt="Mastodon logo" aria-hidden="true" /><span>Mastodon</span></a>
+    <a href="/channels/discord"><img noZoom src="/images/channels/discord.svg" alt="Discord logo" aria-hidden="true" /><span>Discord</span></a>
+    <a href="/channels/telegram"><img noZoom src="/images/channels/telegram.svg" alt="Telegram logo" aria-hidden="true" /><span>Telegram</span></a>
+    <a href="/channels/slack"><img noZoom src="/images/channels/slack.svg" alt="Slack logo" aria-hidden="true" /><span>Slack</span></a>
+    <a href="/channels/twitch"><img noZoom src="/images/channels/twitch.svg" alt="Twitch logo" aria-hidden="true" /><span>Twitch</span></a>
+    <a href="/channels/kick"><img noZoom src="/images/channels/kick.svg" alt="Kick logo" aria-hidden="true" /><span>Kick</span></a>
+    <a href="/channels/wordpress"><img noZoom src="/images/channels/wordpress.svg" alt="WordPress logo" aria-hidden="true" /><span>WordPress</span></a>
+    <a href="/channels/tumblr"><img noZoom src="/images/channels/tumblr.png" alt="Tumblr logo" aria-hidden="true" /><span>Tumblr</span></a>
+    <a href="/channels/devto"><img noZoom src="/images/channels/devto.svg" alt="DEV logo" aria-hidden="true" /><span>DEV</span></a>
+    <a href="/channels/hashnode"><img noZoom src="/images/channels/hashnode.svg" alt="Hashnode logo" aria-hidden="true" /><span>Hashnode</span></a>
+    <a href="/channels/google-my-business"><img noZoom src="/images/channels/google-business.svg" alt="Google Business logo" aria-hidden="true" /><span>Google Business</span></a>
+    <a href="/channels/dribbble"><img noZoom src="/images/channels/dribbble.svg" alt="Dribbble logo" aria-hidden="true" /><span>Dribbble</span></a>
+    <a href="/channels/vk"><img noZoom src="/images/channels/vk.svg" alt="VK logo" aria-hidden="true" /><span>VK</span></a>
+    <a href="/channels/mewe"><img noZoom src="/images/channels/mewe.svg" alt="MeWe logo" aria-hidden="true" /><span>MeWe</span></a>
+    <a href="/channels/lemmy"><img noZoom src="/images/channels/lemmy.svg" alt="Lemmy logo" aria-hidden="true" /><span>Lemmy</span></a>
+    <a href="/channels/nostr"><img noZoom src="/images/channels/nostr.svg" alt="Nostr logo" aria-hidden="true" /><span>Nostr</span></a>
+    <a href="/channels/farcaster"><img noZoom src="/images/channels/farcaster.svg" alt="Farcaster logo" aria-hidden="true" /><span>Farcaster</span></a>
+    <a href="/channels/moltbook"><img noZoom src="/images/channels/moltbook.png" alt="Moltbook logo" aria-hidden="true" /><span>Moltbook</span></a>
+    <a href="/channels/listmonk"><img noZoom src="/images/channels/listmonk.svg" alt="Listmonk logo" aria-hidden="true" /><span>Listmonk</span></a>
+    <a href="/channels/whop"><img noZoom src="/images/channels/whop.svg" alt="Whop logo" aria-hidden="true" /><span>Whop</span></a>
+    <a href="/channels/skool"><img noZoom src="/images/channels/skool.svg" alt="Skool logo" aria-hidden="true" /><span>Skool</span></a>
+  </div>
+</section>
 
-## Reach her from anywhere
+<div className="pq-home-foot">
+  Cannot find what you need? Search the docs, see [Support](/support) or write to support@postqueen.ai. PostQueen is an open-source fork of [Postiz](https://github.com/gitroomhq/postiz-app), under AGPL-3.0. Running it on your own server? Start with [Self-hosting](/installation/overview).
+</div>
 
-Every route below rides the same public API, so a post lands on the same calendar whichever one you
-choose. [Which interface](/which-interface) weighs them against each other.
-
-<CardGroup cols={3}>
-  <Card title="Agents" icon="robot" href="/agents/overview">
-    Ask Claude, ChatGPT or Grok Bot for a post instead of writing one
-  </Card>
-  <Card title="Automation" icon="bolt" href="/automation/overview">
-    n8n, Zapier and Make, or an RSS feed she watches herself
-  </Card>
-  <Card title="CLI" icon="terminal" href="/cli/introduction">
-    Sixteen commands, clean JSON, at home in a CI job
-  </Card>
-  <Card title="MCP" icon="network-wired" href="/mcp/introduction">
-    One URL, and your assistant can post for you. Nothing to install
-  </Card>
-  <Card title="Public API" icon="code" href="/public-api/introduction">
-    REST for your own code, and the layer the others ride on
-  </Card>
-  <Card title="Self-hosting" icon="server" href="/installation/overview">
-    Your server, your database, your tokens. AGPL-3.0
-  </Card>
-</CardGroup>
-
-## Or just send her a voice note
-
-OpenClaw and Hermes run on your own machine and put her inside the chat apps you already have open.
-Hold the mic button on WhatsApp, say what you want, and she writes it, makes the picture and puts
-both posts on the calendar.
-
-<Frame>
-  <img src="/images/brand/chat-agent.svg" alt="A voice note in a chat app becoming a generated visual and two scheduled posts" />
-</Frame>
-
-<CardGroup cols={3}>
-  <Card title="OpenClaw" icon="/images/brand/icon-openclaw.svg" href="/agents/openclaw">
-    WhatsApp, Telegram, Slack and Discord, through a gateway you run
-  </Card>
-  <Card title="Hermes" icon="/images/brand/icon-hermes.svg" href="/agents/hermes">
-    Hand it one brief and it plans, writes and schedules your week
-  </Card>
-  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Ask the Bot to connect PostQueen, then type your key in its secure prompt, never in the chat
-  </Card>
-</CardGroup>
-
-OpenClaw and Hermes are open source, and both drive the same CLI, so the only outside cost is the
-model provider you point them at.
-
-<CardGroup cols={1}>
-  <Card title="Stuck on something?" icon="circle-question" href="/support">
-    Troubleshooting sorted by symptom, the questions that come up most, and how to reach a human
-  </Card>
-</CardGroup>
-
-<Note>
-PostQueen is an open-source fork of [Postiz](https://github.com/gitroomhq/postiz-app), AGPL-3.0.
-</Note>
+</div>

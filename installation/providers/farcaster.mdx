@@ -1,65 +1,108 @@
 ---
-title: 'Farcaster setup'
-description: 'Register the Farcaster application and give PostQueen its keys'
-icon: /images/channels/farcaster.svg
+title: "Farcaster setup"
+description: "Give a self-hosted PostQueen the Neynar keys and the app account that Farcaster channels need: managed signers, the variables, and how a channel connects with a QR code."
+icon: "/images/channels/farcaster.svg"
 ---
 
-Farcaster sign-in runs through Neynar, so the application you register is a Neynar app and the keys you copy back are Neynar's.
+import RestartService from '/snippets/restart-service.mdx';
 
-<Note>
-PostQueen uses [Neynar](https://neynar.com) as the Farcaster API provider.
-You need a Neynar developer account to obtain the API credentials below.
-</Note>
+On a self-hosted PostQueen the Neynar app is yours. PostQueen reaches Farcaster through [Neynar](https://neynar.com), so the keys are Neynar's, plus a Farcaster account that represents your instance.
 
-## Set up Farcaster
+A channel connects through a Neynar **managed signer**. PostQueen asks Neynar for a signer, signs the key request with your app account, and shows the approval link as a QR code. The person connecting scans it, or opens the link on their phone, and approves in the Farcaster app. There is no OAuth callback, so there is no redirect URI to register.
+
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [Neynar developer portal](https://dev.neynar.com), with a Neynar account |
+| Required variables | `NEYNAR_SECRET_KEY`, `NEYNAR_APP_FID`, `NEYNAR_APP_MNEMONIC` |
+| Optional variables | `NEYNAR_SPONSOR_SIGNERS`, `NEYNAR_CLIENT_ID` |
+| Redirect URI | None |
+| You also need | A Farcaster account for your instance, and its recovery phrase |
+| Review | None |
+
+<Warning>
+`NEYNAR_APP_MNEMONIC` controls the app account. Use a Farcaster account created for your instance rather than a personal one, keep the phrase only in the server's environment, and never commit it.
+</Warning>
+
+## Get the keys
 
 <Steps>
   <Step title="Create a Neynar app">
-    Go to the [Neynar dashboard](https://dev.neynar.com) and create a new app. You will get a **Client ID** and a **Secret Key**.
-
-    <Note>
-    **There is no redirect URI to set here**, which is why this page has no callback block while
-    every other OAuth network does. Farcaster sign-in goes through Neynar's widget, so PostQueen
-    hands it the client ID directly rather than building a callback path for the network to
-    return to.
-    </Note>
+    Sign in to the [Neynar developer portal](https://dev.neynar.com) and create an app. Copy its **API key**, and its **client ID** if you want the Farcaster sign-in option.
   </Step>
+  <Step title="Pick the app account">
+    Choose the Farcaster account that will represent your instance, ideally one made for it. You need two things from it:
 
-  <Step title="Add credentials to your environment">
-    Add the following to your `.env` file:
-
-```env
-NEYNAR_CLIENT_ID="your-neynar-client-id"
-NEYNAR_SECRET_KEY="your-neynar-secret-key"
-```
-  </Step>
-
-  <Step title="Restart PostQueen">
-    Stop PostQueen if it is running and start it again so the new environment variables are picked up.
-  </Step>
-
-  <Step title="Add the channel">
-    In the PostQueen web interface, click **Add Channel**, select **Farcaster**, and complete the Neynar login flow. Your Farcaster account will appear in the channel list.
+    - **Its FID.** Look the username up with Neynar's user lookup, or read it from the account's profile.
+    - **Its recovery phrase.** In the Farcaster app, open **Settings**, then **Advanced**, then **Reveal recovery phrase**.
   </Step>
 </Steps>
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
+## Set the variables
 
-## Next steps
+Add the keys to your environment:
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Farcaster" icon="/images/channels/farcaster.svg" href="/providers/farcaster">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+```env
+NEYNAR_SECRET_KEY="your-neynar-api-key"
+NEYNAR_APP_FID="123456"
+NEYNAR_APP_MNEMONIC="word1 word2 ... word24"
+NEYNAR_SPONSOR_SIGNERS="false"
+# Optional: the Continue with Farcaster sign-in option
+NEYNAR_CLIENT_ID="your-neynar-client-id"
+```
+
+| Variable | What it does |
+|---|---|
+| `NEYNAR_SECRET_KEY` | Your Neynar API key. Every call to Neynar uses it: creating and checking signers, searching channels and publishing casts. |
+| `NEYNAR_APP_FID` | The Farcaster id (FID, a number) of the account that represents your instance. People see this account on the approval screen. |
+| `NEYNAR_APP_MNEMONIC` | The recovery phrase of that account's custody wallet. PostQueen uses it only to sign the key request for each new signer. |
+| `NEYNAR_SPONSOR_SIGNERS` | `"true"` asks Neynar to pay the on-chain fee for each new signer and bill it to your Neynar credits. Any other value leaves the fee to the person approving, in the Farcaster app. |
+| `NEYNAR_CLIENT_ID` | Your Neynar app's client ID. It only turns on **Continue with Farcaster** on the sign-in page. Connecting a Farcaster channel does not use it. |
+
+<RestartService />
+
+## Connect a Farcaster account
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels**, choose **Add Channel**, then **Farcaster**. A window opens with a QR code and a **Copy Farcaster link** button.
+  </Step>
+  <Step title="Approve on the phone">
+    Scan the code with the phone that has the Farcaster app, or open the copied link there, and approve PostQueen. Without sponsorship, the Farcaster app may ask for a small fee first.
+  </Step>
+  <Step title="Check that it connected">
+    The window shows "Waiting for your approval..." and checks every 2 seconds. It closes by itself once the approval arrives, and the account appears in the **Channels** list. It gives up after 10 minutes, or at once if the request is revoked.
+  </Step>
+</Steps>
+
+<Note>
+The two public routes behind this window are rate limited per client address: 30 new approval requests and 1,000 status checks an hour. The address is the **last** `X-Forwarded-For` entry, the one your reverse proxy appends, or the connection's own address without a proxy. Behind a CDN that last entry is the CDN's address, so everyone arriving through it shares one limit.
+</Note>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Farcaster is not configured: set NEYNAR_APP_FID and NEYNAR_APP_MNEMONIC">
+    One of the two variables is empty. Set both and recreate the container.
+  </Accordion>
+  <Accordion title="The window closes with another error message">
+    Neynar did not create the signer, and the message is Neynar's answer. Check `NEYNAR_SECRET_KEY`, and check that `NEYNAR_APP_FID` is the FID of the account whose recovery phrase is in `NEYNAR_APP_MNEMONIC`.
+  </Accordion>
+  <Accordion title="Failed to start the Farcaster connection">
+    The request for a signer did not get an answer from PostQueen, or more than 30 came from one address within an hour. Behind a CDN, see the note above.
+  </Accordion>
+  <Accordion title="Farcaster approval timed out, please try again">
+    Nobody approved within 10 minutes. Open **Add Channel** again for a new code.
+  </Accordion>
+  <Accordion title="The Farcaster approval was revoked, please try again">
+    The request was rejected in the Farcaster app. Start again and approve it.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Farcaster posting settings](/public-api/providers/farcaster)

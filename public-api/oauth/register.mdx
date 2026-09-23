@@ -1,0 +1,9 @@
+---
+title: "Register a client"
+description: "Let a client register itself and get a pcd_ client id, without an app under Connections > Developers."
+openapi: "POST /oauth/register"
+---
+
+Most integrations never call this. An MCP client that supports OAuth sign-in calls it on its own when you add PostQueen by its sign-in address. Call it yourself only when you build a client that registers itself (Dynamic Client Registration, RFC 7591).
+
+The answer carries a `pcd_` client id. A public client (`token_endpoint_auth_method: none`) gets no secret, so it must use PKCE with `S256` on the [consent URL](/public-api/oauth/authorize) and send the `code_verifier` in the [token exchange](/public-api/oauth/token). The other steps are the same as for an app made under **Connections > Developers**; see [OAuth apps](/public-api/oauth).

@@ -1,0 +1,106 @@
+---
+title: "Zed"
+description: "Add PostQueen to Zed as a remote MCP server, then ask Zed's agent panel to write, schedule and check your posts."
+icon: "/images/brand/icon-zed.svg"
+---
+
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
+
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
+
+Zed is a code editor with a built-in AI agent panel. Add PostQueen as a remote MCP server and the agent can write posts about your work, schedule them and report how your published posts did.
+
+## Before you start
+
+- **Plans:** Personal (free), Pro and Business. Zed documents no plan limit on MCP.
+- **Platforms:** macOS, Linux and Windows.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect Zed
+
+<Steps>
+  <Step title="Add a remote server">
+    Open **Settings > AI > MCP Servers**, click **Add Server** and choose **Add Remote Server**. Or run `zed: open settings file` from the command palette.
+  </Step>
+  <Step title="Add PostQueen">
+    Add the `postqueen` entry, with your key in place of `YOUR_API_KEY`, and save:
+
+    ```json settings.json
+    {
+      "context_servers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+        }
+      }
+    }
+    ```
+  </Step>
+  <Step title="Check the dot">
+    In **Settings > AI > MCP Servers**, the dot next to PostQueen turns green, and its tooltip says **Server is active**.
+  </Step>
+</Steps>
+
+## Check that it works
+
+In the agent panel, ask: "List my PostQueen channels." The agent calls PostQueen and answers with the channels you connected.
+
+## Good to know
+
+- **The key address needs no header and no sign-in.** Zed starts a sign-in only when a server answers that it needs one, and the key address does not.
+- **The bare `{{mcpBearerUrl}}` address needs a header.** Without one, Zed tries a sign-in there. With a header set, a refused key shows as a header error instead.
+- **Zed's agent can add the entry for you** if you allow it to edit `settings.json`.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From Zed's docs. The route above |
+| The Bearer header | `{{mcpBearerUrl}}` | From Zed's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+
+<Tabs>
+  <Tab title="Bearer header">
+    ```json settings.json
+    {
+      "context_servers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp",
+          "headers": { "Authorization": "Bearer YOUR_API_KEY" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Sign in (not tested yet)">
+    Use `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL, with no headers. Zed shows an **Authenticate** button; a workspace admin signs in to PostQueen and approves.
+
+    The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+  </Tab>
+</Tabs>
+
+## Try this first
+
+```text wrap
+List my PostQueen channels. Then write a short Bluesky post about what I changed today and save it as a draft for tomorrow at 9am.
+```
+
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| The dot next to PostQueen is not green | Check the entry in `settings.json` against the example above, and read the tooltip on the dot. |
+| Zed asks you to sign in on the key address | Check that the address has your key at the end: `{{mcpKeyUrl}}`. |
+| A header error on `{{mcpBearerUrl}}` | The key in the header is wrong. Copy it again from **Connections > API Keys**. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+<NextStepsAgent />

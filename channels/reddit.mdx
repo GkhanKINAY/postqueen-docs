@@ -1,0 +1,64 @@
+---
+title: "Reddit"
+description: "What PostQueen will post to Reddit, and the limits it checks before a post is scheduled."
+icon: "/images/channels/reddit.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post text, link, image and video posts to the subreddits you pick, each with the title, post type and flair that subreddit needs.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/reddit.webp" alt="A new Reddit post in the PostQueen composer, with the post types Reddit takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 10,000 characters of body text, and a title of 2 to 300 characters for each subreddit.
+  </Card>
+  <Card title="Media" icon="image">
+    A media post takes exactly one image or one MP4 video. A video needs a thumbnail.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Text post, link post, and image or video post, to one subreddit or several at once.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Reddit.
+  </Card>
+</CardGroup>
+
+**Not supported:** galleries, polls, NSFW and spoiler flags, video GIFs, and private or restricted subreddits.
+
+## Connect Reddit
+
+<Note>
+Reddit is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Each subreddit's own rules, karma and flair requirements will still apply to the account you connect.
+</Note>
+
+## Post settings
+
+Reddit posts are set up per subreddit. Choose **Add Subreddit** for each one, then:
+
+- **Search Subreddit**: type a name, or paste an `r/name` or `reddit.com/r/name` link. Only public subreddits are offered.
+- The post type: **Post** for text, **Link** or **Media**. Only the types the subreddit accepts are offered.
+- **Title**: 2 to 300 characters.
+- **Flair**: the subreddit's flairs. Required when the subreddit demands flair.
+- **URL**: the link, for a **Link** post.
+
+The body text is the same in every subreddit: only the title, type, link and flair differ. The field names and values for the API are on [Reddit posting settings](/public-api/providers/reddit).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that a media post has exactly one file and that a video has a thumbnail, and that each subreddit has a title of 2 to 300 characters.
+- Reddit's Responsible Builder Policy forbids automated posting of identical or substantially similar content across subreddits. Write each post for its community.
+- **Add comment** adds top-level comments under the post, each with its own delay. They work on a post to one subreddit: on a post sent to several subreddits, the comments fail.
+- Subreddits are posted one at a time. If Reddit refuses one, PostQueen shows Reddit's own reason.
+- When Reddit's answer is late, PostQueen checks your account for the post before it tries again, so a post is not sent twice.
+
+<NextStepsChannel />

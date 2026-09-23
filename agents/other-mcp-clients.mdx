@@ -1,0 +1,129 @@
+---
+title: "Other MCP clients"
+description: "Connect any MCP client that is not on the agents list: the address, the header, the config shapes clients use, and a bridge for clients that only run local servers."
+icon: "/images/brand/icon-other-clients.svg"
+keywords:
+  - mcp client
+  - streamable http
+  - mcp-remote
+  - bearer header
+  - mcpServers
+---
+
+import McpAddresses from '/snippets/mcp-addresses.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
+
+Any client that can reach a remote MCP server over streamable HTTP can use PostQueen. Whatever the client calls its fields, it needs the same three things: a name for the server, the address, and your API key, either in the address or in a header. PostQueen has not tested clients that are not on [the agents list](/agents/overview).
+
+<ApiKeyLocation />
+
+## The addresses
+
+<McpAddresses />
+
+Start with the key address. It needs no header and no sign-in, so it works in almost every client. Use the Bearer header when the client has a header field and you want the key out of the address. The sign-in address works only in clients that support MCP sign-in.
+
+## Config shapes
+
+Most clients take the server in one of these shapes. Check your client's docs for which one it reads.
+
+<CodeGroup>
+
+```json mcpServers
+{
+  "mcpServers": {
+    "postqueen": {
+      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+    }
+  }
+}
+```
+
+```json servers
+{
+  "servers": {
+    "postqueen": {
+      "type": "http",
+      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+    }
+  }
+}
+```
+
+```json mcpServers with a header
+{
+  "mcpServers": {
+    "postqueen": {
+      "url": "https://api.postqueen.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_API_KEY"
+      }
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+The first shape is the one Cursor and Devin Desktop use, and the second is VS Code's. Zed reads `context_servers`, Gemini CLI writes `url` with `"type": "http"`, and Muse Code needs a `schema_version`. Their pages have the exact blocks: [Cursor](/agents/cursor), [VS Code](/agents/vscode), [Devin Desktop](/agents/devin-desktop), [Zed](/agents/zed), [Gemini CLI](/agents/gemini-cli), [Muse Code](/agents/muse-code).
+
+If the client asks for a transport, choose streamable HTTP. Choose SSE only when the client offers nothing else, and then use `https://api.postqueen.ai/sse/YOUR_API_KEY`.
+
+<Warning>
+Claude Desktop does not read a remote address from `claude_desktop_config.json`. Add PostQueen in Claude as a custom connector instead: see [Claude](/agents/claude).
+</Warning>
+
+## Clients that only run local servers
+
+Some clients can only start a program on your computer and talk to it over standard input and output (stdio). Bridge them to PostQueen with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which runs on your computer and forwards the calls. It needs [Node.js](https://nodejs.org/).
+
+<CodeGroup>
+
+```json Key address
+{
+  "mcpServers": {
+    "postqueen": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.postqueen.ai/mcp/YOUR_API_KEY"]
+    }
+  }
+}
+```
+
+```json Bearer header
+{
+  "mcpServers": {
+    "postqueen": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://api.postqueen.ai/mcp",
+        "--header",
+        "Authorization: Bearer YOUR_API_KEY"
+      ]
+    }
+  }
+}
+```
+
+</CodeGroup>
+
+Use the bridge only when the client cannot take an address. A direct connection has fewer parts that can fail.
+
+## Keep the key safe
+
+The key can post to every channel in your workspace. It sits in the client's config file either way, so keep that file out of version control and off shared screens. If the key leaks, an admin chooses **Rotate key** under **Connections > API Keys**, and you update every client that used it.
+
+## Check that it works
+
+Ask the client's agent:
+
+```text
+List my PostQueen channels.
+```
+
+It calls `integrationList` and answers with your connected channels. If the connection fails or no PostQueen tools appear, see [the agent will not connect over MCP](/agents/troubleshooting#the-agent-will-not-connect-over-mcp).
+
+<NextStepsAgent />

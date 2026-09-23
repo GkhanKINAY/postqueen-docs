@@ -1,0 +1,64 @@
+---
+title: "Skool"
+description: "What PostQueen will post to Skool groups, how it will connect, and the limits it checks before a post is scheduled."
+icon: "/images/channels/skool.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post titled posts with attachments into your Skool groups and categories, with threaded comments underneath.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/skool.webp" alt="A new Skool post in the PostQueen composer, with the post types Skool takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 5,000 characters, under a title you set for each post.
+  </Card>
+  <Card title="Media" icon="image">
+    Images or video files, uploaded to Skool as attachments.
+  </Card>
+  <Card title="Post types" icon="layers">
+    A titled post in a group and category, and threaded comments.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Skool.
+  </Card>
+</CardGroup>
+
+**Not supported:** polls.
+
+## Connect Skool
+
+<Note>
+Skool is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Skool has no public API, so connecting it will go through the PostQueen browser extension in Chrome, which uses your own Skool session.
+</Note>
+
+<Warning>
+Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned.
+</Warning>
+
+## Post settings
+
+Each Skool post in the composer has these settings:
+
+- **Title**: the post's title. Required.
+- **Select Group**: the group to post in. Required. The list shows your first 30 groups.
+- **Select Label**: the category the post is filed under. Required. In a group with no categories the only choice is **Default Label**, which posts without one.
+
+The field names and values for the API are on [Skool posting settings](/public-api/providers/skool).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it is at most 5,000 characters and that a title, a group and a label are set.
+- The composer's follow-up button reads **Add comment / post**, but every follow-up goes out as a comment, each under the one before it, with its own delay and attachments.
+- Skool can refuse a post. "You can't post to this channel" means your role in the group is below what it requires, and "Cannot post to this label" means the category is restricted.
+
+<NextStepsChannel />

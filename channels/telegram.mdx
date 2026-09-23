@@ -1,0 +1,57 @@
+---
+title: "Telegram"
+description: "What PostQueen will post to Telegram channels and groups, and the limits it checks before a post is scheduled."
+icon: "/images/channels/telegram.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will send messages, photos, videos and albums to your Telegram channels and groups, public or private, through its bot at the time you pick.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/telegram.webp" alt="A new Telegram post in the PostQueen composer, with the post types Telegram takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 4,096 characters in a text message. With media attached, the text becomes the caption, and Telegram allows 1,024 characters there.
+  </Card>
+  <Card title="Media" icon="image">
+    Photos, videos and other files. Several files go out as albums of up to 10.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Text message, a photo, video or file with a caption, album, and follow-up replies.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Telegram.
+  </Card>
+</CardGroup>
+
+**Not supported:** polls, buttons, silent or pinned messages, and italics or links in the formatting. Only bold, underline and line breaks are kept.
+
+## Connect Telegram
+
+<Note>
+Telegram is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will mean adding PostQueen's bot to your channel or group as an administrator.
+</Note>
+
+## Post settings
+
+Telegram has no post settings. Each post goes to the chat the channel is connected to. The API takes `"__type": "telegram"` and nothing else, as [Telegram posting settings](/public-api/providers/telegram) shows.
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that a text message is at most 4,096 characters, and that the text on a message with media is at most 1,024 characters, counted as it will appear, without formatting.
+- **Add comment** adds follow-up messages, each with its own delay. The first replies to the post, and each later one replies to the one before it.
+- Photos go out as photos and videos as videos. Any other file goes out as a document.
+- More than 10 files go out as several albums, and only the first album carries your text. A single file left over after a full album is sent on its own.
+- Telegram can refuse an album that mixes photos and documents.
+- Telegram's own file limits are not checked first. Telegram fetches each file from its link and accepts photos up to 5 MB and other files up to 20 MB.
+
+<NextStepsChannel />

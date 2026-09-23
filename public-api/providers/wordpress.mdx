@@ -1,90 +1,141 @@
 ---
-title: 'WordPress Settings'
-description: 'Provider settings for WordPress posts'
+title: "WordPress posting settings"
+sidebarTitle: "WordPress"
+description: "The settings object a post to WordPress takes in the public API: title, post type, status, categories, tags and featured image, what PostQueen checks, and complete examples."
+icon: "/images/channels/wordpress.svg"
 ---
 
-Creating the OAuth app and connecting a channel: [WordPress setup guide](/providers/wordpress).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Overview
+<ChannelStatus status="available" />
 
-WordPress integration allows you to publish posts to your WordPress site. You can set the title, featured image, post type, status, categories and tags.
+Every post to WordPress carries a `settings` object with `"__type": "wordpress"`, a title and a post type. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
-## Settings Schema
+A WordPress channel connects with the site address, a username and an Application Password, which only the app's connect form takes. [Connect it in the app](/channels/wordpress) first, then post to it here.
+
+## Fields
+
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"wordpress"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `title` | string | Yes | The post title, at least 2 characters. The slug is made from it. |
+| `type` | string | Yes | The REST base of the post type: `posts` for posts, `pages` for pages, or a custom type's base. The `postTypes` tool lists them. Not `post`. |
+| `status` | string | No | `publish` (the default), `draft`, `pending` or `private`. |
+| `categories` | number[] | No | Category ids from the `categoriesList` tool. |
+| `tags` | number[] | No | Tag ids from the `tagsList` tool. |
+| `main_image` | object | No | The featured image, `{ "id": "...", "path": "..." }` as [upload a file](/public-api/uploads/upload-file) returns it. It is uploaded to the site's media library. |
+
+The body comes from `value[0].content` and is sent as HTML, so headings, bold, lists and links keep their tags. Media in `value` is not sent: only `main_image` reaches WordPress. WordPress has no follow-ups, so entries after the first in `value` are not published.
+
+### Find post types, categories and tags
+
+Three tools read them from the site. Call them through [trigger a provider tool](/public-api/integrations/trigger), with no data:
+
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"methodName": "postTypes", "data": {}}'
+```
+
+| Tool | Answers | Use it for |
+|---|---|---|
+| `postTypes` | `[{ "id": "posts", "name": "Posts" }, ...]` | `type`: send the `id` |
+| `categoriesList` | `[{ "id": 7, "name": "News" }, ...]`, the first 100 | `categories` |
+| `tagsList` | `[{ "id": 12, "name": "Release" }, ...]`, the first 100 | `tags` |
+
+Each answer comes wrapped in `{ "output": ... }`.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| A title of at least 2 characters | “title must be longer than or equal to 2 characters” |
+| A post type | “type should not be null or undefined” |
+| `status` is one of the four values | “status must be one of the following values: publish, draft, pending, private” |
+| `categories` and `tags` hold numbers | “each value in categories must be a number conforming to the specified constraints” |
+| The body within 100,000 characters | “post is too long, please fix it” |
+
+The settings rules come back as a list, with each field's path:
 
 ```json
 {
-  "__type": "wordpress",
-  "title": "Post Title",
-  "main_image": {
-    "id": "image-id",
-    "path": "https://uploads.postqueen.ai/featured.jpg"
-  },
-  "type": "post",
-  "categories": [12],
-  "tags": [45, 46],
-  "status": "publish"
+  "statusCode": 400,
+  "message": ["posts.0.settings.type should not be null or undefined", "posts.0.settings.type must be a string"],
+  "error": "Bad Request"
 }
 ```
 
-## Properties
+The text limit comes back with the channel's name instead, as on [posting settings by network](/public-api/providers/overview#two-error-shapes).
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"wordpress"` |
-| `title` | string | ✅ | Post title (min 2 chars) |
-| `main_image` | object | ❌ | Featured image |
-| `main_image.id` | string | ✅ | Image ID |
-| `main_image.path` | string | ✅ | Image URL |
-| `type` | string | ✅ | Post type (depends on your WordPress setup) |
-| `categories` | number[] | ❌ | Category ids to file the post under |
-| `tags` | number[] | ❌ | Tag ids to apply |
-| `status` | string | ❌ | `publish` (the default), `draft`, `pending` or `private` |
+A `type` your site does not have is not checked first: WordPress refuses the post when it is published. The featured image is held to your server's upload limit.
 
-### `status`
+## Examples
 
-| Value | Description |
-|-------|-------------|
-| `publish` | Publish on schedule. Used when the field is left out |
-| `draft` | Still sent on schedule, but it lands in your WordPress drafts |
-| `pending` | Submitted for review |
-| `private` | Published, visible only to logged-in users with permission |
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), the category and tag ids with values from the tools above, and the media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-### `categories` and `tags`
+<CodeGroup>
 
-Both take **numeric WordPress ids**, not names. The channel's `categoriesList` and `tagsList` tools return the first hundred of each from your site, as id and name pairs: call them through [Trigger a Tool](/public-api/integrations/trigger), or look the ids up in your WordPress admin.
-
-## Example
-
-```json
+```json Published post
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-wordpress-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "<h2>Introduction</h2>\n<p>Welcome to our latest blog post...</p>\n\n<h2>Main Content</h2>\n<p>Here's what you need to know...</p>",
+          "content": "<p>Our autumn release is out.</p><h2>What changed</h2><ul><li>Faster search</li><li>A new dark theme</li></ul>",
           "image": []
         }
       ],
       "settings": {
         "__type": "wordpress",
-        "title": "Latest Company Updates",
-        "type": "post"
+        "title": "Our autumn release",
+        "type": "posts",
+        "status": "publish",
+        "categories": [7],
+        "tags": [12, 15],
+        "main_image": { "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/autumn-release.png" }
       }
     }
   ]
 }
 ```
 
-## Notes
+```json Draft page
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        { "content": "<p>Everything you need to know before the event, updated weekly.</p>", "image": [] }
+      ],
+      "settings": {
+        "__type": "wordpress",
+        "title": "Event guide",
+        "type": "pages",
+        "status": "draft"
+      }
+    }
+  ]
+}
+```
 
-- The `type` field depends on your WordPress configuration (e.g., "post", "page", or custom post types)
-- Content can be HTML or Markdown depending on your WordPress setup
-- Featured images will be uploaded to your WordPress media library
-- The top-level `tags` array in the request body is PostQueen's own labelling. WordPress tags go in `settings.tags`
+</CodeGroup>
+
+In the second example the page is created as a draft in WordPress at the scheduled time, ready for you to finish there.
+
+## Related
+
+- [Connect WordPress in the app](/channels/wordpress)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)

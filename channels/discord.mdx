@@ -1,0 +1,61 @@
+---
+title: "Discord"
+description: "What PostQueen will post to Discord text and announcement channels, and the limits it checks before a post is scheduled."
+icon: "/images/channels/discord.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post messages with attachments and mentions to the text and announcement channels of your Discord servers, sent by its bot.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/discord.webp" alt="A new Discord post in the PostQueen composer, with the post types Discord takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 1,980 characters, sent as Discord markdown.
+  </Card>
+  <Card title="Media" icon="image">
+    Images and videos, attached to the message.
+  </Card>
+  <Card title="Post types" icon="layers">
+    A message in a text or announcement channel, with follow-ups in a thread.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Discord.
+  </Card>
+</CardGroup>
+
+**Not supported:** forum channels, custom embeds, polls, and more than one channel of the same server in one post.
+
+## Connect Discord
+
+<Note>
+Discord is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will add PostQueen's bot to one server, and you will need the **Manage Server** permission there.
+</Note>
+
+## Post settings
+
+Each Discord post in the composer has one setting:
+
+- **Select Channel**: the text or announcement channel to post in. Required. Forum channels are not listed.
+
+The field names and values for the API are on [Discord posting settings](/public-api/providers/discord).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it is at most 1,980 characters and that a channel is picked.
+- **Add comment** adds follow-ups, each with its own delay. The first starts a thread on the message, named "Thread", and later ones go into the same thread. Discord archives the thread after a day without activity.
+- Type `@` to mention a member or a role, found by search. `@here` and `@everyone` are offered too, but they only notify people when the bot's role has the **Mention Everyone** permission in that server.
+- The bot asks for **View Channel**, **Send Messages**, **Embed Links**, **Attach Files** and the thread permissions. If a channel limits who can see it, give the bot's role **View Channel**, **Send Messages** and **Attach Files** there.
+- When Discord refuses a post, it fails with the reason: "Bot doesn't have access to this channel", "Bot lacks permission to send messages in this channel", "Channel no longer exists" or "Attachment exceeds Discord's size limit".
+- Discord's own file limit is not checked first: 20 MiB per file by default, and more in boosted servers.
+
+<NextStepsChannel />

@@ -1,0 +1,109 @@
+---
+title: "Bluesky"
+description: "Connect Bluesky to PostQueen with an app password, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/bluesky.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="available" />
+
+Schedule Bluesky posts and full threads with up to 4 images or 1 video, with clickable links and mentions, on bsky.social or your own Bluesky server. You connect with your handle and an app password, so there is no app to approve.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/bluesky.webp" alt="A new Bluesky post in the PostQueen composer, with the post types Bluesky takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    300 characters per post and per reply. An emoji can count as 2 or more of them.
+  </Card>
+  <Card title="Media" icon="image">
+    Up to 4 images with alt text, or one MP4 video on its own. Large images are scaled down to fit Bluesky's file size limit.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Posts and threads, with clickable links and @mentions. Two automations can repost a post or reply to it once it has enough likes.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Bluesky.
+  </Card>
+</CardGroup>
+
+**Not supported:** link preview cards (a link stays clickable text), quote posts, polls and Bluesky's 10-image gallery.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| At most 4 images | “There can be maximum 4 pictures in a post.” |
+| A video goes alone, with no other media | “You can only upload one video per post.” |
+| Text within 300 characters, in the post and in every reply | “post is too long, please fix it” |
+
+Video length and size are Bluesky's rules, and PostQueen does not check them first. Bluesky takes an MP4 of up to 300 MB and 10 minutes, and 25 videos or 10 GB a day from an account with a verified email address.
+
+## Connect Bluesky
+
+You need an app password: a separate password for tools, which you can revoke without changing your own. It works even when two-factor authentication is on.
+
+<Steps>
+  <Step title="Create an app password on Bluesky">
+    In Bluesky, open **Settings**, then **Privacy and security**, then **App passwords** ([bsky.app/settings/app-passwords](https://bsky.app/settings/app-passwords)). Choose **Add App Password** and name it `PostQueen`. Leave **Allow access to your direct messages** off: PostQueen does not need it. Copy the password now, because Bluesky shows it only once.
+  </Step>
+  <Step title="Open Add Channel">
+    In PostQueen, open **Channels** and choose **Add Channel**, then **Bluesky** and **Enter details**.
+  </Step>
+  <Step title="Enter your handle and the app password">
+    Leave **Service** as `https://bsky.social` unless your account lives on another Bluesky server. Type your handle, for example `name.bsky.social`, in **Identifier**, paste the app password in **Password**, and choose **Connect**.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with your Bluesky avatar and name.
+  </Step>
+</Steps>
+
+<NeverShare />
+
+## Post settings
+
+Bluesky has no post settings. Text, media and timing are set on the post itself, and the API takes `"__type": "bluesky"` and nothing else, as [Bluesky posting settings](/public-api/providers/bluesky) shows.
+
+## Comments and threads
+
+**Continue thread** adds parts to the post. Each part is posted as a reply under the part before, can carry its own images or video, and has its own delay. Every part is held to the same limits as the first post.
+
+**Add a thread finisher** adds a closing post, such as a thank-you or a follow link, after the other parts. When you save, it becomes the thread's last part, which you can then edit like the others.
+
+In the channel's **Automations** on the **Channels** page ([how automations work](/using/auto-plugs)), **Auto Repost Posts** reposts a post, and **Auto plug post** replies to it with a post you write in advance, once it has reached a number of likes you set. Each checks the post every 6 hours, up to 3 times.
+
+## Good to know
+
+- Use an app password, not your account password.
+- PostQueen signs in to Bluesky each time it posts, adds a reply, runs an automation or searches for an account to mention. Bluesky allows 30 sign-ins in 5 minutes and 300 a day per account, so a very busy account can reach that limit.
+- If you revoke the app password on Bluesky, the channel shows **Needs reconnecting**. Create a new app password and enter it with **Update Credentials** under **Access** on the channel's page. A short Bluesky outage does not disconnect the channel; the post fails and can be scheduled again.
+- **Service** must be a public `https` address.
+- **Invite by link** does not offer Bluesky, because the app password is typed into PostQueen. Connect it with **Connect myself**.
+- During the free trial, a Bluesky account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid credentials">
+    Bluesky refused the handle or the app password. Check the handle, create a new app password if you are not sure of the old one, and connect again.
+  </Accordion>
+  <Accordion title="Invalid service URL: must be a public HTTPS address">
+    **Service** is not a public `https` address. Use `https://bsky.social`, or the `https` address of the Bluesky server your account is on.
+  </Accordion>
+  <Accordion title="Could not upload video, job failed">
+    Bluesky could not process the video. Check that it is an MP4 within Bluesky's size and length limits, then schedule the post again.
+  </Accordion>
+  <Accordion title="Bluesky may have already published this post, please check your account before posting again to avoid duplicates">
+    The post was interrupted after it was sent, so PostQueen cannot tell whether Bluesky published it, and it stops rather than post twice. Look at your Bluesky profile before you schedule it again.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />

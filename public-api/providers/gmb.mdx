@@ -1,187 +1,183 @@
 ---
-title: 'Google My Business Settings'
-sidebarTitle: GMB
-description: 'Provider settings for Google My Business posts'
+title: "Google Business Profile posting settings"
+sidebarTitle: "Google Business Profile"
+description: "The settings object a post to Google Business Profile takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/google-business.svg"
 ---
 
-Google My Business (GMB) posts appear on your Google Business Profile. There are three shapes, and `topicType` picks which one: a standard update, an event, or an offer.
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Google My Business setup guide](/installation/providers/google-my-business).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Google Business Profile cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Google Business Profile channel will take.
+
+Every post to Google Business Profile carries a `settings` object with `"__type": "gmb"`. In **Add Channel** the tile is named **Google My Business**, and each channel is one location. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
+
+## Fields
+
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"gmb"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `topicType` | string | No | `STANDARD` (an update), `EVENT` or `OFFER`. Left out, the post is an update. |
+| `callToActionType` | string | No | The button on an update or an event: `NONE`, `BOOK`, `ORDER`, `SHOP`, `LEARN_MORE`, `SIGN_UP` or `CALL`. Left out, there is no button. Not sent on an offer, where Google shows its own. |
+| `callToActionUrl` | string | No | Where the button goes. A button other than `CALL` is sent only when this is set. `CALL` takes no link: it dials the phone number verified on the profile. |
+| `eventTitle` | string | For events and offers | The title of the event or the offer. |
+| `eventStartDate`, `eventEndDate` | string | For events and offers | The first and last day, as `YYYY-MM-DD`. |
+| `eventStartTime`, `eventEndTime` | string | No | Start and end times of an event or an offer, as `HH:MM` in 24-hour time. |
+| `offerCouponCode` | string | No | A coupon code shown on the offer. |
+| `offerRedeemUrl` | string | No | Where the offer is redeemed online. Must be a valid URL. |
+| `offerTerms` | string | No | The offer's terms and conditions. |
+
+`GET_OFFER` is still accepted so that posts saved with it keep working, and it is sent as `LEARN_MORE`. Use `LEARN_MORE` in new posts.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| At most one photo | “Google My Business posts can only have one image” |
+| No video | “Google My Business posts do not support video attachments” |
+| An event has `eventTitle` | “Event posts require an event title” |
+| An event has `eventStartDate` and `eventEndDate` | “Event posts require a start and an end date” |
+| An offer has `eventTitle` | “Offer posts require an offer title” |
+| An offer has `eventStartDate` and `eventEndDate` | “Offer posts require a start and an end date” |
+| Text up to 1,500 characters | “post is too long, please fix it” |
+| `topicType` and `callToActionType` from the lists above, `callToActionUrl` and `offerRedeemUrl` valid URLs | A validation error naming the field |
+
+The error body names the channel and the rule:
 
 ```json
 {
-  "__type": "gmb",
-  "topicType": "STANDARD",
-  "callToActionType": "LEARN_MORE",
-  "callToActionUrl": "https://example.com",
-  "eventTitle": "Event Name",
-  "eventStartDate": "2024-12-14",
-  "eventEndDate": "2024-12-15",
-  "eventStartTime": "09:00",
-  "eventEndTime": "17:00",
-  "offerCouponCode": "SAVE20",
-  "offerRedeemUrl": "https://example.com/redeem",
-  "offerTerms": "Terms and conditions apply"
+  "statusCode": 400,
+  "provider": "gmb",
+  "name": "Your channel name",
+  "message": "Event posts require a start and an end date"
 }
 ```
 
-## Properties
-
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"gmb"` |
-| `topicType` | string | ❌ | Post type: `STANDARD`, `EVENT`, or `OFFER` |
-| `callToActionType` | string | ❌ | CTA button type |
-| `callToActionUrl` | string | ❌ | URL for the CTA button |
-| `eventTitle` | string | ❌ | Event name (required for EVENT type) |
-| `eventStartDate` | string | ❌ | Event start date |
-| `eventEndDate` | string | ❌ | Event end date |
-| `eventStartTime` | string | ❌ | Event start time |
-| `eventEndTime` | string | ❌ | Event end time |
-| `offerCouponCode` | string | ❌ | Coupon code (for OFFER type) |
-| `offerRedeemUrl` | string | ❌ | Redemption URL |
-| `offerTerms` | string | ❌ | Offer terms and conditions |
-
-<Warning>
-`callToActionUrl` is genuinely optional. Set `callToActionType` without it and the request still succeeds, with the button quietly left off the post.
-</Warning>
-
-### Call-to-Action Types
-
-| Value | Button |
-|-------|--------|
-| `NONE` | No button |
-| `BOOK` | Book now |
-| `ORDER` | Order online |
-| `SHOP` | Shop now |
-| `LEARN_MORE` | Learn more |
-| `SIGN_UP` | Sign up |
-| `GET_OFFER` | Get offer |
-| `CALL` | Call |
-
-<Info>
-Event posts require date and time information.
-</Info>
+Google's own rules are not checked first: photos in JPG or PNG of 10 KB to 5 MB. An event or an offer sent without `eventStartTime` and `eventEndTime` goes out without times, and Google may refuse it. Every post is sent with its language set to English.
 
 ## Examples
 
-<Tabs>
-  <Tab title="Standard">
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-```json
-{
-  "settings": {
-    "__type": "gmb",
-    "topicType": "STANDARD",
-    "callToActionType": "LEARN_MORE",
-    "callToActionUrl": "https://example.com/news"
-  }
-}
-```
+<CodeGroup>
 
-  </Tab>
-  <Tab title="Event">
-
-```json
-{
-  "settings": {
-    "__type": "gmb",
-    "topicType": "EVENT",
-    "eventTitle": "Grand Opening",
-    "eventStartDate": "2024-12-20",
-    "eventEndDate": "2024-12-20",
-    "eventStartTime": "10:00",
-    "eventEndTime": "18:00",
-    "callToActionType": "BOOK",
-    "callToActionUrl": "https://example.com/rsvp"
-  }
-}
-```
-
-  </Tab>
-  <Tab title="Offer">
-
-```json
-{
-  "settings": {
-    "__type": "gmb",
-    "topicType": "OFFER",
-    "callToActionType": "GET_OFFER",
-    "callToActionUrl": "https://example.com/offer",
-    "offerCouponCode": "HOLIDAY20",
-    "offerRedeemUrl": "https://example.com/redeem",
-    "offerTerms": "Valid until December 31, 2024. Cannot be combined with other offers."
-  }
-}
-```
-
-  </Tab>
-</Tabs>
-
-<Note>
-Offer posts can include coupon codes, which gives you something to track against.
-</Note>
-
-## Full Example
-
-```json
+```json Update with a button
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-gmb-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "🎉 Big Holiday Sale! Get 20% off all products this weekend only. Visit us in-store or shop online!",
-          "image": [
-            {
-              "id": "img-id",
-              "path": "https://uploads.postqueen.ai/sale-banner.jpg"
-            }
-          ]
+          "content": "Our autumn menu is here, with three new soups and a pumpkin tart. Book a table for this weekend.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/autumn-menu.jpg" }]
         }
       ],
       "settings": {
         "__type": "gmb",
-        "topicType": "OFFER",
-        "callToActionType": "GET_OFFER",
-        "callToActionUrl": "https://example.com/holiday-sale",
-        "offerCouponCode": "HOLIDAY20",
-        "offerTerms": "Valid December 14-15, 2024. In-store and online."
+        "topicType": "STANDARD",
+        "callToActionType": "BOOK",
+        "callToActionUrl": "https://example.com/book"
       }
     }
   ]
 }
 ```
 
-<Check>
-Once the post publishes, it appears on your Google Business Profile in Search and in Maps.
-</Check>
+```json Update with a Call button
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "We are open late on Fridays until 10 pm. Call ahead for large groups.",
+          "image": []
+        }
+      ],
+      "settings": { "__type": "gmb", "topicType": "STANDARD", "callToActionType": "CALL" }
+    }
+  ]
+}
+```
 
-<Tip>
-Images are highly recommended for better engagement.
-</Tip>
+```json Event
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Join our tasting evening: five local wines, small plates and live music.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/tasting.jpg" }]
+        }
+      ],
+      "settings": {
+        "__type": "gmb",
+        "topicType": "EVENT",
+        "eventTitle": "Wine tasting evening",
+        "eventStartDate": "2026-10-17",
+        "eventEndDate": "2026-10-17",
+        "eventStartTime": "18:00",
+        "eventEndTime": "22:00",
+        "callToActionType": "SIGN_UP",
+        "callToActionUrl": "https://example.com/tasting"
+      }
+    }
+  ]
+}
+```
 
-## Next steps
+```json Offer
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "20% off every coffee bag this week.",
+          "image": []
+        }
+      ],
+      "settings": {
+        "__type": "gmb",
+        "topicType": "OFFER",
+        "eventTitle": "20% off coffee bags",
+        "eventStartDate": "2026-10-01",
+        "eventEndDate": "2026-10-07",
+        "offerCouponCode": "BEANS20",
+        "offerRedeemUrl": "https://example.com/shop",
+        "offerTerms": "One use per customer."
+      }
+    }
+  ]
+}
+```
 
-<CardGroup cols={2}>
-  <Card title="Connect the channel" icon="plug" href="/providers/google-my-business">
-    Create the OAuth app and link your Business Profile.
-  </Card>
-  <Card title="Schedule the post" icon="paper-plane" href="/public-api/posts/create">
-    The create endpoint, field by field, with a worked request.
-  </Card>
-  <Card title="Upload the image" icon="image" href="/public-api/uploads/upload-file">
-    Get media onto a public URL before you reference it.
-  </Card>
-  <Card title="Find your integration id" icon="list" href="/public-api/integrations/list">
-    Every connected channel, with the id this request needs.
-  </Card>
-</CardGroup>
+</CodeGroup>
+
+Only the first entry in `value` is published: Google Business Profile takes no comments, and a later entry is marked as failed with “This channel cannot post comments”.
+
+## Related
+
+- [Google Business Profile in the app](/channels/google-my-business)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

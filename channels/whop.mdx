@@ -1,0 +1,60 @@
+---
+title: "Whop"
+description: "What PostQueen will post to Whop forums, and the limits it checks before a post is scheduled."
+icon: "/images/channels/whop.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post Markdown forum posts with images or video to the forums of the Whop companies you have access to, with follow-ups as threaded replies.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/whop.webp" alt="A new Whop post in the PostQueen composer, with the post types Whop takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 50,000 characters, sent as Markdown.
+  </Card>
+  <Card title="Media" icon="image">
+    Images or video, uploaded to Whop and attached to the post.
+  </Card>
+  <Card title="Post types" icon="layers">
+    A forum post, with or without a title, and threaded replies.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Whop.
+  </Card>
+</CardGroup>
+
+## Connect Whop
+
+<Note>
+Whop is listed in **Add Channel**, but it cannot be connected on PostQueen yet.
+</Note>
+
+## Post settings
+
+Each Whop post in the composer has these settings:
+
+- **Select Company**: the company whose forums are listed. Required.
+- **Select Forum**: the forum to post in. Required.
+- **Title (optional)**: the post's title. Left empty, the post has none.
+
+The field names and values for the API are on [Whop posting settings](/public-api/providers/whop).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it is at most 50,000 characters and that a company and a forum are picked.
+- **Add comment** adds replies, each with its own delay and its own attachments. The first replies to the post, and each later one replies to the one before it.
+- Every file is uploaded to Whop before the post is created. If Whop has not finished processing a file after about 9 minutes, the post fails with "File upload timed out".
+- The company and forum lists show the first 50 of each.
+- A post to a forum that was deleted, or that you no longer have access to, fails with "Forum or experience not found".
+
+<NextStepsChannel />

@@ -1,68 +1,98 @@
 ---
-title: Grok
-description: 'Ask Grok on the web or your phone to schedule posts through PostQueen'
-icon: /images/brand/icon-grok.svg
+title: "Grok"
+description: "Add PostQueen to Grok at grok.com/connectors with your MCP address, then ask Grok to write, schedule and check your posts."
+icon: "/images/brand/icon-grok.svg"
 ---
 
-## Working with her in Grok
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Grok is where a lot of drafts start. With PostQueen connected it is also where they ship: ask for two posts about the new menu and she writes the copy, generates the images and puts both on your calendar while you keep chatting.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-This is Grok on the web, iOS and Android. Add PostQueen as a custom connector at [grok.com/connectors](https://grok.com/connectors) (web: **+ → Connectors**; iOS/Android: **Settings → Connectors**).
+Grok is xAI's AI assistant at grok.com and in its mobile apps. Add PostQueen as a custom connector and Grok can list your channels, write and schedule posts, and tell you how your published posts did.
 
-[Grok Bot](/agents/grok-bot) is a different product. [Grok Build](/agents/grok-build) is the terminal coding agent. Connecting here does not install her on either.
+<div className="pq-visual pq-tint-lilac">
+  <img noZoom src="/images/site/agents/grok.webp" alt="A sample Grok chat with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
+</div>
 
-What PostQueen brings into the chat is its [21 MCP tools](/mcp/tools). They list your channels, read what each platform accepts, schedule the posts and report how published posts did. They do not delete a post or read channel numbers such as followers, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+## Before you start
 
-## Set up
+- **Plans:** connectors are available to all Grok users. On Grok Business and Enterprise, an admin adds the connector first.
+- **Platforms:** you add the connector on the web, at grok.com. xAI says connectors also work in the Grok iOS and Android apps, but documents adding a custom one only on the web.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Then paste this URL as a custom connector:
+<ApiKeyLocation />
 
+## Connect Grok
+
+<Steps>
+  <Step title="Copy your MCP address">
+    In PostQueen, open **Connections** and copy the address from the Grok card, or build it from your key:
+
+    ```text wrap
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+  </Step>
+  <Step title="Add a custom connector">
+    Go to [grok.com/connectors](https://grok.com/connectors), choose **New Connector**, then **Custom**.
+  </Step>
+  <Step title="Paste the address and save">
+    Paste the address as the MCP server URL and save. The key is part of the address, so there is no extra sign-in.
+  </Step>
+</Steps>
+
+<Note>
+**On Grok Business and Enterprise,** an admin first adds PostQueen at [console.x.ai](https://console.x.ai): choose the team, then **Grok Business > Connectors > + Add Connector > Other**, and enter the address. Members then connect it at grok.com/connectors.
+</Note>
+
+## Check that it works
+
+In a new Grok chat, ask: "List my PostQueen channels." Grok answers with the channels you connected in PostQueen. If it does not use PostQueen, open grok.com/connectors and check that the PostQueen connector is there and connected.
+
+## Good to know
+
+- **The address carries your API key.** Keep it private, like a password. If it leaks, a workspace admin rotates the key under **Connections > API Keys**, and you update the connector with the new address.
+- **Grok on grok.com is separate from Grok Bot and Grok Build.** Each one is set up on its own; see the last section.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From xAI's docs. The route above |
+| The Bearer header | `{{mcpBearerUrl}}` | Not documented: xAI does not say whether the custom connector form takes a header |
+| Sign in with PostQueen | Not offered | Not documented: xAI does not say how Grok registers for a sign-in, so use the key address |
+
+## Try this first
+
+```text wrap
+List my PostQueen channels. Then write a short Bluesky post about our weekend opening hours and save it as a draft for Saturday at 10am.
 ```
-https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
 
-<Warning>
-Your API key travels inside that connector URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
-</Warning>
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
-The full walkthrough covers Business admin provisioning and self-hosted URLs:
+## Troubleshooting
 
-<Card title="Grok connector setup" icon="plug" href="/mcp/clients/grok">
-  Step by step, from grok.com/connectors to your first tool call
-</Card>
+| Symptom | Fix |
+|---|---|
+| Grok does not use PostQueen | Check at grok.com/connectors that the PostQueen connector is there, then start a new chat. |
+| The key is refused | Copy the address again from the Grok card on **Connections**, or the key from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The address with your key leaked | A workspace admin rotates the key under **Connections > API Keys**. Then update the connector. |
+| On Business or Enterprise, you cannot add it | An admin adds it first at console.x.ai under **Grok Business > Connectors**. |
+| You set it up in Grok, but Grok Bot or Grok Build does not see it | Each product is set up on its own. Open its page below. |
 
-Once she is on, ask Grok to list your connected channels. If it calls `integrationList` and hands back your accounts, you are connected.
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
-## 👑 A week planned from Grok
+## Is it the same as Grok Bot or Grok Build?
 
-> **You:** Plan five posts across next week for X and LinkedIn and schedule them for 9am each day.
+No. xAI has three products with Grok in the name, and each one connects to PostQueen on its own:
 
-> **Grok:** Reading your channels and what each one accepts, then scheduling with PostQueen.
+| Product | What it is | How it connects |
+|---|---|---|
+| **Grok** (this page) | xAI's assistant at grok.com and in its mobile apps | A custom connector at grok.com/connectors |
+| [Grok Bot](/agents/grok-bot) | An always-on AI teammate with its own cloud computer | Ask in chat, key in the secure prompt |
+| [Grok Build](/agents/grok-build) | xAI's coding agent for the terminal | One `grok mcp add` command |
 
-> `integrationList` running...
-
-> `integrationSchema` running for x, linkedin...
-
-> `integrationSchedulePostTool` running...
-
-> 5 posts scheduled across X and LinkedIn, Monday to Friday at 9:00 AM. Every one is on your calendar if you want to change the wording.
-
-Want an image with a post? `generateImageTool` produces one. Not ready for one of them to publish? Ask for drafts, and the call carries `type` as `draft` instead of `schedule`.
-
-## Learn more
-
-<CardGroup cols={2}>
-  <Card title="Grok setup over MCP" icon="/images/brand/icon-grok.svg" href="/mcp/clients/grok">
-    Custom connector at grok.com/connectors
-  </Card>
-  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Cloud agent. Add the server in the Bot chat.
-  </Card>
-  <Card title="Grok Build" icon="/images/brand/icon-grok.svg" href="/agents/grok-build">
-    Terminal agent. grok mcp add, not grok.com.
-  </Card>
-  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 21 tools Grok gains once the connector is on
-  </Card>
-</CardGroup>
+<NextStepsAgent />

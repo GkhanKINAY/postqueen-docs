@@ -1,158 +1,107 @@
 ---
-title: Abuse Protection and Rate Limits
-description: 'Sign-in rate limiting, Cloudflare Turnstile, passwordless login and the API hourly cap'
-icon: 'gauge-high'
+title: "Abuse protection and rate limits"
+description: "The sign-in rate limits a self-hosted PostQueen applies by default, how to change them, the Cloudflare Turnstile captcha, passwordless sign-in, the public API and upload caps, and the Farcaster signer routes."
+icon: "gauge"
 ---
 
-The endpoints anyone can reach without signing in, sign-in, sign-up, password reset and one-time
-codes, are rate limited out of the box. You do not have to configure anything for that to work.
-This page is for when you want to tighten it, loosen it, or add a captcha.
+The routes anyone can reach without signing in (sign-in, sign-up, password reset and one-time codes) are rate limited out of the box. Nothing needs configuring for that. This page is for tightening or loosening the limits, adding a captcha, and the other hourly caps.
 
-## What is already on
+## Sign-in rate limits
 
-Rate limiting needs no configuration and no secret. Each protected action is counted twice, once
-per email address and once per IP address, over a rolling window. Whichever ceiling is hit first
-starts refusing requests.
+Each protected action is counted twice over a rolling 15-minute window: once per email address and once per IP address. Whichever limit is reached first refuses further requests until the window moves on.
 
-| Action | Per email | Per IP |
-| --- | --- | --- |
-| Requesting a one-time code | 5 | 30 |
-| Verifying a one-time code | 10 | 60 |
-| Signing in | 20 | 60 |
-| Registering | 5 | 20 |
-| Password reset | 5 | 20 |
+| Action | Name | Per email | Per IP |
+|---|---|---|---|
+| Requesting a one-time code | `otp_request` | 5 | 30 |
+| Entering a one-time code | `otp_verify` | 10 | 60 |
+| Signing in with a password | `login` | 20 | 60 |
+| Signing up | `register` | 5 | 20 |
+| Requesting a password reset | `forgot` | 5 | 20 |
+| Changing the password | `password_change` | 5 | 20 |
+| Changing the email address | `email_change` | 5 | 20 |
+| Linking another sign-in method to an account | `identity_link` | 5 | 20 |
 
-The window is 15 minutes.
+The sign-in limits are loose on purpose: they stop credential stuffing and mail bombing, and an office behind one shared address should never reach them.
 
-<Note>
-The sign-in limits are deliberately loose. They exist to stop credential stuffing and mail
-bombing, not to punish someone mistyping their password, and a shared office connection should
-never reach the IP ceiling in normal use.
-</Note>
+With `REDIS_URL` set, as in every standard install, the counters live in Redis and are shared by every backend. Without Redis, each process counts on its own. The backend logs which at start, for example `Abuse guard using Redis counters (shared across instances)`. If Redis becomes unreachable, requests are let through rather than locking everyone out.
 
-### Where the counters live
+### Change the limits
 
-If `REDIS_URL` is set, which it is in every standard install, counters live in Redis and are
-shared across every backend instance. Without it she falls back to counting inside a single
-process, which is correct for one instance and wrong the moment you run two. She says which one
-she chose in the startup log:
-
-```
-Abuse guard using Redis counters (shared across instances)
-```
-
-## Changing the limits
-
-Every number above can be overridden. Times are in milliseconds, counts are per window.
+Every number can be set. The variable is `GUARD_` + the action's name in capitals + `_EMAIL` or `_IP`:
 
 ```env
 GUARD_WINDOW_MS=900000
-
-GUARD_OTP_REQUEST_EMAIL=5
-GUARD_OTP_REQUEST_IP=30
-GUARD_OTP_VERIFY_EMAIL=10
-GUARD_OTP_VERIFY_IP=60
 GUARD_LOGIN_EMAIL=20
 GUARD_LOGIN_IP=60
 GUARD_REGISTER_EMAIL=5
 GUARD_REGISTER_IP=20
-GUARD_FORGOT_EMAIL=5
-GUARD_FORGOT_IP=20
+GUARD_PASSWORD_CHANGE_EMAIL=5
+GUARD_IDENTITY_LINK_IP=20
 ```
 
-Setting any one of them to `0` disables that dimension. For example `GUARD_LOGIN_IP=0` stops
-counting sign-in attempts per IP while still counting them per email address.
+`GUARD_WINDOW_MS` is the window in milliseconds. `0` turns off that count, so `GUARD_LOGIN_IP=0` stops counting sign-ins per IP while still counting them per email.
 
 <Warning>
-A value that is not a whole number falls back to the default rather than failing, so a typo
-leaves the original limit in place silently. If you change one, confirm the new behaviour rather
-than assuming it took.
+A value that is not a whole number falls back to the default without a warning, so a typo keeps the old limit. Test a change rather than assume it took.
 </Warning>
 
-## Adding a captcha
+## Add a captcha
 
-Cloudflare Turnstile can be required before an action goes through. It is off unless you
-configure it.
+[Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) can be required before an action goes through. It is off until you set it up.
 
 <Steps>
   <Step title="Create a Turnstile widget">
-    In the Cloudflare dashboard, under Turnstile, add a widget for your domain. You get a site
-    key and a secret key.
+    In the Cloudflare dashboard, add a Turnstile widget for your domain. You get a site key and a secret key.
   </Step>
-
   <Step title="Set both keys">
     ```env
     TURNSTILE_SITE_KEY=your-site-key
     TURNSTILE_SECRET=your-secret-key
     ```
 
-    <Warning>
-    **Both, or neither.** The site key alone renders the widget in the browser, but with no
-    secret there is nothing to check the answer against, so it is decorative. Verification only
-    engages when `TURNSTILE_SECRET` is set.
-    </Warning>
+    Set both. The site key alone shows the widget, but without the secret nothing checks the answer.
   </Step>
-
-  <Step title="Choose which actions it guards">
-    By default only one-time code requests require a captcha. Change that with a comma separated
-    list:
+  <Step title="Choose the actions it guards">
+    By default only `otp_request` asks for the captcha. List others by name, separated by commas:
 
     ```env
     GUARD_CAPTCHA_ACTIONS=otp_request,register,forgot
     ```
-
-    The names you can use are `otp_request`, `otp_verify`, `login`, `register` and `forgot`.
   </Step>
 </Steps>
 
 ## Passwordless sign-in
 
-Instead of a password, she can mail a one-time code:
-
 ```env
 PASSWORDLESS_LOGIN=true
 ```
 
-This one is compared against the literal string `true`, so any other value leaves it off.
+People then sign in with a one-time code sent by email. It is compared against the exact string `true`, and it needs working [email](/configuration/emails): without a provider the codes never arrive and nobody can sign in.
 
-<Warning>
-It needs working email. With no provider configured the code is never delivered and nobody can
-sign in. Set up [Email Notifications](/configuration/emails) first.
-</Warning>
+## Public API and upload caps
 
-The one-time code endpoints are the most attractive ones to abuse, which is why they carry the
-tightest limits above and are the default target for the captcha.
+Separate from the sign-in limits, two hourly caps apply per workspace:
 
-## The public API hourly cap
+| Variable | What it counts | Default |
+|---|---|---|
+| `API_LIMIT` | Requests to `POST /public/v1/posts`, whatever the number of posts in each. A request refused with `400` counts too | 90 per hour. The Compose file sets 30. |
+| `UPLOAD_LIMIT` | Uploads. Each upload route keeps its own count | 300 per hour |
 
-Separate from all of the above, post creation through the public API is capped per hour, per
-organization. It defaults to 90 requests per hour and is set with:
+They are counted separately, so a folder of files added to the media library never uses up the posting cap. The other public API routes and posts made in the app are not counted. With Redis, the counts are shared by every backend. A request over the cap is answered with `429`: see [Limits and errors](/public-api/limits-and-errors).
 
-```env
-API_LIMIT=30
-```
+## Farcaster signer routes
 
-Posting from the web interface is not counted.
+Connecting Farcaster uses two public routes: one creates a Neynar managed signer, the other checks whether the person approved it. Both are limited per client address, with numbers fixed in the code:
 
-Uploads have an hourly allowance of their own, 300 per organization unless you change it. It
-covers `POST /public/v1/upload`, `/public/v1/upload-from-url` and the uploads you make in the app.
-Keeping it apart means choosing a folder of files in the media library never runs into the posting
-cap, while one account still cannot push unlimited files through the upload routes.
+| Route | Limit |
+|---|---|
+| `POST /auth/farcaster/signer`, which creates a signer at Neynar | 30 per hour |
+| `GET /auth/farcaster/signer`, which the approval window checks every two seconds | 1,000 per hour |
 
-```env
-UPLOAD_LIMIT=300
-```
-
-Before v3.5.2 uploads drew on `API_LIMIT` instead. See [Public API](/public-api/introduction) for
-what counts against each.
+The client address is the **last** entry of the `X-Forwarded-For` header, the one added by the nginx inside the container, so a client cannot choose its own count by sending the header. Behind a reverse proxy of your own, that last entry is the proxy's address as the container sees it. Everyone then shares one count, which allows 30 new Farcaster connections per hour across the whole install.
 
 ## Related
 
-<CardGroup cols={2}>
-  <Card title="Close sign-ups" icon="user-lock" href="/configuration/reference">
-    `DISABLE_REGISTRATION` stops new accounts entirely, which beats rate limiting them
-  </Card>
-  <Card title="Email notifications" icon="envelope" href="/configuration/emails">
-    Needed for passwordless sign-in and password resets
-  </Card>
-</CardGroup>
+- [Deploy to a server](/installation/production): `DISABLE_REGISTRATION` closes sign-up entirely
+- [Email](/configuration/emails): needed for passwordless sign-in and password resets
+- [Configuration reference](/configuration/reference#limits-and-safety)

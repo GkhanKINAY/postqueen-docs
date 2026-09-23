@@ -1,126 +1,114 @@
 ---
-title: Traefik + Docker Compose
-description: 'Configure Traefik as a reverse proxy for PostQueen'
-icon: 'route'
+title: "Traefik"
+description: "Run Traefik v3 in the same Compose project as PostQueen, route your domain to it with container labels, and get a Let's Encrypt certificate."
+icon: "route"
 ---
 
-Traefik is configured with labels on the container rather than a separate config file, which
-makes it a natural fit if you already run it in front of your other containers. If you do not,
-[Caddy](/reverse-proxies/caddy) is less work for the same result.
+import ComposePublicUrls from '/snippets/compose-public-urls.mdx';
+import RestartService from '/snippets/restart-service.mdx';
 
-If you are not sure what a reverse proxy is or why she needs one,
-[Domain and HTTPS](/installation/domain-and-https) explains it first.
+Traefik reads its routes from labels on the containers, so it fits when it already sits in front of your other Docker services. If it does not, [Caddy](/installation/domain-and-https#set-up-caddy) is less work for the same result.
 
-## Which port, and why
-
-| Route to her | Port | Reason |
-|---|---|---|
-| Traefik, on this page | `5000` | Traefik does not go through the host. It reaches the container directly over the Docker network, so it uses the port she actually listens on inside the container. |
-| Everywhere else in these guides | `4007` | That is where Docker Compose publishes her on the host. |
-
-Both numbers are right, for different routes to the same place.
+Traefik reaches PostQueen over the Docker network, not through the host. It therefore talks to port **5000**, the port PostQueen listens on inside the container, and the `4007` mapping is no longer needed.
 
 ## Set it up
 
 <Steps>
-  <Step title="Add Traefik to your Docker Compose file">
-    ```yaml
-    version: '3.8'
+  <Step title="Add Traefik and the labels">
+    Edit `docker-compose.yaml` from the [Compose repository](https://github.com/GkhanKINAY/postqueen-docker-compose). Add labels to the `postqueen` service, remove its `ports:` lines, and add a `traefik` service:
+
+    ```yaml docker-compose.yaml
     services:
       postqueen:
-        ##
-        ## Include all the other configuration from the standard compose example.
-        ##
-
+        # ...everything else stays as shipped, minus the ports: lines
         labels:
-          # Required. The Traefik service below runs with exposedbydefault=false,
-          # so without this line Traefik ignores the container entirely and the
-          # four labels underneath never become a router.
           - "traefik.enable=true"
-          # Router for main PostQueen entrypoint (on port 5000)
-          - "traefik.http.routers.postqueen.rule=Host(`postqueen.example.com`)"  # Replace with your domain
-          - "traefik.http.services.postqueen.loadbalancer.server.port=5000"  # Internal port for postqueen
-          - "traefik.http.routers.postqueen.entrypoints=websecure"  # PostQueen requires HTTPS
-          - "traefik.http.routers.postqueen.tls=true"
-
+          - "traefik.http.routers.postqueen.rule=Host(`postqueen.example.com`)"
+          - "traefik.http.routers.postqueen.entrypoints=websecure"
+          - "traefik.http.routers.postqueen.tls.certresolver=letsencrypt"
+          - "traefik.http.services.postqueen.loadbalancer.server.port=5000"
 
       traefik:
-        image: "traefik:v2.9"
-        container_name: "traefik"
+        image: traefik:v3
+        container_name: traefik
+        restart: always
         command:
-          #- "--log.level=DEBUG"
-          - "--api.insecure=true"
-          - "--api.dashboard=true"
           - "--providers.docker=true"
           - "--providers.docker.exposedbydefault=false"
+          - "--providers.docker.network=postqueen-docker-compose_postqueen-network"
+          - "--entrypoints.web.address=:80"
+          - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
           - "--entrypoints.websecure.address=:443"
+          - "--entrypoints.websecure.transport.respondingTimeouts.readTimeout=600s"
+          - "--certificatesresolvers.letsencrypt.acme.email=you@example.com"
+          - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+          - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
         ports:
+          - "80:80"
           - "443:443"
         volumes:
           - "/var/run/docker.sock:/var/run/docker.sock:ro"
+          - "traefik-letsencrypt:/letsencrypt"
         networks:
           - postqueen-network
+
+    volumes:
+      traefik-letsencrypt:
     ```
 
-    <Warning>
-    Because Traefik reaches her over the Docker network, the `ports:` mapping on the PostQueen
-    service is no longer needed and is worth removing. Leaving it in place publishes her on host
-    port 4007 as well, which bypasses your proxy and your HTTPS.
-    </Warning>
+    Put your domain in the `Host` rule and your address in `acme.email`. Keep the existing `volumes:` entries and add `traefik-letsencrypt` to them.
+
+    - `traefik.enable=true` is required, because `exposedbydefault=false` makes Traefik ignore every container without it.
+    - Removing `ports:` from `postqueen` matters: left in place, PostQueen also answers on host port 4007 over plain HTTP, past Traefik.
+    - `readTimeout` is raised because Traefik stops reading a request after 60 seconds by default, which cuts off a large upload on a slow connection. PostQueen accepts files up to 1 GB.
+    - `providers.docker.network` tells Traefik which network to reach PostQueen on, since the `postqueen` container is on two. It takes the network's full name, which Compose prefixes with the project folder's name: `docker network ls` shows it.
   </Step>
+  <Step title="Start it">
+    ```bash
+    docker compose up -d
+    docker compose logs -f traefik
+    ```
 
-  <Step title="Tell PostQueen her address">
-    Routing alone is not enough. She also has to know the address people use, because sign-in
-    origins and every social network's return address are built from it. Put them in `.env`:
-
-    <Snippet file="compose-public-urls.mdx" />
-
-    Apply it:
-
-    <Snippet file="restart-service.mdx" />
+    Traefik requests the certificate as soon as it sees the router. The domain has to resolve to this server and port 80 has to be open for the challenge.
   </Step>
+  <Step title="Tell PostQueen its address">
+    <ComposePublicUrls />
 
+    <RestartService />
+  </Step>
   <Step title="Check it">
     ```bash
     curl -I https://postqueen.example.com
     ```
 
     <Check>
-    `HTTP/2 200` means the router and PostQueen are both working.
+    `HTTP/2 200` with a certificate from Let's Encrypt, and a sign-in that holds in the browser.
     </Check>
-
-    <Warning>
-    **This block does not get you a real certificate.** `tls=true` turns TLS on, but with no
-    certificate resolver configured Traefik serves its own self-signed default, so browsers warn
-    and `curl` needs `-k`. Add a resolver, usually ACME against Let's Encrypt, and name it on the
-    router with `traefik.http.routers.postqueen.tls.certresolver`. Traefik's own
-    [ACME documentation](https://doc.traefik.io/traefik/https/acme/) has the entrypoint and storage
-    settings that go with it.
-
-    [Caddy](/reverse-proxies/caddy) does this part for you, which is why it is the shorter path.
-    </Warning>
-
-    <Warning>
-    A 404 from Traefik instead is usually a missing `traefik.enable=true` label, since the
-    service above runs with `exposedbydefault=false`.
-    </Warning>
   </Step>
 </Steps>
 
-## Next steps
+Traefik does not buffer responses and sets no body size limit by default, so streamed Copilot replies and large uploads pass as they are. Do not attach a `buffering` middleware to this router.
 
-<CardGroup cols={2}>
-  <Card title="Caddy" icon="shield" href="/reverse-proxies/caddy">
-    The shorter path, with certificates handled for you.
-  </Card>
-  <Card title="Nginx" icon="server" href="/reverse-proxies/nginx">
-    The right choice when you already run Nginx for other things.
-  </Card>
-  <Card title="WebSockets and dev tunnels" icon="bolt" href="/reverse-proxies/websockets-and-dev">
-    Path routing for split deployments, and HMR behind a tunnel.
-  </Card>
-  <Card title="Self-host gotchas" icon="wrench" href="/troubleshooting/self-host">
-    What tends to break once she is behind a proxy.
-  </Card>
-</CardGroup>
+## If it does not work
 
+<AccordionGroup>
+  <Accordion title="404 page not found from Traefik">
+    The router was not created. The usual cause is a missing `traefik.enable=true` label, or a `Host` rule that does not match the name you open.
+  </Accordion>
+  <Accordion title="The browser warns about the certificate">
+    Traefik is serving its default self-signed certificate because the ACME request failed. `docker compose logs traefik` gives the reason, most often DNS that does not point here yet or port 80 blocked.
+  </Accordion>
+  <Accordion title="curl http://localhost:4007 no longer answers">
+    That is expected once `ports:` is removed: PostQueen is reachable only through Traefik. To check the container itself: `docker compose exec postqueen node -e "require('http').get('http://localhost:5000/',r=>console.log(r.statusCode))"` prints `200`.
+  </Accordion>
+  <Accordion title="Gateway Timeout or Bad Gateway">
+    Traefik cannot reach the container. Check that both services are on `postqueen-network`, that `providers.docker.network` names it as `docker network ls` shows it, and that the service label says port `5000`, not 4007.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Domain and HTTPS](/installation/domain-and-https)
+- [Traefik's ACME documentation](https://doc.traefik.io/traefik/reference/install-configuration/tls/certificate-resolvers/acme/)
+- [Split deployments](/reverse-proxies/split-deployments)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)

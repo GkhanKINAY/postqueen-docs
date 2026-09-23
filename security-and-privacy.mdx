@@ -1,0 +1,128 @@
+---
+title: "Security and privacy"
+description: "How PostQueen connects to your channels, what it keeps and how it protects it, and how to take its access away: one channel, one app or your whole account."
+icon: "shield-check"
+keywords:
+  - security
+  - privacy
+  - credentials
+  - delete account
+  - data deletion
+  - revoke access
+---
+
+import NeverShare from '/snippets/never-share.mdx';
+
+PostQueen needs access to your channels to publish for you. This page says how it gets that access, what it keeps, how it protects it and how you take it away. The legal detail, including every kind of data and how long it is kept, is in the [Privacy Policy](https://postqueen.ai/privacy-policy).
+
+## How PostQueen connects to a channel
+
+PostQueen publishes through each network's own API. It does not drive a browser or read pages as you.
+
+| Networks | How you connect, and what PostQueen keeps |
+|---|---|
+| Facebook, Instagram, Threads, TikTok, X, YouTube | On the network's own sign-in screen. PostQueen keeps a token with the permissions you approved there, and never sees your password. |
+| Bluesky, WordPress, DEV, Hashnode, Listmonk | With a credential you create for PostQueen: an app password (Bluesky), an Application Password (WordPress), an API key (DEV), a personal access token (Hashnode) or an API user's token (Listmonk). You can revoke it where you created it without changing your own password. |
+| Lemmy | With your username and password on the instance, because Lemmy offers no other way in. |
+| Nostr | With your private key, which PostQueen needs to sign your notes. |
+| Moltbook | PostQueen registers an agent for you and keeps the agent's key from Moltbook. You never type one in. |
+
+Networks marked Soon are not in the table because they cannot be connected yet. Skool has no public API, so when it opens it will connect through the PostQueen browser extension with your own Skool session, and [its page](/channels/skool) explains what that means for your account.
+
+<NeverShare />
+
+## How PostQueen protects your account and data
+
+<CardGroup cols={2}>
+  <Card title="Encrypted in transit" icon="lock">
+    Every connection to the app, the API and the MCP server uses TLS.
+  </Card>
+  <Card title="Passwords are hashed" icon="key-round">
+    Passwords and sign-in codes are stored only as one-way hashes. A sign-in code stops working after 10 minutes.
+  </Card>
+  <Card title="Sign-in is guarded" icon="shield-check">
+    Sign-in has rate limits and a bot check. Changing your password signs out every session that existed before.
+  </Card>
+  <Card title="Access-controlled servers" icon="server">
+    Your data is kept on access-controlled servers in the EU that only the people who run PostQueen can reach.
+  </Card>
+  <Card title="Cards stay with Stripe" icon="credit-card">
+    You type your card into Stripe's payment form. PostQueen does not receive or store the card number.
+  </Card>
+  <Card title="Your channels' data stays yours" icon="eye-off">
+    What PostQueen receives from your channels is used only to publish your posts and show you their results. It is never sold or used for advertising.
+  </Card>
+</CardGroup>
+
+<Tip>
+Use a password you use nowhere else, or sign in with **Continue with Google** or **Email me a sign-in code**.
+</Tip>
+
+## Who can do what in a workspace
+
+The workspace owner is its Super Admin. Invited people are an Admin or a User. [Team](/using/team) explains the roles.
+
+| Action | Who can do it |
+|---|---|
+| Reveal or rotate the API key | Admin and Super Admin. Users see the key masked. |
+| Approve an app that signs in to PostQueen, or revoke one | Admin and Super Admin |
+| Change the plan, cancel it or see invoices | Admin and Super Admin |
+| Invite or remove team members | Admin and Super Admin |
+| Connect channels, write and schedule posts | Everyone in the workspace |
+
+## Your API key and connected apps
+
+The API key acts for the whole workspace. Anyone who has it can read, create and delete posts through the API and the CLI, so keep it like a password. The MCP address `{{mcpKeyUrl}}` carries the key in it: do not paste it anywhere public, and do not share screenshots of it.
+
+- **If the key leaks, rotate it.** An Admin opens **Connections > API Keys** and chooses **Rotate key**. The old key stops working at once. Give the new key to the agents and scripts that still need it.
+- **Revoke an app you no longer use.** Apps you approved through sign-in are listed in **Connections > Approved Apps**. Choose **Revoke** to cut one off. An approved app keeps its access until it is revoked, or until the person who approved it leaves the workspace.
+
+## When you remove a channel
+
+**Delete channel**, on the channel's page under **Access**, stops PostQueen publishing to it and discards the credentials PostQueen kept for it, so they cannot be used again. It also deletes that channel's posts in PostQueen: scheduled posts, drafts and the records of published posts. [Connect a channel](/using/connect-a-channel#disable-or-delete-a-channel) has the steps.
+
+<Warning>
+To cut PostQueen off at the network too, remove it in the network's own settings, in its list of connected apps: deleting the channel does not do that. For a network you connected with an app password, a key or a token, delete that credential where you created it. [Delete My Account](https://postqueen.ai/delete-my-account) has the steps for each network.
+</Warning>
+
+Revoking at the network first works too: PostQueen can no longer publish to that account, and the channel shows **Needs reconnecting** until you reconnect or delete it.
+
+## When you delete your account
+
+Choose **Delete Account** in **Settings > Account**: [Settings](/using/settings#delete-your-account) has the steps. What happens next:
+
+| When | What happens |
+|---|---|
+| At once | You are signed out and cannot sign in again. The plans of the workspaces you own are canceled, scheduled posts are canceled, and the credentials of every channel are discarded so they cannot be used. |
+| Within 30 days | Posts, drafts, media, comments, statistics, AI Copilot conversations and everything else in those workspaces are erased from PostQueen's databases, file storage and backups. |
+| Kept by law | Invoices and payment records, kept for 7 years as accounting law requires. |
+| Kept to stop repeat trials | A one-way hash of each connected social account's ID. It holds no name, content or token. |
+
+Posts that are already live stay on the networks. Delete them there first if you want them gone. Workspaces you only belong to carry on without you. [Delete My Account](https://postqueen.ai/delete-my-account) is the full statement.
+
+## Your data
+
+- **A copy of your data.** Email [support@postqueen.ai](mailto:support@postqueen.ai) from the address on your account and ask for it. You get your account details, posts and media in a common machine-readable format within one month.
+- **Deleting only some data.** Email support and say what to erase, for example everything PostQueen received from one network.
+- **AI features.** The AI Copilot and AI images send what you ask for to the AI provider that writes the answer or draws the image. The [Privacy Policy](https://postqueen.ai/privacy-policy) names each provider and what it receives.
+
+## Report a security problem
+
+Email [support@postqueen.ai](mailto:support@postqueen.ai) with what you found, where and when. Do not open a public GitHub issue for it. A person reads every message and replies.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Connections" icon="cable" href="/using/connections">
+    The API key, approved apps and the agent cards.
+  </Card>
+  <Card title="Team" icon="users" href="/using/team">
+    Roles, invites and who can do what.
+  </Card>
+  <Card title="Connect a channel" icon="plug" href="/using/connect-a-channel">
+    Reconnect, disable or delete a channel.
+  </Card>
+  <Card title="Support" icon="headset" href="/support">
+    How to reach a person.
+  </Card>
+</CardGroup>

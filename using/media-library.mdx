@@ -1,0 +1,110 @@
+---
+title: "Upload and manage media"
+sidebarTitle: "Media library"
+description: "Upload images and video to your workspace's library, add alt text and video thumbnails, import from Reel.Farm, and delete what you no longer need."
+icon: "images"
+---
+
+**Where:** **Media** in the left rail. The same library opens in **Create Post** from **Insert Media** under the post editor.
+
+Media holds every image and video in your workspace: what you upload, what you import and what you generate with AI. Any post can use a file from it.
+
+<Frame>
+  <img className="pq-shot" src="/images/app/media-library.webp" alt="The Media page with the upload area, the All, Images and Video filters and a grid of images" />
+</Frame>
+
+## Upload files
+
+<Steps>
+  <Step title="Open Media">
+    Choose **Media** in the left rail.
+  </Step>
+  <Step title="Add your files">
+    Drag files onto the page, paste them, or choose **Upload**. On a computer the drop zone reads "Drop files here, paste or browse".
+  </Step>
+  <Step title="Wait for the upload to finish">
+    Each file gets a tile that counts up to 100%. Keep the window open until the upload finishes. A video then shows **Processing** while PostQueen prepares it, and appears in the grid when it is ready.
+  </Step>
+</Steps>
+
+| Type | Formats you can upload |
+|---|---|
+| Images | JPG, PNG, GIF and WebP |
+| Video | MP4, and MOV, which PostQueen converts to MP4 |
+
+One upload can be up to 1 GB, counting every file you add at once. Each network sets its own, smaller limits on what it publishes: the network's page under [Channels](/channels/overview) lists them.
+
+### How PostQueen prepares a video
+
+While a video shows **Processing**, PostQueen checks it. A video that already meets all of these is not re-encoded:
+
+- H.264 video in 8-bit 4:2:0 color, and AAC audio or no audio
+- At most 1080 pixels on the short side and 1920 on the long side
+- At most 60 frames per second
+- Upright, with no rotation flag, and not HDR
+
+Any other video is converted to an MP4 that meets them: it is scaled down without changing its shape, capped at 60 frames per second, turned upright, and HDR is converted to standard color. A video that already fits keeps its encoding, and is only repackaged when needed as an MP4 that starts playing at once. To keep your own encoding, export the video with these settings before you upload it.
+
+## Find and preview a file
+
+- **All**, **Images** and **Video** filter the library. **Grid** and **List** switch the view; the list shows each file's alt text, format, upload date and size.
+- Click a file to preview it.
+- Each file has a ⋯ button with **Preview**, **Download**, **Change alt text** and **Delete**.
+- Files are listed newest first, 18 to a page. The Media page has no search box.
+
+## Add alt text and a video thumbnail
+
+<Steps>
+  <Step title="Open the file's settings">
+    On the file, choose ⋯ > **Change alt text**. In Create Post, hover a file attached to the post and choose **Edit** instead.
+  </Step>
+  <Step title="Describe the file">
+    Type a description in **Alt text**. Networks that support alt text show it to screen readers.
+  </Step>
+  <Step title="Pick a thumbnail for a video">
+    For an MP4, choose **Create Thumbnail** (or **Edit Thumbnail**), play the video to the frame you want and choose **Select This Frame**. **Clear Thumbnail** removes it.
+  </Step>
+  <Step title="Save">
+    Choose **Save**. PostQueen confirms with "Alt text saved".
+  </Step>
+</Steps>
+
+## Import from Reel.Farm
+
+Choose **Import** next to **Upload**, then **Browse** on Reel.Farm. Select the videos you want and choose **Import Selected**. The **Import** window lists only services you have connected under **Settings > Integrations**: [AI images and media integrations](/using/ai-images-and-video) shows how to connect one.
+
+## Delete a file
+
+Choose ⋯ > **Delete** on the file and confirm "Are you sure you want to delete the image?". The file leaves the library, and PostQueen confirms with "Media deleted".
+
+## Good to know
+
+- The library belongs to the workspace, so everyone in it sees the same files.
+- In Create Post, **Insert Media** opens this library as a picker. Click files to select them in order, then choose **Add selected media**. A file already on the post shows a check mark and cannot be added twice.
+- An image you generate with **AI Image** is saved here as well as attached to the post.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| “File is too large. Maximum size allowed is 1GB.” | Upload a smaller file, or compress the video first. |
+| “Upload size limit exceeded. Maximum 1 GB per upload session.” | Add fewer files at once. |
+| “The video could not be converted.” | Convert the video to MP4 yourself and upload it again. |
+| “Failed to import media” | Check the service's key under **Settings > Integrations**, then import again. |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Create a post" icon="square-pen" href="/using/create-a-post">
+    Attach files from the library to a post and schedule it.
+  </Card>
+  <Card title="AI images and video" icon="sparkles" href="/using/ai-images-and-video">
+    Generate an image or a video for a post, or connect HeyGen and Reel.Farm.
+  </Card>
+  <Card title="Channels and their status" icon="layout-grid" href="/channels/overview">
+    The media each network accepts and its limits.
+  </Card>
+  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
+    The monthly AI image and video credits on each plan.
+  </Card>
+</CardGroup>

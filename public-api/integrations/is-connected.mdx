@@ -1,6 +1,7 @@
 ---
-title: 'Check Connection'
-description: 'Check that the API key still authenticates against this workspace.'
-openapi: 'GET /is-connected'
+title: "Check the API key"
+description: "A call that only succeeds with a valid key, for testing a key or a token."
+openapi: "GET /is-connected"
 ---
 
+A `401` names the problem: `No API Key found`, `Invalid API key`, `Invalid OAuth token` or `No subscription found`. [Limits and errors](/public-api/limits-and-errors) says what to do about each.

@@ -1,0 +1,121 @@
+---
+title: "YouTube"
+description: "Connect YouTube to PostQueen, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/youtube.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="in-review">Until Google's audit of PostQueen's app passes, every upload is private, and all PostQueen customers share a limit of 100 uploads a day.</ChannelStatus>
+
+Upload videos to your YouTube channel on schedule with their title, description, tags, visibility, made-for-kids setting and your own thumbnail. PostQueen uploads them through YouTube's official API when their time comes.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/youtube.webp" alt="A new YouTube post in the PostQueen composer, with the post types YouTube takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    A title of 2 to 100 characters and a description of up to 5,000 bytes, neither with `<` or `>`. Accented letters, emoji and non-Latin scripts take 2 to 4 bytes each.
+  </Card>
+  <Card title="Media" icon="image">
+    One MP4 video per post, plus an optional JPEG or PNG thumbnail.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Video upload, set to public, unlisted or private, with up to 3 tags.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    7, 30 or 90 days: views by day, watch time, average view duration and percentage, subscribers gained and lost, and likes, plus views, likes, comments and favorites for each video.
+  </Card>
+</CardGroup>
+
+**Not supported:** Shorts as a separate format, Community posts, playlists, categories, premieres, scheduling inside YouTube, and follow-up comments.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| Exactly one video | “You need one media” |
+| The file is an MP4 | “Item must be a video” |
+| No `<` or `>` in the title | “YouTube titles cannot contain < or >” |
+| No `<` or `>` in the description | “YouTube descriptions cannot contain < or >” |
+| Description up to 5,000 bytes | “YouTube descriptions can be at most 5,000 bytes, and accented letters, emoji and non-Latin scripts take 2 to 4 bytes each” |
+| Tags up to 500 characters in total | “The maximum allowed is 500 characters in total for all tags.” |
+
+The title is also held to 2 to 100 characters. The composer's counter shows the description in characters while YouTube measures it in bytes, so a description in another script can be refused before the counter reaches 5,000.
+
+Video length and the thumbnail are YouTube's rules, and PostQueen does not check them first. YouTube takes videos up to 15 minutes on an unverified channel and up to 12 hours once the channel is verified, and custom thumbnails only on verified channels. A thumbnail problem is reported after the video is already up, for example "Your account is not verified, we have uploaded your video but we could not set the thumbnail. Please verify your account and try again."
+
+## Connect YouTube
+
+The Google account you sign in with must already own a YouTube channel.
+
+<Note>
+YouTube is in review. Until Google's audit of PostQueen's app passes, every video goes up as private, whatever visibility you choose.
+</Note>
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **YouTube**.
+  </Step>
+  <Step title="Sign in with Google">
+    Sign in with the Google account that owns the channel, and approve every permission you are asked for. PostQueen needs all of them.
+  </Step>
+  <Step title="Pick the channel">
+    In **Select YouTube Channel**, choose the channel to connect.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
+
+## Post settings
+
+Each YouTube post in the composer has these settings. The post text is the video's description.
+
+- **Title**: 2 to 100 characters. Required.
+- **Type**: **Public**, **Private** or **Unlisted**. It starts on **Public**.
+- **Made for kids**: **No** or **Yes**. It starts on **No**.
+- **Tags**: up to 3 tags, 500 characters in total. A tag with a space counts 2 extra characters, because YouTube wraps it in quotes.
+- **Thumbnail**: an optional picture, set as the video's thumbnail right after the upload.
+
+The field names and values for the API are on [YouTube posting settings](/public-api/providers/youtube).
+
+## Comments and threads
+
+YouTube takes no follow-up comments or threads, so the composer offers no follow-up parts for a YouTube post.
+
+## Good to know
+
+- Your subscribers are always notified of a new upload.
+- The upload starts at the scheduled time. A large file takes a while to go up, and an interrupted upload resumes where it stopped, so it never leaves a broken video behind.
+- YouTube itself counts square or vertical videos up to 3 minutes as Shorts. There is no separate Shorts option.
+- The connection renews itself.
+- During the free trial, a YouTube account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="We couldn't find any YouTube channels connected to your account.">
+    The Google account you signed in with has no YouTube channel. Create one in YouTube, or sign in with the account that owns it, then connect again.
+  </Accordion>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    A permission was switched off on Google's screen. Connect the channel again and approve every permission.
+  </Accordion>
+  <Accordion title="You have reached your daily upload limit, please try again tomorrow.">
+    The shared daily upload limit was reached. Move the post to tomorrow.
+  </Accordion>
+  <Accordion title="You have to link your youtube account to your google account first.">
+    The Google account has no YouTube channel set up yet. Create the channel in YouTube, then schedule the post again.
+  </Accordion>
+  <Accordion title="Please re-authenticate your YouTube account">
+    Google no longer accepts the connection, for example after a password change or when access was removed in your Google account. Choose **Reconnect channel** in the channel's menu.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />

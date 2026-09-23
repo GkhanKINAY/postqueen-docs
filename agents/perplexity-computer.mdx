@@ -1,0 +1,116 @@
+---
+title: "Perplexity Computer"
+description: "Add PostQueen to Perplexity as a custom remote connector, then let Perplexity Computer write, schedule and check your posts, once or on a schedule."
+icon: "/images/brand/icon-perplexity.png"
+---
+
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
+
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
+
+Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a cloud sandbox, with a browser, files and your connected tools. Add PostQueen as a custom connector and Computer can draft posts from your research, schedule them and report how your published posts did.
+
+<div className="pq-visual pq-tint-lilac">
+  <img noZoom src="/images/site/agents/perplexity-computer.webp" alt="A sample Perplexity Computer chat with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
+</div>
+
+## Before you start
+
+- **Plans:** Pro, Max, Education Pro, Enterprise Pro and Enterprise Max; not Free. Computer tasks use credits: Max gets a monthly allowance, Pro a one-time bonus. On Enterprise, members add their own custom connectors only if an admin allows it.
+- **Platforms:** add the connector in Perplexity on the web. Computer runs on the web, in the iOS and Android apps, in the Comet browser, and from Slack, Teams and email.
+- **A PostQueen API key.** A workspace admin copies it from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect Perplexity Computer
+
+<Steps>
+  <Step title="Open Connectors">
+    In Perplexity on the web, open **Account settings**, then **Connectors**. Click **+ Custom connector** and choose **Remote**.
+  </Step>
+  <Step title="Fill in the connector">
+    Name it `PostQueen` and fill in the fields as below, with your key in the address:
+
+    ```text wrap
+    Name:           PostQueen
+    MCP Server URL: https://api.postqueen.ai/mcp/YOUR_API_KEY
+    Authentication: None
+    Transport:      Streamable HTTP
+    ```
+  </Step>
+  <Step title="Add and enable it">
+    Tick the acknowledgement box and click **Add**, then click the PostQueen card to enable it.
+  </Step>
+  <Step title="Turn it on in Computer">
+    In Computer, check that PostQueen is on under **Connectors**.
+  </Step>
+</Steps>
+
+<Note>
+**On Enterprise,** an admin first turns on **Allow members to add custom connectors** under **Enterprise settings**, then **Permissions**, or adds PostQueen for the whole organization there.
+</Note>
+
+## Check that it works
+
+Start a Computer task: "List my PostQueen channels." Computer answers with the channels you connected in PostQueen. If it does not use PostQueen, check that the connector is enabled under **Account settings > Connectors** and on under **Connectors** in Computer.
+
+## Good to know
+
+- **Keep Authentication on None.** The key is already in the address, and Perplexity's API Key option does not say which header it sends.
+- **Add it under Connectors, not under Settings > MCP servers.** That setting is for servers on your own device, which cloud Computer tasks do not use.
+- **Use the connector, not the PostQueen CLI.** Computer keeps saved keys in its Credential vault and never passes them into its sandbox.
+- **The address carries your API key.** Keep it private. If it leaks, a workspace admin rotates the key under **Connections > API Keys**, and you update the connector.
+- **Do not see + Custom connector?** Look for **Add a custom connection**: Perplexity's own pages use both names.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address, Authentication None | `{{mcpKeyUrl}}` | From Perplexity's docs. The route above |
+| The Bearer header | `{{mcpBearerUrl}}` | Not documented: Perplexity does not say which header its API Key option sends |
+| Sign in with PostQueen | Not offered | Not supported with Perplexity yet. Use the key address |
+
+## Try this first
+
+```text wrap
+List my PostQueen channels. Then read this week's posts on our blog and draft three short Bluesky posts from them. Save them in PostQueen as drafts, one a day from Monday at 9am.
+```
+
+The drafts appear on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
+
+## Run it on a schedule
+
+Computer runs Scheduled Tasks. Describe the recurring task in Computer; it proposes a schedule for you to confirm, and lists the task on its **Automations** dashboard. Scheduled Tasks can use every connector you linked to Computer, PostQueen included, and run at most once an hour.
+
+```text wrap
+Every Monday at 9am, draft three Bluesky posts from our latest blog articles and save them in PostQueen as drafts.
+```
+
+Source: [Perplexity, Scheduled Tasks in Computer](https://www.perplexity.ai/help-center/en/articles/11521526-perplexity-tasks).
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| PostQueen tools do not show up in a task | Click the PostQueen card under **Account settings > Connectors** to enable it, and check that it is on under **Connectors** in Computer. |
+| You added it under **Settings > MCP servers** | That setting is for servers on your own device. Add PostQueen as a custom connector under **Connectors** instead. |
+| The key is refused | Use the key address with **Authentication** set to **None**, and copy the key again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| On Enterprise you cannot add it | Ask an admin to turn on **Allow members to add custom connectors** under **Enterprise settings**, then **Permissions**. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+## Is it the same as Perplexity search?
+
+No. Two other Perplexity products share part of the name:
+
+| Product | What it is | How it connects |
+|---|---|---|
+| **Perplexity Computer** (this page) | Perplexity's agent that carries out tasks in a cloud sandbox | A custom remote connector |
+| Perplexity search | Perplexity's answer engine | Not covered here |
+| The Perplexity Computer MCP server | Lets other apps use Computer | It does not connect PostQueen to Perplexity |
+
+<NextStepsAgent />

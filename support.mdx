@@ -1,108 +1,105 @@
 ---
-title: Support
-description: 'Where to find help with PostQueen, and how to write a report that gets a fast answer'
-icon: 'headset'
+title: "Support"
+description: "How to reach a person at PostQueen, what to put in your message so the first reply solves it, and where billing, refund and account requests go."
+icon: "headset"
 keywords:
   - postqueen
   - support
+  - contact
   - billing
-  - help
+  - refund
+  - bug report
 ---
 
-Something is not working and you want a person to look at it. Here is where to go.
+**Where:** by email to [support@postqueen.ai](mailto:support@postqueen.ai). A person reads every message.
+
+Write from the email address on your PostQueen account, so support can find it without asking.
 
 <CardGroup cols={2}>
-  <Card title="GitHub Issues" icon="github" href="https://github.com/GkhanKINAY/postqueen-app/issues/new/choose">
-    Something is broken: a bug, an error, a crash. Screenshots and logs attached
+  <Card title="Email support" icon="mail" href="mailto:support@postqueen.ai">
+    Anything: a problem in the app, billing, refunds, your account, your data or a security concern.
   </Card>
-  <Card title="Email" icon="envelope" href="mailto:support@postqueen.ai">
-    Billing, your account, and anything you would not post publicly
+  <Card title="Known issues" icon="list-checks" href="/troubleshooting/known-issues">
+    Bugs we know about and have not fixed yet, each with a way around it.
   </Card>
 </CardGroup>
-
-## What is covered where
-
-| | Self-hosted | PostQueen Cloud |
-|---|---|---|
-| **A bug, an error, a crash** | Yes. Open a [GitHub issue](https://github.com/GkhanKINAY/postqueen-app/issues/new/choose) | Yes |
-| **"How do I do X?"** | Not covered | Yes |
-| **Billing and your account** | Nothing to bill | Email support |
-
-<Info>
-**Self-hosting is supported for defects, not for usage.** Find a bug and it goes on the issue
-tracker like any other: it gets read, and fixing it helps everyone running the same code. Working
-out how to do something with the product is a different job, and that is what a Cloud subscription
-pays for.
-
-There is no promised reply time on issues. Write the detail down while it is fresh.
-</Info>
 
 ## Check these first
 
-Most reports match one of these in a minute.
+Many questions already have an answer on one of these pages.
 
 <CardGroup cols={2}>
-  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/overview">
-    Sorted by symptom
+  <Card title="Common errors" icon="circle-alert" href="/troubleshooting/common-errors">
+    The messages the app shows, what each one means and what to do.
   </Card>
-  <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
-    The most common report, and how to tell the three causes apart
+  <Card title="A post did not go out" icon="triangle-alert" href="/troubleshooting/post-failed">
+    Why a post failed, and how to send it again without a duplicate.
   </Card>
-  <Card title="Known issues" icon="bug" href="/troubleshooting/known-issues">
-    Bugs we have already confirmed, with workarounds
+  <Card title="Known issues" icon="list-checks" href="/troubleshooting/known-issues">
+    Bugs PostQueen knows about, with a way around each one.
   </Card>
-  <Card title="FAQ" icon="circle-question" href="/faq">
-    The questions that come up most
+  <Card title="FAQ" icon="circle-question-mark" href="/faq">
+    Short answers to the questions support hears most.
   </Card>
 </CardGroup>
 
-## What to put in the report
+## What to put in your message
 
-Four short answers are usually all it takes. Cover them and the maintainer who opens your issue can
-go straight to the fix, instead of spending the first reply asking which browser you are on.
+The first reply can solve the problem when it has these details.
 
-<AccordionGroup>
-  <Accordion title="Goal — what you wanted to happen" icon="bullseye">
-    - *I want to schedule a post on Reddit at 6pm*
-    - *I want to run in a Linux container on a Raspberry Pi*
-    - *I want to use a custom domain name*
-  </Accordion>
+<Tabs>
+  <Tab title="In the app">
 
-  <Accordion title="Environment — browser, OS, install" icon="desktop">
-    For trouble in the web app the browser is what matters. For an install, your OS and how you installed it.
+    | Detail | Example |
+    |---|---|
+    | What you did, step by step | “In Create Post I picked my Bluesky channel and chose **Schedule**.” |
+    | What you expected | “The post to appear on Friday at 9:00.” |
+    | What happened instead, with the exact message | A screenshot, or the message copied word for word. |
+    | The channel and the time | The network, the account name, and the time with your time zone. |
+    | The workspace | Its name, when your account belongs to more than one. |
 
-    - *I am using Firefox on Windows 10*
-    - *I am using a Raspberry Pi 4 with Ubuntu 20.04, and Node version 18*
-    - *This is a fresh installation on a Mac*
-  </Accordion>
+  </Tab>
+  <Tab title="The API, the CLI or an agent">
 
-  <Accordion title="Changes — what moved before it broke" icon="clock-rotate-left">
-    - *I updated my browser to the latest version and now …*
-    - *I upgraded to the latest release and now …*
-    - *I think this used to work, but now …*
-  </Accordion>
+    | Detail | Example |
+    |---|---|
+    | The request or the command | The endpoint and body, or the full `postqueen` command. Write `YOUR_API_KEY` where the key was. |
+    | The answer | The status code and the response body, or the tool's reply in your agent. |
+    | The time | With your time zone, so support can find the request. |
+    | The version | For the CLI, the output of `postqueen --version`. For an agent, its name and how it connects. |
 
-  <Accordion title="Results — what you saw instead" icon="eye">
-    - *I see a blank screen*
-    - *I see an error message*
-    - *I see a 404 page*
-  </Accordion>
-</AccordionGroup>
+  </Tab>
+</Tabs>
+
+<Warning>
+Never send your API key, a password, a sign-in code or a card number, by email or anywhere else. Support never needs them. If a key was shared by mistake, an Admin can replace it with **Rotate key** under **Connections > API Keys**, and the old key stops working.
+</Warning>
 
 ## Billing, refunds and your account
 
-Write to [support@postqueen.ai](mailto:support@postqueen.ai) from the address on your account, and
-say what you expected against what happened instead. Closing the account or making a GDPR request
-goes to the same address.
+Email support from the address on the account for any of these. Most can also be done in the app.
 
-A charge is refunded in full if you ask within 30 days of it, on a monthly or a yearly plan. Say
-which charge it is: [Refunds](/cloud/subscription#refunds).
+| You want to | How |
+|---|---|
+| Get a refund | Email support within {{refundDays}} days of the charge. Any charge is refunded in full: [Refunds](/cloud/refunds). |
+| Cancel your plan | **Billing > Cancel subscription**, as an Admin or Super Admin: [Manage your subscription](/cloud/subscription#cancel). |
+| Change the card or get an invoice | **Billing > Open billing portal**: [Manage your subscription](/cloud/subscription). |
+| Delete your account | **Settings > Account > Delete Account**: [Settings](/using/settings#delete-your-account). |
+| Get a copy of your data | Email support and ask for it: [Security and privacy](/security-and-privacy#your-data). |
 
-<Warning>
-Leave API keys, OAuth secrets and card numbers out of the message. We do not need any of them to
-help you.
-</Warning>
+If you cannot sign in at all, email support from the address on the account and say what happens when you try.
 
-Many *"I was charged but…"* cases turn out to be a script blocker stopping Stripe.js, or a private
-window throwing localStorage away: [billing troubleshooting](/troubleshooting/billing).
+## A security concern
 
+Found something that looks like a security problem, or think someone else has access to your account? Email [support@postqueen.ai](mailto:support@postqueen.ai) with what you saw and when. [Security and privacy](/security-and-privacy) explains how PostQueen protects your account and your channels.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Refunds" icon="receipt" href="/cloud/refunds">
+    Any charge refunded in full within {{refundDays}} days.
+  </Card>
+  <Card title="Security and privacy" icon="shield-check" href="/security-and-privacy">
+    What PostQueen stores and how to remove it.
+  </Card>
+</CardGroup>

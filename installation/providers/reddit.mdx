@@ -1,61 +1,108 @@
 ---
-title: 'Reddit setup'
-description: 'Register the Reddit application and give PostQueen its keys'
-icon: /images/channels/reddit.svg
+title: "Reddit setup"
+description: "Register your own Reddit app for a self-hosted PostQueen: Data API approval, app type, scopes, redirect URI and the variables to set."
+icon: "/images/channels/reddit.svg"
 ---
 
-On your own instance the Reddit app is yours: create it on Reddit Developers, then put its client id and secret in your environment.
+import OAuthRedirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
+
+On a self-hosted PostQueen the Reddit app is yours. You create a **web app** on Reddit, ask Reddit to approve your use of its Data API, and give PostQueen the client ID and secret.
+
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [Reddit app preferences](https://www.reddit.com/prefs/apps), signed in to the Reddit account that will own the app |
+| Variables | `REDDIT_CLIENT_ID`, `REDDIT_CLIENT_SECRET` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/reddit` |
+| Scopes | `read`, `identity`, `submit`, `flair` |
+| Review | Reddit's approval of your Data API access, and a separate agreement for commercial use. See App review |
+
+Reddit grants scopes on its consent screen, not on the app form. PostQueen asks for the four scopes and refuses the connect if Reddit grants fewer. `flair` is the one that lets the composer list each subreddit's flairs.
+
+<Warning>
+Reddit's [Responsible Builder Policy](https://support.reddithelp.com/hc/en-us/articles/42728983564564-Responsible-Builder-Policy) requires you to request access and get explicit approval before your app uses Reddit data. Creating the app below is not enough on its own. The same policy forbids automated posting of identical or substantially similar content across subreddits.
+</Warning>
+
+## Create the app
 
 <Steps>
-  <Step title="Create an app on Reddit Developers">
-    Head over to [Reddit developers](https://www.reddit.com/prefs/apps) and click on **create a new app**.
-
-    * **Name:** `MyPostQueenInstance` (or whatever you like)
-    * **App type:** `web app`
-    * **Redirect URI:** your PostQueen callback URL, shown in the next step
-
-    <Snippet file="oauth2redirect.mdx" />
-
-    **Your Reddit OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/reddit`
-    - Local development: `http://localhost:4200/integrations/social/reddit`
-    - Docker: `http://localhost:4007/integrations/social/reddit`
-
-    Reddit grants scopes at authorization rather than on the app form. PostQueen asks for four,
-    and the connect is refused if any is denied: `read`, `identity`, `submit` and `flair`.
-    `flair` is the one people are surprised by, and it is what makes flair selection work.
+  <Step title="Open the app form">
+    Go to [reddit.com/prefs/apps](https://www.reddit.com/prefs/apps) and choose **are you a developer? create an app...**, or **create another app...** if the account already has one.
   </Step>
+  <Step title="Fill in the form">
+    - **name**: a name for your install, such as `PostQueen for Example Inc`.
+    - App type: **web app**. A script app can only use its own account, and an installed app gets no secret.
+    - **description** and **about url**: optional.
+    - **redirect uri**: your address from the next step.
 
-  <Step title="Set environment variables">
-    Copy the Reddit client id and client secret and add them to your `.env` file.
-
-    <Frame>
-      <img src="/images/providers/reddit/reddit-001.png" alt="Reddit" />
-    </Frame>
-
-```env
-REDDIT_CLIENT_ID=""
-REDDIT_CLIENT_SECRET=""
-```
+    Then choose **create app**.
   </Step>
-  <Step title="Restart and add the Reddit channel">
-    <Snippet file="restart-and-add-channel.mdx" />
+  <Step title="Set the redirect URI">
+    Use the address that matches how you run PostQueen:
+
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/reddit
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/reddit
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/reddit
+    ```
+
+    </CodeGroup>
+
+    Reddit compares it exactly, both when you sign in and when PostQueen exchanges the code.
+
+    <OAuthRedirect />
+  </Step>
+  <Step title="Copy the client ID and secret">
+    The app now shows in the list. The client ID is the string under the app's name and type, and the secret is on the **secret** row. Copy both, and keep the secret private.
   </Step>
 </Steps>
 
-## Next steps
+## Set the variables
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Reddit" icon="/images/channels/reddit.svg" href="/providers/reddit">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="plug-circle-xmark" href="/troubleshooting/oauth-connect">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/providers/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+Add the two keys to your environment:
+
+```env
+REDDIT_CLIENT_ID="your client id"
+REDDIT_CLIENT_SECRET="your secret"
+```
+
+<RestartAndAddChannel />
+
+Pick **Reddit**, sign in, and allow the permissions. In each post you then choose the subreddits, and a title, post type and flair for each.
+
+## App review
+
+- **Access.** Reddit asks every app to request access through its [Data API request form](https://support.reddithelp.com/hc/en-us/requests/new?ticket_form_id=14868593862164) and wait for approval. Describe what your install posts and for whom.
+- **Commercial use.** Reddit treats any use by or on behalf of a business as commercial, and that needs Reddit's written approval and an agreement. See Reddit's [Data API terms](https://redditinc.com/policies/data-api-terms).
+- **Rate limit.** An approved app gets 100 requests a minute, averaged over 10 minutes, shared by every channel on your install. PostQueen publishes one Reddit post at a time.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    Reddit returned a token without all four scopes. Connect again and allow every permission on Reddit's screen.
+  </Accordion>
+  <Accordion title="Reddit shows invalid redirect_uri parameter">
+    The address PostQueen sent is not the app's **redirect uri**. It is exactly your `FRONTEND_URL` followed by `/integrations/social/reddit`. Check the scheme, the port and that there is no trailing slash.
+  </Accordion>
+  <Accordion title="Reddit rejected the post to r/name:">
+    Reddit refused that subreddit and gave its reason after the colon: a missing flair, a post type the subreddit does not allow, or a karma or account-age rule. Fix the post for that subreddit and schedule it again.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Reddit posting settings](/public-api/providers/reddit)

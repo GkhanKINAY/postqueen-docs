@@ -29,33 +29,35 @@ PostQueen is a social media scheduler with an AI copilot. It schedules posts to 
 | --- | --- | --- |
 | Getting started | What PostQueen is and how to publish your first post | [/introduction](https://docs.postqueen.ai/introduction) · [/quickstart](https://docs.postqueen.ai/quickstart) |
 | Using the app | The calendar, the composer, analytics, teams and settings | [/using/calendar](https://docs.postqueen.ai/using/calendar) |
-| Channels | How each network connects and what it supports | [/providers/overview](https://docs.postqueen.ai/providers/overview) |
-| Plans and trial | The hosted service's plans, trial and limits | [/cloud/overview](https://docs.postqueen.ai/cloud/overview) |
+| Channels | Each network, its status today, and what it supports | [/channels/overview](https://docs.postqueen.ai/channels/overview) |
+| Plans and billing | Plans, the free trial, refunds and your subscription | [/cloud/plans](https://docs.postqueen.ai/cloud/plans) |
 | AI agents and MCP | Connecting Claude, ChatGPT, Cursor, Codex and other agents | [/agents/overview](https://docs.postqueen.ai/agents/overview) · [/mcp/introduction](https://docs.postqueen.ai/mcp/introduction) |
 | CLI | The `postqueen` command line | [/cli/introduction](https://docs.postqueen.ai/cli/introduction) |
 | Public API | How to authenticate, and the main endpoints with examples | [/public-api/introduction](https://docs.postqueen.ai/public-api/introduction) |
 | Self-hosting | Docker Compose, Kubernetes, configuration and reverse proxies | [/installation/overview](https://docs.postqueen.ai/installation/overview) · [/configuration/reference](https://docs.postqueen.ai/configuration/reference) |
-| Troubleshooting | Common failures and how to fix them | [/troubleshooting/overview](https://docs.postqueen.ai/troubleshooting/overview) |
+| Help | Common errors, failed posts and how to reach a person | [/troubleshooting/common-errors](https://docs.postqueen.ai/troubleshooting/common-errors) · [/support](https://docs.postqueen.ai/support) |
 
 The site also serves [`llms.txt`](https://docs.postqueen.ai/llms.txt) and `llms-full.txt`, so AI assistants can read the whole site in one request.
 
 ## Quick start
 
-Run the site locally:
+Run the site locally (the Mintlify CLI needs Node.js 22):
 
 ```bash
 npm i -g mint
-mint dev                          # serves the docs at http://localhost:3000
-python3 scripts/check-docs.py     # checks navigation, internal links and the User Guide rules
+mint dev              # serves the docs at http://localhost:3000
+npm run check         # navigation, links, frontmatter and the style rules
+npm run check:facts   # the facts pages repeat, against facts/facts.json
 ```
 
 Every page is an `.mdx` file in this repository, and [`docs.json`](docs.json) defines the navigation.
 
 ## Contributing
 
-1. Edit or add the `.mdx` page. A new page also needs an entry in `docs.json`.
-2. Run `python3 scripts/check-docs.py`. The same check runs on every push and pull request.
-3. Open a pull request. Merged changes deploy to docs.postqueen.ai.
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md): where things live, the checks and the style guide.
+2. Start a new page from its template in `_templates/`, and add it to `docs.json`.
+3. Run the checks. The same ones run on every push and pull request.
+4. Open a pull request. Merged changes deploy to docs.postqueen.ai.
 
 Report a mistake in the docs as an issue here. Report a bug in the app itself on [postqueen-app](https://github.com/GkhanKINAY/postqueen-app/issues).
 
@@ -72,7 +74,7 @@ Report a mistake in the docs as an issue here. Report a bug in the app itself on
 | --- | --- |
 | Docs | [docs.postqueen.ai](https://docs.postqueen.ai/introduction) |
 | Hosted service | [postqueen.ai](https://postqueen.ai) · [pricing](https://postqueen.ai/pricing) |
-| API reference | [api.postqueen.ai/docs](https://api.postqueen.ai/docs) |
+| API reference | [docs.postqueen.ai/public-api](https://docs.postqueen.ai/public-api/introduction) |
 | Repositories | [app](https://github.com/GkhanKINAY/postqueen-app) · [CLI and skill](https://github.com/GkhanKINAY/postqueen-agent) · [n8n node](https://github.com/GkhanKINAY/postqueen-n8n) · [docs](https://github.com/GkhanKINAY/postqueen-docs) · [Docker Compose](https://github.com/GkhanKINAY/postqueen-docker-compose) · [Helm chart](https://github.com/GkhanKINAY/postqueen-helmchart) |
 | Help | support@postqueen.ai · [GitHub issues](https://github.com/GkhanKINAY/postqueen-docs/issues) |
 

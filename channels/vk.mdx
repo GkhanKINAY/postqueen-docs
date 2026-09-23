@@ -1,0 +1,55 @@
+---
+title: "VK"
+description: "What PostQueen will post to VK, and the limits it checks before a post is scheduled."
+icon: "/images/channels/vk.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post text and photos to your personal VK wall, with follow-ups as comments on the post.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/vk.webp" alt="A new VK post in the PostQueen composer, with the post types VK takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 2,048 characters.
+  </Card>
+  <Card title="Media" icon="image">
+    Photos, uploaded to VK for you. VK takes up to 10 attachments on a post and photos of up to 50 MB.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Wall post on your own wall, with comments under it.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for VK.
+  </Card>
+</CardGroup>
+
+**Not supported:** video (attach photos only), community and group walls, posting as a community, documents, link cards and polls.
+
+## Connect VK
+
+<Note>
+VK is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will connect a personal VK account through VK ID, and posts will go to that account's own wall.
+</Note>
+
+## Post settings
+
+VK posts have no settings of their own in the composer: the text and the photos are all a post carries. The API fields are on [VK posting settings](/public-api/providers/vk).
+
+## Good to know
+
+- **Add comment** adds comments under the wall post, each with its own delay. A comment can carry photos.
+- PostQueen does not check the number of photos or their size first: VK refuses what it does not accept.
+- VK reports some errors inside a normal-looking answer. A post VK refused can then show as published, with a link that leads nowhere, so check the wall after the first posts.
+- The link to a published post opens it in the VK feed.
+
+<NextStepsChannel />

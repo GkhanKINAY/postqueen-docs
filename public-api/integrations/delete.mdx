@@ -1,5 +1,18 @@
 ---
-title: 'Delete Channel'
-description: 'Disconnect a channel after its posts have been removed.'
-openapi: 'DELETE /integrations/{id}'
+title: "Delete a channel"
+description: "Remove a channel together with every post it has in PostQueen."
+openapi: "DELETE /integrations/{id}"
 ---
+
+<Warning>
+Deleting a channel deletes all of its posts in PostQueen first: scheduled posts, drafts, published records and failed posts. Pending publishing is canceled. Connecting the same account again does not bring them back.
+</Warning>
+
+What the delete does not do:
+
+- It does not touch the same content scheduled on your other channels. Each channel has its own posts.
+- It does not take anything down from the network. Published posts stay live there.
+
+An id that is not a channel of your workspace answers `404` with `{"msg":"Channel not found"}`, and nothing is deleted. A channel that is already deleted answers the same `404`, so a client that retries a delete can treat that `404` as done.
+
+A deleted channel is refused everywhere else too. A post for it answers `400` `Integration with id <id> not found`, and [Get a channel's settings](/public-api/integrations/settings) and [Trigger a tool](/public-api/integrations/trigger) answer `404` `Integration not found`.

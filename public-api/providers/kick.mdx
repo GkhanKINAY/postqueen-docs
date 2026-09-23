@@ -1,116 +1,110 @@
 ---
-title: Kick Settings
-description: 'API settings for posting to Kick'
+title: "Kick posting settings"
+sidebarTitle: "Kick"
+description: "The settings object a post to Kick takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/kick.svg"
 ---
 
-Creating the OAuth app and connecting a channel: [Kick setup guide](/installation/providers/kick).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Settings Schema
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-When creating a post for Kick, use the following settings schema:
+Kick cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Kick channel will take.
 
-```json
-{
-  "settings": {
-    "__type": "kick"
-  }
-}
-```
+Every post to Kick carries a `settings` object with `"__type": "kick"`, and nothing else: Kick has no settings of its own. A post is a message in the chat of the channel that connected. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `kick` |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"kick"`. PostQueen sets it from the channel you post to, so it can be left out. |
 
-Kick has no additional settings fields. Only the `__type` identifier is required.
+Chat is text only: media on the post is not sent.
 
----
+## What PostQueen checks
 
-## Complete Example
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-### Chat Message
+| Rule | Message |
+|---|---|
+| Each entry up to 500 characters | “post is too long, please fix it” |
+
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "kick",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+Kick's own rules are not checked first: a message is also capped at 2,048 bytes, so a message heavy in emoji holds fewer than 500 characters.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list).
+
+<CodeGroup>
+
+```json Chat message
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T18:55:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-kick-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Going live in 10 minutes! Today we're doing a special community stream 🎮",
+          "content": "Stream starts in 5 minutes: ranked games until midnight.",
           "image": []
         }
       ],
-      "settings": {
-        "__type": "kick"
-      }
+      "settings": { "__type": "kick" }
     }
   ]
 }
 ```
 
-### Message with Image
-
-```json
+```json Message with replies
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T18:55:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-kick-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Check out the schedule for this week! See you there 👋",
-          "image": [
-            {
-              "id": "schedule-image-id",
-              "path": "https://uploads.postqueen.ai/schedule.png"
-            }
-          ]
-        }
-      ],
-      "settings": {
-        "__type": "kick"
-      }
-    }
-  ]
-}
-```
-
-### Quick Announcement
-
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-kick-integration-id"
-      },
-      "value": [
-        {
-          "content": "Stream canceled tonight due to technical issues. Will be back tomorrow at the usual time! Sorry about that 🙏",
+          "content": "Going live in 5 minutes.",
           "image": []
+        },
+        {
+          "content": "We are live.",
+          "image": [],
+          "delay": 5
+        },
+        {
+          "content": "Raffle opens in ten minutes. Stay in chat.",
+          "image": [],
+          "delay": 20
         }
       ],
-      "settings": {
-        "__type": "kick"
-      }
+      "settings": { "__type": "kick" }
     }
   ]
 }
 ```
+
+</CodeGroup>
+
+In the second example, each entry after the first replies to the message before it: 5 minutes after the first message, then 20 minutes after that.
+
+## Related
+
+- [Kick in the app](/channels/kick)
+- [Create a post](/public-api/posts/create)

@@ -1,0 +1,42 @@
+---
+title: "Get a clipping"
+description: "A clipping's progress and its clips, with the video and media id of each finished clip."
+openapi: "GET /clipping/{id}"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+
+<ChannelStatus status="soon">Not available on PostQueen yet.</ChannelStatus>
+
+Ask again every few seconds with the `id` from [Start a clipping](/public-api/clipping/start) until `status` is `completed` or `failed`:
+
+| Status | What it means |
+|---|---|
+| `analysing` | PostQueen is reading the video and taking the minutes |
+| `transcribing` | The video had no captions PostQueen can use, so its audio is being transcribed |
+| `picking` | AI is choosing the moments |
+| `rendering` | The clips are being made. `clips` is filled from here on |
+| `completed` | Done. At least one clip was made |
+| `failed` | No clip was made. `error` says why, and the minutes were given back |
+
+A `completed` clipping can still have failed clips, and an `error` when something went wrong after the clips were made, such as the draft posts.
+
+## The clips
+
+`clips` lists them in the order they appear in the video. Each has:
+
+| Field | What it is |
+|---|---|
+| `id` | The clip's id |
+| `title` | A short title, written by AI |
+| `content` | The post text written for the clip, without hashtags |
+| `start`, `end` | Where the clip sits in the source video, in seconds |
+| `status` | `pending`, `completed` or `failed` |
+| `error` | Why the clip failed |
+| `mediaId`, `path` | The clip in your media library. Put them on a post as the media's `id` and `path` |
+| `thumbnail` | A JPEG of the clip's first frame |
+
+`title` and `content` are written from somebody else's video, in its language. Show them to a person before you post them.
+
+An `id` that is not a clipping of your workspace answers `404 Clipping not found`.

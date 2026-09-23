@@ -1,133 +1,130 @@
 ---
-title: Settings
-description: 'Every tab, what lives in it, and why some of them are missing for you'
-icon: 'sliders'
+title: "Settings"
+description: "What each Settings tab holds and who sees it, your email notifications, the language and time zone, and how to delete your account."
+icon: "sliders-horizontal"
+keywords:
+  - settings
+  - notifications
+  - account
+  - delete account
+  - date format
+  - language
+  - time zone
 ---
 
-Settings is one page with a row of tabs, and which tabs you see depends on your plan and your
-role. That is the part that confuses people: a tab named in a guide can be genuinely absent from
-your own screen, and nothing explains why.
+**Where:** **Settings** at the bottom of the left rail, or in the account menu under your avatar.
 
-This page is the map. Each tab can be linked to directly with `?tab=`, which is how the rest of
-these docs send you to a specific one.
+Settings opens over the page you were on and starts on **Global Settings**. Its tabs sit in three groups, and a few appear only for your role or your plan. Type in **Search settings** to filter the list.
+
+<Frame>
+  <img className="pq-shot" src="/images/app/settings.webp" alt="Settings open on Global Settings, with the organization name and the time and date formats" />
+</Frame>
 
 ## The tabs
 
-| Tab | What is in it | You see it when |
-| --- | --- | --- |
-| **Global Settings** | Workspace name (Super Admin only), date format, and whether she offers to shorten links | Always |
-| **Language** | The interface language | Always |
-| **Teams** | Invite people, change User/Admin roles, transfer Super Admin, or leave | Your plan includes team members, **and** you are an organization admin |
-| **Account** | Your name, email, password, connected Google/GitHub/Apple (and other enabled OAuth) accounts, and **Delete Account** | Always (first item in the Account group) |
-| **Webhooks** | URLs she calls when a post publishes or fails | Your plan includes webhooks |
-| **Auto Post** | RSS feeds that turn new articles into scheduled posts on their own | Your plan includes auto posting |
-| **Social Sets** | Saved groups of channels, so you stop reselecting the same five | Any plan above Free |
-| **Signatures** | Blocks of text appended to posts, per channel | Any plan above Free |
-| **API Keys** | The workspace API key, the same one as on **Connections > API Keys**. Reveal, copy and rotate it here | The tab is visible to every member. Only an admin can reveal or rotate the key |
-| **Developers** | OAuth apps you build for other PostQueen users | Your plan includes the public API. Creating or rotating the client secret is an admin action |
-| **Approved Apps** | Third-party apps you have authorized against your account | Always |
+| Group | Tab | What it holds | Who sees it |
+|---|---|---|---|
+| Workspace | **Global Settings** | **Organization name**, **Date Metrics** and **Date format** | Everyone |
+| Workspace | **Teams** | Members, roles and invites. See [Team](/using/team) | Admins and Super Admins |
+| Workspace | **Language** | The app's language in this browser. See [Pick your language](#pick-your-language) | Everyone |
+| Workspace | **Notifications** | Your email switches. See [Notifications](/using/notifications) | Everyone |
+| More | **Social Sets**, **Signatures** | Saved starting points and text for posts. See [Sets, signatures and tags](/using/sets-signatures-and-tags) | Paid plans |
+| More | **Auto Post** | Feeds that turn into posts. See [RSS Auto Post](/using/rss-auto-post) | Paid plans |
+| More | **Webhooks** | Calls to your URL when a post goes out. See [Webhooks](/using/webhooks) | Paid plans |
+| More | **Integrations** | Services you connect with their own API key to bring media into posts. See [AI images](/using/ai-images-and-video) | Everyone |
+| Account | **Account** | Your name, email, password, sign-in accounts, [time zone](#your-time-zone) and **Delete Account** | Everyone |
+| Account | **API Keys**, **Developers**, **Approved Apps** | The same screens as on [Connections](/using/connections) | Everyone; only admins can reveal the key or create an app |
 
-<Note>
-**Self-hosting with billing off?** Every plan gate above passes, because your account reports
-itself as AGENCY, the tier labelled Ultimate, when no Stripe keys are set. So you see all of them.
-[Plans and limits](/using/plans-and-limits) has the rule.
-</Note>
+On **Global Settings**:
 
-## Why a tab is missing
+- Only the Super Admin sees **Organization name**, the workspace name shown in the switcher and on invoices.
+- **Date Metrics** (**AM:PM** or **24 hours**) and **Date format** (**MM/DD/YYYY** or **DD/MM/YYYY**) are saved in this browser only.
+- PostQueen has no link shortener today, so links are published as you wrote them and there is no **Shortlink Settings** card.
 
-Two different reasons, and they are worth telling apart before you go looking for a bug.
+## Choose your email notifications
 
-**Your plan does not include it.** Webhooks, Auto Post, Social Sets, Signatures and Developers (OAuth)
-are each gated on a plan feature. The tab is simply not rendered.
+<Steps>
+  <Step title="Open Notifications">
+    In Settings, choose **Notifications** in the Workspace group.
+  </Step>
+  <Step title="Switch each email on or off">
+    **Success Emails** tell you a post was published, **Failure Emails** that a post failed, and **Streak Ended Emails** that the workspace's posting streak has ended, 24 hours after its last published post. All three start on.
+  </Step>
+</Steps>
 
-**Your role is not admin.** Teams requires you to be an **ADMIN** or **SUPERADMIN** in the
-organization. API Keys and Developers still appear for members, but revealing the workspace key
-or creating an OAuth app is admin-only: a member sees the screen and a note to ask an admin,
-rather than an error.
+The switches choose what reaches your own inbox, but the emails cover every post in the workspace, whoever made it. Emails about channels and billing always arrive, whatever the switches say. Keep **Failure Emails** on unless you check the calendar every day, because a failed post does not publish again by itself. [Notifications](/using/notifications) lists every email, when it comes and what the bell shows.
 
-If a teammate can reveal the API key and you cannot, role is the likely difference rather than billing.
+## Pick your language
 
-## Account
+In **Settings > Language**, choose a language. The app switches at once.
 
-**Account** is the first row in the Account group (`?tab=account`). It is your user, not the
-workspace:
+| Direction | Languages offered |
+|---|---|
+| Left to right | English, Русский, 中文, Français, Español, Português, Deutsch, Italiano, 日本語, 한국어, Türkçe, Tiếng Việt |
+| Right to left | עברית (Hebrew) and العربية (Arabic). The whole layout flips to read from the right. |
 
-- **Name.** Saved with `POST /user/personal`. At least three characters.
-- **Email.** Shown read-only. Change sends a confirmation to the new address (20 minutes) and a
-  notice to the old one. The login email does not move until you confirm. Another account already
-  using that inbox is refused.
-- **Password.** At least eight characters. If you already have one, the current password is
-  required; other sessions are signed out. OAuth-only accounts set a password after a confirmation
-  email or a fresh sign-in with a connected account.
-- **Connected accounts.** Google, GitHub, Apple, and any other OAuth provider enabled on the
-  install. You cannot unlink the last sign-in method unless a password is set.
+- The choice is saved in this browser, not in your account or the workspace. Each member, and each of your browsers and devices, picks on its own. Until you pick, PostQueen is in English.
+- This browser keeps the choice for 7 days. After that, the app is in English again until you pick once more.
+- Emails from PostQueen are always in English. The tab says so too: "Pick the language for the interface and AI prompts. Emails are sent in English."
+- The AI Copilot is told which language the app is in.
 
-Workspace name lives on **Global Settings**, and only a Super Admin can change it.
+## Change your account details
 
-## Teams
+In **Settings > Account**:
 
-The member list is **Member | Role | Actions**. Super Admin is a badge. User and Admin can be
-changed when your role is strictly above theirs — an Admin cannot change another Admin. Super Admin
-cannot be granted from this list; ownership moves with **Transfer** (the current Super Admin
-becomes Admin). You can leave the workspace unless you are the last Super Admin. Inviting an email
-that is already in the workspace is refused.
+- **Profile**: choose **Edit** next to **Name**, then **Save**.
+- **Email**: choose **Change**, enter the **New email** and choose **Send confirmation**. The address changes when you confirm it from the new inbox.
+- **Password**: choose **Change**, or **Set password** if you only sign in with another account. Changing it signs out your other sessions.
+- **Connected accounts**: **Connect** or **Unlink** a sign-in method. You cannot unlink the last one unless a password is set.
 
-## Deleting your account
+## Your time zone
 
-**Delete Account** sits at the bottom of **Account** (not Global Settings). On the Free tier the
-billing page still points at the same screen. Type your email to enable the button, then confirm
-with your password or a fresh OAuth sign-in. After that there is no undo.
+PostQueen shows every time in the time zone your browser reports, which is the time zone of your computer or phone. **Settings > Account** shows it under **Timezone**, with a **Coming soon** badge: you cannot change it in PostQueen yet.
 
-What goes, and what stays behind:
+To see and schedule times in another time zone, change your device's time zone, then reload PostQueen. A post is saved as a moment, not a clock time: a post set for 09:00 in Berlin shows as 08:00 to a teammate in London, and goes out once, at that moment.
 
-- **Organizations you own** are deleted, together with their posts and channels.
-- **Organizations you only belong to** carry on. You are removed from their team.
-- **Your own account** is emptied rather than kept: your email address, password, name, linked
-  identities and profile details are scrubbed, and you are signed out.
+## Delete your account
 
-Two things refuse the request:
+<Steps>
+  <Step title="Open Delete Account">
+    In **Settings > Account**, scroll to **Delete Account** and choose it.
+  </Step>
+  <Step title="Confirm it is you">
+    Type your email in **Type your email to confirm** and enter your **Current password**. If your account has no password, sign out and sign in again with your connected account first. That sign-in counts for 20 minutes.
+  </Step>
+  <Step title="Delete">
+    Choose **Delete Account**, then **Yes, delete my account**.
+  </Step>
+</Steps>
 
-- **Other people in an organization you own.** Remove them first. Until you do, the answer is
-  *Please remove your team members before deleting your account*.
-- **Impersonation.** An admin viewing the app as you cannot delete your account for you.
+<Warning>
+This cannot be undone. Every workspace you own is deleted with its channels and posts, and its paid plan is canceled first. Workspaces you only belong to carry on without you. For what happens to your data afterward, see [Security and privacy](/security-and-privacy).
+</Warning>
 
-A paid subscription on an organization you own is cancelled first. If that cancellation fails,
-nothing is deleted, and you can try again.
+## If something goes wrong
 
-## Linking straight to a tab
+| Message | What to do |
+|---|---|
+| “Please remove your team members before deleting your account” | In each workspace you own, remove the other members in **Teams**, or make an Admin the Super Admin with **Transfer**. |
+| “Current password is incorrect” | Enter the password you sign in with. |
+| “Re-authenticate with a connected account to delete your account” | Sign out, sign in again with your connected account, then delete within 20 minutes. |
+| “Could not cancel your subscription, please try again or contact support” | Try again. If it repeats, email [support@postqueen.ai](mailto:support@postqueen.ai). |
+| “Name must be at least 3 characters” | Use a longer name. |
+| “Password must be at least 8 characters” | Use a longer password. |
 
-Append `?tab=` and the tab's key:
-
-```
-https://app.postqueen.ai/settings?tab=account
-https://app.postqueen.ai/settings?tab=teams
-https://app.postqueen.ai/settings?tab=autopost
-```
-
-The keys are `global_settings`, `language`, `teams`, `account`, `webhooks`, `autopost`, `sets`,
-`signatures`, `api`, `developers` and `approved_apps`. **Account** is `account`. **Developers** (OAuth apps) is `developers`. For the API key, open
-**Connections > API Keys**. An unrecognised or unavailable key falls back
-to Global Settings rather than erroring.
-
-## Where to go for each
+## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Your API key" icon="key" href="/public-api/introduction">
-    Connections > API Keys. The key the CLI, MCP and the public API all use
+  <Card title="Team" icon="users" href="/using/team">
+    Invite members, change roles and share a published post with a client.
   </Card>
-  <Card title="Teams" icon="users" href="/using/teams-and-collaboration">
-    Who you invite, and what each role can do
-  </Card>
-  <Card title="Auto Post from a feed" icon="rss" href="/automation/rss-autopost">
-    One check takes one item, which is the thing to know before setting it up
-  </Card>
-  <Card title="Webhooks" icon="bolt" href="/automation/webhooks">
-    What she sends, and what happens when your endpoint is slow
-  </Card>
-  <Card title="Sets and signatures" icon="bookmark" href="/using/reusable-content">
-    Social Sets and the text appended to posts
+  <Card title="Connections" icon="cable" href="/using/connections">
+    The API key, your AI agents and the apps you approved.
   </Card>
   <Card title="Notifications" icon="bell" href="/using/notifications">
-    What she tells you about, and where it arrives
+    The bell, every email PostQueen sends, and the posting streak.
+  </Card>
+  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
+    Which tabs and limits come with each plan.
   </Card>
 </CardGroup>

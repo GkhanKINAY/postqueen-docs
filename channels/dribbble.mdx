@@ -1,0 +1,59 @@
+---
+title: "Dribbble"
+description: "What PostQueen will post to Dribbble, and the limits it checks before a post is scheduled."
+icon: "/images/channels/dribbble.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post Dribbble shots for you or for one of your teams: one image at exactly 400 × 300 or 800 × 600 pixels, with a title and a description.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/dribbble.webp" alt="A new Dribbble post in the PostQueen composer, with the post types Dribbble takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    A description of up to 40,000 characters, and a title, which every shot needs.
+  </Card>
+  <Card title="Media" icon="image">
+    Exactly one image of 400 × 300 or 800 × 600 pixels. Dribbble takes GIF, JPG or PNG files of up to 8 MB.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Shot, on your own profile or for a team you belong to.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Dribbble.
+  </Card>
+</CardGroup>
+
+**Not supported:** video and animated shots, tags, larger images such as 1600 × 1200, and comments or follow-ups.
+
+## Connect Dribbble
+
+<Note>
+Dribbble is listed in **Add Channel**, but it cannot be connected on PostQueen yet. The account you connect will need to be allowed to upload shots.
+</Note>
+
+## Post settings
+
+Each Dribbble post in the composer has these settings:
+
+- **Title**: the shot title. Required.
+- **Select a team**: post the shot for one of your Dribbble teams. Shown only when your account belongs to a team. Leave it empty to post on your own profile.
+
+The post text becomes the shot description. The field names and values for the API are on [Dribbble posting settings](/public-api/providers/dribbble).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it has exactly one image, that it is not an MP4, and that it measures exactly 400 × 300 or 800 × 600 pixels.
+- File size and format are Dribbble's rules, and PostQueen does not check them first: Dribbble refuses other files when the shot is published.
+- A Dribbble connection does not expire. If access is withdrawn on Dribbble's side, the channel asks to be reconnected.
+
+<NextStepsChannel />

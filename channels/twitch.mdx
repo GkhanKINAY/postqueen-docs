@@ -1,0 +1,60 @@
+---
+title: "Twitch"
+description: "What PostQueen will post to Twitch, and the limits it checks before a post is scheduled."
+icon: "/images/channels/twitch.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post chat messages and colored announcements into your own Twitch chat, such as a go-live reminder. Twitch's API cannot publish videos or posts, so chat is what PostQueen sends.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/twitch.webp" alt="A new Twitch post in the PostQueen composer, with the post types Twitch takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 500 characters per message.
+  </Card>
+  <Card title="Media" icon="image">
+    None. Chat is text only: media on the post is not sent.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Chat message or announcement, with replies after it.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Twitch.
+  </Card>
+</CardGroup>
+
+**Not supported:** videos and clips, the stream title, category and tags, and chats of channels you do not own.
+
+## Connect Twitch
+
+<Note>
+Twitch is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will post into the chat of the Twitch channel you sign in with.
+</Note>
+
+## Post settings
+
+Each Twitch post in the composer has these settings:
+
+- **Message Type**: **Chat Message** or **Announcement**. It starts on **Chat Message**.
+- **Announcement Color**: **Primary (Default)**, **Blue**, **Green**, **Orange** or **Purple**. Shown for announcements only.
+
+The field names and values for the API are on [Twitch posting settings](/public-api/providers/twitch).
+
+## Good to know
+
+- **Add comment** adds follow-up messages, each with its own delay and no media. Each chat message replies to the one before. When the post is an announcement, the follow-ups are announcements too.
+- Before a post is scheduled, PostQueen checks that each message has at most 500 characters.
+- PostQueen does not read Twitch's answer to an announcement, so it is recorded as posted even when Twitch refused it.
+- The link to a published message is your channel page, not the message.
+
+<NextStepsChannel />

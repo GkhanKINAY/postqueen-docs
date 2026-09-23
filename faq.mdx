@@ -1,141 +1,162 @@
 ---
-title: FAQ
-description: 'Short answers on how PostQueen runs, what she connects to, and where to get help'
-icon: 'circle-question'
+title: "FAQ"
+description: "Short answers on starting out, channels, posting, AI agents, billing and your data, each with a link to the page that has the details."
+icon: "circle-question-mark"
 keywords:
   - postqueen
   - faq
-  - self-host
-  - cloud
+  - questions
   - trial
   - channels
+  - refund
 ---
 
-Most people arrive with the same handful of questions. Autopilot, self-hosting, what she can post
-to. Cannot find yours? The [support page](/support) is the fastest route to a human.
+import TrialLocks from '/snippets/trial-locks.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+
+The questions support hears most, answered in a few lines each. Not here? Try [Common errors](/troubleshooting/common-errors), or write to [support@postqueen.ai](mailto:support@postqueen.ai).
 
 ## Getting started
 
 <AccordionGroup>
-  <Accordion title="What is PostQueen, in one sentence?" icon="crown">
-    PostQueen is an AI social media assistant who writes the copy, designs the visuals and schedules posts across 30+ networks, while you review the calendar.
+  <Accordion title="What does PostQueen do?" icon="calendar-days">
+    PostQueen publishes your posts to your social channels at the times you pick, from one calendar. You write a post in the app, or ask an AI agent, run the `postqueen` CLI or call the API, and every post lands on the same calendar.
 
-    New here? The [quickstart](/quickstart) takes you from an empty account to your first scheduled post in about five minutes.
+    The [Quickstart](/quickstart) takes you from sign-up to your first scheduled post.
   </Accordion>
 
-  <Accordion title="Should I use the cloud or self-host her?" icon="scale-balanced">
-    Both run the same code.
+  <Accordion title="Do I need a card for the free trial?" icon="credit-card">
+    Yes. Every new workspace gets a {{trialDays}}-day free trial on the plan you pick. Checkout asks for a card and charges \$0 today. To check the card, PostQueen places a \$1 authorization and releases it at once.
 
-    | | |
+    Cancel before the trial ends and nothing is charged. [Free trial](/cloud/trial) has the details.
+  </Accordion>
+
+  <Accordion title="What is locked during the trial?" icon="lock">
+    <TrialLocks />
+
+    Everything else works from day one. [Free trial](/cloud/trial) lists it.
+  </Accordion>
+
+  <Accordion title="Is there a free plan?" icon="tag">
+    No. After the trial, a workspace needs one of the four paid plans to publish. The smallest, Creator, is {{priceCreator}} a month when billed monthly: [Plans and limits](/cloud/plans).
+  </Accordion>
+
+  <Accordion title="Is there a mobile app?" icon="smartphone">
+    There is nothing to install. [app.postqueen.ai](https://app.postqueen.ai) works in your phone's browser, with the same calendar and composer.
+  </Accordion>
+</AccordionGroup>
+
+## Channels
+
+<AccordionGroup>
+  <Accordion title="Which networks can I connect?" icon="share-2">
+    PostQueen supports {{networks}} networks. Each one has a status today:
+
+    | Status | Networks |
     |---|---|
-    | **[Cloud](https://postqueen.ai)** | 7-day free trial, nothing to patch |
-    | **[Self-host](/installation/overview)** | Free forever, your database and your tokens |
+    | Available | Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress |
+    | In review | Facebook, Instagram, Threads, TikTok, X, YouTube |
+    | Soon | LinkedIn, Pinterest, Google Business Profile, Reddit, Mastodon, Tumblr, VK, Farcaster, MeWe, Twitch, Kick, Dribbble, Telegram, Discord, Slack, Skool, Whop |
+
+    [All channels](/channels/overview) has a page for each network.
   </Accordion>
 
-  <Accordion title="Is there a mobile app?" icon="mobile">
-    On the way. Meanwhile [app.postqueen.ai](https://app.postqueen.ai) runs the whole calendar from a phone browser, and she answers on WhatsApp or Telegram through [OpenClaw](/agents/openclaw) or [Hermes](/agents/hermes).
-  </Accordion>
-</AccordionGroup>
+  <Accordion title="What does In review mean?" icon="hourglass">
+    The network is still reviewing PostQueen's app. Until the review passes, the network sets a limit: for example, only some accounts can connect, or posts are published as private. Each network's page states its limit in one sentence at the top.
 
-## Channels and posting
-
-<AccordionGroup>
-  <Accordion title="Which networks can she post to?" icon="share-nodes">
-    30+ networks, from the big ones like X, LinkedIn and Instagram to community platforms such as Discord, Mastodon and Reddit.
-
-    <Frame caption="Some of the networks she posts to. One setup page each on Providers">
-    <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center'}}>
-      <img src="/images/channels/instagram.svg" height="28" alt="Instagram" />
-      <img src="/images/channels/youtube.svg" height="28" alt="YouTube" />
-      <img src="/images/channels/google-business.svg" height="28" alt="Google Business Profile" />
-      <img src="/images/channels/dribbble.svg" height="28" alt="Dribbble" />
-      <img src="/images/channels/linkedin.svg" height="28" alt="LinkedIn" />
-      <img src="/images/channels/reddit.svg" height="28" alt="Reddit" />
-      <img src="/images/channels/tiktok.svg" height="28" alt="TikTok" />
-      <img src="/images/channels/facebook.svg" height="28" alt="Facebook" />
-      <img src="/images/channels/pinterest.svg" height="28" alt="Pinterest" />
-      <img src="/images/channels/threads.svg" height="28" alt="Threads" />
-      <img src="/images/channels/x.svg" height="28" alt="X" />
-      <img src="/images/channels/slack.svg" height="28" alt="Slack" />
-      <img src="/images/channels/discord.svg" height="28" alt="Discord" />
-      <img src="/images/channels/mastodon.svg" height="28" alt="Mastodon" />
-      <img src="/images/channels/bluesky.svg" height="28" alt="Bluesky" />
-      <img src="/images/channels/lemmy.svg" height="28" alt="Lemmy" />
-      <img src="/images/channels/farcaster.svg" height="28" alt="Farcaster" />
-      <img src="/images/channels/telegram.svg" height="28" alt="Telegram" />
-      <img src="/images/channels/nostr.svg" height="28" alt="Nostr" />
-      <img src="/images/channels/vk.svg" height="28" alt="VK" />
-      <img src="/images/channels/devto.svg" height="28" alt="Dev.to" />
-      <img src="/images/channels/hashnode.svg" height="28" alt="Hashnode" />
-      <img src="/images/channels/wordpress.svg" height="28" alt="WordPress" />
-      <img src="/images/channels/whop.svg" height="28" alt="Whop" />
-      <img src="/images/channels/kick.svg" height="28" alt="Kick" />
-      <img src="/images/channels/mewe.svg" height="28" alt="MeWe" />
-      <img src="/images/channels/twitch.svg" height="28" alt="Twitch" />
-      <img src="/images/channels/listmonk.svg" height="28" alt="Listmonk" />
-      <img src="/images/channels/skool.svg" height="28" alt="Skool" />
-    </div>
-    </Frame>
-
-    On the cloud you connect a channel with a couple of clicks. Self-hosting? You register your own provider apps and drop the credentials into the environment first. Full walkthrough: [OAuth configuration](/configuration/oauth).
-
-    One page per channel: [providers overview](/providers/overview).
+    X is the exception: it connects once your paid plan starts.
   </Accordion>
 
-  <Accordion title="Do I stay in control of what gets published?" icon="eye">
-    Everything is on the calendar before it goes out, and you can edit or delete any of it.
+  <Accordion title="Why can I not connect a network marked Soon?" icon="clock">
+    **Add Channel** lists every network, but the ones marked Soon cannot be connected on PostQueen yet. Their pages say what PostQueen will post there once they can.
+  </Accordion>
 
-    Scheduled means scheduled: it publishes on time without asking again. Want to stage things instead? Ask her for drafts, which sit on the calendar until you publish them.
+  <Accordion title="How many channels can I connect?" icon="plug">
+    It depends on your plan: [Plans and limits](/cloud/plans) has the numbers. Disabled channels count toward the limit, so disabling a channel does not make room for a new one. Delete a channel, or move to a bigger plan.
+  </Accordion>
+
+  <Accordion title="What happens to my posts when I delete a channel?" icon="trash-2">
+    PostQueen deletes that channel's posts in PostQueen: scheduled posts, drafts and the records of published posts. Scheduled posts on it will not go out. Copies of a post on your other channels stay, and posts that are already live stay on the network.
+
+    Reconnecting the channel later does not bring the posts back. [Connect a channel](/using/connect-a-channel#disable-or-delete-a-channel) has the steps.
   </Accordion>
 </AccordionGroup>
 
-## Agents and the API
+## Posting
 
 <AccordionGroup>
-  <Accordion title="Can my AI assistant use her?" icon="robot">
-    Any assistant that can run a command or call a tool.
-
-    - **[MCP](/mcp/introduction)** gives any client 21 tools from one URL with your API key (20 with the sign-in address, not tested yet)
-    - **[CLI](/cli/introduction)** via `npm install -g postqueen`, plus the skill (`npx skills add GkhanKINAY/postqueen-agent`) for agents
-    - **[Public API](/public-api/introduction)** for your own scripts
-
-    Compared side by side: [which interface](/which-interface).
+  <Accordion title="Do I have to approve each post before it goes out?" icon="circle-check">
+    No. A scheduled post publishes at its time without asking again. To hold a post back, save it as a draft: a draft keeps its date on the calendar and does not publish until you schedule it.
   </Accordion>
 
-  <Accordion title="Are there API limits?" icon="gauge-high">
-    An hourly limit per workspace on create-post (`POST /posts`). Uploads have an hourly allowance of their own. Nothing else is capped by them. Schedule several posts in one request when you need throughput.
+  <Accordion title="Can I change a post after I schedule it?" icon="square-pen">
+    Yes, until it is published. Open it from the [calendar](/using/calendar) to edit it, or drag it to another time.
+  </Accordion>
 
-    Self-hosting? Raise or lower them with `API_LIMIT` and `UPLOAD_LIMIT`.
+  <Accordion title="Is there a limit on how many posts I can schedule?" icon="infinity">
+    No plan has a monthly post limit. Each network still applies its own daily limits, and the public API takes 30 requests to create posts an hour per workspace: [Limits and errors](/public-api/limits-and-errors#rate-limits).
+  </Accordion>
+
+  <Accordion title="A post did not go out. What now?" icon="triangle-alert">
+    A failed post shows a red mark on the calendar, and the reason is in its tooltip and in your notifications. [A post did not go out](/troubleshooting/post-failed) explains each reason and how to send the post again.
   </Accordion>
 </AccordionGroup>
 
-## Open source and licensing
+## AI agents and the API
 
 <AccordionGroup>
-  <Accordion title="Is PostQueen open source?" icon="code-branch">
-    Yes. She is AGPL-3.0, forked from [Postiz](https://github.com/gitroomhq/postiz-app) with thanks to its contributors.
+  <Accordion title="Can my AI agent post for me?" icon="bot">
+    Yes. Any agent that supports MCP can connect to PostQueen and use its {{mcpToolsKey}} tools with your API key. A sign-in address without a key offers {{mcpToolsOauth}} tools and is not tested yet. Agents that run commands can use the `postqueen` CLI instead.
 
-    Her source lives at [github.com/GkhanKINAY/postqueen-app](https://github.com/GkhanKINAY/postqueen-app). Read it, run it on your own box, and open an issue when something looks wrong.
+    [Connect your agent](/agents/overview) has a page for each agent.
+  </Accordion>
+
+  <Accordion title="Where is my API key?" icon="key-round">
+    <ApiKeyLocation />
+  </Accordion>
+
+  <Accordion title="Can an agent delete my posts?" icon="shield-check">
+    Not over MCP: no MCP tool deletes a post. The CLI and the API can delete posts, because they act with your API key. Give the key only to tools you trust, and rotate it if it leaks.
+  </Accordion>
+</AccordionGroup>
+
+## Billing
+
+<AccordionGroup>
+  <Accordion title="How do I cancel?" icon="circle-x">
+    On **Billing**, choose **Cancel subscription**. Only a workspace Admin or Super Admin can cancel. The plan keeps working until the end of the period you paid for: [Manage your subscription](/cloud/subscription#cancel).
+  </Accordion>
+
+  <Accordion title="Can I get a refund?" icon="receipt">
+    Yes. Any charge is refunded in full when you ask within {{refundDays}} days of it. Email [support@postqueen.ai](mailto:support@postqueen.ai): [Refunds](/cloud/refunds).
+  </Accordion>
+
+  <Accordion title="What happens when my plan ends?" icon="calendar-x">
+    Your channels are switched off, not deleted, and scheduled posts stop publishing. Your posts and settings stay. Choose a plan on **Billing** to carry on: [When a plan ends](/cloud/subscription#when-a-plan-ends).
+  </Accordion>
+</AccordionGroup>
+
+## Your account and data
+
+<AccordionGroup>
+  <Accordion title="How do I delete my account?" icon="user-x">
+    In **Settings > Account**, choose **Delete Account** and confirm with your email and password: [Settings](/using/settings#delete-your-account). Your plan is canceled at once, and your data is erased within 30 days.
+
+    [Security and privacy](/security-and-privacy#when-you-delete-your-account) says what is removed and what the law requires PostQueen to keep.
+  </Accordion>
+
+  <Accordion title="Does PostQueen sell my data?" icon="eye-off">
+    No. PostQueen uses what it receives from your channels only to publish your posts and show you their results. The [Privacy Policy](https://postqueen.ai/privacy-policy) lists every kind of data it holds and why.
   </Accordion>
 </AccordionGroup>
 
 ## Still need help?
 
-<CardGroup cols={1}>
-  <Card title="Contact support" icon="headset" href="/support">
-    Bugs go to GitHub Issues, billing and account questions go to support@postqueen.ai. The page
-    also shows what to put in a report so the first reply is the useful one.
+<CardGroup cols={2}>
+  <Card title="Support" icon="headset" href="/support">
+    How to reach a person, and what to put in your message.
   </Card>
-</CardGroup>
-
-<CardGroup cols={3}>
-  <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Connect a channel and schedule your first post
-  </Card>
-  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/overview">
-    Sorted by symptom
-  </Card>
-  <Card title="Providers" icon="share-nodes" href="/providers/overview">
-    Setup for every network
+  <Card title="Common errors" icon="circle-alert" href="/troubleshooting/common-errors">
+    The messages the app shows, and what to do about each.
   </Card>
 </CardGroup>

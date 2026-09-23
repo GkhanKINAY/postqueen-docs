@@ -1,80 +1,96 @@
 ---
-title: Notifications
-description: 'What she tells you about, where it arrives, and which emails you can turn off'
-icon: 'bell'
+title: "Notifications and your posting streak"
+sidebarTitle: "Notifications"
+description: "What the bell shows, which emails PostQueen sends and when, and how the posting streak counts."
+icon: "bell"
+keywords:
+  - notifications
+  - email
+  - bell
+  - streak
+  - mark all read
 ---
 
-She works while you are not watching, so the way you find out a post failed is a notification.
-Two places carry them: the bell in the app, and your inbox.
+**Where:** the bell in the header. Your email switches are in **Settings > Notifications**, in the Workspace group.
 
-## The bell
+Notifications belong to the workspace. Every member sees the same notices in the bell, and the emails cover every post in the workspace, not only the posts you made.
 
-Notifications collect in the app and stay there until you clear them. Newest first, a hundred to
-a page.
+## Read your notifications
 
-What lands there is anything you would want to know without asking: a post that published, a post
-a network refused, a channel whose connection went stale, an invitation to an organization.
+Choose the bell. A dot on it means there are notices you have not seen yet. The panel lists the workspace's 10 most recent notices, newest first, with the ones you have not seen highlighted. Opening the panel marks them as seen for you, and **Mark all read** clears the highlight. Other members keep their own unread state.
 
-The ones worth acting on immediately are failures, because a failed post does not retry itself.
-[When a post fails](/troubleshooting/post-failed) covers what each kind means.
+A notice can carry a button that takes you where you fix it:
 
-## Emails
+| Button | On notices about | Opens |
+|---|---|---|
+| **View post** | A post that was published | The post on the network, in a new tab |
+| **Reconnect** | A channel that lost its connection | **Channels**, with that channel selected |
+| **Open channel** | A channel that is disabled, was never finished connecting, or was switched back on, and an Auto Post feed with no channel to post to | **Channels** |
+| **Go to billing** | A payment that failed, was disputed or was refunded, channels your plan switched off, and a post that did not go out because the plan ended | **Billing** |
+| **Open calendar** | A post that failed, and Auto Post drafts or items it could not schedule | The calendar |
 
-Three toggles under **Settings > Global Settings**, all on by default:
+While PostQueen is open in your browser, a new notice also pops up at the bottom of the screen and counts as seen. With nothing yet, the panel reads "No notifications".
 
-| Toggle | What it stops |
-| --- | --- |
-| **Success Emails** | The mail confirming a post went out |
-| **Failure Emails** | The mail telling you a post did not |
-| **Streak Reminder Emails** | The nudge about keeping your posting streak going |
+## Choose your emails
 
-Turning one off leaves the bell alone: the notification still appears in the app, you just stop
-getting mail about it.
+<Steps>
+  <Step title="Open Notifications">
+    In **Settings**, choose **Notifications**. The address the emails go to is at the top.
+  </Step>
+  <Step title="Switch each email on or off">
+    Flip **Success Emails**, **Failure Emails** or **Streak Ended Emails**. Each switch saves at once. All three start on.
+  </Step>
+</Steps>
 
-<Warning>
-**Think before turning Failure Emails off.** A failed post is silent otherwise unless you happen
-to open the app. If the volume is the problem rather than the emails themselves, the usual cause
-is one channel with a dead token failing repeatedly, and reconnecting it stops the noise at the
-source.
-</Warning>
+| Email | When it arrives | Switch |
+|---|---|---|
+| A post was published | Within the hour, batched. See below. | **Success Emails** |
+| A post failed, or PostQueen could not confirm it went out | At once | **Failure Emails** |
+| "Streak Ended" | 24 hours after the workspace's last published post | **Streak Ended Emails** |
+| A channel needs reconnecting, is disabled or was never finished; your plan switched channels off or back on; a payment failed, was disputed or was refunded; a post did not go out because the plan ended | At once | None. These always arrive |
 
-<Note>
-**Self-hosting?** No mail of any kind goes out until `EMAIL_PROVIDER` is set, whatever these
-toggles say. The bell still works. [Email Notifications](/configuration/emails) sets it up.
-</Note>
+Success emails wait an hour from the first one, so a busy day does not fill your inbox. Everything published in the workspace during that hour arrives in one email with the subject "[PostQueen] Your latest notifications". When only one post went out, the email carries that notice's own subject instead.
 
-## Reading them from outside the app
+- Your switches decide what reaches your own inbox, in every workspace you belong to. They do not change what other members get.
+- A switch turned off stops the email only. The notice still appears in the bell.
+- A post saved with **Quiet** sends no success notice or email. You are still told if it fails. See [Create a post](/using/create-a-post).
+- Auto Post notices appear in the bell only. They are not emailed.
+- Emails from PostQueen are in English, whatever language the app is in.
 
-The public API exposes the same list, which is the practical way to watch for failures from a
-script or a dashboard:
+Keep **Failure Emails** on unless you check the calendar every day: a failed post does not publish again by itself. See [A post did not go out](/troubleshooting/post-failed).
 
-```bash
-curl -H "Authorization: your-api-key" \
-  "https://api.postqueen.ai/public/v1/notifications?page=0"
-```
+## Your posting streak
 
-A hundred per page, newest first, `page` starting at `0`. Full reference:
-[List Notifications](/public-api/notifications/list).
+The header shows your streak as a flame and a number, such as **3 day streak**. Hover it to see this week's days. Phones do not show it.
 
-<Note>
-There is no notification tool over [MCP](/mcp/limits-and-troubleshooting) and no CLI command for
-this, so an agent cannot tell you what failed. The API is the only route.
-[CLI limits](/cli/limits) lists the other gaps.
-</Note>
+- The streak belongs to the workspace. It starts when any post in the workspace is published, by any member, from the app, an agent, the CLI, the API or Auto Post.
+- Every published post starts a new 24-hour countdown. Drafts and scheduled posts count only once they go out.
+- If 24 hours pass with nothing published, the streak ends and the count goes back to 0. Members with **Streak Ended Emails** on get an email titled "Streak Ended".
+
+The email comes when the streak has ended, not before, as the switch says: "Receive an email when your posting streak ends, 24 hours after your last published post". If the workspace does not post every day, it arrives about a day after each post, so switch **Streak Ended Emails** off if you do not want it.
+
+## If something goes wrong
+
+| What you see | What to do |
+|---|---|
+| Emails about posts you did not make | Notices cover the whole workspace. Turn off the switch for that email in **Settings > Notifications**. |
+| No email after a post was published | Success emails can take up to an hour. Check that **Success Emails** is on, that the post was not saved with **Quiet**, and your spam folder. |
+| A notice you did not want to miss has scrolled away | The bell keeps the 10 most recent notices. For a failed post, open the calendar: the reason is on the post. |
+| "Something went wrong" when you flip a switch | The switch goes back. Reload the page and try again. |
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="When a post fails" icon="triangle-exclamation" href="/troubleshooting/post-failed">
-    What each failure means and which ones need you
+  <Card title="A post did not go out" icon="triangle-alert" href="/troubleshooting/post-failed">
+    Every failure notice, and how to send the post again.
   </Card>
-  <Card title="Set up email" icon="envelope" href="/configuration/emails">
-    Self-hosting: nothing is delivered until a provider is configured
+  <Card title="Connect a channel" icon="plug" href="/using/connect-a-channel">
+    Reconnect or enable a channel a notice points to.
   </Card>
-  <Card title="Webhooks" icon="bolt" href="/automation/webhooks">
-    Push the same events to your own endpoint instead of waiting for mail
+  <Card title="Settings" icon="sliders-horizontal" href="/using/settings">
+    Every Settings tab, and who sees it.
   </Card>
-  <Card title="Settings" icon="sliders" href="/using/settings">
-    Every tab, and why some are missing for you
+  <Card title="Manage your subscription" icon="credit-card" href="/cloud/subscription">
+    Failed, disputed and refunded payments.
   </Card>
 </CardGroup>

@@ -1,22 +1,104 @@
 ---
-title: Subscription
-sidebarTitle: Subscription
-description: 'Change plan on Billing, open the Stripe portal, cancel at period end'
-icon: 'file-invoice'
+title: "Manage your subscription"
+sidebarTitle: "Subscription"
+description: "Change plan, update the card, get invoices, cancel or reactivate, and what happens when a payment fails or is disputed."
+icon: "credit-card"
+keywords:
+  - billing
+  - change plan
+  - cancel
+  - reactivate
+  - invoices
+  - failed payment
+  - disputed payment
+  - chargeback
 ---
 
-Admins manage everything on **Billing** (left rail, or **Billing & invoices** in the user menu). It is not a Settings tab. Everyone else sees Billing as someone else's job.
+**Where:** **Billing**, from the **Upgrade** row at the bottom of the left rail (**Billing & invoices** on Ultimate, **Founding member** for founding members), or **Billing & invoices** in the account menu.
 
-Change plan on that page. Stripe prorates.
+Only a workspace Admin or Super Admin can open Billing. Other members see **Billing is managed by admins** and need to ask one of them.
 
-**Open billing portal** is Stripe's page for the card and invoices. It sends you back to Billing.
+## Change your plan
 
-**Cancel** keeps access until the period ends. Press it again while cancel is scheduled and the subscription stays on. There is no refund button on Billing: see Refunds below.
+<Steps>
+  <Step title="Pick the billing period">
+    Use the **Monthly** and **Yearly** switch above the plan cards.
+  </Step>
+  <Step title="Choose the new plan">
+    On its card, choose **Upgrade to** or **Downgrade to** followed by the plan name. On your current plan's card, **Switch to yearly** or **Switch to monthly** changes only the period.
+  </Step>
+  <Step title="Confirm what you lose">
+    Moving from a plan with team members to Creator asks you to confirm that your team members will be removed from the workspace (switched off, not deleted). Choose **Yes, continue** to go ahead.
+  </Step>
+</Steps>
 
-A founding deal still in its trail can drop to FREE immediately instead of waiting for the period end.
+The change applies at once. An upgrade charges the prorated difference right away, and a downgrade leaves the unused difference as a credit on your next invoices. You see "Subscription updated successfully" when it is done.
 
-## Refunds
+### What a smaller plan switches off
 
-A charge is refunded in full if you ask within 30 days of it, on a monthly or a yearly plan. Write
-to [support@postqueen.ai](mailto:support@postqueen.ai) from the address on your account and say
-which charge it is.
+- **Channels** above the new limit are disabled, newest first. They are not deleted. A post that comes due on a disabled channel fails with "Channel disabled", so reschedule it after you turn the channel back on.
+- **Team members** are switched off when the new plan has none. Super Admins, such as the workspace owner, keep access. Upgrading again switches the members back on.
+- **Upgrading again** turns the channels the downgrade disabled back on, oldest first, up to the new limit. Channels you disabled yourself stay off.
+
+## Update your card and get invoices
+
+Under **Payment method & invoices**, choose **Open billing portal**. The portal is where you change the card, add a tax ID and download invoices and receipts.
+
+## Cancel
+
+<Steps>
+  <Step title="Start the cancellation">
+    Choose **Cancel subscription** next to **Open billing portal**, then **Yes, cancel**.
+  </Step>
+  <Step title="Consider the offer">
+    On a monthly plan, you may be offered 50% off for 3 months instead. Choose **Apply 50% discount for 3 months** to keep the plan at that price, or **Cancel my subscription** to go on.
+  </Step>
+  <Step title="Give a reason">
+    Write at least 20 characters of feedback, then choose **Cancel Subscription**.
+  </Step>
+</Steps>
+
+The plan keeps working until the end of the period you already paid for, and nothing more is charged. Billing shows the end date and a **Reactivate subscription** button. Choose it before that date to keep the plan as it was.
+
+Two cases end at once instead:
+
+- **The last payment failed.** Canceling ends the plan immediately.
+- **A founding-member trial.** Canceling returns the workspace to no plan immediately, and you lose the lifetime offer.
+
+Deleting your account also cancels the plans of the workspaces you own. See [Refunds](/cloud/refunds#deleting-your-account).
+
+## When a payment fails
+
+If Stripe cannot charge a renewal, you get an email and an in-app notice, and Billing shows "We could not charge your credit card" with **Update payment method**. The plan keeps working while Stripe retries the payment. The next attempt uses the card you set in the billing portal. If the payment still cannot be collected, the plan ends.
+
+## When a payment is disputed
+
+If a payment to PostQueen is disputed with your bank (a chargeback) and the workspace has no subscription still running, such as a founding-member payment, the plan is suspended at once. Every member gets an email titled "Payment disputed", and the bell shows the same words: "A payment for PostQueen was disputed with your bank, so your plan has been suspended. Contact support if this was not you." **Go to billing** on the notice opens Billing.
+
+The workspace is then without a plan, as described below. If you did not dispute the payment, email [support@postqueen.ai](mailto:support@postqueen.ai). A dispute over a past payment does not suspend a subscription that is still running, and a bank's query that takes no money back does not suspend anything.
+
+## When a plan ends
+
+The workspace has no plan. Its channels are switched off, not deleted, and scheduled posts stop publishing. Auto Post feeds are switched off and stay off until you turn them on again. Your posts, channels and settings stay until you delete them. To come back, choose a plan on Billing. A workspace gets one free trial, so coming back starts the paid plan at once.
+
+## Coupons and the founding-member offer
+
+- **Coupons** go in **Have a discount coupon?** at checkout.
+- **Founding member** is a one-time payment of $99 that keeps the workspace on Pro for good, with no renewal. It is open for 24 hours after you sign up and during the free trial. On Billing, choose **Switch to lifetime**. Bought during the trial, it is charged when the trial ends.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
+    Prices, what each plan includes and the limits.
+  </Card>
+  <Card title="Refunds" icon="receipt" href="/cloud/refunds">
+    Any charge is refunded in full within {{refundDays}} days.
+  </Card>
+  <Card title="Free trial" icon="hourglass" href="/cloud/trial">
+    End the trial early, or cancel before it ends.
+  </Card>
+  <Card title="Support" icon="headset" href="/support">
+    Reach a person at support@postqueen.ai.
+  </Card>
+</CardGroup>

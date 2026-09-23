@@ -1,0 +1,63 @@
+---
+title: "LinkedIn"
+description: "What PostQueen will post to LinkedIn profiles and company pages, and the limits it checks before a post is scheduled."
+icon: "/images/channels/linkedin.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post to your LinkedIn profile and to the company pages you manage: text, images, multi-image posts of up to 20 images, MP4 video, and swipeable document carousels built from your images.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/linkedin.webp" alt="A new LinkedIn post in the PostQueen composer, with the post types LinkedIn takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 3,000 characters. A link stays plain text: LinkedIn does not build a preview card from it.
+  </Card>
+  <Card title="Media" icon="image">
+    One image, up to 20 in a multi-image post, or one MP4 video on its own. Large images are resized to fit LinkedIn's limits.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Text post, image post, multi-image post, video post and document carousel, on profiles and company pages.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    Company pages only, over 7, 30 or 90 days: page views, clicks, shares, engagement, comments and daily follower gains, plus impressions, clicks, likes, comments, shares and engagement for each post. No analytics for personal profiles.
+  </Card>
+</CardGroup>
+
+**Not supported:** polls, link preview cards, uploading your own PDF, mentions of people (company pages can be mentioned), and visibility choices: every post is public.
+
+## Connect LinkedIn
+
+<Note>
+LinkedIn is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It has two tiles: **LinkedIn** for your personal profile, and **LinkedIn Page** for a company page where you are an administrator or content administrator.
+</Note>
+
+## Post settings
+
+Each LinkedIn post in the composer has these settings:
+
+- **Post as images carousel**: **Post** or **Carousel**. **Carousel** turns 2 or more images into one swipeable document post. It works on profiles and company pages.
+- **Carousel slide name**: the title of the document carousel. Left empty, it is `slides`.
+
+The field names and values for the API are on [LinkedIn posting settings](/public-api/providers/linkedin).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that a multi-image post has at most 20 images, a video is the only media, a document carousel has 2 or more images and no video, and comments are text only.
+- **Add comment** adds your own text comments under the post, each with its own delay.
+- Mention a company page by typing `@` and the page's vanity name, the part after `linkedin.com/company/` in its address.
+- Images larger than LinkedIn allows are scaled down to fit inside 6,000 by 6,000 pixels. Formats other than JPEG, PNG and GIF are converted to JPEG. A GIF goes up unchanged.
+- PostQueen waits until LinkedIn has processed the media before it creates the post.
+- In the composer, **Add comments by a different account** and **Add Re-posters** let your other LinkedIn profiles and pages comment on the post or reshare it.
+- On company pages, **Auto Repost Posts** and **Auto plug post** in the channel's **Automations** on the **Channels** page reshare the post, or add a comment to it, once it reaches a like count you set. The post is checked every 6 hours, up to 3 times. See [how automations work](/using/auto-plugs).
+
+<NextStepsChannel />

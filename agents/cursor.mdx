@@ -1,179 +1,115 @@
 ---
-title: 'Cursor'
-description: "Ship the feature and schedule the announcement in one sitting: Cursor's agent drives her over MCP or the postqueen CLI"
-icon: /images/brand/icon-cursor.svg
+title: "Cursor"
+description: "Add PostQueen to Cursor with one entry in mcp.json, then let Cursor's agent announce what you ship and draft posts from your code."
+icon: "/images/brand/icon-cursor.svg"
 ---
 
-## Working with her inside the editor
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Cursor is the AI code editor with an agent mode and MCP support, which means she can sit right beside the diff you just merged. The changelog entry and the launch post are usually the same idea written twice, and the agent already has the first one open. Ask for the second and it lands on your calendar without a context switch.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-## Set up
+Cursor is an AI code editor with a built-in agent. Add PostQueen to its MCP settings and the agent can write posts about what you shipped, schedule them and report how your published posts did, without leaving the editor.
 
-Two routes, and you can take either. MCP is the native one here: Cursor's agent gets PostQueen's 21 hosted tools and asks for your approval before it calls them. The postqueen skill plus the `postqueen` CLI is the other, and it suits the agent terminal when you would rather see the exact command that ran.
+<div className="pq-visual pq-tint-blue">
+  <img noZoom src="/images/site/agents/cursor.webp" alt="A sample Cursor terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
+</div>
+
+## Before you start
+
+- **Plans:** Cursor lists MCP on its paid Individual plan. For the free Hobby plan, check [cursor.com/pricing](https://cursor.com/pricing).
+- **Platforms:** macOS, Windows and Linux.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect Cursor
 
 <Steps>
-  <Step title="Grab your API key">
-    Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key. Both routes below use this one key. Treat it like a password, since it grants full access to your account.
+  <Step title="Open mcp.json">
+    Open `~/.cursor/mcp.json` to use PostQueen in every project, or `.cursor/mcp.json` in a project to keep it to that one. In the app, MCP servers are under **Customize > MCPs**.
   </Step>
-  <Step title="Route A: connect over MCP">
-    One entry in `~/.cursor/mcp.json` and her tools appear in every project. The file, the
-    Settings UI route (**Customize → MCP** or **Tools & MCP**), the header variant and self-hosted URLs are all on
-    [Cursor over MCP](/mcp/clients/cursor).
+  <Step title="Add PostQueen">
+    Add the `postqueen` entry, with your key in place of `YOUR_API_KEY`, and save:
 
-    <Warning>
-    Put it in `~/.cursor/mcp.json` rather than the project's own `.cursor/mcp.json`, or your API
-    key travels into the repository with it.
-    </Warning>
-  </Step>
-  <Step title="Route B: install the CLI and her skill">
-    ```bash
-    npm install -g postqueen
-    npx skills add GkhanKINAY/postqueen-agent
-    ```
-
-    The skill is her `SKILL.md` playbook: it teaches the agent flags and patterns. It does not install the CLI — `npm install -g postqueen` is a separate step.
-
-    The repo also ships a Cursor plugin at `.cursor-plugin/plugin.json`. To install it locally:
-
-    ```bash
-    git clone https://github.com/GkhanKINAY/postqueen-agent.git
-    ln -s "$(pwd)/postqueen-agent" ~/.cursor/plugins/local/postqueen
-    ```
-
-    Then restart Cursor or run **Developer: Reload Window**. The plugin loads the same skill; it does not register an MCP server.
-
-    Then export the key in the shell Cursor's terminal inherits:
-
-    ```bash
-    export POSTQUEEN_API_KEY="your-api-key"
-    ```
-
-    Self-hosting PostQueen? Point the CLI at your backend URL, the same value as `NEXT_PUBLIC_BACKEND_URL`. Most single-domain setups serve the backend under `/api`:
-
-    ```bash
-    export POSTQUEEN_API_URL="https://postqueen.example.com/api"
+    ```json ~/.cursor/mcp.json
+    {
+      "mcpServers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+        }
+      }
+    }
     ```
   </Step>
-  <Step title="Verify the connection">
-    In agent mode, ask: *"List my connected social media accounts."* Over MCP the agent calls `integrationList`; over the CLI it runs:
-
-    ```bash
-    postqueen integrations:list
-    ```
-
-    A JSON list of your channels with their integration IDs means she is ready.
+  <Step title="Check it in Cursor">
+    Open **Customize > MCPs** and check that PostQueen is listed and on.
   </Step>
 </Steps>
 
-## 👑 Posts about the feature you just shipped
+## Check that it works
 
-The saved-views branch is merged and the changelog is written. Ask in the same window:
+Ask Cursor's agent: "List my PostQueen channels." It calls PostQueen and answers with the channels you connected.
 
-> *"We just shipped saved views. Read the changelog entry, draft three posts about it for X, LinkedIn and Bluesky, and hold them as drafts."*
+## Good to know
 
-It reads the repo for the source material, then discovers where the posts can go:
+- **The file holds your key** when you use the key address. Keep `.cursor/mcp.json` out of version control, or use the header form below.
+- **Cursor's agent can add the entry for you** if you allow it to edit `mcp.json`.
+- **Grok Bot runs on Cursor's cloud,** but it does not read Cursor's `mcp.json`. It has [its own setup](/agents/grok-bot).
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
-```bash
-postqueen integrations:list
-```
+## Other ways to connect
 
-Before writing a word, it asks each channel what it accepts. The response carries character limits and required settings, so a LinkedIn draft does not arrive shaped like a tweet:
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From Cursor's docs. The route above |
+| The Bearer header, key read from your environment | `{{mcpBearerUrl}}` | From Cursor's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| The postqueen skill and the CLI | No address | See [the postqueen skill](/agents/skill) |
 
-```bash
-postqueen integrations:settings <integration-id>
-```
+<Tabs>
+  <Tab title="Bearer header">
+    Cursor fills in `${env:NAME}` from your environment, so the key stays out of the file:
 
-Then it creates each post with `-t draft`, which saves it to the calendar rather than queueing it for publishing. The settings schema is validated even for a draft, so X still needs its `who_can_reply_post` value:
-
-```bash
-postqueen posts:create \
-  -c "Saved views are live. Filter once, name it, and it is waiting for you tomorrow." \
-  -s "2026-08-01T09:00:00Z" \
-  -t draft \
-  --settings '{"who_can_reply_post":"everyone"}' \
-  -i "twitter-id"
-```
-
-For a whole set at once, the agent can write a campaign file and pass it with `--json`, which is the cleaner path when the copy differs per channel. The file is the request body her API receives, so it carries the top-level `type`, `date`, `shortLink` and `tags` alongside one entry per channel:
-
-```json launch-week.json
-{
-  "type": "draft",
-  "date": "2026-08-01T09:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
+    ```json ~/.cursor/mcp.json
     {
-      "integration": { "id": "your-x-integration-id" },
-      "value": [
-        { "content": "Saved views are live 🎉", "image": [] }
-      ],
-      "settings": { "__type": "x", "who_can_reply_post": "everyone" }
-    },
-    {
-      "integration": { "id": "your-linkedin-integration-id" },
-      "value": [
-        { "content": "Saved views are live. Here is the thinking behind them...", "image": [] }
-      ],
-      "settings": { "__type": "linkedin" }
+      "mcpServers": {
+        "postqueen": {
+          "url": "https://api.postqueen.ai/mcp",
+          "headers": {
+            "Authorization": "Bearer ${env:POSTQUEEN_API_KEY}"
+          }
+        }
+      }
     }
-  ]
-}
+    ```
+  </Tab>
+  <Tab title="Sign in (not tested yet)">
+    Set `"url"` to `https://api.postqueen.ai/mcp-oauth-dynamic`, with no headers. Cursor registers itself and opens the PostQueen sign-in, which a workspace admin approves. In the Cursor CLI, run `agent mcp login postqueen`.
+
+    The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+  </Tab>
+</Tabs>
+
+## Try this first
+
+```text wrap
+We just shipped dark mode. List my PostQueen channels, then write a short Bluesky post about it and save it as a draft for tomorrow at 9am.
 ```
 
-```bash
-postqueen posts:create --json launch-week.json
-```
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
-<Note>
-`image` is required on every entry, so pass `[]` when a post has no media. Any value inside it has to be a URL returned by `postqueen upload`, the same rule that applies to `-m`. The rules in full: [Media upload](/cli/media-upload).
-</Note>
+## Troubleshooting
 
-The three drafts are now on your calendar at [app.postqueen.ai](https://app.postqueen.ai). Edit the copy there and publish when you are happy, or promote one from the terminal:
+| Symptom | Fix |
+|---|---|
+| The agent does not list PostQueen | Check that the `postqueen` entry is in `~/.cursor/mcp.json` or `.cursor/mcp.json`, and look under **Customize > MCPs**. |
+| It works in one project only | `.cursor/mcp.json` covers one project. Use `~/.cursor/mcp.json` for all of them. |
+| The Cursor CLI does not sign in | Run `agent mcp login postqueen`. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
 
-```bash
-postqueen posts:status <post-id> --status schedule
-```
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
-She runs on your terms. A post you schedule goes out at its time without another word from you, everything is visible on the calendar before it publishes, and a draft stays unscheduled until you publish it.
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Do I need Cursor to use PostQueen?">
-    No. She works on her own through the dashboard, the CLI and the public API. Cursor is one of several ways to automate her, and the one to pick when the announcement should be written where the code is.
-  </Accordion>
-  <Accordion title="MCP or the CLI in Cursor?">
-    MCP is the smoother fit for agent mode: 21 tools, no local install, and an approval prompt before each call. The CLI is better when you want the exact command visible in the terminal, or when you plan to reuse the same script in CI later. Configuring both is fine.
-  </Accordion>
-  <Accordion title="Can the agent write posts from my repo?">
-    Yes, and that is the point of running her here. Cursor's agent can read your changelog, your release notes or the diff itself, then turn them into posts shaped for each channel. You still see every draft on the calendar before anything reaches an audience.
-  </Accordion>
-  <Accordion title="Will it publish without asking me?">
-    Only if you set it up that way. Cursor asks for approval before running MCP tools by default, so keep that on for `integrationSchedulePostTool`. On the CLI side, `-t draft` saves each post to the calendar without scheduling it.
-  </Accordion>
-  <Accordion title="Can one brief cover my other channels too?">
-    Yes. PostQueen connects 30+ networks, so the same brief can become posts for every channel you have connected, each one adapted to what that channel accepts.
-  </Accordion>
-  <Accordion title="Does the integration cost extra?">
-    <Snippet file="agent-plan-limits.mdx" />
-  </Accordion>
-</AccordionGroup>
-
-## Learn more
-
-<CardGroup cols={2}>
-  <Card title="Cursor over MCP" icon="plug" href="/mcp/clients/cursor">
-    The full `.cursor/mcp.json` reference, the Settings UI flow and self-hosted URLs.
-  </Card>
-  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
-    The `postqueen` CLI behind Route B, with installation and the full command set.
-  </Card>
-  <Card title="Why agents love her" icon="robot" href="/agents/why-agents">
-    Why an agent can drive her without guesswork, and the two rules that matter most.
-  </Card>
-  <Card title="Agents overview" icon="compass" href="/agents/overview">
-    Every way to put an agent in front of PostQueen, from coding assistants to chat apps.
-  </Card>
-</CardGroup>
+<NextStepsAgent />

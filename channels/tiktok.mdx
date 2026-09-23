@@ -1,0 +1,126 @@
+---
+title: "TikTok"
+description: "Connect TikTok to PostQueen, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/tiktok.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="in-review">Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet.</ChannelStatus>
+
+Schedule TikTok videos and photo posts with their caption, audience and comment, Duet and Stitch settings. PostQueen posts them through TikTok's official API, or sends them to your TikTok inbox to finish in the app.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/tiktok.webp" alt="A new TikTok post in the PostQueen composer, with the post types TikTok takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Captions up to 2,000 characters. A photo post can also have a title of up to 90 characters.
+  </Card>
+  <Card title="Media" icon="image">
+    One MP4 video, or 1 to 35 photos, never both. PNG, WebP and GIF photos are converted to JPEG. AVIF, BMP and TIFF are refused.
+  </Card>
+  <Card title="Post types" icon="layers">
+    Video post and photo post, published directly or sent to your TikTok inbox.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    7 or 30 days: followers, following, total likes and video count, views, likes, comments and shares on your latest 20 videos, plus views, likes, comments and shares for each post.
+  </Card>
+</CardGroup>
+
+**Not supported:** text-only posts, a video and photos in one post, follow-up comments, Stories, and picking a specific sound or a location tag.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| At least one video or photo | “No video / images selected” |
+| A video goes on its own | “Only pictures are supported when selecting multiple items” |
+| At most 35 photos | “You can select up to 35 pictures” |
+| No AVIF, BMP or TIFF photos, as on every network | “File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4” |
+| Photos at most 1,080 px on the shorter side | “Image 2 is 1440x1920, TikTok allows a maximum of 1080px on the shorter side” (with your photo's number and size) |
+| An audience is chosen for a direct post | “Choose who can see this video before scheduling.” |
+| Caption up to 2,000 characters | “post is too long, please fix it” |
+
+Video length is TikTok's rule, and it depends on the account. When you post directly, the composer reads the longest video your account may post and warns when yours is longer ("This video is 95 seconds long and this TikTok account can post videos of up to 60 seconds. TikTok will refuse it, so trim it or choose a shorter video."). It does not stop you from scheduling. File size and video resolution are not checked first: TikTok takes photos up to 20 MB and videos at least 360 px on both sides.
+
+## Connect TikTok
+
+Any TikTok account can connect. You don't need a business account. **Add Channel** also lists **TikTok Business**, but that tile cannot be connected yet: use **TikTok**.
+
+<Note>
+TikTok is in review. Until TikTok audits PostQueen's app, at most 5 people can post through it in 24 hours, and every post is published as **Self only**.
+</Note>
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **TikTok**.
+  </Step>
+  <Step title="Sign in to TikTok">
+    Sign in with the TikTok account you want to post to, and approve every permission you are asked for. PostQueen needs all of them.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
+
+## Post settings
+
+Each TikTok post in the composer has these settings. The audience and the three switches are read from your TikTok account each time, so settings you turned off in TikTok stay off here, marked "Turned off on your TikTok account, so it cannot be set here".
+
+- **Content posting method**: **Post content directly to TikTok** publishes the post. **Upload content to TikTok without posting it** sends it to your TikTok inbox, where you finish and publish it in the TikTok app within 24 hours. It starts on posting directly.
+- **Who can see this video?**: the audiences your account allows, from **Public to everyone**, **Mutual follow friends**, **Follower of creator** and **Self only**. Nothing is preselected.
+- **Title**: a photo post's title. A video uses its caption instead.
+- **Auto add music**: let TikTok add recommended music to a photo post.
+- **Video features**: **Allow Duet**, **Allow Stitch** and **Video made with AI**, for videos only.
+- **Allow Comments**: on by default.
+- **Disclose Video Content**: mark the post as promotional, then choose **Your brand** (you promote yourself or your own brand) or **Branded content** (you promote another brand). Branded content can't be private.
+
+In Upload mode only the media, with a photo post's title and caption, reaches TikTok. A video's caption and every other setting stay behind, so you set them in the TikTok app.
+
+The field names and values for the API are on [TikTok posting settings](/public-api/providers/tiktok).
+
+## Comments and threads
+
+TikTok takes no follow-up comments or threads, so the composer offers no follow-up parts for a TikTok post.
+
+## Good to know
+
+- TikTok does not allow branded content to be private, so a post marked **Branded content** cannot be published until TikTok's audit of PostQueen's app passes.
+- When TikTok's limit of people posting through PostQueen's app is reached, TikTok disconnects the channel. It shows **Needs reconnecting**: choose **Reconnect channel** in its menu later.
+- TikTok processes a video after the upload, so a post can take a few minutes to appear on your profile.
+- TikTok itself limits how often you post: around 15 direct posts a day per account, shared with every app that posts to it, and at most 5 uploads waiting in your inbox in any 24 hours.
+- Photos are converted to JPEG when the post is published, not when you schedule it.
+- The connection renews itself.
+- During the free trial, a TikTok account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="This TikTok app has not passed TikTok's review yet">
+    Until TikTok's audit of PostQueen's app passes, only **Self only** publishes. Set **Who can see this video?** to **Self only** and schedule the post again.
+  </Accordion>
+  <Accordion title="TikTok daily user limit reached, please re-connect your account">
+    TikTok's limit of 5 people posting through PostQueen's app in 24 hours was reached, and TikTok disconnected the channel. Reconnect it later.
+  </Accordion>
+  <Accordion title="TikTok limits pending posts to 5 within any 24-hour period">
+    Five uploads are already waiting in your TikTok inbox. Publish or delete them in the TikTok app, then try again after 24 hours.
+  </Accordion>
+  <Accordion title="TikTok says your daily post limit reached, please try again tomorrow">
+    TikTok's own daily limit for the account was reached. Move the post to tomorrow.
+  </Accordion>
+  <Accordion title="Could not load who can see this video from TikTok">
+    PostQueen could not read your account's audiences, so it cannot offer them. Choose **Try again**. If it keeps failing, reconnect the channel.
+  </Accordion>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    A permission was switched off on TikTok's screen. Connect the channel again and approve every permission.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />

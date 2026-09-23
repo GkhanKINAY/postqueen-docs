@@ -1,75 +1,138 @@
 ---
-title: Grok Build
-description: 'Run your calendar from Grok Build in the terminal: one grok mcp add command, or the skill plus CLI'
-icon: /images/brand/icon-grok.svg
+title: "Grok Build"
+description: "Connect Grok Build, xAI's coding agent for the terminal, to PostQueen with one grok mcp add command."
+icon: "/images/brand/icon-grok.svg"
 ---
 
-## Working with her in the terminal
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Grok Build is xAI's coding agent. It lives in the terminal, runs commands, and speaks MCP. It is not Grok chat on grok.com, iOS or Android, and it is not [Grok Bot](/agents/grok-bot). Same pairing as Claude Code vs Claude, or Codex vs ChatGPT.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-A custom connector at [grok.com/connectors](https://grok.com/connectors) does not install this product. Official MCP is `grok mcp add`.
+Grok Build is xAI's coding agent for the terminal: the `grok` CLI. It also runs headless in scripts and inside other apps, and its source is open under Apache 2.0. Add PostQueen with one command and Grok Build can announce a release, draft posts from your repo and report how published posts did, without leaving the terminal.
 
-## Set up
+<div className="pq-visual pq-tint-blue">
+  <img noZoom src="/images/site/agents/grok-build.webp" alt="A sample Grok Build terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
+</div>
 
-Two routes lead to the same place. MCP hands Grok Build PostQueen's 21 hosted tools with nothing installed locally. The postqueen skill teaches the `postqueen` CLI when you want shell commands and JSON you can pipe.
+## Before you start
+
+- **Plans:** xAI first opened the `grok` CLI to SuperGrok and X Premium+ subscribers. No xAI plan page names the CLI today; free and X Basic accounts get a usage limit. Sign in through the browser, with `grok login --device-auth`, or with an xAI API key.
+- **Platforms:** the terminal on macOS, Linux and Windows. WSL uses the Linux build.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect Grok Build
 
 <Steps>
-  <Step title="Connect over MCP">
-    One command writes `~/.grok/config.toml`. The scoping options, the header variant and self-hosted URLs are on [Grok Build over MCP](/mcp/clients/grok-build).
+  <Step title="Add PostQueen">
+    Run this in your terminal, with your key in place of `YOUR_API_KEY`:
 
     ```bash
-    grok mcp add --transport http postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    grok mcp add --transport http postqueen \
+      https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
+
+    It saves PostQueen in your user config, `~/.grok/config.toml`, so every project can use it.
   </Step>
-  <Step title="Or install the CLI and skill">
+  <Step title="Check the server">
+    Run the doctor, or type `/mcps` inside Grok Build to open the extensions modal:
+
     ```bash
-    npm install -g postqueen
-    npx skills add GkhanKINAY/postqueen-agent
-    export POSTQUEEN_API_KEY="your-api-key"
+    grok mcp doctor postqueen
     ```
-
-    The skill is a playbook. It does not install the CLI. Get the key from [app.postqueen.ai](https://app.postqueen.ai) under **Connections > API Keys**. Only a workspace admin can reveal it.
-
-    The repo also ships a Grok Build plugin (`.grok-plugin/plugin.json` and `.grok-plugin/marketplace.json`). Add the repo as a marketplace source; the identifier is `postqueen@postqueen-agent`. It loads the same skill and does not register an MCP server.
-  </Step>
-  <Step title="Verify">
-    ```bash
-    grok mcp list
-    postqueen integrations:list
-    ```
-
-    `grok mcp list` confirms the MCP server. A JSON list of channels from the CLI means the key works.
   </Step>
 </Steps>
 
-<Note>
-Grok Build can also load Cursor `mcp.json` and `~/.claude.json` at lower priority. That is a compatibility fallback, not the official install. grok.com/connectors still does not register this product.
-</Note>
+## Check that it works
 
-## 👑 A launch post from the session
+Start Grok Build and ask: "List my PostQueen channels." It calls PostQueen and answers with the channels you connected. If PostQueen is missing, run `grok mcp list` to see whether the server is saved.
 
-Ask in plain words:
+## Good to know
 
-> Schedule a launch post about dark mode for tomorrow at 9am on X and LinkedIn.
+- **Keep the key out of the file** with the header form under [Other ways to connect](#other-ways-to-connect). The command above writes the key into `config.toml`.
+- **One project only:** add `--scope project` to write `.grok/config.toml` in the project instead of your user config.
+- **Grok Build also reads** `~/.claude.json`, `.cursor/mcp.json` and a project `.mcp.json`, at a lower priority than its own config. A server you already added for Claude Code or Cursor can show up here too.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
-It reads your channels with `integrationList`, then calls `integrationSchedulePostTool`. Want an image? Ask it to generate one. Not ready to publish? Ask for drafts.
+## Other ways to connect
 
-Posts land on the calendar at [app.postqueen.ai](https://app.postqueen.ai). You can edit or delete them before they go out.
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From xAI's docs. The route above |
+| The Bearer header, key read from your environment | `{{mcpBearerUrl}}` | From xAI's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| The postqueen skill as a Grok plugin | No address | Not tested yet |
 
-## Learn more
+<Tabs>
+  <Tab title="Bearer header">
+    Grok reads `${POSTQUEEN_API_KEY}` from your environment when it loads, so the key stays out of `config.toml`:
 
-<CardGroup cols={2}>
-  <Card title="Grok Build MCP setup" icon="plug" href="/mcp/clients/grok-build">
-    grok mcp add, config.toml, and the Bearer form
-  </Card>
-  <Card title="Grok chat" icon="/images/brand/icon-grok.svg" href="/agents/grok">
-    Custom connector at grok.com/connectors
-  </Card>
-  <Card title="Grok Bot" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Cloud agent. Add the server in the Bot chat.
-  </Card>
-  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
-    The postqueen CLI the skill drives
-  </Card>
-</CardGroup>
+    ```bash
+    export POSTQUEEN_API_KEY=YOUR_API_KEY
+    grok mcp add --transport http postqueen https://api.postqueen.ai/mcp \
+      --header 'Authorization: Bearer ${POSTQUEEN_API_KEY}'
+    ```
+
+    Keep the single quotes. With double quotes your shell writes the key itself into `config.toml`.
+  </Tab>
+  <Tab title="Sign in (not tested yet)">
+    Add the sign-in address, then sign in from the extensions modal. It has {{mcpToolsOauth}} tools, all but `ask_postqueen`.
+
+    ```bash
+    grok mcp add --transport http postqueen \
+      https://api.postqueen.ai/mcp-oauth-dynamic
+    ```
+
+    Type `/mcps` in Grok Build, select PostQueen and press `i` to sign in. A workspace admin signs in to PostQueen and approves. Grok keeps the token on your computer, and you can revoke it in PostQueen under **Connections > Approved Apps**.
+  </Tab>
+  <Tab title="Plugin (not tested yet)">
+    The postqueen skill drives the [PostQueen CLI](/cli/introduction), so install the CLI and set your key first:
+
+    ```bash
+    npm install -g postqueen
+    export POSTQUEEN_API_KEY=YOUR_API_KEY
+    grok plugin marketplace add GkhanKINAY/postqueen-agent
+    grok plugin install postqueen --trust
+    ```
+
+    See [the postqueen skill](/agents/skill) for what it teaches an agent.
+  </Tab>
+</Tabs>
+
+## Try this first
+
+```text wrap
+Read CHANGELOG.md and write a short Bluesky post about the latest release. Save it in PostQueen as a draft for tomorrow at 9am.
+```
+
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| PostQueen tools do not show up | Run `grok mcp doctor postqueen`, or open `/mcps` and check the server. |
+| Your key ended up in `config.toml` | Add the server again with the header in single quotes, so Grok reads `${POSTQUEEN_API_KEY}` from your environment. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| PostQueen works in one project only | It was added with `--scope project`. Add it again without the flag for your user config. |
+| You set up Grok or Grok Bot instead | Each product is set up on its own. Open its page below. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+## Is it the same as Grok or Grok Bot?
+
+No. xAI has three products with Grok in the name, and each one connects to PostQueen on its own:
+
+| Product | What it is | How it connects |
+|---|---|---|
+| **Grok Build** (this page) | xAI's coding agent for the terminal | One `grok mcp add` command |
+| [Grok](/agents/grok) | xAI's assistant at grok.com and in its mobile apps | A custom connector at grok.com/connectors |
+| [Grok Bot](/agents/grok-bot) | An always-on AI teammate with its own cloud computer | Ask in chat, key in the secure prompt |
+
+A server in Grok Build's `config.toml` does not reach Grok on grok.com or Grok Bot.
+
+<NextStepsAgent />

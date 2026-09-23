@@ -1,175 +1,265 @@
 ---
-title: 'Facebook Settings'
-description: 'Provider settings for Facebook posts'
+title: "Facebook posting settings"
+sidebarTitle: "Facebook"
+description: "The settings object a post to a Facebook Page takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/facebook.svg"
 ---
 
-Creating the OAuth app and connecting a channel: [Facebook setup guide](/installation/providers/facebook).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Overview
+<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish.</ChannelStatus>
 
-Facebook integration allows you to post to Facebook pages. You can optionally include a link URL, publish a story instead of a feed post, or put a short text post on a background.
+Every post to a Facebook Page carries a `settings` object with `"__type": "facebook"`. Every other field is optional: a plain text post needs nothing more. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
-## Settings Schema
+## Fields
 
-```json
-{
-  "__type": "facebook",
-  "url": "https://example.com/my-article",
-  "post_type": "post"
-}
-```
-
-## Properties
-
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"facebook"` |
-| `url` | string | ❌ | Optional link URL to include in the post |
-| `post_type` | string | ❌ | `post` (the default) or `story` |
-| `text_format_preset_id` | string | ❌ | Background preset for a short text-only post |
-
-### `post_type`
-
-| Value | Description |
-|-------|-------------|
-| `post` | A normal Page post. The default |
-| `story` | A Facebook story. Needs at least one photo or video, and **each attachment goes out as its own story** |
-
-A story with no media is refused with *Story should have at least one media*.
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | Always `"facebook"`. PostQueen sets it from the channel you post to, so it can be left out. |
+| `post_type` | string | No | `post` (the default) or `story`. A story needs at least one photo or video, and each item goes out as its own story. |
+| `url` | string | No | A link attached to the post. It must be a valid URL. Not used on stories. |
+| `text_format_preset_id` | string | No | A background preset id from the list below, for a text-only post. |
 
 ### `text_format_preset_id`
 
-A short text-only post can sit on a coloured or illustrated background. Pass the preset id to use one. Two conditions decide whether it shows, and when either fails the post still publishes, as plain text:
+A background shows only when both of these hold. When either fails, the post still publishes, as plain text:
 
-- **Text only.** A post with a photo ignores the preset.
+- **Text only.** A post with a photo or a video ignores the preset.
 - **130 characters at most.** Longer text drops the background.
 
-Facebook has no API for listing its presets, so PostQueen carries a fixed catalogue: the composer's background picker offers that set, and the ids themselves are listed in [`facebook.dto.ts`](https://github.com/GkhanKINAY/postqueen-app/blob/main/libraries/nestjs-libraries/src/dtos/posts/providers-settings/facebook.dto.ts).
+Facebook has no API that lists its presets, so PostQueen carries a fixed list, the same one the composer offers. The field is not checked against the list. If Facebook refuses an id, the post is published again without the background.
+
+<Accordion title="The 74 background preset ids">
+
+| Preset id | Background |
+|---|---|
+| `106018623298955` | Solid purple |
+| `365653833956649` | Pink tropical plants |
+| `618093735238824` | Brown illustration |
+| `191761991491375` | 3D hearts |
+| `2193627793985415` | 3D heart-eyes emojis |
+| `200521337465306` | 3D flame emojis |
+| `1821844087883360` | Walking yellow illustration |
+| `177465482945164` | Light purple 3D cube pattern |
+| `160419724814650` | Orange with pink illustration |
+| `248623902401250` | 3D smiling emoji |
+| `240401816771706` | 3D rose emojis |
+| `1868855943417360` | 3D crying-laughter emoji |
+| `255989551804163` | Eye pink illustration |
+| `1792915444087912` | Illustration |
+| `1654916007940525` | Light grey illustration |
+| `1679248482160767` | Light blue illustration |
+| `518948401838663` | Pink heart pattern on pink |
+| `423339708139719` | Illustration |
+| `204187940028597` | Solid red |
+| `621731364695726` | Solid red |
+| `518596398537417` | Red illustration |
+| `134273813910336` | Tree red illustration |
+| `217321755510854` | Pink and purple hearts on pink |
+| `323371698179784` | Sunset red illustration |
+| `901751159967576` | Gradient, dark orange-red |
+| `552118025129095` | Brown illustration |
+| `263789377694911` | Apple red illustration |
+| `606643333067842` | Tulip light-orange illustration |
+| `458988134561491` | Cat dark-orange illustration |
+| `548109108916650` | Unicorn red illustration |
+| `175493843120364` | Pink and yellow gradient |
+| `338976169966519` | Stairs beige illustration |
+| `206513879997925` | Spiral beige illustration |
+| `168373304017982` | Cube beige illustration |
+| `1271157196337260` | Solid red |
+| `174496469882866` | Lemon yellow illustration |
+| `862667370603267` | Egg light-yellow illustration |
+| `127541261450947` | Ball green illustration |
+| `218067308976029` | Light grey illustration |
+| `688479024672716` | Gradient, teal light-green |
+| `238863426886624` | Cat light-blue illustration |
+| `301029513638534` | Solid teal |
+| `154977255088164` | Solid teal |
+| `1941912679424590` | Gradient, grey dark-grey |
+| `396343990807392` | Flower teal illustration |
+| `143093446467972` | Blue clouds on dark blue |
+| `161409924510923` | Rocket ship makes heart in sky |
+| `145893972683590` | Solid dark purple |
+| `217761075370932` | Solid blue |
+| `931584293685988` | Wave blue illustration |
+| `148862695775447` | Pink and purple hearts on purple |
+| `100114277230063` | Deep sea blue illustration |
+| `558836317844129` | Spiral purple illustration |
+| `172497526576609` | Watermelon light-purple illustration |
+| `433967226963128` | Solid purple |
+| `197865920864520` | Donut light-purple illustration |
+| `643122496026756` | Pink illustration |
+| `762009070855346` | Balloon light-grey illustration |
+| `228164237768720` | Grey heart pattern on black |
+| `146487026137131` | Rain black illustration |
+| `221828835275596` | Glasses light-grey illustration |
+| `1903718606535395` | Solid red |
+| `1881421442117417` | Solid black |
+| `249307305544279` | Gradient, red-blue |
+| `1777259169190672` | Gradient, purple-magenta |
+| `303063890126415` | Yellow/orange/pink gradient |
+| `122708641613922` | Gradient, dark-grey-black |
+| `319468561816672` | Dark blue illustration |
+| `121945541697934` | Pink illustration |
+| `288211338285858` | Blue illustration |
+| `446330032368780` | Gradient, red |
+| `219266485227663` | Solid magenta |
+| `1289741387813798` | Solid dark red |
+| `1365883126823705` | Solid blue |
+
+</Accordion>
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| A story has at least one photo or video | “Story should have at least one media” |
+| Text up to 63,206 characters | “post is too long, please fix it” |
+
+The error body names the channel and the rule:
+
+```json
+{
+  "statusCode": 400,
+  "provider": "facebook",
+  "name": "Your Page name",
+  "message": "Story should have at least one media"
+}
+```
+
+Facebook's own rules are not checked first: photos in JPEG, PNG, GIF, BMP or TIFF up to 10 MB, and story videos up to 60 seconds. When the first item is an MP4, only that video is published and the other items are ignored. When a photo comes first, every item is sent as a photo.
 
 ## Examples
 
-### Simple text post
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the Page's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-facebook-integration-id"
-      },
-      "value": [
-        {
-          "content": "Check out our latest updates! 🎉",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "facebook"
-      }
-    }
-  ]
-}
-```
+<CodeGroup>
 
-### Post with link
-
-```json
+```json Link post
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-facebook-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
-        {
-          "content": "We just published a new blog post about social media automation!",
-          "image": []
-        }
+        { "content": "Our autumn guide is out. Five walks within an hour of the city.", "image": [] }
       ],
       "settings": {
         "__type": "facebook",
-        "url": "https://example.com/blog/social-media-automation"
+        "post_type": "post",
+        "url": "https://example.com/autumn-walks"
       }
     }
   ]
 }
 ```
 
-### Post with image
-
-```json
+```json Photos with a comment
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-facebook-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Beautiful sunset from our office! 🌅",
+          "content": "Opening night, in pictures.",
           "image": [
-            {
-              "id": "img-123",
-              "path": "https://uploads.postqueen.ai/sunset.jpg"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/night-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/night-2.jpg" }
           ]
+        },
+        {
+          "content": "Thanks to everyone who came.",
+          "image": [{ "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/crowd.jpg" }],
+          "delay": 10
         }
       ],
+      "settings": { "__type": "facebook", "post_type": "post" }
+    }
+  ]
+}
+```
+
+```json Video
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Two minutes with our head baker.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/baker.mp4" }]
+        }
+      ],
+      "settings": { "__type": "facebook", "post_type": "post" }
+    }
+  ]
+}
+```
+
+```json Background text
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [{ "content": "We are open all weekend!", "image": [] }],
       "settings": {
-        "__type": "facebook"
+        "__type": "facebook",
+        "post_type": "post",
+        "text_format_preset_id": "106018623298955"
       }
     }
   ]
 }
 ```
 
-### Story
-
-```json
+```json Story
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-facebook-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
           "content": "",
           "image": [
-            {
-              "id": "img-123",
-              "path": "https://uploads.postqueen.ai/story.jpg"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/story-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/story-2.mp4" }
           ]
         }
       ],
-      "settings": {
-        "__type": "facebook",
-        "post_type": "story"
-      }
+      "settings": { "__type": "facebook", "post_type": "story" }
     }
   ]
 }
 ```
 
-## Notes
+</CodeGroup>
 
-- The `url` field is optional and creates a link preview in the post
-- If posting with images, Facebook will display them as attachments
-- Video uploads are also supported
+In the photos example, the second entry in `value` is a follow-up comment, posted 10 minutes after the post. Each comment replies to the one before it and can carry one image. Only the first attached item is sent, and Facebook takes images on comments, not video.
+
+## Related
+
+- [Connect Facebook in the app](/channels/facebook)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

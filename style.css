@@ -1,10 +1,982 @@
-/* Frame draws a grey card behind every image: bg-gray-50/50 in light,
-   dark:bg-gray-800/25 in dark, plus p-2 of inset. Our illustrations already
-   carry their own panel and border, so the wrapper showed as a second, paler
-   box around the first one.
-   Dropping the fill and the inset keeps what Frame is actually for: zoom on
-   click, and a caption slot. */
+/* PostQueen docs theme.
+   Aligns Mintlify with the postqueen.ai design (canvas v31): Plus Jakarta Sans
+   (set in docs.json fonts), Instrument Serif italic accents, JetBrains Mono code;
+   violet #7C3AED / #6D28D9 / #5B21B6; lilac #EFE9FD; paper #FAF9FC; ink #15131C;
+   hairlines #E8E5EF; dark #15131C / #0E0C14, code panels #17141F on #2A2634.
+
+   Only hooks Mintlify renders today are used: the #page-title, #content,
+   #content-area, #navbar and #topbar-cta-button ids, the .card, .code-block, .callout and
+   .tabs classes and data attributes such as [data-badge]. Mintlify says these
+   can change, so check every rule in `mint dev` at 1440 and 390 in both
+   themes after a Mintlify update, and drop a rule that no longer does anything.
+   Colors come from the tokens below; further down only masks and shadows
+   carry their own alpha values. */
+
+/* 1. Fonts docs.json cannot set: the serif accent, the code font, and Plus
+   Jakarta Sans at the weights between the two docs.json loads (400 body,
+   800 headings), which the header, tabs, buttons and bold text use.
+   Self-hosted OFL files in /fonts (licenses in fonts/OFL.txt). */
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("/fonts/PlusJakartaSans-Variable.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/InstrumentSerif-Italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-SemiBold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+/* 2. Tokens, mirrored from the site. */
+:root {
+  --pq-ink: #15131c;
+  --pq-ink-2: #3b3745;
+  --pq-muted: #5b5766;
+  --pq-line: #e8e5ef;
+  --pq-line-2: #d9d5e2;
+  --pq-paper: #faf9fc;
+  --pq-surface: #ffffff;
+  --pq-violet: #7c3aed;
+  --pq-violet-600: #6d28d9;
+  --pq-violet-700: #5b21b6;
+  --pq-violet-900: #4c1d95;
+  --pq-violet-300: #c4b5fd;
+  --pq-tint: #f3effd;
+  --pq-lilac: #efe9fd;
+  --pq-accent: #6d28d9;
+  --pq-code-bg: #17141f;
+  --pq-code-line: #2a2634;
+  --pq-code-ink: #e9e5f2;
+  --pq-inline-ink: #4c1d95;
+  --pq-dot: rgba(21, 19, 28, 0.075);
+  --pq-glow: rgba(124, 58, 237, 0.16);
+  --pq-shadow: 0 14px 30px -18px rgba(40, 20, 80, 0.35);
+  --pq-ok: #16a34a;
+  --pq-on-violet: #ffffff;
+  /* The panels behind the site's pictures (Main on the canvas). */
+  --pq-tint-lilac: #f3effd;
+  --pq-tint-peach: #fdf0ea;
+  --pq-tint-blue: #e9f0fa;
+  --pq-tint-green: #eaf6f1;
+}
+.dark {
+  --pq-ink: #f3f0f8;
+  --pq-ink-2: #e9e5f2;
+  --pq-muted: #a39db1;
+  --pq-line: #2a2634;
+  --pq-line-2: #3a3547;
+  --pq-paper: #0e0c14;
+  --pq-surface: #15131c;
+  --pq-tint: #221f2b;
+  --pq-lilac: #26222e;
+  --pq-accent: #c4b5fd;
+  --pq-inline-ink: #ddd0fe;
+  --pq-dot: rgba(243, 240, 248, 0.07);
+  --pq-glow: rgba(124, 58, 237, 0.22);
+  --pq-shadow: 0 14px 30px -18px rgba(0, 0, 0, 0.8);
+  --pq-ok: #4ade80;
+  --pq-tint-lilac: #221d2f;
+  --pq-tint-peach: #2a211e;
+  --pq-tint-blue: #1b212d;
+  --pq-tint-green: #1a2622;
+}
+
+/* The page background runs to the bottom of long pages and under the footer. */
+html,
+body {
+  background-color: var(--pq-paper);
+}
+
+/* 3. Type. Site headings are 800 with tight tracking; docs sizes are smaller,
+   so the tracking is looser than the site's -0.045em. */
+#page-title {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+#content-area h2 {
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+#content-area h3 {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+/* Step titles are headings for their step. Mintlify sets them at body
+   weight, which makes a page of <Steps> read as one grey column. */
+[data-component-part="step-title"] {
+  font-weight: 700;
+  color: var(--pq-ink);
+}
+
+/* The serif accent: the violet second half of a headline, as on the site.
+   <h1>One calendar <span className="pq-serif">for every network.</span></h1> */
+.pq-serif {
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--pq-accent);
+}
+
+/* 4. Code: JetBrains Mono everywhere, dark panels like the site's code cards. */
+code,
+kbd,
+samp,
+pre,
+pre *,
+.font-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
+}
+.code-block,
+.code-group {
+  border-radius: 16px;
+  border: 1px solid var(--pq-code-line);
+  background: var(--pq-code-bg);
+}
+.code-block [data-component-part="code-block-root"] {
+  background: transparent;
+}
+/* Inline code: violet ink on a pale violet chip. #content-area rather than
+   #content, so API reference pages (which render no #content) match. */
+#content-area :not(pre) > code {
+  background: var(--pq-tint);
+  color: var(--pq-inline-ink);
+  border: 0;
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+}
+
+/* 5. Cards: hairline border, a larger radius, violet on hover. */
+.card {
+  border-radius: 16px;
+}
+#content-area .card {
+  border-color: var(--pq-line);
+  background-color: var(--pq-surface);
+}
+#content-area a.card:hover,
+#content-area .card:hover {
+  border-color: var(--pq-violet-300);
+}
+[data-component-part="card-icon"] {
+  color: var(--pq-violet);
+}
+
+/* 6. The navbar button as the site's pill (themes that draw one). */
+#topbar-cta-button a,
+#topbar-cta-button button {
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+/* 7. Callouts keep Mintlify's semantic colors, rounded like site panels. */
+.callout {
+  border-radius: 16px;
+}
+
+/* 8. Frame: our illustrations carry their own panel, so drop Frame's grey
+   wrapper and inset. Zoom on click and the caption slot still work. */
 .frame {
   background: transparent !important;
   padding: 0 !important;
+}
+/* App screenshots (images/app/, one per Guide page) are white on the white
+   paper, so they get the site's hairline edge, radius and soft shadow. */
+.pq-shot,
+.frame img.pq-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--pq-line);
+  border-radius: 14px;
+  box-shadow: var(--pq-shadow);
+}
+
+/* 9. Tables: site hairlines and a header row that reads as one.
+   Mintlify gives every cell a 150px minimum. That squeezes the text column
+   of a four-column table into a narrow strip and pushes a three-column table
+   past a phone screen, so the minimum is smaller and the browser sizes the
+   columns by their content. */
+#content-area table,
+#content-area th,
+#content-area td {
+  border-color: var(--pq-line);
+}
+#content-area th {
+  font-weight: 700;
+  color: var(--pq-ink);
+}
+#content-area td {
+  min-width: 6rem;
+}
+/* Mintlify lets inline code break between any two letters, which splits a
+   field name such as is_trial_reel across lines and lets the browser give its
+   column almost no width. Code in a cell keeps whole words; it still wraps if
+   the column has no room left. */
+#content-area td code {
+  word-break: normal;
+}
+/* On a phone even 6rem a cell pushes a four-column table off screen and
+   leaves its text column a word wide; the columns size to their content. */
+@media (max-width: 639px) {
+  #content-area td {
+    min-width: 0;
+  }
+}
+
+/* 10. Badges are pills; status lines sit under the page title
+   (snippets/status-badge.mdx, snippets/agent-status.mdx). */
+[data-badge] {
+  border-radius: 999px;
+  font-weight: 700;
+}
+/* The surface badge ("From the vendor's docs") is white on white without
+   an edge; a hairline keeps it a badge. */
+[data-badge][data-color="surface"] {
+  box-shadow: inset 0 0 0 1px var(--pq-line-2);
+  color: var(--pq-ink-2);
+}
+.pq-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+  margin: 0 0 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--pq-ink-2);
+}
+.pq-status [data-badge] {
+  flex-shrink: 0;
+}
+
+/* 11. The docs home (introduction.mdx, mode: custom). The site's look (Main
+   and Mcp on the design canvas) laid out as a docs index: every block starts
+   on the same left edge; a large title with a search box and popular pages;
+   the four ways as the site's picture cards; topic lists; the channel tiles. The pictures
+   are captures of the canvas on a transparent ground (images/site), and the
+   tinted panel behind each one is drawn here, so it follows the theme. */
+.pq-home {
+  color: var(--pq-ink);
+  padding-bottom: 4rem;
+}
+.pq-home a {
+  text-decoration: none;
+}
+#content .pq-home a {
+  border-bottom: 0;
+}
+.pq-home img {
+  display: block;
+  margin: 0;
+}
+/* Mintlify paints <Icon> with bg-primary; on the home the icon takes the
+   color of the element around it. */
+.pq-home .icon {
+  background-color: currentColor !important;
+}
+.pq-top {
+  position: relative;
+  overflow: hidden;
+}
+.pq-dots {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(var(--pq-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+  mask-image: linear-gradient(to bottom, #000 0%, transparent 85%);
+}
+.pq-top-inner {
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem 0.5rem;
+}
+.pq-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 34px;
+  padding: 0 14px 0 10px;
+  border: 1px solid var(--pq-line);
+  border-radius: 999px;
+  background: var(--pq-surface);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--pq-ink-2);
+}
+.pq-eyebrow svg {
+  width: 18px;
+  height: 18px;
+  color: var(--pq-violet);
+}
+.pq-top-title {
+  margin: 1.25rem 0 0;
+  font-size: clamp(2.9rem, 9vw, 7rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  color: var(--pq-ink);
+}
+.pq-top-title .pq-serif {
+  font-size: 1.1em;
+  letter-spacing: -0.02em;
+}
+.pq-lede {
+  margin: 1.5rem 0 0;
+  max-width: 700px;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: var(--pq-muted);
+  text-wrap: pretty;
+}
+/* The search box opens Mintlify's own search: its button is on the page but
+   hidden in custom mode, and SearchDocs (introduction.mdx) clicks it. */
+.pq-search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 600px;
+  height: 56px;
+  margin-top: 2rem;
+  padding: 0 14px 0 20px;
+  border: 1.5px solid var(--pq-line-2);
+  border-radius: 999px;
+  background: var(--pq-surface);
+  box-shadow: var(--pq-shadow);
+  font-size: 1.05rem;
+  color: var(--pq-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.pq-search:hover {
+  border-color: var(--pq-violet-300);
+}
+.pq-search span {
+  flex-grow: 1;
+}
+.pq-search kbd {
+  padding: 3px 9px;
+  border: 1px solid var(--pq-line);
+  border-radius: 8px;
+  background: var(--pq-paper);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pq-muted);
+}
+.pq-popular {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+}
+.pq-popular > span {
+  margin-right: 0.25rem;
+  font-weight: 700;
+  color: var(--pq-muted);
+}
+.pq-popular a,
+#content .pq-home .pq-popular a {
+  padding: 5px 12px;
+  border: 1px solid var(--pq-line);
+  border-radius: 999px;
+  background: var(--pq-surface);
+  font-weight: 600;
+  color: var(--pq-ink-2) !important;
+  transition: border-color 0.15s, color 0.15s;
+}
+.pq-popular a:hover,
+#content .pq-home .pq-popular a:hover {
+  border-color: var(--pq-violet-300);
+  color: var(--pq-accent) !important;
+}
+.pq-section {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 0;
+}
+.pq-h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.125rem);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--pq-ink);
+}
+.pq-sub {
+  margin: 0.6rem 0 0;
+  max-width: 640px;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--pq-muted);
+}
+.pq-ways {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+}
+.pq-way,
+#content .pq-home a.pq-way {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border: 1px solid var(--pq-line);
+  border-radius: 26px;
+  background: var(--pq-surface);
+  color: var(--pq-ink) !important;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.pq-way:hover,
+#content .pq-home a.pq-way:hover {
+  border-color: var(--pq-violet-300);
+  box-shadow: var(--pq-shadow);
+}
+.pq-way-visual {
+  display: block;
+  aspect-ratio: 564 / 300;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.pq-way-visual img {
+  width: 100%;
+  height: auto;
+}
+/* A window capture (the app, the terminal) sits inside the panel and runs
+   off its bottom edge, like the phone on the site. */
+.pq-way-window img {
+  width: 88%;
+  margin: 6% auto 0;
+}
+.pq-tint-lilac {
+  background: var(--pq-tint-lilac);
+}
+.pq-tint-peach {
+  background: var(--pq-tint-peach);
+}
+.pq-tint-blue {
+  background: var(--pq-tint-blue);
+}
+.pq-tint-green {
+  background: var(--pq-tint-green);
+}
+.pq-way-body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem 0.6rem;
+}
+.pq-way-logos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pq-way-logos img {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+.pq-way-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--pq-line-2);
+  border-radius: 6px;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pq-ink-2);
+}
+.pq-way-title {
+  margin-top: 0.35rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.pq-way-text {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--pq-ink-2);
+}
+.pq-way-need {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--pq-muted);
+}
+.pq-way-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--pq-accent);
+}
+.pq-topics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+.pq-topic {
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1.35rem 1rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 20px;
+  background: var(--pq-surface);
+}
+.pq-topic a {
+  padding: 0.3rem 0;
+  font-size: 0.95rem;
+  color: var(--pq-ink-2) !important;
+}
+.pq-topic a:hover {
+  color: var(--pq-accent) !important;
+}
+.pq-topic a.pq-topic-head,
+#content .pq-home .pq-topic a.pq-topic-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.5rem;
+  padding: 0 0 0.9rem;
+  border-bottom: 1px solid var(--pq-line);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--pq-ink) !important;
+}
+.pq-topic-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--pq-lilac);
+  color: var(--pq-violet);
+}
+/* Use these docs with AI: four cards, each with an address and a copy
+   button (CopyLink in introduction.mdx). */
+.pq-ai {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+.pq-ai-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 20px;
+  background: var(--pq-surface);
+}
+.pq-ai-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--pq-ink);
+}
+.pq-ai-item p {
+  flex-grow: 1;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--pq-ink-2);
+}
+.pq-ai-item p a {
+  color: var(--pq-accent) !important;
+  font-weight: 600;
+}
+.pq-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid var(--pq-line);
+  border-radius: 12px;
+  background: var(--pq-paper);
+}
+#content .pq-copy code,
+.pq-copy code {
+  flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12.5px;
+  color: var(--pq-ink-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pq-copy button {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  border: 1px solid var(--pq-line-2);
+  border-radius: 999px;
+  background: var(--pq-surface);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pq-accent);
+  cursor: pointer;
+}
+.pq-copy button:hover {
+  border-color: var(--pq-violet-300);
+}
+.pq-head-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+}
+.pq-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--pq-accent) !important;
+}
+/* The page reads centred, as the site does: the top, every section's title
+   and intro, the popular links and the channels link sit on the middle
+   axis; the cards keep their text flush left. */
+.pq-top-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.pq-top-inner .pq-lede {
+  margin-inline: auto;
+}
+.pq-popular {
+  justify-content: center;
+}
+.pq-h2 {
+  text-align: center;
+}
+.pq-sub {
+  margin-inline: auto;
+  text-align: center;
+}
+.pq-head-row {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.pq-home-foot {
+  text-align: center;
+}
+/* Every row as tall as the tallest, so a two-line name (Google Business)
+   does not make one row of tiles bigger than the rest. */
+.pq-channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+.pq-channels a,
+#content .pq-home .pq-channels a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--pq-line);
+  border-radius: 14px;
+  background: var(--pq-surface);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--pq-ink-2) !important;
+  transition: border-color 0.15s;
+}
+.pq-channels a:hover,
+#content .pq-home .pq-channels a:hover {
+  border-color: var(--pq-violet-300);
+  color: var(--pq-ink) !important;
+}
+.pq-channels img {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+.pq-channels span {
+  line-height: 1.25;
+}
+/* The rule spans the text, not the 1120px box around it, so it starts on
+   the same left edge as every block above. */
+.pq-home-foot {
+  max-width: 1072px;
+  margin: 4rem max(1.5rem, calc((100% - 1072px) / 2)) 0;
+  padding: 1.5rem 0 0;
+  border-top: 1px solid var(--pq-line);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--pq-muted);
+}
+.pq-home-foot a {
+  color: var(--pq-accent) !important;
+  font-weight: 600;
+}
+@media (max-width: 1023px) {
+  .pq-top-inner {
+    padding-top: 3.5rem;
+  }
+  .pq-topics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .pq-ways {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 639px) {
+  .pq-top-inner {
+    padding: 2.75rem 1rem 0;
+  }
+  .pq-lede {
+    font-size: 1.05rem;
+  }
+  .pq-section {
+    padding: 3rem 1rem 0;
+  }
+  .pq-topics,
+  .pq-ai {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pq-channels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pq-home-foot {
+    margin-inline: 1rem;
+    padding-top: 1.25rem;
+  }
+  .pq-search {
+    height: 50px;
+    font-size: 1rem;
+  }
+  .pq-search kbd {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pq-way,
+  .pq-search,
+  .pq-popular a,
+  .pq-channels a {
+    transition: none;
+  }
+}
+
+/* 12. Header, drawn from the site's menu (DesktopNav on the design canvas):
+   a solid bar with a hairline, a 30px logo, the tabs as plain 15px words
+   with no icons (ink-2 at 500, violet on hover, the open one ink with
+   Mintlify's faux bold, which keeps the centred row from shifting when the
+   tab changes), Pricing as one more word, Log in an outlined pill and Start
+   the violet pill (shape and weight in section 6), both 38px. The banner is news in the brand's lilac
+   rather than a dark strip that reads like a warning. */
+#navbar {
+  background-color: var(--pq-surface);
+  border-bottom: 1px solid var(--pq-line);
+}
+#navbar .nav-logo {
+  height: 30px;
+}
+#navbar .nav-tabs {
+  column-gap: 30px;
+}
+.nav-tabs-item {
+  color: var(--pq-ink-2) !important;
+  font-size: 15px;
+  font-weight: 500;
+}
+.nav-tabs-item > svg {
+  display: none;
+}
+.nav-tabs-item:hover {
+  color: var(--pq-accent) !important;
+}
+.nav-tabs-item[data-active="true"] {
+  color: var(--pq-ink) !important;
+  text-shadow: -0.35px 0 0 currentColor, 0.35px 0 0 currentColor;
+}
+#navbar li.navbar-link {
+  border-radius: 999px;
+}
+#navbar li.navbar-link a {
+  color: var(--pq-ink-2) !important;
+  font-size: 15px;
+  font-weight: 500;
+}
+#navbar li.navbar-link:has(a[href$="/pricing"]) {
+  border-color: transparent;
+  background: transparent;
+}
+#navbar li.navbar-link:has(a[href$="/pricing"]) a:hover {
+  color: var(--pq-accent) !important;
+}
+#navbar li.navbar-link:has(a[href*="/auth/login"]) {
+  height: 38px;
+  padding: 0 18px;
+  border: 1.5px solid var(--pq-line-2);
+  background: var(--pq-surface);
+}
+#navbar li.navbar-link:has(a[href*="/auth/login"]) a {
+  color: var(--pq-ink) !important;
+  font-weight: 600;
+}
+#topbar-cta-button > a {
+  height: 38px;
+  padding: 0 18px 0 20px;
+  font-size: 15px;
+}
+/* Mintlify pins every element but headings and bold to the docs.json body
+   weight (400) from a utility rule, so the label inside each link or button
+   would stay at 400 whatever the link says. It takes the link's. */
+#navbar li.navbar-link a *,
+#topbar-cta-button a * {
+  font-weight: inherit;
+}
+/* Mintlify forces the banner text white from inside a cascade layer, which
+   outranks an !important color here, so the fill is set instead. */
+#banner p {
+  -webkit-text-fill-color: var(--pq-inline-ink);
+  font-weight: 500;
+}
+/* Bold in the banner text (the agent names) comes out as a span that
+   Mintlify's body-weight rule pins to 400, so it is set by its marker. */
+#banner [data-streamdown="strong"] {
+  font-weight: 800;
+}
+#banner a {
+  -webkit-text-fill-color: var(--pq-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+#banner a::after {
+  content: " \2192";
+}
+#banner button svg,
+#banner button svg path {
+  stroke: var(--pq-accent);
+}
+
+/* 13. The tabs sit in the middle of the header on wide screens, like the
+   site's menu, instead of piling up against the buttons with an empty
+   stretch after the logo. The wrapper Mintlify marks relative is made
+   static, so the tab row centres on the full header row. Below 1280px the
+   row keeps Mintlify's layout: there is no room to centre without
+   touching the logo or the buttons. */
+@media (min-width: 1280px) {
+  #navbar div:has(> div > .nav-tabs) {
+    position: static;
+  }
+  #navbar div:has(> .nav-tabs) {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+  }
+  #navbar .nav-tabs-item {
+    white-space: nowrap;
+  }
+}
+
+/* 14. A wide page (mode: wide; today only agents/overview, for its
+   six-column agent tables) drops the "On this page" rail but keeps a
+   bounded column in the middle, so on a large screen the text does not
+   stretch edge to edge. */
+html[data-page-mode="wide"] #content-area {
+  max-width: 64rem;
+  margin-inline: auto;
+}
+
+/* 15. The site's pictures on inner pages: a capture from images/site on the
+   tinted panel it sits on in the site's cards (tints in section 2). A window
+   or card capture keeps its shadow margin, which pads it inside the panel;
+   pq-visual-fill is for a capture that is a whole panel already, and
+   pq-visual-wide lets a window grow on a wide page, pq-visual-phone keeps
+   a phone at phone size. Each agent page opens with its own session from
+   the site's agent page (images/site/agents), and each channel page with
+   the site's composer card for that network (images/site/channels). */
+.pq-visual {
+  display: flex;
+  justify-content: center;
+  margin: 1.75rem 0 2rem;
+  padding: 12px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.pq-visual img {
+  display: block;
+  width: 100%;
+  max-width: 640px;
+  height: auto;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.pq-visual-fill {
+  padding: 0;
+}
+.pq-visual-fill img {
+  max-width: none;
+}
+/* The composer card at the top of a channel page stays card-sized. */
+.pq-visual-card img {
+  max-width: 460px;
+}
+/* A phone stays phone-sized, so it does not fill a screen of its own. */
+.pq-visual-phone img {
+  max-width: 330px;
+}
+/* On a wide page (agents/overview) the app window fills more of the panel. */
+.pq-visual-wide img {
+  max-width: 920px;
+}
+
+/* 16. Footer links: Mintlify caps each at 144px and cuts the rest with an
+   ellipsis, which hid most of support@postqueen.ai. They take their full
+   width; the columns have room for it. */
+footer a.max-w-36 {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
 }

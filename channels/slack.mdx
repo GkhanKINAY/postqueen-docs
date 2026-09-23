@@ -1,0 +1,61 @@
+---
+title: "Slack"
+description: "What PostQueen will post to public and private Slack channels, and the limits it checks before a post is scheduled."
+icon: "/images/channels/slack.svg"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
+
+PostQueen will post messages and images to your public and private Slack channels, under the name and picture you choose for the channel, with follow-ups as thread replies.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/slack.webp" alt="A new Slack post in the PostQueen composer, with the post types Slack takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    Up to 150,000 characters, sent as Slack mrkdwn. Long text is split into sections of up to 3,000 characters at line breaks.
+  </Card>
+  <Card title="Media" icon="image">
+    PNG, JPG or GIF images, shown under the text. No video.
+  </Card>
+  <Card title="Post types" icon="layers">
+    A channel message, with follow-ups as replies in its thread.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Slack.
+  </Card>
+</CardGroup>
+
+**Not supported:** video, file uploads, and more than one channel of the same workspace in one post.
+
+## Connect Slack
+
+<Note>
+Slack is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will install PostQueen's Slack app in your workspace, so you will need permission to install apps there.
+</Note>
+
+## Post settings
+
+Each Slack post in the composer has one setting:
+
+- **Select Channel**: the public or private channel to post in. Required. You pick it in each post, not when you connect.
+
+The field names and values for the API are on [Slack posting settings](/public-api/providers/slack).
+
+## Good to know
+
+- Before a post is scheduled, PostQueen checks that it has no video, that a channel is picked, and that each message fits in Slack's 50 blocks: each picture is one block, and the text takes one per 3,000 characters.
+- **Add comment** adds follow-ups, each with its own delay. They go out as replies in the message's thread, and each can carry images.
+- Posts show the name and picture set for the channel in PostQueen. Change them with **Bot name & avatar** on the **Channels** page.
+- PostQueen joins a public channel by itself before posting. Invite the app to a private channel first, or the post fails.
+- If Slack refuses a message, the post fails with Slack's reason, such as `not_in_channel`, instead of being marked published.
+- Each published post links to the message in Slack.
+
+<NextStepsChannel />

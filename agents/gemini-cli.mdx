@@ -1,118 +1,93 @@
 ---
-title: 'Gemini CLI'
-description: 'One command connects Gemini CLI to her over MCP, and the terminal you already have open can put finished posts on your calendar'
-icon: /images/brand/icon-gemini-cli.svg
+title: "Gemini CLI"
+description: "Connect Gemini CLI, Google's AI agent for the terminal, to PostQueen with one gemini mcp add command."
+icon: "/images/brand/icon-gemini-cli.svg"
 ---
 
-## Working with her in the terminal
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-The release is cut, the terminal is still open, and the only thing standing between you and the announcement is a browser tab you do not want to open. One line of setup later, Gemini CLI can see your channels, ask each one what it accepts and write the posts onto your calendar without you leaving the prompt.
+<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
-Gemini CLI reads MCP servers from its `settings.json`, and PostQueen is already hosted at a URL, so nothing new runs on your machine. On connect it discovers PostQueen's [21 tools](/mcp/tools) and reads their schemas, which is why you never type a tool call by hand.
+Gemini CLI is Google's AI agent for the terminal. Add PostQueen with one command and Gemini CLI can turn release notes into posts, schedule them and report how your published posts did.
 
-Those 21 tools cover discovery, media, posting and analytics for published posts, and they can read back what is already scheduled and change a scheduled post's settings. They do not delete a post, move it to a new time, or read channel numbers such as followers. Those live on the calendar at [app.postqueen.ai](https://app.postqueen.ai) and in the [`postqueen` CLI](/cli/introduction), which Gemini CLI can run as a shell command like any other.
+<div className="pq-visual pq-tint-blue">
+  <img noZoom src="/images/site/agents/gemini-cli.webp" alt="A sample Gemini CLI terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
+</div>
 
-## Set up
+## Before you start
 
-One command, and the terminal you already have open can post:
+- **Plans:** free with a personal Google account, up to 60 requests a minute and 1,000 a day.
+- **Platforms:** the terminal on macOS 15+, Windows 11 24H2+ and Ubuntu 20.04+, with Node 20 or later.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
-```bash
-gemini mcp add --transport http --scope user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
+<ApiKeyLocation />
 
-Your key comes from the app at [app.postqueen.ai](https://app.postqueen.ai), under
-**Connections > API Keys** (only a workspace admin can reveal it). Then run `/mcp` inside Gemini CLI: `postqueen` should
-show as connected with 21 tools.
+## Connect Gemini CLI
 
-<Card title="Full setup: Gemini CLI over MCP" icon="/images/brand/icon-gemini-cli.svg" href="/mcp/clients/gemini-cli">
-  Scope options, the `settings.json` block, the header variant, self-hosted URLs, and why an entry
-  written with `url` instead of `httpUrl` connects to nothing
-</Card>
+<Steps>
+  <Step title="Add PostQueen">
+    Run this in your terminal, with your key in place of `YOUR_API_KEY`:
 
-<Warning>
-`--scope user` writes `~/.gemini/settings.json`. Without that flag, Gemini CLI writes a project-level `.gemini/settings.json` that carries your key into the repo. Keep that file out of version control.
-</Warning>
+    ```bash
+    gemini mcp add --transport http --scope user \
+      postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
 
-## 👑 Two posts about the release you just cut
+    `--scope user` writes `~/.gemini/settings.json`, so every folder can use PostQueen.
+  </Step>
+  <Step title="Check the tools">
+    Start Gemini CLI and type `/mcp`. PostQueen is listed with its tools.
+  </Step>
+</Steps>
 
-Saved views went out this afternoon and the changelog entry is written. Ask in the same terminal:
+## Check that it works
 
-> *"We shipped saved views today. Write a post for X and one for LinkedIn, generate an image for the X one, and schedule both for tomorrow at 9am."*
+Ask Gemini CLI: "List my PostQueen channels." It calls PostQueen and answers with the channels you connected.
 
-Four calls carry that sentence to your calendar:
+## Good to know
 
-1. `integrationList` returns every connected channel with its integration ID, so the agent knows which accounts exist before it writes anything.
-2. `integrationSchema` asks each platform what it expects and gets back its rules, its `maxLength` and its required settings. This is why the LinkedIn post does not arrive written to X's character limit.
-3. `generateImageTool` takes a prompt and returns an `id` with a hosted `path`. That `path` goes straight into `attachments`.
-4. `integrationSchedulePostTool` writes the calendar entries, one item in `socialPost` per post:
+- **Use the key address, not the sign-in.** Since v0.60.0, Gemini CLI refuses PostQueen's sign-in, so the sign-in address does not work here.
+- **Without `--scope user`,** the command writes `.gemini/settings.json` in the current project only.
+- **The command writes `"url"` with `"type": "http"`,** which works. `httpUrl` is the older key; a guide that calls `url` wrong is out of date.
+- **Gemini CLI can run the command for you** if you allow it.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
-```json
-{
-  "socialPost": [
-    {
-      "integrationId": "your-x-integration-id",
-      "isPremium": false,
-      "date": "2026-08-01T09:00:00.000Z",
-      "shortLink": false,
-      "type": "schedule",
-      "postsAndComments": [
-        {
-          "content": "<p>Saved views are live. Filter once, name it, and it is waiting for you tomorrow.</p>",
-          "attachments": ["https://uploads.postqueen.ai/saved-views.png"]
-        }
-      ],
-      "settings": [{ "key": "who_can_reply_post", "value": "everyone" }]
-    }
-  ]
-}
-```
+## Other ways to connect
 
-Content is HTML with a short list of allowed tags, and every line is wrapped in `<p>`. The `settings` array carries whatever `integrationSchema` said that platform requires, which is `who_can_reply_post` on X. Both rules in full: [tool reference](/mcp/tools).
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | From Google's docs. The route above |
+| The Bearer header | `{{mcpBearerUrl}}` | From Google's docs |
+| Sign in with PostQueen | Not offered | Does not work with Gemini CLI. Use the key |
 
-Not ready for one to go out? `type` takes `draft` instead of `schedule`. A draft is a post state, not a queue position: it lands on the calendar and stays there, unscheduled, until you publish it from the editor at [app.postqueen.ai](https://app.postqueen.ai). Her MCP tools carry no status change, so that switch happens on the calendar or from the CLI:
+To keep the key out of the address, send it as a header:
 
 ```bash
-postqueen posts:status <post-id> --status schedule
+gemini mcp add --transport http --scope user \
+  --header "Authorization: Bearer YOUR_API_KEY" \
+  postqueen https://api.postqueen.ai/mcp
 ```
 
-Everything you scheduled needs nothing further from you. It sits on the calendar where you can still edit or delete it, and at nine tomorrow morning it goes out on time.
+## Try this first
 
-## FAQ
+```text wrap
+List my PostQueen channels. Then split our release notes into a short Bluesky thread and save it as a draft for tonight at 8pm.
+```
 
-<AccordionGroup>
-  <Accordion title="Do I need Gemini CLI to use PostQueen?">
-    No. She works on her own through the dashboard, the CLI and the public API. Gemini CLI is one of several ways to automate her, and a good pick when your day already happens at a prompt.
-  </Accordion>
-  <Accordion title="She never shows up in /mcp">
-    The usual cause is the wrong config key. Streamable HTTP servers go under `httpUrl`, while `url` is for SSE. After that, check the API key was pasted in full with no stray whitespace, and that the entry is in the file you think it is: `gemini mcp add` writes into the project unless you pass `--scope user`.
-  </Accordion>
-  <Accordion title="What can she do from a Gemini CLI session?">
-    Everything PostQueen's 21 MCP tools cover. They list your channels, read what each platform accepts and schedule posts across your 30+ networks. Along the way they can fetch dynamic values like subreddit flairs, generate an image or build a video to attach.
-  </Accordion>
-  <Accordion title="Can it check how a post performed?">
-    Yes, for published posts: `analyticsPostsTool` ranks them and `analyticsPostTool` reads one. Channel numbers such as follower growth are not over MCP, and no tool deletes posts either. For those, use the calendar at [app.postqueen.ai](https://app.postqueen.ai) or the `postqueen` CLI, which carries `posts:delete` and `analytics:platform`.
-  </Accordion>
-  <Accordion title="Can Gemini CLI use the CLI instead of MCP?">
-    Yes. It runs shell commands, and every `postqueen` command takes flags and prints JSON, so nothing has to be scraped off the screen. The CLI is the wider surface of the two, and the one to reach for when you want listing, status changes or analytics. Installation and the full command set: [CLI introduction](/cli/introduction).
-  </Accordion>
-  <Accordion title="Does the integration cost extra?">
-    <Snippet file="agent-plan-limits.mdx" />
-  </Accordion>
-</AccordionGroup>
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
-## Learn more
+## Troubleshooting
 
-<CardGroup cols={2}>
-  <Card title="Gemini CLI over MCP" icon="plug" href="/mcp/clients/gemini-cli">
-    The `settings.json` block, the Bearer variant and self-hosted URLs.
-  </Card>
-  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 21 tools Gemini discovers on connect, with every parameter.
-  </Card>
-  <Card title="CLI introduction" icon="terminal" href="/cli/introduction">
-    The `postqueen` CLI, for the work MCP does not cover.
-  </Card>
-  <Card title="Agents overview" icon="compass" href="/agents/overview">
-    Every way to put an agent in front of PostQueen, from coding assistants to chat apps.
-  </Card>
-</CardGroup>
+| Symptom | Fix |
+|---|---|
+| The sign-in address fails | Gemini CLI refuses PostQueen's sign-in. Use the key address. |
+| PostQueen is missing in another folder | The default scope is project. Add it again with `--scope user`. |
+| A guide says your `url` setting is wrong | `url` with `"type": "http"` works. `httpUrl` is the older key. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+<NextStepsAgent />

@@ -1,0 +1,45 @@
+{/*
+  Tested status, one line under an agent page's title. `status` and `label`
+  must equal the agent's status and badge in facts/facts.json
+  (npm run check:facts compares them). The pill shows a few words and the
+  rest of the label follows as a note, like ChannelStatus:
+    tested         green    label "Tested by PostQueen (2026-09-19)"
+                            -> pill: the whole label
+    partly-tested  green    label: the exact badge text in facts.json
+                            -> pill "Partly tested", note: the label
+    vendor-docs    surface  label "From the vendor's docs, not tested by PostQueen yet"
+                            -> pill "From the vendor's docs", note "Not tested by PostQueen yet."
+    not-possible   gray     label "Not possible yet"
+                            -> pill: the label, note: the children
+  A whole sentence in a pill wraps into a block on a phone, so a partial
+  result gets its own short pill and any other label is split at its first
+  comma. No comments inside the component: MDX cannot parse them there.
+
+  import { AgentStatus } from '/snippets/agent-status.mdx';
+  <AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
+*/}
+
+export const AgentStatus = ({ status, label, children }) => {
+  const look = {
+    tested: { color: 'green', icon: 'badge-check' },
+    'partly-tested': { color: 'green', icon: 'badge-check' },
+    'vendor-docs': { color: 'surface', icon: 'book-open' },
+    'not-possible': { color: 'gray', icon: 'circle-slash' },
+  }[status] || { color: 'gray', icon: 'circle-question-mark' };
+  const cut = status === 'partly-tested' ? -1 : (label || '').indexOf(', ');
+  const rest = cut > 0 ? label.slice(cut + 2) : '';
+  const pill = status === 'partly-tested' ? 'Partly tested' : cut > 0 ? label.slice(0, cut) : label;
+  const note = status === 'partly-tested' ? label : cut > 0 ? rest.charAt(0).toUpperCase() + rest.slice(1) + '.' : null;
+  return (
+    <div className="pq-status not-prose" data-status={status}>
+      <Badge color={look.color} shape="pill" size="md" icon={look.icon}>{pill}</Badge>
+      {note || children ? (
+        <span className="pq-status-note">
+          {note}
+          {note && children ? ' ' : null}
+          {children}
+        </span>
+      ) : null}
+    </div>
+  );
+};

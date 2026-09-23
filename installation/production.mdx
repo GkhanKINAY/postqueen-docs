@@ -1,100 +1,50 @@
 ---
-title: Deploy to a server
-description: 'From an empty virtual machine to PostQueen running on your own domain with HTTPS'
-icon: 'server'
+title: "Deploy to a server"
+description: "From an empty Ubuntu virtual machine to PostQueen on your own domain with HTTPS: DNS, Docker, the firewall, the .env file, a pinned image, the reverse proxy and closing sign-up."
+icon: "server"
 ---
 
-From an empty virtual machine to PostQueen running on your own domain, over HTTPS. No prior
-server experience is needed. Every command is written out. Set aside about thirty minutes, most
-of it waiting for downloads.
+import RestartService from '/snippets/restart-service.mdx';
 
-<Tip>
-Want to look around first without renting anything? [Try her locally](/installation/quickstart-local)
-runs the same software on your own machine in five minutes. That path sets `NOT_SECURED=true`
-for HTTP login. This page does not: production is HTTPS, with `ENCRYPTION_KEY` set on first
-setup.
-</Tip>
+This walkthrough takes an empty virtual machine to PostQueen running at `https://postqueen.example.com`. Every command is written out. Plan on about thirty minutes, most of it downloads.
 
 ## What you need
 
-Three things, and the guide helps you get all of them.
+| | |
+|---|---|
+| A server | A Linux virtual machine with Ubuntu 24.04, 2 vCPU and at least 4 GB of memory. [Self-hosting overview](/installation/overview#what-the-machine-needs) has the sizing. |
+| A domain | A domain or subdomain whose DNS you control. A certificate needs a name, so an IP address alone is not enough. |
+| A terminal | With SSH, on your own computer. |
 
-| What | Detail |
-| --- | --- |
-| **A small server** | Any provider that rents Linux virtual machines works. Pick Ubuntu 24.04. Two vCPUs and **4 GB of RAM** is the starting point. Temporal plus Elasticsearch will OOM a 2 GB box. |
-| **A domain name** | Or a subdomain of one you already own. She needs a real name to get an HTTPS certificate, so an IP address alone is not enough. |
-| **A terminal** | macOS and Linux have one built in. On Windows use PowerShell or Windows Terminal. |
+Replace `postqueen.example.com` with your own name everywhere on this page.
 
-## Step by step
+## Install
 
 <Steps>
   <Step title="Create the server">
-    Order a virtual machine running **Ubuntu 24.04**. When it is ready your provider gives you
-    a public IP address that looks like `203.0.113.42`, and either a password or an SSH key.
-
-    Write the IP address down. You need it in the next two steps.
+    Order an Ubuntu 24.04 machine from any provider. Note its public IP address, for example `203.0.113.42`, and the SSH login it gives you.
   </Step>
-
-  <Step title="Point your domain at it">
-    In whichever service manages your domain, add an **A record**:
-
-    | Field | Value |
-    | --- | --- |
-    | Type | `A` |
-    | Name | `postqueen` (or `@` to use the bare domain) |
-    | Value | your server's IP address |
-    | TTL | leave the default |
-
-    That gives you `postqueen.example.com`. Throughout the rest of this guide, replace
-    `postqueen.example.com` with whatever you actually chose.
-
-    DNS changes take a few minutes to spread. You can check from your own machine:
+  <Step title="Point the domain at it">
+    Where your domain's DNS is managed, add an **A record**: name `postqueen` (or `@` for the bare domain), value the server's IP address. Then check from your own computer:
 
     ```bash
     dig +short postqueen.example.com
     ```
 
     <Check>
-    That prints your server's IP address. Do this now, because the certificate step later will
-    fail if the name does not resolve yet.
+    The command prints the server's IP address. The certificate step fails until it does.
     </Check>
   </Step>
-
-  <Step title="Connect to the server">
+  <Step title="Connect and install Docker">
     ```bash
     ssh root@203.0.113.42
-    ```
-
-    Use your own IP address. If your provider gave you a different username, such as `ubuntu`,
-    use that instead. The first time you connect it asks whether you trust the host; answer
-    `yes`.
-
-    Everything from here runs on the server, not on your own machine.
-  </Step>
-
-  <Step title="Install Docker">
-    Docker's own install script handles this in one go:
-
-    ```bash
     curl -fsSL https://get.docker.com | sh
-    ```
-
-    Confirm it worked:
-
-    ```bash
-    docker --version
     docker compose version
     ```
 
-    <Check>
-    Both print a version number. If either answers "command not found", the script did not
-    finish, and running it again is safe.
-    </Check>
+    Use the username your provider gave you if it is not `root`. The last command prints the Compose version, which has to be v2.24 or newer. Every command from here runs on the server.
   </Step>
-
-  <Step title="Close the doors you are not using">
-    Only web traffic and your own SSH session should be able to reach this machine.
-
+  <Step title="Open only SSH and the web ports">
     ```bash
     ufw allow OpenSSH
     ufw allow 80/tcp
@@ -103,232 +53,138 @@ Three things, and the guide helps you get all of them.
     ```
 
     <Warning>
-    Allow `OpenSSH` before enabling the firewall. If you enable it first you will lock yourself
-    out of your own server and have to recover through your provider's console.
+    Allow `OpenSSH` before you enable the firewall, or it locks you out of the server.
     </Warning>
-
-    <Note>
-    Port 4007 is **not** on that list, and should not be. The reverse proxy you set up later is
-    the only thing that should talk to PostQueen on 4007. UFW alone does not keep that port
-    closed, though: ports that Docker publishes bypass UFW's rules. The next step binds 4007 to
-    the server itself.
-    </Note>
   </Step>
-
-  <Step title="Download PostQueen">
+  <Step title="Clone the Compose repository">
     ```bash
     git clone https://github.com/GkhanKINAY/postqueen-docker-compose
     cd postqueen-docker-compose
     ```
 
-    <Note>
-    Stay in this folder for the rest of the guide. It holds `docker-compose.yaml`, which is the
-    single file that describes the whole install, along with the `dynamicconfig` folder that
-    the scheduler reads at startup.
-    </Note>
-
-    <Warning>
-    **Bind port 4007 to the server itself.** Docker publishes container ports past UFW, so the
-    firewall rules above do not close 4007. In `docker-compose.yaml`, change the `postqueen`
-    service's port mapping from `"4007:5000"` to `"127.0.0.1:4007:5000"`. PostQueen then
-    answers only on the server, where the reverse proxy reaches it, and the outside world only
-    sees 443. If you keep the original mapping, filter the port in Docker's `DOCKER-USER` chain
-    instead.
-    </Warning>
+    Stay in this folder. It holds `docker-compose.yaml` and the `dynamicconfig` folder Temporal reads at start.
   </Step>
-
-  <Step title="Write `.env` (JWT, encryption, public URLs)">
-    Compose loads a sibling `.env` and interpolates `${VAR:-default}` into the app service, so
-    this file is the production default path. Generate two keys and point her at your HTTPS
-    address. **Do not set `NOT_SECURED`.**
-
-    ```bash
-    printf 'JWT_SECRET=%s\nENCRYPTION_KEY=%s\nMAIN_URL=https://postqueen.example.com\nFRONTEND_URL=https://postqueen.example.com\nNEXT_PUBLIC_BACKEND_URL=https://postqueen.example.com/api\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
-    ```
-
-    Replace `postqueen.example.com` with your domain before you run it. No trailing slashes.
-    `NEXT_PUBLIC_BACKEND_URL` keeps `/api`.
-
-    <Warning>
-    **`ENCRYPTION_KEY` is required on first production setup.** Unset, she falls back to
-    `JWT_SECRET` for encrypting stored secrets. That works until you rotate the signing key,
-    then every connected channel dies. Set a separate encryption key now, while the database
-    is empty. [Configuration Reference](/configuration/reference) covers later rotation with
-    `PREVIOUS_ENCRYPTION_KEY`.
-    </Warning>
-
-    <Warning>
-    Set `JWT_SECRET` and `ENCRYPTION_KEY` once and never change them casually. Changing
-    `JWT_SECRET` signs everyone out. Changing `ENCRYPTION_KEY` without
-    `PREVIOUS_ENCRYPTION_KEY` can disconnect channels.
-    </Warning>
-
-    Optionally pin the image in `docker-compose.yaml` so `latest` does not move under you.
-    Swap `latest` for a tag from the
-    [releases page](https://github.com/GkhanKINAY/postqueen-app/releases):
+  <Step title="Bind port 4007 to the server itself">
+    Docker publishes container ports past UFW, so the rules above do not close port 4007. In `docker-compose.yaml`, change the `postqueen` service's port line:
 
     ```yaml
-    image: ghcr.io/gkhankinay/postqueen-app:v3.5.9
+    ports:
+      - "127.0.0.1:4007:5000"
     ```
 
-    <Note>
-    **Why `/api`?** Everything reaches her through one address. Inside the container a small
-    proxy sends anything starting with `/api` to the backend and everything else to the web
-    interface. So the browser is told the backend lives at `yourdomain/api`, and there is no
-    second port or second hostname to set up.
-    </Note>
+    PostQueen then answers only on the server, where the reverse proxy reaches it, and the outside world sees only ports 80 and 443. Keeping the original `"4007:5000"` leaves PostQueen reachable over plain HTTP on port 4007 from anywhere.
+  </Step>
+  <Step title="Write the .env file">
+    ```bash
+    cat > .env <<EOF
+    JWT_SECRET=$(openssl rand -hex 32)
+    ENCRYPTION_KEY=$(openssl rand -hex 32)
+    MAIN_URL=https://postqueen.example.com
+    FRONTEND_URL=https://postqueen.example.com
+    NEXT_PUBLIC_BACKEND_URL=https://postqueen.example.com/api
+    EOF
+    ```
+
+    Put your own domain in the three addresses before you run it. Keep `/api` on the last one and leave off trailing slashes. Do **not** add `NOT_SECURED`: the site runs on HTTPS.
 
     <Warning>
-    Leave `BACKEND_INTERNAL_URL` as its default `http://localhost:3000`. That one is not about
-    your domain at all. Pointing it at your public address will break things.
+    **Keep both keys once set.** `JWT_SECRET` signs sessions, so changing it signs everyone out. `ENCRYPTION_KEY` encrypts the API key, the stored credentials of networks such as Bluesky and WordPress, and other secrets, so changing it without `PREVIOUS_ENCRYPTION_KEY` makes those unreadable. Setting `ENCRYPTION_KEY` now, before there is data, is what lets you rotate `JWT_SECRET` later. See [Configuration reference](/configuration/reference#encryption-keys).
     </Warning>
   </Step>
+  <Step title="Pin the image">
+    The Compose file uses `ghcr.io/gkhankinay/postqueen-app:latest`, which moves with every release. Pin a release tag so an upgrade happens when you choose:
 
-  <Step title="Start her">
-    ```bash
-    docker compose up -d
+    ```yaml
+    image: ghcr.io/gkhankinay/postqueen-app:vX.Y.Z
     ```
 
-    First run downloads several gigabytes of images, so give it a few minutes. When it finishes
-    you will see each container reported as started or healthy.
-
-    Watch her come up:
-
+    Take the newest tag from the [app's tags](https://github.com/GkhanKINAY/postqueen-app/tags) or the [image package](https://github.com/GkhanKINAY/postqueen-app/pkgs/container/postqueen-app), written with its `v`. The GitHub Releases page is not kept current, so do not take the version from there. Later, only ever move the tag forward: [Backups and upgrades](/installation/backups-and-upgrades) explains why.
+  </Step>
+  <Step title="Start PostQueen">
     ```bash
+    docker compose up -d
     docker compose logs -f postqueen
     ```
 
-    You are waiting for:
-
-    ```
-    postqueen  | Backend started successfully on port 3000
-    ```
-
-    Press `Ctrl+C` to stop watching.
-
-    <Note>
-    **Read the lines just after that one.** She checks her own configuration at the end of
-    startup and prints anything suspicious as `Configuration issue`. She does not refuse to
-    start when something is wrong, so a running container is not by itself proof that the
-    settings are right. If you see those warnings, fix them now rather than wondering later
-    why sign-in fails.
-    </Note>
-
-    Check she is answering locally before you put a proxy in front of her:
+    Wait for `Backend started successfully on port 3000`, then press `Ctrl+C`. Read the lines just after it: the backend checks its settings and prints each problem as a `Configuration issue`, but keeps running either way. Then check that it answers on the server:
 
     ```bash
     curl -I http://localhost:4007
     ```
 
     <Check>
-    An `HTTP/1.1 200 OK` means she is up.
+    `HTTP/1.1 200 OK`.
     </Check>
   </Step>
+  <Step title="Add HTTPS">
+    Put a reverse proxy in front of port 4007. With Caddy it is three lines and the certificate renews itself: follow [Domain and HTTPS](/installation/domain-and-https#set-up-caddy), then come back when `https://postqueen.example.com` loads.
 
-  <Step title="Add your domain and HTTPS">
-    She is running, but only on the server itself. The last piece is a reverse proxy, which
-    accepts HTTPS on port 443, gets a certificate for your domain automatically, and passes
-    requests to port 4007.
-
-    [Domain and HTTPS](/installation/domain-and-https) explains what that means and why she
-    needs it. The URL values already live in `.env` from the step above. If you want the short
-    version, Caddy does the whole job in three lines:
-    [Caddy](/reverse-proxies/caddy).
-
-    Come back here when `https://postqueen.example.com` loads in your browser.
+    [Nginx](/reverse-proxies/nginx) and [Traefik](/reverse-proxies/traefik) work too.
   </Step>
+  <Step title="Create your account, then close sign-up">
+    Open `https://postqueen.example.com` and sign up. That first account owns the install.
 
-  <Step title="Create your account and close the door">
-    Open `https://postqueen.example.com` and sign up. The first account is yours and owns the
-    install.
-
-    Then stop anyone else from signing up. Add this line to `.env`:
+    Everyone who should have an account on this install has to sign up now, before you close it. Then add this line to `.env`:
 
     ```env
     DISABLE_REGISTRATION=true
     ```
 
-    Apply it:
-
-    <Snippet file="restart-service.mdx" />
+    <RestartService />
 
     <Note>
-    Existing accounts, including yours, can still sign in normally. This only closes new
-    sign-ups. You can still invite teammates from inside the app.
+    **Closing sign-up also blocks invitations for new people.** Existing accounts sign in as before, and you can still invite someone who already has an account here. A person without one cannot create it from an invite while this is set. People who sign in through your own [single sign-on](/configuration/oauth) provider are the exception: they still get an account.
     </Note>
   </Step>
 </Steps>
 
 <Check>
-**She is live** on your domain, over HTTPS, and closed to strangers.
+PostQueen runs on your domain, over HTTPS, and nobody new can sign up.
 </Check>
 
-## Connect a channel
+## Connect channels
 
-Most networks need a public HTTPS callback. Put the provider keys in the same `.env` (for
-example `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`), recreate the app container, then
-Add Channel. Per-network walkthroughs: [Providers](/providers/overview). Redirect URLs and
-HTTPS: [Domain and HTTPS](/installation/domain-and-https).
-
-<Snippet file="restart-service.mdx" />
+Eight networks need no setup: Bluesky, DEV, Hashnode, Lemmy, Listmonk, Nostr and WordPress take a key or login in the connect form, and Moltbook registers an agent. For the others, register a developer app with the network, put its keys in `.env`, recreate the `postqueen` container, then open **Channels** and choose **Add Channel**. [Channel developer apps](/installation/providers/overview) lists each network's variables, redirect URI and setup page.
 
 ## If something is not right
 
 <AccordionGroup>
-  <Accordion title="The site does not load at all">
-    Work outwards. `curl -I http://localhost:4007` on the server tells you whether she is up at
-    all. If that works but the domain does not, the problem is the reverse proxy or DNS, not
-    PostQueen. Check that `dig +short postqueen.example.com` returns your server's IP.
+  <Accordion title="The site does not load">
+    Work outward from the container. If `curl -I http://localhost:4007` fails on the server, PostQueen is not up: `docker compose logs postqueen` says why. If it works but the domain does not, check DNS with `dig +short postqueen.example.com` and the proxy's own log.
   </Accordion>
-
-  <Accordion title="Sign-in fails or immediately signs me out">
-    Almost always a URL mismatch. `FRONTEND_URL` has to be character for character the address
-    in your browser's bar, including `https://` and with no trailing slash. She builds her
-    allowed-origin list from it, so a mismatch means the browser is refused. Search the log for
-    it:
+  <Accordion title="Sign-in fails or does not stick">
+    `FRONTEND_URL` has to be exactly the address in the browser, with `https://` and no trailing slash. The backend accepts requests only from that address and `MAIN_URL`. Look for the backend's warnings:
 
     ```bash
     docker compose logs postqueen | grep -i "configuration issue"
     ```
 
-    Do not set `NOT_SECURED=true` to paper over this on a public server. Fix the URLs and the
-    proxy instead.
+    Do not set `NOT_SECURED=true` to work around it on a public server.
   </Accordion>
-
-  <Accordion title="Connecting a social channel fails">
-    Every network builds its return address from `FRONTEND_URL`, so if that value is wrong or
-    was changed after you registered the app, the redirect will not match what the network has
-    on file. Keys belong in `.env`, then recreate the app container.
-    [OAuth connect errors](/troubleshooting/oauth-connect) covers the specific messages.
+  <Accordion title="Connecting a channel fails at the network">
+    Each network sends the browser back to `FRONTEND_URL` + `/integrations/social/` + the network's name. If `FRONTEND_URL` changed after you registered the app, update the redirect URI in the network's console. A missing or wrong key shows up as an error page on the network's side, not in PostQueen.
   </Accordion>
-
   <Accordion title="Containers restart in a loop">
-    Usually memory. Check with `docker stats`, and `docker compose logs postqueen` for the
-    reason it died. Temporal plus Elasticsearch want around 4 GB total. 2 GB is not enough.
+    Usually memory. `docker stats` shows usage, and `docker compose logs postqueen` shows why it stopped. The stack needs about 4 GB.
   </Accordion>
-
   <Accordion title="Everyone was signed out after a restart">
-    `JWT_SECRET` changed. It signs every session, so a new value invalidates all of them. Set
-    it once and keep it. If `ENCRYPTION_KEY` was never set, changing `JWT_SECRET` can also
-    disconnect channels. [Self-host troubleshooting](/troubleshooting/self-host) has more.
+    `JWT_SECRET` changed. Put the old value back, or accept that everyone signs in again. [Self-hosting troubleshooting](/troubleshooting/self-host) covers what else a changed key breaks.
   </Accordion>
 </AccordionGroup>
 
 ## Next steps
 
-Worth doing soon rather than eventually.
-
 <CardGroup cols={2}>
-  <Card title="Set up email" icon="envelope" href="/configuration/emails">
-    Without it, password resets quietly do nothing. This is the most common regret.
+  <Card title="Set up email" icon="mail" href="/configuration/emails">
+    Without it, password resets send nothing.
   </Card>
-  <Card title="Back up your data" icon="box-archive" href="/installation/backups-and-upgrades">
-    Which volumes hold data you cannot rebuild, and how to restore one
+  <Card title="Back up your data" icon="archive" href="/installation/backups-and-upgrades">
+    Which volumes hold data you cannot rebuild, and how to restore them.
   </Card>
-  <Card title="Connect your channels" icon="plug" href="/providers/overview">
-    Each network needs its own app keys, created by you
+  <Card title="Channel developer apps" icon="key-round" href="/installation/providers/overview">
+    Each network's app, keys and redirect URI.
   </Card>
-  <Card title="Sort out media storage" icon="cloud-arrow-up" href="/configuration/uploads">
-    Local disk is fine to start with. Know the tradeoff before you grow.
+  <Card title="Uploads and storage" icon="cloud-upload" href="/configuration/uploads">
+    Local disk or Cloudflare R2, and what each asks of you.
   </Card>
 </CardGroup>

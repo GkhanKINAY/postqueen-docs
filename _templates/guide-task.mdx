@@ -1,0 +1,52 @@
+---
+title: "TASK, as the reader would say it"
+description: "One sentence: what the reader gets done on this page."
+icon: "LUCIDE_ICON"
+---
+
+import NextStepsGuide from '/snippets/next-steps-guide.mdx';
+
+{/*
+  Guide task page template (B1). Copy it to using/<slug>.mdx. 300 to 600 words.
+  Labels are the app's English strings (the i18n value in the app's
+  translation.json on origin/main, not the code fallback), quoted in bold as the
+  app shows them. Error messages are quoted exactly. At most one screenshot, from
+  the B11 rig. Delete these comments when done.
+
+  Rules for this page:
+  - Open with the "Where:" line naming the screen and how to get there.
+  - Plain voice: "PostQueen", never "she"; US English; no em dashes; no narrative
+    opener; no marketing.
+  - No self-hosting words, env var names or source links on this tab.
+  - Examples use networks that work today (Bluesky, WordPress, DEV, Nostr); a
+    network in review only with its note.
+  - Numbers that live in facts.json come through a docs.json variable
+    ({{trialDays}}, {{priceCreator}} ...) or a link to the page that owns them.
+*/}
+
+**Where:** SCREEN, from **RAIL_ITEM** in the left rail.
+
+INTRO: one or two sentences on what this does, and when you need it.
+
+## Do the task
+
+<Steps>
+  <Step title="STEP">
+    Choose **LABEL**. WHAT_HAPPENS.
+  </Step>
+  <Step title="STEP">
+    STEP_TEXT
+  </Step>
+</Steps>
+
+## Good to know
+
+- DETAIL, with the exact label or message.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| "EXACT MESSAGE" | FIX |
+
+<NextStepsGuide />

@@ -1,323 +1,114 @@
 ---
-title: Nginx
-description: 'Configure Nginx as a reverse proxy for PostQueen'
-icon: 'server'
+title: "Nginx"
+description: "Put PostQueen behind Nginx on your own domain, with a Let's Encrypt certificate from Certbot and the upload size PostQueen needs."
+icon: "server-cog"
 ---
 
-Nginx puts PostQueen on your domain with HTTPS. It takes more configuration than
-[Caddy](/reverse-proxies/caddy) and handles certificates through a separate tool, so it is the
-right choice mainly when you already run Nginx for other things.
+import ComposePublicUrls from '/snippets/compose-public-urls.mdx';
+import RestartService from '/snippets/restart-service.mdx';
 
-If you are not sure what a reverse proxy is or why she needs one,
-[Domain and HTTPS](/installation/domain-and-https) explains it first.
+Nginx takes more setup than [Caddy](/installation/domain-and-https#set-up-caddy) and gets its certificate from a separate tool, Certbot. Use it when Nginx already runs on the server. [Domain and HTTPS](/installation/domain-and-https) explains what the proxy is for.
 
 ## Before you start
 
-- Your domain's **A record** points at this server. Check with `dig +short postqueen.example.com`.
-- Ports **80 and 443** are open. Port 80 is needed to prove you own the domain.
-- PostQueen is already running. Confirm with `curl -I http://localhost:4007` on the server.
+- The domain's **A record** points at the server: `dig +short postqueen.example.com` prints its IP.
+- Ports **80 and 443** are open. Certbot proves control of the domain over port 80.
+- PostQueen answers on the server: `curl -I http://localhost:4007` returns `200`. If you run the image on its own with `-p 127.0.0.1:5000:5000`, use port 5000 wherever this page says 4007.
 
-<Note>
-**About the port.** Under [Docker Compose](/installation/docker-compose), the normal install,
-she is published on the host as **4007**, which is the number used throughout this page. Inside
-the container she listens on 5000. If you installed her with
-[Docker on its own](/installation/docker) she is on `localhost:5000` instead, so change the
-`proxy_pass` lines below accordingly.
-</Note>
+## Set it up
 
-## How to add Nginx as a reverse proxy
-
-<Info>
-The following commands are tailored for Ubuntu/Debian systems. If you are using a different Linux distribution, you may need to adjust package management commands accordingly (e.g., `yum` for CentOS, `brew` for macOS).
-</Info>
+The commands are for Ubuntu and Debian.
 
 <Steps>
-  <Step title="Install Nginx">
-```bash
-sudo apt update && sudo apt install nginx -y
-sudo systemctl start nginx && sudo systemctl enable nginx
-```
+  <Step title="Install Nginx and Certbot">
+    ```bash
+    sudo apt update
+    sudo apt install -y nginx certbot python3-certbot-nginx
+    ```
   </Step>
+  <Step title="Write the site">
+    Create `/etc/nginx/sites-available/postqueen` with your own domain:
 
-  <Step title="Install Certbot for SSL">
-```bash
-sudo apt update && sudo apt install python3-certbot-nginx -y
-```
-  </Step>
+    ```nginx /etc/nginx/sites-available/postqueen
+    server {
+        listen 80;
+        listen [::]:80;
+        server_name postqueen.example.com;
 
-  <Step title="Create the Webroot Directory">
-```bash
-sudo mkdir -p /var/www/certbot/.well-known/acme-challenge && sudo chown -R www-data:www-data /var/www/certbot
-```
-  </Step>
+        # PostQueen accepts uploads up to 1 GB, sent in one request.
+        # Nginx refuses anything over 1 MB unless this is raised.
+        client_max_body_size 1G;
 
-  <Step title="Create a temporary Nginx config for creating SSL certificates">
-    <Note>
-    Make sure to change subdomain.domain.tld to your actual subdomain and ensure that it is pointed to your server's IP address.
-    </Note>
-
-    Edit the file `/etc/nginx/sites-available/subdomain.domain.tld`:
-
-```nginx
-server {
-    listen 80;
-    listen [::]:80;  # IPv6 support
-    server_name <subdomain.domain.tld>;  # CHANGE HERE
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
+        location / {
+            proxy_pass http://127.0.0.1:4007;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
     }
+    ```
 
-    location / {
-        return 301 https://$host$request_uri;
-    }
+    Then enable it and check the syntax:
 
-    # Hide NGINX version for security reasons
-    server_tokens off;
-}
-```
-
-    Then create the symlink:
-```bash
-sudo ln -s /etc/nginx/sites-available/<subdomain.domain.tld> /etc/nginx/sites-enabled/
-```
+    ```bash
+    sudo ln -s /etc/nginx/sites-available/postqueen /etc/nginx/sites-enabled/
+    sudo nginx -t
+    sudo systemctl reload nginx
+    ```
   </Step>
+  <Step title="Get the certificate">
+    ```bash
+    sudo certbot --nginx -d postqueen.example.com
+    ```
 
-  <Step title="Obtain SSL Certificates Using Webroot method">
-```bash
-sudo certbot certonly --webroot -w /var/www/certbot -d <subdomain.domain.tld> --email your-email@example.com --agree-tos --no-eff-email
-```
+    Certbot proves the domain over port 80, then adds HTTPS to this server block and a redirect from HTTP to HTTPS. The package also installs a timer that renews the certificate and reloads Nginx on its own; `sudo certbot renew --dry-run` tests it.
   </Step>
+  <Step title="Tell PostQueen its address">
+    <ComposePublicUrls />
 
-  <Step title="Edit the Nginx config">
-    Edit the file `/etc/nginx/sites-available/subdomain.domain.tld`.
-
-    <Tabs>
-      <Tab title="Secure Config (Recommended)">
-```nginx
-# HTTP -> HTTPS Redirection
-server {
-    listen 80;
-    listen [::]:80;  # IPv6 support
-    server_name <subdomain.domain.tld>;  # CHANGE HERE
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-    }
-
-    location / {
-        return 301 https://$host$request_uri;
-    }
-
-    # Hide NGINX version for security reasons
-    server_tokens off;
-}
-
-# HTTPS Configuration
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;  # Enable HTTP/2 and IPv6 support if you need
-    server_name <subdomain.domain.tld>; # CHANGE HERE
-
-    # Hide NGINX version
-    server_tokens off;
-
-    # SSL Certificates
-    ssl_certificate /etc/letsencrypt/live/<subdomain.domain.tld>/fullchain.pem;  # CHANGE HERE
-    ssl_certificate_key /etc/letsencrypt/live/<subdomain.domain.tld>/privkey.pem;  # CHANGE HERE
-    ssl_trusted_certificate /etc/letsencrypt/live/<subdomain.domain.tld>/chain.pem;  # CHANGE HERE
-
-    # Security: Stronger SSL Configuration
-    ssl_session_cache shared:SSL:10m;  # Cache SSL sessions
-    ssl_session_timeout 1d;  # Set session timeout to 1 day
-    ssl_session_tickets off;  # Disable SSL session tickets
-
-    # Use only modern SSL/TLS protocols (disables older insecure ones)
-    ssl_protocols TLSv1.2 TLSv1.3;
-
-    # Configure SSL ciphers (strong encryption algorithms)
-    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
-    ssl_prefer_server_ciphers off;  # Allow clients to prefer their ciphers
-
-    # Diffie-Hellman parameter for Perfect Forward Secrecy (PFS)
-    ssl_dhparam /etc/ssl/certs/dhparam.pem;  # Generate with `sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048`
-
-    # OCSP Stapling for improved SSL/TLS performance
-    ssl_stapling on;
-    ssl_stapling_verify on;
-
-    # DNS resolver for OCSP
-    resolver 1.1.1.1 1.0.0.1 valid=300s;
-    resolver_timeout 5s;
-
-    # some HTTP Security Headers
-    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;  # HSTS
-    add_header X-Frame-Options "SAMEORIGIN" always;  # Prevent Clickjacking
-    add_header X-Content-Type-Options "nosniff" always;  # Prevent MIME-type sniffing
-    add_header X-XSS-Protection "1; mode=block" always;  # XSS Protection
-    add_header Referrer-Policy "no-referrer" always;  # Better privacy control
-    add_header Permissions-Policy "geolocation=(self), microphone=(), camera=()" always;  # Limit browser permissions
-
-    # Reverse Proxy to PostQueen application
-    location / {
-        proxy_pass http://localhost:4007;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # WebSocket Support
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-
-    # Disable directory listing for security
-    autoindex off;
-
-    # Increase maximum post size to prevent 413 error with images larger than 2MB (changes max size to 100MB)
-    client_max_body_size 100M;
-
-    # Enable Gzip compression for better performance
-    gzip on;
-    gzip_comp_level 6;
-    gzip_min_length 1100;
-    gzip_buffers 4 32k;
-    gzip_proxied any;
-    gzip_types text/plain text/css text/javascript application/json application/xml image/svg+xml;
-
-    # Optional Access/Error Logging
-    access_log /var/log/nginx/<subdomain.domain.tld>.log; # CHANGE HERE
-    error_log /var/log/nginx/<subdomain.domain.tld>.log; # CHANGE HERE
-}
-```
-      </Tab>
-      <Tab title="Simple Config">
-```nginx
-# HTTP -> HTTPS Redirection
-server {
-    listen 80;
-    server_name <subdomain.domain.tld>; # CHANGE HERE
-
-    # Location for Let's Encrypt validation
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-    }
-
-    return 301 https://$host$request_uri;  # Redirect all traffic to HTTPS
-}
-
-# HTTPS Configuration
-server {
-    listen 443 ssl;
-    server_name <subdomain.domain.tld>; # CHANGE HERE
-
-    # SSL certificate
-    ssl_certificate /etc/letsencrypt/live/<subdomain.domain.tld>/fullchain.pem; # CHANGE HERE
-    ssl_certificate_key /etc/letsencrypt/live/<subdomain.domain.tld>/privkey.pem; # CHANGE HERE
-
-    # Proxy requests to PostQueen, published on host port 4007 by Docker Compose
-    location / {
-        proxy_pass http://localhost:4007;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # WebSocket Support
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-
-    # Optional Access/Error Logging
-    access_log /var/log/nginx/<subdomain.domain.tld>.log; # CHANGE HERE
-    error_log /var/log/nginx/<subdomain.domain.tld>.log; # CHANGE HERE
-}
-```
-      </Tab>
-    </Tabs>
-  </Step>
-
-  <Step title="Generate DH Parameters">
-    (Needed if you are using the "robust" nginx config option)
-```bash
-sudo openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
-```
-  </Step>
-
-  <Step title="Test your Nginx configuration">
-```bash
-sudo nginx -t
-```
-  </Step>
-
-  <Step title="Automatic reload Nginx when SSL Certificates are renewed">
-```bash
-echo -e '#!/bin/bash\nginx -t && systemctl reload nginx' | sudo tee /etc/letsencrypt/renewal-hooks/post/nginx-reload.sh && sudo chmod a+x /etc/letsencrypt/renewal-hooks/post/nginx-reload.sh
-```
-  </Step>
-
-  <Step title="Reload Nginx">
-```bash
-sudo systemctl reload nginx
-```
-  </Step>
-
-  <Step title="Tell PostQueen her address">
-    The proxy works now, but she still believes she lives on `localhost`, and she builds
-    sign-in origins and every social network's return address from these values. Put them in
-    `.env`:
-
-    <Snippet file="compose-public-urls.mdx" />
-
-    Then apply the change:
-
-    <Snippet file="restart-service.mdx" />
+    <RestartService />
 
     <Warning>
-    Skipping this step is the most common way to end up with a working padlock and a site you
-    cannot sign in to. The certificate is not the problem in that case, these three values are.
+    Skipping this step is the usual way to get a valid padlock and a sign-in that does not stick. The certificate is fine in that case; these three values are not.
     </Warning>
   </Step>
-
   <Step title="Check it">
-    From your own machine, not the server:
+    From your own computer:
 
     ```bash
     curl -I https://postqueen.example.com
     ```
 
-    `HTTP/2 200` means the certificate, Nginx and PostQueen are all doing their jobs. Open the
-    address in a browser and sign in. 🎉
+    <Check>
+    `HTTP/2 200` or `HTTP/1.1 200`, then a sign-in in the browser that holds.
+    </Check>
   </Step>
 </Steps>
+
+The AI Copilot streams its replies and sends `X-Accel-Buffering: no`, which Nginx honors, so no buffering setting is needed. PostQueen uses no WebSockets in production, so no `Upgrade` headers are needed either.
 
 ## If it does not work
 
 <AccordionGroup>
   <Accordion title="502 Bad Gateway">
-    Nginx is running and PostQueen is not answering on the port it was told to use. Check her
-    directly on the server with `curl -I http://localhost:4007`. If that also fails,
-    `docker compose logs postqueen` has the reason. If it succeeds, the `proxy_pass` line has
-    the wrong port.
+    Nginx runs and nothing answers on the port in `proxy_pass`. `curl -I http://localhost:4007` on the server tells you whether PostQueen is up; if it is, the port in `proxy_pass` is wrong.
   </Accordion>
-
-  <Accordion title="413 Request Entity Too Large when uploading">
-    Nginx caps request bodies at 1 MB by default. The secure config above sets
-    `client_max_body_size 100M;` for exactly this reason. If you used the simple config, add
-    that line inside the `server` block and reload.
+  <Accordion title="413 Request Entity Too Large">
+    `client_max_body_size` is missing or too small in the server block that serves HTTPS. Certbot adds HTTPS to the block you wrote, so the value above carries over. If you wrote your own `listen 443` block, add the line there, then reload.
   </Accordion>
-
-  <Accordion title="The page loads but sign-in does not stick">
-    `FRONTEND_URL` does not match the address in the browser bar, character for character. See
-    the step above.
+  <Accordion title="Certbot cannot validate the domain">
+    The name does not resolve to this server yet, or port 80 is closed. Both have to be true while Certbot runs.
   </Accordion>
-
-  <Accordion title="certbot cannot validate the domain">
-    The temporary HTTP config has to be live and reachable on port 80, and
-    `dig +short postqueen.example.com` has to return this server's IP. Both have to be true at
-    the moment certbot runs.
+  <Accordion title="The page loads, sign-in does not stick">
+    `FRONTEND_URL` does not match the address in the browser. See **Tell PostQueen its address** above.
   </Accordion>
 </AccordionGroup>
 
+## Related
 
+- [Domain and HTTPS](/installation/domain-and-https)
+- [Split deployments](/reverse-proxies/split-deployments): routing when the frontend and backend run apart
+- [MCP on your server](/configuration/mcp)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)

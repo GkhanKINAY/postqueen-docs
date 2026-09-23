@@ -1,146 +1,172 @@
 ---
-title: LinkedIn Settings
-description: 'API settings for posting to LinkedIn'
+title: "LinkedIn posting settings"
+sidebarTitle: "LinkedIn"
+description: "The settings object a post to LinkedIn takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/linkedin.svg"
 ---
 
-Creating the OAuth app and connecting a channel: [LinkedIn setup guide](/installation/providers/linkedin).
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-## Settings Schema
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-When creating a post for LinkedIn (profile or page), use the following settings schema:
+LinkedIn cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a LinkedIn channel will take.
 
-```json
-{
-  "settings": {
-    "__type": "linkedin",
-    "post_as_images_carousel": false
-  }
-}
-```
+Every post to LinkedIn carries a `settings` object. LinkedIn has two tiles, and both take the same fields:
 
-<Note>
-Use `__type: "linkedin"` for personal profiles and `__type: "linkedin-page"` for company pages. Both use the same settings schema.
-</Note>
+| Tile in Add Channel | Posts to | `__type` |
+|---|---|---|
+| LinkedIn | Your personal profile | `linkedin` |
+| LinkedIn Page | A company page | `linkedin-page` |
+
+Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | `linkedin` or `linkedin-page` |
-| `post_as_images_carousel` | `boolean` | No | Display multiple images as a carousel |
-| `carousel_name` | `string` | No | Name for the carousel document |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | No | `"linkedin"` or `"linkedin-page"`. PostQueen sets it from the channel you post to, so it always matches the tile and can be left out. |
+| `post_as_images_carousel` | boolean | No | `true` turns the images into one PDF document that LinkedIn shows as a swipeable carousel. Needs 2 or more images and no video. `false` or left out: one image is an image post and 2 to 20 images are a multi-image post. |
+| `carousel_name` | string | No | The title of the document carousel. Used only when `post_as_images_carousel` is `true`. Left out, the title is `slides`. |
 
-### `post_as_images_carousel`
+Every post is public. A link in the text stays plain text: LinkedIn builds no preview card from it.
 
-When set to `true` and you have multiple images, they will be displayed as a swipeable carousel instead of a collage.
+## What PostQueen checks
 
-| Value | Description |
-|-------|-------------|
-| `true` | Images displayed as carousel |
-| `false` | Images displayed as collage (default) |
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-### `carousel_name`
+| Rule | Message |
+|---|---|
+| `post_as_images_carousel: true` needs 2 or more images and no video | “Carousel can only be created with 2 or more images and no videos.” |
+| A video is the only media in the post | “Can have maximum 1 media when selecting a video.” |
+| At most 20 images in a multi-image post (the carousel is not held to this) | “LinkedIn multi-image posts can have up to 20 images.” |
+| Every entry after the first in `value` is a comment, and a comment is text only | “Comments can only contain text.” |
+| Up to 3,000 characters per entry | “post is too long, please fix it” |
 
-Optional name for the carousel document. Only used when `post_as_images_carousel` is `true`.
-
----
-
-## Complete Example
-
-### Text Post
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "linkedin",
+  "name": "Your channel name",
+  "message": "Can have maximum 1 media when selecting a video."
+}
+```
+
+LinkedIn's own rules are not checked first: MP4 video from 3 seconds to 30 minutes and up to 500 MB, and a document of up to 300 pages and 100 MB. Images are scaled down to fit inside 6,000 by 6,000 pixels, and formats other than JPEG, PNG and GIF are converted to JPEG.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Text post with a comment
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-linkedin-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Excited to share our latest update! 🎉\n\n#innovation #tech",
+          "content": "Three things we learned shipping our first product this quarter.",
           "image": []
+        },
+        {
+          "content": "The full write-up is on our blog: https://example.com/q3-lessons",
+          "image": [],
+          "delay": 10
         }
       ],
-      "settings": {
-        "__type": "linkedin"
-      }
+      "settings": { "__type": "linkedin" }
     }
   ]
 }
 ```
 
-### Carousel Post
-
-```json
+```json Multi-image post
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-linkedin-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Check out our product showcase! Swipe through to see all features →",
+          "content": "Our team at this week's meetup.",
           "image": [
-            {
-              "id": "image-1-id",
-              "path": "https://uploads.postqueen.ai/image1.png"
-            },
-            {
-              "id": "image-2-id",
-              "path": "https://uploads.postqueen.ai/image2.png"
-            },
-            {
-              "id": "image-3-id",
-              "path": "https://uploads.postqueen.ai/image3.png"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/meetup-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/meetup-2.jpg" }
+          ]
+        }
+      ],
+      "settings": { "__type": "linkedin-page", "post_as_images_carousel": false }
+    }
+  ]
+}
+```
+
+```json Document carousel
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Q3 lessons in six slides. Swipe through.",
+          "image": [
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/slide-1.png" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/slide-2.png" },
+            { "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/slide-3.png" }
           ]
         }
       ],
       "settings": {
-        "__type": "linkedin",
+        "__type": "linkedin-page",
         "post_as_images_carousel": true,
-        "carousel_name": "Product Showcase"
+        "carousel_name": "Q3 lessons"
       }
     }
   ]
 }
 ```
 
-### Company Page Post
-
-```json
+```json Video post
 {
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-linkedin-page-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "We're hiring! Join our team and help us build the future.",
-          "image": []
+          "content": "A two-minute tour of the new dashboard.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/tour.mp4" }]
         }
       ],
-      "settings": {
-        "__type": "linkedin-page",
-        "post_as_images_carousel": false
-      }
+      "settings": { "__type": "linkedin" }
     }
   ]
 }
 ```
 
+</CodeGroup>
+
+In the first example, the second entry in `value` is a follow-up comment, posted 10 minutes after the post. Comments on LinkedIn are text only and go on the main post.
+
+## Related
+
+- [LinkedIn in the app](/channels/linkedin)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

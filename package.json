@@ -2,7 +2,17 @@
   "name": "postqueen-docs",
   "private": true,
   "description": "PostQueen documentation (Mintlify)",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
-    "check": "python3 scripts/check-docs.py"
+    "check": "python3 scripts/check-docs.py",
+    "check:facts": "python3 scripts/check-facts.py",
+    "check:release": "python3 scripts/check-docs.py --release && python3 scripts/check-facts.py --release && python3 scripts/lint-openapi.py --release",
+    "validate": "npx --yes mint@4.2.922 validate",
+    "links": "npx --yes mint@4.2.922 broken-links",
+    "a11y": "npx --yes mint@4.2.922 a11y",
+    "lint:openapi": "python3 scripts/lint-openapi.py",
+    "dev": "npx --yes mint@4.2.922 dev"
   }
 }

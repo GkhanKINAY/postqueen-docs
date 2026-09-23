@@ -1,124 +1,129 @@
 ---
-title: Domain and HTTPS
-description: 'What a reverse proxy is, why PostQueen needs one, and how to choose'
-icon: 'lock'
+title: "Domain and HTTPS"
+description: "Put a reverse proxy in front of PostQueen so it answers on your own domain over HTTPS, with Caddy as the worked example, and set the three public addresses."
+icon: "lock"
 ---
 
-If you followed [Deploy to a server](/installation/production), PostQueen is running but only
-answers on the server itself, on port 4007. This page is the last piece: giving her your
-domain name and a certificate, so people can reach her at `https://postqueen.example.com`.
+import ComposePublicUrls from '/snippets/compose-public-urls.mdx';
+import RestartService from '/snippets/restart-service.mdx';
+import NextStepsSelfhost from '/snippets/next-steps-selfhost.mdx';
 
-## What a reverse proxy is
-
-A reverse proxy is a small program that sits in front of your app. It takes requests from the
-internet on the standard web ports, handles the HTTPS certificate, and passes each request
-along to the app running quietly on a local port.
-
-You need one because PostQueen does not manage certificates herself, and because you do not
-want her port open to the world.
+PostQueen does not handle certificates itself. A reverse proxy in front of it accepts HTTPS on port 443, holds the certificate, and passes each request to PostQueen on a local port. This page sets one up with Caddy, which gets and renews the certificate on its own, and then tells PostQueen its public address.
 
 ```mermaid
 graph LR;
-	A[Visitor's browser] -->|HTTPS on 443| B[Reverse proxy]
-	B -->|plain HTTP on 4007| C[PostQueen container]
-	B -.->|gets and renews the certificate| D[Let's Encrypt]
+  A[Browser] -->|HTTPS 443| B[Reverse proxy]
+  B -->|HTTP 4007| C[postqueen container]
+  B -.->|gets and renews the certificate| D[Let's Encrypt]
 ```
 
-The proxy is also where the certificate lives, which is why the tools below can obtain and
-renew one for you automatically. You never handle certificate files by hand.
+## Why HTTPS is required
 
-## Why HTTPS is not optional here
+- **Sign-in.** The login cookie is marked `Secure`, so the browser sends it only over HTTPS. Over plain HTTP, signing in looks like it works and the next page is the login page again.
+- **Connecting channels.** Most networks accept only an `https` redirect address. On a plain `http` address, PostQueen sends Slack, TikTok, TikTok Business, Threads, Instagram (Standalone) and VK through the public `redirectmeto.com` service to satisfy them. That helper is for local testing, and it drops out as soon as your address is `https`.
 
-This is not a general recommendation. Two things genuinely stop working without it.
+`NOT_SECURED=true` removes the cookie requirement for a local try. On a server other people reach, it sends session cookies in the clear: do not set it there.
 
-**Sign-in.** PostQueen marks her login cookies as secure, which is a browser rule meaning the
-cookie is only sent over an encrypted connection. Over plain HTTP the browser refuses to store
-it, so signing in appears to succeed and then immediately does not.
+## Which port the proxy sends to
 
-**Connecting channels.** Several networks, including Slack, TikTok, Threads and Instagram,
-reject a plain HTTP return address outright when you connect an account. She works around it
-in development by routing those redirects through a public helper service, and that workaround
-disappears the moment your address is HTTPS, which is where you want to be anyway.
+| How PostQueen runs | Send the proxy to |
+|---|---|
+| [Docker Compose](/installation/docker-compose), the usual install | `localhost:4007` |
+| The image on its own, with `-p 127.0.0.1:5000:5000` | `localhost:5000` |
+| A proxy on the same Docker network, such as [Traefik](/reverse-proxies/traefik) | the `postqueen` service, port `5000` |
 
-<Warning>
-There is an escape hatch, `NOT_SECURED=true`, which drops the cookie protections so plain HTTP
-works. It exists for local development. Setting it on a server that other people reach means
-session cookies travel in the clear, so do not.
-</Warning>
+Inside the container PostQueen always listens on 5000. Compose publishes that as 4007 on the host.
 
-## Which proxy should you use
+## Set up Caddy
 
-<CardGroup cols={2}>
-  <Card title="Caddy" icon="feather" href="/reverse-proxies/caddy">
-    **Pick this if you have no preference.** Three lines of configuration, and it gets and
-    renews your certificate on its own with nothing to schedule.
-  </Card>
-  <Card title="Nginx" icon="server" href="/reverse-proxies/nginx">
-    The one most people have heard of. More configuration, and certificates are a separate
-    tool. Sensible if you already run it.
-  </Card>
-  <Card title="Traefik" icon="network-wired" href="/reverse-proxies/traefik">
-    Configured with labels on the container rather than a file. Natural if you already run it
-    in front of your other containers.
-  </Card>
-  <Card title="Something else" icon="circle-question" href="/reverse-proxies/websockets-and-dev">
-    Cloudflare Tunnel, a load balancer, a split deployment. What any proxy has to get right.
-  </Card>
-</CardGroup>
+Before you start, the domain's **A record** has to point at the server (`dig +short postqueen.example.com` prints its IP), and ports 80 and 443 have to be open. Caddy uses port 80 to prove it controls the domain.
 
-## Which port to send traffic to
+<Steps>
+  <Step title="Install Caddy">
+    On Ubuntu or Debian, from Caddy's own package repository:
 
-This trips people up, so it is worth being exact.
+    ```bash
+    sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+    sudo chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+    sudo chmod o+r /etc/apt/sources.list.d/caddy-stable.list
+    sudo apt update
+    sudo apt install caddy
+    ```
 
-| How you installed her | Send the proxy to |
-| --- | --- |
-| [Docker Compose](/installation/docker-compose), the normal path | `localhost:4007` |
-| [Docker on its own](/installation/docker) | `localhost:5000` |
-| Traefik, which reaches the container over the container network | port `5000` on the service |
+    Other systems are on [Caddy's install page](https://caddyserver.com/docs/install). The package runs Caddy as a systemd service.
+  </Step>
+  <Step title="Write the Caddyfile">
+    Replace everything in `/etc/caddy/Caddyfile` with:
 
-Inside the container she always listens on **5000**. The Compose file publishes that as
-**4007** on the host, which is why the number your proxy needs depends on how you started her.
-Traefik is the exception because it talks to the container directly rather than through the
-host, so it uses 5000 even under Compose.
+    ```caddy /etc/caddy/Caddyfile
+    postqueen.example.com {
+        reverse_proxy localhost:4007
+    }
+    ```
 
-## Tell her about her own address
+    That is the whole configuration. Caddy sees a public name and requests a certificate for it. It sets the forwarding headers, does not cap upload size and streams responses as they arrive, so PostQueen needs nothing more.
+  </Step>
+  <Step title="Reload Caddy">
+    ```bash
+    sudo systemctl reload caddy
+    sudo journalctl -u caddy -f
+    ```
 
-Setting up the proxy is only half of it. She also has to know what address people use, because
-she builds sign-in origins and every social network's return address from it.
+    Wait for a line with `certificate obtained successfully`, then press `Ctrl+C`.
+  </Step>
+</Steps>
 
-<Snippet file="compose-public-urls.mdx" />
+On a private network where Let's Encrypt cannot reach the name, add `tls internal` inside the block. Caddy then issues its own certificate, which browsers trust only after you install Caddy's local authority on each device: see [Caddy's local HTTPS](https://caddyserver.com/docs/automatic-https#local-https).
 
-Three rules that cover nearly every problem people hit here:
+Already run another proxy? [Nginx](/reverse-proxies/nginx) and [Traefik](/reverse-proxies/traefik) have their own pages, and [Split deployments](/reverse-proxies/split-deployments) covers the paths any proxy must route when the frontend and backend run apart.
 
-- **No trailing slashes.** She flags them at startup and they break comparisons.
-- **`NEXT_PUBLIC_BACKEND_URL` keeps the `/api` suffix.** Everything arrives on one address, and
-  that path is how the internal proxy knows to send a request to the backend.
-- **`BACKEND_INTERNAL_URL` stays `http://localhost:3000`.** It is not a public address. It is
-  how the web interface reaches the backend inside the same container, and changing it to your
-  domain sends that traffic on a pointless round trip through the internet, if it works at all.
+## Tell PostQueen its address
 
-If you followed [Deploy to a server](/installation/production), these three URLs are already
-in `.env`. Apply a change with a recreate, not a whole-stack teardown:
+The proxy alone is not enough. PostQueen builds its allowed origins, email links and every network's redirect address from these values.
 
-<Snippet file="restart-service.mdx" />
+<ComposePublicUrls />
 
-## Check that it worked
+Three rules cover most problems:
 
-From your own machine, not the server:
+- **No trailing slashes.** The backend logs `should not end with /` at startup for each one.
+- **`FRONTEND_URL` is exactly the browser's address**, with `https://`, the same host and no path. The backend accepts browser requests only from `FRONTEND_URL` and `MAIN_URL`.
+- **`NEXT_PUBLIC_BACKEND_URL` keeps `/api`.** Inside the container, nginx sends everything under `/api/` to the backend.
+
+Apply it:
+
+<RestartService />
+
+## Check it
+
+From your own computer:
 
 ```bash
 curl -I https://postqueen.example.com
 ```
 
-`HTTP/2 200` means the proxy, the certificate and PostQueen are all doing their jobs. Then open
-the address in a browser and sign in. If the page loads but sign-in does not stick, the
-certificate is fine and the URL settings above are what to check.
-
 <Check>
-**Your install is live on your own domain, over HTTPS.** The padlock is real, the certificate
-renews itself, and sign-in holds between page loads.
+`HTTP/2 200`, then a sign-in in the browser that holds on the next page.
 </Check>
 
-## Next Steps
+## If it does not work
 
-<Snippet file="next-steps-selfhost.mdx" />
+<AccordionGroup>
+  <Accordion title="Caddy does not get a certificate">
+    The name does not resolve to this server yet, or port 80 is blocked. `sudo journalctl -u caddy -n 50` usually names the reason.
+  </Accordion>
+  <Accordion title="502 Bad Gateway">
+    Caddy runs, PostQueen does not answer. On the server, `curl -I http://localhost:4007` tells you whether it is up, and `docker compose logs postqueen` why not.
+  </Accordion>
+  <Accordion title="The page loads, sign-in does not stick">
+    `FRONTEND_URL` does not match the address in the browser, character for character. Fix the value and recreate the container.
+  </Accordion>
+  <Accordion title="A large upload fails">
+    Caddy sets no size limit, so look at what else is in the path. A CDN or another proxy in front of Caddy often caps the request body, for example at 100 MB. PostQueen itself accepts files up to 1 GB each.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<NextStepsSelfhost />

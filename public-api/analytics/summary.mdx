@@ -1,0 +1,11 @@
+---
+title: "Get an analytics summary"
+description: "Totals across your published posts in a range, per channel and per weekday."
+openapi: "GET /analytics/summary"
+---
+
+The same stored metrics as [List post analytics](/public-api/analytics/posts), added up for the posts published in the range: how many posts, their reactions, comments and impressions, a row per channel, and how many posts went out on each weekday (Monday first, by the UTC publish date).
+
+A total is `null` when any post in the range does not report that metric, so a range that mixes networks, such as Pinterest and X, can show `null` reactions. `engagementMix` adds up what is known anyway.
+
+It takes the same filters as the list: `date`, `integrationIds`, `platform` and `q`.

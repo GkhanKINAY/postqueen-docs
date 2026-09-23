@@ -1,0 +1,103 @@
+---
+title: "Lemmy"
+description: "Connect Lemmy to PostQueen with your instance, username and password, what you can post to it, and the limits PostQueen checks before a post is scheduled."
+icon: "/images/channels/lemmy.svg"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+import NeverShare from '/snippets/never-share.mdx';
+import NextStepsChannel from '/snippets/next-steps-channel.mdx';
+
+<ChannelStatus status="available" />
+
+Schedule titled Lemmy posts, each with an optional link and a cover image, into one or several communities on your instance. You connect with your instance address, username and password, with no developer app.
+
+<div className="pq-visual pq-visual-card pq-tint-lilac">
+  <img noZoom src="/images/site/channels/lemmy.webp" alt="A new Lemmy post in the PostQueen composer, with the post types Lemmy takes and the time it goes out" />
+</div>
+
+## What you can post
+
+<CardGroup cols={2}>
+  <Card title="Text" icon="type">
+    A body of up to 10,000 characters, sent as plain text. Each community gets its own title of 3 to 200 characters.
+  </Card>
+  <Card title="Media" icon="image">
+    One cover image: the first file, as PNG, JPG, JPEG, GIF or WebP.
+  </Card>
+  <Card title="Post types" icon="layers">
+    A titled post with an optional link, sent to one or several communities, and follow-up comments.
+  </Card>
+  <Card title="Analytics" icon="chart-line">
+    No analytics for Lemmy.
+  </Card>
+</CardGroup>
+
+**Not supported:** more images in the body, headings or links formatted in the editor, nested comment threads, and accounts with two-factor authentication.
+
+## Checked before scheduling
+
+PostQueen refuses a post that breaks these rules and shows the message in the composer:
+
+| Rule | Message |
+|---|---|
+| At least one community | “subreddit must contain at least 1 elements”. The settings also show “Please add at least one community” until you add one. |
+| A title of at least 3 characters in each community | “title must be longer than or equal to 3 characters” |
+| A title of at most 200 characters in each community | “title must be shorter than or equal to 200 characters” |
+| **URL**, when you give one, is a web address | “url must be a URL address” |
+| The first file is a PNG, JPG, JPEG, GIF or WebP image | “You can set only one picture for a cover” |
+| Text within 10,000 characters | “post is too long, please fix it” |
+
+Each instance sets its own posting rate and image rules, and PostQueen does not check them first. Lemmy's default is 6 posts in 10 minutes from one address, and it is shared by everyone who posts to that instance through PostQueen.
+
+## Connect Lemmy
+
+There is nothing to create on Lemmy first: PostQueen signs in with the account you use there. An account with two-factor authentication turned on cannot connect.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Lemmy** and **Enter details**.
+  </Step>
+  <Step title="Enter your instance and login">
+    Type your instance address in **Service** (`https://lemmy.world` is filled in), your username on that instance in **Identifier** and your Lemmy password in **Password**. Choose **Connect**.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with your Lemmy avatar and name.
+  </Step>
+</Steps>
+
+<NeverShare />
+
+## Post settings
+
+Choose **Add Community**, search for a community under **Search Community** and pick it. Then give that community a **Title**, 3 to 200 characters, and an optional **URL** to share a link. Add as many communities as you like: each one gets its own submission, with its own title and link and the same body. The first file you attach becomes the cover image.
+
+The field names and values for the API are on [Lemmy posting settings](/public-api/providers/lemmy).
+
+## Comments and threads
+
+**Add comment** adds follow-ups. Each one is posted as a top-level comment under the submission in every community the post went to, after its own delay. Comments are text only and are not nested under each other.
+
+## Good to know
+
+- PostQueen signs in to your instance each time it posts. If you change your Lemmy password, publishing stops until you enter the new one with **Update Credentials** under **Access** on the channel's page.
+- Only instances reachable on the public internet can be connected. An address on a private or local network is refused.
+- The link on a published post opens it on your instance.
+- **Invite by link** does not offer Lemmy, because the password is typed into PostQueen. Connect it with **Connect myself**.
+- During the free trial, a Lemmy account that another PostQueen workspace already connected is refused until you end the trial.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Invalid credentials">
+    The instance refused the username or the password, or the account has two-factor authentication on. Check both on the instance's own sign-in page, turn two-factor authentication off if you use it, and connect again.
+  </Accordion>
+  <Accordion title="subreddit must contain at least 1 elements">
+    The post has no community yet, and the settings say “Please add at least one community”. Choose **Add Community** and pick one.
+  </Accordion>
+  <Accordion title="You can set only one picture for a cover">
+    The first file is not an image Lemmy takes as a cover. Attach a PNG, JPG, JPEG, GIF or WebP image first.
+  </Accordion>
+</AccordionGroup>
+
+<NextStepsChannel />
