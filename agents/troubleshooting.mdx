@@ -51,7 +51,7 @@ Find the symptom or the message you see. Most failures come from the key, from a
 |---|---|---|
 | `This channel needs to be reconnected before you can schedule posts. Please reconnect it from Channels.` | The channel's sign-in to its network expired, or it is turned off | Reconnect or turn on the channel on the **Channels** page, then ask again |
 | A channel is missing from the list | `integrationList` leaves out channels that are turned off, need to be reconnected or were not finished connecting | Fix the channel on the **Channels** page |
-| `No posts are left on this plan this month. ...` | The workspace has no active trial or plan | Start or renew the plan in **Billing**. See [plans](/cloud/plans) |
+| `This workspace has no active plan, or no posts left on its plan this month. ...` | The workspace has no active trial or plan | Start or renew the plan in **Billing**. See [plans](/cloud/plans) |
 | `<channel>: ... please fix it, and try integrationSchedulePostTool again.` | The post is missing a setting, or is too long for the network | The agent should read `integrationSchema` for that network and try again |
 | `Your post should have at least one character or one image.` | An item in the post is empty | Give every item text or media |
 | `File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4` | An attachment is not a supported file | Bring the file in with `uploadFromUrlTool`, the upload panel or `generateImageTool`, and use the `path` it returns |
@@ -152,7 +152,7 @@ Upload errors are on [upload media](/cli/media-upload#if-an-upload-fails). A pos
     From 2.0.24, `auth:status` exits `1` when no key is set, when the API refuses it, and when it could not be checked, so `postqueen auth:status > /dev/null || exit 1` works. Older versions exit `0` in every case: update with `npm install -g postqueen@latest`.
   </Accordion>
   <Accordion title="A file path or a link in -m" icon="image">
-    `-m` takes only a `path` returned by `postqueen upload`. Upload the file first. For a video, wait until it is ready: see [upload media](/cli/media-upload#wait-for-a-video).
+    `-m` takes only a `path` returned by `postqueen upload`. Upload the file first. A MOV has to finish converting to MP4 before it can go into a post: see [upload media](/cli/media-upload#wait-for-a-video).
   </Accordion>
 </AccordionGroup>
 

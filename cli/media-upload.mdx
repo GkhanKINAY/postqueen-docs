@@ -61,9 +61,12 @@ PostQueen reads the file's contents to tell its type, so renaming a file does no
 
 ## Wait for a video
 
-An image is ready as soon as the upload returns. A video comes back with `"status": "processing"` while PostQueen checks it and, when needed, converts it into an MP4 the networks accept. That takes from a few seconds to a few minutes. A converted video gets a new `path`, and the original file is removed, so do not post the `path` from the upload answer.
+An image is ready as soon as the upload returns. A video comes back with `"status": "processing"` while PostQueen checks it and, when needed, converts it into an MP4 the networks accept. That takes from a few seconds to a few minutes.
 
-The CLI has no command for this step. Ask the API's [media status](/public-api/uploads/media-status) route until the status changes, then take the `path` from its answer:
+- **An MP4** can go into a post right away, with the `path` from the upload answer. When the post publishes, PostQueen uses the converted file.
+- **A MOV** is converted to MP4 first, and a post takes no MOV, so wait until it is ready and use the new `path`.
+
+The CLI has no command for the wait. Ask the API's [media status](/public-api/uploads/media-status) route until the status changes, then take the `path` from its answer:
 
 ```bash
 VIDEO_ID=$(postqueen upload launch.mov | tail -n +2 | jq -r '.id')

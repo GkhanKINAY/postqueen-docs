@@ -1217,7 +1217,7 @@
           "Posts"
         ],
         "summary": "Change post status",
-        "description": "Moves a post between draft and scheduled. `schedule` queues it for its stored date. `draft` stops any pending publish and keeps the post as a draft. The date does not change. Published and failed posts cannot change.",
+        "description": "Moves a post between draft and scheduled. `schedule` queues it for its stored date. A draft is checked first, with the same rules [Create a post](/public-api/posts/create) applies to a scheduled post: text or media present, the network's required settings, its media rules and its length. A draft that fails answers 400 with the channel name and the reason, and stays a draft. `draft` stops any pending publish and keeps the post as a draft. The date does not change. Published and failed posts cannot change.",
         "operationId": "changePostStatus",
         "parameters": [
           {
@@ -1284,16 +1284,29 @@
             }
           },
           "400": {
-            "description": "`Post not found`, `Cannot change status of a published or errored post`, or a `status` that is not `draft` or `schedule`",
+            "description": "`Post not found`, `Cannot change status of a published or errored post`, a `status` that is not `draft` or `schedule`, or `<channel name>: <reason>` when a draft moved to `schedule` fails its checks",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NestError"
                 },
-                "example": {
-                  "message": "Cannot change status of a published or errored post",
-                  "error": "Bad Request",
-                  "statusCode": 400
+                "examples": {
+                  "published": {
+                    "summary": "Published or failed post",
+                    "value": {
+                      "message": "Cannot change status of a published or errored post",
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  },
+                  "draftCheck": {
+                    "summary": "A draft that fails its checks",
+                    "value": {
+                      "message": "Acme community: channel should not be null or undefined",
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  }
                 }
               }
             }

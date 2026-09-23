@@ -247,7 +247,7 @@ Needs these eight settings, with no defaults:
 
 `title` (up to 90 characters) and `video_made_with_ai` are optional.
 
-Upload the video and [wait until it is ready](/cli/media-upload#wait-for-a-video), then use its `path` as `$VIDEO`:
+Upload the video and use its `path` as `$VIDEO`. An MP4 can go in right away; a MOV has to [finish converting](/cli/media-upload#wait-for-a-video) first:
 
 ```bash
 postqueen posts:create \

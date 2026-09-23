@@ -32,7 +32,7 @@ Auto Post checks a feed every hour. When the feed has a new item, PostQueen writ
 | Step | Question | What the answers do |
 |---|---|---|
 | Timing | **Should we sync the current last post?** | **Yes** posts the item at the top of the feed on the first check. **No** marks it as seen, so only items published after it are posted. |
-| Timing | **When should we post it?** | **Post on the next available slot** or **Post Immediately**. Today both put the post at the next free posting time. |
+| Timing | **When should we post it?** | **Post on the next available slot** puts each post at the next free posting time. **Post Immediately** publishes it as soon as the item is found. Drafts always take the next free time. |
 | Timing | **What should we do with new items?** | **Create a draft for review** (the default) or **Publish automatically**. See below. |
 | Content | **Autogenerate content** | **Yes**: PostQueen writes a short post of about 100 characters from the item. **No**: every item uses your text from **Post content**. |
 | Content | **Generate Picture?** | **Yes**: PostQueen generates an image for each item. |
