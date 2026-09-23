@@ -1,11 +1,125 @@
 ---
 title: "Claude"
-description: "Post from Claude on the web, desktop and mobile through PostQueen's MCP server."
+description: "Add PostQueen to Claude as a custom connector, on the web or in Claude Desktop, and ask Claude to write, schedule and check your posts."
 icon: "/images/brand/icon-claude.svg"
 ---
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/claude.mdx (merge; WIP: partly better; audit: agents), main:agents/claude-apps.mdx (rewrite; WIP: partly better; audit: agents). Row in page-status-2026-09-23.md. */}
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
+
+<AgentStatus status="partly-tested" label="Key address tested (2026-09-19); sign-in from Anthropic's docs, not tested yet" />
+
+Claude is Anthropic's AI assistant on the web, in the desktop app and in the iOS and Android apps. Add PostQueen as a custom connector and Claude can list your channels, write and schedule posts, add a photo from your device, and tell you how your published posts did.
+
+## Before you start
+
+- **Plans:** Free (one custom connector), Pro, Max, Team and Enterprise.
+- **Platforms:** add the connector on the web or in Claude Desktop (macOS, Windows). It then works in the iOS and Android apps too; adding one from mobile is in beta.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect Claude
+
+These steps use the key address, the route PostQueen tested on 2026-09-19. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
+
+<Steps>
+  <Step title="Copy your MCP address">
+    In PostQueen, open **Connections** and copy the address from the Claude card, or build it from your key:
+
+    ```text wrap
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+  </Step>
+  <Step title="Add a custom connector">
+    In Claude, open **Customize > Connectors**, then **+ > Add custom connector**.
+  </Step>
+  <Step title="Paste the address">
+    Name it `PostQueen` and paste the address as the URL, with no slash at the end. Leave **Advanced settings** empty and click **Add**.
+  </Step>
+  <Step title="Switch it on in a chat">
+    In a chat, open **+** (or type `/`), choose **Connectors** and switch PostQueen on.
+  </Step>
+</Steps>
 
 <Note>
-This page is on its way. Until it is here, write to [support@postqueen.ai](mailto:support@postqueen.ai) and we will help.
+**On Team and Enterprise,** an Owner adds the connector first under **Organization settings > Connectors > Add > Custom > Web**. Members then connect it from **Customize > Connectors**.
 </Note>
+
+## Check that it works
+
+Ask Claude: "List my PostQueen channels." Claude calls PostQueen and answers with the channels you connected. The PostQueen tools show up in the chat as `mcp__PostQueen__...` calls.
+
+## Good to know
+
+- **Anthropic advises against secrets in a URL.** The key address works and is tested, but it carries your key, so keep it private. The sign-in under [Other ways to connect](#other-ways-to-connect) avoids a key in the URL; PostQueen has not tested it yet. If the address leaks, a workspace admin rotates the key under **Connections > API Keys**.
+- **Claude cannot add PostQueen for you.** Asked in a chat, it says it cannot add servers itself. Add the connector in **Connectors**.
+- **PostQueen is not in Anthropic's connector directory**, so searching **Connectors** does not find it. Add it as a custom connector.
+- **Upload from your device.** In Claude, PostQueen's upload widget opens an **Upload Media** panel where you add a photo or video from your device. It works on the web, in Claude Desktop, in Cowork and in the mobile apps.
+- **Claude Desktop's config file** starts only local servers. Use the **Connectors** screen for PostQueen.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address | `{{mcpKeyUrl}}` | Tested (2026-09-19). The route above |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs, not tested yet |
+| The Bearer header | `{{mcpBearerUrl}}` | Not for Claude: custom headers in the connector dialog are a limited beta |
+
+The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}: the same set without `ask_postqueen`.
+
+<Accordion title="Sign in with PostQueen instead (not tested yet)" icon="log-in">
+  With the sign-in, no key is copied or stored in Claude. Only a workspace admin can approve it.
+
+  <Steps>
+    <Step title="Add the sign-in address">
+      In **Customize > Connectors**, choose **+ > Add custom connector**, name it `PostQueen` and paste `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL, with no slash at the end. Leave the OAuth client ID and secret empty, so Claude registers itself, and click **Add**.
+    </Step>
+    <Step title="Sign in and approve">
+      Click **Connect**, sign in to PostQueen and approve access.
+    </Step>
+    <Step title="Switch it on in a chat">
+      Open **+** (or type `/`), choose **Connectors** and switch PostQueen on.
+    </Step>
+  </Steps>
+
+  The access does not expire on its own. Revoke it in PostQueen under **Connections > Approved Apps**.
+</Accordion>
+
+## Try this first
+
+```text wrap
+List my PostQueen channels. Then turn these notes into a short Bluesky post and save it as a draft for tomorrow at 9am: <paste your notes>
+```
+
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| Searching **Connectors** does not find PostQueen | PostQueen is not in Anthropic's directory. Add it as a custom connector. |
+| Claude refuses the address | Paste it with no slash at the end. Claude checks that it matches exactly. |
+| The tools do not show up in a chat | Open **+** (or type `/`), choose **Connectors** and switch PostQueen on. |
+| The key is refused | Copy the address again from the Claude card on **Connections**. Only a workspace Admin or Super Admin can reveal the key. |
+| "Only an admin can approve" | Ask a PostQueen workspace admin to sign in and approve, or to set it up with the key address. |
+| You cannot add a second custom connector | The Free plan allows one. Remove the other one, or use a paid plan. |
+
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
+
+## Is it the same as Claude Code or Claude Cowork?
+
+No. Anthropic ships three products that can use PostQueen, and two of them share this connector:
+
+| Product | What it is | How it connects |
+|---|---|---|
+| **Claude** (this page) | Anthropic's assistant on the web, desktop and mobile | A custom connector |
+| [Claude Cowork](/agents/claude-cowork) | Claude's agent mode for everyday work | The same connector, switched on in a Cowork session |
+| [Claude Code](/agents/claude-code) | Anthropic's coding agent for the terminal and IDEs | One `claude mcp add` command |
+
+A connector you add in Claude also shows up in Claude Code when you log in to Claude Code with a claude.ai subscription.
+
+<NextStepsAgent />

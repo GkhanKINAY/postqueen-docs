@@ -1,148 +1,121 @@
 ---
-title: ChatGPT
-description: 'Connect ChatGPT over MCP in Developer mode, or give a Custom GPT an action that schedules posts through her public API'
-icon: /images/brand/icon-chatgpt.svg
+title: "ChatGPT"
+description: "Add PostQueen to ChatGPT as a developer mode app on the web, then ask ChatGPT to write, schedule and check your posts."
+icon: "/images/brand/icon-chatgpt.svg"
 ---
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/chatgpt.mdx (merge; WIP: better, use as base; audit: agents), this file (rewrite; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-## Working with her in ChatGPT
+<AgentStatus status="partly-tested" label="Key address with No Authentication tested (2026-09-19); sign-in and posting from Plus or Pro not tested yet" />
 
-ChatGPT is where a lot of content gets written. With PostQueen connected it is also where content gets shipped: ask for two posts about the new menu and she writes the copy, generates the images and puts both on your calendar while you keep chatting. This is ChatGPT the chat product, not Codex — same split as Claude vs Claude Code.
+ChatGPT is OpenAI's AI assistant. You add PostQueen as a developer mode app from the Plugins page on the web, and ChatGPT can then list your channels, write and schedule posts, add a file from your device, and tell you how your published posts did.
 
-<Frame>
-  <img src="/images/brand/chat-chatgpt.svg" alt="ChatGPT with PostQueen over MCP: it generates two post images and schedules them to Instagram and X" />
-</Frame>
+## Before you start
 
-There are two routes in, and they solve different problems:
+- **Plans:** paid plans on the web: Plus, Pro, Business, Enterprise and Education. Not Free. OpenAI's pages disagree on which plans can make changes such as scheduling a post, so check yours on [OpenAI's developer mode help page](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt).
+- **Platforms:** ChatGPT on the web only.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
-- **MCP in Developer mode.** PostQueen is not in the ChatGPT app store. One URL under **Settings → Apps → Create**, and PostQueen's [21 MCP tools](/mcp/tools) show up in your chats. This is the route most people want.
-- **A Custom GPT action.** You are building a GPT of your own and want it to call her public API directly, with no MCP in the middle.
+<ApiKeyLocation />
 
-## Route 1: MCP in Developer mode
+## Connect ChatGPT
 
-ChatGPT reaches her over MCP. She is not listed in the ChatGPT app store; do not search Apps. Turn on **Developer mode** under **Settings → Apps → Advanced settings**, then create an app under **Settings → Apps → Create** with one URL, and she becomes a tool the model can call:
+These steps use the key address with **No Authentication**, the route PostQueen tested on 2026-09-19. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
 
+<Steps>
+  <Step title="Turn on developer mode">
+    In ChatGPT on the web, open **Settings > Security and login** and turn on **Developer mode**. On Business, Enterprise and Edu, an admin first allows it under **Workspace settings > Permissions & roles**.
+  </Step>
+  <Step title="Create the app">
+    Go to [chatgpt.com/plugins](https://chatgpt.com/plugins) and press **+**. Enter the name `PostQueen` and a short description, and under **Connection** enter your key address:
+
+    ```text wrap
+    https://api.postqueen.ai/mcp/YOUR_API_KEY
+    ```
+  </Step>
+  <Step title="Choose No Authentication">
+    Set **Authentication** to **No Authentication**, since the key is part of the address, and create the app. It appears under **Drafts**.
+  </Step>
+  <Step title="Select it in a chat">
+    In a chat, open the **+** menu, choose **Developer mode** and select PostQueen.
+  </Step>
+</Steps>
+
+## Check that it works
+
+Ask ChatGPT: "List my PostQueen channels." It answers with the channels you connected in PostQueen. ChatGPT asks you to confirm each action that changes something, such as scheduling a post; review what it will send, then confirm.
+
+## Good to know
+
+- **The Plugins page is the current path.** Guides that say **Settings > Apps > Advanced settings** describe the older menus.
+- **ChatGPT cannot add PostQueen for you.** It works with the tools once you add the app yourself.
+- **The address carries your API key.** Keep it private. If it leaks, a workspace admin rotates the key under **Connections > API Keys**, and you update the app.
+- **Upload from your device.** PostQueen's upload widget opens an **Upload Media** panel in ChatGPT, where you add a photo or video from your device.
+- **The ChatGPT desktop app's MCP servers setting belongs to Codex,** not to the web chat. Add PostQueen on the web.
+- **ChatGPT cannot run the PostQueen CLI.** Use the MCP address.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+| Way | Address | Status |
+|---|---|---|
+| The key in the address, No Authentication | `{{mcpKeyUrl}}` | Tested (2026-09-19). The route above |
+| Sign in with PostQueen, OAuth | `{{mcpOauthUrl}}` | From OpenAI's docs, not tested yet |
+| The Bearer header | `{{mcpBearerUrl}}` | Not for ChatGPT: it cannot send a custom header |
+
+The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}: the same set without `ask_postqueen`.
+
+<Accordion title="Sign in with PostQueen instead (not tested yet)" icon="log-in">
+  With the sign-in, no key is copied or stored in ChatGPT. Only a workspace admin can approve it.
+
+  <Steps>
+    <Step title="Create the app with the sign-in address">
+      At [chatgpt.com/plugins](https://chatgpt.com/plugins), press **+**, enter the name `PostQueen` and a description, and under **Connection** enter `https://api.postqueen.ai/mcp-oauth-dynamic`.
+    </Step>
+    <Step title="Choose OAuth">
+      Set **Authentication** to **OAuth** and create the app. Sign in to PostQueen and approve.
+    </Step>
+    <Step title="Select it in a chat">
+      Open the **+** menu, choose **Developer mode** and select PostQueen.
+    </Step>
+  </Steps>
+
+  The access does not expire on its own. Revoke it in PostQueen under **Connections > Approved Apps**.
+</Accordion>
+
+## Try this first
+
+```text wrap
+List my PostQueen channels. Then write a short Bluesky post about our weekend sale and save it as a draft for Friday at 6pm.
 ```
-https://api.postqueen.ai/mcp/YOUR_API_KEY
-```
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
+The draft appears on your PostQueen calendar, ready for you to check and schedule. [Prompts to try](/mcp/examples) has more.
 
-<Warning>
-Your API key travels inside that MCP URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
-</Warning>
+## Troubleshooting
 
-Custom apps sit behind ChatGPT's developer mode, which OpenAI offers on the paid web plans. Plus and Pro can usually connect; OpenAI currently documents full write MCP (scheduling) for Business and Enterprise/Edu. The full walkthrough covers the developer mode toggle, the create-app form and enabling her per chat:
+| Symptom | Fix |
+|---|---|
+| There is no **Developer mode** option | Turn it on under **Settings > Security and login**. On Business, Enterprise and Edu, an admin allows it first under **Workspace settings > Permissions & roles**. |
+| A guide says **Settings > Apps > Advanced settings** | That is the older path. Add PostQueen at chatgpt.com/plugins. |
+| PostQueen is not in the chat | Open the **+** menu, choose **Developer mode** and select PostQueen. |
+| The desktop app's MCP servers setting does nothing in chat | That setting belongs to Codex. Add PostQueen to ChatGPT on the web. |
+| ChatGPT can read but not schedule | Your plan may have read access only in developer mode. Check [OpenAI's help page](https://help.openai.com/en/articles/12584461-developer-mode-and-mcp-apps-in-chatgpt). |
+| The key is refused | Copy the address again from the ChatGPT card on **Connections**. Only a workspace Admin or Super Admin can reveal the key. |
 
-<Card title="ChatGPT MCP setup" icon="plug" href="/agents/chatgpt">
-  Step by step, from the developer mode switch to your first tool call
-</Card>
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
-Once she is switched on in a conversation, ask for your connected channels. If ChatGPT calls `integrationList` and hands back your accounts, you are connected.
+## Is it the same as Codex?
 
-## Route 2: a Custom GPT action
+No. OpenAI's coding agent, Codex, has its own setup:
 
-Building your own GPT? Give it an action that talks to her [public API](/public-api/introduction). The endpoint you want is the one that creates posts:
+| Product | What it is | How it connects |
+|---|---|---|
+| **ChatGPT** (this page) | OpenAI's assistant on the web | A developer mode app at chatgpt.com/plugins |
+| [Codex](/agents/codex) | OpenAI's coding agent: CLI, IDE extension and the ChatGPT desktop app | One `codex mcp add` command |
 
-```
-POST https://api.postqueen.ai/public/v1/posts
-```
+ChatGPT on the web does not read Codex's config, so a server you add to Codex does not reach the web chat.
 
-Authentication is a single header carrying the raw key, with no `Bearer` prefix:
-
-```bash
-curl -X POST https://api.postqueen.ai/public/v1/posts \
-  -H "Authorization: YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "schedule",
-    "date": "2026-08-01T10:00:00.000Z",
-    "shortLink": false,
-    "tags": [],
-    "posts": [
-      {
-        "integration": { "id": "your-integration-id" },
-        "value": [
-          {
-            "content": "Latte week starts Monday. #coffee #newmenu",
-            "image": [
-              { "id": "media-id-from-upload", "path": "https://uploads.postqueen.ai/latte-week.jpg" }
-            ]
-          }
-        ],
-        "settings": { "__type": "instagram", "post_type": "post" }
-      }
-    ]
-  }'
-```
-
-A few things worth knowing before you wire the action up:
-
-- **`type`** decides the outcome. Use `schedule` with a `date`, `now` to publish immediately, or `draft` to save the post on the calendar without scheduling it.
-- **`settings.__type`** tells the backend which platform schema to validate against. Each provider has its own required fields, listed in [Create Post](/public-api/posts/create).
-- **Integration IDs** come from `GET /public/v1/integrations`, so a useful GPT usually gets that action too.
-- **Images** have to be uploaded through her first. Each entry in `image` is an object with an `id` and a `path` that came back from an upload, because providers reject raw file paths and outside links. The endpoint: [Upload File](/public-api/uploads/upload-file).
-
-<Note>
-The create-post endpoint has an hourly limit per workspace. One request can carry several posts, so a GPT that batches a week into a single call gets a lot done inside that budget. Self-hosting? Point the action at `https://postqueen.example.com/api/public/v1` and tune the limit with the `API_LIMIT` env var.
-</Note>
-
-## 👑 Ask her for two posts
-
-You describe what you want, and she takes care of the rest:
-
-> **You:** Create 2 posts about our cafe's new dessert menu with photos, schedule them for this week.
-
-> **ChatGPT:** On it. Generating two images and scheduling them with PostQueen.
->
-> `generateImageTool` running...
->
-> *"Latte week starts Monday. #coffee #newmenu"*
->
-> *"The raspberry cake is here. #dessert #comehungry"*
->
-> 2 posts scheduled: Instagram + X, Thursday 10:00 AM. Both are on your calendar if you want to tweak them first.
-
-Behind that one sentence sit two tools: `generateImageTool` produces each visual and hands back a hosted URL, then `integrationSchedulePostTool` writes the calendar entries. Bringing your own image from somewhere else? `uploadFromUrlTool` pulls it into her media library first, because attachments have to live on a PostQueen URL.
-
-## Staying in control
-
-She runs on your terms. Leave the schedule alone and she is a true autopilot: whatever lands on the calendar goes out on time without another word from you. Want a closer look first? Every post is visible at [app.postqueen.ai](https://app.postqueen.ai) before it publishes, so you can edit or delete it, and a post she saves as a draft stays unscheduled until you publish it there.
-
-## FAQ
-
-<AccordionGroup>
-  <Accordion title="Do I need ChatGPT to use PostQueen?">
-    No. She works on her own through the dashboard, the CLI and the API. ChatGPT is one of several ways to reach her.
-  </Accordion>
-  <Accordion title="What can she actually do from a ChatGPT chat?">
-    Everything PostQueen's 21 MCP tools cover, if your ChatGPT plan is allowed to call write tools. Listing channels is a read. Scheduling a post is a write (`integrationSchedulePostTool`). OpenAI currently documents full write MCP for Business and Enterprise/Edu; Plus and Pro may connect but only get read/fetch.
-  </Accordion>
-  <Accordion title="Can I review posts before they publish?">
-    Yes. Ask for drafts and each post sits on your calendar unscheduled until you publish it there.
-  </Accordion>
-  <Accordion title="Does MCP access cost extra?">
-    No. Agent access uses the same API key and plan limits as your regular PostQueen account, on any plan. ChatGPT's own developer mode does require one of OpenAI's paid plans.
-  </Accordion>
-  <Accordion title="MCP app or Custom GPT action?">
-    The MCP app if you want her in your everyday chats with no build step. The action if you are shipping a GPT to other people and want to control exactly which calls it can make.
-  </Accordion>
-</AccordionGroup>
-
-## Learn more
-
-<CardGroup cols={2}>
-  <Card title="Agents overview" icon="bot" href="/agents/overview">
-    Every way to put an agent in front of PostQueen, from chat apps to your terminal
-  </Card>
-  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    The 21 tools ChatGPT calls once the MCP app is on
-  </Card>
-  <Card title="Create Post API" icon="code" href="/public-api/posts/create">
-    The endpoint behind a Custom GPT action, with every provider's settings schema
-  </Card>
-  <Card title="MCP examples" icon="lightbulb" href="/mcp/examples">
-    Real prompts and the tool calls each one triggers
-  </Card>
-</CardGroup>
+<NextStepsAgent />

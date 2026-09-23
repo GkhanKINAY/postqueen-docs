@@ -1,70 +1,114 @@
 ---
-title: Grok Bot
-description: 'Ask Grok Bot to schedule posts through PostQueen. This is not grok.com chat.'
-icon: /images/brand/icon-grok.svg
+title: "Grok Bot"
+description: "Ask Grok Bot in chat to connect PostQueen, give it your API key in its secure prompt, and it schedules posts for you from the desktop or your phone."
+icon: "/images/brand/icon-grok-bot.svg"
 ---
 
-{/* OVERHAUL-TODO(B7): write it from _templates/agent.mdx. Sources: main:mcp/clients/grok-bot.mdx (merge; WIP: better, use as base; audit: agents), this file (fix; WIP: better, use as base; audit: agents). Row in page-status-2026-09-23.md. */}
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-## Working with her in Grok Bot
+<AgentStatus status="tested" label="Tested by PostQueen (2026-09-19)" />
 
-Grok Bot is xAI's cloud agent. Grok on grok.com is a different product. Connecting PostQueen at [grok.com/connectors](https://grok.com/connectors) does **not** add it to Grok Bot.
+Grok Bot is xAI's always-on AI teammate. Each Bot works on its own cloud computer, and you sign in with a Cursor account. Connect PostQueen once and the Bot can list your channels, write and schedule posts, and report how your published posts did, from the desktop app or your phone.
 
-Ask the Bot to connect PostQueen as a remote MCP server. That brings PostQueen's [21 MCP tools](/mcp/tools) into the chat. They list your channels, read what each platform accepts, schedule the posts and report how published posts did. They do not delete a post or read channel numbers such as followers, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+## Before you start
 
-## Set up
+- **Plans:** included with Cursor Pro, Pro+, Ultra and Teams. An individual SuperGrok, SuperGrok Plus, SuperGrok Heavy or X Premium+ subscription can be linked instead. Not Hobby or SuperGrok Lite. On Enterprise, an admin turns Grok Bot on in the Cursor dashboard.
+- **Platforms:** the desktop app on macOS, Windows and Linux, and the mobile app on iPhone, iPad and Android.
+- **A PostQueen API key.** A workspace admin copies it from **Connections**.
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal it. Then, in a Grok Bot chat:
+<ApiKeyLocation />
 
+## Connect Grok Bot
+
+You add PostQueen from inside a Grok Bot chat. There is no settings form to fill in.
+
+<Steps>
+  <Step title="Ask the Bot to connect PostQueen">
+    In a Grok Bot chat, send this message. The address has no key in it.
+
+    ```text wrap
+    Connect PostQueen as an MCP server at https://api.postqueen.ai/mcp
+    ```
+
+    PostQueen is not in the Bot's catalog, so the Bot offers to add it as a custom MCP server and shows a card with **Connect** and **Not now**.
+  </Step>
+  <Step title="Enter the key in the secure prompt">
+    Choose **Connect**, then paste your PostQueen API key into the secure prompt the Bot opens. Never paste it into the chat itself: the secure prompt keeps the key out of the chat history.
+  </Step>
+  <Step title="Check the tools">
+    Ask the Bot to list your connected PostQueen channels. The next section shows what a working connection looks like.
+  </Step>
+</Steps>
+
+## Check that it works
+
+Ask Grok Bot: "List my PostQueen channels." It answers with the channels you connected in PostQueen, by name and network. If it says it has no PostQueen tools, open **Plugins > Yours** and make sure the PostQueen server is on.
+
+## Good to know
+
+- **The key stays out of the chat.** If a key ever lands in a chat message, a workspace admin rotates it under **Connections > API Keys**, and you connect again with the new key.
+- **Servers you add from chat live under Plugins > Yours.** Turn PostQueen off or on there.
+- **The address must be public HTTPS.** Grok Bot runs in the cloud, so it cannot reach a server on your own computer. `api.postqueen.ai` is public.
+- **On Enterprise,** PostQueen's address must be on your team's MCP allowlist. A connector the team blocks shows as **Disabled by team admin**.
+- **Adding a server by chat** is described by Cursor staff on Cursor's forum, not in xAI's docs. PostQueen tested it on 2026-09-19.
+- **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
+- **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
+
+## Other ways to connect
+
+The tested route above is the one to use. The other PostQueen addresses do not suit Grok Bot:
+
+| Way | Use it with Grok Bot? |
+|---|---|
+| `{{mcpBearerUrl}}` with the key in the secure prompt | **Yes.** This is the route above, tested on 2026-09-19 |
+| The key in the address, `{{mcpKeyUrl}}` | No. You would have to paste the key into the chat |
+| Sign in with PostQueen | No. Cursor staff acknowledged an open problem with MCP sign-in redirects in Grok Bot on 2026-09-14 |
+
+## Try this first
+
+```text wrap
+List my PostQueen channels, then write a short Bluesky post about our new opening hours and save it as a draft for tomorrow at 9am.
 ```
-Connect PostQueen as an MCP server at https://api.postqueen.ai/mcp
+
+The draft appears on your PostQueen calendar. Open it there to check the wording before you schedule it. [Prompts to try](/mcp/examples) has more, in the order an agent calls the tools.
+
+## Run it on a schedule
+
+Grok Bot runs routines: a routine tells a Bot when to run a workflow. Create one by asking in chat, or open the Bot, choose **View conversation details**, then **Routines**. Background routines run while your laptop is closed and can use the Bot's connected tools, PostQueen included. A Bot can own up to 50 routines.
+
+```text wrap
+Every Friday at 4pm, write our week in review as a Bluesky post and save it as a PostQueen draft.
 ```
 
-Choose **Connect** on the card the Bot shows, then paste your API key into its secure prompt. PostQueen tested this flow on 2026-09-19.
+<Tip>
+xAI recommends approval for anything that publishes. Saving drafts keeps you in the loop: the routine writes, and you schedule. Source: [xAI, skills, routines and automations](https://docs.x.ai/grok-bot/skills-routines-and-automations).
+</Tip>
 
-<Warning>
-Never paste your API key into the Bot chat itself. The secure prompt keeps it out of the transcript and away from the model. Anyone holding the key can post from your accounts. If it leaks, an admin rotates it under **Connections > API Keys**; then connect again with the new key.
-</Warning>
+## Troubleshooting
 
-The full walkthrough covers public-HTTPS, Cursor `mcp.json` not syncing, and team allowlists:
+| Symptom | Fix |
+|---|---|
+| The Bot says it has no PostQueen tools | Open **Plugins > Yours** and make sure the PostQueen server is on. |
+| You pasted the key into the chat | Ask a workspace admin to rotate it under **Connections > API Keys**, then connect again and use the secure prompt on the **Connect** card. |
+| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| On Enterprise, the connection is blocked | Ask your admin to add PostQueen's address to the team's MCP allowlist. |
+| A sign-in page fails | Use `{{mcpBearerUrl}}` with the key in the secure prompt. That is the tested route. |
+| You added PostQueen at grok.com, but the Bot does not see it | Grok Bot is set up in the Bot itself. Follow the steps on this page. |
 
-<Card title="Grok Bot MCP setup" icon="plug" href="/agents/grok-bot">
-  Step by step, from the Bot chat to your first tool call
-</Card>
+More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
-Once PostQueen is on, ask Grok Bot to list your connected channels. If it calls `integrationList` and hands back your accounts, you are connected.
+## Is it the same as Grok or Grok Build?
 
-For Grok on the web and phone, see [Grok](/agents/grok).
+No. xAI has three products with Grok in the name, and each one connects to PostQueen on its own:
 
-## 👑 A week planned from Grok Bot
+| Product | What it is | How it connects |
+|---|---|---|
+| **Grok Bot** (this page) | An always-on AI teammate with its own cloud computer | Ask in chat, key in the secure prompt |
+| [Grok](/agents/grok) | xAI's assistant at grok.com and in its mobile apps | A custom connector at grok.com/connectors |
+| [Grok Build](/agents/grok-build) | xAI's coding agent for the terminal | One `grok mcp add` command |
 
-> **You:** Plan five posts across next week for X and LinkedIn and schedule them for 9am each day.
+A connector you add at grok.com, or a server in Grok Build's config, does not reach Grok Bot. Grok Bot runs on Cursor's cloud, but Cursor's own `mcp.json` does not reach it either.
 
-> **Grok Bot:** Reading your channels and what each one accepts, then scheduling with PostQueen.
-
-> `integrationList` running...
-
-> `integrationSchema` running for x, linkedin...
-
-> `integrationSchedulePostTool` running...
-
-> 5 posts scheduled across X and LinkedIn, Monday to Friday at 9:00 AM. Every one is on your calendar if you want to change the wording.
-
-Want an image with a post? `generateImageTool` produces one. Not ready for one of them to publish? Ask for drafts, and the call carries `type` as `draft` instead of `schedule`.
-
-## Learn more
-
-<CardGroup cols={2}>
-  <Card title="Grok Bot setup over MCP" icon="/images/brand/icon-grok.svg" href="/agents/grok-bot">
-    Add the server in the Bot chat. Not grok.com/connectors.
-  </Card>
-  <Card title="Grok chat" icon="/images/brand/icon-grok.svg" href="/agents/grok">
-    Custom connector at grok.com/connectors
-  </Card>
-  <Card title="Grok Build" icon="/images/brand/icon-grok.svg" href="/agents/grok-build">
-    Terminal agent. grok mcp add, not the Bot.
-  </Card>
-  <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 21 tools Grok Bot gains once the server is on
-  </Card>
-</CardGroup>
+<NextStepsAgent />
