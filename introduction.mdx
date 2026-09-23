@@ -14,25 +14,38 @@ keywords:
   - api
 ---
 
+export const SearchDocs = () => (
+  <button
+    type="button"
+    className="pq-search"
+    onClick={() => (document.getElementById('search-bar-entry') || document.getElementById('search-bar-entry-mobile'))?.click()}
+  >
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+    <span>Search the docs</span>
+    <kbd>⌘K</kbd>
+  </button>
+);
+
 <div className="pq-home">
 
 <section className="pq-top">
   <div className="pq-dots" />
   <div className="pq-top-inner">
-    <div className="pq-top-text">
-      <span className="pq-eyebrow">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6.6 20.4 L8.2 10.6 L12.4 14.4 L16 8 L19.6 14.4 L23.8 10.6 L25.4 20.4 Z" fill="currentColor" /><rect x="7" y="21.8" width="18" height="2.6" rx="1.3" fill="currentColor" /></svg>
-        <span>Documentation</span>
-      </span>
-      <h1 className="pq-top-title">PostQueen <span className="pq-serif">docs</span></h1>
-      <p className="pq-lede">Guides for the app, setup guides for AI agents, and the reference for the CLI and the public API. However a post is made, it lands on the same calendar.</p>
-      <div className="pq-actions">
-        <a className="pq-btn pq-btn-primary" href="/quickstart">Quickstart <Icon icon="arrow-right" size={18} /></a>
-        <a className="pq-btn pq-btn-ghost" href="/agents/overview">Connect an AI agent</a>
-      </div>
-    </div>
-    <div className="pq-top-visual">
-      <img noZoom src="/images/site/app-agent.webp" alt="The PostQueen calendar next to a Claude chat. Claude used three PostQueen tools and four posts for next week are on the calendar." />
+    <span className="pq-eyebrow">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6.6 20.4 L8.2 10.6 L12.4 14.4 L16 8 L19.6 14.4 L23.8 10.6 L25.4 20.4 Z" fill="currentColor" /><rect x="7" y="21.8" width="18" height="2.6" rx="1.3" fill="currentColor" /></svg>
+      <span>Documentation</span>
+    </span>
+    <h1 className="pq-top-title">PostQueen <span className="pq-serif">docs</span></h1>
+    <p className="pq-lede">Guides for the app, setup guides for AI agents, and the reference for the CLI and the public API. However a post is made, it lands on the same calendar.</p>
+    <SearchDocs />
+    <div className="pq-popular">
+      <span>Popular</span>
+      <a href="/quickstart">Quickstart</a>
+      <a href="/agents/overview">Connect an AI agent</a>
+      <a href="/mcp/introduction">MCP server</a>
+      <a href="/public-api/introduction">API overview</a>
+      <a href="/channels/overview">All channels</a>
+      <a href="/cloud/plans">Plans</a>
     </div>
   </div>
 </section>
@@ -50,8 +63,8 @@ keywords:
           <img noZoom src="/images/channels/instagram.svg" alt="Instagram" />
           <img noZoom src="/images/channels/tiktok.svg" alt="TikTok" />
           <img noZoom src="/images/channels/x.svg" alt="X" />
-          <img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn" />
           <img noZoom src="/images/channels/youtube.svg" alt="YouTube" />
+          <img noZoom src="/images/channels/bluesky.svg" alt="Bluesky" />
         </span>
         <span className="pq-way-title">In the app</span>
         <span className="pq-way-text">Connect your channels, write a post once and schedule it for each of them on the calendar.</span>
@@ -171,42 +184,42 @@ keywords:
   <div className="pq-head-row">
     <div>
       <h2 className="pq-h2">Channels</h2>
-      <p className="pq-sub">Every network has its own page: what you can post to it, its limits, and what to check before you connect it.</p>
+      <p className="pq-sub">Every network has its own page: what you can post to it, its limits, and what to check before you connect it. In review: it connects today within a limit that its page explains. Soon: it cannot be connected on PostQueen yet.</p>
     </div>
     <a className="pq-link" href="/channels/overview">All channels and their status <Icon icon="arrow-right" size={15} /></a>
   </div>
   <div className="pq-channels">
-    <a href="/channels/instagram"><img noZoom src="/images/channels/instagram.svg" alt="Instagram logo" aria-hidden="true" /><span>Instagram</span></a>
-    <a href="/channels/tiktok"><img noZoom src="/images/channels/tiktok.svg" alt="TikTok logo" aria-hidden="true" /><span>TikTok</span></a>
-    <a href="/channels/youtube"><img noZoom src="/images/channels/youtube.svg" alt="YouTube logo" aria-hidden="true" /><span>YouTube</span></a>
-    <a href="/channels/x-twitter"><img noZoom src="/images/channels/x.svg" alt="X logo" aria-hidden="true" /><span>X</span></a>
-    <a href="/channels/linkedin"><img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn logo" aria-hidden="true" /><span>LinkedIn</span></a>
-    <a href="/channels/facebook"><img noZoom src="/images/channels/facebook.svg" alt="Facebook logo" aria-hidden="true" /><span>Facebook</span></a>
-    <a href="/channels/threads"><img noZoom src="/images/channels/threads.svg" alt="Threads logo" aria-hidden="true" /><span>Threads</span></a>
-    <a href="/channels/pinterest"><img noZoom src="/images/channels/pinterest.svg" alt="Pinterest logo" aria-hidden="true" /><span>Pinterest</span></a>
-    <a href="/channels/reddit"><img noZoom src="/images/channels/reddit.svg" alt="Reddit logo" aria-hidden="true" /><span>Reddit</span></a>
+    <a href="/channels/instagram"><img noZoom src="/images/channels/instagram.svg" alt="Instagram logo" aria-hidden="true" /><span>Instagram<small>In review</small></span></a>
+    <a href="/channels/tiktok"><img noZoom src="/images/channels/tiktok.svg" alt="TikTok logo" aria-hidden="true" /><span>TikTok<small>In review</small></span></a>
+    <a href="/channels/youtube"><img noZoom src="/images/channels/youtube.svg" alt="YouTube logo" aria-hidden="true" /><span>YouTube<small>In review</small></span></a>
+    <a href="/channels/x-twitter"><img noZoom src="/images/channels/x.svg" alt="X logo" aria-hidden="true" /><span>X<small>In review</small></span></a>
+    <a href="/channels/linkedin"><img noZoom src="/images/channels/linkedin.svg" alt="LinkedIn logo" aria-hidden="true" /><span>LinkedIn<small>Soon</small></span></a>
+    <a href="/channels/facebook"><img noZoom src="/images/channels/facebook.svg" alt="Facebook logo" aria-hidden="true" /><span>Facebook<small>In review</small></span></a>
+    <a href="/channels/threads"><img noZoom src="/images/channels/threads.svg" alt="Threads logo" aria-hidden="true" /><span>Threads<small>In review</small></span></a>
+    <a href="/channels/pinterest"><img noZoom src="/images/channels/pinterest.svg" alt="Pinterest logo" aria-hidden="true" /><span>Pinterest<small>Soon</small></span></a>
+    <a href="/channels/reddit"><img noZoom src="/images/channels/reddit.svg" alt="Reddit logo" aria-hidden="true" /><span>Reddit<small>Soon</small></span></a>
     <a href="/channels/bluesky"><img noZoom src="/images/channels/bluesky.svg" alt="Bluesky logo" aria-hidden="true" /><span>Bluesky</span></a>
-    <a href="/channels/mastodon"><img noZoom src="/images/channels/mastodon.svg" alt="Mastodon logo" aria-hidden="true" /><span>Mastodon</span></a>
-    <a href="/channels/discord"><img noZoom src="/images/channels/discord.svg" alt="Discord logo" aria-hidden="true" /><span>Discord</span></a>
-    <a href="/channels/telegram"><img noZoom src="/images/channels/telegram.svg" alt="Telegram logo" aria-hidden="true" /><span>Telegram</span></a>
-    <a href="/channels/slack"><img noZoom src="/images/channels/slack.svg" alt="Slack logo" aria-hidden="true" /><span>Slack</span></a>
-    <a href="/channels/twitch"><img noZoom src="/images/channels/twitch.svg" alt="Twitch logo" aria-hidden="true" /><span>Twitch</span></a>
-    <a href="/channels/kick"><img noZoom src="/images/channels/kick.svg" alt="Kick logo" aria-hidden="true" /><span>Kick</span></a>
+    <a href="/channels/mastodon"><img noZoom src="/images/channels/mastodon.svg" alt="Mastodon logo" aria-hidden="true" /><span>Mastodon<small>Soon</small></span></a>
+    <a href="/channels/discord"><img noZoom src="/images/channels/discord.svg" alt="Discord logo" aria-hidden="true" /><span>Discord<small>Soon</small></span></a>
+    <a href="/channels/telegram"><img noZoom src="/images/channels/telegram.svg" alt="Telegram logo" aria-hidden="true" /><span>Telegram<small>Soon</small></span></a>
+    <a href="/channels/slack"><img noZoom src="/images/channels/slack.svg" alt="Slack logo" aria-hidden="true" /><span>Slack<small>Soon</small></span></a>
+    <a href="/channels/twitch"><img noZoom src="/images/channels/twitch.svg" alt="Twitch logo" aria-hidden="true" /><span>Twitch<small>Soon</small></span></a>
+    <a href="/channels/kick"><img noZoom src="/images/channels/kick.svg" alt="Kick logo" aria-hidden="true" /><span>Kick<small>Soon</small></span></a>
     <a href="/channels/wordpress"><img noZoom src="/images/channels/wordpress.svg" alt="WordPress logo" aria-hidden="true" /><span>WordPress</span></a>
-    <a href="/channels/tumblr"><img noZoom src="/images/channels/tumblr.png" alt="Tumblr logo" aria-hidden="true" /><span>Tumblr</span></a>
+    <a href="/channels/tumblr"><img noZoom src="/images/channels/tumblr.png" alt="Tumblr logo" aria-hidden="true" /><span>Tumblr<small>Soon</small></span></a>
     <a href="/channels/devto"><img noZoom src="/images/channels/devto.svg" alt="DEV logo" aria-hidden="true" /><span>DEV</span></a>
     <a href="/channels/hashnode"><img noZoom src="/images/channels/hashnode.svg" alt="Hashnode logo" aria-hidden="true" /><span>Hashnode</span></a>
-    <a href="/channels/google-my-business"><img noZoom src="/images/channels/google-business.svg" alt="Google Business logo" aria-hidden="true" /><span>Google Business</span></a>
-    <a href="/channels/dribbble"><img noZoom src="/images/channels/dribbble.svg" alt="Dribbble logo" aria-hidden="true" /><span>Dribbble</span></a>
-    <a href="/channels/vk"><img noZoom src="/images/channels/vk.svg" alt="VK logo" aria-hidden="true" /><span>VK</span></a>
-    <a href="/channels/mewe"><img noZoom src="/images/channels/mewe.svg" alt="MeWe logo" aria-hidden="true" /><span>MeWe</span></a>
+    <a href="/channels/google-my-business"><img noZoom src="/images/channels/google-business.svg" alt="Google Business logo" aria-hidden="true" /><span>Google Business<small>Soon</small></span></a>
+    <a href="/channels/dribbble"><img noZoom src="/images/channels/dribbble.svg" alt="Dribbble logo" aria-hidden="true" /><span>Dribbble<small>Soon</small></span></a>
+    <a href="/channels/vk"><img noZoom src="/images/channels/vk.svg" alt="VK logo" aria-hidden="true" /><span>VK<small>Soon</small></span></a>
+    <a href="/channels/mewe"><img noZoom src="/images/channels/mewe.svg" alt="MeWe logo" aria-hidden="true" /><span>MeWe<small>Soon</small></span></a>
     <a href="/channels/lemmy"><img noZoom src="/images/channels/lemmy.svg" alt="Lemmy logo" aria-hidden="true" /><span>Lemmy</span></a>
     <a href="/channels/nostr"><img noZoom src="/images/channels/nostr.svg" alt="Nostr logo" aria-hidden="true" /><span>Nostr</span></a>
-    <a href="/channels/farcaster"><img noZoom src="/images/channels/farcaster.svg" alt="Farcaster logo" aria-hidden="true" /><span>Farcaster</span></a>
+    <a href="/channels/farcaster"><img noZoom src="/images/channels/farcaster.svg" alt="Farcaster logo" aria-hidden="true" /><span>Farcaster<small>Soon</small></span></a>
     <a href="/channels/moltbook"><img noZoom src="/images/channels/moltbook.png" alt="Moltbook logo" aria-hidden="true" /><span>Moltbook</span></a>
     <a href="/channels/listmonk"><img noZoom src="/images/channels/listmonk.svg" alt="Listmonk logo" aria-hidden="true" /><span>Listmonk</span></a>
-    <a href="/channels/whop"><img noZoom src="/images/channels/whop.svg" alt="Whop logo" aria-hidden="true" /><span>Whop</span></a>
-    <a href="/channels/skool"><img noZoom src="/images/channels/skool.svg" alt="Skool logo" aria-hidden="true" /><span>Skool</span></a>
+    <a href="/channels/whop"><img noZoom src="/images/channels/whop.svg" alt="Whop logo" aria-hidden="true" /><span>Whop<small>Soon</small></span></a>
+    <a href="/channels/skool"><img noZoom src="/images/channels/skool.svg" alt="Skool logo" aria-hidden="true" /><span>Skool<small>Soon</small></span></a>
   </div>
 </section>
 

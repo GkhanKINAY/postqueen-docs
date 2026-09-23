@@ -59,7 +59,7 @@
     }
   },
   "banner": {
-    "content": "Post from Claude, ChatGPT, Grok Bot or any AI agent. [Connect your agent](/agents/overview)",
+    "content": "Post from **Claude**, **ChatGPT**, **Grok Bot** or any AI agent. [Connect your agent](/agents/overview)",
     "dismissible": true,
     "color": {
       "light": "#EFE9FD",

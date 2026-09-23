@@ -270,8 +270,8 @@ pre *,
 
 /* 11. The docs home (introduction.mdx, mode: custom). The site's look (Main
    and Mcp on the design canvas) laid out as a docs index: every block starts
-   on the same left edge; a two-column top with the app window; the four ways
-   as the site's picture cards; topic lists; the channel tiles. The pictures
+   on the same left edge; a large title with a search box and popular pages;
+   the four ways as the site's picture cards; topic lists; the channel tiles. The pictures
    are captures of the canvas on a transparent ground (images/site), and the
    tinted panel behind each one is drawn here, so it follows the theme. */
 .pq-home {
@@ -308,13 +308,9 @@ pre *,
 }
 .pq-top-inner {
   position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  align-items: center;
-  gap: 3rem;
   max-width: 1120px;
   margin: 0 auto;
-  padding: 4.5rem 1.5rem 0.5rem;
+  padding: 5rem 1.5rem 0.5rem;
 }
 .pq-eyebrow {
   display: inline-flex;
@@ -336,8 +332,8 @@ pre *,
 }
 .pq-top-title {
   margin: 1.25rem 0 0;
-  font-size: clamp(2.5rem, 5vw, 3.75rem);
-  line-height: 1.04;
+  font-size: clamp(2.9rem, 9vw, 7rem);
+  line-height: 1;
   font-weight: 800;
   letter-spacing: -0.045em;
   color: var(--pq-ink);
@@ -347,57 +343,77 @@ pre *,
   letter-spacing: -0.02em;
 }
 .pq-lede {
-  margin: 1.25rem 0 0;
-  max-width: 520px;
-  font-size: 1.125rem;
+  margin: 1.5rem 0 0;
+  max-width: 700px;
+  font-size: 1.25rem;
   line-height: 1.6;
   color: var(--pq-muted);
   text-wrap: pretty;
 }
-.pq-actions {
+/* The search box opens Mintlify's own search: its button is on the page but
+   hidden in custom mode, and SearchDocs (introduction.mdx) clicks it. */
+.pq-search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 600px;
+  height: 56px;
+  margin-top: 2rem;
+  padding: 0 14px 0 20px;
+  border: 1.5px solid var(--pq-line-2);
+  border-radius: 999px;
+  background: var(--pq-surface);
+  box-shadow: var(--pq-shadow);
+  font-size: 1.05rem;
+  color: var(--pq-muted);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.pq-search:hover {
+  border-color: var(--pq-violet-300);
+}
+.pq-search span {
+  flex-grow: 1;
+}
+.pq-search kbd {
+  padding: 3px 9px;
+  border: 1px solid var(--pq-line);
+  border-radius: 8px;
+  background: var(--pq-paper);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pq-muted);
+}
+.pq-popular {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.75rem;
-}
-.pq-btn {
-  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  height: 46px;
-  padding: 0 20px;
-  border-radius: 999px;
-  font-size: 15px;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+}
+.pq-popular > span {
+  margin-right: 0.25rem;
   font-weight: 700;
-  white-space: nowrap;
-  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  color: var(--pq-muted);
 }
-.pq-btn-primary {
-  background: var(--pq-violet);
-  color: var(--pq-on-violet) !important;
-}
-.pq-btn-primary:hover {
-  background: var(--pq-violet-600);
-}
-.pq-btn-ghost {
-  border: 1.5px solid var(--pq-line-2);
-  color: var(--pq-ink-2) !important;
+.pq-popular a,
+#content .pq-home .pq-popular a {
+  padding: 5px 12px;
+  border: 1px solid var(--pq-line);
+  border-radius: 999px;
   background: var(--pq-surface);
+  font-weight: 600;
+  color: var(--pq-ink-2) !important;
+  transition: border-color 0.15s, color 0.15s;
 }
-#content .pq-home .pq-btn-ghost {
-  border: 1.5px solid var(--pq-line-2);
-}
-.pq-btn-ghost:hover,
-#content .pq-home .pq-btn-ghost:hover {
-  border-color: var(--pq-ink);
-  color: var(--pq-ink) !important;
-}
-/* The capture keeps 40px of shadow around the 1200px window; the picture is
-   widened by that much so the window itself meets the column's edges. */
-.pq-top-visual img {
-  width: 106.667%;
-  max-width: none;
-  margin: -3.333%;
+.pq-popular a:hover,
+#content .pq-home .pq-popular a:hover {
+  border-color: var(--pq-violet-300);
+  color: var(--pq-accent) !important;
 }
 .pq-section {
   max-width: 1120px;
@@ -616,7 +632,16 @@ pre *,
   border-radius: 6px;
 }
 .pq-channels span {
+  display: flex;
+  flex-direction: column;
   line-height: 1.25;
+}
+/* The channel's status from its page, under the name: In review or Soon. */
+.pq-channels small {
+  margin-top: 1px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pq-muted);
 }
 /* The rule spans the text, not the 1120px box around it, so it starts on
    the same left edge as every block above. */
@@ -635,8 +660,6 @@ pre *,
 }
 @media (max-width: 1023px) {
   .pq-top-inner {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2.5rem;
     padding-top: 3.5rem;
   }
   .pq-topics {
@@ -668,14 +691,18 @@ pre *,
     margin-inline: 1rem;
     padding-top: 1.25rem;
   }
-  .pq-btn {
-    height: 44px;
-    padding: 0 18px;
+  .pq-search {
+    height: 50px;
+    font-size: 1rem;
+  }
+  .pq-search kbd {
+    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .pq-way,
-  .pq-btn,
+  .pq-search,
+  .pq-popular a,
   .pq-channels a {
     transition: none;
   }
@@ -754,7 +781,12 @@ pre *,
    outranks an !important color here, so the fill is set instead. */
 #banner p {
   -webkit-text-fill-color: var(--pq-inline-ink);
-  font-weight: 600;
+  font-weight: 500;
+}
+/* Bold in the banner text (the agent names) comes out as a span that
+   Mintlify's body-weight rule pins to 400, so it is set by its marker. */
+#banner [data-streamdown="strong"] {
+  font-weight: 800;
 }
 #banner a {
   -webkit-text-fill-color: var(--pq-accent);
@@ -804,7 +836,10 @@ html[data-page-mode="wide"] #content-area {
    tinted panel it sits on in the site's cards (tints in section 2). A window
    or card capture keeps its shadow margin, which pads it inside the panel;
    pq-visual-fill is for a capture that is a whole panel already, and
-   pq-visual-wide lets a window grow on a wide page. */
+   pq-visual-wide lets a window grow on a wide page, pq-visual-phone keeps
+   a phone at phone size. Each agent page opens with its own session from
+   the site's agent page (images/site/agents), and each channel page with
+   the site's composer card for that network (images/site/channels). */
 .pq-visual {
   display: flex;
   justify-content: center;
@@ -828,6 +863,14 @@ html[data-page-mode="wide"] #content-area {
 }
 .pq-visual-fill img {
   max-width: none;
+}
+/* The composer card at the top of a channel page stays card-sized. */
+.pq-visual-card img {
+  max-width: 460px;
+}
+/* A phone stays phone-sized, so it does not fill a screen of its own. */
+.pq-visual-phone img {
+  max-width: 330px;
 }
 /* On a wide page (agents/overview) the app window fills more of the panel. */
 .pq-visual-wide img {
