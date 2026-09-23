@@ -14,10 +14,10 @@ keywords:
   - ask_postqueen
 ---
 
-Point a client at `/mcp` and your agent gets **17 tools** to list channels, upload media, schedule posts and read analytics. Nothing to install. Directory OAuth paths expose fewer tools.
+Point a client at your MCP address and your agent gets **21 tools** to list channels, upload media, schedule posts and read post analytics. Nothing to install.
 
 <Note>
-**You do not have to run or install anything.** In the protocol's own words PostQueen is the "server" and your AI client is the "client", but she is already running at a URL. Setup is pasting that URL into your client.
+**You do not have to run or install anything.** In the protocol's own words PostQueen is the "server" and your AI client is the "client", but PostQueen is already running at a URL. Setup is pasting that URL into your client.
 </Note>
 
 <Frame>
@@ -26,16 +26,20 @@ Point a client at `/mcp` and your agent gets **17 tools** to list channels, uplo
 
 ## Authentication
 
-Two forms, same 17 tools on direct `/mcp`:
+Start with the API key address. Two forms, the same 21 tools:
 
 | Form | URL | Header |
 |---|---|---|
 | Key in the URL | `https://api.postqueen.ai/mcp/YOUR_API_KEY` | none |
 | Bearer | `https://api.postqueen.ai/mcp` | `Authorization: Bearer YOUR_API_KEY` (or a `pos_` OAuth token) |
 
-The URL form accepts API keys only. Get the key in **Settings → API Keys**. Building for other users: [OAuth2](/public-api/oauth). Directory OAuth uses `mcp:read` / `mcp:write` on `/mcp-oauth*`. Self-hosted: swap the host for your `NEXT_PUBLIC_BACKEND_URL`.
+The URL form accepts API keys only. The key is under **Connections > API Keys** in the app. Only a workspace admin can reveal it, and each workspace has one. Building for other users: [OAuth2](/public-api/oauth). Self-hosted: swap the host for your `NEXT_PUBLIC_BACKEND_URL`.
 
-Tool names, parameters, and how many tools each path actually exposes: [Tools Reference](/mcp/tools#how-many-tools-you-actually-get).
+### Sign in instead of a key (not tested yet)
+
+Clients that support MCP OAuth can use `https://api.postqueen.ai/mcp-oauth-dynamic` with no key. The client registers itself, you sign in to PostQueen, and a workspace admin approves the connection. It exposes 20 tools, everything except `ask_postqueen`. The access does not expire on its own; revoke it under **Connections > Approved Apps**. PostQueen has not completed this sign-in in its own tests yet, and some clients cannot use it, so each agent page says which address to use.
+
+Tool names, parameters, and how many tools each address exposes: [Tools Reference](/mcp/tools#how-many-tools-you-get).
 
 ## Connect your client
 
@@ -50,13 +54,13 @@ Tool names, parameters, and how many tools each path actually exposes: [Tools Re
     Paste the MCP URL once for claude.ai, Desktop and mobile
   </Card>
   <Card title="ChatGPT" icon="/images/brand/icon-chatgpt.svg" href="/mcp/clients/chatgpt">
-    Developer mode, then paste the MCP URL under Apps → Create
+    Developer mode, then add the MCP URL as a new app
   </Card>
   <Card title="Cursor" icon="/images/brand/icon-cursor.svg" href="/mcp/clients/cursor">
     One `.cursor/mcp.json` entry, or the Settings UI
   </Card>
   <Card title="Every tool" icon="wrench" href="/mcp/tools">
-    All 17, with the parameters each one takes
+    All 21, with the parameters each one takes
   </Card>
 </CardGroup>
 
@@ -67,6 +71,6 @@ Ask it to list your connected accounts. If the names come back, `integrationList
     Discord channels, video voices, and the flows that need a lookup first
   </Card>
   <Card title="Limits and troubleshooting" icon="gauge-high" href="/mcp/limits-and-troubleshooting">
-    No analytics, no delete, no reschedule. What a bad key looks like
+    No delete, no reschedule, no channel analytics. What a bad key looks like
   </Card>
 </CardGroup>

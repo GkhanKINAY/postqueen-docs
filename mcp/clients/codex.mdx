@@ -7,7 +7,7 @@ icon: /images/brand/icon-codex.svg
 The OpenAI Codex CLI supports remote streamable HTTP MCP servers natively, so it talks to her directly, with no local bridge process. This is Codex, not ChatGPT — same pairing as Claude Code vs Claude. ChatGPT uses [Settings → Apps](/mcp/clients/chatgpt). Servers are registered in `~/.codex/config.toml` under `[mcp_servers.NAME]`, either by editing the file or with the `codex mcp add` command.
 
 <Info>
-You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 </Info>
 
 ## Add via CLI
@@ -16,7 +16,7 @@ You need your PostQueen API key first. In [app.postqueen.ai](https://app.postque
 codex mcp add postqueen --url https://api.postqueen.ai/mcp/YOUR_API_KEY
 ```
 
-Replace `YOUR_API_KEY` with your actual key. Codex writes the entry to `~/.codex/config.toml`, and all 14 PostQueen tools are available in every session from then on.
+Replace `YOUR_API_KEY` with your actual key. Codex writes the entry to `~/.codex/config.toml`, and all 21 PostQueen tools are available in every session from then on.
 
 ## The two forms
 
@@ -64,7 +64,7 @@ Syntax per the official [Codex MCP documentation](https://learn.chatgpt.com/docs
 </Note>
 
 <Warning>
-Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plain text file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key grants full access to your PostQueen workspace: treat it like a password. `~/.codex/config.toml` is a plain text file, so the `bearer_token_env_var` form is the safer choice on shared machines. If the environment variable is not visible to the Codex process, requests are sent without an `Authorization` header and the connection fails. Export it before launching Codex. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
 </Warning>
 
 ## Self-hosted
@@ -89,7 +89,7 @@ Your channel names come back, because the agent reached for her `integrationList
 
 <CardGroup cols={2}>
   <Card title="Tools reference" icon="screwdriver-wrench" href="/mcp/tools">
-    Every parameter of the 14 tools your agent just discovered
+    Every parameter of the 21 tools your agent just discovered
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     The flows where she has to look something up before she can post

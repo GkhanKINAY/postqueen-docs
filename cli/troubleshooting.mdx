@@ -45,9 +45,9 @@ When you are stuck, the HTTP status is the fastest signal: `401` is authenticati
 | `Not authenticated.` | Same cause, reported by `auth:status`. | Same fix. |
 | `Credentials are expired or invalid. Please re-authenticate.` | `auth:status` got a `401` or `403` when verifying. | Rotate the key in the app and re-export it, or run `auth:login` again if you use the device flow. |
 | `API Error (401): {"msg":"No API Key found"}` | The `Authorization` header never reached the API. | Confirm the variable is exported in the shell that runs the command, not just set. |
-| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong, revoked, or has whitespace. | Re-copy it from **Settings → API Keys**, then **Reveal**. |
+| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong, revoked, or has whitespace. | Re-copy it from **Connections > API Keys**. Only a workspace admin can reveal the key, so a member asks an admin. |
 | `API Error (401): {"msg":"No subscription found"}` | Billing is enabled on the instance and the organization has no active plan. | Activate a plan, or disable billing on your self-hosted instance. |
-| `Could not reach auth server at <url>` | `auth:login` could not contact the auth server. | The hosted `cli-auth.postqueen.ai` is not currently available. Use an API key, or [self-host the auth server](/cli/authentication). |
+| `No auth server is answering at <url> (<detail>).` | `auth:login` was pointed at an auth server with `--auth-server` or `POSTQUEEN_AUTH_SERVER`, and nothing answered there. | Check that URL. PostQueen runs no auth server, so on the hosted service use an API key: `export POSTQUEEN_API_KEY=your_api_key` ([Authentication](/cli/authentication)). |
 | `Authorization expired. Please try again.` / `Authorization timed out. Please try again.` | Nobody completed the browser step before the device code expired. | Re-run `auth:login` and finish in the browser. |
 
 <Note>

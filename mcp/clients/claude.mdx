@@ -25,11 +25,11 @@ A plain `"url"` entry in `claude_desktop_config.json` does **not** work. Claude 
 ## Before you start
 
 <Info>
-Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**.
+Grab your API key from [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 </Info>
 
 <Warning>
-Your API key can post to every account you have connected. Treat it like a password: anyone who sees your MCP URL or config file can publish as you. Do not screenshot it and do not commit it. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key can post to every account you have connected. Treat it like a password: anyone who sees your MCP URL or config file can publish as you. Do not screenshot it and do not commit it. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
 </Warning>
 
 ## Option A: paste the MCP URL (recommended)
@@ -56,7 +56,7 @@ At the time of writing, Anthropic's help center lists custom connectors as avail
     Leave the OAuth fields in Advanced settings empty: the key in the URL is the authentication.
   </Step>
   <Step title="Confirm">
-    Click **Add**. PostQueen appears in your list. Enable it in a chat from **+ → Connectors**. Her 17 tools become available in that conversation.
+    Click **Add**. PostQueen appears in your list. Enable it in a chat from **+ → Connectors**. PostQueen's 21 tools become available in that conversation.
   </Step>
 </Steps>
 
@@ -192,7 +192,7 @@ Claude calls the `integrationList` tool and returns your connected accounts. She
 
 <CardGroup cols={2}>
   <Card title="Tools reference" icon="screwdriver-wrench" href="/mcp/tools">
-    Every parameter of the 17 tools Claude just discovered
+    Every parameter of the 21 tools Claude just discovered
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     The flows where she has to look something up before she can post

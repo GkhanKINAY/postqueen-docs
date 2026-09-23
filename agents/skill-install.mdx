@@ -145,7 +145,7 @@ The skill teaches your agent what to run. The key is what lets it run anything a
 
 <Steps>
   <Step title="Reveal your key">
-    Open [app.postqueen.ai](https://app.postqueen.ai), go to **Settings → API Keys**, and click **Reveal**. Self-hosting? The same screen lives in your own instance.
+    Open [app.postqueen.ai](https://app.postqueen.ai), go to **Connections > API Keys**, and click **Reveal**. Only a workspace admin can reveal the key. Self-hosting? The same screen lives in your own instance.
   </Step>
   <Step title="Export it">
     ```bash
@@ -163,16 +163,16 @@ The skill teaches your agent what to run. The key is what lets it run anything a
   </Step>
 </Steps>
 
-Keep the key secret: it grants full access to your account. You can revoke or rotate it any time from the same screen.
+Keep the key secret: it grants full access to your workspace. An admin can rotate it any time under **Connections > API Keys**.
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `POSTQUEEN_API_KEY` | Yes | - | Your PostQueen API key |
 | `POSTQUEEN_API_URL` | No | `https://api.postqueen.ai` | API endpoint, for self-hosted instances |
-| `POSTQUEEN_AUTH_SERVER` | No | `https://cli-auth.postqueen.ai` | Auth server for the OAuth2 device flow. Only relevant if you run your own |
+| `POSTQUEEN_AUTH_SERVER` | No | none | Only for a device-flow auth server you run yourself. PostQueen runs none |
 
 <Note>
-`postqueen auth:login` runs an OAuth2 device flow that needs an auth server to mediate it, and PostQueen does not currently host one. On the hosted service the API key is the route to take. Running your own auth server is written out in full on the [Authentication page](/cli/authentication).
+On the hosted service the CLI signs in with an API key only. `postqueen auth:login` makes no network call unless you point it at a device-flow auth server you run yourself: see [Authentication](/cli/authentication).
 </Note>
 
 ## Verify it works

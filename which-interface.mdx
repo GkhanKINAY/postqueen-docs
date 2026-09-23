@@ -27,22 +27,22 @@ A draft keeps the date you gave it and does nothing until you publish it. Publis
 | Route | Install effort | Authentication | What it can reach | Who it suits |
 |---|---|---|---|---|
 | **[CLI](/cli/introduction)** | `npm install -g postqueen`. If an assistant will drive it, also `npx skills add GkhanKINAY/postqueen-agent` — the skill is a playbook, not a second installer | `POSTQUEEN_API_KEY` in your shell. There is an OAuth2 device flow too, but it needs an auth server you run yourself | **17 commands** covering channels, posts and analytics. Media uploads included, video generation not | Anyone at home in a shell, a CI job, a coding agent |
-| **[MCP](/mcp/introduction)** | Nothing for most clients, just one URL. Claude Desktop takes a **custom connector**, or `mcp-remote` in `claude_desktop_config.json` for a LAN/VPN instance. A plain `"url"` in that file does not work | API key as a Bearer token on `/mcp`, or the key in the URL at `/mcp/:apiKey`. OAuth tokens starting with `pos_` work on the Bearer form only | **14 tools** on `/mcp` (channel discovery, scheduling, media generation, `ask_postqueen`). Directory OAuth paths expose fewer: [tool counts by path](/mcp/tools#how-many-tools-you-actually-get). Upload from a URL too. Lists scheduled posts and edits their settings. No analytics, and no deleting or rescheduling posts | Claude, ChatGPT, Cursor, Grok or any MCP client where you would rather ask than type flags |
+| **[MCP](/mcp/introduction)** | Nothing for most clients, just one URL. Claude Desktop takes a **custom connector**, or `mcp-remote` in `claude_desktop_config.json` for a LAN/VPN instance. A plain `"url"` in that file does not work | API key as a Bearer token on `/mcp`, or the key in the URL at `/mcp/:apiKey`. OAuth tokens starting with `pos_` work on the Bearer form only. Sign-in at `/mcp-oauth-dynamic` is an option, not tested yet | **21 tools** with the key (channel discovery, scheduling, media generation, post analytics, `ask_postqueen`), 20 with sign-in: [tool counts by address](/mcp/tools#how-many-tools-you-get). Upload from a URL too. Lists and reads posts and edits their settings. No channel analytics, and no deleting or rescheduling posts | Claude, ChatGPT, Cursor, Grok or any MCP client where you would rather ask than type flags |
 | **[Public API](/public-api/introduction)** | Nothing. Your key is the whole setup | Your key in the `Authorization` header, with no `Bearer` prefix. Or an OAuth2 token starting with `pos_` | **23 key-authenticated operations**, plus the two OAuth2 endpoints. The widest surface of the four. Channel connection, notifications and slot finding live only here | Your own code, and anyone building a product for other PostQueen users |
 | **[n8n, Zapier, Make](/automation/overview)** | The `n8n-nodes-postqueen` community node in n8n. Nothing to install in Zapier or Make, where you build the request yourself | The n8n credential stores your key and host. In Zapier and Make you set `Authorization: YOUR_API_KEY` yourself | **Seven ready-made operations** in the n8n node. Zapier and Make reach whatever you write against the API | Teams already living in a workflow tool, with no appetite for code |
 
 ## Pick the CLI when
 
-You are already in a terminal, or an agent will drive flags. Seventeen commands, JSON on the data ones, and the only route besides the API that returns analytics. It does not generate video.
+You are already in a terminal, or an agent will drive flags. Seventeen commands, JSON on the data ones, and channel analytics such as follower numbers, which MCP does not carry. It does not generate video.
 
 [Command Reference](/cli/command-reference).
 
 ## Pick MCP when
 
-You would rather describe the post than write the call. Point a client at one URL and 14 tools arrive with their schemas, including AI image generation, which none of the other three carry. Directory OAuth paths expose fewer.
+You would rather describe the post than write the call. Point a client at one URL and 21 tools arrive with their schemas, including AI image generation, which none of the other three carry. The sign-in address, not tested yet, exposes 20.
 
 <Warning>
-No tool reads analytics, and none deletes or reschedules a post. `postsListTool` lists scheduled posts between two dates, and `postSettingsTool` can change settings of a post that has not gone out yet. When you need analytics or a delete, keep the CLI or the API.
+Three tools read analytics for published posts, but none reads channel numbers such as follower growth, and none deletes or reschedules a post. `postsListTool` lists posts between two dates, `postReadTool` reads one in full, and `postSettingsTool` can change settings of a post that has not gone out yet. When you need channel analytics or a delete, keep the CLI or the API.
 </Warning>
 
 [Client Setup](/mcp/setup).

@@ -1,64 +1,54 @@
 ---
-title: Windsurf
-description: 'Connect Windsurf Cascade to PostQueen over MCP'
-icon: /images/brand/icon-windsurf.svg
+title: Devin Desktop
+description: 'Connect Devin Desktop to PostQueen over MCP'
+icon: 'laptop-code'
 ---
 
-Windsurf Cascade reads MCP servers from `~/.codeium/windsurf/mcp_config.json`. Remote HTTP uses **`serverUrl`** (`url` also works). That is not Cursor's `mcp.json`.
+Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Devin Local reads MCP servers from `~/.config/devin/mcp_config.json` (Windows: `%APPDATA%\devin\mcp_config.json`), and PostQueen connects with one URL.
 
-This page is Cascade. The newer **Devin Local** agent (the default in new Windsurf tabs) configures MCP in Devin CLI files instead of `mcp_config.json`.
+<Note>
+From Cognition's docs, not tested by PostQueen yet.
+</Note>
 
 <Info>
-You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+You need your PostQueen API key first. In [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 </Info>
 
-## Option A: Cascade UI
+## Option A: one command
 
-<Steps>
-  <Step title="Open MCP settings">
-    In the Cascade panel, click **MCPs**, or open **Devin Settings → Cascade → MCP Servers**.
-  </Step>
-  <Step title="Add PostQueen">
-    PostQueen is not in the Windsurf marketplace. Edit the raw `mcp_config.json` and add the block below.
-  </Step>
-</Steps>
+```bash
+devin mcp add -s user postqueen https://api.postqueen.ai/mcp/YOUR_API_KEY
+```
+
+`-s user` saves the server for every project. Without it, it is saved for the current project only.
 
 ## Option B: mcp_config.json
 
 <Tabs>
   <Tab title="API key in URL">
-    ```json ~/.codeium/windsurf/mcp_config.json
+    ```json ~/.config/devin/mcp_config.json
     {
       "mcpServers": {
         "postqueen": {
-          "serverUrl": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+          "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
         }
       }
     }
     ```
   </Tab>
   <Tab title="Bearer token">
-    ```json ~/.codeium/windsurf/mcp_config.json
-    {
-      "mcpServers": {
-        "postqueen": {
-          "serverUrl": "https://api.postqueen.ai/mcp",
-          "headers": {
-            "Authorization": "Bearer ${env:POSTQUEEN_API_KEY}"
-          }
-        }
-      }
-    }
+    ```bash
+    devin mcp add -s user postqueen https://api.postqueen.ai/mcp -H "Authorization: Bearer YOUR_API_KEY"
     ```
   </Tab>
 </Tabs>
 
 <Note>
-Field name per [Windsurf Cascade MCP](https://docs.windsurf.com/windsurf/cascade/mcp): remote HTTP needs `serverUrl` or `url`. `${env:VAR_NAME}` interpolation works in `serverUrl`, `url`, and `headers`.
+Sign-in instead of a key is an option, not tested yet: add `https://api.postqueen.ai/mcp-oauth-dynamic` as the server URL, then run `devin mcp login postqueen` or press **Authenticate** in Devin Desktop. A workspace admin approves the connection.
 </Note>
 
 <Warning>
-Your API key can post to every account you have connected. Keep `mcp_config.json` off shared screens. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key can post to every account you have connected. Keep `mcp_config.json` off shared screens. If the key leaks, an admin rotates it under **Connections > API Keys**; then update every client that uses it.
 </Warning>
 
 ## Self-hosted
@@ -67,8 +57,8 @@ Swap the host for your `NEXT_PUBLIC_BACKEND_URL` and keep the `/mcp/YOUR_API_KEY
 
 ## Verify
 
-In a Cascade chat, ask:
+Open a new agent tab and ask:
 
 > "List my connected social media accounts"
 
-Your channel names come back when Cascade calls `integrationList`. Toggle the `postqueen` tools on the MCP settings page if they stay off. Teams can allowlist servers by the key name in `mcp_config.json`; a missing allowlist entry looks like a broken URL.
+Your channel names come back when Devin Local calls `integrationList`. It asks before each tool call by default. On Enterprise, an admin must enable Devin Local first.

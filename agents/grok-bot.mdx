@@ -6,20 +6,22 @@ icon: /images/brand/icon-grok.svg
 
 ## Working with her in Grok Bot
 
-Grok Bot is the cloud agent: named bots, memory, routines. Grok on grok.com is a different product. Connecting PostQueen at [grok.com/connectors](https://grok.com/connectors) does **not** install her on Grok Bot.
+Grok Bot is xAI's cloud agent. Grok on grok.com is a different product. Connecting PostQueen at [grok.com/connectors](https://grok.com/connectors) does **not** add it to Grok Bot.
 
-Tell the Bot to add the remote MCP server. What she brings into that chat is her [14 MCP tools](/mcp/tools). They list your channels, read what each platform accepts and schedule the posts. They do not delete a post or return analytics, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
+Ask the Bot to connect PostQueen as a remote MCP server. That brings PostQueen's [21 MCP tools](/mcp/tools) into the chat. They list your channels, read what each platform accepts, schedule the posts and report how published posts did. They do not delete a post or read channel numbers such as followers, so that work lives on the calendar at [app.postqueen.ai](https://app.postqueen.ai) or in the [`postqueen` CLI](/cli/introduction).
 
 ## Set up
 
-Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Settings → API Keys** and click **Reveal**. Then, in a Grok Bot chat:
+Your key lives in the app at [app.postqueen.ai](https://app.postqueen.ai): open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal it. Then, in a Grok Bot chat:
 
 ```
-Add this MCP server: https://api.postqueen.ai/mcp/YOUR_API_KEY
+Connect PostQueen as an MCP server at https://api.postqueen.ai/mcp
 ```
+
+Choose **Connect** on the card the Bot shows, then paste your API key into its secure prompt. PostQueen tested this flow on 2026-09-19.
 
 <Warning>
-Your API key travels inside that URL, which makes the URL itself a secret. Anyone holding it can post from your accounts. Keep it out of screenshots, and if the key leaks, regenerate it in **Settings → API Keys** and add the new URL.
+Never paste your API key into the Bot chat itself. The secure prompt keeps it out of the transcript and away from the model. Anyone holding the key can post from your accounts. If it leaks, an admin rotates it under **Connections > API Keys**; then connect again with the new key.
 </Warning>
 
 The full walkthrough covers public-HTTPS, Cursor `mcp.json` not syncing, and team allowlists:
@@ -28,7 +30,7 @@ The full walkthrough covers public-HTTPS, Cursor `mcp.json` not syncing, and tea
   Step by step, from the Bot chat to your first tool call
 </Card>
 
-Once she is on, ask Grok Bot to list your connected channels. If it calls `integrationList` and hands back your accounts, you are connected.
+Once PostQueen is on, ask Grok Bot to list your connected channels. If it calls `integrationList` and hands back your accounts, you are connected.
 
 For Grok on the web and phone, see [Grok](/agents/grok).
 
@@ -61,6 +63,6 @@ Want an image with a post? `generateImageTool` produces one. Not ready for one o
     Terminal agent. grok mcp add, not the Bot.
   </Card>
   <Card title="MCP tools" icon="wrench" href="/mcp/tools">
-    All 14 tools Grok Bot gains once the server is on
+    All 21 tools Grok Bot gains once the server is on
   </Card>
 </CardGroup>

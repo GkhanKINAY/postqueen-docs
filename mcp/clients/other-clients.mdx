@@ -7,11 +7,11 @@ icon: /images/brand/icon-other-clients.svg
 She speaks MCP over streamable HTTP, so any client that can reach a remote MCP server connects with a single URL, with no local process and no wrapper package. Whatever the client calls the field, it wants the same three things: an endpoint, your API key and a name.
 
 <Info>
-You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Settings → API Keys** and click **Reveal**.
+You need your PostQueen API key first. In the app at [app.postqueen.ai](https://app.postqueen.ai), open **Connections > API Keys** and click **Reveal**. Only a workspace admin can reveal the key.
 </Info>
 
 <Warning>
-Your API key can post to every account you have connected, so treat it like a password. Whether it sits in the URL or in an `Authorization` header, it ends up in a config file on your machine, so keep those files out of version control and off shared screens. If the key leaks, regenerate it in **Settings → API Keys** and update every client that uses it.
+Your API key can post to every account you have connected, so treat it like a password. Whether it sits in the URL or in an `Authorization` header, it ends up in a config file on your machine, so keep those files out of version control and off shared screens. If the key leaks, have an admin rotate it under **Connections > API Keys**, then update every client that uses it.
 </Warning>
 
 <CardGroup cols={3}>
@@ -45,13 +45,13 @@ The config key differs by client. Check which one yours expects for **streamable
 | --- | --- |
 | Cursor | `"url"` under `mcpServers` |
 | VS Code Copilot | `"url"` under `servers`, with `"type": "http"` |
-| Windsurf Cascade | `"serverUrl"` (or `"url"`) under `mcpServers` |
+| Devin Desktop | `"url"` under `mcpServers` in `~/.config/devin/mcp_config.json` |
 | Zed | `"url"` under `context_servers`, plus an `Authorization` header (without it Zed starts OAuth, even if the key is in the URL) |
 | Continue | `type: streamable-http` in YAML |
 | Gemini CLI | `"httpUrl"` (`url` is SSE and will not connect) |
 | Claude Desktop `claude_desktop_config.json` | Do **not** paste a plain `"url"`. Use a [custom connector](/mcp/clients/claude) or [`mcp-remote`](/mcp/clients/claude#option-b-mcp-remote-bridge-config-file) |
 
-Dedicated pages: [VS Code](/mcp/clients/vscode), [Windsurf](/mcp/clients/windsurf), [Zed](/mcp/clients/zed). Cline, Continue, Goose, Warp, JetBrains AI Assistant, Raycast and GitHub Copilot CLI use this generic shape.
+Dedicated pages: [VS Code](/mcp/clients/vscode), [Devin Desktop](/mcp/clients/windsurf), [Zed](/mcp/clients/zed). Cline, Continue, Goose, Warp, JetBrains AI Assistant, Raycast and GitHub Copilot CLI use this generic shape.
 
 Cursor style:
 
@@ -86,7 +86,7 @@ URL: https://api.postqueen.ai/mcp
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Both forms use the same key and give you the same 14 tools. Pick whichever your client takes more cleanly.
+Both forms use the same key and give you the same 21 tools. Pick whichever your client takes more cleanly.
 
 ### Self-Hosted
 
@@ -161,7 +161,7 @@ Your channel names come back, because the agent reached for her `integrationList
     Confirm your client is using the streamable HTTP transport rather than stdio, that it kept the trailing key segment in the URL, and that nothing on your network blocks `api.postqueen.ai`. On self-hosted setups, check that the reverse proxy forwards `/mcp` and does not buffer streaming responses.
   </Accordion>
   <Accordion title="Tools appear but every call errors">
-    That combination means the endpoint is right but the key was rejected. Regenerate the key in **Settings → API Keys** and update the config, remembering that the URL form carries the key in the path while the Bearer form carries it in the `Authorization` header. The `Bearer ` prefix itself is stripped if present, so either spelling of that header works and a missing prefix is never the cause.
+    That combination means the endpoint is right but the key was rejected. Have an admin rotate the key under **Connections > API Keys** and update the config, remembering that the URL form carries the key in the path while the Bearer form carries it in the `Authorization` header. The `Bearer ` prefix itself is stripped if present, so either spelling of that header works and a missing prefix is never the cause.
   </Accordion>
 </AccordionGroup>
 
@@ -169,7 +169,7 @@ Your channel names come back, because the agent reached for her `integrationList
 
 <CardGroup cols={2}>
   <Card title="MCP Tools" icon="wrench" href="/mcp/tools">
-    See what all 14 tools can do
+    See what all 21 tools can do
   </Card>
   <Card title="Examples" icon="lightbulb" href="/mcp/examples">
     Real prompts and the tool calls they trigger
