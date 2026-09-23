@@ -406,7 +406,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "3,000 characters",
       "analytics": true
     },
@@ -448,7 +448,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "10,000 characters",
       "analytics": false
     },
@@ -462,7 +462,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "500 characters",
       "analytics": false
     },
@@ -476,7 +476,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "32,768 characters",
       "analytics": false
     },
@@ -490,7 +490,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "2,048 characters",
       "analytics": false
     },
@@ -504,7 +504,7 @@
       "status": "cannot_connect",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "1,024 bytes",
       "analytics": false
     },
@@ -546,7 +546,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "63,206 characters",
       "analytics": false
     },
@@ -574,7 +574,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "500 characters",
       "analytics": false
     },
@@ -588,7 +588,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "500 characters",
       "analytics": false
     },
@@ -602,7 +602,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "800 characters",
       "analytics": true
     },
@@ -616,7 +616,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "1,500 characters",
       "analytics": true
     },
@@ -630,7 +630,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "40,000 characters",
       "analytics": false
     },
@@ -644,7 +644,7 @@
       "status": "cannot_connect",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "4,096 characters, 1,024 with media",
       "analytics": false
     },
@@ -658,7 +658,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "1,980 characters",
       "analytics": false
     },
@@ -672,7 +672,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "150,000 characters",
       "analytics": false
     },
@@ -686,7 +686,7 @@
       "status": "cannot_connect",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "5,000 characters",
       "analytics": false
     },
@@ -700,7 +700,7 @@
       "status": "no_keys",
       "badge": "Soon",
       "badgeColor": "gray",
-      "statusNote": "Not available on PostQueen Cloud yet.",
+      "statusNote": "Cannot be connected on PostQueen yet.",
       "textLimit": "50,000 characters",
       "analytics": false
     },
