@@ -1,0 +1,76 @@
+---
+title: "AGENT"
+description: "Connect AGENT to PostQueen over MCP, then ask it to schedule, list and measure your posts."
+icon: "/images/brand/icon-SLUG.svg"
+---
+
+import { AgentStatus } from '/snippets/agent-status.mdx';
+import ApiKeyLocation from '/snippets/api-key-location.mdx';
+import NextStepsAgent from '/snippets/next-steps-agent.mdx';
+
+{/*
+  Agent page template (B7). Copy it to agents/<slug>.mdx and fill every UPPER_CASE
+  word from the agent's entry in facts_agents.v3675b (research folder) and
+  facts/facts.json. Vendor steps come from the vendor's current official docs
+  (facts_agents `sources`), never from memory. Delete these comments when done.
+
+  Rules for this page:
+  - The status line equals the agent's status and badge in facts/facts.json
+    (check:facts compares them).
+  - Lead with the route facts.json names (`route`). Offer the sign-in address only
+    where facts.json says `signin: offered` (or as an untested alternative for
+    `untested-alternative`); never for `none` or `not-possible`.
+  - Tool counts only through {{mcpToolsKey}} and {{mcpToolsOauth}}, never a typed number.
+  - Never ask the user to paste the API key into a chat. Where the agent has a
+    secure prompt or a settings field, name it.
+  - No self-hosting words, no "she", no "(formerly ...)" names.
+*/}
+
+<AgentStatus status="STATUS" label="BADGE_FROM_FACTS_JSON" />
+
+WHAT_IT_IS: one or two sentences on what AGENT is, and what it can do with PostQueen.
+
+## Before you start
+
+- **Plans:** PLANS_FROM_FACTS.
+- **Platforms:** PLATFORMS_FROM_FACTS.
+- **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
+
+<ApiKeyLocation />
+
+## Connect AGENT
+
+<Steps>
+  <Step title="STEP_TITLE">
+    STEP_TEXT
+  </Step>
+  <Step title="Add PostQueen">
+    STEP_TEXT
+
+```json
+CODE_FROM_FACTS
+```
+  </Step>
+</Steps>
+
+## Check that it works
+
+Ask AGENT: "List my PostQueen channels." It answers with the channels you connected. CHECK_DETAIL
+
+## Good to know
+
+- GOTCHA
+
+## Other ways to connect
+
+- **The Bearer header:** `https://api.postqueen.ai/mcp` with `Authorization: Bearer YOUR_API_KEY`, for clients that keep secrets in headers.
+- **Sign in with PostQueen:** `{{mcpOauthUrl}}`, where facts.json offers it. A workspace admin approves it, and it has {{mcpToolsOauth}} tools.
+- **The skill and the CLI:** see [the postqueen skill](/agents/skill) and [the CLI](/cli/introduction).
+
+## Try this first
+
+```text
+FIRST_PROMPT
+```
+
+<NextStepsAgent />
