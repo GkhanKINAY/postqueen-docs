@@ -1,127 +1,126 @@
 ---
-title: Pinterest Settings
-description: 'API settings for posting to Pinterest'
+title: "Pinterest posting settings"
+sidebarTitle: "Pinterest"
+description: "The settings object a post to Pinterest takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/pinterest.svg"
 ---
 
-{/* OVERHAUL-TODO(B4): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Pinterest setup guide](/installation/providers/pinterest).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Pinterest cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Pinterest channel will take.
 
-When creating a Pin on Pinterest, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "pinterest",
-    "board": "board-id",
-    "title": "My Pin Title",
-    "link": "https://example.com",
-    "dominant_color": "#FF5733"
-  }
-}
-```
+Every post to Pinterest carries a `settings` object with `"__type": "pinterest"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `pinterest` |
-| `board` | `string` | Yes | Board ID to pin to |
-| `title` | `string` | No | Pin title (max 100 characters) |
-| `link` | `string` | No | Destination URL |
-| `dominant_color` | `string` | No | Dominant color for the pin |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"pinterest"`. PostQueen sets it from the channel you post to. |
+| `board` | string | Yes | The id of the board the Pin is saved to. See below. |
+| `title` | string | No | The Pin title, up to 100 characters. |
+| `link` | string | No | Where the Pin sends people who click it. Must be a valid URL. |
+| `dominant_color` | string | No | A background color Pinterest shows while the Pin loads, such as `#E8B4B8`. |
+
+The text of the post, the `content` of the first entry in `value`, becomes the Pin description.
 
 ### `board`
 
-The board ID where the pin will be saved. This is required and must be a valid board ID from your Pinterest account.
+Find your board ids with the `boards` tool through [trigger a provider tool](/public-api/integrations/trigger). It takes no input and lists up to 250 boards:
 
-<Note>
-Get board IDs by using PostQueen's UI to view your boards, or by using Pinterest's API directly.
-</Note>
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "boards", "data": {} }'
+```
 
-### `title`
+The response is `{ "output": [ { "name", "id" } ] }`. Put the chosen `id` in `settings.board`.
 
-Optional pin title with a maximum of 100 characters.
+## What PostQueen checks
 
-### `link`
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-Optional destination URL. When users click "Visit" on your pin, they will be taken to this URL.
+| Rule | Message |
+|---|---|
+| At least one image or video | “Requires at least one media” |
+| At most 5 media items | “You can only have up to 5 media items” |
+| A video comes with a cover image as the second item | “If posting a video you have to also include a cover image as second media” |
+| A video Pin carries only the video and its cover | “If posting a video you can only have two media items” |
+| The images in a multi-image Pin all have the same width and height | “Requires all images to have the same width and height” |
+| Description up to 800 characters | “post is too long, please fix it” |
+| `board` set | A validation error that says “Board is required” |
+| `title` up to 100 characters, `link` a valid URL | A validation error naming the field |
 
-### `dominant_color`
-
-Optional hex color code that represents the dominant color of your pin. Pinterest may use this for visual presentation.
-
----
-
-## Complete Example
-
-### Basic Pin
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "pinterest",
+  "name": "Your channel name",
+  "message": "Requires at least one media"
+}
+```
+
+Pinterest's own rules are not checked first: video Pins of 4 seconds to 5 minutes, and images in BMP, JPEG, PNG, TIFF or WEBP of up to 20 MB. A video Pin is created once Pinterest has processed the video, and PostQueen waits up to about 30 minutes for that.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), `BOARD_ID` with an id from the `boards` tool, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Image Pin
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-pinterest-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Beautiful home decor inspiration for your living room! 🏠✨",
-          "image": [
-            {
-              "id": "pin-image-id",
-              "path": "https://uploads.postqueen.ai/decor.jpg"
-            }
-          ]
+          "content": "A calm, bright living room in three steps: light walls, one bold rug, plants at eye level.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/living-room.jpg" }]
         }
       ],
       "settings": {
         "__type": "pinterest",
-        "board": "1234567890123456789",
-        "title": "Living Room Decor Ideas",
-        "link": "https://blog.example.com/living-room-decor",
-        "dominant_color": ""
+        "board": "BOARD_ID",
+        "title": "Living room ideas",
+        "link": "https://example.com/living-room-ideas"
       }
     }
   ]
 }
 ```
 
-### Pin with All Options
-
-```json
+```json Multi-image Pin
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-pinterest-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Try this delicious recipe! Perfect for summer dinners. Full recipe on my blog 👇",
+          "content": "Summer pasta, step by step.",
           "image": [
-            {
-              "id": "recipe-image-id",
-              "path": "https://uploads.postqueen.ai/recipe.jpg"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/pasta-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/pasta-2.jpg" },
+            { "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/pasta-3.jpg" }
           ]
         }
       ],
       "settings": {
         "__type": "pinterest",
-        "board": "9876543210987654321",
-        "title": "Easy Summer Pasta Recipe",
-        "link": "https://recipes.example.com/summer-pasta",
+        "board": "BOARD_ID",
+        "title": "Easy summer pasta",
         "dominant_color": "#E8B4B8"
       }
     }
@@ -129,17 +128,37 @@ Optional hex color code that represents the dominant color of your pin. Pinteres
 }
 ```
 
-### Simple Pin (Minimal Settings)
-
-```json
+```json Video Pin
 {
-  "settings": {
-    "__type": "pinterest",
-    "board": "1234567890123456789",
-    "title": "",
-    "link": "",
-    "dominant_color": ""
-  }
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Fold a fitted sheet in thirty seconds.",
+          "image": [
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/fold.mp4" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/fold-cover.jpg" }
+          ]
+        }
+      ],
+      "settings": { "__type": "pinterest", "board": "BOARD_ID" }
+    }
+  ]
 }
 ```
 
+</CodeGroup>
+
+In the multi-image example, the three images must have the same width and height. Only the first entry in `value` is published: Pinterest takes no comments, and a later entry is marked as failed with “This channel cannot post comments”.
+
+## Related
+
+- [Pinterest in the app](/channels/pinterest)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)
+- [Trigger a provider tool](/public-api/integrations/trigger)

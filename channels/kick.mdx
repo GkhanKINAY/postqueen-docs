@@ -1,58 +1,50 @@
 ---
-title: Kick
-description: 'How to add Kick to your system'
-icon: /images/channels/kick.svg
+title: "Kick"
+description: "What PostQueen will post to Kick, and the limits it checks before a post is scheduled."
+icon: "/images/channels/kick.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B4): write it from _templates/channel.mdx. Sources: this file, moved from providers/kick (fix; WIP: same as main; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/kick.svg" alt="Kick" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post chat messages into your own Kick channel, such as a go-live reminder, with follow-ups as replies. Kick's API has no way to upload videos, so chat is what PostQueen sends.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-<Warning>
-Kick here is a chat connector, not a feed. What she sends arrives as a chat message in your own Kick channel. Media never rides along, and anything past 500 characters is refused when you save it rather than trimmed. If you are connecting Kick expecting a post that sits on a profile, this is not that.
-</Warning>
-
-## What she can post to Kick
-
-You go live in ten minutes and you want chat to already say so. Write the line, put it on the calendar, and at the minute you picked she sends it into your channel as you.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    500 characters. A longer post is refused when you save it, not trimmed
+  <Card title="Text" icon="type">
+    Up to 500 characters per message. Kick also caps a message at 2,048 bytes, so a message heavy in emoji holds fewer.
   </Card>
-  <Card title="Media" icon="images">
-    None. Kick chat takes text only, so anything you attach is left behind
+  <Card title="Media" icon="image">
+    None. Chat is text only: media on the post is not sent.
   </Card>
   <Card title="Post types" icon="layers">
-    Chat message, plus replies chained under it
+    Chat message, with replies after it.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None
+    No analytics for Kick.
   </Card>
 </CardGroup>
 
-The message always goes to the channel that owns the connection, so this is your own chat and not somebody else's. She runs three Kick jobs side by side. Kick chat gives back no permalink, so the link on a sent post opens your channel page rather than the message itself.
+**Not supported:** videos and clips, the stream title and category, and chats of channels you do not own.
 
-| | |
-|---|---|
-| **Post settings** | None. The settings block carries `__type` and nothing else, shown in the [Kick settings reference](/public-api/providers/kick) |
-| **Connect flow** | One step. She reads your Kick user once the authorization round trip finishes, and that user id becomes the channel she writes into |
-| **Automations** | None. Comments go out as replies threaded on the chat message |
+## Connect Kick
 
-## Self-hosting
+<Note>
+Kick is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will post into the chat of the Kick channel you sign in with.
+</Note>
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Kick on your own instance](/installation/providers/kick).
-</Info>
+## Post settings
+
+Kick posts have no settings of their own in the composer: the message text is all a post carries. The API fields are on [Kick posting settings](/public-api/providers/kick).
+
+## Good to know
+
+- **Add comment** adds follow-up messages, each with its own delay and no media. Each one replies to the message before it.
+- Before a post is scheduled, PostQueen checks that each message has at most 500 characters.
+- The link to a published message is your channel page, not the message.
 
 <NextStepsChannel />

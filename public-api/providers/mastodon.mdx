@@ -1,131 +1,144 @@
 ---
-title: Mastodon Settings
-description: 'API settings for posting to Mastodon'
+title: "Mastodon posting settings"
+sidebarTitle: "Mastodon"
+description: "The settings object a post to Mastodon takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/mastodon.svg"
 ---
 
-{/* OVERHAUL-TODO(B4): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Mastodon setup guide](/installation/providers/mastodon).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Mastodon cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Mastodon channel will take.
 
-When creating a post for Mastodon, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "mastodon"
-  }
-}
-```
-
-<Note>
-Mastodon has no provider-specific settings beyond `__type`. Post content,
-images, and the schedule are configured at the post level - see the
-[Create Post](/public-api/posts/create) reference. The instance the post
-publishes to is determined by the connected integration, not the settings
-block.
-</Note>
+Every post to Mastodon carries a `settings` object with `"__type": "mastodon"`, and nothing else: Mastodon has no settings of its own. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `mastodon` |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"mastodon"`. PostQueen sets it from the channel you post to. |
 
----
+Every post is public. Alt text goes on each file in `image`, as `alt`, and PostQueen sends it to Mastodon as the file's description.
 
-## Complete Example
+## What PostQueen checks
 
-### Text Post
+A post that breaks this rule is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| Each entry up to 500 characters | “post is too long, please fix it” |
+
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "mastodon",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+The server's own rules are not checked first: how many files a post can carry, usually 4 images or 1 video, and the largest video it accepts. PostQueen waits until the server has processed a video before it creates the first post. Files in later thread parts are posted without that wait, so a part with a large video can fail.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Text post
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-mastodon-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Hello from the PostQueen API! 🐘",
+          "content": "Version 2.4 is out: faster search, dark mode, and a fix for the export bug many of you reported.",
           "image": []
         }
       ],
-      "settings": {
-        "__type": "mastodon"
-      }
+      "settings": { "__type": "mastodon" }
     }
   ]
 }
 ```
 
-### Thread Post
-
-Create a thread by adding multiple items to the `value` array. Each entry
-becomes a reply chained to the previous toot:
-
-```json
+```json Thread with an image
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-mastodon-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "1/ Starting a thread on Mastodon from the API",
-          "image": []
-        },
-        {
-          "content": "2/ Each value entry becomes a reply in the thread",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "mastodon"
-      }
-    }
-  ]
-}
-```
-
-### Post with Image
-
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-mastodon-integration-id"
-      },
-      "value": [
-        {
-          "content": "Sharing a launch screenshot",
+          "content": "Three things we changed in the new dashboard. A thread.",
           "image": [
             {
-              "id": "image-id",
-              "path": "https://uploads.postqueen.ai/launch.png"
+              "id": "MEDIA_ID",
+              "path": "https://uploads.postqueen.ai/dashboard.png",
+              "alt": "The new dashboard, with the calendar on the left and the post list on the right"
+            }
+          ]
+        },
+        {
+          "content": "1. Search now covers drafts as well as published posts.",
+          "image": [],
+          "delay": 2
+        },
+        {
+          "content": "2. The calendar remembers the view you used last.",
+          "image": [],
+          "delay": 2
+        }
+      ],
+      "settings": { "__type": "mastodon" }
+    }
+  ]
+}
+```
+
+```json Video post
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "A one-minute tour of the new dashboard.",
+          "image": [
+            {
+              "id": "MEDIA_ID",
+              "path": "https://uploads.postqueen.ai/tour.mp4",
+              "alt": "Screen recording of the dashboard tour"
             }
           ]
         }
       ],
-      "settings": {
-        "__type": "mastodon"
-      }
+      "settings": { "__type": "mastodon" }
     }
   ]
 }
 ```
+
+</CodeGroup>
+
+In the thread example, each entry after the first in `value` is posted as a reply to the one before, 2 minutes apart.
+
+## Related
+
+- [Mastodon in the app](/channels/mastodon)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

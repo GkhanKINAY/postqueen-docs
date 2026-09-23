@@ -1,79 +1,58 @@
 ---
-title: Tumblr
-description: 'How to add Tumblr to your system'
-icon: /images/channels/tumblr.png
+title: "Tumblr"
+description: "What PostQueen will post to Tumblr, and the limits it checks before a post is scheduled."
+icon: "/images/channels/tumblr.png"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B4): write it from _templates/channel.mdx. Sources: this file, moved from providers/tumblr (fix; WIP: better, use as base; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/tumblr.png" alt="Tumblr" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post Tumblr text posts with a title, a link, a source URL and tags, plus up to 30 images and a video, to the blog you choose.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-## What she can post to Tumblr
-
-Tumblr gives her the most room of any network she posts to, and it is the one place a long piece
-can go out whole rather than trimmed. One account can hold several blogs, so connecting is two
-steps rather than one: you authorize Tumblr, then pick which blog this channel is.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    32,768 characters, the largest on any channel here
+  <Card title="Text" icon="type">
+    Up to 32,768 characters. A blank line starts a new text block, and a block longer than 4,096 characters is split.
   </Card>
   <Card title="Media" icon="image">
-    Up to 30 images, or a single video
+    Up to 30 images with alt text, and one MP4 video. Images and a video can go in the same post.
   </Card>
   <Card title="Post types" icon="layers">
-    A text post with optional title, link and source URL
+    Text post with an optional title heading, link, source URL and tags, published on the blog you pick.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None. Tumblr returns no post-level numbers through their API
+    No analytics for Tumblr.
   </Card>
 </CardGroup>
 
-| Area | Detail |
-|---|---|
-| Post settings | `title`, `link`, `sourceUrl` and `tags`, **all optional**: [Tumblr settings](/public-api/providers/tumblr) |
-| Connect flow | Two steps. Authorize the app, then choose which blog to attach |
-| Automations | None on this network |
-| Publish rate | Three posts at a time |
+**Not supported:** drafts, the Tumblr queue, private posts, reblogs, polls, and comments or follow-ups.
+
+## Connect Tumblr
 
 <Note>
-Long posts are split into blocks of about 4,000 characters on the way out, on blank lines, which
-is Tumblr's own limit for a text block rather than ours. A post reads as one piece either way.
-Alt text you set on an image is carried through.
+Tumblr is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Each channel will be one of your blogs.
 </Note>
 
-## Troubleshooting
+## Post settings
 
-<AccordionGroup>
-  <Accordion title="Posts fail with a daily limit message">
-    Tumblr caps how much one account can publish per day and answers with its own limit error.
-    There is nothing to configure here; the posts resume the next day.
-  </Accordion>
+Each Tumblr post in the composer has these settings, all optional:
 
-  <Accordion title="I picked the wrong blog">
-    Remove the channel and connect again. The blog is chosen at connect time and there is no way
-    to switch it afterwards on an existing channel.
-  </Accordion>
+- **Title**: a heading at the top of the post.
+- **Link URL**: a link block added after the text.
+- **Source URL**: the source credited on the post.
+- **Tags**: sent to Tumblr as you type them. Separate tags with commas.
 
-  <Accordion title="A post with several videos is refused">
-    One video per post, and it cannot be mixed with images. Up to 30 images is fine.
-  </Accordion>
-</AccordionGroup>
+The field names and values for the API are on [Tumblr posting settings](/public-api/providers/tumblr).
 
-## Self-hosting
+## Good to know
 
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Tumblr on your own instance](/installation/providers/tumblr).
-</Info>
+- Before a post is scheduled, PostQueen checks that it has at most 30 images and one video.
+- Tumblr sets daily caps per account: 250 posts, 250 image uploads, 20 video uploads and 60 minutes of video. When one is reached, the post fails with a message that says which.
+- A video can be up to 500 MB and 10 minutes long. PostQueen does not check this first.
+- Every post is published on the blog straight away when its time comes.
 
 <NextStepsChannel />

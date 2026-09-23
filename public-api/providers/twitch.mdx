@@ -1,103 +1,94 @@
 ---
-title: Twitch Settings
-description: 'API settings for posting to Twitch chat'
+title: "Twitch posting settings"
+sidebarTitle: "Twitch"
+description: "The settings object a post to Twitch takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/twitch.svg"
 ---
 
-{/* OVERHAUL-TODO(B4): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Twitch setup guide](/installation/providers/twitch).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Twitch cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Twitch channel will take.
 
-When creating a post for Twitch, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "twitch",
-    "messageType": "message",
-    "announcementColor": "primary"
-  }
-}
-```
+Every post to Twitch carries a `settings` object with `"__type": "twitch"`. A post is a message in the chat of the channel that connected. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `twitch` |
-| `messageType` | `string` | No | Type of message to send |
-| `announcementColor` | `string` | No | Color for announcement messages |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"twitch"`. PostQueen sets it from the channel you post to. |
+| `messageType` | string | No | `message` for a chat message, `announcement` for a highlighted announcement. Left out, it is a chat message. |
+| `announcementColor` | string | No | The color of an announcement: `primary`, `blue`, `green`, `orange` or `purple`. Left out, it is `primary`. |
 
-### `messageType`
+Chat is text only: media on the post is not sent.
 
-The type of message to send in Twitch chat.
+## What PostQueen checks
 
-| Value | Description |
-|-------|-------------|
-| `message` | Regular chat message (default) |
-| `announcement` | Announcement message (highlighted in chat) |
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
-### `announcementColor`
+| Rule | Message |
+|---|---|
+| Each entry up to 500 characters | “post is too long, please fix it” |
+| `messageType` and `announcementColor` from the lists above | A validation error naming the field |
 
-The color of the announcement banner. Only applies when `messageType` is `announcement`.
-
-| Value | Description |
-|-------|-------------|
-| `primary` | Default purple color |
-| `blue` | Blue announcement |
-| `green` | Green announcement |
-| `orange` | Orange announcement |
-| `purple` | Purple announcement |
-
----
-
-## Complete Example
-
-### Regular Chat Message
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "twitch",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+Twitch's own chat rate limits are not checked first. PostQueen does not read Twitch's answer to an announcement, so it is recorded as posted even when Twitch refused it.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list).
+
+<CodeGroup>
+
+```json Chat message with a reply
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T18:55:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-twitch-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Going live in 5 minutes! Today's stream: Ranked grind to Diamond 🎮",
+          "content": "Going live in 5 minutes with the season finale. Grab a drink and settle in.",
           "image": []
+        },
+        {
+          "content": "We are live. Say hi in chat.",
+          "image": [],
+          "delay": 5
         }
       ],
-      "settings": {
-        "__type": "twitch",
-        "messageType": "message"
-      }
+      "settings": { "__type": "twitch", "messageType": "message" }
     }
   ]
 }
 ```
 
-### Announcement
-
-```json
+```json Announcement
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T18:55:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-twitch-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "🎉 HUGE NEWS! We just hit 10,000 followers! Thank you all so much for the support! Special stream tomorrow to celebrate!",
+          "content": "Giveaway tonight at 21:00. Follow the channel to take part.",
           "image": []
         }
       ],
@@ -111,37 +102,11 @@ The color of the announcement banner. Only applies when `messageType` is `announ
 }
 ```
 
-### Green Announcement
+</CodeGroup>
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-twitch-integration-id"
-      },
-      "value": [
-        {
-          "content": "✅ Giveaway winner announced! Congratulations to the lucky viewer! Check your DMs for prize details.",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "twitch",
-        "messageType": "announcement",
-        "announcementColor": "green"
-      }
-    }
-  ]
-}
-```
+In the first example, the second entry in `value` replies to the first message 5 minutes later. Each follow-up replies to the message before it. On an announcement, the follow-ups are announcements too.
 
-<Info>
-- Regular messages appear as standard chat messages from your bot/account.
-- Announcements are highlighted with a colored banner and are more visible to viewers.
-- The `announcementColor` field is ignored when `messageType` is `message`.
-</Info>
+## Related
+
+- [Twitch in the app](/channels/twitch)
+- [Create a post](/public-api/posts/create)

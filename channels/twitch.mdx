@@ -1,80 +1,56 @@
 ---
-title: Twitch
-description: 'How to add Twitch to your system'
-icon: /images/channels/twitch.svg
+title: "Twitch"
+description: "What PostQueen will post to Twitch, and the limits it checks before a post is scheduled."
+icon: "/images/channels/twitch.svg"
+tag: "Soon"
 ---
 
-import NeverShare from '/snippets/never-share.mdx';
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-{/* OVERHAUL-TODO(B4): write it from _templates/channel.mdx. Sources: this file, moved from providers/twitch (fix; WIP: same as main; audit: providers). Row in page-status-2026-09-23.md. */}
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-<img src="/images/channels/twitch.svg" alt="Twitch" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+PostQueen will post chat messages and colored announcements into your own Twitch chat, such as a go-live reminder. Twitch's API cannot publish videos or posts, so chat is what PostQueen sends.
 
-<Warning>
-**Soon.** Listed in Add Channel, but it cannot be connected on PostQueen yet. [Status of every network](/channels/overview#status-on-postqueen)
-</Warning>
-
-<NeverShare />
-
-<Warning>
-Twitch here is a chat connector, not a feed. She writes into your own channel chat, media never rides along, and anything past 500 characters is refused when you save it rather than trimmed.
-</Warning>
-
-## What she can post to Twitch
-
-The stream starts at eight and you would rather not type the same reminder every week. Schedule the line once, and she drops it into your chat on time, either as a normal message or as the colored announcement banner.
+## What you can post
 
 <CardGroup cols={2}>
-  <Card title="Character limit" icon="type">
-    500 characters. A longer post is refused when you save it, not trimmed
+  <Card title="Text" icon="type">
+    Up to 500 characters per message.
   </Card>
-  <Card title="Media" icon="images">
-    None. Twitch chat takes text only, so anything you attach is left behind
+  <Card title="Media" icon="image">
+    None. Chat is text only: media on the post is not sent.
   </Card>
   <Card title="Post types" icon="layers">
-    Chat message, announcement, reply
+    Chat message or announcement, with replies after it.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    None
+    No analytics for Twitch.
   </Card>
 </CardGroup>
 
-She waits two seconds before every write, on the post and on each comment, and she keeps Twitch to one job at a time. That pause is deliberate. Twitch chat punishes bursts, and a queue that arrives politely gets through.
+**Not supported:** videos and clips, the stream title, category and tags, and chats of channels you do not own.
 
-| | |
-|---|---|
-| **Post settings** | `messageType` and `announcementColor`. Full schema in the [Twitch settings reference](/public-api/providers/twitch) |
-| **Connect flow** | One step. She reads your Twitch user after the authorization round trip, and that account is both the sender and the channel |
-| **Automations** | None. A comment on a normal message posts as a reply. A comment on an announcement goes out as another announcement, because announcements have nothing to reply to |
+## Connect Twitch
 
 <Note>
-Announcements are quieter than normal messages in one specific way. Twitch answers an announcement with no message id, so she stores a placeholder and nothing links back to it in chat. She does not read that answer for a failure either, which means an announcement Twitch turned down still records as posted. Watch your first announcement land in your own chat before you trust a run of them. A normal chat message returns a real id and a real sent flag, so it reports honestly.
+Twitch is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will post into the chat of the Twitch channel you sign in with.
 </Note>
 
 ## Post settings
 
-Open the settings bar on a Twitch post and one select is waiting for you. A second one appears once you change your mind about the first.
+Each Twitch post in the composer has these settings:
 
-**Message Type** starts on **Chat Message**, which sends a normal chat line. Switch it to **Announcement** and the same text goes out as a highlighted banner instead. The API takes those two as `message` and `announcement`.
+- **Message Type**: **Chat Message** or **Announcement**. It starts on **Chat Message**.
+- **Announcement Color**: **Primary (Default)**, **Blue**, **Green**, **Orange** or **Purple**. Shown for announcements only.
 
-**Announcement Color** is the select that appears, and it appears only while Message Type reads Announcement. Go back to a chat message and the field leaves the screen rather than sitting there greyed out.
+The field names and values for the API are on [Twitch posting settings](/public-api/providers/twitch).
 
-| The dropdown reads | The API takes |
-|---|---|
-| Primary (Default) | `primary` |
-| Blue | `blue` |
-| Green | `green` |
-| Orange | `orange` |
-| Purple | `purple` |
+## Good to know
 
-Leave both alone and she sends a normal chat message in the default color.
-
-## Self-hosting
-
-<Info>
-Running your own instance? You register the application yourself:
-[Set up Twitch on your own instance](/installation/providers/twitch).
-</Info>
+- **Add comment** adds follow-up messages, each with its own delay and no media. Each chat message replies to the one before. When the post is an announcement, the follow-ups are announcements too.
+- Before a post is scheduled, PostQueen checks that each message has at most 500 characters.
+- PostQueen does not read Twitch's answer to an announcement, so it is recorded as posted even when Twitch refused it.
+- The link to a published message is your channel page, not the message.
 
 <NextStepsChannel />

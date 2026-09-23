@@ -1,156 +1,120 @@
 ---
-title: Dribbble Settings
-description: 'API settings for posting to Dribbble'
+title: "Dribbble posting settings"
+sidebarTitle: "Dribbble"
+description: "The settings object a post to Dribbble takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/dribbble.svg"
 ---
 
-{/* OVERHAUL-TODO(B4): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Dribbble setup guide](/installation/providers/dribbble).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+Dribbble cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Dribbble channel will take.
 
-When creating a shot on Dribbble, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "dribbble",
-    "title": "My Shot Title",
-    "team": ""
-  }
-}
-```
+Every post to Dribbble carries a `settings` object with `"__type": "dribbble"`. A post is a shot: one image, a title, and the post text as its description. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `dribbble` |
-| `title` | `string` | Yes | Shot title (min 1 character) |
-| `team` | `string` | No | Accepted and validated, but not used when publishing |
-
-### `title`
-
-Required title for your Dribbble shot. This is displayed prominently on your shot.
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"dribbble"`. PostQueen sets it from the channel you post to. |
+| `title` | string | Yes | The shot title, at least 1 character. |
+| `team` | string | No | The numeric id of one of your teams, as a string, to post the shot for that team. Anything that is not a number, a team URL included, is ignored and the shot goes on your own profile. |
 
 ### `team`
 
-Validated as a URL if you send it, and then ignored. The publish path never reads it, so the shot is always created on the authenticated Dribbble account. Posting on behalf of a team is not supported through the API today.
+Find your team ids with the `teams` tool through [trigger a provider tool](/public-api/integrations/trigger). It takes no input:
 
----
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "teams", "data": {} }'
+```
 
-## Complete Example
+The response is `{ "output": [ { "id", "name" } ] }`, where `id` is a number. Put it in `settings.team` as a string, such as `"1234567"`.
 
-### Personal Shot
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| Exactly one file | “Requires one item” |
+| The file is not an MP4 | “Does not support mp4 files” |
+| The image is exactly 400 × 300 or 800 × 600 pixels | “Invalid image size. Requires 400x300 or 800x600 px images.” |
+| Description up to 40,000 characters | “post is too long, please fix it” |
+| `title` set | A validation error that says “Title is required” |
+| `team` a string | A validation error naming the field |
+
+The error body names the channel and the rule:
 
 ```json
+{
+  "statusCode": 400,
+  "provider": "dribbble",
+  "name": "Your channel name",
+  "message": "Invalid image size. Requires 400x300 or 800x600 px images."
+}
+```
+
+Dribbble's own rules are not checked first: GIF, JPG or PNG files of up to 8 MB, and an account that is allowed to upload shots.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), `TEAM_ID` with an id from the `teams` tool, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Shot
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-dribbble-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "New dashboard design concept exploring dark mode aesthetics and modern UI patterns. Built with Figma.\n\n#ui #ux #dashboard #darkmode #design",
-          "image": [
-            {
-              "id": "shot-image-id",
-              "path": "https://uploads.postqueen.ai/dashboard-design.png"
-            }
-          ]
+          "content": "Onboarding screens for a budgeting app: three steps, one thumb.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/onboarding-800x600.png" }]
         }
       ],
-      "settings": {
-        "__type": "dribbble",
-        "title": "Dashboard UI - Dark Mode Concept",
-        "team": ""
-      }
+      "settings": { "__type": "dribbble", "title": "Budget app onboarding" }
     }
   ]
 }
 ```
 
-### Team Shot
-
-```json
+```json Team shot
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-dribbble-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Our latest branding project for TechCorp. Full case study coming soon!\n\n#branding #logo #identity",
-          "image": [
-            {
-              "id": "branding-image-id",
-              "path": "https://uploads.postqueen.ai/branding.png"
-            }
-          ]
+          "content": "A new icon set for our weather app, drawn on a 24 px grid.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/icons-400x300.png" }]
         }
       ],
-      "settings": {
-        "__type": "dribbble",
-        "title": "TechCorp Brand Identity",
-        "team": "https://dribbble.com/teams/my-design-team"
-      }
+      "settings": { "__type": "dribbble", "title": "Weather icons", "team": "TEAM_ID" }
     }
   ]
 }
 ```
 
-### Mobile App Design
+</CodeGroup>
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-dribbble-integration-id"
-      },
-      "value": [
-        {
-          "content": "Fitness tracking app concept with focus on clean data visualization and motivational design elements.\n\nSwipe to see all screens →\n\n#mobileapp #fitness #appdesign #ios",
-          "image": [
-            {
-              "id": "app-screen-1",
-              "path": "https://uploads.postqueen.ai/fitness-1.png"
-            },
-            {
-              "id": "app-screen-2",
-              "path": "https://uploads.postqueen.ai/fitness-2.png"
-            }
-          ]
-        }
-      ],
-      "settings": {
-        "__type": "dribbble",
-        "title": "Fitness App - UI/UX Design",
-        "team": ""
-      }
-    }
-  ]
-}
-```
+Only the first entry in `value` is published: Dribbble takes no comments, and a later entry is marked as failed with “This channel cannot post comments”.
 
-<Note>
-**Dribbble Tips:**
-- Use high-quality images (800×600 or larger recommended)
-- Include relevant tags in your description
-- Add context about your design process in the content
-</Note>
+## Related
 
+- [Dribbble in the app](/channels/dribbble)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)
+- [Trigger a provider tool](/public-api/integrations/trigger)

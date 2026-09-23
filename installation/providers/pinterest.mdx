@@ -1,86 +1,117 @@
 ---
-title: 'Pinterest setup'
-description: 'Register the Pinterest application and give PostQueen its keys'
-icon: /images/channels/pinterest.svg
+title: "Pinterest setup"
+description: "Register your own Pinterest developer app for a self-hosted PostQueen: access tiers, scopes, redirect URI and the variables to set."
+icon: "/images/channels/pinterest.svg"
 ---
 
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-{/* OVERHAUL-TODO(B4): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen the Pinterest app is yours. You request an app from Pinterest, add PostQueen's redirect URI to it, and give PostQueen the app id and secret. Pinterest reviews the app twice: once to create it, and again before Pins are visible to anyone but you.
 
-<img src="/images/channels/pinterest.svg" alt="Pinterest" height="44" noZoom style={{ height: "44px", marginBottom: "1.25rem" }} />
+## Before you start
 
-On your own instance the Pinterest app is yours: create it in the Pinterest developer dashboard, wait for approval, then put its app id and secret in your environment.
+| | |
+|---|---|
+| Developer portal | [Pinterest Developers](https://developers.pinterest.com/apps/), with a Pinterest business account |
+| Variables | `PINTEREST_CLIENT_ID`, `PINTEREST_CLIENT_SECRET` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/pinterest` |
+| Scopes | `boards:read`, `boards:write`, `pins:read`, `pins:write`, `user_accounts:read` |
+| Review | Pinterest approves the app request for Trial access, then Standard access before Pins are public. See App review |
+
+PostQueen asks for the five scopes when a channel connects, and refuses the connect if Pinterest grants fewer.
+
+## Create the app
 
 <Steps>
-  <Step title="Create Pinterest App">
-    Head to [Pinterest Developer Dashboard](https://developers.pinterest.com/apps/) and create your App. Fill out all required Information and wait on the App to get approved.
-
-    Request these five scopes. The connect is refused if any one of them is missing:
-
-    ```
-    boards:read
-    boards:write
-    pins:read
-    pins:write
-    user_accounts:read
-    ```
-
-    <Note>
-    Pinterest reviews apps before granting full access, and a new app starts with trial access
-    that covers fewer scopes than it eventually will. If the connect refuses a scope you clearly
-    requested, check whether the app is still in trial rather than assuming a typo.
-    </Note>
+  <Step title="Use a business account">
+    Sign in to Pinterest with a business account, or create one: Pinterest says this is the account that administers the app. Verify its email address.
   </Step>
+  <Step title="Request the app">
+    Open [My apps](https://developers.pinterest.com/apps/) and accept the Developer Terms. Choose **Connect app**, fill in the request form and submit it. Pinterest reviews requests each business day and emails you the decision. An approved app starts on **Trial** access.
+  </Step>
+  <Step title="Add the redirect URI">
+    In **My apps**, choose **Manage** on the app, open the **Configure** tab and find **Redirect URIs**. Enter the address and choose **Add**:
 
-  <Step title="Copy the App ID and Secret">
-    Copy the App ID at "App id" and the Secret Key at "App secret key"
-    
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/pinterest
+    ```
+
+    ```text Local development
+    http://localhost:4200/integrations/social/pinterest
+    ```
+
+    ```text Docker on your machine
+    http://localhost:4007/integrations/social/pinterest
+    ```
+
+    </CodeGroup>
+
+    Pinterest accepts `https` addresses, and plain `http` only for `localhost`. The address has to match exactly.
+
     <Frame>
-      <img src="/images/providers/pinterest/pinterest-002.png" alt="Copy App ID and Secret" />
+      <img src="/images/providers/pinterest/pinterest-001.png" alt="The Redirect URIs section of a Pinterest app, with the Redirect link field and the Add button" />
     </Frame>
-  </Step>
 
-  <Step title="Configure Redirect URI">
     <OAuthRedirect />
+  </Step>
+  <Step title="Copy the app id and secret">
+    The app page shows the **App id** and the **App secret key**. Copy both, and keep the secret private.
 
-    **Your Pinterest OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/pinterest`
-    - Local development: `http://localhost:4200/integrations/social/pinterest`
-    - Docker: `http://localhost:4007/integrations/social/pinterest`
-    
     <Frame>
-      <img src="/images/providers/pinterest/pinterest-001.png" alt="Setup of Redirect URIs" />
+      <img src="/images/providers/pinterest/pinterest-002.png" alt="The App id and App secret key fields of a Pinterest app, with the secret hidden" />
     </Frame>
-  </Step>
-
-  <Step title="Add environment variables">
-```env
-PINTEREST_CLIENT_ID=""
-PINTEREST_CLIENT_SECRET=""
-```
-
-    You should now be able to add the Pinterest Provider to your User / Team Account.
-  </Step>
-  <Step title="Restart and add the Pinterest channel">
-    <RestartAndAddChannel />
   </Step>
 </Steps>
 
-## Next steps
+## Set the variables
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Pinterest" icon="/images/channels/pinterest.svg" href="/channels/pinterest">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+Add the two keys to your environment:
+
+```env
+PINTEREST_CLIENT_ID="your app id"
+PINTEREST_CLIENT_SECRET="your app secret key"
+```
+
+<RestartAndAddChannel />
+
+Pick **Pinterest**, sign in, and approve the board and Pin permissions. The Pinterest account needs at least one board before a Pin can be scheduled.
+
+## App review
+
+<Steps>
+  <Step title="Trial access">
+    A new app can create boards and Pins, but Pinterest treats them as sandbox content that only their creator can see. Writes are capped at 300 a day for the whole app, and all requests at 1,000 a day.
+  </Step>
+  <Step title="Standard access">
+    For Pins other people can see, choose **Upgrade** on the app card in **My apps**. Confirm the use case and your privacy policy link, and upload a video of the app at work that shows the sign-in: a screen recording of a channel connecting in PostQueen and a Pin being scheduled is enough, even if you are the only user. Pinterest often refuses an upgrade when the privacy policy cannot be reached or the video does not show the sign-in.
+  </Step>
+</Steps>
+
+On Standard access, Pinterest allows 100 writes a minute for each user. See [Pinterest access tiers](https://developers.pinterest.com/docs/key-concepts/access-tiers/) and [rate limits](https://developers.pinterest.com/docs/reference/rate-limits/).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    Pinterest returned a token without all five scopes. Connect again and approve every permission on Pinterest's screen.
+  </Accordion>
+  <Accordion title="Pinterest says the redirect URI does not match">
+    The address PostQueen sent is not in **Redirect URIs**. It is exactly your `FRONTEND_URL` followed by `/integrations/social/pinterest`. Check the scheme, the port and that there is no trailing slash.
+  </Accordion>
+  <Accordion title="Apps with Trial access may not create Pins in production">
+    Pinterest refuses Pins from an app that is still on Trial access. Request Standard access as described in App review.
+  </Accordion>
+  <Accordion title="No boards found, you have to create a board first">
+    The Pinterest account has no boards yet. Create one on Pinterest, then open the post again.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Pinterest posting settings](/public-api/providers/pinterest)

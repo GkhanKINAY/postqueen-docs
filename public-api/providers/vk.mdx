@@ -1,96 +1,109 @@
 ---
-title: VK Settings
-description: 'API settings for posting to VK (VKontakte)'
+title: "VK posting settings"
+sidebarTitle: "VK"
+description: "The settings object a post to VK takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/vk.svg"
 ---
 
-{/* OVERHAUL-TODO(B4): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [VK setup guide](/installation/providers/vk).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+VK cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a VK channel will take.
 
-When creating a post for VK, use the following settings schema:
-
-```json
-{
-  "settings": {
-    "__type": "vk"
-  }
-}
-```
-
-<Note>
-VK has no provider-specific settings beyond `__type`. The wall or community
-the post publishes to is determined by the connected integration, not the
-settings block. Post content, images, and the schedule are configured at
-the post level. Full request body: [Create Post](/public-api/posts/create).
-</Note>
+Every post to VK carries a `settings` object with `"__type": "vk"`, and nothing else: VK has no settings of its own. Posts go to the connected account's own wall. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `vk` |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"vk"`. PostQueen sets it from the channel you post to. |
 
----
+Photos in `image` are uploaded to VK and attached to the wall post. Video is not supported yet: attach photos only.
 
-## Complete Example
+## What PostQueen checks
 
-### Text Post
+A post that breaks this rule is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| Each entry up to 2,048 characters | “post is too long, please fix it” |
+
+The error body names the channel and the rule:
 
 ```json
 {
+  "statusCode": 400,
+  "provider": "vk",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+VK's own rules are not checked first: up to 10 attachments on a post, and photos in JPG, PNG or GIF of up to 50 MB. VK reports some errors inside a normal-looking answer, so a post VK refused can show as published with a link that leads nowhere.
+
+## Examples
+
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
+
+<CodeGroup>
+
+```json Text post
+{
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-vk-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Hello from the PostQueen API!",
+          "content": "Our workshop opens its doors this Saturday from 10:00. Come and try the new presses.",
           "image": []
         }
       ],
-      "settings": {
-        "__type": "vk"
-      }
+      "settings": { "__type": "vk" }
     }
   ]
 }
 ```
 
-### Post with Image
-
-```json
+```json Photos with a comment
 {
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-vk-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Sharing today's launch screenshot",
+          "content": "Photos from last weekend's print fair.",
           "image": [
-            {
-              "id": "image-id",
-              "path": "https://uploads.postqueen.ai/launch.png"
-            }
+            { "id": "MEDIA_ID_1", "path": "https://uploads.postqueen.ai/fair-1.jpg" },
+            { "id": "MEDIA_ID_2", "path": "https://uploads.postqueen.ai/fair-2.jpg" }
           ]
+        },
+        {
+          "content": "The full album is on our site.",
+          "image": [{ "id": "MEDIA_ID_3", "path": "https://uploads.postqueen.ai/fair-3.jpg" }],
+          "delay": 30
         }
       ],
-      "settings": {
-        "__type": "vk"
-      }
+      "settings": { "__type": "vk" }
     }
   ]
 }
 ```
+
+</CodeGroup>
+
+In the second example, the second entry in `value` is a comment under the wall post, posted 30 minutes after it. Comments on VK can carry photos.
+
+## Related
+
+- [VK in the app](/channels/vk)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)

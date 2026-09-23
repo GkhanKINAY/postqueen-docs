@@ -1,96 +1,119 @@
 ---
-title: MeWe Settings
-description: 'API settings for posting to MeWe'
+title: "MeWe posting settings"
+sidebarTitle: "MeWe"
+description: "The settings object a post to MeWe takes in the public API: every field, its values, what PostQueen checks, and complete examples."
+icon: "/images/channels/mewe.svg"
 ---
 
-{/* OVERHAUL-TODO(B4): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the app and connecting a channel: [MeWe setup guide](/installation/providers/mewe).
+<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-## Settings Schema
+MeWe cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a MeWe channel will take.
 
-A MeWe post goes either to your own timeline or to one group you belong to:
-
-```json
-{
-  "settings": {
-    "__type": "mewe",
-    "postType": "timeline"
-  }
-}
-```
+Every post to MeWe carries a `settings` object with `"__type": "mewe"`. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `__type` | `string` | Yes | Must be `mewe` |
-| `postType` | `string` | Yes | `timeline` or `group` |
-| `group` | `string` | When `postType` is `group` | The group's id, not its name |
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"mewe"`. PostQueen sets it from the channel you post to. |
+| `postType` | string | Yes | `timeline` posts to your own timeline, `group` to one of your groups. |
+| `group` | string | For `group` | The id of the group. See below. |
+
+Photos in `image` are uploaded to MeWe with the post. MP4 files are left out, and any other file, a MOV video included, is sent as a photo.
 
 ### `group`
 
-The field takes the group's **id**. The `groups` tool on the channel lists every group the account belongs to, as `id` and `name` pairs. Call it through [Trigger a Tool](/public-api/integrations/trigger) and copy the id you want. A post to a group with an empty `group` fails.
+Find your group ids with the `groups` tool through [trigger a provider tool](/public-api/integrations/trigger). It takes no input:
 
-### Media
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "methodName": "groups", "data": {} }'
+```
 
-Photos only. A video file is dropped from the post rather than sent.
+The response is `{ "output": [ { "id", "name" } ] }`. Put the chosen `id` in `settings.group`.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| Text up to 63,206 characters | “post is too long, please fix it” |
+| `postType` is `timeline` or `group` | A validation error naming the field |
+| A `group` post has a `group` | A validation error that says “Select a group to post to” |
+
+The error body names the channel and the rule:
+
+```json
+{
+  "statusCode": 400,
+  "provider": "mewe",
+  "name": "Your channel name",
+  "message": "post is too long, please fix it"
+}
+```
+
+MeWe's own rules on photos are not checked first. The link to a published post opens your timeline or the group, not the post itself.
 
 ## Examples
 
-### Post to your timeline
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), `GROUP_ID` with an id from the `groups` tool, and each media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-```json
-{
-  "type": "now",
-  "date": "2024-12-14T10:00:00.000Z",
-  "shortLink": false,
-  "tags": [],
-  "posts": [
-    {
-      "integration": {
-        "id": "your-mewe-integration-id"
-      },
-      "value": [
-        {
-          "content": "Hello from the PostQueen API!",
-          "image": []
-        }
-      ],
-      "settings": {
-        "__type": "mewe",
-        "postType": "timeline"
-      }
-    }
-  ]
-}
-```
+<CodeGroup>
 
-### Post to a group
-
-```json
+```json Timeline post
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-mewe-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "Sharing this with the group",
-          "image": []
+          "content": "First frost in the garden this morning. The kale does not mind at all.",
+          "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/frost.jpg" }]
         }
       ],
-      "settings": {
-        "__type": "mewe",
-        "postType": "group",
-        "group": "your-group-id"
-      }
+      "settings": { "__type": "mewe", "postType": "timeline" }
     }
   ]
 }
 ```
+
+```json Group post
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        {
+          "content": "Reminder: the seed swap is this Sunday at 2 pm. Bring labeled packets.",
+          "image": []
+        }
+      ],
+      "settings": { "__type": "mewe", "postType": "group", "group": "GROUP_ID" }
+    }
+  ]
+}
+```
+
+</CodeGroup>
+
+Only the first entry in `value` is published: MeWe takes no comments, and a later entry is marked as failed with “This channel cannot post comments”.
+
+## Related
+
+- [MeWe in the app](/channels/mewe)
+- [Create a post](/public-api/posts/create)
+- [Upload a file](/public-api/uploads/upload-file)
+- [Trigger a provider tool](/public-api/integrations/trigger)

@@ -1,110 +1,127 @@
 ---
-title: 'Mastodon setup'
-description: 'Register the Mastodon application and give PostQueen its keys'
-icon: /images/channels/mastodon.svg
+title: "Mastodon setup"
+description: "Register your own Mastodon app for a self-hosted PostQueen: the one server it connects to, scopes, redirect URI and the variables to set."
+icon: "/images/channels/mastodon.svg"
 ---
 
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
+import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-{/* OVERHAUL-TODO(B4): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better, use as base; audit: selfhost). Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen you register a Mastodon app on one Mastodon server and give PostQueen its client key and secret. Every Mastodon channel on your install then signs in on that server.
 
-On your own instance you register the Mastodon client yourself and put its keys in your environment.
+## Before you start
 
-Mastodon client registration does not happen in a web interface. You talk to the API directly, and `curl` is the shortest way to register a new client:
-
-Optionally check that you have `jq` installed on your system. You can normally install this with brew, apt-get, yum or chocolatey. If you do not have `jq` installed, you can remove it from the command below.
+| | |
+|---|---|
+| Server | One Mastodon server, set in `MASTODON_URL`. Left unset, it is `https://mastodon.social` |
+| Variables | `MASTODON_URL`, `MASTODON_CLIENT_ID`, `MASTODON_CLIENT_SECRET` |
+| Redirect URI | `FRONTEND_URL` + `/integrations/social/mastodon` |
+| Scopes | `write:statuses`, `write:media`, `profile` |
+| Server version | Mastodon 4.3 or later, the first version with the `profile` scope |
+| Review | None |
 
 <Info>
-The examples on this page use `https://mastodon.social` as the default Mastodon instance. If you are setting up PostQueen to connect to a different self-hosted Mastodon instance (e.g., `https://fosstodon.org`), you must replace `https://mastodon.social` with your instance's URL in the `curl` command below. You will also need to ensure the `MASTODON_URL` environment variable in your application's `.env` file (or equivalent configuration for Docker, etc.) is set to your custom instance's URL.
+**One server per install.** A Mastodon app exists only on the server you register it on, so accounts on other servers cannot connect to your install. To use another server, such as `https://fosstodon.org`, register the app there and set `MASTODON_URL` to it.
 </Info>
 
-<Steps>
-  <Step title="Register your client">
-    <OAuthRedirect />
+## Register the app
 
-    **Your Mastodon OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/mastodon`
-    - Local development: `http://localhost:4200/integrations/social/mastodon`
-    - Docker: `http://localhost:4007/integrations/social/mastodon`
+Register it in the web interface of the server, or with one API call. Both give you the same client key and secret.
 
-    Run the following curl command in a terminal to get the Mastodon client id and client secret.
+<Tabs>
+  <Tab title="Web interface">
+    <Steps>
+      <Step title="Open Development">
+        Sign in on the server and open its settings. Choose **Development** in the settings menu, at `/settings/applications`, then **New application**.
+      </Step>
+      <Step title="Fill in the form">
+        - **Application name**: a name for your install, such as `PostQueen`.
+        - **Application website**: optional.
+        - **Redirect URI**: your address, one per line. See the addresses below.
+        - **Scopes**: tick `write:statuses`, `write:media` and `profile`, and untick everything else.
 
-```bash
-curl -X POST -sS https://mastodon.social/api/v1/apps -F "client_name=YourAppName" -F "redirect_uris=http://localhost:4200/integrations/social/mastodon" -F "scopes=write:statuses write:media profile" | jq
+        Save the application.
+      </Step>
+      <Step title="Copy the key and secret">
+        Open the new application. Copy the **Client key** and the **Client secret**. You do not need **Your access token**.
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab title="API call">
+    Send the app to the server's `/api/v1/apps`, with your redirect URI and the three scopes:
+
+    ```bash
+    curl -X POST https://mastodon.social/api/v1/apps \
+      -F "client_name=PostQueen" \
+      -F "redirect_uris=https://postqueen.example.com/integrations/social/mastodon" \
+      -F "scopes=write:statuses write:media profile"
+    ```
+
+    The answer holds the two values you need:
+
+    ```json
+    {
+      "client_id": "your client id",
+      "client_secret": "your client secret"
+    }
+    ```
+  </Tab>
+</Tabs>
+
+The redirect URI is the one that matches how you run PostQueen:
+
+<CodeGroup>
+
+```text Your domain
+https://postqueen.example.com/integrations/social/mastodon
 ```
 
-    This will give you output that looks something like this;
-
-```json
-{
-  "id": "1234567890",
-  "redirect_uris": [
-    "http://localhost:4200/integrations/social/mastodon"
-  ],
-  ...
-  "client_id": "your_client_id",
-  "client_secret": "your_client_secret"
-}
+```text Local development
+http://localhost:4200/integrations/social/mastodon
 ```
-  </Step>
 
-  <Step title="Add credentials to your environment">
-    Make a note of your `client_id` and `client_secret` and add them to your `.env` file.
+```text Docker on your machine
+http://localhost:4007/integrations/social/mastodon
+```
+
+</CodeGroup>
+
+<OAuthRedirect />
+
+## Set the variables
+
+Add the server and the two keys to your environment. `MASTODON_URL` is the server's address with `https://` and no trailing slash:
 
 ```env
-MASTODON_CLIENT_ID="shown in the output from the above command"
-MASTODON_CLIENT_SECRET="shown in the output from the above command"
-MASTODON_URL="https://mastodon.social" # Change this if connecting to a different instance
+MASTODON_URL="https://mastodon.social"
+MASTODON_CLIENT_ID="your client key"
+MASTODON_CLIENT_SECRET="your client secret"
 ```
-  </Step>
 
-  <Step title="Start PostQueen">
-    Stop PostQueen if it is running, and then start it using the .env file with the Mastodon details. Click through the new channel setup and you should be asked to login on Mastodon.
-  </Step>
-</Steps>
+<RestartAndAddChannel />
 
-<Check>
-The channel is in the left sidebar with its avatar and name. That is the whole confirmation: if it is in the list, she can post to it.
-</Check>
-
+Pick **Mastodon**, sign in on the server, and approve access. PostQueen does not check which scopes were granted, so a missing one shows up later as a failed post.
 
 ## Troubleshooting
 
-### "Failed to fetch" / "fetch failed" when connecting
+<AccordionGroup>
+  <Accordion title="The server says the redirect URI is not valid for this client">
+    The address PostQueen sent is not one of the app's redirect URIs. It is exactly your `FRONTEND_URL` followed by `/integrations/social/mastodon`. Edit the application in **Development** and add it.
+  </Accordion>
+  <Accordion title="fetch failed when connecting">
+    PostQueen could not reach the server in `MASTODON_URL`. From inside the PostQueen container, run `curl -I` against the server's address and fix DNS or outbound access until it answers. If the logs show `Blocked IP`, the server's name resolves to a private address, which PostQueen's SSRF guard refuses.
+  </Accordion>
+  <Accordion title="Posts with a picture fail with fetch failed, while text posts go out">
+    Before it uploads a picture to Mastodon, PostQueen downloads it from your own media address. When that name resolves to a private address inside the container, which is common behind a home reverse proxy or split DNS, the SSRF guard refuses the download and the logs show `Blocked IP`. Make the media address resolve to a public address from inside the container. If every account on your install is trusted, you can instead set `DISABLE_SSRF_PROTECTION=true`, which turns the guard off for every request. Read its entry in the [configuration reference](/configuration/reference) first.
+  </Accordion>
+  <Accordion title="The media was still processing when the post was published, please try again">
+    A file in a later thread part was not processed yet. PostQueen waits for the first post's media, but not for the media of later parts. Schedule the post again, or move the video to the first post.
+  </Accordion>
+</AccordionGroup>
 
-The PostQueen backend needs network access to reach your Mastodon instance. If the connect call fails at this stage, the backend container could not resolve or reach the `MASTODON_URL` host.
+## Related
 
-**Fix**
-
-1. From inside the backend container, run `curl -I https://mastodon.example.com/`. If that fails, fix DNS/egress before retrying.
-2. If you are behind a corporate proxy, set `HTTPS_PROXY` on the backend.
-3. Confirm `MASTODON_URL` exactly matches your instance (protocol included, no trailing slash issues).
-4. If the logs show `Error: Blocked IP`, the instance hostname resolved to a private address and the SSRF guard refused it. The next section covers the fix.
-
-### "fetch failed" when posting with media, while text posts go out
-
-Text posts publish, posts with a picture fail with `fetch failed`, and the orchestrator logs show `Error: Blocked IP`.
-
-**Cause:** before she uploads a picture to your instance, she downloads it from your own media URL, such as `https://postqueen.example.com/uploads/...`. When that hostname resolves to a private address from inside the container, which is common behind a home reverse proxy, split DNS or hairpin NAT, the SSRF guard refuses the download.
-
-**Fix**
-
-1. Make the media hostname resolve to a reachable address from inside the container, for example with a Docker network alias or a split-horizon DNS entry. The guard stays on.
-2. If that is not possible and every account on the instance is trusted, set `DISABLE_SSRF_PROTECTION=true` and restart. Read [its warning](/configuration/reference#disable_ssrf_protection) first: it switches the guard off for every request, not only Mastodon's.
-
-## Next steps
-
-<CardGroup cols={2}>
-  <Card title="What she can post to Mastodon" icon="/images/channels/mastodon.svg" href="/channels/mastodon">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Mastodon posting settings](/public-api/providers/mastodon)
