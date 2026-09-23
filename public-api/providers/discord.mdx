@@ -57,21 +57,9 @@ The error body for a too-long entry names the channel and the rule:
 }
 ```
 
-A missing `channel` fails the request validation instead, which lists every problem with the body:
+A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
 
-```json
-{
-  "message": [
-    "posts.0.settings.channel should not be null or undefined",
-    "posts.0.settings.channel must be a string",
-    "posts.0.settings.channel must be longer than or equal to 1 characters"
-  ],
-  "error": "Bad Request",
-  "statusCode": 400
-}
-```
-
-Discord's own rules are not checked first: 20 MiB per file by default, and the bot's permissions in the channel. When Discord refuses a post, it fails with “Bot doesn't have access to this channel”, “Bot lacks permission to send messages in this channel”, “Channel no longer exists” or “Attachment exceeds Discord's size limit”.
+Discord's own rules are not checked first: 20 MiB per file by default, and the bot's permissions in the channel. When Discord refuses a post, it fails with "Bot doesn't have access to this channel", "Bot lacks permission to send messages in this channel", "Channel no longer exists" or "Attachment exceeds Discord's size limit".
 
 ## Examples
 
@@ -99,7 +87,7 @@ Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANN
           "delay": 5
         }
       ],
-      "settings": { "__type": "discord", "channel": "1234567890123456789" }
+      "settings": { "__type": "discord", "channel": "DISCORD_CHANNEL_ID" }
     }
   ]
 }
@@ -120,7 +108,7 @@ Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANN
           "image": [{ "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/dashboard.png" }]
         }
       ],
-      "settings": { "__type": "discord", "channel": "1234567890123456789" }
+      "settings": { "__type": "discord", "channel": "DISCORD_CHANNEL_ID" }
     }
   ]
 }

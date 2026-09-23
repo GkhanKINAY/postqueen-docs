@@ -58,7 +58,7 @@ The error body names the channel and the rule:
 }
 ```
 
-A missing `channel` fails the request validation instead, and the body lists every problem under `message`.
+A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
 
 Slack's own rules are not checked first: an image block shows PNG, JPG and GIF only, and a private channel needs the app invited. If Slack refuses a message, the post fails with Slack's reason, such as `not_in_channel`, instead of being marked published.
 
@@ -88,7 +88,7 @@ Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANN
           "delay": 5
         }
       ],
-      "settings": { "__type": "slack", "channel": "C0123456789" }
+      "settings": { "__type": "slack", "channel": "SLACK_CHANNEL_ID" }
     }
   ]
 }
@@ -112,7 +112,7 @@ Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANN
           ]
         }
       ],
-      "settings": { "__type": "slack", "channel": "C0123456789" }
+      "settings": { "__type": "slack", "channel": "SLACK_CHANNEL_ID" }
     }
   ]
 }

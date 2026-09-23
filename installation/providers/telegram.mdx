@@ -16,7 +16,6 @@ On a self-hosted PostQueen the Telegram bot is yours. Telegram has no OAuth app 
 | Variables | `TELEGRAM_TOKEN`, `TELEGRAM_BOT_NAME` |
 | Redirect URI | None |
 | Bot rights | In a channel, an administrator allowed to post messages. In a group, a member who can send messages and media |
-| One bot per deployment | A bot token must not be shared with another PostQueen, or with anything else that reads the bot's updates |
 | Review | None |
 
 ## Create the bot
@@ -71,11 +70,11 @@ PostQueen reads the `/connect` code with Telegram's `getUpdates`, and Telegram a
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Telegram is not set up on this installation">
-    An admin sees "Telegram is not set up on this installation. Add TELEGRAM_TOKEN and TELEGRAM_BOT_NAME to the server environment and restart PostQueen." Other members see "Telegram is not set up on this installation yet. Ask a workspace admin to turn it on." `TELEGRAM_BOT_NAME` is empty: set both variables and recreate the container. An instance with billing turned on says "Telegram cannot be connected right now. Please contact support." for the same reason.
+  <Accordion title="Telegram is not set up on this installation. Add TELEGRAM_TOKEN and TELEGRAM_BOT_NAME to the server environment and restart PostQueen.">
+    This is what an admin sees. Other members see "Telegram is not set up on this installation yet. Ask a workspace admin to turn it on." `TELEGRAM_BOT_NAME` is empty: set both variables and recreate the container. An instance with billing turned on says "Telegram cannot be connected right now. Please contact support." for the same reason.
   </Accordion>
   <Accordion title="The window keeps waiting after the code was sent">
-    The bot did not receive the code. In a group, privacy mode is still on and the bot is not an administrator: disable it with `/setprivacy`, then remove the bot and add it again. In a channel, the bot is not an administrator. Send the code exactly as shown, without `@` and the bot's name after `/connect`. If none of that helps, check that no other deployment uses the same token and that the bot has no webhook.
+    The bot did not receive the code. In a group, privacy mode is still on and the bot is not an administrator: disable it with `/setprivacy`, then remove the bot and add it again. In a channel, the bot is not an administrator. Send the code exactly as shown, without adding `@` and the bot's name. If none of that helps, check that no other deployment uses the same token and that the bot has no webhook.
   </Accordion>
   <Accordion title="409 Conflict: terminated by other getUpdates request">
     Another process reads the same bot's updates. Give each PostQueen deployment its own bot.

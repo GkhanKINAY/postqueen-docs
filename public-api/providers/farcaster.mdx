@@ -11,15 +11,14 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Farcaster cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Farcaster channel will take.
 
-Every post to Farcaster carries a `settings` object with `"__type": "wrapcast"`, spelled that way. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Farcaster carries a `settings` object with `"__type": "wrapcast"`, the API's name for Farcaster. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
 | Field | Type | Required | What it does |
 |---|---|---|---|
 | `__type` | string | Yes | Always `"wrapcast"`. PostQueen sets it from the channel you post to. |
-| `subreddit` | array | No | The Farcaster channels to cast into, despite the field's name. Each item is `{ "value": { "id": "CHANNEL_ID" } }`. Left out or empty, the cast goes to your home feed. |
-| `subreddit[].value.id` | string | Yes, in each item | A Farcaster channel id, such as `dev`. |
+| `subreddit` | array | No | The Farcaster channels to cast into, despite the field's name. Each item is `{ "value": { "id": "CHANNEL_ID" } }`, where the id is a Farcaster channel id such as `dev`. Left out or empty, the cast goes to your home feed. |
 
 With channels, PostQueen publishes one cast in each, and the post's id and link come back as comma-separated lists. Each extra entry in `value` is a follow-up, posted after its `delay` in minutes as a reply to the cast before it, in every channel the post went to. Links in the text stay plain text, with no embed or frame.
 
@@ -58,7 +57,9 @@ The error body names the channel and the rule:
 }
 ```
 
-The 1,024 bytes are a long cast on Farcaster. A plain Latin letter is one byte, so English text fits about 1,024 characters, while text in other scripts or with emoji fits fewer.
+A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
+
+A plain Latin letter is one byte, so English text fits about 1,024 characters, while text in other scripts or with emoji fits fewer.
 
 ## Examples
 

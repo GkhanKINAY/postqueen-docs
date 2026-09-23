@@ -10,7 +10,7 @@ import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
 <ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
 
-PostQueen will send messages, photos, videos and albums to your Telegram channels and groups, public or private, through PostQueen's bot at the time you pick.
+PostQueen will send messages, photos, videos and albums to your Telegram channels and groups, public or private, through its bot at the time you pick.
 
 ## What you can post
 
@@ -22,7 +22,7 @@ PostQueen will send messages, photos, videos and albums to your Telegram channel
     Photos, videos and other files. Several files go out as albums of up to 10.
   </Card>
   <Card title="Post types" icon="layers">
-    Text message, message with a photo, video or file, album, and follow-up replies.
+    Text message, a photo, video or file with a caption, album, and follow-up replies.
   </Card>
   <Card title="Analytics" icon="chart-line">
     No analytics for Telegram.
@@ -34,12 +34,12 @@ PostQueen will send messages, photos, videos and albums to your Telegram channel
 ## Connect Telegram
 
 <Note>
-Telegram is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will connect through PostQueen's bot, which you add to your channel or group as an administrator.
+Telegram is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will mean adding PostQueen's bot to your channel or group as an administrator.
 </Note>
 
 ## Post settings
 
-A Telegram post has no settings of its own. It goes to the chat the channel is connected to. The API side is on [Telegram posting settings](/public-api/providers/telegram).
+Telegram has no post settings. Each post goes to the chat the channel is connected to. The API takes `"__type": "telegram"` and nothing else, as [Telegram posting settings](/public-api/providers/telegram) shows.
 
 ## Good to know
 

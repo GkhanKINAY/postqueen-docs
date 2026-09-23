@@ -1,6 +1,6 @@
 ---
 title: "Farcaster"
-description: "What PostQueen will post to Farcaster, your home feed and Farcaster channels, and the limits it checks before a cast is scheduled."
+description: "What PostQueen will post to your Farcaster home feed and channels, and the limits it checks before a cast is scheduled."
 icon: "/images/channels/farcaster.svg"
 tag: "Soon"
 ---
@@ -16,7 +16,7 @@ PostQueen will publish casts with up to 4 images to your home feed or to one or 
 
 <CardGroup cols={2}>
   <Card title="Text" icon="type">
-    Up to 1,024 bytes. A plain Latin letter is one byte, while accented letters, emoji and other scripts take 2 to 4, so they fit fewer characters.
+    Up to 1,024 bytes. A plain Latin letter is one byte, while accented letters, emoji and other scripts take 2 to 4, so text with them fits fewer characters.
   </Card>
   <Card title="Media" icon="image">
     Up to 4 images. Video is refused.
@@ -34,15 +34,16 @@ PostQueen will publish casts with up to 4 images to your home feed or to one or 
 ## Connect Farcaster
 
 <Note>
-Farcaster is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will connect when you approve PostQueen in the Farcaster app on your phone.
+Farcaster is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will mean approving PostQueen in the Farcaster app on your phone.
 </Note>
 
 ## Post settings
 
-Each Farcaster post in the composer can name channels:
+Each Farcaster post in the composer has one setting:
 
-- **Add Channel** adds a Farcaster channel to the post. Search by name under **Search Channel** and pick one from the list. Add as many as you like.
-- With no channel, the cast goes to your home feed. With channels, PostQueen publishes one cast in each.
+- **Add Channel**: adds a Farcaster channel to the post. Search by name under **Search Channel** and pick one from the list. Add as many as you like.
+
+With no channel, the cast goes to your home feed. With channels, PostQueen publishes one cast in each.
 
 The field names and values for the API are on [Farcaster posting settings](/public-api/providers/farcaster).
 

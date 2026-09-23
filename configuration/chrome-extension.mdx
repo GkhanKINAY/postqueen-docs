@@ -10,10 +10,6 @@ Skool has no public API, so PostQueen connects it through the PostQueen browser 
 
 Skool is the only channel that uses the extension today.
 
-<Warning>
-Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned. PostQueen shows the same notice before a Skool account connects.
-</Warning>
-
 ## Before you start
 
 | | |
@@ -23,6 +19,11 @@ Using a browser extension to interact with a platform may violate its terms of s
 | Build variables | `FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL`, the same values your instance runs with |
 | Instance variables | `EXTENSION_ID`, and `EXTENSION_STORE_URL` if you publish the extension |
 | Your address | Served over `https` on the default port. `localhost` works on any port |
+| Review | None for an unpacked build. A Chrome Web Store item goes through the store's review |
+
+<Warning>
+Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned. PostQueen shows the same notice before a Skool account connects.
+</Warning>
 
 ## How it works
 
@@ -68,9 +69,11 @@ Using a browser extension to interact with a platform may violate its terms of s
 
 ## Set the variables
 
+Add the ID to your environment:
+
 ```env
 EXTENSION_ID="the 32-letter id Chrome shows"
-# Optional: your own Chrome Web Store listing, used by the install prompts
+# Optional: your own Web Store listing
 EXTENSION_STORE_URL="https://chromewebstore.google.com/detail/your-listing"
 ```
 
@@ -113,7 +116,7 @@ For local development, `pnpm run dev` at the repository root also builds the ext
 
 ## Related
 
-- [Skool posting settings](/public-api/providers/skool)
-- [Configuration reference](/configuration/reference)
 - [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
 - [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Skool posting settings](/public-api/providers/skool)

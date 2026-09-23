@@ -38,7 +38,7 @@ curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
   -d '{ "methodName": "label", "data": { "id": "GROUP_ID" } }'
 ```
 
-Both answer `{ "output": [ { "id", "name" } ] }`. For a group with no categories, `label` answers `[ { "id": "none", "name": "Default Label" } ]`. Put the group's `id` in `settings.group` and the category's `id` in `settings.label`.
+Both return `{ "output": [ { "id", "name" } ] }`. For a group with no categories, `label` answers `[ { "id": "none", "name": "Default Label" } ]`. Put the group's `id` in `settings.group` and the category's `id` in `settings.label`.
 
 ## What PostQueen checks
 
@@ -60,9 +60,9 @@ The error body for a too-long entry names the channel and the rule:
 }
 ```
 
-A missing field fails the request validation instead, and the body lists every problem under `message`.
+A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
 
-After scheduling, Skool can still refuse a post: “You can't post to this channel” when the account's role in the group is below what it requires, and “Cannot post to this label” when the category is restricted.
+After scheduling, Skool can still refuse a post: "You can't post to this channel" when the account's role in the group is below what it requires, and "Cannot post to this label" when the category is restricted.
 
 ## Examples
 

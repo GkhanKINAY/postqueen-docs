@@ -6,7 +6,7 @@ icon: "/images/channels/farcaster.svg"
 
 import RestartService from '/snippets/restart-service.mdx';
 
-On a self-hosted PostQueen the Farcaster connection is yours. PostQueen reaches Farcaster through [Neynar](https://neynar.com), so the keys are Neynar's, plus a Farcaster account that represents your instance.
+On a self-hosted PostQueen the Neynar app is yours. PostQueen reaches Farcaster through [Neynar](https://neynar.com), so the keys are Neynar's, plus a Farcaster account that represents your instance.
 
 A channel connects through a Neynar **managed signer**. PostQueen asks Neynar for a signer, signs the key request with your app account, and shows the approval link as a QR code. The person connecting scans it, or opens the link on their phone, and approves in the Farcaster app. There is no OAuth callback, so there is no redirect URI to register.
 
@@ -20,14 +20,6 @@ A channel connects through a Neynar **managed signer**. PostQueen asks Neynar fo
 | Redirect URI | None |
 | You also need | A Farcaster account for your instance, and its recovery phrase |
 | Review | None |
-
-| Variable | What it is |
-|---|---|
-| `NEYNAR_SECRET_KEY` | Your Neynar API key. Every call to Neynar uses it: creating and checking signers, searching channels and publishing casts. |
-| `NEYNAR_APP_FID` | The Farcaster id (FID, a number) of the account that represents your instance. People see this account on the approval screen. |
-| `NEYNAR_APP_MNEMONIC` | The recovery phrase of that account's custody wallet. PostQueen uses it only to sign the key request for each new signer. |
-| `NEYNAR_SPONSOR_SIGNERS` | `"true"` asks Neynar to pay the on-chain fee for each new signer and bill it to your Neynar credits. Any other value leaves the fee to the person approving, in the Farcaster app. |
-| `NEYNAR_CLIENT_ID` | Your Neynar app's client ID. It only turns on **Continue with Farcaster** on the sign-in page. Connecting a Farcaster channel does not use it. |
 
 <Warning>
 `NEYNAR_APP_MNEMONIC` controls the app account. Use a Farcaster account created for your instance rather than a personal one, keep the phrase only in the server's environment, and never commit it.
@@ -49,6 +41,8 @@ A channel connects through a Neynar **managed signer**. PostQueen asks Neynar fo
 
 ## Set the variables
 
+Add the keys to your environment:
+
 ```env
 NEYNAR_SECRET_KEY="your-neynar-api-key"
 NEYNAR_APP_FID="123456"
@@ -57,6 +51,14 @@ NEYNAR_SPONSOR_SIGNERS="false"
 # Optional: the Continue with Farcaster sign-in option
 NEYNAR_CLIENT_ID="your-neynar-client-id"
 ```
+
+| Variable | What it does |
+|---|---|
+| `NEYNAR_SECRET_KEY` | Your Neynar API key. Every call to Neynar uses it: creating and checking signers, searching channels and publishing casts. |
+| `NEYNAR_APP_FID` | The Farcaster id (FID, a number) of the account that represents your instance. People see this account on the approval screen. |
+| `NEYNAR_APP_MNEMONIC` | The recovery phrase of that account's custody wallet. PostQueen uses it only to sign the key request for each new signer. |
+| `NEYNAR_SPONSOR_SIGNERS` | `"true"` asks Neynar to pay the on-chain fee for each new signer and bill it to your Neynar credits. Any other value leaves the fee to the person approving, in the Farcaster app. |
+| `NEYNAR_CLIENT_ID` | Your Neynar app's client ID. It only turns on **Continue with Farcaster** on the sign-in page. Connecting a Farcaster channel does not use it. |
 
 <RestartService />
 

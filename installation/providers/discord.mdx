@@ -17,7 +17,7 @@ On a self-hosted PostQueen the Discord application is yours. Connecting a Discor
 | Variables | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_BOT_TOKEN_ID` |
 | Redirect URI | `FRONTEND_URL` + `/integrations/social/discord` |
 | Scopes | `identify`, `guilds` and `bot` |
-| Bot permissions | View Channels, Send Messages, Embed Links, Attach Files, Create Public Threads, Create Private Threads, Send Messages in Threads (permissions integer `377957174272`) |
+| Bot permissions | **View Channel**, **Send Messages**, **Embed Links**, **Attach Files**, **Create Public Threads**, **Create Private Threads**, **Send Messages in Threads** (permissions integer `377957174272`) |
 | You also need | The **Manage Server** permission on each server you connect |
 | Review | None to start. Discord asks for verification of the app's owner once the bot is in 100 servers |
 
@@ -100,10 +100,10 @@ Discord needs no review to start. Once the bot is in 100 servers, Discord requir
     `DISCORD_BOT_TOKEN_ID` is missing or wrong, or the token was reset after you copied it. Copy a fresh token from the **Bot** page and recreate the container.
   </Accordion>
   <Accordion title="Bot doesn't have access to this channel">
-    The channel hides itself from the bot's role. In Discord, give the bot's role **View Channel** and **Send Messages** on that channel. The same applies to "Bot lacks permission to send messages in this channel".
+    The channel hides itself from the bot's role. In Discord, give the bot's role **View Channel**, **Send Messages** and **Attach Files** on that channel. The same applies to "Bot lacks permission to send messages in this channel".
   </Accordion>
   <Accordion title="Pictures or link previews do not come through">
-    The bot was added before PostQueen asked for Embed Links and Attach Files, and keeps the permissions its server gave it then. Reconnect the channel, or give the bot's role those permissions.
+    The bot was added before PostQueen asked for **Embed Links** and **Attach Files**, and keeps the permissions its server gave it then. Reconnect the channel, or give the bot's role those permissions.
   </Accordion>
 </AccordionGroup>
 

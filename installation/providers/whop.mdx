@@ -18,6 +18,7 @@ On a self-hosted PostQueen the Whop app is yours. PostQueen signs in to Whop wit
 | Redirect URI | `FRONTEND_URL` + `/integrations/social/whop` |
 | Scopes | `openid`, `profile`, `email`, `forum:post:create`, `forum:read`, `company:basic:read` |
 | You also need | Access to a Whop company that has a forum, for each account you connect |
+| Review | None in Whop's OAuth guide |
 
 <Warning>
 PostQueen does not check the granted Whop scopes when an account connects. With one missing, the channel connects and looks healthy, and the first post fails and asks for a reconnect. Select all six scopes before anyone connects.

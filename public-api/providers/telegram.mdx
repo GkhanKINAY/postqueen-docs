@@ -1,7 +1,7 @@
 ---
 title: "Telegram posting settings"
 sidebarTitle: "Telegram"
-description: "The settings object a post to Telegram takes in the public API, the caption and album rules PostQueen checks, and complete examples."
+description: "The settings object a post to Telegram takes in the public API: the type field, the caption and album rules PostQueen checks, and complete examples."
 icon: "/images/channels/telegram.svg"
 ---
 
@@ -11,7 +11,7 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
 
 Telegram cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Telegram channel will take.
 
-Every post to Telegram carries a `settings` object with `"__type": "telegram"`, and nothing else. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
+Every post to Telegram carries a `settings` object with `"__type": "telegram"`. Telegram has no other settings. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
 ## Fields
 
@@ -54,7 +54,7 @@ The error body names the channel and the rule:
 }
 ```
 
-Telegram's own rules are not checked first. Telegram fetches each file from its link and accepts photos up to 5 MB and other files up to 20 MB, and it can refuse an album that mixes photos and documents.
+Telegram's own rules are not checked first: Telegram fetches each file from its link and accepts photos up to 5 MB and other files up to 20 MB, and it can refuse an album that mixes photos and documents.
 
 ## Examples
 
