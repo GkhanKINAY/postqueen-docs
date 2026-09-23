@@ -22,7 +22,7 @@ These are the tool names your agent sees when it connects, so you can match them
 | `{{mcpKeyUrl}}` (key address) | {{mcpToolsKey}} |
 | `{{mcpBearerUrl}}` with `Authorization: Bearer YOUR_API_KEY` (Bearer header) | {{mcpToolsKey}} |
 | `https://api.postqueen.ai/sse/YOUR_API_KEY` (older SSE clients) | {{mcpToolsKey}} |
-| `{{mcpOauthUrl}}` (sign-in address) | {{mcpToolsOauth}}: every tool except `ask_postqueen` |
+| `{{mcpOauthUrl}}` (sign-in address, not tested yet) | {{mcpToolsOauth}}: every tool except `ask_postqueen` |
 
 How to connect: [MCP server](/mcp/introduction).
 
@@ -149,7 +149,7 @@ Changes the network settings of a post that has not gone out. The text and the p
 
 ## Analytics
 
-The three analytics tools read your published posts on the networks that report numbers: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. Only some of these can be connected today: see the status column on [CLI analytics](/cli/analytics#which-networks-report-numbers).
+The three analytics tools read your published posts on the networks that report numbers: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. Only some of these can be connected today: see the status column on [Analytics](/using/analytics#the-nine-networks-that-report-numbers).
 
 - The window (7, 30 or 90 days) picks which posts count, by publish date. The numbers are each post's totals so far, not only what happened inside the window.
 - `null` means the network does not report that number. Facebook gives no comment counts, Pinterest gives impressions only, and Google Business Profile gives no numbers per post.
