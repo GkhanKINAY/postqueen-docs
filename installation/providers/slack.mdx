@@ -1,80 +1,108 @@
 ---
-title: 'Slack setup'
-description: 'Register the Slack application and give PostQueen its keys'
-icon: /images/channels/slack.svg
+title: "Slack setup"
+description: "Register your own Slack app for a self-hosted PostQueen: the redirect URL, the six bot scopes, the app icon, distribution and the variables to set."
+icon: "/images/channels/slack.svg"
 ---
 
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-{/* OVERHAUL-TODO(B5): rewrite it to the style guide in CONTRIBUTING.md. Sources: this file (fix; WIP: better; audit: selfhost). Row in page-status-2026-09-23.md. */}
+On a self-hosted PostQueen the Slack app is yours. Connecting a Slack channel installs the app in a workspace, and the app's bot posts every message under the name and picture set for the channel in PostQueen.
 
-On your own instance the Slack app is yours: create it, add the six bot scopes and the redirect URI, then put its client id and secret in your environment.
+## Before you start
+
+| | |
+|---|---|
+| Developer portal | [Slack apps](https://api.slack.com/apps), with a Slack account in a workspace where you can create apps |
+| Variables | `SLACK_ID`, `SLACK_SECRET` |
+| Redirect URL | `FRONTEND_URL` + `/integrations/social/slack`, `https` only |
+| Bot token scopes | `channels:read`, `chat:write`, `users:read`, `groups:read`, `channels:join`, `chat:write.customize` |
+| You also need | An app icon, and public distribution to install the app in workspaces other than its own |
+| Review | None. A Slack Marketplace listing is optional |
+
+PostQueen checks all six scopes when a workspace connects and refuses the connect if any is missing.
+
+## Create the app
 
 <Steps>
-  <Step title="Create Slack App">
-    Head to [Slack Applications Dashboard](https://api.slack.com/apps) and select "From scratch", fill out all the required Information.
+  <Step title="Create the app">
+    Open [Slack apps](https://api.slack.com/apps), choose **Create New App**, then **From scratch**. Enter the app's name, pick the workspace it belongs to and choose **Create App**.
   </Step>
+  <Step title="Add the redirect URL">
+    Open **OAuth & Permissions**. Under **Redirect URLs**, choose **Add New Redirect URL**, enter the address and choose **Save URLs**.
 
-  <Step title="Set up OAuth Scopes and redirect URIs">
+    Slack takes only `https` addresses. When `FRONTEND_URL` is plain `http`, PostQueen sends the callback through `https://redirectmeto.com/` first, and that wrapped address is the one to register:
+
+    <CodeGroup>
+
+    ```text Your domain
+    https://postqueen.example.com/integrations/social/slack
+    ```
+
+    ```text Local development
+    https://redirectmeto.com/http://localhost:4200/integrations/social/slack
+    ```
+
+    ```text Docker on your machine
+    https://redirectmeto.com/http://localhost:4007/integrations/social/slack
+    ```
+
+    </CodeGroup>
+
     <OAuthRedirect />
-
-    **Your Slack OAuth2 Redirect URI:**
-    - Production: `https://postqueen.example.com/integrations/social/slack`
-    - Local development: `https://redirectmeto.com/http://localhost:4200/integrations/social/slack`
-    - Docker: `https://redirectmeto.com/http://localhost:4007/integrations/social/slack`
-
-    <Warning>
-    Slack will not send a visitor back to a plain `http` address, so when your `FRONTEND_URL` is not `https` she wraps the callback through `redirectmeto.com` on its way home. That wrapped address is the literal string she sends to Slack, which makes it the one you register. Local development and Docker both fall into this case. Register the bare `localhost` URI instead and the login stops on Slack with a redirect mismatch.
-    </Warning>
-
-    Head to Features > OAuth & Permissions
-    1. Add the redirect URI you copied from PostQueen
-    2. At Scopes > Bot Token Scopes, add all six of these Scopes:
-       - `chat:write`
-       - `channels:read`
-       - `users:read`
-       - `groups:read`
-       - `channels:join`
-       - `chat:write.customize`
   </Step>
+  <Step title="Add the bot token scopes">
+    On the same page, under **Scopes**, add these six to **Bot Token Scopes**: `channels:read`, `chat:write`, `users:read`, `groups:read`, `channels:join` and `chat:write.customize`.
 
-  <Step title="Set an App Icon">
-    Head back to Settings > Basic Information > Display Information
-    
-    Now set an Icon that meets these Requirements:
-    1. It has to be a Square
-    2. It has to be 512px×512px to 2000px×2000px
-    
-    If you do not set an App Icon, PostQueen will not let you install the Integration.
+    `chat:write.customize` lets a message carry the channel's own name and picture. `channels:join` lets the bot join a public channel before it posts.
   </Step>
-
-  <Step title="Copy Client ID and Secret">
-    Head back to App Credentials, copy the Client ID and Secret and paste it to your Environment:
-
-```env
-SLACK_ID=""
-SLACK_SECRET=""
-```
+  <Step title="Set an app icon">
+    Open **Basic Information**. Under **Display Information**, upload an app icon. The channel's picture in PostQueen comes from the app's bot, and without an icon the channel connects with no picture.
   </Step>
-  <Step title="Restart and add the Slack channel">
-    <RestartAndAddChannel />
+  <Step title="Copy the client ID and secret">
+    On **Basic Information**, under **App Credentials**, copy the **Client ID** and the **Client Secret**.
+  </Step>
+  <Step title="Turn on distribution for other workspaces">
+    To connect workspaces other than the app's own, open **Manage Distribution** and activate public distribution. The app does not have to be listed in the Slack Marketplace for that.
   </Step>
 </Steps>
 
-## Next steps
+## Set the variables
 
-<CardGroup cols={2}>
-  <Card title="What she can post to Slack" icon="/images/channels/slack.svg" href="/channels/slack">
-    Limits, post types and settings
-  </Card>
-  <Card title="Configuration reference" icon="list" href="/configuration/reference">
-    Every variable she reads
-  </Card>
-  <Card title="Connect errors" icon="unplug" href="/troubleshooting/common-errors">
-    Invalid state, invalid_grant and the rest
-  </Card>
-  <Card title="Another channel" icon="plug" href="/channels/overview">
-    Every network, and what each one asks for
-  </Card>
-</CardGroup>
+Add the two keys to your environment:
+
+```env
+SLACK_ID="your client id"
+SLACK_SECRET="your client secret"
+```
+
+<RestartAndAddChannel />
+
+Each post then picks its Slack channel. The bot joins a public channel by itself before posting, but not a private one: invite the app to a private channel first, for example with `/invite @your-app` in that channel.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
+    Slack returned a token without all six scopes. Add the missing ones under **Bot Token Scopes**, then connect again.
+  </Accordion>
+  <Accordion title="Slack says redirect_uri did not match any configured URIs">
+    The address PostQueen sent is not under **Redirect URLs**. On a plain `http` install, register the `redirectmeto.com` address from the table, not the bare `localhost` one.
+  </Accordion>
+  <Accordion title="Another workspace cannot install the app">
+    The app is not distributed. Activate public distribution under **Manage Distribution**.
+  </Accordion>
+  <Accordion title="A post fails with not_in_channel">
+    The channel is private and the app is not in it. Invite the app to the channel, then post again.
+  </Accordion>
+  <Accordion title="The channel has no picture">
+    The app had no icon when the workspace connected. Upload one under **Display Information**, then reconnect the channel, or set a picture with **Bot name & avatar** on the **Channels** page.
+  </Accordion>
+</AccordionGroup>
+
+## Related
+
+- [Channel developer apps](/installation/providers/overview)
+- [Configuration reference](/configuration/reference)
+- [Self-hosting troubleshooting](/troubleshooting/self-host)
+- [Slack posting settings](/public-api/providers/slack)
