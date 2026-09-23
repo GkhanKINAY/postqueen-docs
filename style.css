@@ -669,6 +669,36 @@ pre *,
   white-space: nowrap;
   color: var(--pq-accent) !important;
 }
+/* The page reads centred, as the site does: the top, every section's title
+   and intro, the popular links and the channels link sit on the middle
+   axis; the cards keep their text flush left. */
+.pq-top-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.pq-top-inner .pq-lede {
+  margin-inline: auto;
+}
+.pq-popular {
+  justify-content: center;
+}
+.pq-h2 {
+  text-align: center;
+}
+.pq-sub {
+  margin-inline: auto;
+  text-align: center;
+}
+.pq-head-row {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.pq-home-foot {
+  text-align: center;
+}
 /* Every row as tall as the tallest, so a two-line name (Google Business)
    does not make one row of tiles bigger than the rest. */
 .pq-channels {
