@@ -1,181 +1,102 @@
 ---
-title: Teams and collaboration
-sidebarTitle: Teams
-description: 'Bring people into your workspace, give each one a role, and put a post in front of a client without asking them to sign up'
-icon: 'users'
+title: "Invite your team"
+sidebarTitle: "Team"
+description: "Invite members to your workspace, give each one a role, hand the workspace over, and share a published post with a client."
+icon: "users"
+keywords:
+  - team
+  - invite
+  - roles
+  - admin
+  - share a post
 ---
 
-{/* OVERHAUL-TODO(B1): write it from _templates/guide-task.mdx. Sources: this file, moved from using/teams-and-collaboration (rewrite; WIP: same as main; audit: guide). Row in page-status-2026-09-23.md. */}
+**Where:** **Settings** > **Teams**, in the Workspace group. Only Admins and Super Admins see it.
 
-Thursday, and the client wants to see Monday's post before it goes out. You do not want to email them a screenshot, and you certainly do not want to give them a login. So you hover the post on the calendar, copy one link, and paste it into the thread you are already in. They open it in a browser, read the real post with its media attached, and reply.
+Team members work in the same workspace as you: the same channels, calendar, media and analytics. Team members come with the Growth, Pro and Ultimate plans; on Creator only the owner uses the workspace. See [Plans](/cloud/plans).
 
-That is the shape of collaboration in PostQueen. People you trust come inside the workspace with a role. Everyone else gets a link.
-
-
-<Frame>
-  <img src="/images/brand/teamwork.svg" alt="Several people working in one PostQueen workspace, each with their own role, on a shared calendar" />
-</Frame>
-
-## Bring someone in
-
-Team members live in **Settings > Teams**. The heading reads *Team Members*, every person in the workspace is listed with their role, and **Add another member** opens the invite window.
-
-Three things have to be true before that tab is there: you have to be on the general build, which is what PostQueen Cloud runs, your plan has to include team members, and you have to be an Admin or a Super Admin of the workspace. See [Plans and limits](/cloud/plans) for which plans qualify.
+## Invite a member
 
 <Steps>
-  <Step title="Open Add Member">
-    A small window with three fields. There is also an **Invite** shortcut at the bottom of the left rail that drops you straight onto the same tab.
+  <Step title="Open the invite pane">
+    In **Settings** > **Teams**, choose **Invite member**. The **Add Member** pane opens.
   </Step>
   <Step title="Pick a role">
-    The **Role** dropdown starts on *Select Role* and offers exactly two entries: **User** and **Admin**. The role is baked into the invite, so choose it now.
+    Under **Role**, choose **User** or **Admin**. The next section explains the difference.
   </Step>
-  <Step title="Choose how it travels">
-    A checkbox reads *Send invitation via email?* and starts ticked. Leave it ticked, fill in the **Email** field, and press **Send Invitation Link**. Untick it and the email field disappears; the button becomes **Copy Link** and the invite lands on your clipboard instead.
+  <Step title="Send the invite">
+    Leave **Send invitation via email?** ticked, enter the **Email** and choose **Send Invitation Link**. To share the link yourself, untick it and choose **Copy Link**.
   </Step>
 </Steps>
 
-The email arrives with the subject *You have been invited to join an organization* and a single link.
+The email arrives from PostQueen with your name and the workspace name in the subject. The link expires after 2 days. The person signs in, or creates an account, from the link and lands in your workspace. Send a fresh invite if a link has expired.
 
-### What the link does
+## Roles
 
-| Situation | What happens when they open it |
+| Role | What it can do |
 |---|---|
-| They already have an account and are signed in | They are added to your workspace on the spot and the app reloads with it selected |
-| They already have an account, signed out | The invite is held for 15 minutes while they sign in, then applied |
-| They have no account | They sign up, and the workspace is attached to the account they just created |
+| **Super Admin** | The workspace owner. Everything an Admin can do, plus renaming the workspace and handing ownership to an Admin |
+| **Admin** | Billing, inviting and removing members, revealing and rotating the API key, OAuth apps, approving apps that ask to sign in, and the shortlink setting |
+| **User** | Everything else: channels, posts, the calendar, media and analytics |
 
-<Warning>
-An invite is good for two days and works once. After that the link is dead and you send a fresh one. There is no list of pending invites to look at, so if someone loses theirs, open **Add Member** again.
-</Warning>
+On each member's row you can:
 
-## The three roles
+- change the **Role** of anyone whose role is below yours, to **User** or **Admin**;
+- remove anyone whose role is below yours with the trash button. Their account stays; they only leave this workspace;
+- **Leave** the workspace yourself, unless you are its last Super Admin.
 
-| Role | Where it comes from | Teams tab | Billing | Reveal API key / OAuth apps | Day-to-day work |
-|---|---|---|---|---|---|
-| **Super Admin** | Whoever created the workspace | Yes | Yes | Yes | Yes |
-| **Admin** | Invited as Admin | Yes | Yes | Yes | Yes |
-| **User** | Invited as User | No | No | No | Yes |
-
-The ladder is shorter than most people expect, and that is deliberate. A User is a full working member of the workspace. They connect channels, write posts and schedule them. They upload media, open the analytics and drag Thursday's post to Friday. What they do not get is the money and the keys.
-
-Three places are Admin and above:
-
-- **Billing.** The entry is missing from the left rail for a User, and the checkout, portal, cancel and prorate calls behind it are Admin-only. If the workspace subscription lapses, a User sees *A subscription is needed* with a line telling them to ask an admin, rather than a checkout screen they cannot use.
-- **Settings > Teams.** Inviting and removing people.
-- **Connections > API Keys.** The workspace API key: revealing it and rotating it.
-- **Settings → Developers.** The OAuth app you build for other PostQueen users.
-
-The short link preference is a softer case. It sits on the **Global Settings** tab where everyone can see it and click it, and only the save is gated: writing a new value is Admin-only.
-
-<Note>
-The **Invite** shortcut in the left rail is gated on your plan, not on your role, so a User on a team plan can see it. The tab it points at still needs an admin role, so for them Settings opens as it always does, with the usual entries down the left, but no Teams entry and an empty pane where it would have been.
-</Note>
-
-There is no screen for changing somebody's role after the fact. To move a User up to Admin, remove them and send a fresh invite with the new role.
-
-## Who can remove whom
-
-The **Remove** button only appears next to a member whose role sits below yours.
-
-| You are | Remove appears next to |
-|---|---|
-| Super Admin | Admins and Users |
-| Admin | Users |
-| User | Nothing, since the tab is not there |
-
-She asks *Are you sure you want to remove this team member?* before doing it. Removing takes the person out of this workspace only. Their account survives, and so does every other workspace they belong to. Nobody can remove the Super Admin from the interface.
-
-One thing happens without anyone pressing a button. Drop to a plan that does not include team members and every member below Super Admin is switched off rather than deleted. Move back up and they come back on, with the same roles they had.
-
-## More than one workspace
-
-Somebody who works with two agencies belongs to two workspaces, on one account. The person icon in the top bar lists them by name, and picking one reloads the app on that workspace. The icon only shows up when you belong to more than one, so if you only ever see one workspace you will never see it.
-
-## Comments on a post
-
-Every post has its own page, and that page has a comment panel down the right side. Write in the box marked *Add a comment...*, press **Post**, and it appears in the list underneath, oldest first.
-
-Two details are worth knowing before you rely on it.
-
-**Commenters are numbered, not named.** The panel labels people **User1**, **User2** and so on, in the order they first commented on that post. Consistent within a post, but no email address and no display name, so sign your comment if it matters who said it.
-
-**Only your own workspace can comment.** A comment is checked against the post's workspace before it is written. Someone outside your workspace who signs up and opens the link cannot leave one, even though the button invites them to try. Comments are a conversation among the people you invited.
-
-<Warning>
-A comment cannot be edited or deleted once it is posted. The panel itself only draws for people who are signed in, and a signed-out visitor holding the link gets a **Login / Register to add comments** button in its place. The route behind the panel is unauthenticated, though, so treat comments as readable by anyone who goes looking rather than as a private channel.
-</Warning>
-
-## The link you send a client
-
-Hover a post on the calendar and a row of icons appears on its strip. The eye, tooltip *Preview Post*, opens that post on its own page in a new tab.
-
-That page needs no account. The publication date sits across the top. Underneath it, the post itself: the channel avatar with its platform badge, the account name above the content, and every image or video you attached. It is one plain card rather than a mockup of the network, so read it for the words and the media, not for the styling. A thread shows every part in order, one card under the next, which is the fastest way to check that part four still reads well after you rewrote part two.
-
-At the top of that page sits **Share with a client**. It copies the address without the query string on the end, giving you a clean link like:
-
-```
-https://app.postqueen.ai/p/<post-id>
-```
-
-Paste that anywhere. They open it, read the post, and reply to you wherever you already talk.
-
-<Warning>
-The link is the post id and nothing else. There is no password on it, no expiry, and no way to switch it back off. Anyone who ends up with the link can read the post and its comments, so think before you paste it somewhere public.
-</Warning>
-
-## About that approval workflow
-
-There is not one. No approver role, no approve button and no reject button. Nothing sits between a scheduled post and the platform. Say it out loud once and the rest of the page makes sense.
-
-Autopilot is the default and it is real: whatever is scheduled goes out at its time, whoever scheduled it. Nobody is standing at the gate.
-
-What teams do instead is a three-part loop, and it works well once you know it is the whole story:
+## Hand the workspace to someone else
 
 <Steps>
-  <Step title="Write it as a draft">
-    **Save as Draft** in the editor writes the post at the date you gave it and stops. It sits on the calendar with *Draft:* in front of it and goes nowhere. On the CLI that is `-t draft`, and on the API it is `type: draft`.
+  <Step title="Make them an Admin">
+    The new owner must already be an Admin. Change their **Role** to **Admin** if needed.
   </Step>
-  <Step title="Send the link">
-    Open the draft's own page from the calendar and copy the share link. Your client reads the real thing, not a description of it.
-  </Step>
-  <Step title="Collect the notes, then schedule">
-    Teammates comment on the post page. You edit until everyone is happy, then open the post and press **Schedule**, which hands it to the queue for its stored date.
+  <Step title="Transfer">
+    As the Super Admin, choose **Transfer** on their row, then **Transfer** again to confirm. They become Super Admin and you become an Admin.
   </Step>
 </Steps>
 
-The important part is step three. A draft becomes a scheduled post because a person opened it and scheduled it, not because a workflow advanced. Nothing publishes itself out of the draft state. If you need a hard record of who approved what, keep that in the tool you already use for it, because PostQueen will not produce one.
+## Share a published post with a client
 
-<Note>
-Team management is app-only. There are no team endpoints on the public API and no team commands on the CLI, so inviting, removing and role changes all happen in **Settings > Teams**.
-</Note>
+<Steps>
+  <Step title="Open the preview">
+    On the calendar or in **Posts**, open **Preview Post** on a published post. The preview opens in a new tab.
+  </Step>
+  <Step title="Copy the link">
+    Choose **Share with a client**. The link is copied, ready to paste anywhere.
+  </Step>
+</Steps>
 
-## Keep going
+Anyone with the link can read the post and its media without an account, so share it with care. Signed-in members of your workspace can leave **Comments** on that page.
 
-<CardGroup cols={3}>
-  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
-    Which plans include team members, and what else moves with the tier.
-  </Card>
-  <Card title="Writing a post" icon="pen-tool" href="/using/create-a-post">
-    Drafts, schedules and Post Now, and what each one really does.
-  </Card>
-  <Card title="Customers" icon="users" href="/using/customers">
-    Group channels by client, then narrow the calendar down to one of them.
-  </Card>
-</CardGroup>
+## Good to know
+
+- The preview link shows a post only once it is published. For a draft or a scheduled post the page reads "Post not found".
+- PostQueen has no approval step. A scheduled post goes out at its time. To hold a post for review, save it as a draft and schedule it once it is approved. See [Create a post](/using/create-a-post).
+- If the workspace moves to a plan without team members, every member except the Super Admin is switched off. Moving back to Growth or above switches them on again, with the same roles.
+- When the workspace has no active plan, Users see "A subscription is needed" and are asked to contact an admin. Only Admins and Super Admins can choose a plan.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| "A member with this email is already in the workspace" | They are already in. Check the member list |
+| "Your subscription does not include team members. Please upgrade your subscription to invite your team." | Choose **Upgrade plan** and pick Growth or above |
+| "Could not send the invitation, please try again" | Try again, or untick **Send invitation via email?** and share the link with **Copy Link** |
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Customers" icon="users" href="/using/customers">
-    Group channels by client and narrow everything down to one
+  <Card title="Plans" icon="credit-card" href="/cloud/plans">
+    Which plans include team members.
   </Card>
-  <Card title="Plans and limits" icon="credit-card" href="/cloud/plans">
-    How many seats each plan carries
+  <Card title="Customers" icon="building-2" href="/using/customers">
+    Group channels by client and filter the calendar by them.
   </Card>
-  <Card title="Notifications" icon="bell" href="/using/settings">
-    What each member hears about, and where
+  <Card title="Connections" icon="cable" href="/using/connections">
+    The API key only admins can reveal, and the apps you approved.
   </Card>
   <Card title="Settings" icon="sliders-horizontal" href="/using/settings">
-    Every tab, and why some are missing for you
+    Every Settings tab, and who sees it.
   </Card>
 </CardGroup>
