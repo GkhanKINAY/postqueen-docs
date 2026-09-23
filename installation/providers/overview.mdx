@@ -5,7 +5,7 @@ description: "Every network's variables, redirect path and setup page on a self-
 icon: "key-round"
 ---
 
-On a self-hosted PostQueen, most networks talk to PostQueen through a developer app that you register with the network yourself. You set the app's keys as environment variables, restart PostQueen, and the network then connects from **Add Channel**. Eight networks need no app at all: the person connecting types a key or a login into the connect form.
+On a self-hosted PostQueen, most networks talk to PostQueen through a developer app that you register with the network yourself. You set the app's keys as environment variables, restart PostQueen, and the network then connects from **Add Channel**. Eight networks need no app at all: the person connecting types a key or a login into the connect form, or, for Moltbook, registers an agent.
 
 ## How it works
 
@@ -74,7 +74,7 @@ With the backend at `https://postqueen.example.com/api`, the Facebook app's firs
 
 ## Networks that need no developer app
 
-These eight read no variable. The person connecting enters their own key or login in the connect form, so they work as soon as PostQueen runs:
+These eight read no variable, so they work as soon as PostQueen runs. The person connecting enters their own key or login in the connect form, or registers a Moltbook agent:
 
 | Network | The connect form asks for |
 |---|---|

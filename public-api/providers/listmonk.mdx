@@ -54,7 +54,7 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | `list` is a string | “list must be a string” |
 | The body within 100,000,000 characters | “post is too long, please fix it” |
 
-These are settings rules, so the body lists every failing field with its path:
+The settings rules come back as a list, with each field's path:
 
 ```json
 {
@@ -63,6 +63,8 @@ These are settings rules, so the body lists every failing field with its path:
   "error": "Bad Request"
 }
 ```
+
+The text limit comes back with the channel's name instead, as on [posting settings by network](/public-api/providers/overview#two-error-shapes).
 
 The app's editor stops sooner, at 300,000 characters. A list id that your server does not have is not checked first: Listmonk refuses the campaign when it is created.
 

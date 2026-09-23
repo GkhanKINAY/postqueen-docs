@@ -60,7 +60,7 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | `canonical` is a web address | “Invalid URL” |
 | The body within 10,000 characters | “post is too long, please fix it” |
 
-These are settings rules, so the body lists every failing field with its path:
+The settings rules come back as a list, with each field's path:
 
 ```json
 {
@@ -69,6 +69,8 @@ These are settings rules, so the body lists every failing field with its path:
   "error": "Bad Request"
 }
 ```
+
+The text limit comes back with the channel's name instead, as on [posting settings by network](/public-api/providers/overview#two-error-shapes).
 
 The Pro plan is not checked first. When Hashnode refuses the article, the post fails with Hashnode's own message, and a token Hashnode no longer accepts marks the channel for reconnection.
 

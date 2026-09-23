@@ -12,10 +12,6 @@ import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
 Publish Markdown articles to your Hashnode publication on schedule, with a title, subtitle, cover image, canonical URL and tags. You connect with a Hashnode personal access token.
 
-<Warning>
-Hashnode answers API requests only for publications on its Pro plan, and PostQueen publishes through that API. Without Pro, Hashnode refuses the connection, or the article when it is published, with its own upgrade message. PostQueen does not include Hashnode Pro.
-</Warning>
-
 ## What you can post
 
 <CardGroup cols={2}>
@@ -52,6 +48,10 @@ The tag picker stops at 4. The Pro plan is not checked first: Hashnode itself re
 
 ## Connect Hashnode
 
+<Note>
+Hashnode answers API requests only for publications on its Pro plan, and PostQueen publishes through that API. Without Pro, Hashnode refuses the connection, or the article when it is published, with its own upgrade message. PostQueen does not include Hashnode Pro.
+</Note>
+
 <Steps>
   <Step title="Check the plan of your publication">
     In the dashboard of the Hashnode blog you want to publish to, open **Billing** and make sure it is on the Pro plan.
@@ -74,7 +74,7 @@ The tag picker stops at 4. The Pro plan is not checked first: Hashnode itself re
 
 ## Post settings
 
-Each Hashnode post has its own settings in the composer:
+Each Hashnode post in the composer has these settings:
 
 - **Title**: required, at least 6 characters.
 - **Subtitle**: optional, at least 2 characters when you give one.
@@ -87,13 +87,13 @@ The field names and values for the API are on [Hashnode posting settings](/publi
 
 ## Comments and threads
 
-Hashnode has no follow-ups: the composer shows no **Add comment** button for a Hashnode channel.
+Hashnode takes no follow-up comments, so the composer shows no **Add comment** button for a Hashnode post.
 
 ## Good to know
 
 - The article is published on Hashnode at the scheduled time. It is never saved as a Hashnode draft.
 - When a connect fails, PostQueen tells a wrong token apart from a publication without Pro, and shows Hashnode's own message for the plan.
-- If Hashnode stops accepting the token when an article goes out, the channel shows **Needs reconnecting**. Generate a new token and enter it with **Update credentials** under **Access** on the channel's page.
+- If Hashnode stops accepting the token when an article goes out, the channel shows **Needs reconnecting**. Generate a new token and enter it with **Update Credentials** under **Access** on the channel's page.
 - **Invite by link** does not offer Hashnode, because the token is typed into PostQueen. Connect it with **Connect myself**.
 - During the free trial, a Hashnode account that another PostQueen workspace already connected is refused until you end the trial.
 

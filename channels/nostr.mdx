@@ -10,7 +10,7 @@ import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
 <ChannelStatus status="available" />
 
-Sign and broadcast Nostr notes and threads on schedule, with images linked by URL. You connect with your Nostr private key, and PostQueen sends each note to five well-known relays.
+Sign and broadcast Nostr notes and threads on schedule, with images linked by URL. You connect with your Nostr private key, and PostQueen sends each note to five public relays.
 
 ## What you can post
 
@@ -40,18 +40,6 @@ PostQueen refuses a post that breaks this rule and shows the message in the comp
 | Text within 100,000 characters, in the note and in every reply | “post is too long, please fix it” |
 
 Each relay sets its own size limit, and PostQueen does not check it first.
-
-## Where your notes go
-
-PostQueen signs each note with your key and sends it to these relays:
-
-- `nos.lol`
-- `relay.damus.io`
-- `relay.snort.social`
-- `temp.iris.to`
-- `vault.iris.to`
-
-A note counts as published when at least one of them accepts it. The list is fixed, so a note reaches your followers only if their clients read one of these relays.
 
 ## Connect Nostr
 
@@ -84,6 +72,7 @@ A reply points only at the part before it, not at the first note, so a client th
 
 ## Good to know
 
+- PostQueen signs each note with your key and sends it to five relays: `nos.lol`, `relay.damus.io`, `relay.snort.social`, `temp.iris.to` and `vault.iris.to`. A note counts as published when at least one of them accepts it. The list is fixed, so a note reaches your followers only if their clients read one of these relays.
 - Your key is stored encrypted on PostQueen's server, so that PostQueen can sign each note at the scheduled time. Treat it as you would any key that can post as you.
 - A key pasted in `nsec` form is read as hex and connects the wrong identity. Delete that channel and connect again with the hex key.
 - The link on a published note opens it on [primal.net](https://primal.net).

@@ -25,7 +25,7 @@ Send email campaigns from your own Listmonk server on schedule, with a subject, 
     An email campaign to one list, with a subject, preview text and your default or chosen template.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    No analytics for Listmonk in PostQueen.
+    No analytics for Listmonk.
   </Card>
 </CardGroup>
 
@@ -40,6 +40,8 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | A subject | “subject must be longer than or equal to 1 characters” |
 | A list is picked | “list must be a string” |
 | Text within 300,000 characters | “post is too long, please fix it” |
+
+A list your server no longer has is not checked first: Listmonk refuses the campaign when it is created.
 
 ## Connect Listmonk
 
@@ -64,7 +66,7 @@ Your Listmonk server has to be reachable from the internet. PostQueen talks to i
 
 ## Post settings
 
-Each Listmonk post has its own settings in the composer:
+Each Listmonk post in the composer has these settings:
 
 - **Subject**: the email subject. Required.
 - **Preview**: the preview text inboxes show next to the subject. It is added to the email as hidden text and can be left empty.
@@ -75,7 +77,7 @@ The body of the post becomes the body of the email. The field names and values f
 
 ## Comments and threads
 
-Listmonk has no follow-ups: the composer shows no **Add comment** button for a Listmonk channel.
+Listmonk takes no follow-up comments, so the composer shows no **Add comment** button for a Listmonk post.
 
 ## Good to know
 
@@ -83,7 +85,7 @@ Listmonk has no follow-ups: the composer shows no **Add comment** button for a L
 - The campaign is named after its subject.
 - The link on a sent campaign opens its preview on your Listmonk server.
 - Only servers reachable on the public internet can be connected. An address on a private or local network is refused.
-- If you change or delete the API user's token, publishing stops. Enter the new one with **Update credentials** under **Access** on the channel's page.
+- If you change or delete the API user's token, publishing stops. Enter the new one with **Update Credentials** under **Access** on the channel's page.
 - **Invite by link** does not offer Listmonk, because the token is typed into PostQueen. Connect it with **Connect myself**.
 - During the free trial, a Listmonk server that another PostQueen workspace already connected is refused until you end the trial.
 
