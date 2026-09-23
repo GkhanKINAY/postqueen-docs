@@ -1,78 +1,107 @@
 ---
-title: 'Hashnode Settings'
-description: 'Provider settings for Hashnode articles'
+title: "Hashnode posting settings"
+sidebarTitle: "Hashnode"
+description: "The settings object a post to Hashnode takes in the public API: title, subtitle, cover, canonical URL, publication and tags, what PostQueen checks, and complete examples."
+icon: "/images/channels/hashnode.svg"
 ---
 
-{/* OVERHAUL-TODO(B3): write it from _templates/api-settings.mdx. Sources: this file (fix; WIP: better, use as base; audit: api). Row in page-status-2026-09-23.md. */}
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 
-Creating the OAuth app and connecting a channel: [Hashnode setup guide](/channels/hashnode).
+<ChannelStatus status="available">Needs Hashnode's Pro plan on the publication you connect.</ChannelStatus>
 
-## Overview
+Every post to Hashnode carries a `settings` object with `"__type": "hashnode"`, a title, a publication and at least one tag. Read the live schema for your channel with [integration settings](/public-api/integrations/settings).
 
-Hashnode is a blogging platform for developers. When posting articles, you need to specify the title, tags, and publication.
+A Hashnode channel connects with a personal access token, which only the app's connect form takes. [Connect it in the app](/channels/hashnode) first, then post to it here. Hashnode answers only for publications on its Pro plan, so a post to one without Pro fails when it is published.
 
-## Settings Schema
+## Fields
+
+| Field | Type | Required | What it does |
+|---|---|---|---|
+| `__type` | string | Yes | Always `"hashnode"`. PostQueen sets it from the channel you post to. |
+| `title` | string | Yes | The article title, at least 6 characters. |
+| `subtitle` | string | No | A subtitle, at least 2 characters when you send one. |
+| `main_image` | object | No | The cover image, `{ "id": "...", "path": "..." }` as [upload a file](/public-api/uploads/upload-file) returns it. Hashnode is sent its address. |
+| `canonical` | string | No | Where the article first appeared, as a web address. |
+| `publication` | string | Yes | The id of the publication to publish in, from the `publications` tool. |
+| `tags` | array | Yes | At least 1 tag, each `{ "value": "javascript", "label": "JavaScript" }`. `value` is the tag's `slug` or `objectID` from the `tagsList` tool, and `label` its name. |
+
+The body comes from `value[0].content` as Markdown. The article is always published, never saved as a Hashnode draft. Hashnode has no follow-ups, so entries after the first in `value` are not published, and media in `value` is not sent: only `main_image` reaches Hashnode.
+
+The composer lets a person pick up to 4 tags. Hashnode itself takes up to 15.
+
+### Find publications and tags
+
+Two tools answer them. Call them through [trigger a provider tool](/public-api/integrations/trigger), with no data:
+
+```bash
+curl -X POST "{{apiBase}}/integration-trigger/YOUR_CHANNEL_ID" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"methodName": "publications", "data": {}}'
+```
+
+| Tool | Answers | Use it for |
+|---|---|---|
+| `publications` | `[{ "id": "...", "name": "My blog" }, ...]`, your first 50 | `publication`: send the `id` |
+| `tagsList` | `[{ "name": "JavaScript", "slug": "javascript", "objectID": "...", "logo": "..." }, ...]` | `tags`: send `slug` or `objectID` as `value` and `name` as `label` |
+
+Each answer comes wrapped in `{ "output": ... }`. A `value` that is not in the list is sent to Hashnode as a slug, with `label` as the name.
+
+## What PostQueen checks
+
+A post that breaks one of these rules is refused with `400` before it is scheduled:
+
+| Rule | Message |
+|---|---|
+| A title of at least 6 characters | “title must be longer than or equal to 6 characters” |
+| A subtitle, when sent, of at least 2 characters | “subtitle must be longer than or equal to 2 characters” |
+| A publication | “publication should not be null or undefined” |
+| At least 1 tag | “tags must contain at least 1 elements” |
+| `canonical` is a web address | “Invalid URL” |
+| The body within 10,000 characters | “post is too long, please fix it” |
+
+These are settings rules, so the body lists every failing field with its path:
 
 ```json
 {
-  "__type": "hashnode",
-  "title": "Article Title",
-  "subtitle": "Article Subtitle",
-  "main_image": {
-    "id": "image-id",
-    "path": "https://uploads.postqueen.ai/cover.jpg"
-  },
-  "canonical": "https://original-url.com/article",
-  "publication": "publication-id",
-  "tags": [
-    { "value": "tag-id", "label": "Tag Name" }
-  ]
+  "statusCode": 400,
+  "message": ["posts.0.settings.tags must contain at least 1 elements"],
+  "error": "Bad Request"
 }
 ```
 
-## Properties
+The Pro plan is not checked first. When Hashnode refuses the article, the post fails with Hashnode's own message, and a token Hashnode no longer accepts marks the channel for reconnection.
 
-| Property | Type | Required | Description |
-|----------|------|----------|-------------|
-| `__type` | string | ✅ | Must be `"hashnode"` |
-| `title` | string | ✅ | Article title (min 6 chars) |
-| `subtitle` | string | ❌ | Article subtitle (min 2 chars) |
-| `main_image` | object | ❌ | Cover image |
-| `main_image.id` | string | ✅ | Image ID |
-| `main_image.path` | string | ✅ | Image URL |
-| `canonical` | string | ❌ | Original URL for SEO |
-| `publication` | string | ✅ | Publication ID |
-| `tags` | array | ✅ | At least 1 tag required |
-| `tags[].value` | string | ✅ | Tag ID |
-| `tags[].label` | string | ✅ | Tag display name |
+## Examples
 
-## Example
+Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANNEL_ID` with the channel's id from [list channels](/public-api/integrations/list), `YOUR_PUBLICATION_ID` with an id from the `publications` tool, and the media `id` and `path` with the values [upload a file](/public-api/uploads/upload-file) returns.
 
-```json
+<CodeGroup>
+
+```json Article with a cover and tags
 {
   "type": "schedule",
-  "date": "2024-12-14T10:00:00.000Z",
+  "date": "2026-10-01T09:00:00.000Z",
   "shortLink": false,
   "tags": [],
   "posts": [
     {
-      "integration": {
-        "id": "your-hashnode-integration-id"
-      },
+      "integration": { "id": "YOUR_CHANNEL_ID" },
       "value": [
         {
-          "content": "# Introduction\n\nWelcome to this comprehensive guide...\n\n## Prerequisites\n\n- Node.js installed\n- Basic JavaScript knowledge\n\n## Getting Started\n\nLet's begin...",
+          "content": "## The short version\n\nAn index on the right column took our slowest query from 4 seconds to 40 milliseconds.",
           "image": []
         }
       ],
       "settings": {
         "__type": "hashnode",
-        "title": "Complete Guide to TypeScript",
-        "subtitle": "From basics to advanced patterns",
-        "publication": "your-publication-id",
+        "title": "How one index made our dashboard fast",
+        "subtitle": "A Postgres story in three queries",
+        "main_image": { "id": "MEDIA_ID", "path": "https://uploads.postqueen.ai/index-cover.png" },
+        "publication": "YOUR_PUBLICATION_ID",
         "tags": [
-          { "value": "typescript-id", "label": "TypeScript" },
-          { "value": "javascript-id", "label": "JavaScript" }
+          { "value": "javascript", "label": "JavaScript" },
+          { "value": "web-development", "label": "Web Development" }
         ]
       }
     }
@@ -80,10 +109,34 @@ Hashnode is a blogging platform for developers. When posting articles, you need 
 }
 ```
 
-## Notes
+```json Cross-post with a canonical URL
+{
+  "type": "schedule",
+  "date": "2026-10-01T09:00:00.000Z",
+  "shortLink": false,
+  "tags": [],
+  "posts": [
+    {
+      "integration": { "id": "YOUR_CHANNEL_ID" },
+      "value": [
+        { "content": "This article first appeared on our company blog.", "image": [] }
+      ],
+      "settings": {
+        "__type": "hashnode",
+        "title": "Our year in open data",
+        "canonical": "https://example.com/blog/year-in-open-data",
+        "publication": "YOUR_PUBLICATION_ID",
+        "tags": [{ "value": "python", "label": "Python" }]
+      }
+    }
+  ]
+}
+```
 
-- Title must be at least 6 characters
-- At least 1 tag is required
-- Publication ID is required - get it from your Hashnode dashboard
-- Content supports full Markdown formatting
+</CodeGroup>
 
+## Related
+
+- [Connect Hashnode in the app](/channels/hashnode)
+- [Create a post](/public-api/posts/create)
+- [Trigger a provider tool](/public-api/integrations/trigger)
