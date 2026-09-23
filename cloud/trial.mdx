@@ -14,7 +14,7 @@ import TrialLocks from '/snippets/trial-locks.mdx';
 
 **Where:** the plan picker that opens right after you sign up. Later, **Billing**, from the **Upgrade** row at the bottom of the left rail.
 
-Every new workspace gets one {{trialDays}}-day free trial on the plan you choose, with that plan's channels, AI image credits and features. Checkout asks for a card and charges $0 today.
+Every new workspace gets one {{trialDays}}-day free trial on the plan you choose, with that plan's channels, AI image and video credits and features. Checkout asks for a card and charges $0 today.
 
 ## Start the trial
 
@@ -43,11 +43,11 @@ Every new workspace gets one {{trialDays}}-day free trial on the plan you choose
 
 <TrialLocks />
 
-In **Add Channel**, X's setup step shows "X unlocks after your trial" in place of its connect button. The AI Copilot page and the **AI Copilot** tab in Create Post show "AI Copilot unlocks after your trial".
+In **Add Channel**, X's setup step shows "X unlocks after your trial" in place of its connect button. The AI Copilot page and the **AI Copilot** tab in Create Post show "AI Copilot unlocks after your trial". In the **Generate video** window, **Generate** with **Seedance 2.0 (Audio + Video)** opens a **Trial** dialog instead of making the video, and no credit is used. The API and the MCP server answer `This video is not available in trial mode`.
 
 During the trial, PostQueen also refuses a social account that another PostQueen account connected before. End the trial to add it.
 
-Everything else works from the first day: every other channel you can connect, scheduling, analytics, AI images, Auto Post, webhooks, the MCP server and the public API, and team invites on Growth and up.
+Everything else works from the first day: every other channel you can connect, scheduling, analytics, AI images, AI videos with **Image Text Slides**, Auto Post, webhooks, the MCP server and the public API, and team invites on Growth and up.
 
 ## End the trial early
 
@@ -59,7 +59,7 @@ Everything else works from the first day: every other channel you can connect, s
     Choose **End free trial** on the trial banner above the plan cards. There is no second confirmation: PostQueen charges the card for the plan right away.
   </Step>
   <Step title="Check the result">
-    When the payment goes through, you see "Your trial is finished and your card has been charged." X and the AI Copilot are unlocked.
+    When the payment goes through, you see "Your trial is finished and your card has been charged." X, Seedance videos and the AI Copilot are unlocked.
   </Step>
 </Steps>
 
@@ -74,7 +74,8 @@ Only a workspace Admin or Super Admin can cancel. On **Billing**, choose **Cance
 | Message | What to do |
 |---|---|
 | “X unlocks when your free trial ends. End the trial to connect it now.” | End the trial on **Billing**, or wait for it to end, then connect X again. |
-| “You are currently on trial, in order to use the feature you must finish the trial” | Choose **Finish the trial, charge me now** to start the paid plan, or close the dialog and wait for the trial to end. |
+| “You are currently on trial, in order to use the feature you must finish the trial” | Shown for a Seedance video. Choose **Finish the trial, charge me now** to start the paid plan, or close the dialog and make the video with **Image Text Slides**. |
+| `This video is not available in trial mode` | The API or an agent asked for a Seedance video. End the trial on **Billing**, or use `image-text-slides`. |
 | “This social channel was connected previously to another PostQueen account.” | Choose **Fast track - Charge me now** to end the trial and add the channel, or **Cancel**. |
 | “We could not charge your credit card” after **End free trial** | Choose **Update payment method**, fix the card in the billing portal, and try again. The trial stays active until the payment succeeds. |
 

@@ -10,9 +10,11 @@ keywords:
   - postsListTool
   - analyticsPostsTool
   - uploadWidgetTool
+  - generateVideoTool
   - ask_postqueen
 ---
 
+import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
 These are the tool names your agent sees when it connects, so you can match them to what it shows in a session. You never call them yourself: you ask in plain words and the agent picks the tools.
@@ -36,7 +38,7 @@ How to connect: [MCP server](/mcp/introduction).
     `integrationSchema` returns the rules, the character limit and the settings a post needs. If a setting needs a value only the network knows, such as a WordPress post type, `triggerTool` looks it up.
   </Step>
   <Step title="Bring in media, if the post has any">
-    `uploadFromUrlTool`, the upload panel (`uploadWidgetTool`) or `generateImageTool` puts the file in your media library and returns its `path`.
+    `uploadFromUrlTool`, the upload panel (`uploadWidgetTool`) or `generateImageTool` puts the file in your media library and returns its `path`. A video made with `generateVideoTool` takes minutes: `videoStatusTool` returns its `url` when it is done.
   </Step>
   <Step title="Create the post">
     `integrationSchedulePostTool` saves a draft, schedules the post or publishes it now, and returns the new post's ID.
@@ -252,37 +254,60 @@ Creates an image and puts it in your media library. Uses one AI image credit.
 
 ### `generateVideoOptions`
 
-Lists the video generators your workspace can use. The agent calls it before it starts a video. An empty list means none is available.
+Lists the video generators your agent can use. The agent calls it before it starts a video. An empty list means none is available.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
 | `reasoning` | string | No | A short note on why the agent is asking |
 
-**Returns** `video`, each generator with its `identifier`, `title`, `description`, `trial` (whether it works during the free trial), `output`, `tools` and `customParams` (the inputs it needs).
+**Returns** `video`, one entry per generator:
+
+| Field | What it is |
+|---|---|
+| `identifier` | What `generateVideoTool` takes: `seedance` or `image-text-slides` |
+| `title` | The name the app shows: `Seedance 2.0 (Audio + Video)` or `Image Text Slides` |
+| `description` | What the generator makes |
+| `trial` | `false` when the generator waits for the paid plan during the free trial. Seedance is `false` |
+| `output` | The shapes it makes: `vertical\|horizontal` |
+| `tools` | Helpers `videoFunctionTool` runs for a value the inputs need, each with a `functionName` and what it returns |
+| `customParams` | The generator's inputs, as a JSON schema |
+
+The two generators take these inputs:
+
+| Generator | Inputs | What it makes |
+|---|---|---|
+| `seedance` | `prompt`: one scene of about 8 seconds, as a visual brief of camera, subject, motion, light and atmosphere, with no on-screen text or logos. `images`: up to three images from your media library as `{ id, path }`, or an empty list for a video from the prompt alone | One 8-second clip at 720p, with sound |
+| `image-text-slides` | `voice`: a voice id from `loadVoices`. `prompt`: what the video should say and show, in plain text | A narrated slideshow with captions, three to five slides |
 
 ### `videoFunctionTool`
 
-Looks up a value a video generator needs, such as the list of voices, with one of the helpers `generateVideoOptions` listed under `tools`.
+Looks up a value a video generator needs, with one of the helpers `generateVideoOptions` listed under `tools`. The only one today is `loadVoices` on `image-text-slides`.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
 | `identifier` | string | Yes | The generator's `identifier` |
 | `functionName` | string | Yes | The helper's `functionName` |
-| `params` | string | No | The helper's inputs, as a JSON string |
+| `params` | string | No | The helper's inputs, as a JSON string. `loadVoices` takes none |
 
-**Returns** the helper's answer.
+**Returns** the helper's answer. `loadVoices` returns `voices`, each with an `id` (the `voice` input), a `name` and a `preview_url` with a sample. A name the generator does not list returns `Function not found`, and `params` that are not JSON return `params must be a JSON string`.
 
 ### `generateVideoTool`
 
-Starts a video. It takes minutes, so the tool returns a job ID at once. Uses one AI video credit.
+Starts a video and puts it in your media library when it is done. It takes minutes, so the tool returns a job ID at once. Uses one AI video credit, which a failed video gives back.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
 | `identifier` | string | Yes | The generator's `identifier` |
-| `output` | string | Yes | `vertical` or `horizontal` |
-| `customParams` | list | Yes | The generator's inputs as `key` and `value` pairs |
+| `output` | string | Yes | `vertical` for Reels, Stories, TikTok and Shorts, or `horizontal` for X, LinkedIn, YouTube and Facebook |
+| `customParams` | list | Yes | The generator's inputs as `key` and `value` pairs, such as `{ "key": "prompt", "value": "..." }` |
 
-**Returns** a `jobId`, or `error`.
+**Returns** a `jobId`, or `error` when the video could not start. No credit is used then. The error reads `Video generation failed:`, the reason, and `The user's video credit was not used.` The reasons you are most likely to see:
+
+| Reason | What it means |
+|---|---|
+| `No AI video credits are available on this account.` | The plan's videos for this month are used up. Credits come back on the day of the month the plan started |
+| `This video is not available in trial mode` | Seedance during the free trial. Use `image-text-slides`, or end the trial on **Billing** |
+| `Video generation is not available` | PostQueen could not start the job. Try again later |
 
 ### `videoStatusTool`
 
@@ -292,7 +317,52 @@ Checks a video job.
 |---|---|---|---|
 | `jobId` | string | Yes | The `jobId` from `generateVideoTool` |
 
-**Returns** `status`: `pending` (the agent asks again in about 30 seconds), `completed` with the video's `url`, or `failed` with the `error`.
+**Returns** `status`:
+
+- `pending`: the video is still being made. The agent waits about 30 seconds and asks again.
+- `completed`, with the media's `id` and the video's `url`. The `url` goes into `attachments` as it is.
+- `failed`, with the `error`, such as `AI generation failed, please try again later.` The credit is given back.
+
+A job ID of another workspace, or one PostQueen no longer keeps, returns `error`: `Video job lookup failed: Video job not found`. A video that finished is in your media library even when its job is gone.
+
+## Clipping
+
+<ChannelStatus status="soon">Not available on PostQueen yet. These tools are not registered, so the tool counts at the top of this page leave them out.</ChannelStatus>
+
+Clipping turns a long YouTube video into short vertical clips with captions, saves them in your media library and can add them to your channels as drafts. It uses your plan's clipping minutes: one for each started minute of the video. How it works: [Clipping](/using/clipping).
+
+### `clippingTool`
+
+Starts a clipping. Before it calls the tool, the agent asks you how the horizontal video should fill the vertical clip, and waits for your answer.
+
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `url` | string | Yes | The YouTube video's link |
+| `fit` | string | Yes | `blur` keeps the whole picture over a blurred copy of itself. `crop` fills the clip with the middle of the picture and cuts the sides away: there is no face tracking, so a speaker who is not in the center can be cut out |
+| `integrations` | list | No | Up to 20 channel `id`s from `integrationList`. Every clip becomes a draft on each of them. Nothing is scheduled or published |
+| `clips` | number | No | The most clips to make, 1 to 10. Default `5` |
+
+**Returns** a `clippingId`, or `error`. A clipping takes several minutes, so the tool only starts it. In apps that can show MCP panels, a **Video Clipping** panel follows its steps, shows each clip with **Open** and **Copy link**, and tells the chat when the clips are ready.
+
+### `clippingStatusTool`
+
+Checks a clipping. While the clipping runs, the tool waits up to 25 seconds for something to change before it answers, so the agent can ask again straight away.
+
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `clippingId` | string | Yes | The `clippingId` from `clippingTool` |
+
+**Returns** `status`: `pending` while it runs, `completed`, or `failed`. With it come `step` (`analysing`, `transcribing`, `picking` or `rendering` while it runs), `title` (the video's title), `error`, and `clips`, each with `id`, `title`, `content` (the post text), `status`, `url` (the clip's video, ready to attach to a post), `thumbnail` and `error`. A `completed` clipping can still carry failed clips. A `failed` one made no clip, and its minutes were given back.
+
+### `clippingWidgetTicketTool`
+
+Used by the **Video Clipping** panel itself, not by your agent. It gets a short-lived ticket to read one clipping's progress, so the credential never appears in the chat.
+
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `clippingId` | string | Yes | The `clippingId` from `clippingTool` |
+
+**Returns** a `ticket`, or `error`.
 
 ## Agent
 

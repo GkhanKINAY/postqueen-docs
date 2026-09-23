@@ -1,0 +1,99 @@
+---
+title: "Turn a long video into short clips"
+sidebarTitle: "Clipping"
+description: "Clipping cuts a long YouTube video into short vertical clips with captions, saves them in Media and can add them to your channels as drafts."
+icon: "scissors"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+
+<ChannelStatus status="soon">Not available on PostQueen yet.</ChannelStatus>
+
+**Where:** an AI agent connected to PostQueen over [MCP](/mcp/introduction), or the [public API](/public-api/clipping/start). The app has no clipping screen.
+
+Clipping takes a long YouTube video, picks the moments that stand on their own, and turns each one into a short vertical clip with captions. The clips land in [Media](/using/media-library), and as drafts on the channels you choose.
+
+## Clip a video with your agent
+
+<Steps>
+  <Step title="Give the link">
+    Ask your agent to clip a YouTube video, and paste its link.
+  </Step>
+  <Step title="Choose blur or crop">
+    The agent asks how the horizontal video should fill the vertical clip, and waits for your answer. See [Blur or crop](#blur-or-crop).
+  </Step>
+  <Step title="Name channels and a number, if you want">
+    Name the channels that should get a draft of each clip, and how many clips you want, from 1 to 10. Without a number you get up to 5.
+  </Step>
+  <Step title="Wait for the clips">
+    Clipping takes several minutes. In apps that can show MCP panels, a **Video Clipping** panel shows each step and each clip as it is ready, with **Open** and **Copy link**. Elsewhere, ask the agent how it is going.
+  </Step>
+</Steps>
+
+With the API, send the same choices to [Start a clipping](/public-api/clipping/start), then read [Get a clipping](/public-api/clipping/get) until it is `completed` or `failed`.
+
+## What you get
+
+- **Clips**: vertical MP4 videos, 1080 × 1920. Each is one moment of the video that opens with a hook, makes one complete point and runs up to 90 seconds. Clips never overlap, and you can get fewer than you asked for.
+- **Captions** burned into the picture, timed to each spoken word.
+- **A title and a post text** for each clip, written by AI in the language of the video, without hashtags. Read them before you post.
+- **Files in Media**, each with a thumbnail from its first frame and the clip's title as alt text.
+- **Drafts**, if you named channels: one for each clip on each channel, with the post text and the clip attached. Each clip's drafts take the next free time from your [posting times](/using/posting-times). Nothing is scheduled or published. Find them under **Drafts** in the [calendar](/using/calendar), add any settings the network needs, and schedule them.
+
+## How a clipping runs
+
+| Step | What happens |
+|---|---|
+| Analysing | PostQueen reads the video's title and length, takes your minutes, and fetches its captions |
+| Transcribing | Only when the video has no captions PostQueen can use: its audio is transcribed |
+| Picking clips | AI reads what is said and picks the moments |
+| Rendering | Each clip is cut, framed, captioned and saved to Media. A clip that fails does not stop the others |
+| Done | The drafts are created |
+
+## Blur or crop
+
+| Choice | What it does |
+|---|---|
+| `blur` | Keeps the whole picture, over a blurred copy of itself that fills the frame. Nothing is cut out. The API uses it when you do not choose |
+| `crop` | Fills the frame with the middle of the picture and cuts the sides away. There is no face tracking, so a speaker who is not in the center can be cut out |
+
+## Clipping minutes
+
+- A clipping uses one minute for each started minute of the source video, however many clips it makes.
+- The minutes are taken as soon as PostQueen knows how long the video is, before any clip is made. The whole video has to fit in the minutes you have left.
+- If no clip is made, the minutes are given back.
+- Minutes reset every month, counted from the day your subscription started.
+- Clipping is not part of the free trial.
+- The minutes each plan includes, and the other limits, will be listed on [Plans and limits](/cloud/plans) when clipping opens.
+
+## If something goes wrong
+
+| Message | What to do |
+|---|---|
+| "Only YouTube videos can be clipped" | Use a `youtube.com` or `youtu.be` link. |
+| "This video is private, removed, or restricted by age or region, so it cannot be clipped." | Pick a public video. |
+| "This link is not a video that can be clipped. Live streams are not supported." | Link a video, not a live stream. |
+| "No clipping minutes are left on this account for this month." | Wait for your minutes to reset, or change your plan in **Billing**. |
+| "This video is … minutes long, more than the clipping minutes left on this account for this month." | Clip a shorter video, or wait for your minutes to reset. |
+| "No speech was found in this video." | Clipping works from what is said. Pick a video where someone talks. Your minutes were given back. |
+| "No part of this video works as a short clip." | Try another video. Your minutes were given back. |
+| "A clipping is already running, wait for it to finish" | Start the next one when the running clipping is done. |
+| "Clipping is not available in trial mode" | Clipping is not part of the free trial. |
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="MCP tools" icon="wrench" href="/mcp/tools#clipping">
+    The clipping tools your agent calls, and what each returns.
+  </Card>
+  <Card title="Start a clipping" icon="code" href="/public-api/clipping/start">
+    Start a clipping from your own code.
+  </Card>
+  <Card title="Upload and manage media" icon="images" href="/using/media-library">
+    Find the clips, change their alt text, or delete them.
+  </Card>
+  <Card title="The calendar" icon="calendar" href="/using/calendar">
+    Open the drafts, check them and schedule them.
+  </Card>
+</CardGroup>

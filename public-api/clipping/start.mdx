@@ -1,0 +1,57 @@
+---
+title: "Start a clipping"
+description: "Turn a YouTube video into short vertical clips with captions, saved to the media library and drafted on the channels you name."
+openapi: "POST /clipping"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+
+<ChannelStatus status="soon">Not available on PostQueen yet. Every request answers `503` with `Clipping is not configured`.</ChannelStatus>
+
+A clipping runs in the background and takes several minutes. This endpoint starts it and answers at once with its `id`. Follow it with [Get a clipping](/public-api/clipping/get). What the clips look like and how they are picked: [Clipping](/using/clipping).
+
+```bash
+curl -X POST "{{apiBase}}/clipping" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://www.youtube.com/watch?v=VIDEO_ID", "integrations": ["YOUR_CHANNEL_ID"], "clips": 3, "fit": "blur"}'
+```
+
+```json
+{ "id": "3f0c2a4e-8b1d-4c6e-9f2a-7d5b1e0c4a93" }
+```
+
+## The fields
+
+| Field | Default | What it does |
+|---|---|---|
+| `url` | Required | A YouTube video, on `youtube.com` or `youtu.be` |
+| `integrations` | None | Up to 20 channel ids from [List channels](/public-api/integrations/list). Every clip becomes a draft on each of them. Without any, the clips only land in the media library |
+| `clips` | `5` | The most clips to make, 1 to 10. A video with fewer good moments gives fewer |
+| `fit` | `blur` | How the horizontal picture fills the vertical clip. `blur` keeps the whole picture over a blurred copy of itself. `crop` fills the frame with the middle of the picture and cuts the sides away, with no face tracking |
+
+The drafts are never scheduled or published. Each clip's drafts take the next free time from your [posting times](/using/posting-times), with the network settings left empty: add what the network needs before you schedule them.
+
+## Minutes
+
+A clipping uses one clipping minute for each started minute of the video, however many clips it makes. They are taken once PostQueen knows how long the video is, and given back if no clip is made. See [Clipping minutes](/using/clipping#clipping-minutes).
+
+## If it fails
+
+| Answer | What to do |
+|---|---|
+| `400` with a `message` list | A field is missing or out of range. The list says which |
+| `400 Only YouTube videos can be clipped` | Send a `youtube.com` or `youtu.be` link |
+| `400 Channel {id} not found` | One of the `integrations` is not a channel in your workspace. Check it with [List channels](/public-api/integrations/list) |
+| `402` | No clipping minutes are left this month. The body has the billing link |
+| `406 Clipping is not available in trial mode` | Clipping is not part of the free trial |
+| `429 Another clipping is being started` | Two requests arrived at the same moment. Wait a few seconds and send it again |
+| `429 A clipping is already running, wait for it to finish` | Poll the running clipping until it is `completed` or `failed`, then start the next one |
+| `429 Too many clippings were started today, try again tomorrow` | Starts are counted over the last 24 hours. Try again later |
+| `503 Clipping is not configured` | Clipping is not available on PostQueen yet |
+| `503 Clipping is not available` | The clipping could not be started. Try again later |
+
+These `429` answers come from clipping itself, not from an hourly limit, so they carry no `Retry-After` header.
+
+A problem found after the start, such as a private video or one longer than your minutes, does not fail this request. It ends the clipping as `failed`, with the reason in `error` on [Get a clipping](/public-api/clipping/get).

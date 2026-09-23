@@ -164,7 +164,8 @@
             "group": "AI",
             "pages": [
               "using/ai-copilot",
-              "using/ai-images-and-video"
+              "using/ai-images-and-video",
+              "using/clipping"
             ]
           },
           {
@@ -314,6 +315,22 @@
                   "public-api/uploads/upload-file",
                   "public-api/uploads/upload-from-url",
                   "public-api/uploads/media-status"
+                ]
+              },
+              {
+                "group": "Clipping",
+                "tag": "Soon",
+                "pages": [
+                  "public-api/clipping/start",
+                  "public-api/clipping/list",
+                  "public-api/clipping/get"
+                ]
+              },
+              {
+                "group": "AI video",
+                "pages": [
+                  "public-api/videos/generate",
+                  "public-api/videos/function"
                 ]
               },
               {
@@ -1117,11 +1134,11 @@
     },
     {
       "source": "/public-api/video/generate",
-      "destination": "/public-api/introduction"
+      "destination": "/public-api/videos/generate"
     },
     {
       "source": "/public-api/video/function",
-      "destination": "/public-api/introduction"
+      "destination": "/public-api/videos/function"
     }
   ]
 }

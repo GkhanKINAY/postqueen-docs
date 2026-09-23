@@ -34,6 +34,14 @@
       "description": "Upload files to the media library"
     },
     {
+      "name": "Clipping",
+      "description": "Turn a YouTube video into short vertical clips. Not available on PostQueen yet"
+    },
+    {
+      "name": "AI video",
+      "description": "Generate a video with AI into the media library"
+    },
+    {
       "name": "Analytics",
       "description": "Channel and post metrics"
     },
@@ -1723,6 +1731,565 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/clipping": {
+      "post": {
+        "tags": [
+          "Clipping"
+        ],
+        "summary": "Start a clipping",
+        "description": "Not available on PostQueen yet: every request answers `503` with `Clipping is not configured`.\n\nStarts turning a YouTube video into short vertical clips (1080 × 1920) with burned-in captions, and answers at once with the clipping's `id`. Every clip is saved to the media library and, for each channel in `integrations`, drafted as a post. Nothing is scheduled or published. The clipping uses one clipping minute for each started minute of the video, taken once its length is known and given back if no clip is made. Follow it with `GET /clipping/{id}`.",
+        "operationId": "startClipping",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClippingRequest"
+              },
+              "example": {
+                "url": "https://www.youtube.com/watch?v=VIDEO_ID",
+                "integrations": [
+                  "YOUR_CHANNEL_ID"
+                ],
+                "clips": 3,
+                "fit": "blur"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Started. The clipping runs in the background",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The clipping's id, for `GET /clipping/{id}`"
+                    }
+                  }
+                },
+                "example": {
+                  "id": "3f0c2a4e-8b1d-4c6e-9f2a-7d5b1e0c4a93"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A field failed validation (`message` is a list), `Only YouTube videos can be clipped`, or `Channel {id} not found`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "examples": {
+                  "validation": {
+                    "summary": "Validation",
+                    "value": {
+                      "message": [
+                        "clips must not be greater than 10"
+                      ],
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  },
+                  "youtube": {
+                    "summary": "Not a YouTube link",
+                    "value": {
+                      "statusCode": 400,
+                      "message": "Only YouTube videos can be clipped"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "description": "No clipping minutes are left this month",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequired"
+                },
+                "example": {
+                  "statusCode": 402,
+                  "message": "You have used all the clipping minutes of your subscription for this month. Please upgrade your subscription to clip more videos.",
+                  "url": "https://app.postqueen.ai/billing"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "`Clipping is not available in trial mode`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 406,
+                  "message": "Clipping is not available in trial mode"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "`Another clipping is being started`, `A clipping is already running, wait for it to finish`, or `Too many clippings were started today, try again tomorrow`. These come from clipping itself, not from an hourly limit, and carry no `Retry-After`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 429,
+                  "message": "A clipping is already running, wait for it to finish"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "`Clipping is not configured`: clipping is not available on PostQueen yet. `Clipping is not available`: the clipping could not be started, try again later",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 503,
+                  "message": "Clipping is not configured"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Clipping"
+        ],
+        "summary": "List clippings",
+        "description": "Not available on PostQueen yet.\n\nThe workspace's clippings, newest first, 20 per page. The clips of one clipping are on `GET /clipping/{id}`.",
+        "operationId": "listClippings",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Page number, starting at 1",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of clippings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClippingsResponse"
+                },
+                "example": {
+                  "pages": 1,
+                  "results": [
+                    {
+                      "id": "3f0c2a4e-8b1d-4c6e-9f2a-7d5b1e0c4a93",
+                      "url": "https://www.youtube.com/watch?v=VIDEO_ID",
+                      "status": "completed",
+                      "error": null,
+                      "title": "How we plan a month of posts",
+                      "thumbnail": "https://example.com/video-thumbnail.jpg",
+                      "duration": 1524,
+                      "createdAt": "2026-10-01T09:00:12.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/clipping/{id}": {
+      "get": {
+        "tags": [
+          "Clipping"
+        ],
+        "summary": "Get a clipping",
+        "description": "Not available on PostQueen yet.\n\nA clipping's progress and its clips. Ask again every few seconds until `status` is `completed` or `failed`. A `completed` clipping can still carry failed clips, and an `error` when something went wrong after the clips were made. `failed` means no clip was made and the minutes were given back.",
+        "operationId": "getClipping",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The clipping's id from `POST /clipping`",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The clipping and its clips",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Clipping"
+                },
+                "example": {
+                  "id": "3f0c2a4e-8b1d-4c6e-9f2a-7d5b1e0c4a93",
+                  "url": "https://www.youtube.com/watch?v=VIDEO_ID",
+                  "status": "completed",
+                  "error": null,
+                  "title": "How we plan a month of posts",
+                  "thumbnail": "https://example.com/video-thumbnail.jpg",
+                  "duration": 1524,
+                  "createdAt": "2026-10-01T09:00:12.000Z",
+                  "clips": [
+                    {
+                      "id": "9b2d4f61-0c3e-4a58-8e7f-2d1c6b5a4e30",
+                      "title": "Plan the month in one sitting",
+                      "content": "We plan a whole month of posts in one afternoon. Here is the order we do it in.",
+                      "start": 312.4,
+                      "end": 371.9,
+                      "status": "completed",
+                      "error": null,
+                      "mediaId": "e639003b-f727-4a1e-87bd-74a2c48ae41e",
+                      "path": "https://cdn.example.com/clip-9b2d4f61-0c3e-4a58-8e7f-2d1c6b5a4e30.mp4",
+                      "thumbnail": "https://cdn.example.com/clip-9b2d4f61-0c3e-4a58-8e7f-2d1c6b5a4e30.jpg"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "`Clipping not found`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 404,
+                  "message": "Clipping not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/generate-video": {
+      "post": {
+        "tags": [
+          "AI video"
+        ],
+        "summary": "Generate a video",
+        "description": "Makes a video with AI and saves it to the media library. The request stays open until the video is ready, which takes minutes, and then answers with the stored file, ready to put on a post. Each video uses one of the plan's monthly AI video credits; a generation that fails gives the credit back. `seedance` is not available during the free trial.",
+        "operationId": "generateVideo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateVideoRequest"
+              },
+              "examples": {
+                "seedance": {
+                  "summary": "A clip from a prompt (seedance)",
+                  "value": {
+                    "type": "seedance",
+                    "output": "vertical",
+                    "customParams": {
+                      "prompt": "Slow push-in on a bowl of spring salad on a wooden table by a sunny window, steam rising from fresh bread beside it, warm morning light.",
+                      "images": []
+                    }
+                  }
+                },
+                "seedance-images": {
+                  "summary": "A clip that follows your images (seedance)",
+                  "value": {
+                    "type": "seedance",
+                    "output": "horizontal",
+                    "customParams": {
+                      "prompt": "The camera circles the dish slowly while a hand sprinkles herbs on top.",
+                      "images": [
+                        {
+                          "id": "YOUR_MEDIA_ID",
+                          "path": "https://cdn.example.com/a1b2c3d4e5.png"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "slides": {
+                  "summary": "A narrated slideshow (image-text-slides)",
+                  "value": {
+                    "type": "image-text-slides",
+                    "output": "vertical",
+                    "customParams": {
+                      "voice": "YOUR_VOICE_ID",
+                      "prompt": "Three reasons to try our spring menu: every dish comes in a smaller size, the salads are picked the same morning, and there is a new lemon tart."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The video, saved in the media library",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaFile"
+                },
+                "example": {
+                  "id": "c2f1a7d0-5b3e-4f7a-9d61-8e2b4c0a9f13",
+                  "name": "k3l4m5n6o7.mp4",
+                  "originalName": null,
+                  "path": "https://cdn.example.com/k3l4m5n6o7.mp4",
+                  "thumbnail": "https://cdn.example.com/p8q9r0s1t2.jpg",
+                  "alt": null,
+                  "status": "ready"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The body or `customParams` failed validation. `message` lists every problem. An unknown `type` lists the generators you can use",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "examples": {
+                  "type": {
+                    "summary": "Unknown generator",
+                    "value": {
+                      "message": [
+                        "type must be any of: seedance, image-text-slides"
+                      ],
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  },
+                  "params": {
+                    "summary": "A missing input",
+                    "value": {
+                      "message": [
+                        "prompt must be a string"
+                      ],
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "description": "The plan's AI videos for this month are used up. Credits come back on the day of the month the subscription started. When the last credit went to a request made at the same moment, the body is `{\"statusCode\": 402, \"message\": \"No credits left this month\"}` instead",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/PaymentRequired"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NestError"
+                    }
+                  ]
+                },
+                "example": {
+                  "statusCode": 402,
+                  "message": "You have reached the maximum number of generated videos for your subscription. Please upgrade your subscription to generate more videos.",
+                  "url": "https://app.postqueen.ai/billing"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "`seedance` during the free trial. End the trial, or use `image-text-slides`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 406,
+                  "message": "This video is not available in trial mode"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The AI provider's safety system refused the prompt. The message names the flagged categories when the provider gives them",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 422,
+                  "message": "Your request was rejected by the AI safety system. Please adjust your prompt and try again."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "The generation failed or timed out. The credit was given back",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 500,
+                  "message": "AI generation failed, please try again later."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/video/function": {
+      "post": {
+        "tags": [
+          "AI video"
+        ],
+        "summary": "Run a video helper",
+        "description": "Runs a helper that looks up a value a generator's `customParams` need. The only helper today is `loadVoices` on `image-text-slides`, which lists the voices its `voice` takes.",
+        "operationId": "runVideoFunction",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "identifier",
+                  "functionName"
+                ],
+                "properties": {
+                  "identifier": {
+                    "type": "string",
+                    "description": "The generator, such as `image-text-slides`"
+                  },
+                  "functionName": {
+                    "type": "string",
+                    "description": "The helper, such as `loadVoices`"
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "The helper's inputs. `loadVoices` takes none"
+                  }
+                }
+              },
+              "example": {
+                "identifier": "image-text-slides",
+                "functionName": "loadVoices"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The helper's answer. For `loadVoices`, the voices",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "voices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Send it as `voice`"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "preview_url": {
+                            "type": "string",
+                            "description": "A sample of the voice"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "voices": [
+                    {
+                      "id": "YOUR_VOICE_ID",
+                      "name": "Sarah",
+                      "preview_url": "https://cdn.example.com/voice-sample.mp3"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`identifier` or `functionName` is missing, or the generator has no helper of that name",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": "Function voices not found on video instance"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "description": "The generator does not exist, or the voice service refused the call",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 500,
+                  "message": "Internal server error"
+                }
+              }
+            }
           }
         }
       }
@@ -4737,6 +5304,328 @@
                 "value"
               ]
             }
+          }
+        }
+      },
+      "SeedanceParams": {
+        "type": "object",
+        "title": "seedance",
+        "description": "`customParams` for `seedance`: one 8-second clip at 720p, with sound.",
+        "required": [
+          "prompt",
+          "images"
+        ],
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "One scene of about 8 seconds, as a visual brief: the camera, the subject, the motion, the light and the atmosphere. Plain text, with no on-screen text or logos"
+          },
+          "images": {
+            "type": "array",
+            "maxItems": 3,
+            "description": "Up to three reference images from your media library, each as the `id` and `path` an upload returned. Send an empty list to make the video from the prompt alone",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "path"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The media id"
+                },
+                "path": {
+                  "type": "string",
+                  "description": "The media path"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ImageTextSlidesParams": {
+        "type": "object",
+        "title": "image-text-slides",
+        "description": "`customParams` for `image-text-slides`: a narrated slideshow with captions.",
+        "required": [
+          "voice",
+          "prompt"
+        ],
+        "properties": {
+          "voice": {
+            "type": "string",
+            "description": "A voice `id` from the `loadVoices` helper (Run a video helper)"
+          },
+          "prompt": {
+            "type": "string",
+            "description": "What the video should say and show, as plain text. PostQueen writes the narration from it, and each slide gets a generated picture"
+          }
+        }
+      },
+      "GenerateVideoRequest": {
+        "type": "object",
+        "required": [
+          "type",
+          "output",
+          "customParams"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "seedance",
+              "image-text-slides"
+            ],
+            "description": "The generator. `seedance` makes an 8-second clip with sound, `image-text-slides` a narrated slideshow"
+          },
+          "output": {
+            "type": "string",
+            "enum": [
+              "vertical",
+              "horizontal"
+            ],
+            "description": "`vertical` (9:16) for Reels, Stories, TikTok and Shorts; `horizontal` (16:9) for a feed post"
+          },
+          "customParams": {
+            "description": "The generator's inputs",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SeedanceParams"
+              },
+              {
+                "$ref": "#/components/schemas/ImageTextSlidesParams"
+              }
+            ]
+          }
+        }
+      },
+      "ClippingRequest": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "A YouTube video, on youtube.com or youtu.be"
+          },
+          "integrations": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string"
+            },
+            "description": "Channel ids to draft every clip on. Without any, the clips only land in the media library"
+          },
+          "clips": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5,
+            "description": "The most clips to make. A video with fewer good moments gives fewer"
+          },
+          "fit": {
+            "type": "string",
+            "enum": [
+              "blur",
+              "crop"
+            ],
+            "default": "blur",
+            "description": "How the horizontal picture fills the vertical clip. `blur` keeps the whole picture over a blurred copy of itself. `crop` fills the frame with the middle of the picture and cuts the sides away, with no face tracking"
+          }
+        }
+      },
+      "ClippingsResponse": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "integer",
+            "description": "The number of pages"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ClippingSummary"
+            }
+          }
+        }
+      },
+      "ClippingSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "The video's link, as it was sent"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "analysing",
+              "transcribing",
+              "picking",
+              "rendering",
+              "completed",
+              "failed"
+            ]
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Why the clipping failed, or what went wrong after its clips were made"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The video's title, once it is analysed"
+          },
+          "thumbnail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The video's thumbnail, once it is analysed"
+          },
+          "duration": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "The video's length in seconds, rounded up, once it is analysed"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Clipping": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "The video's link, as it was sent"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "analysing",
+              "transcribing",
+              "picking",
+              "rendering",
+              "completed",
+              "failed"
+            ]
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Why the clipping failed, or what went wrong after its clips were made"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The video's title, once it is analysed"
+          },
+          "thumbnail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The video's thumbnail, once it is analysed"
+          },
+          "duration": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "The video's length in seconds, rounded up, once it is analysed"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "clips": {
+            "type": "array",
+            "description": "The clips, in the order they appear in the video. Empty until the moments are picked",
+            "items": {
+              "$ref": "#/components/schemas/ClippingClip"
+            }
+          }
+        }
+      },
+      "ClippingClip": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short title, written by AI"
+          },
+          "content": {
+            "type": "string",
+            "description": "The post text written for the clip, without hashtags. Written from somebody else's video: show it to a person before you post it"
+          },
+          "start": {
+            "type": "number",
+            "description": "Where the clip starts in the source video, in seconds"
+          },
+          "end": {
+            "type": "number",
+            "description": "Where the clip ends in the source video, in seconds"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed",
+              "failed"
+            ]
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Why the clip failed"
+          },
+          "mediaId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The clip's id in the media library. Send it with `path` as a post's media"
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "URL of the clip's MP4, once it is made"
+          },
+          "thumbnail": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "URL of a JPEG of the clip's first frame"
           }
         }
       }

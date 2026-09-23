@@ -7,7 +7,7 @@
    (tool.list.ts, raw fetch), minus the classes facts.json keeps out of the docs.
 3. Banned strings: removed routes and tools, wrong tool counts, Windsurf, Medium,
    the old API key location, trial and rate-limit claims that are not true,
-   Bearer on the public API, clipping, veo3.
+   Bearer on the public API, veo3.
 4. The status line of each channel and agent page equals facts.json.
 5. mcp/tools names exactly facts.json's tools.
 6. Prices, trial days and refund days written in a page equal facts.json.
@@ -58,7 +58,6 @@ BANNED: list[tuple[str, re.Pattern]] = [
                 r"|(?<!not )\b(?:every|all) (?:networks?|channels?) (?:works?|can be connected|connects?)\b"
                 r"|from the first minute", re.I)),
     ("api.postqueen.ai/docs (the internal Swagger list, never linked)", re.compile(r"api\.postqueen\.ai/docs\b")),
-    ("clipping (off in production, never documented)", re.compile(r"\bclipping\b", re.I)),
     ("veo3 (no such video type)", re.compile(r"veo3", re.I)),
 ]
 FENCE_RE = re.compile(r"^([ \t]*)(```|~~~)[^\n]*\n(.*?)^\1\2", re.M | re.S)

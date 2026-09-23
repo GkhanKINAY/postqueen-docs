@@ -3,10 +3,9 @@
 
 1. `redocly lint` (pinned) reports 0 errors.
 2. The spec's paths equal the routes of the app's public controller on GitHub
-   main (public.integrations.controller.ts), without the debug, clipping and
-   AI video routes (the docs leave AI video out). The OAuth endpoints, which
-   live in the app's OAuth controller, are the only extra paths the spec may
-   carry.
+   main (public.integrations.controller.ts), without the debug routes. The
+   OAuth endpoints, which live in the app's OAuth controller, are
+   the only extra paths the spec may carry.
 
 While the spec carries "x-overhaul-todo" (batch B8 has not rebuilt it yet) the
 findings are printed and the run passes; --release (or DOCS_RELEASE=1) fails on
@@ -31,9 +30,8 @@ CONTROLLER_URL = (
     "https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/"
     "apps/backend/src/public-api/routes/v1/public.integrations.controller.ts"
 )
-# Super-admin debug routes, clipping (off in production) and AI video
-# (/generate-video, /video/function), which the docs leave out.
-EXCLUDED = re.compile(r"^/(?:debug|clipping|generate-video|video)(?:/|$)")
+# Super-admin debug routes, which the docs leave out.
+EXCLUDED = re.compile(r"^/debug(?:/|$)")
 EXTRA_ALLOWED = re.compile(r"^/oauth/")
 
 

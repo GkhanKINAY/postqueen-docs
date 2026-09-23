@@ -1,0 +1,16 @@
+---
+title: "List clippings"
+description: "Your workspace's clippings, newest first, 20 to a page, with the state of each."
+openapi: "GET /clipping"
+tag: "Soon"
+---
+
+import { ChannelStatus } from '/snippets/status-badge.mdx';
+
+<ChannelStatus status="soon">Not available on PostQueen yet.</ChannelStatus>
+
+Each entry is one clipping: its `id`, the video `url`, its `status` and `error`, the video's `title` and `thumbnail`, its `duration` in seconds and when it was started (`createdAt`). The clips themselves are on [Get a clipping](/public-api/clipping/get).
+
+- `page` starts at `1`. Leave it out for the first page.
+- `pages` is the number of pages there are.
+- `title`, `thumbnail` and `duration` are `null` until the video has been analysed.

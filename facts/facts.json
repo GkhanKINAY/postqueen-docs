@@ -291,6 +291,30 @@
         "summary": "Checks whether a video job has finished."
       },
       {
+        "name": "clippingTool",
+        "class": "ClippingTool",
+        "group": "clipping",
+        "signin": true,
+        "summary": "Starts turning a YouTube video into short vertical clips with captions, using clipping minutes. Not available on PostQueen yet.",
+        "soon": true
+      },
+      {
+        "name": "clippingStatusTool",
+        "class": "ClippingStatusTool",
+        "group": "clipping",
+        "signin": true,
+        "summary": "Checks a clipping and returns its clips when they are ready. Not available on PostQueen yet.",
+        "soon": true
+      },
+      {
+        "name": "clippingWidgetTicketTool",
+        "class": "ClippingWidgetTicketTool",
+        "group": "clipping",
+        "signin": true,
+        "summary": "Used by the clipping panel itself to get a short-lived ticket to read one clipping's progress. Not available on PostQueen yet.",
+        "soon": true
+      },
+      {
         "name": "ask_postqueen",
         "class": null,
         "group": "agent",
@@ -298,20 +322,7 @@
         "summary": "Sends a request in plain words to the PostQueen agent, which picks and runs the other tools itself."
       }
     ],
-    "notInDocs": [
-      {
-        "class": "ClippingTool",
-        "reason": "off in production"
-      },
-      {
-        "class": "ClippingStatusTool",
-        "reason": "off in production"
-      },
-      {
-        "class": "ClippingWidgetTicketTool",
-        "reason": "off in production"
-      }
-    ],
+    "notInDocs": [],
     "cannot": [
       "delete a post",
       "change a post's text or time",

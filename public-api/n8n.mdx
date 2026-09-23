@@ -13,7 +13,7 @@ keywords:
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsApi from '/snippets/next-steps-api.mdx';
 
-[`n8n-nodes-postqueen`](https://www.npmjs.com/package/n8n-nodes-postqueen) is a community node for n8n. It creates, lists and deletes posts, uploads files and lists your channels, through the PostQueen API with your API key. Everything it creates lands on the same calendar as the posts you write in the app.
+[`n8n-nodes-postqueen`](https://www.npmjs.com/package/n8n-nodes-postqueen) is a community node for n8n. It creates, lists and deletes posts, uploads files, makes AI videos and lists your channels, through the PostQueen API with your API key. Everything it creates lands on the same calendar as the posts you write in the app.
 
 This page describes version 1.0.2 of the node.
 
@@ -60,9 +60,11 @@ This page describes version 1.0.2 of the node.
 |---|---|---|
 | **Create Post** | Saves a draft, schedules a post or publishes it now, on one or more channels | [`POST /posts`](/public-api/posts/create) |
 | **Delete Post** | Deletes a post by its ID, with its whole thread | [`DELETE /posts/{id}`](/public-api/posts/delete) |
+| **Generate Video** | Makes a video with AI and saves it to your media library | [`POST /generate-video`](/public-api/videos/generate) |
 | **Get Channels** | Lists your connected channels, one item per channel | [`GET /integrations`](/public-api/integrations/list) |
 | **Get Posts** | Lists posts between two dates, optionally for one customer | [`GET /posts`](/public-api/posts/list) |
 | **Upload File** | Uploads an image or a video from a binary property | [`POST /upload`](/public-api/uploads/upload-file) |
+| **Video Function** | Runs a video generator's helper, such as the list of voices | [`POST /video/function`](/public-api/videos/function) |
 
 There is no PostQueen trigger node. A workflow starts from an n8n trigger, such as a Schedule Trigger, an RSS Feed Trigger or a webhook. To start a workflow when PostQueen publishes a post, point a [PostQueen webhook](/using/webhooks) at an n8n Webhook node.
 
@@ -101,6 +103,8 @@ What each network needs is on [Posting settings by network](/public-api/provider
 
 - **Get Posts:** **Start Date (UTC)**, **End Date (UTC)** and an optional **Customer** id.
 - **Upload File:** **Binary Property**, the name of the binary field that holds the file. Most nodes that read files call it `data`. The node returns the stored file with its `id`, `path` and `status`. A video comes back `processing`: wait until it is `ready` before you post it (see [Get media status](/public-api/uploads/media-status)).
+- **Generate Video:** **Video Type** is `seedance` or `image-text-slides` (the default); the field's hint names a type that does not exist. **Output Format** is **Vertical** or **Horizontal**. Under **Custom Parameters**, add one **Parameter** per input of the generator, with its **Key** and **Value**: `prompt` and `images` for `seedance`, `voice` and `prompt` for `image-text-slides`. A **Value** that is valid JSON is sent as JSON, so `images` can be `[]` or `[{"id": "...", "path": "..."}]`, with a lowercase `id`. The node waits while the video is made, which takes minutes, and returns the stored file: its `id` and `path` go into **Images** on Create Post. Each video uses one of your plan's AI video credits. The inputs are on [Generate a video](/public-api/videos/generate).
+- **Video Function:** set **Function Name** to `loadVoices` and **Identifier** to `image-text-slides` to list the voices, each with the `id` that `voice` takes. Leave **Additional Parameters** empty: the node sends them outside the `params` field, where the helper does not read them.
 - **Delete Post:** **Post ID**. When it works, the node outputs `{ "error": true }`: that is the API's answer to a successful delete. A post that does not exist stops the node with a 404.
 
 ## Build a workflow: new blog post to Bluesky

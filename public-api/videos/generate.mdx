@@ -1,0 +1,82 @@
+---
+title: "Generate a video"
+description: "Make a video with AI, saved to the media library and ready to put on a post."
+openapi: "POST /generate-video"
+---
+
+Pick a generator in `type`, a shape in `output`, and send the generator's inputs in `customParams`. The request stays open until the video is ready, which takes minutes, and answers with the stored file.
+
+<CodeGroup>
+
+```bash curl
+curl -X POST "{{apiBase}}/generate-video" \
+  -H "Authorization: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  --max-time 2400 \
+  -d '{
+    "type": "seedance",
+    "output": "vertical",
+    "customParams": {
+      "prompt": "Slow push-in on a bowl of spring salad on a wooden table by a sunny window, warm morning light.",
+      "images": []
+    }
+  }'
+```
+
+```js Node.js
+const res = await fetch("{{apiBase}}/generate-video", {
+  method: "POST",
+  headers: {
+    Authorization: process.env.POSTQUEEN_API_KEY,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    type: "seedance",
+    output: "vertical",
+    customParams: {
+      prompt: "Slow push-in on a bowl of spring salad on a wooden table by a sunny window, warm morning light.",
+      images: [],
+    },
+  }),
+});
+const video = await res.json();
+```
+
+</CodeGroup>
+
+The answer has the same shape as [Upload a file](/public-api/uploads/upload-file), with `status` already `ready`. Put its `id` and `path` in a post's `image` array as they are: there is nothing to poll.
+
+## The generators
+
+| `type` | What it makes | `customParams` |
+|---|---|---|
+| `seedance` | One 8-second clip at 720p, with sound. | `prompt` (string, required): one scene, as a visual brief of the camera, the subject, the motion, the light and the atmosphere, with no on-screen text or logos. `images` (list, required): up to three images from your media library, each as the `id` and `path` an upload returned. Send `[]` for a video from the prompt alone. |
+| `image-text-slides` | A narrated slideshow of three to five slides, each with a generated picture, the narration read aloud and shown as captions. | `voice` (string, required): a voice `id` from [Run a video helper](/public-api/videos/function). `prompt` (string, required): what the video should say and show, in plain text. |
+
+`output` is `vertical` (9:16) for Reels, Stories, TikTok and Shorts, or `horizontal` (16:9) for a feed post. An Image Text Slides video is 1080 × 1920 or 1920 × 1080.
+
+## How long it takes
+
+A video takes a few minutes. Seedance gives up after about 30 minutes and answers `500`. Set your HTTP client's timeout above that. If the connection closes before the answer, the video is still made and saved: find it in the app's media library.
+
+## Credits and the free trial
+
+- Each video uses one of your plan's AI videos for the month. The count starts again on the day of the month your subscription started. How many each plan has is on [Plans and limits](/cloud/plans).
+- A video that fails gives its credit back. A request refused with `400`, `402` or `406` uses none.
+- During the free trial, `seedance` answers `406`. `image-text-slides` works. See [Free trial](/cloud/trial).
+
+This endpoint has no hourly limit. Your monthly credits are the limit.
+
+## If it fails
+
+| Answer | What to do |
+|---|---|
+| `400` with a `message` list | A field is missing or wrong. `type must be any of: ...` lists the generators you can use |
+| `402` `You have reached the maximum number of generated videos for your subscription. Please upgrade your subscription to generate more videos.` | This month's videos are used up. Wait for the monthly reset, or move to a bigger plan at the `url` in the body. `No credits left this month` means the last credit went to another request made at the same moment |
+| `406` `This video is not available in trial mode` | Seedance during the free trial. Use `image-text-slides`, or end the trial on **Billing** |
+| `422` `Your request was rejected by the AI safety system.` | The provider refused the prompt. The message names the flagged categories when the provider gives them. Change the prompt |
+| `500` `AI generation failed, please try again later.` | The generation failed or timed out. The credit was given back. Try again |
+
+<Tip>
+Agents connected over MCP start the same video as a job and poll it, so nothing waits on an open connection: see [`generateVideoTool`](/mcp/tools#generatevideotool).
+</Tip>

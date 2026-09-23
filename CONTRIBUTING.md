@@ -80,7 +80,8 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
 - User tabs (Guide, AI agents, API, Plans and billing, Help) never mention self-hosting, PostQueen as open source,
   AGPL, Docker, `.env` or a server environment variable (`scripts/env-names.txt`). The CLI's `POSTQUEEN_API_KEY` is
   fine. The docs home carries the one fork line and the one link to Self-hosting.
-- Never document clipping, `/mcp-oauth-claude` or `/mcp-oauth-chatgpt`. The API key is under
+- Never document `/mcp-oauth-claude` or `/mcp-oauth-chatgpt`. Clipping is documented, as **Soon** until the app
+  switches it on. The API key is under
   **Connections > API Keys**, and only a workspace Admin or Super Admin can reveal it.
 - API examples send the raw key: `Authorization: YOUR_API_KEY`, never `Bearer` on `/public/v1`.
 

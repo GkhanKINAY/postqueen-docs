@@ -1,6 +1,6 @@
 ---
 title: "Prompts and tool calls"
-description: "Prompts that work with PostQueen's MCP server, and the tool calls an agent makes for each: posts, threads, articles, media, changes and analytics."
+description: "Prompts that work with PostQueen's MCP server, and the tool calls an agent makes for each: posts, threads, articles, media, video, changes and analytics."
 icon: "messages-square"
 keywords:
   - mcp examples
@@ -8,6 +8,7 @@ keywords:
   - integrationSchedulePostTool
   - triggerTool
   - uploadFromUrlTool
+  - generateVideoTool
   - analyticsPostsTool
 ---
 
@@ -203,6 +204,47 @@ A post takes media from your PostQueen media library, never a link to another si
 </Tabs>
 
 A video comes back as `processing` while PostQueen prepares it, and its `path` can change when it is done. From the upload panel, the agent waits until `uploadWidgetStatusTool` says `ready` and uses that `path`. A video from a link has no status tool yet, so check that post on your calendar before it goes out.
+
+## Make a video for a post
+
+```text Prompt wrap
+Make a short vertical video of our spring salad for Thursday's Bluesky post.
+```
+
+<Accordion title="The tool calls" icon="code">
+The agent lists the generators first, to learn their identifiers and inputs:
+
+```json generateVideoOptions
+{}
+```
+
+Then it starts the video. `seedance` makes one 8-second clip with sound; `images` stays empty for a video from the prompt alone:
+
+```json generateVideoTool
+{
+  "identifier": "seedance",
+  "output": "vertical",
+  "customParams": [
+    { "key": "prompt", "value": "Slow push-in on a bowl of spring salad on a wooden table by a sunny window, warm morning light." },
+    { "key": "images", "value": [] }
+  ]
+}
+```
+
+It returns a `jobId` at once. Making the video takes minutes, so the agent asks every 30 seconds or so:
+
+```json videoStatusTool
+{ "jobId": "the-job-id" }
+```
+
+```json Answer
+{ "status": "completed", "id": "the-media-id", "url": "https://cdn.example.com/k3l4m5n6o7.mp4" }
+```
+
+The `url` goes into `attachments` of `integrationSchedulePostTool`. The video uses one AI video credit, and it is also in your media library.
+
+For a narrated slideshow, the agent uses `image-text-slides`. It gets a voice first with `videoFunctionTool` (`"identifier": "image-text-slides"`, `"functionName": "loadVoices"`) and passes its `id` as `voice`, with a `prompt`. During the free trial Seedance is locked, so the agent gets `This video is not available in trial mode` and can use `image-text-slides` instead.
+</Accordion>
 
 ## Check and change what is scheduled
 
