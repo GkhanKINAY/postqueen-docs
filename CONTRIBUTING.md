@@ -69,12 +69,13 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
 ### Facts
 
 - Say what is true today. A network that cannot connect is **Soon**; one limited by the platform's review is
-  **In review** with the limit in one sentence. An agent page says whether PostQueen tested it.
+  **In review** with the limit in one sentence. An agent page says how to connect, never what PostQueen has or
+  has not tested: no status line, no "not tested yet".
 - Every number has one owner. Prices, the trial, the refund window and tool counts come from `docs.json` variables
   (`{{trialDays}}`, `{{refundDays}}`, `{{priceCreator}}`, `{{mcpToolsKey}}`, `{{mcpToolsOauth}}`, `{{mcpKeyUrl}}`,
   `{{mcpBearerUrl}}`, `{{apiBase}}` ...), or the page links to the page that owns the fact.
-- The status line under a channel or agent title is the `ChannelStatus` or `AgentStatus` snippet, with the values in
-  `facts/facts.json`. `check:facts` compares them.
+- The status line under a channel title is the `ChannelStatus` snippet, with the values in `facts/facts.json`.
+  `check:facts` compares them, and fails an agent page that carries a test status.
 - Examples use networks that work today (Bluesky, WordPress, DEV, Nostr). A network in review appears only with its
   note.
 - User tabs (Guide, AI agents, API, Plans and billing, Help) never mention self-hosting, PostQueen as open source,

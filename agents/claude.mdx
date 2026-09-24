@@ -4,11 +4,8 @@ description: "Add PostQueen to Claude as a custom connector, on the web or in Cl
 icon: "/images/brand/icon-claude.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="partly-tested" label="Key address tested (2026-09-19); sign-in from Anthropic's docs, not tested yet" />
 
 Claude is Anthropic's AI assistant on the web, in the desktop app and in the iOS and Android apps. Add PostQueen as a custom connector and Claude can list your channels, write and schedule posts, add a photo from your device, and tell you how your published posts did.
 
@@ -26,7 +23,7 @@ Claude is Anthropic's AI assistant on the web, in the desktop app and in the iOS
 
 ## Connect Claude
 
-These steps use the key address, the route PostQueen tested on 2026-09-19. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
+These steps use the key address. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
 
 <Steps>
   <Step title="Copy your MCP address">
@@ -57,7 +54,7 @@ Ask Claude: "List my PostQueen channels." Claude calls PostQueen and answers wit
 
 ## Good to know
 
-- **Anthropic advises against secrets in a URL.** The key address works and is tested, but it carries your key, so keep it private. The sign-in under [Other ways to connect](#other-ways-to-connect) avoids a key in the URL; PostQueen has not tested it yet. If the address leaks, a workspace admin rotates the key under **Connections > API Keys**.
+- **Anthropic advises against secrets in a URL.** The key address works, but it carries your key, so keep it private. The sign-in under [Other ways to connect](#other-ways-to-connect) avoids a key in the URL. If the address leaks, a workspace admin rotates the key under **Connections > API Keys**.
 - **Claude cannot add PostQueen for you.** Asked in a chat, it says it cannot add servers itself. Add the connector in **Connectors**.
 - **PostQueen is not in Anthropic's connector directory**, so searching **Connectors** does not find it. Add it as a custom connector.
 - **Upload from your device.** In Claude, PostQueen's upload widget opens an **Upload Media** panel where you add a photo or video from your device. It works on the web, in Claude Desktop, in Cowork and in the mobile apps.
@@ -67,15 +64,15 @@ Ask Claude: "List my PostQueen channels." Claude calls PostQueen and answers wit
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
-| The key in the address | `{{mcpKeyUrl}}` | Tested (2026-09-19). The route above |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs, not tested yet |
+| The key in the address | `{{mcpKeyUrl}}` | The route above |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs |
 | The Bearer header | `{{mcpBearerUrl}}` | Not for Claude: custom headers in the connector dialog are a limited beta |
 
 The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}, all but `ask_postqueen`.
 
-<Accordion title="Sign in with PostQueen instead (not tested yet)" icon="log-in">
+<Accordion title="Sign in with PostQueen instead" icon="log-in">
   With the sign-in, no key is copied or stored in Claude. Only a workspace admin can approve it.
 
   <Steps>

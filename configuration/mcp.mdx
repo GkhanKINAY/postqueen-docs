@@ -55,7 +55,7 @@ Errors come back as plain text, not JSON, so some agents show only a generic ser
 
 ## The sign-in address
 
-Agents that sign in to MCP, instead of taking the key, use `/mcp-oauth-dynamic`. They register themselves, open PostQueen for a workspace Admin or Super Admin to approve, and the access lasts until it is revoked under **Connections > Approved Apps**. PostQueen has not tested this sign-in end to end yet.
+Agents that sign in to MCP, instead of taking the key, use `/mcp-oauth-dynamic`. They register themselves, open PostQueen for a workspace Admin or Super Admin to approve, and the access lasts until it is revoked under **Connections > Approved Apps**.
 
 Signing in needs discovery to work: the agent looks for the authorization server's metadata at the root of the backend's host. With the backend under `/api`, that lookup reaches the web app and fails. So:
 

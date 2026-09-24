@@ -4,11 +4,8 @@ description: "Add PostQueen to Grok at grok.com/connectors with your MCP address
 icon: "/images/brand/icon-grok.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Grok is xAI's AI assistant at grok.com and in its mobile apps. Add PostQueen as a custom connector and Grok can list your channels, write and schedule posts, and tell you how your published posts did.
 
@@ -59,7 +56,7 @@ In a new Grok chat, ask: "List my PostQueen channels." Grok answers with the cha
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From xAI's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | Not documented: xAI does not say whether the custom connector form takes a header |

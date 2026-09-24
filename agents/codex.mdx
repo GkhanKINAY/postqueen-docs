@@ -4,11 +4,8 @@ description: "Connect OpenAI Codex to PostQueen with one codex mcp add command, 
 icon: "/images/brand/icon-codex.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Codex is OpenAI's coding agent, available as a CLI, an IDE extension, in the ChatGPT desktop app and in the cloud. Add PostQueen once and Codex can write posts from your commits, schedule them and report how your published posts did.
 
@@ -64,11 +61,11 @@ Ask Codex: "List my PostQueen channels." It calls PostQueen and answers with the
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From OpenAI's docs. The route above |
 | The Bearer token, read from your environment | `{{mcpBearerUrl}}` | From OpenAI's docs |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
 <Tabs>
   <Tab title="Bearer token">
@@ -82,7 +79,7 @@ Ask Codex: "List my PostQueen channels." It calls PostQueen and answers with the
 
     `codex mcp add` has no header flag. Other headers go under `http_headers` in `config.toml`.
   </Tab>
-  <Tab title="Sign in (not tested yet)">
+  <Tab title="Sign in">
     ```bash
     codex mcp add postqueen \
       --url https://api.postqueen.ai/mcp-oauth-dynamic

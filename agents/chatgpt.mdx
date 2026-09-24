@@ -4,11 +4,8 @@ description: "Add PostQueen to ChatGPT as a developer mode app on the web, then 
 icon: "/images/brand/icon-chatgpt.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="partly-tested" label="Key address with No Authentication tested (2026-09-19); sign-in and posting from Plus or Pro not tested yet" />
 
 ChatGPT is OpenAI's AI assistant. You add PostQueen as a developer mode app from the Plugins page on the web, and ChatGPT can then list your channels, write and schedule posts, add a file from your device, and tell you how your published posts did.
 
@@ -26,7 +23,7 @@ ChatGPT is OpenAI's AI assistant. You add PostQueen as a developer mode app from
 
 ## Connect ChatGPT
 
-These steps use the key address with **No Authentication**, the route PostQueen tested on 2026-09-19. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
+These steps use the key address with **No Authentication**. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
 
 <Steps>
   <Step title="Turn on developer mode">
@@ -64,15 +61,15 @@ Ask ChatGPT: "List my PostQueen channels." It answers with the channels you conn
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
-| The key in the address, No Authentication | `{{mcpKeyUrl}}` | Tested (2026-09-19). The route above |
-| Sign in with PostQueen, OAuth | `{{mcpOauthUrl}}` | From OpenAI's docs, not tested yet |
+| The key in the address, No Authentication | `{{mcpKeyUrl}}` | The route above |
+| Sign in with PostQueen, OAuth | `{{mcpOauthUrl}}` | From OpenAI's docs |
 | The Bearer header | `{{mcpBearerUrl}}` | Not for ChatGPT: it cannot send a custom header |
 
 The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}, all but `ask_postqueen`.
 
-<Accordion title="Sign in with PostQueen instead (not tested yet)" icon="log-in">
+<Accordion title="Sign in with PostQueen instead" icon="log-in">
   With the sign-in, no key is copied or stored in ChatGPT. Only a workspace admin can approve it.
 
   <Steps>

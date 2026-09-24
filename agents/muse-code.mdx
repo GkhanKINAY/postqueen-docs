@@ -4,11 +4,8 @@ description: "Connect Muse Code, Meta's coding agent for the terminal and CI, to
 icon: "/images/brand/icon-muse.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Muse Code is Meta's coding agent for the terminal and CI, built on Muse Spark. Add PostQueen to its settings file and Muse Code can list your channels, draft and schedule posts from your repo, and report how published posts did.
 
@@ -63,11 +60,11 @@ Ask Muse Code: "List my PostQueen channels." It answers with the channels you co
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From Meta's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | From Meta's docs |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
 <Tabs>
   <Tab title="Bearer header">
@@ -85,7 +82,7 @@ Ask Muse Code: "List my PostQueen channels." It answers with the channels you co
     }
     ```
   </Tab>
-  <Tab title="Sign in (not tested yet)">
+  <Tab title="Sign in">
     Set `"url"` to `https://api.postqueen.ai/mcp-oauth-dynamic` with no headers, then run:
 
     ```bash

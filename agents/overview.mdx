@@ -1,6 +1,6 @@
 ---
 title: "AI agents"
-description: "Let an AI agent list your channels, schedule posts and read how they did. Every agent PostQueen supports, how each one connects, and what PostQueen has tested."
+description: "Let an AI agent list your channels, schedule posts and read how they did. Every agent PostQueen supports and how each one connects."
 icon: "bot"
 mode: "wide"
 keywords:
@@ -67,52 +67,45 @@ Connect channels and edit a post's text or time in the app.
 
 ## Every agent
 
-**How it connects** is what you set up in the agent. **Sign-in or key** says whether the agent can sign in to PostQueen or takes your API key. **Status** says what PostQueen has tested:
-
-- <Badge color="green">Tested</Badge> PostQueen connected this agent and used it on 2026-09-19.
-- <Badge color="green">Key tested</Badge> PostQueen tested the key address on 2026-09-19. The sign-in address is not tested yet.
-- <Badge color="surface">Vendor's docs</Badge> The guide follows the vendor's current documentation. PostQueen has not tested the connection yet.
-- <Badge color="gray">Not possible yet</Badge> The agent cannot connect to PostQueen today.
-
-Each guide shows the agent's full status under its title.
+**How it connects** is what you set up in the agent. **Sign-in or key** says whether the agent can sign in to PostQueen or takes your API key.
 
 ### Assistants and bots
 
-| Agent | Made by | How it connects | Sign-in or key | Status | Guide |
-|---|---|---|---|---|---|
-| Claude | Anthropic | Custom connector | Sign-in or key | <Badge color="green">Key tested</Badge> | [Guide](/agents/claude) |
-| ChatGPT | OpenAI | Developer mode app | Sign-in or key | <Badge color="green">Key tested</Badge> | [Guide](/agents/chatgpt) |
-| Claude Cowork | Anthropic | Custom connector, the same one as Claude | Sign-in or key | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/claude-cowork) |
-| Grok Bot | xAI (runs on Cursor's cloud) | Custom MCP server, added by chat | Key only | <Badge color="green">Tested</Badge> | [Guide](/agents/grok-bot) |
-| Muse | Meta | Not possible by address yet | None yet | <Badge color="gray">Not possible yet</Badge> | [Guide](/agents/muse) |
-| OpenClaw | OpenClaw | Skill and CLI | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/openclaw) |
-| Hermes Agent | Nous Research | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/hermes) |
-| Grok | xAI | Custom connector | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/grok) |
-| Perplexity Computer | Perplexity | Custom remote connector | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/perplexity-computer) |
-| NanoClaw | NanoCo | MCP server added with `ncl`, key kept in the OneCLI vault | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/nanoclaw) |
+| Agent | Made by | How it connects | Sign-in or key | Guide |
+|---|---|---|---|---|
+| Claude | Anthropic | Custom connector | Sign-in or key | [Guide](/agents/claude) |
+| ChatGPT | OpenAI | Developer mode app | Sign-in or key | [Guide](/agents/chatgpt) |
+| Claude Cowork | Anthropic | Custom connector, the same one as Claude | Sign-in or key | [Guide](/agents/claude-cowork) |
+| Grok Bot | xAI (runs on Cursor's cloud) | Custom MCP server, added by chat | Key only | [Guide](/agents/grok-bot) |
+| Muse | Meta | Custom connector, built in chat | Key only | [Guide](/agents/muse) |
+| OpenClaw | OpenClaw | Skill and CLI | Key or sign-in | [Guide](/agents/openclaw) |
+| Hermes Agent | Nous Research | Config file | Key or sign-in | [Guide](/agents/hermes) |
+| Grok | xAI | Custom connector | Key only | [Guide](/agents/grok) |
+| Perplexity Computer | Perplexity | Custom remote connector | Key only | [Guide](/agents/perplexity-computer) |
+| NanoClaw | NanoCo | MCP server added with `ncl`, key kept in the OneCLI vault | Key only | [Guide](/agents/nanoclaw) |
 
 ### Coding agents
 
-| Agent | Made by | How it connects | Sign-in or key | Status | Guide |
-|---|---|---|---|---|---|
-| Claude Code | Anthropic | `claude mcp add` command | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/claude-code) |
-| Codex | OpenAI | `codex mcp add` command | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/codex) |
-| Cursor | Anysphere | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/cursor) |
-| Gemini CLI | Google | `gemini mcp add` command | Key only | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/gemini-cli) |
-| Grok Build | xAI | `grok mcp add` command | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/grok-build) |
-| Paperclip | Paperclip AI | Remote MCP connection in Apps | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/paperclip) |
+| Agent | Made by | How it connects | Sign-in or key | Guide |
+|---|---|---|---|---|
+| Claude Code | Anthropic | `claude mcp add` command | Key or sign-in | [Guide](/agents/claude-code) |
+| Codex | OpenAI | `codex mcp add` command | Key or sign-in | [Guide](/agents/codex) |
+| Cursor | Anysphere | Config file | Key or sign-in | [Guide](/agents/cursor) |
+| Gemini CLI | Google | `gemini mcp add` command | Key only | [Guide](/agents/gemini-cli) |
+| Grok Build | xAI | `grok mcp add` command | Key or sign-in | [Guide](/agents/grok-build) |
+| Paperclip | Paperclip AI | Remote MCP connection in Apps | Key or sign-in | [Guide](/agents/paperclip) |
 
 ### Editors and more
 
-| Agent | Made by | How it connects | Sign-in or key | Status | Guide |
-|---|---|---|---|---|---|
-| VS Code | Microsoft (GitHub Copilot agent mode) | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/vscode) |
-| Devin Desktop | Cognition | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/devin-desktop) |
-| Zed | Zed Industries | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/zed) |
-| Muse Code | Meta | Config file | Key, sign-in untested | <Badge color="surface">Vendor's docs</Badge> | [Guide](/agents/muse-code) |
+| Agent | Made by | How it connects | Sign-in or key | Guide |
+|---|---|---|---|---|
+| VS Code | Microsoft (GitHub Copilot agent mode) | Config file | Key or sign-in | [Guide](/agents/vscode) |
+| Devin Desktop | Cognition | Config file | Key or sign-in | [Guide](/agents/devin-desktop) |
+| Zed | Zed Industries | Config file | Key or sign-in | [Guide](/agents/zed) |
+| Muse Code | Meta | Config file | Key or sign-in | [Guide](/agents/muse-code) |
 
 <Note>
-Muse and Muse Code are two different Meta products. Muse Code, the coding agent, connects with the key address today. Muse, the personal agent, cannot take an MCP address yet.
+Muse and Muse Code are two different Meta products. Muse Code, the coding agent, connects with the key address. Muse, the personal agent, connects through a custom connector it builds with you in chat.
 </Note>
 
 Using an agent that is not listed? If it can reach a remote MCP server, give it the key address: [other MCP clients](/agents/other-mcp-clients). If it runs shell commands, give it the [CLI and the skill](/agents/skill). To post from WhatsApp, Telegram, Slack or Discord, see [post from chat apps](/agents/chat-channels).

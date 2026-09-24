@@ -4,11 +4,8 @@ description: "Turn on the PostQueen connector in a Claude Cowork session, then l
 icon: "/images/brand/icon-claude.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Claude Cowork is Anthropic's agent mode for everyday knowledge work, built on the same architecture as Claude Code with no terminal needed. It uses the same PostQueen connector as Claude: add it once, then switch it on in a Cowork session and hand Cowork the posting work.
 
@@ -59,10 +56,10 @@ Ask Cowork: "List my PostQueen channels." It answers with the channels you conne
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From Anthropic's docs. The route above |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs, not tested yet |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs |
 
 The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}, all but `ask_postqueen`.
 
