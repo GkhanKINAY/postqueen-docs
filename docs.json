@@ -59,7 +59,7 @@
     }
   },
   "banner": {
-    "content": "Post from **Claude**, **ChatGPT**, **Grok Bot** or any AI agent. [Connect your agent](/agents/overview)",
+    "content": "Post from **Grok Bot**, **Muse**, **ChatGPT**, **Claude** or any AI agent. [Connect your agent](/agents/overview)",
     "dismissible": true,
     "color": {
       "light": "#EFE9FD",
@@ -210,13 +210,13 @@
           {
             "group": "Assistants and bots",
             "pages": [
-              "agents/claude",
-              "agents/chatgpt",
-              "agents/claude-cowork",
               "agents/grok-bot",
               "agents/muse",
               "agents/openclaw",
               "agents/hermes",
+              "agents/claude",
+              "agents/claude-cowork",
+              "agents/chatgpt",
               "agents/grok",
               "agents/perplexity-computer",
               "agents/nanoclaw",

@@ -133,7 +133,7 @@ postqueen integrations:list | tail -n +2 | jq -r '.[] | "\(.identifier)\t\(.id)"
 
 ## Use it from an AI agent
 
-An agent that runs shell commands, such as Claude Code, Cursor, Gemini CLI, Grok Build, OpenClaw or Hermes Agent, can drive the CLI. Install [the postqueen skill](/agents/skill) so it knows the commands and the rules:
+An agent that runs shell commands, such as OpenClaw, Hermes Agent, Claude Code, Cursor, Gemini CLI or Grok Build, can drive the CLI. Install [the postqueen skill](/agents/skill) so it knows the commands and the rules:
 
 ```bash
 npx skills add GkhanKINAY/postqueen-agent
