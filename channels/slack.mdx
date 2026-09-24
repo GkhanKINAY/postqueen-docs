@@ -1,16 +1,12 @@
 ---
 title: "Slack"
-description: "What PostQueen will post to public and private Slack channels, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to public and private Slack channels, and the limits it checks before a post is scheduled."
 icon: "/images/channels/slack.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post messages and images to your public and private Slack channels, under the name and picture you choose for the channel, with follow-ups as thread replies.
+PostQueen posts messages and images to your public and private Slack channels, under the name and picture you choose for the channel, with follow-ups as thread replies.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/slack.webp" alt="A new Slack post in the PostQueen composer, with the post types Slack takes and the time it goes out" />
@@ -37,9 +33,24 @@ PostQueen will post messages and images to your public and private Slack channel
 
 ## Connect Slack
 
-<Note>
-Slack is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will install PostQueen's Slack app in your workspace, so you will need permission to install apps there.
-</Note>
+Connecting Slack installs PostQueen's Slack app in your workspace, so you need permission to install apps there.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Slack**.
+  </Step>
+  <Step title="Install the app">
+    Install the PostQueen app to your workspace.
+  </Step>
+  <Step title="Invite it to private channels">
+    Invite the app to any private channel you want to post in.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
+
+In each post, pick the Slack channel to post in.
 
 ## Post settings
 

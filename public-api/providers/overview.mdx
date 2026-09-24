@@ -1,11 +1,9 @@
 ---
 title: "Posting settings by network"
 sidebarTitle: "Overview"
-description: "The settings type each network needs in a post, which fields are required, its text limit, its status today, and where each network's page is."
+description: "The settings type each network needs in a post, which fields are required, its text limit, and where each network's page is."
 icon: "sliders-horizontal"
 ---
-
-import { ChannelBadge } from '/snippets/status-badge.mdx';
 
 Every post you send to [create a post](/public-api/posts/create) names a channel and carries a `settings` object for that channel's network. This page lists, for each network, the settings type, the fields a post must include and the text limit. Each network's page has every field, the rules PostQueen checks and complete examples.
 
@@ -40,73 +38,65 @@ A post that breaks one of the network's own rules, such as a media count or the 
 }
 ```
 
-## Status and connecting
+## Connecting
 
-A post needs a connected channel, and not every network can be connected today:
-
-| Status | What it means for the API |
-|---|---|
-| <ChannelBadge status="available" /> | Connect the channel in the app, then post to it here. |
-| <ChannelBadge status="in-review" /> | The channel connects and posts within the limit its page states, until that limit is lifted. |
-| <ChannelBadge status="soon" /> | The channel cannot be connected on PostQueen yet, so there is nothing to post to. Its page documents the settings it will take. |
-
-All eight available networks connect with a key, a password or an agent that only the app's connect form takes, so [Get a connect URL](/public-api/integrations/connect) cannot connect them. Connect them in the app, then read their ids with [list channels](/public-api/integrations/list).
+A post needs a connected channel. Bluesky, Nostr, Lemmy, Moltbook, WordPress, DEV, Hashnode and Listmonk connect with a key, a password or an agent that only the app's connect form takes, so [Get a connect URL](/public-api/integrations/connect) cannot connect them. Connect them in the app, then read their ids with [list channels](/public-api/integrations/list).
 
 ## Social networks
 
 | Network | `__type` | A post must include | Text limit |
 |---|---|---|---|
-| [Instagram](/public-api/providers/instagram) <ChannelBadge status="in-review" /> | `instagram`, `instagram-standalone` | `post_type` | 2,200 characters |
-| [TikTok](/public-api/providers/tiktok) <ChannelBadge status="in-review" /> | `tiktok`, `tiktok-business` | `content_posting_method`, `privacy_level`, and six interaction and disclosure fields | 2,000 characters |
-| [Facebook](/public-api/providers/facebook) <ChannelBadge status="in-review" /> | `facebook` | Nothing more | 63,206 characters |
-| [X](/public-api/providers/x) <ChannelBadge status="in-review" /> | `x` | `who_can_reply_post`, except on an Article | 280 characters, 4,000 on verified accounts |
-| [LinkedIn](/public-api/providers/linkedin) <ChannelBadge status="soon" /> | `linkedin`, `linkedin-page` | Nothing more | 3,000 characters |
-| [Threads](/public-api/providers/threads) <ChannelBadge status="in-review" /> | `threads` | Nothing more | 500 bytes |
-| [Bluesky](/public-api/providers/bluesky) <ChannelBadge status="available" /> | `bluesky` | Nothing more | 300 characters |
-| [Reddit](/public-api/providers/reddit) <ChannelBadge status="soon" /> | `reddit` | `subreddit`, each with a subreddit, `title`, `type` and `is_flair_required` | 10,000 characters |
-| [Mastodon](/public-api/providers/mastodon) <ChannelBadge status="soon" /> | `mastodon` | Nothing more | 500 characters |
-| [Tumblr](/public-api/providers/tumblr) <ChannelBadge status="soon" /> | `tumblr` | Nothing more | 32,768 characters |
-| [VK](/public-api/providers/vk) <ChannelBadge status="soon" /> | `vk` | Nothing more | 2,048 characters |
-| [Farcaster](/public-api/providers/farcaster) <ChannelBadge status="soon" /> | `wrapcast` | Nothing more | 1,024 bytes |
-| [Nostr](/public-api/providers/nostr) <ChannelBadge status="available" /> | `nostr` | Nothing more | 100,000 characters |
-| [Lemmy](/public-api/providers/lemmy) <ChannelBadge status="available" /> | `lemmy` | `subreddit`, each with a community name, `id` and `title` | 10,000 characters |
-| [MeWe](/public-api/providers/mewe) <ChannelBadge status="soon" /> | `mewe` | `postType`, and `group` for a group post | 63,206 characters |
+| [Instagram](/public-api/providers/instagram) | `instagram`, `instagram-standalone` | `post_type` | 2,200 characters |
+| [TikTok](/public-api/providers/tiktok) | `tiktok`, `tiktok-business` | `content_posting_method`, `privacy_level`, and six interaction and disclosure fields | 2,000 characters |
+| [Facebook](/public-api/providers/facebook) | `facebook` | Nothing more | 63,206 characters |
+| [X](/public-api/providers/x) | `x` | `who_can_reply_post`, except on an Article | 280 characters, 4,000 on verified accounts |
+| [LinkedIn](/public-api/providers/linkedin) | `linkedin`, `linkedin-page` | Nothing more | 3,000 characters |
+| [Threads](/public-api/providers/threads) | `threads` | Nothing more | 500 bytes |
+| [Bluesky](/public-api/providers/bluesky) | `bluesky` | Nothing more | 300 characters |
+| [Reddit](/public-api/providers/reddit) | `reddit` | `subreddit`, each with a subreddit, `title`, `type` and `is_flair_required` | 10,000 characters |
+| [Mastodon](/public-api/providers/mastodon) | `mastodon` | Nothing more | 500 characters |
+| [Tumblr](/public-api/providers/tumblr) | `tumblr` | Nothing more | 32,768 characters |
+| [VK](/public-api/providers/vk) | `vk` | Nothing more | 2,048 characters |
+| [Farcaster](/public-api/providers/farcaster) | `wrapcast` | Nothing more | 1,024 bytes |
+| [Nostr](/public-api/providers/nostr) | `nostr` | Nothing more | 100,000 characters |
+| [Lemmy](/public-api/providers/lemmy) | `lemmy` | `subreddit`, each with a community name, `id` and `title` | 10,000 characters |
+| [MeWe](/public-api/providers/mewe) | `mewe` | `postType`, and `group` for a group post | 63,206 characters |
 
 ## Video and live
 
 | Network | `__type` | A post must include | Text limit |
 |---|---|---|---|
-| [YouTube](/public-api/providers/youtube) <ChannelBadge status="in-review" /> | `youtube` | `title`, `type` | 5,000 bytes |
-| [Twitch](/public-api/providers/twitch) <ChannelBadge status="soon" /> | `twitch` | Nothing more | 500 characters |
-| [Kick](/public-api/providers/kick) <ChannelBadge status="soon" /> | `kick` | Nothing more | 500 characters |
+| [YouTube](/public-api/providers/youtube) | `youtube` | `title`, `type` | 5,000 bytes |
+| [Twitch](/public-api/providers/twitch) | `twitch` | Nothing more | 500 characters |
+| [Kick](/public-api/providers/kick) | `kick` | Nothing more | 500 characters |
 
 ## Business and discovery
 
 | Network | `__type` | A post must include | Text limit |
 |---|---|---|---|
-| [Pinterest](/public-api/providers/pinterest) <ChannelBadge status="soon" /> | `pinterest` | `board` | 800 characters |
-| [Google Business Profile](/public-api/providers/gmb) <ChannelBadge status="soon" /> | `gmb` | Nothing more for an update; an event or offer needs its title and dates | 1,500 characters |
-| [Dribbble](/public-api/providers/dribbble) <ChannelBadge status="soon" /> | `dribbble` | `title` | 40,000 characters |
+| [Pinterest](/public-api/providers/pinterest) | `pinterest` | `board` | 800 characters |
+| [Google Business Profile](/public-api/providers/gmb) | `gmb` | Nothing more for an update; an event or offer needs its title and dates | 1,500 characters |
+| [Dribbble](/public-api/providers/dribbble) | `dribbble` | `title` | 40,000 characters |
 
 ## Chat and communities
 
 | Network | `__type` | A post must include | Text limit |
 |---|---|---|---|
-| [Telegram](/public-api/providers/telegram) <ChannelBadge status="soon" /> | `telegram` | Nothing more | 4,096 characters, 1,024 with media |
-| [Discord](/public-api/providers/discord) <ChannelBadge status="soon" /> | `discord` | `channel` | 1,980 characters |
-| [Slack](/public-api/providers/slack) <ChannelBadge status="soon" /> | `slack` | `channel` | 150,000 characters |
-| [Skool](/public-api/providers/skool) <ChannelBadge status="soon" /> | `skool` | `group`, `label`, `title` | 5,000 characters |
-| [Whop](/public-api/providers/whop) <ChannelBadge status="soon" /> | `whop` | `company`, `experience` | 50,000 characters |
-| [Moltbook](/public-api/providers/moltbook) <ChannelBadge status="available" /> | `moltbook` | `submolt` | 300 characters |
+| [Telegram](/public-api/providers/telegram) | `telegram` | Nothing more | 4,096 characters, 1,024 with media |
+| [Discord](/public-api/providers/discord) | `discord` | `channel` | 1,980 characters |
+| [Slack](/public-api/providers/slack) | `slack` | `channel` | 150,000 characters |
+| [Skool](/public-api/providers/skool) | `skool` | `group`, `label`, `title` | 5,000 characters |
+| [Whop](/public-api/providers/whop) | `whop` | `company`, `experience` | 50,000 characters |
+| [Moltbook](/public-api/providers/moltbook) | `moltbook` | `submolt` | 300 characters |
 
 ## Blogs and newsletters
 
 | Network | `__type` | A post must include | Text limit |
 |---|---|---|---|
-| [WordPress](/public-api/providers/wordpress) <ChannelBadge status="available" /> | `wordpress` | `title`, `type` | 100,000 characters |
-| [DEV](/public-api/providers/devto) <ChannelBadge status="available" /> | `devto` | `title` | 100,000 characters |
-| [Hashnode](/public-api/providers/hashnode) <ChannelBadge status="available" /> | `hashnode` | `title`, `publication`, `tags`. Needs Hashnode Pro on the publication | 10,000 characters |
-| [Listmonk](/public-api/providers/listmonk) <ChannelBadge status="available" /> | `listmonk` | `subject`, `preview`, `list` | 300,000 characters in the app |
+| [WordPress](/public-api/providers/wordpress) | `wordpress` | `title`, `type` | 100,000 characters |
+| [DEV](/public-api/providers/devto) | `devto` | `title` | 100,000 characters |
+| [Hashnode](/public-api/providers/hashnode) | `hashnode` | `title`, `publication`, `tags`. Needs Hashnode Pro on the publication | 10,000 characters |
+| [Listmonk](/public-api/providers/listmonk) | `listmonk` | `subject`, `preview`, `list` | 300,000 characters in the app |
 
 <Note>
 For Moltbook, [Get a channel's settings](/public-api/integrations/settings) answers “No additional settings required”, but a post needs `submolt`. [Moltbook posting settings](/public-api/providers/moltbook) has the details.
@@ -124,7 +114,7 @@ For Moltbook, [Get a channel's settings](/public-api/integrations/settings) answ
   <Card title="Limits and errors" icon="gauge" href="/public-api/limits-and-errors">
     The hourly limits, and the status codes the API returns.
   </Card>
-  <Card title="Channels and their status" icon="layout-grid" href="/channels/overview">
-    What each network posts and whether you can connect it today.
+  <Card title="All channels" icon="layout-grid" href="/channels/overview">
+    What each network posts and how to connect it.
   </Card>
 </CardGroup>

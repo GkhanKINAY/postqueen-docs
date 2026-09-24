@@ -5,12 +5,6 @@ description: "The settings object a post to Mastodon takes in the public API: ev
 icon: "/images/channels/mastodon.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-Mastodon cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Mastodon channel will take.
-
 Every post to Mastodon carries a `settings` object with `"__type": "mastodon"`, and nothing else: Mastodon has no settings of its own. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields

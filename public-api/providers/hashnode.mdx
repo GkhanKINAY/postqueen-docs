@@ -5,10 +5,6 @@ description: "The settings object a post to Hashnode takes in the public API: ti
 icon: "/images/channels/hashnode.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-<ChannelStatus status="available">Needs Hashnode's Pro plan on the publication you connect.</ChannelStatus>
-
 Every post to Hashnode carries a `settings` object with `"__type": "hashnode"`, a title, a publication and at least one tag. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Hashnode channel connects with a personal access token, which only the app's connect form takes. [Connect it in the app](/channels/hashnode) first, then post to it here. Hashnode answers only for publications on its Pro plan, so a post to one without Pro fails when it is published.

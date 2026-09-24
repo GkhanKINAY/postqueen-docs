@@ -1,16 +1,12 @@
 ---
 title: "Reddit"
-description: "What PostQueen will post to Reddit, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Reddit, and the limits it checks before a post is scheduled."
 icon: "/images/channels/reddit.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post text, link, image and video posts to the subreddits you pick, each with the title, post type and flair that subreddit needs.
+PostQueen posts text, link, image and video posts to the subreddits you pick, each with the title, post type and flair that subreddit needs.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/reddit.webp" alt="A new Reddit post in the PostQueen composer, with the post types Reddit takes and the time it goes out" />
@@ -37,9 +33,21 @@ PostQueen will post text, link, image and video posts to the subreddits you pick
 
 ## Connect Reddit
 
-<Note>
-Reddit is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Each subreddit's own rules, karma and flair requirements will still apply to the account you connect.
-</Note>
+Each subreddit's own rules, karma and flair requirements apply to the account you connect.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Reddit**.
+  </Step>
+  <Step title="Sign in to Reddit">
+    Sign in to Reddit and allow the permissions.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
+
+In each post, search for the subreddit, then set its title, post type and flair.
 
 ## Post settings
 

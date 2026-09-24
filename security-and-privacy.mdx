@@ -21,13 +21,14 @@ PostQueen publishes through each network's own API. It does not drive a browser 
 
 | Networks | How you connect, and what PostQueen keeps |
 |---|---|
-| Facebook, Instagram, Threads, TikTok, X, YouTube | On the network's own sign-in screen. PostQueen keeps a token with the permissions you approved there, and never sees your password. |
+| Facebook, Instagram, Threads, TikTok, X, YouTube, LinkedIn, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop | On the network's own sign-in screen. PostQueen keeps a token with the permissions you approved there, and never sees your password. |
 | Bluesky, WordPress, DEV, Hashnode, Listmonk | With a credential you create for PostQueen: an app password (Bluesky), an Application Password (WordPress), an API key (DEV), a personal access token (Hashnode) or an API user's token (Listmonk). You can revoke it where you created it without changing your own password. |
 | Lemmy | With your username and password on the instance, because Lemmy offers no other way in. |
 | Nostr | With your private key, which PostQueen needs to sign your notes. |
 | Moltbook | PostQueen registers an agent for you and keeps the agent's key from Moltbook. You never type one in. |
-
-Networks marked Soon are not in the table because they cannot be connected yet. Skool has no public API, so when it opens it will connect through the PostQueen browser extension with your own Skool session, and [its page](/channels/skool) explains what that means for your account.
+| Telegram | By adding PostQueen's bot to your channel or group as an administrator. PostQueen never sees your password. |
+| Farcaster | By approving PostQueen in the Farcaster app on your phone. |
+| Skool | Skool has no public API, so PostQueen connects through the PostQueen browser extension with your own Skool session. [Its page](/channels/skool) explains what that means for your account. |
 
 <NeverShare />
 

@@ -1,16 +1,12 @@
 ---
 title: "VK"
-description: "What PostQueen will post to VK, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to VK, and the limits it checks before a post is scheduled."
 icon: "/images/channels/vk.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post text and photos to your personal VK wall, with follow-ups as comments on the post.
+PostQueen posts text and photos to your personal VK wall, with follow-ups as comments on the post.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/vk.webp" alt="A new VK post in the PostQueen composer, with the post types VK takes and the time it goes out" />
@@ -37,9 +33,19 @@ PostQueen will post text and photos to your personal VK wall, with follow-ups as
 
 ## Connect VK
 
-<Note>
-VK is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will connect a personal VK account through VK ID, and posts will go to that account's own wall.
-</Note>
+PostQueen connects a personal VK account through VK ID, and posts go to that account's own wall.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **VK**.
+  </Step>
+  <Step title="Sign in with VK ID">
+    Sign in with VK ID and approve access.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 

@@ -68,16 +68,19 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
 
 ### Facts
 
-- Say what is true today. A network that cannot connect is **Soon**; one limited by the platform's review is
-  **In review** with the limit in one sentence. An agent page says how to connect, never what PostQueen has or
-  has not tested: no status line, no "not tested yet".
+- Describe the product as it works in production (owner, 2026-09-24). Every network is documented as available:
+  no status line, no **In review** or **Soon** badge on a network, and no platform-review limits such as "testers
+  only", "only accounts with a role on the app" or "posts stay private until the audit". **Soon** is only for what is
+  not built or published yet: Make, Zapier, the Chrome extension and clipping. Conditions the product itself enforces
+  stay (X after the trial, Hashnode Pro). An agent page says how to connect, never what PostQueen has or has not
+  tested: no status line, no "not tested yet".
 - Every number has one owner. Prices, the trial, the refund window and tool counts come from `docs.json` variables
   (`{{trialDays}}`, `{{refundDays}}`, `{{priceCreator}}`, `{{mcpToolsKey}}`, `{{mcpToolsOauth}}`, `{{mcpKeyUrl}}`,
   `{{mcpBearerUrl}}`, `{{apiBase}}` ...), or the page links to the page that owns the fact.
-- The status line under a channel title is the `ChannelStatus` snippet, with the values in `facts/facts.json`.
-  `check:facts` compares them, and fails an agent page that carries a test status.
-- Examples use networks that work today (Bluesky, WordPress, DEV, Nostr). A network in review appears only with its
-  note.
+- Channel and agent pages carry no status line. `check:facts` fails a page with a `ChannelStatus` line, a review
+  note ("In review", "testers", "until Meta approves" ...) or an agent test status.
+- Examples may use any network. Bluesky, WordPress, DEV and Nostr need no sign-in page, so they are the easiest to
+  try.
 - User tabs (Guide, AI agents, API, Plans and billing, Help) never mention self-hosting, PostQueen as open source,
   AGPL, Docker, `.env` or a server environment variable (`scripts/env-names.txt`). The CLI's `POSTQUEEN_API_KEY` is
   fine. The docs home carries the one fork line and the one link to Self-hosting.

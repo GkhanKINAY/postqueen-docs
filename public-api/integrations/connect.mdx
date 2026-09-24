@@ -8,13 +8,13 @@ This returns a URL and nothing more. The network shows its own consent screen to
 
 ## Which networks it is for
 
-It is for networks that sign in on their own consent page. On PostQueen today those are the networks **In review**: Instagram, Facebook, Threads, X, TikTok and YouTube. Each works with the limit on its [channel page](/channels/overview) until the network approves PostQueen's app.
+It is for networks that sign in on their own consent page.
 
 | Networks | What to do |
 |---|---|
-| Instagram (`instagram`, `instagram-standalone`), Facebook, Threads, X, TikTok, YouTube | They sign in on their own consent page: open the `url` this returns |
+| Instagram (`instagram`, `instagram-standalone`), Facebook, Threads, X, TikTok, TikTok Business, YouTube, LinkedIn, LinkedIn Page, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop | They sign in on their own consent page: open the `url` this returns |
 | Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress | They connect with a handle, key or password: use **Add Channel** in the app. The `url` returned here is only an internal state value |
-| Every other network | Soon: cannot be connected on PostQueen yet, whatever this returns |
+| Telegram, Farcaster, Skool | They connect through a bot code, an approval in the Farcaster app or the browser extension: use **Add Channel** in the app |
 
 The `{integration}` value is the network's identifier, in lower case: `youtube`, `threads`, `instagram-standalone`. It is not always the display name.
 

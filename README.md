@@ -50,7 +50,7 @@ PostQueen is a social media scheduler with an AI copilot. It schedules posts to 
 | --- | --- | --- |
 | Getting started | What PostQueen is and how to publish your first post | [/introduction](https://docs.postqueen.ai/introduction) · [/quickstart](https://docs.postqueen.ai/quickstart) |
 | Using the app | The calendar, the composer, analytics, teams and settings | [/using/calendar](https://docs.postqueen.ai/using/calendar) |
-| Channels | Each network, its status today, and what it supports | [/channels/overview](https://docs.postqueen.ai/channels/overview) |
+| Channels | Each network, what it supports and how to connect it | [/channels/overview](https://docs.postqueen.ai/channels/overview) |
 | Plans and billing | Plans, the free trial, refunds and your subscription | [/cloud/plans](https://docs.postqueen.ai/cloud/plans) |
 | AI agents and MCP | Connecting Claude, ChatGPT, Cursor, Codex and other agents | [/agents/overview](https://docs.postqueen.ai/agents/overview) · [/mcp/introduction](https://docs.postqueen.ai/mcp/introduction) |
 | CLI | The `postqueen` command line | [/cli/introduction](https://docs.postqueen.ai/cli/introduction) |

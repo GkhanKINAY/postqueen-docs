@@ -148,7 +148,7 @@
           "Channels"
         ],
         "summary": "Get a connect URL",
-        "description": "Starts connecting a network and returns the URL of its sign-in page, for a person to open in a browser. When they approve, the new channel appears in the workspace and they land in the PostQueen app.\n\nThis works for networks that sign in with their own consent page. Networks connected with a handle, key or password (Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress) answer 200 with a `url` that is only an internal state value: connect those from **Add Channel** in the app. A network marked Soon on [Channels](/channels/overview) cannot be connected yet, whatever this returns. The sign-in state is kept for one hour.",
+        "description": "Starts connecting a network and returns the URL of its sign-in page, for a person to open in a browser. When they approve, the new channel appears in the workspace and they land in the PostQueen app.\n\nThis works for networks that sign in with their own consent page. Networks connected with a handle, key or password (Bluesky, DEV, Hashnode, Lemmy, Listmonk, Moltbook, Nostr, WordPress) answer 200 with a `url` that is only an internal state value: connect those from **Add Channel** in the app. The sign-in state is kept for one hour.",
         "operationId": "getIntegrationUrl",
         "parameters": [
           {

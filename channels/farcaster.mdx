@@ -1,16 +1,12 @@
 ---
 title: "Farcaster"
-description: "What PostQueen will post to your Farcaster home feed and channels, and the limits it checks before a cast is scheduled."
+description: "What PostQueen posts to your Farcaster home feed and channels, and the limits it checks before a cast is scheduled."
 icon: "/images/channels/farcaster.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will publish casts with up to 4 images to your home feed or to one or more Farcaster channels, with follow-ups published as a reply chain.
+PostQueen publishes casts with up to 4 images to your home feed or to one or more Farcaster channels, with follow-ups published as a reply chain.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/farcaster.webp" alt="A new Farcaster post in the PostQueen composer, with the post types Farcaster takes and the time it goes out" />
@@ -37,9 +33,22 @@ PostQueen will publish casts with up to 4 images to your home feed or to one or 
 
 ## Connect Farcaster
 
-<Note>
-Farcaster is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will mean approving PostQueen in the Farcaster app on your phone.
-</Note>
+You approve PostQueen in the Farcaster app on your phone.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Farcaster**.
+  </Step>
+  <Step title="Open the link on your phone">
+    Scan the QR code with your phone, or copy the link and open it on your phone.
+  </Step>
+  <Step title="Approve PostQueen">
+    Approve PostQueen in the Farcaster app. The channel connects once the approval arrives.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 

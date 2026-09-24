@@ -5,12 +5,6 @@ description: "The settings object a post to Reddit takes in the public API: ever
 icon: "/images/channels/reddit.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-Reddit cannot be connected on PostQueen yet, so a post to it has no channel to go to. The settings below are the ones a Reddit channel will take.
-
 Every post to Reddit carries a `settings` object with `"__type": "reddit"` and one entry for each subreddit the post goes to. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields

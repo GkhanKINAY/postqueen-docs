@@ -1,16 +1,12 @@
 ---
 title: "Google Business Profile"
-description: "What PostQueen will post to Google Business Profile, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Google Business Profile, and the limits it checks before a post is scheduled."
 icon: "/images/channels/google-business.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post updates, events and offers with a photo to the Business Profile locations you manage, and add a button such as Book or Call to updates and events.
+PostQueen posts updates, events and offers with a photo to the Business Profile locations you manage, and add a button such as Book or Call to updates and events.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/google-business.webp" alt="A new Google Business Profile post in the PostQueen composer, with the post types Google Business Profile takes and the time it goes out" />
@@ -37,9 +33,22 @@ PostQueen will post updates, events and offers with a photo to the Business Prof
 
 ## Connect Google Business Profile
 
-<Note>
-Google Business Profile is listed in **Add Channel** as **Google My Business**, but it cannot be connected on PostQueen yet. The location has to be verified on Google: unverified locations do not accept posts.
-</Note>
+Google Business Profile is listed in **Add Channel** as **Google My Business**. The location has to be verified on Google: unverified locations do not accept posts.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Google My Business**.
+  </Step>
+  <Step title="Sign in with Google">
+    Sign in with the Google account that manages the location, and approve every permission you are asked for.
+  </Step>
+  <Step title="Pick the location">
+    Choose the location to connect. Every location in every account you manage is listed.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 

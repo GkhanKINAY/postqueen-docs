@@ -1,24 +1,19 @@
 {/*
-  Channel status, one line under a channel page's title. The status must equal
-  facts/facts.json for that network (npm run check:facts compares them):
-    available  = works           green   "Available"
-    in-review  = review_gated    yellow  "In review", the note is the limit
-    soon       = no_keys, cannot_connect   gray  "Soon"
-  The note (children) is the network's statusNote from facts.json, word for word.
+  A status badge for a feature that is not out yet (owner, 2026-09-24): Make,
+  Zapier, the Chrome extension and clipping. Networks carry no status badge.
+    soon       gray   "Soon"
+    available  green  "Available"
 
   import { ChannelStatus } from '/snippets/status-badge.mdx';
-  <ChannelStatus status="in-review">Until Meta approves PostQueen's app, ...</ChannelStatus>
+  <ChannelStatus status="soon">Not available on PostQueen yet.</ChannelStatus>
 
-  ChannelBadge is the same badge on its own, with no note and no margin, for
-  a table cell or a card on the index pages (channels/overview,
-  public-api/providers/overview):
-  <ChannelBadge status="soon" />
+  ChannelBadge is the same badge on its own, with no note and no margin, for a
+  table cell or a card.
 */}
 
 export const ChannelStatus = ({ status, children }) => {
   const look = {
     available: { color: 'green', label: 'Available' },
-    'in-review': { color: 'yellow', label: 'In review' },
     soon: { color: 'gray', label: 'Soon' },
   }[status] || { color: 'gray', label: status };
   return (
@@ -32,7 +27,6 @@ export const ChannelStatus = ({ status, children }) => {
 export const ChannelBadge = ({ status }) => {
   const look = {
     available: { color: 'green', label: 'Available' },
-    'in-review': { color: 'yellow', label: 'In review' },
     soon: { color: 'gray', label: 'Soon' },
   }[status] || { color: 'gray', label: status };
   return <Badge color={look.color} shape="pill" size="sm">{look.label}</Badge>;

@@ -14,7 +14,7 @@ keywords:
 
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-You ask in plain words and the agent makes the calls. This page shows prompts that work and the calls behind them, so you can tell what went wrong when a result looks off. The examples use Bluesky, WordPress and DEV, which anyone can connect today. The analytics example uses Instagram, which is in review.
+You ask in plain words and the agent makes the calls. This page shows prompts that work and the calls behind them, so you can tell what went wrong when a result looks off. The examples use Bluesky, WordPress and DEV. The analytics example uses Instagram.
 
 Most requests follow the same order: find the channel with `integrationList`, read its rules with `integrationSchema`, look up any value a setting needs with `triggerTool`, bring in media, then create the post with `integrationSchedulePostTool`. Every tool is on [MCP tools](/mcp/tools).
 
@@ -279,7 +279,7 @@ Which of my Instagram posts did best this month, and how many impressions did my
 ```
 
 <Note>
-Bluesky, WordPress and DEV report no analytics, so this example uses Instagram. Instagram is [in review](/channels/instagram): until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect it.
+Bluesky, WordPress and DEV report no analytics, so this example uses Instagram.
 </Note>
 
 <Accordion title="The tool calls" icon="code">

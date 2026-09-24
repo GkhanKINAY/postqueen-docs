@@ -1,16 +1,12 @@
 ---
 title: "Discord"
-description: "What PostQueen will post to Discord text and announcement channels, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Discord text and announcement channels, and the limits it checks before a post is scheduled."
 icon: "/images/channels/discord.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post messages with attachments and mentions to the text and announcement channels of your Discord servers, sent by its bot.
+PostQueen posts messages with attachments and mentions to the text and announcement channels of your Discord servers, sent by its bot.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/discord.webp" alt="A new Discord post in the PostQueen composer, with the post types Discord takes and the time it goes out" />
@@ -37,9 +33,24 @@ PostQueen will post messages with attachments and mentions to the text and annou
 
 ## Connect Discord
 
-<Note>
-Discord is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will add PostQueen's bot to one server, and you will need the **Manage Server** permission there.
-</Note>
+Connecting Discord adds PostQueen's bot to one server, and you need the **Manage Server** permission there.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Discord**.
+  </Step>
+  <Step title="Pick the server">
+    Sign in to Discord and choose the server for PostQueen's bot.
+  </Step>
+  <Step title="Approve the bot's permissions">
+    Approve the permissions the bot asks for. If a channel limits which roles can see it, let the bot's role view it and attach files.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
+
+In each post, pick the Discord channel to post in.
 
 ## Post settings
 
