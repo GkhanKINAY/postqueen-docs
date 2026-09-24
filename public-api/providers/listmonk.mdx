@@ -5,10 +5,6 @@ description: "The settings object a post to Listmonk takes in the public API: su
 icon: "/images/channels/listmonk.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-<ChannelStatus status="available" />
-
 Every post to Listmonk carries a `settings` object with `"__type": "listmonk"`, a subject, preview text and a list. At the scheduled time PostQueen creates a campaign on your Listmonk server and starts sending it. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Listmonk channel connects with your server's address, an API user and its token, which only the app's connect form takes. [Connect it in the app](/channels/listmonk) first, then post to it here.

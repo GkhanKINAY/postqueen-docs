@@ -13,9 +13,7 @@ keywords:
   - youtube settings
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-Each network wants its own settings, and PostQueen refuses a post that is missing a required one. This page has a command for each network you can connect today, with the settings it needs. Replace `bluesky-id` and the others with your channel IDs from `postqueen integrations:list`.
+Each network wants its own settings, and PostQueen refuses a post that is missing a required one. This page has a command for the networks people post to most, with the settings each one needs. Replace `bluesky-id` and the others with your channel IDs from `postqueen integrations:list`.
 
 <Warning>
 These commands schedule real posts. To try one safely, add `-t draft`: the post waits on your calendar until you schedule it. A draft gets the settings check, so a missing required setting is refused at once. The length and media rules wait until you schedule it, so an accepted draft can still be refused then.
@@ -27,11 +25,9 @@ When you post to a network for the first time, read its rules and settings:
 postqueen integrations:settings <channel-id>
 ```
 
-## Networks you can connect today
+## Networks you connect with a key or a login
 
 ### Bluesky
-
-<ChannelStatus status="available" />
 
 No settings. A post has up to 300 characters, and extra `-c` items become a thread.
 
@@ -45,8 +41,6 @@ postqueen posts:create \
 
 ### Nostr
 
-<ChannelStatus status="available" />
-
 No settings. Extra `-c` items become a thread of replies.
 
 ```bash
@@ -57,8 +51,6 @@ postqueen posts:create \
 ```
 
 ### WordPress
-
-<ChannelStatus status="available" />
 
 Needs a `title` and a `type`, the WordPress post type. Look the type up with `postTypes`, and categories and tags with `categoriesList` and `tagsList`: they go in as lists of numbers.
 
@@ -79,8 +71,6 @@ postqueen posts:create \
 
 ### DEV
 
-<ChannelStatus status="available" />
-
 Needs a `title` of 2 to 128 characters. `tags` takes up to four, as the `value` and `label` pairs the `tags` helper returns. `organization` (from `organizations`), `canonical` and `main_image` are optional.
 
 ```bash
@@ -98,8 +88,6 @@ Use the tag numbers `tags` returns for your account; the `8` here is an example.
 
 ### Hashnode
 
-<ChannelStatus status="available">Needs Hashnode's Pro plan on the publication you connect.</ChannelStatus>
-
 Needs a `title` of at least 6 characters, a `publication` ID from `publications`, and at least one tag. Each tag is a `value` and a `label`: the `objectID` and `name` of a tag from `tagsList`. The example uses the JavaScript tag.
 
 ```bash
@@ -114,8 +102,6 @@ postqueen posts:create \
 ```
 
 ### Lemmy
-
-<ChannelStatus status="available" />
 
 Needs a `subreddit` list with at least one community. Each entry has the community's `subreddit` (its name), its `id` as a string, and a `title` of 3 to 200 characters; `url` is optional. Find communities with `subreddits`:
 
@@ -132,8 +118,6 @@ postqueen posts:create \
 
 ### Listmonk
 
-<ChannelStatus status="available" />
-
 Needs a `subject`, a `preview` text and a `list` ID from `list`. `template` (from `templates`) is optional. Both IDs go in as strings.
 
 ```bash
@@ -149,8 +133,6 @@ postqueen posts:create \
 
 ### Moltbook
 
-<ChannelStatus status="available" />
-
 Needs a `submolt`, the name of the community to post in. `integrations:settings` reports no settings for Moltbook, but a post without `submolt` is refused.
 
 ```bash
@@ -161,13 +143,9 @@ postqueen posts:create \
   -i "moltbook-id"
 ```
 
-## Networks in review
-
-These connect today with a limit until the network approves PostQueen's app. The note next to each badge says the limit.
+## Networks you connect by signing in
 
 ### X
-
-<ChannelStatus status="in-review">X can be connected once the free trial ends, or right away if you end the trial early.</ChannelStatus>
 
 Every regular post needs `who_can_reply_post`: `everyone`, `following`, `mentionedUsers`, `subscribers` or `verified`. There is no default, and a post without it is refused, drafts included.
 
@@ -184,8 +162,6 @@ postqueen posts:create \
 A post has up to 280 characters unless the account has X Premium. For a long-form article, set `post_type` to `article` with an `article_title` and an `article_status` (`draft` or `published`), and write the text as HTML; `who_can_reply_post` is not needed then. `community` (an `https://x.com/i/communities/...` address), `made_with_ai` and `paid_partnership` are optional.
 
 ### Instagram
-
-<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect and publish.</ChannelStatus>
 
 Needs `post_type`: `post`, `reel` or `story`, and at least one uploaded image or video.
 
@@ -204,8 +180,6 @@ postqueen posts:create \
 
 ### Facebook
 
-<ChannelStatus status="in-review">Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish.</ChannelStatus>
-
 No required settings. `post_type` (`post` or `story`) and `url` are optional.
 
 ```bash
@@ -216,8 +190,6 @@ postqueen posts:create \
 ```
 
 ### Threads
-
-<ChannelStatus status="in-review">Until Meta approves PostQueen's Threads app, only accounts added as Threads testers on it can connect and publish.</ChannelStatus>
 
 No settings. Extra `-c` items become a thread.
 
@@ -230,14 +202,12 @@ postqueen posts:create \
 
 ### TikTok
 
-<ChannelStatus status="in-review">Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet.</ChannelStatus>
-
 Needs these eight settings, with no defaults:
 
 | Setting | Values | Note |
 |---|---|---|
 | `content_posting_method` | `DIRECT_POST` or `UPLOAD` | `DIRECT_POST` publishes. `UPLOAD` only sends the video to the TikTok app's inbox, where you finish it within 24 hours, and TikTok then ignores the other settings |
-| `privacy_level` | `PUBLIC_TO_EVERYONE`, `MUTUAL_FOLLOW_FRIENDS`, `FOLLOWER_OF_CREATOR` or `SELF_ONLY` | Use `SELF_ONLY` until TikTok's audit passes |
+| `privacy_level` | `PUBLIC_TO_EVERYONE`, `MUTUAL_FOLLOW_FRIENDS`, `FOLLOWER_OF_CREATOR` or `SELF_ONLY` | Pick one the account allows: the `creatorInfo` helper lists them |
 | `duet` | `true` or `false` | Videos only |
 | `stitch` | `true` or `false` | Videos only |
 | `comment` | `true` or `false` | Whether people can comment |
@@ -254,13 +224,11 @@ postqueen posts:create \
   -c "How we shape a sourdough loaf #baking" \
   -m "$VIDEO" \
   -s "2026-10-01T17:00:00Z" \
-  --settings '{"privacy_level":"SELF_ONLY","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}' \
+  --settings '{"privacy_level":"PUBLIC_TO_EVERYONE","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}' \
   -i "tiktok-id"
 ```
 
 ### YouTube
-
-<ChannelStatus status="in-review">Until Google's audit of PostQueen's app passes, every upload is private, and all PostQueen customers share a limit of 100 uploads a day.</ChannelStatus>
 
 Needs a `title` of 2 to 100 characters, without `<` or `>`, and a `type`: `public`, `private` or `unlisted`. `selfDeclaredMadeForKids` (`yes` or `no`), `thumbnail` and `tags` are optional; all tags together may have 500 characters. A post takes one video, and `-c` is its description.
 
@@ -273,9 +241,9 @@ postqueen posts:create \
   -i "youtube-id"
 ```
 
-## Networks marked Soon
+## Every other network
 
-LinkedIn, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop, Telegram, Farcaster and Skool cannot be connected on PostQueen yet. Their settings are on [posting settings by network](/public-api/providers/overview) for when they open.
+The settings for LinkedIn, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop, Telegram, Farcaster and Skool are on [posting settings by network](/public-api/providers/overview).
 
 ## Several networks in one command
 

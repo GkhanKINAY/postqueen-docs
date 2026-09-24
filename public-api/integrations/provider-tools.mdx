@@ -35,7 +35,7 @@ postqueen integrations:trigger YOUR_CHANNEL_ID postTypes
 The API takes the inputs as an object in `data`, such as `{"word": "design"}`. The MCP `triggerTool` takes them as a list of `{ key, value }` pairs.
 
 <Note>
-This page is the catalog. For the live list on one connected channel, with each tool's inputs, call [Get a channel's settings](/public-api/integrations/settings). Networks marked **Soon** cannot be connected on PostQueen yet; their tools are listed for when they can. Status per network: [Channels](/channels/overview).
+This page is the catalog. For the live list on one connected channel, with each tool's inputs, call [Get a channel's settings](/public-api/integrations/settings).
 </Note>
 
 ## Which networks have tools
@@ -47,10 +47,10 @@ This page is the catalog. For the live list on one connected channel, with each 
 | [Hashnode](#hashnode) | `tagsList`, `publications` |
 | [Lemmy](#lemmy) | `subreddits` |
 | [Listmonk](#listmonk) | `list`, `templates` |
-| [Instagram](#instagram) (In review) | `audioSearch` |
-| [TikTok](#tiktok) (In review) | `creatorInfo` |
-| [TikTok Business](#tiktok-business) (In review) | `musicSearch`, `locationSearch` |
-| Soon: [Reddit](#reddit), [Pinterest](#pinterest), [Discord](#discord), [Slack](#slack), [Dribbble](#dribbble), [MeWe](#mewe), [Whop](#whop), [Skool](#skool), [Farcaster](#farcaster) | Listed below |
+| [Instagram](#instagram) | `audioSearch` |
+| [TikTok](#tiktok) | `creatorInfo` |
+| [TikTok Business](#tiktok-business) | `musicSearch`, `locationSearch` |
+| [Reddit](#reddit), [Pinterest](#pinterest), [Discord](#discord), [Slack](#slack), [Dribbble](#dribbble), [MeWe](#mewe), [Whop](#whop), [Skool](#skool), [Farcaster](#farcaster) | Listed below |
 
 Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook, YouTube, Instagram Standalone, LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr and Google Business Profile. Everything they need is in the post's settings.
 
@@ -99,7 +99,7 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 
 | Tool | Inputs | Returns |
 |---|---|---|
-| `creatorInfo` | none | What this account may post right now, as `{ privacyLevelOptions, maxDurationSeconds, commentDisabled, duetDisabled, stitchDisabled }`. Pick `privacy_level` from `privacyLevelOptions`; until TikTok audits PostQueen's app it is `["SELF_ONLY"]`. Keep a video within `maxDurationSeconds`, and leave comments, duets or stitches off when the account has them turned off. |
+| `creatorInfo` | none | What this account may post right now, as `{ privacyLevelOptions, maxDurationSeconds, commentDisabled, duetDisabled, stitchDisabled }`. Pick `privacy_level` from `privacyLevelOptions`. Keep a video within `maxDurationSeconds`, and leave comments, duets or stitches off when the account has them turned off. |
 
 ## TikTok Business
 
@@ -167,7 +167,7 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 
 ## Tools that take another tool's answer
 
-Whop's `experiences` needs a company id from `companies`, Skool's `label` needs a group id from `groups`, and Reddit's `restrictions` needs a `name` from `subreddits`. All three networks are Soon on PostQueen; when they can be connected, call the tools in that order:
+Whop's `experiences` needs a company id from `companies`, Skool's `label` needs a group id from `groups`, and Reddit's `restrictions` needs a `name` from `subreddits`. Call the tools in that order:
 
 ```bash
 # 1. The companies you administer

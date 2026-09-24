@@ -1,6 +1,6 @@
 ---
 name: postqueen
-description: PostQueen schedules social media and chat posts from the postqueen CLI to 30+ networks, such as X, LinkedIn, LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, Google Business Profile, TikTok, Pinterest, Dribbble, Discord, Slack, Kick, Twitch, Mastodon, Bluesky, Lemmy, Farcaster, Telegram, Nostr, VK, DEV, Hashnode, WordPress, Listmonk, MeWe, Whop, Skool, Moltbook and Tumblr. Some of them are marked Soon on the hosted service.
+description: PostQueen schedules social media and chat posts from the postqueen CLI to 30+ networks, such as X, LinkedIn, LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, Google Business Profile, TikTok, Pinterest, Dribbble, Discord, Slack, Kick, Twitch, Mastodon, Bluesky, Lemmy, Farcaster, Telegram, Nostr, VK, DEV, Hashnode, WordPress, Listmonk, MeWe, Whop, Skool, Moltbook and Tumblr.
 homepage: https://docs.postqueen.ai/public-api/introduction
 metadata: {"openclaw":{"emoji":"🌎","requires":{"bins":["postqueen"],"env":["POSTQUEEN_API_KEY"]}}}
 ---
@@ -23,7 +23,7 @@ official website: https://postqueen.ai
 | Property | Value |
 |----------|-------|
 | **name** | postqueen |
-| **description** | Social media automation CLI for scheduling posts across 30+ networks, including X, LinkedIn, LinkedIn Pages, Instagram, Facebook, Threads, YouTube, TikTok, Reddit, Pinterest, Bluesky, Mastodon, Google Business Profile, Discord, Slack, Telegram, Twitch, Kick, Lemmy, Farcaster, Nostr, VK, MeWe, Tumblr, Skool, Whop, Moltbook, Dribbble, DEV, Hashnode, WordPress and Listmonk. Some are marked Soon on the hosted service (see Networks) |
+| **description** | Social media automation CLI for scheduling posts across 30+ networks, including X, LinkedIn, LinkedIn Pages, Instagram, Facebook, Threads, YouTube, TikTok, Reddit, Pinterest, Bluesky, Mastodon, Google Business Profile, Discord, Slack, Telegram, Twitch, Kick, Lemmy, Farcaster, Nostr, VK, MeWe, Tumblr, Skool, Whop, Moltbook, Dribbble, DEV, Hashnode, WordPress and Listmonk. |
 | **allowed-tools** | Bash(postqueen:*) |
 
 ---
@@ -69,15 +69,9 @@ The key is in PostQueen under **Connections > API Keys**. Only workspace admins 
 
 ## Networks
 
-PostQueen supports 30+ networks. On the hosted service (app.postqueen.ai) some are marked **Soon**: they are listed, but nobody can connect them yet. As of September 2026:
+PostQueen supports 30+ networks: X, LinkedIn and LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, TikTok and TikTok Business, Pinterest, Google Business Profile, Bluesky, Mastodon, Tumblr, VK, Farcaster, Nostr, Lemmy, MeWe, Twitch, Kick, Dribbble, Telegram, Discord, Slack, Skool, Whop, Moltbook, WordPress, DEV, Hashnode and Listmonk. `postqueen integrations:list` shows which of them the workspace has connected.
 
-| Hosted status | Networks |
-|---|---|
-| Connect today | Bluesky, DEV, Hashnode (needs Hashnode Pro), Lemmy, Listmonk, Moltbook, Nostr, WordPress |
-| Connect with limits until the platform approves PostQueen's app | Facebook and Instagram (only accounts with a role on PostQueen's Meta app), Threads (Threads Testers only), TikTok (every post is Self only), YouTube (uploads stay private), X (after the workspace's 7-day trial ends) |
-| Soon | LinkedIn, LinkedIn Page, Pinterest, Reddit, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe, Whop, TikTok Business, Telegram, Farcaster, Skool |
-
-Never tell a user they can connect a Soon network on the hosted service. `postqueen integrations:list` shows what the workspace has actually connected.
+Two conditions come from the product itself: X connects once the workspace's 7-day trial ends, or right away if the trial is ended early, and Hashnode needs Hashnode Pro on the publication you connect.
 
 ---
 
@@ -312,7 +306,7 @@ postqueen upload image.jpg
 # Workflow: Upload, extract the path, use it in a post
 VIDEO_PATH=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 postqueen posts:create -c "Content" -s "2026-12-31T12:00:00Z" -m "$VIDEO_PATH" -i "tiktok-id" \
-  --settings '{"privacy_level":"SELF_ONLY","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}'
+  --settings '{"privacy_level":"PUBLIC_TO_EVERYONE","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}'
 ```
 
 ---
@@ -380,7 +374,7 @@ postqueen posts:create \
   -c "Check out my video!" \
   -s "2026-12-31T12:00:00Z" \
   -m "$VIDEO_PATH" \
-  --settings '{"privacy_level":"SELF_ONLY","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}' \
+  --settings '{"privacy_level":"PUBLIC_TO_EVERYONE","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}' \
   -i "tiktok-id"
 ```
 
@@ -698,7 +692,6 @@ VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 
 # title and type (public, private or unlisted) are required;
 # selfDeclaredMadeForKids ("yes" or "no"), tags and thumbnail are optional.
-# On the hosted service, YouTube keeps uploads private until Google's audit of PostQueen passes.
 postqueen posts:create \
   -c "Video description" \
   -s "2026-12-31T12:00:00Z" \
@@ -714,12 +707,12 @@ VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 
 # Required: privacy_level, duet, stitch, comment, autoAddMusic, brand_content_toggle,
 # brand_organic_toggle, content_posting_method. Optional: title, video_made_with_ai.
-# privacy_level is PUBLIC_TO_EVERYONE, MUTUAL_FOLLOW_FRIENDS, FOLLOWER_OF_CREATOR or SELF_ONLY;
-# on the hosted service TikTok publishes every post as Self only until its audit of PostQueen's app passes.
+# privacy_level is PUBLIC_TO_EVERYONE, MUTUAL_FOLLOW_FRIENDS, FOLLOWER_OF_CREATOR or SELF_ONLY,
+# whichever the account allows.
 postqueen posts:create \
   -c "Video caption #fyp" \
   -s "2026-12-31T12:00:00Z" \
-  --settings '{"privacy_level":"SELF_ONLY","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}' \
+  --settings '{"privacy_level":"PUBLIC_TO_EVERYONE","duet":false,"stitch":false,"comment":true,"autoAddMusic":"no","brand_content_toggle":false,"brand_organic_toggle":false,"content_posting_method":"DIRECT_POST"}' \
   -m "$VIDEO_URL" \
   -i "tiktok-id"
 ```

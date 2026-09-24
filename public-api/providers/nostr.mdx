@@ -5,10 +5,6 @@ description: "The settings object a post to Nostr takes in the public API: every
 icon: "/images/channels/nostr.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-<ChannelStatus status="available" />
-
 Every post to Nostr carries a `settings` object with `"__type": "nostr"`. Nostr has no other settings. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Nostr channel connects with a private key, which only the app's connect form takes. [Connect it in the app](/channels/nostr) first, then post to it here.

@@ -1,16 +1,12 @@
 ---
 title: "Skool"
-description: "What PostQueen will post to Skool groups, how it will connect, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Skool groups, how it connects, and the limits it checks before a post is scheduled."
 icon: "/images/channels/skool.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post titled posts with attachments into your Skool groups and categories, with threaded comments underneath.
+PostQueen posts titled posts with attachments into your Skool groups and categories, with threaded comments underneath.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/skool.webp" alt="A new Skool post in the PostQueen composer, with the post types Skool takes and the time it goes out" />
@@ -37,9 +33,22 @@ PostQueen will post titled posts with attachments into your Skool groups and cat
 
 ## Connect Skool
 
-<Note>
-Skool is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Skool has no public API, so connecting it will go through the PostQueen browser extension in Chrome, which uses your own Skool session.
-</Note>
+Skool has no public API, so PostQueen connects it through the PostQueen browser extension in Chrome, which uses your own Skool session.
+
+<Steps>
+  <Step title="Install the extension">
+    Install the PostQueen browser extension in Chrome, and sign in to Skool in the same browser.
+  </Step>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Skool**.
+  </Step>
+  <Step title="Let the extension connect">
+    Read the notice and let the extension connect your Skool account.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 <Warning>
 Using a browser extension to interact with a platform may violate its terms of service and could result in your account being suspended or banned.

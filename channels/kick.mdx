@@ -1,16 +1,12 @@
 ---
 title: "Kick"
-description: "What PostQueen will post to Kick, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Kick, and the limits it checks before a post is scheduled."
 icon: "/images/channels/kick.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post chat messages into your own Kick channel, such as a go-live reminder, with follow-ups as replies. Kick's API has no way to upload videos, so chat is what PostQueen sends.
+PostQueen posts chat messages into your own Kick channel, such as a go-live reminder, with follow-ups as replies. Kick's API has no way to upload videos, so chat is what PostQueen sends.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/kick.webp" alt="A new Kick post in the PostQueen composer, with the post types Kick takes and the time it goes out" />
@@ -37,9 +33,19 @@ PostQueen will post chat messages into your own Kick channel, such as a go-live 
 
 ## Connect Kick
 
-<Note>
-Kick is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will post into the chat of the Kick channel you sign in with.
-</Note>
+PostQueen posts into the chat of the Kick channel you sign in with.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Kick**.
+  </Step>
+  <Step title="Sign in to Kick">
+    Sign in to Kick and approve the chat permission.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 

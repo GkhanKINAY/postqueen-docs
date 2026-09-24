@@ -1,16 +1,12 @@
 ---
 title: "Mastodon"
-description: "What PostQueen will post to Mastodon, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Mastodon, and the limits it checks before a post is scheduled."
 icon: "/images/channels/mastodon.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post public Mastodon posts and threads with images, video and alt text, and wait for your server to finish processing a video before it posts.
+PostQueen posts public Mastodon posts and threads with images, video and alt text, and wait for your server to finish processing a video before it posts.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/mastodon.webp" alt="A new Mastodon post in the PostQueen composer, with the post types Mastodon takes and the time it goes out" />
@@ -37,9 +33,19 @@ PostQueen will post public Mastodon posts and threads with images, video and alt
 
 ## Connect Mastodon
 
-<Note>
-Mastodon is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will connect accounts on one Mastodon server: accounts on other servers cannot be connected.
-</Note>
+PostQueen connects accounts on one Mastodon server: accounts on other servers cannot be connected.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Mastodon**.
+  </Step>
+  <Step title="Sign in to Mastodon">
+    Sign in to your Mastodon account on the login page that opens, and approve access.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 

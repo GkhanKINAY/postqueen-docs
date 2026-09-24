@@ -8,8 +8,9 @@
 3. Banned strings: removed routes and tools, wrong tool counts, Windsurf, Medium,
    the old API key location, trial and rate-limit claims that are not true,
    Bearer on the public API, veo3.
-4. The status line of each channel page equals facts.json. Agent pages carry no
-   test-status line or note (owner, 2026-09-24).
+4. Channel and agent pages describe the product in production (owner,
+   2026-09-24): no status line or Soon/In review tag on a network, no platform-review
+   note ("In review", "testers", "until Meta approves" ...), no agent test status.
 5. mcp/tools names exactly facts.json's tools.
 6. Prices, trial days and refund days written in a page equal facts.json.
 
@@ -53,10 +54,6 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ('"no card" (the trial takes a card)', re.compile(r"\bno (?:credit )?card\b", re.I)),
     ('"60-day" (refunds are 30 days)', re.compile(r"\b60-day\b", re.I)),
     ('"ten connectors" (nine networks report analytics)', re.compile(r"\bten connectors\b", re.I)),
-    ('"every network" claimed as connectable (17 cannot connect yet)',
-     re.compile(r"(?<!not )\b(?:every|all) (?:networks?|channels?) (?:is|are) (?:available|ready|connectable|supported)\b"
-                r"|(?<!not )\b(?:every|all) (?:networks?|channels?) (?:works?|can be connected|connects?)\b"
-                r"|from the first minute", re.I)),
     ("api.postqueen.ai/docs (the internal Swagger list, never linked)", re.compile(r"api\.postqueen\.ai/docs\b")),
     ("veo3 (no such video type)", re.compile(r"veo3", re.I)),
 ]
@@ -67,7 +64,10 @@ CHANNEL_STATUS_EMPTY_RE = re.compile(r"<ChannelStatus\s+status=\"([^\"]+)\"\s*/>
 AGENT_STATUS_RE = re.compile(r"<AgentStatus\b", re.S)
 TEST_NOTE_RE = re.compile(r"\bnot tested\b|\buntested\b|\bnot possible yet\b|\bkey tested\b|\bpartly tested\b", re.I)
 OWN_WORDS = {"PostQueen", "The", "A", "Your", "On", "Or", "And", "To", "From"}
-STATUS_KEY = {"works": "available", "review_gated": "in-review", "no_keys": "soon", "cannot_connect": "soon"}
+REVIEW_NOTE_RE = re.compile(
+    r"(?<!week )\bin review\b|\btesters?\b|\buntil (?:Meta|TikTok|Google)\b|\bSelf only until\b|\bopens soon\b"
+    r"|\bcannot (?:be )?connect(?:ed)? (?:on PostQueen )?yet\b|\bapproves PostQueen'?s app\b", re.I)
+STATUS_TAG_RE = re.compile(r'^tag: "(?:Soon|In review)"', re.M)
 
 
 def norm(s: str) -> str:
@@ -169,16 +169,18 @@ def check_numbers(rel: str, text: str, facts: dict, pending: bool) -> None:
 
 
 def check_channel(rel: str, text: str, channel: dict, pending: bool) -> None:
-    want = STATUS_KEY[channel["status"]]
-    found = CHANNEL_STATUS_RE.findall(text) or [(s, "") for s in CHANNEL_STATUS_EMPTY_RE.findall(text)]
-    if not found:
-        report(pending, f"{rel}: no <ChannelStatus> line (facts.json: {want})")
-        return
-    status, note = found[0]
-    if status != want:
-        report(pending, f"{rel}: ChannelStatus {status!r}, facts.json says {want!r}")
-    if channel["statusNote"] and norm(note) != norm(channel["statusNote"]):
-        report(pending, f"{rel}: the status note differs from facts.json statusNote: {channel['statusNote']!r}")
+    """Channel pages describe the network in production (owner, 2026-09-24): no
+    status line or tag, no platform-review note."""
+    body = COMMENT_RE.sub("", text)
+    if CHANNEL_STATUS_RE.search(body) or CHANNEL_STATUS_EMPTY_RE.search(body) or STATUS_TAG_RE.search(body):
+        report(pending, f"{rel}: a channel status line or tag; channel pages carry none")
+    check_review_notes(rel, body, pending)
+
+
+def check_review_notes(rel: str, body: str, pending: bool) -> None:
+    for m in REVIEW_NOTE_RE.finditer(body):
+        line = body.count("\n", 0, m.start()) + 1
+        report(pending, f"{rel}:{line}: a platform-review note {m.group(0)!r}; describe the production state")
 
 
 def check_agent(rel: str, text: str, agent: dict, pending: bool) -> None:
@@ -189,6 +191,7 @@ def check_agent(rel: str, text: str, agent: dict, pending: bool) -> None:
         report(pending, f"{rel}: an <AgentStatus> line; agent pages carry no test status")
     for m in TEST_NOTE_RE.finditer(body):
         report(pending, f"{rel}: a test-status note {m.group(0)!r}; agent pages carry none")
+    check_review_notes(rel, body, pending)
 
 
 def check_tools_page(text: str, facts: dict, pending: bool) -> None:

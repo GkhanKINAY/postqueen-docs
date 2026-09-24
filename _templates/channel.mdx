@@ -4,7 +4,6 @@ description: "Connect NETWORK to PostQueen, what you can post to it, and the lim
 icon: "/images/channels/SLUG.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
 {/*
@@ -19,13 +18,9 @@ import NextStepsChannel from '/snippets/next-steps-channel.mdx';
   - The never-share snippet only on networks that take a key or password
     (Bluesky, Nostr, Lemmy, Listmonk, WordPress, DEV, Hashnode). Not Moltbook:
     PostQueen registers its agent, so nobody types a key.
-  - Status Soon (no_keys, cannot_connect): keep "What you can post", "Post
-    settings" and "Good to know", replace "Connect" with the Soon note, and drop
-    the connect steps and troubleshooting.
-  - Add `tag: "Soon"` to the frontmatter of a Soon network.
+  - Production state (owner, 2026-09-24): no status line, no In review or Soon
+    tag, no platform-review limits. Write the connect steps as they work.
 */}
-
-<ChannelStatus status="STATUS">STATUS_NOTE_FROM_FACTS_JSON</ChannelStatus>
 
 {/* One or two sentences: what NETWORK is for and what PostQueen posts to it. */}
 
@@ -61,12 +56,6 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 RULES_NOT_PRECHECKED: the platform rules PostQueen does not check first, in one sentence.
 
 ## Connect NETWORK
-
-{/* For a Soon network, replace this section with:
-<Note>
-NETWORK is listed in **Add Channel**, but it cannot be connected on PostQueen yet.
-</Note>
-*/}
 
 <Steps>
   <Step title="Open Add Channel">

@@ -1,16 +1,12 @@
 ---
 title: "Telegram"
-description: "What PostQueen will post to Telegram channels and groups, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Telegram channels and groups, and the limits it checks before a post is scheduled."
 icon: "/images/channels/telegram.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will send messages, photos, videos and albums to your Telegram channels and groups, public or private, through its bot at the time you pick.
+PostQueen sends messages, photos, videos and albums to your Telegram channels and groups, public or private, through its bot at the time you pick.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/telegram.webp" alt="A new Telegram post in the PostQueen composer, with the post types Telegram takes and the time it goes out" />
@@ -37,9 +33,22 @@ PostQueen will send messages, photos, videos and albums to your Telegram channel
 
 ## Connect Telegram
 
-<Note>
-Telegram is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Connecting it will mean adding PostQueen's bot to your channel or group as an administrator.
-</Note>
+Connecting Telegram means adding PostQueen's bot to your channel or group as an administrator.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Telegram**.
+  </Step>
+  <Step title="Add the bot">
+    Add the bot named in the window to your channel or group, and make it an administrator.
+  </Step>
+  <Step title="Send the connect code">
+    Choose **Connect Telegram**, copy the `/connect` code and send it in that chat. PostQueen finds the chat and connects it.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 

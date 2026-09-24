@@ -5,8 +5,6 @@ description: "The settings object a post to NETWORK takes in the public API: eve
 icon: "/images/channels/SLUG.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
 {/*
   API settings page template (B2 to B5, overview by B3). Copy it to
   public-api/providers/<api-slug>.mdx. Fields, enums and lengths come from the
@@ -16,14 +14,12 @@ import { ChannelStatus } from '/snippets/status-badge.mdx';
   when done.
 
   Rules for this page:
-  - The status line matches the channel page and facts/facts.json.
+  - No status line and no review note: the page describes the network in production.
   - One page per network: a second tile (Instagram Standalone, LinkedIn Page,
     TikTok Business) is a section here, not a page.
   - No links to self-hosting pages, no source links, no env var names.
   - Base URL {{apiBase}}; the key goes in Authorization with no Bearer.
 */}
-
-<ChannelStatus status="STATUS">STATUS_NOTE_FROM_FACTS_JSON</ChannelStatus>
 
 Every post to NETWORK carries a `settings` object with `"__type": "TYPE"`. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 

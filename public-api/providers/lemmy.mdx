@@ -5,10 +5,6 @@ description: "The settings object a post to Lemmy takes in the public API: the c
 icon: "/images/channels/lemmy.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-<ChannelStatus status="available" />
-
 Every post to Lemmy carries a `settings` object with `"__type": "lemmy"` and the communities to post in. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 A Lemmy channel connects with your instance, username and password, which only the app's connect form takes. [Connect it in the app](/channels/lemmy) first, then post to it here.

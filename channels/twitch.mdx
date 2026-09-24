@@ -1,16 +1,12 @@
 ---
 title: "Twitch"
-description: "What PostQueen will post to Twitch, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Twitch, and the limits it checks before a post is scheduled."
 icon: "/images/channels/twitch.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post chat messages and colored announcements into your own Twitch chat, such as a go-live reminder. Twitch's API cannot publish videos or posts, so chat is what PostQueen sends.
+PostQueen posts chat messages and colored announcements into your own Twitch chat, such as a go-live reminder. Twitch's API cannot publish videos or posts, so chat is what PostQueen sends.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/twitch.webp" alt="A new Twitch post in the PostQueen composer, with the post types Twitch takes and the time it goes out" />
@@ -37,9 +33,19 @@ PostQueen will post chat messages and colored announcements into your own Twitch
 
 ## Connect Twitch
 
-<Note>
-Twitch is listed in **Add Channel**, but it cannot be connected on PostQueen yet. It will post into the chat of the Twitch channel you sign in with.
-</Note>
+PostQueen posts into the chat of the Twitch channel you sign in with.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Twitch**.
+  </Step>
+  <Step title="Sign in to Twitch">
+    Sign in to Twitch and approve the chat permissions.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 

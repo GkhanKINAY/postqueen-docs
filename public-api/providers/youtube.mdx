@@ -5,10 +5,6 @@ description: "The settings object a post to YouTube takes in the public API: eve
 icon: "/images/channels/youtube.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
-
-<ChannelStatus status="in-review">Until Google's audit of PostQueen's app passes, every upload is private, and all PostQueen customers share a limit of 100 uploads a day.</ChannelStatus>
-
 Every post to YouTube carries a `settings` object with `"__type": "youtube"`. The post text in `value[0].content` is the video's description. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
@@ -17,7 +13,7 @@ Every post to YouTube carries a `settings` object with `"__type": "youtube"`. Th
 |---|---|---|---|
 | `__type` | string | No | Always `"youtube"`. PostQueen sets it from the channel you post to, so it can be left out. |
 | `title` | string | Yes | The video title, 2 to 100 characters, with no `<` or `>`. |
-| `type` | string | Yes | Who can watch: `public`, `private` or `unlisted`. Until Google's audit of PostQueen's app passes, YouTube keeps every upload private whatever you send. |
+| `type` | string | Yes | Who can watch: `public`, `private` or `unlisted`. |
 | `selfDeclaredMadeForKids` | string | No | `yes` or `no`. Left out, the video is declared not made for kids. |
 | `tags` | array of objects | No | Video tags, each `{ "value": "tag", "label": "tag" }`. The `label` is sent. 500 characters in total, and a tag with a space counts 2 extra because YouTube wraps it in quotes. The composer stops at 3 tags; the API does not. |
 | `thumbnail` | object | No | Your own thumbnail, `{ "id": "...", "path": "..." }` from [upload a file](/public-api/uploads/upload-file). JPEG or PNG, set right after the upload, and only on a verified YouTube channel. |

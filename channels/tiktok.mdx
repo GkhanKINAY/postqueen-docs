@@ -4,10 +4,7 @@ description: "Connect TikTok to PostQueen, what you can post to it, and the limi
 icon: "/images/channels/tiktok.svg"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
-
-<ChannelStatus status="in-review">Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet.</ChannelStatus>
 
 Schedule TikTok videos and photo posts with their caption, audience and comment, Duet and Stitch settings. PostQueen posts them through TikTok's official API, or sends them to your TikTok inbox to finish in the app.
 
@@ -52,11 +49,7 @@ Video length is TikTok's rule, and it depends on the account. When you post dire
 
 ## Connect TikTok
 
-Any TikTok account can connect. You don't need a business account. **Add Channel** also lists **TikTok Business**, but that tile cannot be connected yet: use **TikTok**.
-
-<Note>
-TikTok is in review. Until TikTok audits PostQueen's app, at most 5 people can post through it in 24 hours, and every post is published as **Self only**.
-</Note>
+Any TikTok account can connect. You don't need a business account. **Add Channel** also lists **TikTok Business** for business accounts, with music and location search on top of the same settings.
 
 <Steps>
   <Step title="Open Add Channel">
@@ -92,8 +85,7 @@ TikTok takes no follow-up comments or threads, so the composer offers no follow-
 
 ## Good to know
 
-- TikTok does not allow branded content to be private, so a post marked **Branded content** cannot be published until TikTok's audit of PostQueen's app passes.
-- When TikTok's limit of people posting through PostQueen's app is reached, TikTok disconnects the channel. It shows **Needs reconnecting**: choose **Reconnect channel** in its menu later.
+- TikTok does not allow branded content to be private, so a post marked **Branded content** needs an audience other than **Self only**.
 - TikTok processes a video after the upload, so a post can take a few minutes to appear on your profile.
 - TikTok itself limits how often you post: around 15 direct posts a day per account, shared with every app that posts to it, and at most 5 uploads waiting in your inbox in any 24 hours.
 - Photos are converted to JPEG when the post is published, not when you schedule it.
@@ -103,12 +95,6 @@ TikTok takes no follow-up comments or threads, so the composer offers no follow-
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="This TikTok app has not passed TikTok's review yet">
-    Until TikTok's audit of PostQueen's app passes, only **Self only** publishes. Set **Who can see this video?** to **Self only** and schedule the post again.
-  </Accordion>
-  <Accordion title="TikTok daily user limit reached, please re-connect your account">
-    TikTok's limit of 5 people posting through PostQueen's app in 24 hours was reached, and TikTok disconnected the channel. Reconnect it later.
-  </Accordion>
   <Accordion title="TikTok limits pending posts to 5 within any 24-hour period">
     Five uploads are already waiting in your TikTok inbox. Publish or delete them in the TikTok app, then try again after 24 hours.
   </Accordion>

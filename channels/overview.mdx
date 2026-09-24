@@ -1,105 +1,63 @@
 ---
 title: "Channels"
 sidebarTitle: "All channels"
-description: "Every network PostQueen posts to, grouped by kind: its status today, what you can post to it and its text limit."
+description: "Every network PostQueen posts to, grouped by kind: what you can post to it, its text limit and how to connect it."
 icon: "layout-grid"
 keywords:
   - channels
   - networks
   - character limit
-  - available
-  - in review
-  - soon
+  - connect
 ---
 
-import { ChannelBadge } from '/snippets/status-badge.mdx';
-
 PostQueen posts to {{networks}} networks from one calendar. Pick a network to see what you can publish there, the limits PostQueen checks before a post is scheduled, and how to connect it. Every network is listed in **Add Channel** on the **Channels** page, and [Connect a channel](/using/connect-a-channel) covers the steps they share.
-
-## Status today
-
-| Status | What it means |
-|---|---|
-| <ChannelBadge status="available" /> | 8 networks. Connect them from **Add Channel** today. |
-| <ChannelBadge status="in-review" /> | 6 networks. They connect today within a limit, until the limit is lifted. The limit is below and on each network's page. |
-| <ChannelBadge status="soon" /> | 17 networks. Listed in **Add Channel**, but they cannot be connected on PostQueen yet. Each page says what the network will post. |
 
 ## Social networks
 
 <CardGroup cols={2}>
   <Card title="Instagram" icon="/images/channels/instagram.svg" href="/channels/instagram">
-    <ChannelBadge status="in-review" />
-
     Feed photos, carousels of up to 10, Reels and Stories. 2,200 characters.
   </Card>
   <Card title="TikTok" icon="/images/channels/tiktok.svg" href="/channels/tiktok">
-    <ChannelBadge status="in-review" />
-
     Videos, and photo posts of up to 35 images. 2,000 characters.
   </Card>
   <Card title="Facebook" icon="/images/channels/facebook.svg" href="/channels/facebook">
-    <ChannelBadge status="in-review" />
-
     Page posts with links, photos or video, and Page Stories. 63,206 characters.
   </Card>
   <Card title="X" icon="/images/channels/x.svg" href="/channels/x-twitter">
-    <ChannelBadge status="in-review" />
-
     Posts, threads, images, GIFs, video and Articles. 280 characters, 4,000 on verified accounts.
   </Card>
   <Card title="LinkedIn" icon="/images/channels/linkedin.svg" href="/channels/linkedin">
-    <ChannelBadge status="soon" />
-
     Profile and company page posts, with images, video and document carousels. 3,000 characters.
   </Card>
   <Card title="Threads" icon="/images/channels/threads.svg" href="/channels/threads">
-    <ChannelBadge status="in-review" />
-
     Posts, photos, videos, carousels of up to 20 and threads. 500 bytes.
   </Card>
   <Card title="Bluesky" icon="/images/channels/bluesky.svg" href="/channels/bluesky">
-    <ChannelBadge status="available" />
-
     Posts and threads with up to 4 images or 1 video. 300 characters.
   </Card>
   <Card title="Reddit" icon="/images/channels/reddit.svg" href="/channels/reddit">
-    <ChannelBadge status="soon" />
-
     Text, link, image and video posts to one or more subreddits. 10,000 characters.
   </Card>
   <Card title="Mastodon" icon="/images/channels/mastodon.svg" href="/channels/mastodon">
-    <ChannelBadge status="soon" />
-
     Public posts and threads with images and video. 500 characters.
   </Card>
   <Card title="Tumblr" icon="/images/channels/tumblr.png" href="/channels/tumblr">
-    <ChannelBadge status="soon" />
-
     Long posts with a title, link and tags, up to 30 images and a video. 32,768 characters.
   </Card>
   <Card title="VK" icon="/images/channels/vk.svg" href="/channels/vk">
-    <ChannelBadge status="soon" />
-
     Posts with photos to your own wall, and comments. 2,048 characters.
   </Card>
   <Card title="Farcaster" icon="/images/channels/farcaster.svg" href="/channels/farcaster">
-    <ChannelBadge status="soon" />
-
     Casts with up to 4 images, to your feed or into channels. 1,024 bytes.
   </Card>
   <Card title="Nostr" icon="/images/channels/nostr.svg" href="/channels/nostr">
-    <ChannelBadge status="available" />
-
     Notes and threads, with images linked by address. 100,000 characters.
   </Card>
   <Card title="Lemmy" icon="/images/channels/lemmy.svg" href="/channels/lemmy">
-    <ChannelBadge status="available" />
-
     Titled posts with a link and a cover image, in one or more communities. 10,000 characters.
   </Card>
   <Card title="MeWe" icon="/images/channels/mewe.svg" href="/channels/mewe">
-    <ChannelBadge status="soon" />
-
     Timeline and group posts with photos. 63,206 characters.
   </Card>
 </CardGroup>
@@ -108,18 +66,12 @@ PostQueen posts to {{networks}} networks from one calendar. Pick a network to se
 
 <CardGroup cols={2}>
   <Card title="YouTube" icon="/images/channels/youtube.svg" href="/channels/youtube">
-    <ChannelBadge status="in-review" />
-
     Video uploads with a title, tags and your own thumbnail. 5,000 bytes of description.
   </Card>
   <Card title="Twitch" icon="/images/channels/twitch.svg" href="/channels/twitch">
-    <ChannelBadge status="soon" />
-
     Messages and colored announcements in your own chat. 500 characters.
   </Card>
   <Card title="Kick" icon="/images/channels/kick.svg" href="/channels/kick">
-    <ChannelBadge status="soon" />
-
     Messages in your own chat, with replies. 500 characters.
   </Card>
 </CardGroup>
@@ -128,18 +80,12 @@ PostQueen posts to {{networks}} networks from one calendar. Pick a network to se
 
 <CardGroup cols={2}>
   <Card title="Pinterest" icon="/images/channels/pinterest.svg" href="/channels/pinterest">
-    <ChannelBadge status="soon" />
-
     Image, multi-image and video Pins on the board you pick. 800 characters.
   </Card>
   <Card title="Google Business Profile" icon="/images/channels/google-business.svg" href="/channels/google-my-business">
-    <ChannelBadge status="soon" />
-
     Updates, events and offers for a location you manage. 1,500 characters.
   </Card>
   <Card title="Dribbble" icon="/images/channels/dribbble.svg" href="/channels/dribbble">
-    <ChannelBadge status="soon" />
-
     Shots of one 400 x 300 or 800 x 600 image, for you or a team. 40,000 characters.
   </Card>
 </CardGroup>
@@ -148,33 +94,21 @@ PostQueen posts to {{networks}} networks from one calendar. Pick a network to se
 
 <CardGroup cols={2}>
   <Card title="Telegram" icon="/images/channels/telegram.svg" href="/channels/telegram">
-    <ChannelBadge status="soon" />
-
     Messages, photos, videos and albums in your channels and groups. 4,096 characters, 1,024 with media.
   </Card>
   <Card title="Discord" icon="/images/channels/discord.svg" href="/channels/discord">
-    <ChannelBadge status="soon" />
-
     Messages with attachments and mentions in text and announcement channels. 1,980 characters.
   </Card>
   <Card title="Slack" icon="/images/channels/slack.svg" href="/channels/slack">
-    <ChannelBadge status="soon" />
-
     Messages and images in public and private channels, with thread replies. 150,000 characters.
   </Card>
   <Card title="Skool" icon="/images/channels/skool.svg" href="/channels/skool">
-    <ChannelBadge status="soon" />
-
     Titled posts with attachments in your groups, with comments. 5,000 characters.
   </Card>
   <Card title="Whop" icon="/images/channels/whop.svg" href="/channels/whop">
-    <ChannelBadge status="soon" />
-
     Forum posts with images or video, and threaded replies. 50,000 characters.
   </Card>
   <Card title="Moltbook" icon="/images/channels/moltbook.png" href="/channels/moltbook">
-    <ChannelBadge status="available" />
-
     Text posts in a submolt, with threaded comments. Experimental. 300 characters.
   </Card>
 </CardGroup>
@@ -183,30 +117,22 @@ PostQueen posts to {{networks}} networks from one calendar. Pick a network to se
 
 <CardGroup cols={2}>
   <Card title="WordPress" icon="/images/channels/wordpress.svg" href="/channels/wordpress">
-    <ChannelBadge status="available" />
-
     Posts, pages and custom types with a featured image, categories and tags. 100,000 characters.
   </Card>
   <Card title="DEV (dev.to)" icon="/images/channels/devto.svg" href="/channels/devto">
-    <ChannelBadge status="available" />
-
     Markdown articles with a cover image, tags and a canonical URL. 100,000 characters.
   </Card>
   <Card title="Hashnode" icon="/images/channels/hashnode.svg" href="/channels/hashnode">
-    <ChannelBadge status="available" />
-
     Markdown articles in your publication, with a cover and tags. Needs Hashnode Pro. 10,000 characters.
   </Card>
   <Card title="Listmonk" icon="/images/channels/listmonk.svg" href="/channels/listmonk">
-    <ChannelBadge status="available" />
-
     Email campaigns to one list on your own Listmonk server. 300,000 characters.
   </Card>
 </CardGroup>
 
-## How the available networks connect
+## Networks you connect with a key or a login
 
-None of them sends you to a sign-in page. You type a key or a login into the connect form, or, for Moltbook, register an agent.
+These networks send you to no sign-in page. You type a key or a login into the connect form, or, for Moltbook, register an agent. Every other network opens its own sign-in page, where you approve PostQueen.
 
 | Network | What you enter | Where you get it |
 |---|---|---|
@@ -219,22 +145,9 @@ None of them sends you to a sign-in page. You type a key or a login into the con
 | [Hashnode](/channels/hashnode) | A personal access token | Hashnode: **Settings** > **Developer**, on a publication with Hashnode Pro |
 | [Listmonk](/channels/listmonk) | Your server address, an API user and its token | Listmonk: **Admin** > **Users** |
 
-## What In review means for each network
-
-Each of these networks connects today within this limit:
-
-| Network | The limit today |
-|---|---|
-| [Instagram](/channels/instagram) | Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect and publish. |
-| [TikTok](/channels/tiktok) | Until TikTok audits PostQueen's app, every post is published as private (Self only), at most 5 people can post through the app in 24 hours, and TikTok Business cannot connect yet. |
-| [Facebook](/channels/facebook) | Until Meta approves PostQueen's app, only accounts with a role on PostQueen's Meta app can connect Pages and publish. |
-| [X](/channels/x-twitter) | X can be connected once the free trial ends, or right away if you end the trial early. |
-| [Threads](/channels/threads) | Until Meta approves PostQueen's Threads app, only accounts added as Threads testers on it can connect and publish. |
-| [YouTube](/channels/youtube) | Until Google's audit of PostQueen's app passes, every upload is private, and all PostQueen customers share a limit of 100 uploads a day. |
-
 ## Analytics
 
-Nine networks report numbers back to PostQueen: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. LinkedIn Page, Pinterest and Google Business Profile will report once they can be connected. The available networks above publish normally but send no numbers back. [Analytics](/using/analytics) shows what each one reports.
+Nine networks report numbers back to PostQueen: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. The other networks publish normally but send no numbers back. [Analytics](/using/analytics) shows what each one reports.
 
 ## Next steps
 

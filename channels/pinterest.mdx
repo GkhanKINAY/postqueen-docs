@@ -1,16 +1,12 @@
 ---
 title: "Pinterest"
-description: "What PostQueen will post to Pinterest, and the limits it checks before a post is scheduled."
+description: "What PostQueen posts to Pinterest, and the limits it checks before a post is scheduled."
 icon: "/images/channels/pinterest.svg"
-tag: "Soon"
 ---
 
-import { ChannelStatus } from '/snippets/status-badge.mdx';
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-<ChannelStatus status="soon">Cannot be connected on PostQueen yet.</ChannelStatus>
-
-PostQueen will post image Pins, multi-image Pins and video Pins to the board you choose, each with a title, a description and a destination link.
+PostQueen posts image Pins, multi-image Pins and video Pins to the board you choose, each with a title, a description and a destination link.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/pinterest.webp" alt="A new Pinterest post in the PostQueen composer, with the post types Pinterest takes and the time it goes out" />
@@ -37,9 +33,19 @@ PostQueen will post image Pins, multi-image Pins and video Pins to the board you
 
 ## Connect Pinterest
 
-<Note>
-Pinterest is listed in **Add Channel**, but it cannot be connected on PostQueen yet. Every Pin goes to a board, so the Pinterest account needs at least one.
-</Note>
+Every Pin goes to a board, so the Pinterest account needs at least one.
+
+<Steps>
+  <Step title="Open Add Channel">
+    Open **Channels** and choose **Add Channel**, then **Pinterest**.
+  </Step>
+  <Step title="Sign in to Pinterest">
+    Sign in to Pinterest and approve the board and Pin permissions.
+  </Step>
+  <Step title="Check that it connected">
+    The channel appears in the **Channels** list with its avatar and name.
+  </Step>
+</Steps>
 
 ## Post settings
 
