@@ -22,7 +22,7 @@
 </p>
 
 <p align="center">
-  <a href="https://docs.postqueen.ai/agents/grok-bot"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/announce-dark.png"><img src="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/announce-light.png" width="100%" alt="New: Grok Bot is here. Connect Claude, ChatGPT, Grok Bot or any AI agent to your socials."></picture></a>
+  <a href="https://docs.postqueen.ai/agents/grok-bot"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/announce-dark.png"><img src="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/announce-light.png" width="100%" alt="New: connect Grok Bot, Muse, ChatGPT, Claude or any AI agent to your socials."></picture></a>
 </p>
 
 <p align="center">
@@ -38,7 +38,7 @@
 </p>
 
 <p align="center">
-  <a href="https://docs.postqueen.ai/agents/overview"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/works-dark.png"><img src="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/works-light.png" width="100%" alt="Use the agent you already have: Claude, ChatGPT, Grok Bot (new), Grok, Perplexity, Muse (new), Claude Code, Codex, Cursor, Gemini CLI, VS Code, Devin Desktop, Zed, OpenClaw, Hermes, NanoClaw, Paperclip and any MCP app. Posts to 30+ networks."></picture></a>
+  <a href="https://docs.postqueen.ai/agents/overview"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/works-dark.png"><img src="https://raw.githubusercontent.com/GkhanKINAY/postqueen-app/main/.github/assets/showcase/works-light.png" width="100%" alt="Use the agent you already have: Grok Bot (new), Muse (new), OpenClaw, Hermes, Claude, ChatGPT, Grok, Perplexity, Claude Code, Codex, Cursor, Gemini CLI, VS Code, Devin Desktop, Zed, NanoClaw, Paperclip and any MCP app. Posts to 30+ networks."></picture></a>
 </p>
 
 
@@ -52,7 +52,7 @@ PostQueen is a social media scheduler with an AI copilot. It schedules posts to 
 | Using the app | The calendar, the composer, analytics, teams and settings | [/using/calendar](https://docs.postqueen.ai/using/calendar) |
 | Channels | Each network, what it supports and how to connect it | [/channels/overview](https://docs.postqueen.ai/channels/overview) |
 | Plans and billing | Plans, the free trial, refunds and your subscription | [/cloud/plans](https://docs.postqueen.ai/cloud/plans) |
-| AI agents and MCP | Connecting Claude, ChatGPT, Cursor, Codex and other agents | [/agents/overview](https://docs.postqueen.ai/agents/overview) · [/mcp/introduction](https://docs.postqueen.ai/mcp/introduction) |
+| AI agents and MCP | Connecting Grok Bot, Muse, ChatGPT, Claude, Codex, Cursor and other agents | [/agents/overview](https://docs.postqueen.ai/agents/overview) · [/mcp/introduction](https://docs.postqueen.ai/mcp/introduction) |
 | CLI | The `postqueen` command line | [/cli/introduction](https://docs.postqueen.ai/cli/introduction) |
 | Public API | How to authenticate, and the main endpoints with examples | [/public-api/introduction](https://docs.postqueen.ai/public-api/introduction) |
 | Self-hosting | Docker Compose, Kubernetes, configuration and reverse proxies | [/installation/overview](https://docs.postqueen.ai/installation/overview) · [/configuration/reference](https://docs.postqueen.ai/configuration/reference) |
