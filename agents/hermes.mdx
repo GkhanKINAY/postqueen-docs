@@ -4,11 +4,8 @@ description: "Add PostQueen to Hermes Agent's MCP servers, then plan, write and 
 icon: "/images/brand/icon-hermes.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Hermes Agent is Nous Research's open-source agent with persistent memory, skills, scheduled jobs and gateways to Telegram, Discord, Slack, WhatsApp, Signal, email and more. You run it on your own computer or a server, or hosted in Hermes Cloud. Add PostQueen as an MCP server and Hermes can plan your posts, schedule them and report how they did, in a chat or on a schedule.
 
@@ -60,11 +57,11 @@ Ask Hermes: "List my PostQueen channels." It calls PostQueen and answers with th
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From Nous Research's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | From Nous Research's docs |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
 <Tabs>
   <Tab title="Bearer header">
@@ -76,7 +73,7 @@ Ask Hermes: "List my PostQueen channels." It calls PostQueen and answers with th
 
     Hermes keeps the key in its own secrets file as `MCP_POSTQUEEN_API_KEY` and sends it as a Bearer token.
   </Tab>
-  <Tab title="Sign in (not tested yet)">
+  <Tab title="Sign in">
     Set `auth: oauth` on the server, with the address `https://api.postqueen.ai/mcp-oauth-dynamic`. Hermes registers itself, opens the PostQueen sign-in in your browser and keeps the token on your machine. A workspace admin approves.
 
     The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.

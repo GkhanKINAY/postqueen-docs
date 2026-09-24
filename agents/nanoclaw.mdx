@@ -4,11 +4,8 @@ description: "Add PostQueen's MCP server to a NanoClaw agent group, with your ke
 icon: "container"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 NanoClaw is an open-source assistant that runs each agent in its own Docker container on your machine, built on the Claude Agent SDK. You talk to it over Slack, Telegram, Discord, WhatsApp, iMessage and other chat apps. Add PostQueen's MCP server to an agent group and you can ask it, from any of those apps, to write, schedule and check your posts.
 
@@ -76,7 +73,7 @@ Message the agent in one of your chat apps: "List my PostQueen channels." It ans
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the OneCLI vault | `{{mcpBearerUrl}}` | From NanoClaw's docs. The route above |
 | The key as a header in the group's config | `{{mcpBearerUrl}}` | From NanoClaw's docs. The fallback above |

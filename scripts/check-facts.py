@@ -8,7 +8,8 @@
 3. Banned strings: removed routes and tools, wrong tool counts, Windsurf, Medium,
    the old API key location, trial and rate-limit claims that are not true,
    Bearer on the public API, veo3.
-4. The status line of each channel and agent page equals facts.json.
+4. The status line of each channel page equals facts.json. Agent pages carry no
+   test-status line or note (owner, 2026-09-24).
 5. mcp/tools names exactly facts.json's tools.
 6. Prices, trial days and refund days written in a page equal facts.json.
 
@@ -63,7 +64,8 @@ FENCE_RE = re.compile(r"^([ \t]*)(```|~~~)[^\n]*\n(.*?)^\1\2", re.M | re.S)
 COMMENT_RE = re.compile(r"\{/\*.*?\*/\}", re.S)
 CHANNEL_STATUS_RE = re.compile(r"<ChannelStatus\s+status=\"([^\"]+)\"\s*>(.*?)</ChannelStatus>", re.S)
 CHANNEL_STATUS_EMPTY_RE = re.compile(r"<ChannelStatus\s+status=\"([^\"]+)\"\s*/>")
-AGENT_STATUS_RE = re.compile(r"<AgentStatus\b([^>]*?)/?>", re.S)
+AGENT_STATUS_RE = re.compile(r"<AgentStatus\b", re.S)
+TEST_NOTE_RE = re.compile(r"\bnot tested\b|\buntested\b|\bnot possible yet\b|\bkey tested\b|\bpartly tested\b", re.I)
 OWN_WORDS = {"PostQueen", "The", "A", "Your", "On", "Or", "And", "To", "From"}
 STATUS_KEY = {"works": "available", "review_gated": "in-review", "no_keys": "soon", "cannot_connect": "soon"}
 
@@ -180,15 +182,13 @@ def check_channel(rel: str, text: str, channel: dict, pending: bool) -> None:
 
 
 def check_agent(rel: str, text: str, agent: dict, pending: bool) -> None:
-    found = AGENT_STATUS_RE.search(text)
-    if not found:
-        report(pending, f"{rel}: no <AgentStatus> line (facts.json: {agent['status']})")
-        return
-    attrs = dict(re.findall(r"(\w+)=\"([^\"]*)\"", found.group(1)))
-    if attrs.get("status") != agent["status"]:
-        report(pending, f"{rel}: AgentStatus status {attrs.get('status')!r}, facts.json says {agent['status']!r}")
-    if norm(attrs.get("label", "")) != norm(agent["badge"]):
-        report(pending, f"{rel}: AgentStatus label differs from facts.json badge {agent['badge']!r}")
+    """Agent pages say how to connect, not what PostQueen has tested: no status
+    line, no "not tested" or "untested" note (owner, 2026-09-24)."""
+    body = COMMENT_RE.sub("", text)
+    if AGENT_STATUS_RE.search(body):
+        report(pending, f"{rel}: an <AgentStatus> line; agent pages carry no test status")
+    for m in TEST_NOTE_RE.finditer(body):
+        report(pending, f"{rel}: a test-status note {m.group(0)!r}; agent pages carry none")
 
 
 def check_tools_page(text: str, facts: dict, pending: bool) -> None:

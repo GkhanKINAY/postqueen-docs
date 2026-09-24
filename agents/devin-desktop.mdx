@@ -4,11 +4,8 @@ description: "Connect Devin Desktop to PostQueen with one devin mcp add command,
 icon: "laptop"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Add PostQueen as an MCP server and Devin Local can write posts about your work, schedule them and report how your published posts did.
 
@@ -66,11 +63,11 @@ Ask Devin Local: "List my PostQueen channels." By default it asks before each to
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From Cognition's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | From Cognition's docs |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
 <Tabs>
   <Tab title="Bearer header">
@@ -79,7 +76,7 @@ Ask Devin Local: "List my PostQueen channels." By default it asks before each to
       -H "Authorization: Bearer YOUR_API_KEY"
     ```
   </Tab>
-  <Tab title="Sign in (not tested yet)">
+  <Tab title="Sign in">
     ```bash
     devin mcp add -s user postqueen \
       https://api.postqueen.ai/mcp-oauth-dynamic

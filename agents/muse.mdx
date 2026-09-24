@@ -1,20 +1,17 @@
 ---
 title: "Muse"
-description: "Muse, Meta's personal agent, cannot take PostQueen's address yet. What Meta documents instead, and where it stands."
+description: "Connect Muse, Meta's personal agent, to PostQueen through a custom connector that Muse builds with you in chat."
 icon: "/images/brand/icon-muse.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-<AgentStatus status="not-possible" label="Not possible yet">PostQueen cannot be added to Muse by its address yet. The custom connector route below is not tested yet.</AgentStatus>
-
 <Card title="Looking for Muse Code?" icon="/images/brand/icon-muse.svg" href="/agents/muse-code" horizontal>
-  Muse Code, Meta's coding agent for the terminal, connects to PostQueen today with one settings entry.
+  Muse Code, Meta's coding agent for the terminal, connects to PostQueen with one settings entry.
 </Card>
 
-Muse is Meta's personal agent in the Muse app, on muse.ai and in WhatsApp. It launched in the US on September 8, 2026, and works on its own cloud computer at Meta, the Muse Secure VM. This page shows what Meta documents for adding a service to Muse, and what PostQueen has and has not checked.
+Muse is Meta's personal agent in the Muse app, on muse.ai and in WhatsApp. It launched in the US on September 8, 2026, and works on its own cloud computer at Meta, the Muse Secure VM. Connect PostQueen and Muse can write and schedule your posts from a chat.
 
 <div className="pq-visual pq-tint-peach pq-visual-phone">
   <img noZoom src="/images/site/agents/muse.webp" alt="A sample Muse chat on a phone with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -24,22 +21,22 @@ Muse is Meta's personal agent in the Muse app, on muse.ai and in WhatsApp. It la
 
 - **Plans:** Muse is free with a usage limit. Power costs \$20 a month and Maximum \$100 a month. Meta does not tie connectors to a plan.
 - **Platforms:** the Muse app on iOS and Android, muse.ai on the web, WhatsApp and Mac. Muse is rolling out in the US and is not available in every location yet.
-- **A PostQueen API key**, if you try the custom connector below. A workspace admin copies it from **Connections**.
+- **A PostQueen API key.** A workspace admin copies it from **Connections**.
 
 <ApiKeyLocation />
 
-## Can I connect PostQueen to Muse today?
+## How Muse connects
 
-Not by address. Meta documents two ways for Muse to reach a service, and neither takes an MCP address from you today:
+Through a custom connector that Muse builds with you in chat. Meta also reviews connectors for its directory, and PostQueen is not listed there yet.
 
-| Route | What Meta documents | Where PostQueen stands |
+| Route | What Meta documents | For PostQueen |
 |---|---|---|
-| **A listed connector** | Connectors Meta has reviewed, added under **Settings > Connectors** | PostQueen is not listed yet |
-| **A custom connector** | You ask Muse in chat to build one, from the service's API information | Not tested with PostQueen yet |
+| **A custom connector** | You ask Muse in chat to build one, from the service's API information | The steps below |
+| **A listed connector** | Connectors Meta has reviewed, added under **Settings > Connectors** | Not listed yet |
 
-## Try a custom connector (not tested yet)
+## Connect with a custom connector
 
-These are the steps Meta documents for a service that is not in the Connector list. Nobody has built a PostQueen connector this way yet, so PostQueen cannot promise it works.
+These are the steps Meta documents for a service that is not in the Connector list.
 
 <Steps>
   <Step title="Copy your PostQueen API key">
@@ -62,9 +59,8 @@ Meta does not review custom connectors or how they use your information. A PostQ
 
 ## Good to know
 
-- **Meta does not say that Muse accepts an MCP address.** Pasting PostQueen's address into **Settings > Connectors** does not work the way it does in Claude: that screen lists only connectors Meta has reviewed.
+- **Settings > Connectors lists only connectors Meta has reviewed.** Pasting PostQueen's address there does not work the way it does in Claude. Ask Muse in chat instead.
 - **Only a workspace admin can connect PostQueen.** The API key is shown to admins only, and it gives full access to the workspace.
-- **If you get it working,** tell [support@postqueen.ai](mailto:support@postqueen.ai) what Muse asked for. It helps PostQueen test this route and update this page.
 
 ## Try this first
 
@@ -91,7 +87,7 @@ No. Meta ships two agents with the Muse name, and they connect to PostQueen in d
 
 | Product | What it is | How it connects |
 |---|---|---|
-| **Muse** (this page) | Meta's personal agent in the Muse app, on muse.ai and in WhatsApp | Not by address yet |
+| **Muse** (this page) | Meta's personal agent in the Muse app, on muse.ai and in WhatsApp | A custom connector it builds with you in chat |
 | [Muse Code](/agents/muse-code) | Meta's coding agent for the terminal and CI, built on Muse Spark | PostQueen's MCP address in its settings file |
 
 <NextStepsAgent />

@@ -4,11 +4,8 @@ description: "Give OpenClaw the PostQueen CLI and skill, and post from WhatsApp,
 icon: "/images/brand/icon-openclaw.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 OpenClaw is a personal AI agent you run on your own computer or server, with an always-on gateway to WhatsApp, Telegram, Slack, Discord and more. Give it the PostQueen CLI and skill, and you can message it from your phone to write, schedule and check your posts.
 
@@ -77,14 +74,14 @@ Message OpenClaw, from its chat or a linked chat app: "List my PostQueen channel
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The CLI and the skill | No address | From OpenClaw's docs. The route above |
-| MCP with the Bearer header | `{{mcpBearerUrl}}` | Not tested yet |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| MCP with the Bearer header | `{{mcpBearerUrl}}` | Keeps the key out of the address |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
 <Tabs>
-  <Tab title="MCP (not tested yet)">
+  <Tab title="MCP">
     ```bash
     openclaw mcp add postqueen --url https://api.postqueen.ai/mcp \
       --transport streamable-http \
@@ -94,7 +91,7 @@ Message OpenClaw, from its chat or a linked chat app: "List my PostQueen channel
 
     Set the transport: OpenClaw assumes SSE when it is left out. MCP tools appear in the coding and messaging tool profiles, not in minimal.
   </Tab>
-  <Tab title="Sign in (not tested yet)">
+  <Tab title="Sign in">
     Add the server with `--auth oauth` and the address `https://api.postqueen.ai/mcp-oauth-dynamic`, then run:
 
     ```bash

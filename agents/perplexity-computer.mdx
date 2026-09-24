@@ -4,11 +4,8 @@ description: "Add PostQueen to Perplexity as a custom remote connector, then let
 icon: "/images/brand/icon-perplexity.png"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a cloud sandbox, with a browser, files and your connected tools. Add PostQueen as a custom connector and Computer can draft posts from your research, schedule them and report how your published posts did.
 
@@ -68,7 +65,7 @@ Start a Computer task: "List my PostQueen channels." Computer answers with the c
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address, Authentication None | `{{mcpKeyUrl}}` | From Perplexity's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | Not documented: Perplexity does not say which header its API Key option sends |

@@ -4,11 +4,8 @@ description: "Connect Grok Build, xAI's coding agent for the terminal, to PostQu
 icon: "/images/brand/icon-grok.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Grok Build is xAI's coding agent for the terminal: the `grok` CLI. It also runs headless in scripts and inside other apps, and its source is open under Apache 2.0. Add PostQueen with one command and Grok Build can announce a release, draft posts from your repo and report how published posts did, without leaving the terminal.
 
@@ -60,12 +57,12 @@ Start Grok Build and ask: "List my PostQueen channels." It calls PostQueen and a
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From xAI's docs. The route above |
 | The Bearer header, key read from your environment | `{{mcpBearerUrl}}` | From xAI's docs |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
-| The postqueen skill as a Grok plugin | No address | Not tested yet |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
+| The postqueen skill as a Grok plugin | No address | See [the postqueen skill](/agents/skill) |
 
 <Tabs>
   <Tab title="Bearer header">
@@ -79,7 +76,7 @@ Start Grok Build and ask: "List my PostQueen channels." It calls PostQueen and a
 
     Keep the single quotes. With double quotes your shell writes the key itself into `config.toml`.
   </Tab>
-  <Tab title="Sign in (not tested yet)">
+  <Tab title="Sign in">
     Add the sign-in address, then sign in from the extensions modal. It has {{mcpToolsOauth}} tools, all but `ask_postqueen`.
 
     ```bash
@@ -89,7 +86,7 @@ Start Grok Build and ask: "List my PostQueen channels." It calls PostQueen and a
 
     Type `/mcps` in Grok Build, select PostQueen and press `i` to sign in. A workspace admin signs in to PostQueen and approves. Grok keeps the token on your computer, and you can revoke it in PostQueen under **Connections > Approved Apps**.
   </Tab>
-  <Tab title="Plugin (not tested yet)">
+  <Tab title="Plugin">
     The postqueen skill drives the [PostQueen CLI](/cli/introduction), so install the CLI and set your key first:
 
     ```bash

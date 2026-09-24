@@ -4,11 +4,8 @@ description: "Add PostQueen to Zed as a remote MCP server, then ask Zed's agent 
 icon: "/images/brand/icon-zed.svg"
 ---
 
-import { AgentStatus } from '/snippets/agent-status.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
-
-<AgentStatus status="vendor-docs" label="From the vendor's docs, not tested by PostQueen yet" />
 
 Zed is a code editor with a built-in AI agent panel. Add PostQueen as a remote MCP server and the agent can write posts about your work, schedule them and report how your published posts did.
 
@@ -58,11 +55,11 @@ In the agent panel, ask: "List my PostQueen channels." The agent calls PostQueen
 
 ## Other ways to connect
 
-| Way | Address | Status |
+| Way | Address | Notes |
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From Zed's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | From Zed's docs |
-| Sign in with PostQueen | `{{mcpOauthUrl}}` | Not tested yet |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
 <Tabs>
   <Tab title="Bearer header">
@@ -77,7 +74,7 @@ In the agent panel, ask: "List my PostQueen channels." The agent calls PostQueen
     }
     ```
   </Tab>
-  <Tab title="Sign in (not tested yet)">
+  <Tab title="Sign in">
     Use `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL, with no headers. Zed shows an **Authenticate** button; a workspace admin signs in to PostQueen and approves.
 
     The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
