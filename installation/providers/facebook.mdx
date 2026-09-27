@@ -74,7 +74,7 @@ PostQueen checks every permission it asks for when a Page connects. A missing on
   <Step title="Check the permissions">
     Open **App Review > Permissions and Features** and check that these are listed:
 
-    - **Facebook Page**: `pages_show_list`, `business_management`, `pages_manage_posts`, `pages_manage_engagement`, `pages_read_engagement`, `pages_read_user_content` and `read_insights`.
+    - **Facebook Page**: `pages_show_list`, `business_management`, `pages_manage_posts`, `pages_manage_engagement`, `pages_read_engagement` and `read_insights`.
     - **Instagram (Facebook Business)** adds `instagram_basic`, `instagram_content_publish`, `instagram_manage_comments` and `instagram_manage_insights`.
 
     While the app is in development, people with a role on it can grant all of them.
@@ -82,7 +82,7 @@ PostQueen checks every permission it asks for when a Page connects. A missing on
     Do not add Instagram (Standalone) permissions (`instagram_business_*`) or Threads permissions (`threads_*`) to this app: they belong to separate apps. Do not request messaging, ads or `pages_manage_metadata` permissions either: PostQueen does not use them.
 
     <Note>
-    Meta requires `pages_read_user_content` together with `pages_manage_engagement`, which PostQueen uses to publish follow-up comments under Page posts. PostQueen does not read other people's comments or posts.
+    PostQueen uses `pages_manage_engagement` to publish follow-up comments under Page posts. It does not need `pages_read_user_content`, because it never reads other people's comments or posts. Leave that permission out of your App Review request.
     </Note>
   </Step>
   <Step title="Set the callback URLs">
