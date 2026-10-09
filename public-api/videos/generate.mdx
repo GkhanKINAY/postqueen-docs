@@ -50,7 +50,7 @@ The answer has the same shape as [Upload a file](/public-api/uploads/upload-file
 
 | `type` | What it makes | `customParams` |
 |---|---|---|
-| `seedance` | One 8-second clip at 720p, with sound. | `prompt` (string, required): one scene, as a visual brief of the camera, the subject, the motion, the light and the atmosphere, with no on-screen text or logos. `images` (list, required): up to three images from your media library, each as the `id` and `path` an upload returned. Send `[]` for a video from the prompt alone. |
+| `seedance` | One clip with sound, 8 seconds at 720p unless you ask otherwise. | `prompt` (string, required): one scene, as a visual brief of the camera, the subject, the motion, the light and the atmosphere, with no on-screen text or logos. `images` (list, required): up to three images from your media library, each as the `id` and `path` an upload returned. Send `[]` for a video from the prompt alone. `model` (optional): `fast` (the default), `standard` or `mini`. `resolution` (optional): `480p`, `720p` (the default) or `1080p`, which only `standard` offers. `duration` (optional): 4 to 15 seconds, 8 by default. `aspectRatio` (optional): `9:16`, `16:9`, `1:1`, `4:3` or `3:4`; left out, it follows `output`. `audio` (optional): `true` by default. |
 | `image-text-slides` | A narrated slideshow of three to five slides, each with a generated picture, the narration read aloud and shown as captions. | `voice` (string, required): a voice `id` from [Run a video helper](/public-api/videos/function). `prompt` (string, required): what the video should say and show, in plain text. |
 
 `output` is `vertical` (9:16) for Reels, Stories, TikTok and Shorts, or `horizontal` (16:9) for a feed post. An Image Text Slides video is 1080 × 1920 or 1920 × 1080.
@@ -61,21 +61,22 @@ A video takes a few minutes. Seedance gives up after about 30 minutes and answer
 
 ## Credits and the free trial
 
-- Each video uses one of your plan's AI videos for the month. The count starts again on the day of the month your subscription started. How many each plan has is on [Plans and limits](/cloud/plans).
-- A video that fails gives its credit back. A request refused with `400`, `402` or `406` uses none.
+- Each video is paid from your workspace's credits. A `seedance` video is priced per second by `model` and `resolution`, from 0.5 credits a second (`mini`, 480p) to 12.5 (`standard`, 1080p); the default, 8 seconds of `fast` at 720p, costs 32. An `image-text-slides` video costs 14. Every price is on [Credits](/cloud/credits#ai-videos).
+- A video that fails gives its credits back. A request refused with `400`, `402` or `406` uses none.
 - During the free trial, `seedance` answers `406`. `image-text-slides` works. See [Free trial](/cloud/trial).
 
-This endpoint has no hourly limit. Your monthly credits are the limit.
+This endpoint has no hourly limit. Your credits balance is the limit.
 
 ## If it fails
 
 | Answer | What to do |
 |---|---|
 | `400` with a `message` list | A field is missing or wrong. `type must be any of: ...` lists the generators you can use |
-| `402` `You have reached the maximum number of generated videos for your subscription. Please upgrade your subscription to generate more videos.` | This month's videos are used up. Wait for the monthly reset, or move to a bigger plan at the `url` in the body. `No credits left this month` means the last credit went to another request made at the same moment |
+| `400` `Seedance <model> does not offer <resolution>` | Only `standard` offers `1080p`, and `mini` offers `480p` and `720p` |
+| `402` `Not enough credits: this costs N and the balance is N.` | The balance does not cover the video. `required` and `balance` in the body give both numbers. Buy credits on **Billing**, or ask for a cheaper video |
 | `406` `This video is not available in trial mode` | Seedance during the free trial. Use `image-text-slides`, or end the trial on **Billing** |
 | `422` `Your request was rejected by the AI safety system.` | The provider refused the prompt. The message names the flagged categories when the provider gives them. Change the prompt |
-| `500` `AI generation failed, please try again later.` | The generation failed or timed out. The credit was given back. Try again |
+| `500` `AI generation failed, please try again later.` | The generation failed or timed out. The credits were given back. Try again |
 
 <Tip>
 Agents connected over MCP start the same video as a job and poll it, so nothing waits on an open connection: see [`generateVideoTool`](/mcp/tools#generatevideotool).

@@ -12,7 +12,8 @@
    2026-09-24): no status line or Soon/In review tag on a network, no platform-review
    note ("In review", "testers", "until Meta approves" ...), no agent test status.
 5. mcp/tools names exactly facts.json's tools.
-6. Prices, trial days and refund days written in a page equal facts.json.
+6. Prices, trial days, refund days and monthly credits written in a page
+   equal facts.json.
 
 Checks 3 to 6 run on every page without an OVERHAUL-TODO marker (check 3 also
 on the snippets and on SKILL.md); pages still marked, and openapi.json while it carries
@@ -48,7 +49,8 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ("a tool count other than 22 or 21", re.compile(r"\b(?:1\d|20|2[3-9]|[3-9]\d|\d{3,})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
     ("a spelled-out tool count", re.compile(rf"\b(?:{SPELLED})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
     ("Windsurf (the product is Devin Desktop)", re.compile(r"windsurf", re.I)),
-    ("Medium (the network was removed)", re.compile(r"\bMedium\b(?![- ](?:priority|size|risk|term))")),
+    # **Medium** in bold is the AI image quality label, not the network.
+    ("Medium (the network was removed)", re.compile(r"(?<!\*\*)\bMedium\b(?!\*\*)(?![- ](?:priority|size|risk|term))")),
     ("Settings > API Keys (the key is under Connections > API Keys)", re.compile(r"Settings\s*(?:→|>|->|&gt;|/)\s*API Keys", re.I)),
     ("app.postqueen.ai/settings as the key location", re.compile(r"app\.postqueen\.ai/settings(?![?\w/])")),
     ('"no card" (the trial takes a card)', re.compile(r"\bno (?:credit )?card\b", re.I)),
@@ -56,6 +58,9 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ('"ten connectors" (nine networks report analytics)', re.compile(r"\bten connectors\b", re.I)),
     ("api.postqueen.ai/docs (the internal Swagger list, never linked)", re.compile(r"api\.postqueen\.ai/docs\b")),
     ("veo3 (no such video type)", re.compile(r"veo3", re.I)),
+    ("monthly AI image or video counts (plans add credits now)", re.compile(r"\bAI (?:images|videos) a month\b|\b(?:image|video) credits?\b", re.I)),
+    ("an old AI quota message (the 402 is Not enough credits)", re.compile(r"out of AI credits for this month|maximum number of generated videos|No AI video credits are available", re.I)),
+    ("an X analytics add-on (none exists)", re.compile(r"\bX analytics add-on\b|\banalytics add-on\b", re.I)),
 ]
 FENCE_RE = re.compile(r"^([ \t]*)(```|~~~)[^\n]*\n(.*?)^\1\2", re.M | re.S)
 COMMENT_RE = re.compile(r"\{/\*.*?\*/\}", re.S)
@@ -160,6 +165,11 @@ def check_numbers(rel: str, text: str, facts: dict, pending: bool) -> None:
         tier = tiers[m.group(1)]
         if int(m.group(2)) not in (tier["monthly"], tier["yearly"]):
             report(pending, f"{rel}: {m.group(1)} at ${m.group(2)}, facts.json says ${tier['monthly']} a month or ${tier['yearly']} a year")
+    # A plan's credits: "Pro ... 500 credits a month" on one line or table row.
+    for m in re.finditer(r"\b(Creator|Growth|Pro|Ultimate)\b[^\n]{0,60}?\b([\d,]+) credits a month\b", body):
+        want = tiers[m.group(1)]["monthlyCredits"]
+        if int(m.group(2).replace(",", "")) != want:
+            report(pending, f"{rel}: {m.group(1)} with {m.group(2)} credits a month, facts.json says {want}")
     for m in re.finditer(r"\b(\d+)[- ]day (?:free )?trial\b", body, re.I):
         if int(m.group(1)) != facts["trial"]["days"]:
             report(pending, f"{rel}: a {m.group(1)}-day trial, facts.json says {facts['trial']['days']}")

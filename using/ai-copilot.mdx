@@ -17,10 +17,10 @@ The AI Copilot is a chat that writes posts for your channels. It shows each post
 
 <Steps>
   <Step title="Open AI Copilot">
-    Choose **AI Copilot** in the left rail. Your channels are on the left under **Select Channels**, the chat is in the middle, and your **Chats** are on the right.
+    Choose **AI Copilot** in the left rail. The chat is in the middle and your **Chats** are on the right.
   </Step>
   <Step title="Pick the channels">
-    Click the channels the post is for. The message box lists them after "Posting to".
+    In the message box, choose **Choose channels** and click the channels the post is for. The button then reads **Posting to 1 channel** or **Posting to** and the number of channels.
   </Step>
   <Step title="Describe the post">
     Say what you want to post and when, then press Enter. Shift + Enter starts a new line.
@@ -41,8 +41,8 @@ Ask in plain words, for example "move Friday's Bluesky post to 10:00". The Copil
 
 ## What else you can ask
 
-- **Images:** make one for a post, or use one from [Media](/using/media-library). Each generated image uses an AI image credit.
-- **Videos:** in the **AI Copilot** tab of Create Post, ask for a video for the post. Each video uses an AI video credit. See [Ask the AI Copilot for a video](/using/ai-images-and-video#ask-the-ai-copilot-for-a-video).
+- **Images:** make one for a post, or use one from [Media](/using/media-library). A generated image is paid from your credits like any AI image.
+- **Videos:** in the **AI Copilot** tab of Create Post, ask for a video for the post. It is paid from your credits like any AI video. See [Ask the AI Copilot for a video](/using/ai-images-and-video#ask-the-ai-copilot-for-a-video).
 - **Analytics:** totals for posts published in the last 7, 30 or 90 days, your top posts, or one post's numbers, from the [networks that report analytics](/using/analytics).
 - **Settings:** change a scheduled post's or a draft's network settings without touching its text or time.
 
@@ -54,15 +54,25 @@ The right column has two tabs, **Post Preview** and **AI Copilot**, and opens on
 - Ask for an image and choose **Use in this post** to attach it, or ask for a comment to wait a few minutes after the post.
 - To schedule, use the composer's own buttons.
 
-## Generate Posts from a brief
+## Write a post with AI
 
-Open the arrow next to **Create Post** in the header and choose **AI post**. Write at least 10 characters under **Write anything** (links are fine), pick an **Output format** and a **Tone**, check **Add pictures?** for images, and choose **Generate**. The composer opens with the result to check and schedule.
+Open the arrow next to **Create Post** in the header and choose **AI post**. In **Write a post with AI**, describe the post under **What is the post about?**, pick a **Length**, a **Shape** (**One post** or **Thread**) and a **Voice**, check **Make an image for it** if you want one, and choose **Write the draft**. The composer opens with the draft to check and schedule. Each draft, and its image, is charged in credits.
+
+**Plan with AI Copilot**, the third row of the same menu, opens this page for several posts, images and times in one chat.
 
 ## Good to know
 
-- Every paid plan includes the AI Copilot.
-- Chats are saved for the workspace, so everyone in it sees the same list. **New chat** starts a fresh one.
-- Chatting and rewriting do not use credits. Only images and videos do.
+- Chats are saved for the workspace, so everyone in it sees the same list ("Visible to your team"). **New chat** starts a fresh one.
+- **Search chats** finds a chat by its title. The list is grouped into **Today**, **Yesterday**, **Previous 7 days** and **Earlier**.
+- Each chat has **Rename** and **Delete chat**. Deleting asks first, and posts the chat scheduled and images it made stay where they are. Admins also see **Clear all**, which deletes every Copilot chat in the workspace for everyone.
+
+## Credits
+
+Every paid plan includes the AI Copilot, and it is paid from your workspace's [credits](/cloud/credits) by the tokens each answer uses. A long chat or a long answer costs more than a short one. The message box shows your balance, and an admin can click it to open Billing.
+
+- A message is accepted whenever the balance is above zero. An answer that has started can take the balance a little below zero before it stops.
+- With no credits left, the message box reads "You are out of credits, so Copilot cannot answer." with **Get more credits**.
+- Images and videos the Copilot makes are charged at their own price.
 - A network's rules always win. If a draft breaks one, the card reads "Copilot is fixing this draft" while the Copilot corrects it.
 
 ## If something goes wrong
@@ -72,7 +82,7 @@ Open the arrow next to **Create Post** in the header and choose **AI post**. Wri
 | “AI Copilot unlocks after your trial” | Choose **End free trial to unlock AI Copilot**, or wait for your plan to start. |
 | “Copilot could not fix this draft” | Answer the Copilot's question, or choose **Edit in Create Post** and fix the post yourself. |
 | “The date of this post has passed; say when it should go out.” | Give the Copilot a new date and time. |
-| “You are out of AI credits for this month.” | Wait for your AI credits to reset, or move to a larger plan in **Billing**. |
+| “You are out of credits, so Copilot cannot answer.” | Choose **Get more credits** to buy a pack on **Billing**, or wait for your plan's next credits. |
 
 ## Next steps
 
@@ -81,7 +91,7 @@ Open the arrow next to **Create Post** in the header and choose **AI post**. Wri
     Finish a draft by hand in the composer.
   </Card>
   <Card title="AI images and video" icon="sparkles" href="/using/ai-images-and-video">
-    Styles, shapes, the two video generators and the monthly credits.
+    Styles, shapes, quality, the two video generators and their prices.
   </Card>
   <Card title="Use your own AI agent" icon="bot" href="/agents/overview">
     Post from Claude, ChatGPT or another agent through PostQueen's MCP server.

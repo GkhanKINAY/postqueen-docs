@@ -418,6 +418,7 @@
             "group": "Plans and billing",
             "pages": [
               "cloud/plans",
+              "cloud/credits",
               "cloud/trial",
               "cloud/subscription",
               "cloud/refunds"

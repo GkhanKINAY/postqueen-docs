@@ -1,0 +1,135 @@
+---
+title: "Credits"
+sidebarTitle: "Credits"
+description: "The one credits balance that pays for AI images and video, the AI Copilot, AI agents and posts to X: what each thing costs, where credits come from and when they expire."
+icon: "coins"
+keywords:
+  - credits
+  - balance
+  - credits pack
+  - not enough credits
+  - ai image cost
+  - video cost
+  - x post cost
+---
+
+**Where:** **Credits** on **Billing**, from the **Upgrade** row at the bottom of the left rail, or **Billing & invoices** in the account menu. Only workspace admins see Billing.
+
+Each workspace has one credits balance. Your plan adds credits, and anything that costs PostQueen money to run takes them: AI images and video, the AI Copilot, AI agents that use PostQueen's own agent over MCP, and posts to X.
+
+## Where credits come from
+
+| Source | How many | When they expire |
+|---|---|---|
+| Your plan, monthly | Pro adds 500 a month. Creator adds 150, Growth 300 and Ultimate 1,000. | When the next month's credits arrive, or at the latest 3 days after the billing month ends. |
+| Your plan, yearly | Twelve months of credits at once, as soon as the year is paid: 6,000 on Pro. | When the next year's credits arrive, or at the latest 3 days after the year ends. |
+| The free trial | One month of the plan's credits, on a yearly plan too. | When the trial ends. |
+| The monthly gift | 5 credits every calendar month, for a paid plan past its trial. | At the end of that month. |
+| A credits pack | 100, 500 or 1,000 credits, bought on Billing. | 12 months after you buy it. |
+
+The credits closest to running out are spent first, so a plan's monthly credits go before a pack's. Moving to a dearer plan part of the way through a period adds the new plan's extra credits for the time that is left. [Plans and limits](/cloud/plans) compares the plans.
+
+## Check your balance
+
+The **Credits** card on Billing shows how many credits are left, and how many of them expire next and on which date. The balance also shows in the AI Copilot's message box, and the **Generate AI Image** window shows the credits you have left.
+
+## What credits pay for
+
+Prices are in credits. Work that fails gives its credits back, and a request PostQueen refuses before it starts takes none.
+
+### AI images
+
+An image costs more at a higher **Quality**, and a **Portrait** or **Landscape** image costs more than a **Square** one. The **Generate AI Image** window shows the price of each quality.
+
+| Quality | Square | Portrait or landscape |
+|---|---|---|
+| **Low** | 0.3 | 0.4 |
+| **Medium** | 1 | 1.3 |
+| **High** | 3.5 | 5 |
+
+### AI videos
+
+**Seedance 2.0 (Audio + Video)** is priced per second, by **Model** and **Resolution**. In the app a video is 5, 8, 10, 12 or 15 seconds long, 8 unless you pick another **Length**. The API takes any length from 4 to 15. The sound track is free.
+
+| Model | 480p | 720p | 1080p |
+|---|---|---|---|
+| **Mini** | 0.5 a second | 1 a second | Not offered |
+| **Fast** | 1.85 a second | 4 a second | Not offered |
+| **Standard** | 2.35 a second | 5 a second | 12.5 a second |
+
+An 8-second **Fast** video at 720p, the default, costs 32 credits. An **Image Text Slides** video costs 14 credits, whatever its length. The **Generate video** window shows the price before you choose **Generate**. See [AI images and video](/using/ai-images-and-video).
+
+### The AI Copilot and AI agents
+
+The [AI Copilot](/using/ai-copilot), and [AI agents](/agents/overview) that use PostQueen's own agent over MCP, are charged by the tokens each answer uses, so a long chat or a long answer costs more than a short one. A message is accepted whenever the balance is above zero, and an answer that started can take the balance a little below zero before it stops. With no credits left, the Copilot reads "You are out of credits, so Copilot cannot answer."
+
+### Other AI features
+
+These are charged in credits:
+
+- **AI post** in the **Create Post** menu, which writes a draft and can make an image for it.
+- [Auto Post](/using/rss-auto-post) with **Autogenerate content** or **Generate Picture?** set to **Yes**.
+- Splitting a long post into several posts with AI.
+
+### X
+
+X charges PostQueen for its API, so these X actions take credits:
+
+| Action | Credits |
+|---|---|
+| A post, or each part of a thread | 0.4 |
+| A post whose text has a link | 5 |
+| An Auto-Plugs like check on a post | 0.13, once a day at most for the same post |
+| A repost by **Auto Repost Posts** or **Add Re-posters** | 0.4 for each account |
+| An **Auto plug post** reply | 0.4, or 5 when it has a link |
+| Looking up accounts for an `@` mention, or reading the X account's subscription | 0.25, once a day at most for the same lookup |
+
+Reading X analytics does not take credits. Other networks take none.
+
+## Posting to X sets credits aside
+
+A scheduled X post sets its credits aside when you save it, not when it publishes. When you choose **Schedule**, **Post now** or **Update** on a post with an X channel and the save needs more credits set aside than the post already has, a **Publishing uses credits** window shows what it takes and **Balance after:** with what is left, and says why: "X charges PostQueen for every post published through its API." When the post has a link, it adds that a post with a link costs 5 credits instead of 0.4. Confirm with the same button, or choose **Cancel**.
+
+- **Editing** a scheduled post reuses what it already set aside. Only a difference is charged or given back.
+- **Saving as a draft**, deleting the post, or a publish that fails gives the credits back, unless the credits they came from have expired meanwhile. Drafts and Social Sets ask nothing.
+- **A repeating post** sets aside its next run each time it publishes.
+- **Too few credits:** the window's title reads **Not enough credits** with your balance, and offers **Get more credits** to admins instead of saving. **Back** returns to the composer.
+
+## When the balance is too low
+
+Work that the balance cannot cover is refused before it starts, with this message in the **Payment Required** dialog:
+
+> Not enough credits: this costs N and the balance is N.
+
+Choose **Move to billing** to buy a pack or move to a plan with more credits. The AI image and video windows say "You don't have enough credits for this image." or "You don't have enough credits for this video." under the price, with **Get more credits**.
+
+Background work stops without a dialog instead. An Auto Post item becomes a draft, with a notification: "Autopost saved a draft: not enough credits". A plug stops, with "A plug stopped: not enough credits". The public API and MCP answer the same message, with status `402`: see [Limits and errors](/public-api/limits-and-errors#status-codes).
+
+## Buy more credits
+
+On Billing, under **Buy more credits**, pick a pack, tick the box under the packs and choose **Buy**. Larger packs cost less a credit.
+
+| Pack | Price | A credit |
+|---|---|---|
+| 1,000 credits | $80 | $0.08 |
+| 500 credits | $45 | $0.09 |
+| 100 credits | $10 | $0.10 |
+
+[Manage your subscription](/cloud/subscription#buy-more-credits) covers the checkout.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Plans and limits" icon="layers" href="/cloud/plans">
+    The credits each plan adds, and the other limits.
+  </Card>
+  <Card title="Manage your subscription" icon="credit-card" href="/cloud/subscription">
+    Change plan, buy a pack, update the card or cancel.
+  </Card>
+  <Card title="AI images and video" icon="sparkles" href="/using/ai-images-and-video">
+    Quality, shape, model, resolution and length.
+  </Card>
+  <Card title="X" icon="at-sign" href="/channels/x-twitter">
+    What X can post, and what it costs in credits.
+  </Card>
+</CardGroup>

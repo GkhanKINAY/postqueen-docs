@@ -1057,16 +1057,25 @@
             "$ref": "#/components/responses/Unauthorized"
           },
           "402": {
-            "description": "The workspace's plan allows no more posts. Current plans have no monthly post limit",
+            "description": "The credits balance does not cover publishing the post: a post to X sets its credits aside when it is scheduled or posted now. A workspace whose plan allows no more posts gets the billing link instead; current plans have no monthly post limit",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaymentRequired"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/InsufficientCredits"
+                    },
+                    {
+                      "$ref": "#/components/schemas/PaymentRequired"
+                    }
+                  ]
                 },
                 "example": {
                   "statusCode": 402,
-                  "message": "You have reached the maximum number of posts for your subscription. Please upgrade your subscription to add more posts.",
-                  "url": "https://app.postqueen.ai/billing"
+                  "message": "Not enough credits: this costs 5 and the balance is 1.2.",
+                  "code": "insufficient_credits",
+                  "required": 5,
+                  "balance": 1.2
                 }
               }
             }
@@ -2205,7 +2214,7 @@
           "AI video"
         ],
         "summary": "Generate a video",
-        "description": "Makes a video with AI and saves it to the media library. The request stays open until the video is ready, which takes minutes, and then answers with the stored file, ready to put on a post. Each video uses one of the plan's monthly AI video credits; a generation that fails gives the credit back. `seedance` is not available during the free trial.",
+        "description": "Makes a video with AI and saves it to the media library. The request stays open until the video is ready, which takes minutes, and then answers with the stored file, ready to put on a post. Each video is paid from the workspace's credits: `seedance` by the second, by `model` and `resolution`, and `image-text-slides` at one price. A generation that fails gives the credits back. `seedance` is not available during the free trial.",
         "operationId": "generateVideo",
         "requestBody": {
           "required": true,
@@ -2313,23 +2322,18 @@
             "$ref": "#/components/responses/Unauthorized"
           },
           "402": {
-            "description": "The plan's AI videos for this month are used up. Credits come back on the day of the month the subscription started. When the last credit went to a request made at the same moment, the body is `{\"statusCode\": 402, \"message\": \"No credits left this month\"}` instead",
+            "description": "The workspace's credits do not cover the video. `required` and `balance` give both numbers, in credits",
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/PaymentRequired"
-                    },
-                    {
-                      "$ref": "#/components/schemas/NestError"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/InsufficientCredits"
                 },
                 "example": {
                   "statusCode": 402,
-                  "message": "You have reached the maximum number of generated videos for your subscription. Please upgrade your subscription to generate more videos.",
-                  "url": "https://app.postqueen.ai/billing"
+                  "message": "Not enough credits: this costs 32 and the balance is 12.5.",
+                  "code": "insufficient_credits",
+                  "required": 32,
+                  "balance": 12.5
                 }
               }
             }
@@ -5529,7 +5533,7 @@
       "SeedanceParams": {
         "type": "object",
         "title": "seedance",
-        "description": "`customParams` for `seedance`: one 8-second clip at 720p, with sound.",
+        "description": "`customParams` for `seedance`: one clip with sound, 8 seconds at 720p unless you ask otherwise. Priced per second by `model` and `resolution`.",
         "required": [
           "prompt",
           "images"
@@ -5537,7 +5541,7 @@
         "properties": {
           "prompt": {
             "type": "string",
-            "description": "One scene of about 8 seconds, as a visual brief: the camera, the subject, the motion, the light and the atmosphere. Plain text, with no on-screen text or logos"
+            "description": "One scene, as a visual brief: the camera, the subject, the motion, the light and the atmosphere. Plain text, with no on-screen text or logos"
           },
           "images": {
             "type": "array",
@@ -5560,6 +5564,49 @@
                 }
               }
             }
+          },
+          "model": {
+            "type": "string",
+            "enum": [
+              "fast",
+              "standard",
+              "mini"
+            ],
+            "default": "fast",
+            "description": "`standard` is the sharpest and the only one with 1080p and costs the most credits a second; `mini` costs the least"
+          },
+          "resolution": {
+            "type": "string",
+            "enum": [
+              "480p",
+              "720p",
+              "1080p"
+            ],
+            "default": "720p",
+            "description": "`1080p` only with `standard`. Higher costs more credits a second"
+          },
+          "duration": {
+            "type": "integer",
+            "minimum": 4,
+            "maximum": 15,
+            "default": 8,
+            "description": "Length in seconds. Credits are per second"
+          },
+          "aspectRatio": {
+            "type": "string",
+            "enum": [
+              "9:16",
+              "16:9",
+              "1:1",
+              "4:3",
+              "3:4"
+            ],
+            "description": "The frame shape. Left out, it follows `output`"
+          },
+          "audio": {
+            "type": "boolean",
+            "default": true,
+            "description": "Generate a sound track. Free"
           }
         }
       },
@@ -5845,6 +5892,33 @@
               "null"
             ],
             "description": "URL of a JPEG of the clip's first frame"
+          }
+        }
+      },
+      "InsufficientCredits": {
+        "type": "object",
+        "description": "The credits balance does not cover the work. Nothing was made or saved.",
+        "properties": {
+          "statusCode": {
+            "type": "integer"
+          },
+          "message": {
+            "type": "string",
+            "description": "`Not enough credits: this costs N and the balance is N.`"
+          },
+          "code": {
+            "type": "string",
+            "enum": [
+              "insufficient_credits"
+            ]
+          },
+          "required": {
+            "type": "number",
+            "description": "What the work costs, in credits"
+          },
+          "balance": {
+            "type": "number",
+            "description": "The workspace's balance, in credits"
           }
         }
       }
