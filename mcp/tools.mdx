@@ -10,6 +10,7 @@ keywords:
   - postsListTool
   - analyticsPostsTool
   - uploadWidgetTool
+  - mediaListTool
   - generateVideoTool
   - ask_postqueen
 ---
@@ -38,7 +39,7 @@ How to connect: [MCP server](/mcp/introduction).
     `integrationSchema` returns the rules, the character limit and the settings a post needs. If a setting needs a value only the network knows, such as a WordPress post type, `triggerTool` looks it up.
   </Step>
   <Step title="Bring in media, if the post has any">
-    `uploadFromUrlTool`, the upload panel (`uploadWidgetTool`) or `generateImageTool` puts the file in your media library and returns its `path`. A video made with `generateVideoTool` takes minutes: `videoStatusTool` returns its `url` when it is done.
+    A file already in your media library is found with `mediaListTool`. `uploadFromUrlTool`, the upload panel (`uploadWidgetTool`) or `generateImageTool` puts a new file there and returns its `path`. A video made with `generateVideoTool` takes minutes: `videoStatusTool` returns its `url` when it is done.
   </Step>
   <Step title="Create the post">
     `integrationSchedulePostTool` saves a draft, schedules the post or publishes it now, and returns the new post's ID.
@@ -55,7 +56,7 @@ Lists the channels the agent can post to. Channels that are turned off, need to 
 |---|---|---|---|
 | `group` | string | No | A customer ID from `groupList`, to list only that customer's channels |
 
-**Returns** `output`, a list of channels: `id`, `name`, `platform` (the network, such as `bluesky` or `x`), `picture`, `display` (the account handle), `type` and `customer` (`id` and `name`, when the channel belongs to one).
+**Returns** `output`, a list of channels: `id`, `name` (the name you gave the channel in PostQueen, or the account's name on the network), `platform` (the network, such as `bluesky` or `x`), `picture`, `display` (the account handle), `type` and `customer` (`id` and `name`, when the channel belongs to one).
 
 ### `groupList`
 
@@ -107,13 +108,14 @@ Creates posts: a draft, a post scheduled for a time, or a post that goes out now
 | `date` | string | Yes | When to publish, in UTC |
 | `type` | string | Yes | `draft`, `schedule` or `now` |
 | `shortLink` | boolean | Yes | Whether to shorten the links in the text. PostQueen has no link shortener set up today, so links stay as written either way |
-| `postsAndComments` | list | Yes | The post, then its comments or thread items. Each has `content` (HTML: `p`, `h1` to `h3`, `strong`, `u`, `ul`, `li`), `attachments` (a list of media paths) and an optional `delay`, the minutes to wait after the item before it |
+| `postsAndComments` | list | Yes | The post, then its comments or thread items. Each has `content` (HTML: `p`, `h1` to `h3`, `strong`, `u`, `ul`, `li`, and `img` where the network's rules say pictures go inside the content), `attachments` (a list of media paths) and an optional `delay`, the minutes to wait after the item before it |
 | `settings` | list | Yes | The network's settings as `key` and `value` pairs, from `integrationSchema`. An empty list when it needs none |
 
 **Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again. An `integrationId` that is not a channel of your workspace, or a channel that was deleted, returns `errors`: `Integration not found`.
 
 - Settings and length are checked for scheduled posts and posts that go out now. Over MCP, a draft is saved even when a required setting is missing, so add it before the draft is scheduled. The CLI and the API check a draft's settings too.
 - Attachments must be media paths that end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. Bring a file in with an upload tool first.
+- On WordPress, Listmonk and an X Article, pictures go inside the content as `<img src="..." alt="...">` where they should appear. The `src` is the `path` of a picture in your media library. `integrationSchema` says so in the network's `rules`.
 - What extra items in `postsAndComments` become depends on the network: see [comments and threads](/using/comments-and-threads).
 
 ### `postsListTool`
@@ -126,7 +128,7 @@ Lists your posts between two dates, whatever their state.
 | `endDate` | string | Yes | End of the window, in UTC |
 | `customer` | string | No | A customer ID, to list only posts on that customer's channels |
 
-**Returns** `output.posts`, each with `id`, `publishDate` (UTC), `state` (`QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR`), `content`, `settings`, `group`, `integrationId`, `platform` and `integrationName`.
+**Returns** `output.posts`, each with `id`, `publishDate` (UTC), `state` (`QUEUE`, `DRAFT`, `PUBLISHED` or `ERROR`), `error` (why a post with the `ERROR` state failed, `null` otherwise), `content`, `settings`, `group`, `integrationId`, `platform` and `integrationName`.
 
 ### `postReadTool`
 
@@ -148,6 +150,8 @@ Changes the network settings of a post that has not gone out. The text and the p
 | `settings` | list | Yes | The settings to change, as `key` and `value` pairs. Settings you leave out keep their values |
 
 **Returns** `output` with `postId` and `publishDate`, or `errors`. It works on drafts and on scheduled posts whose time has not passed.
+
+The tool tells MCP clients that it changes data that is already saved, so a client that asks before such changes asks you to approve it.
 
 ## Analytics
 
@@ -202,7 +206,7 @@ A post takes media from your PostQueen media library. These tools put a file the
 
 ### `uploadFromUrlTool`
 
-Brings an image or video in from a public link.
+Brings an image or video in from a public `http` or `https` link.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
@@ -210,9 +214,22 @@ Brings an image or video in from a public link.
 
 **Returns** the file's `id`, `path` and `status`, or `error`. An image is ready at once. An MP4 comes back as `processing` while PostQueen prepares it, and its `path` can change when it is done. A MOV is converted to MP4 first, and the tool waits for that, up to about four minutes.
 
+The tool cannot reach a file on your computer or on a private address. Upload those with the CLI ([`postqueen upload`](/cli/media-upload)) or the API ([Upload a file](/public-api/uploads/upload-file)), then find them with `mediaListTool`.
+
+### `mediaListTool`
+
+Lists what is already in your media library, newest first, 18 to a page. The agent uses it to reuse a file instead of uploading it again. Videos that are still being converted are left out.
+
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `search` | string | No | Part of the original file name. Upper and lower case match alike |
+| `page` | number | No | The page, from `1`. Default `1` |
+
+**Returns** `pages`, the number of pages, and `output`, each file with `id`, `name`, `originalName`, `path` and `createdAt`. The `id` and `path` go into a post as they are.
+
 ### `uploadWidgetTool`
 
-Opens an **Upload Media** panel in the chat, where you add photos or videos from your device. It works in apps that can show MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere no panel appears: use `uploadFromUrlTool` with a public link instead. Takes no input.
+Opens an **Upload Media** panel in the chat, where you add photos or videos from your device. It works in apps that can show MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere no panel appears: upload a file from your computer with the CLI or the API, or use `uploadFromUrlTool` for a public link. Takes no input.
 
 **Returns** a `sessionId`. What you upload through the panel is reported in the chat, and `uploadWidgetStatusTool` lists it.
 
@@ -228,7 +245,7 @@ Used by the upload panel itself, not by your agent. It gets a short-lived upload
 
 ### `uploadWidgetStatusTool`
 
-Lists what you uploaded through the panel.
+Lists what you uploaded through the panel in that session, not the whole media library.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
@@ -238,19 +255,20 @@ Lists what you uploaded through the panel.
 
 ## Images and video
 
-Creating an image or a video uses your plan's monthly AI credits. The credits per plan are on [plans](/cloud/plans).
+Creating an image or a video is paid from your workspace's credits. What it costs depends on the settings you choose. When the balance is too low, the tool answers `Not enough credits: this costs N and the balance is N.` and nothing is made.
 
 ### `generateImageTool`
 
-Creates an image and puts it in your media library. Uses one AI image credit.
+Creates an image and puts it in your media library.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
 | `prompt` | string | Yes | What to draw, described as a scene rather than a caption |
 | `style` | string | No | `Realistic` (default), `Cartoon`, `Anime`, `Minimalist`, `Sketch` or `Watercolor` |
 | `orientation` | string | No | `square` (default), `portrait` or `landscape` |
+| `quality` | string | No | `low`, `medium` (default) or `high`. It sets the price: `high` costs several times `medium`, and `low` a fraction of it |
 
-**Returns** the image's `id`, `path`, `alt` and `thumbnail`, or `error`. With no credits left, the error is `No AI image credits are available on this account.`
+**Returns** the image's `id`, `path`, `alt` and `thumbnail`, or `error`. An image that could not be made reads `Image generation failed:`, the reason, and `No credits were used.`
 
 ### `generateVideoOptions`
 
@@ -300,7 +318,7 @@ Looks up a value a video generator needs, with one of the helpers `generateVideo
 
 ### `generateVideoTool`
 
-Starts a video and puts it in your media library when it is done. It takes minutes, so the tool returns a job ID at once. Uses one AI video credit, which a failed video gives back.
+Starts a video and puts it in your media library when it is done. It takes minutes, so the tool returns a job ID at once. The price depends on the generator and its inputs, and a video that fails gives its credits back.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
@@ -308,16 +326,15 @@ Starts a video and puts it in your media library when it is done. It takes minut
 | `output` | string | Yes | `vertical` for Reels, Stories, TikTok and Shorts, or `horizontal` for X, LinkedIn, YouTube and Facebook |
 | `customParams` | list | Yes | The generator's inputs as `key` and `value` pairs, such as `{ "key": "prompt", "value": "..." }` |
 
-**Returns** a `jobId`, or `error` when the video could not start. No credit is used then.
+**Returns** a `jobId`, or `error` when the video could not start. No credits are used then.
 
-An `identifier` that is not a generator is refused before anything else, with `There is no video generator "<identifier>". Use one of these identifiers: ... The user's video credit was not used.` Use one of the identifiers it lists.
+An `identifier` that is not a generator is refused before anything else, with `There is no video generator "<identifier>". Use one of these identifiers: ... No credits were used.` Use one of the identifiers it lists.
 
-Every other error reads `Video generation failed:`, the reason, and `The user's video credit was not used.` The reasons you are most likely to see:
+A balance that is too low answers `Not enough credits: ...` as above. Every other error reads `Video generation failed:`, the reason, and `No credits were used.` The reasons you are most likely to see:
 
 | Reason | What it means |
 |---|---|
 | `customParams are not valid: ...` | An input is missing or has the wrong shape. The reason lists each problem, such as `images must be an array` when a Seedance video has no `images`. Send `images` as an empty list for a video from the prompt alone |
-| `No AI video credits are available on this account.` | The plan's videos for this month are used up. Credits come back on the day of the month the plan started |
 | `This video is not available in trial mode` | Seedance during the free trial. Use `image-text-slides`, or end the trial on **Billing** |
 | `Video generation is not available` | PostQueen could not start the job. Try again later |
 
@@ -333,7 +350,7 @@ Checks a video job.
 
 - `pending`: the video is still being made. The agent waits about 30 seconds and asks again.
 - `completed`, with the media's `id` and the video's `url`. The `url` goes into `attachments` as it is.
-- `failed`, with the `error`, such as `AI generation failed, please try again later.` The credit is given back.
+- `failed`, with the `error`, such as `AI generation failed, please try again later.` The credits are given back.
 
 A job ID of another workspace, or one PostQueen no longer keeps, returns `error`: `Video job lookup failed: Video job not found`. A video that finished is in your media library even when its job is gone.
 

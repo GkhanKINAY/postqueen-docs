@@ -102,6 +102,8 @@ If you are building a product that other PostQueen users connect to, do not ask 
 | Looks like | A random string | `pos_...` |
 | Stops working | When an admin rotates the key | When the person revokes your app under **Connections > Approved Apps**, or leaves the workspace |
 
+[Who am I](/public-api/integrations/me) tells either one which workspace it acts on, and for an OAuth token who approved it.
+
 ## Channels and integrations
 
 The app says **channel**, the API says **integration**. They are the same thing: one connected account on one network. So `GET /integrations` lists your channels, and `integration.id` in a post is a channel id.
@@ -118,7 +120,7 @@ Each network has an identifier, such as `bluesky`, `wordpress` or `devto`, retur
     Schedule, publish now, save drafts, list, change and delete posts.
   </Card>
   <Card title="Media" icon="image" href="/public-api/uploads/upload-file">
-    Upload images and videos from disk or from a URL.
+    Upload images and videos from disk or from a URL, and list the media library.
   </Card>
   <Card title="Analytics" icon="chart-line" href="/public-api/analytics/platform">
     Channel metrics, one post's metrics, and ranked lists and totals.
@@ -133,7 +135,7 @@ Each network has an identifier, such as `bluesky`, `wordpress` or `devto`, retur
 
 ## Limits
 
-A workspace can send 30 `POST /posts` requests an hour, refused ones included, and each upload endpoint allows 300 requests an hour. Nothing else is limited. One request can carry many channels and a whole thread and counts once, so batch posts rather than sending them one by one. Details, headers and every status code: [Limits and errors](/public-api/limits-and-errors).
+A workspace can send 30 `POST /posts` requests an hour, not counting requests refused during validation, and each upload endpoint allows 300 requests an hour. Nothing else is limited. One request can carry many channels and a whole thread and counts once, so batch posts rather than sending them one by one. Details, headers and every status code: [Limits and errors](/public-api/limits-and-errors).
 
 ## Tools that use the API
 

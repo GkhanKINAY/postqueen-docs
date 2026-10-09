@@ -4,7 +4,7 @@ description: "Schedule a post, publish it now or save a draft, on one channel or
 openapi: "POST /posts"
 ---
 
-Every request carries the same five fields: `type`, `date`, `shortLink`, `tags` and `posts`. Each entry in `posts` is one channel, and each item in its `value` list is one part of the post: the first is the post, the rest are its thread or comments. The request examples on this page show whole requests for Bluesky, Nostr, WordPress and DEV.
+Every request carries the same five fields: `type`, `date`, `shortLink`, `tags` and `posts`. One `date` applies to every channel in the request: a `date` inside an entry of `posts` is ignored. To give channels different times, send one request per time. Each entry in `posts` is one channel, and each item in its `value` list is one part of the post: the first is the post, the rest are its thread or comments. The request examples on this page show whole requests for Bluesky, Nostr, WordPress and DEV.
 
 A step-by-step guide, from finding the channel id to checking the result, is [Schedule a post with the API](/public-api/schedule-a-post).
 
@@ -113,5 +113,5 @@ Do not put file data in the body. This endpoint takes about 100 kB of JSON, whic
 </Warning>
 
 <Note>
-A workspace can send 30 `POST /posts` requests an hour, and a request refused with `400` counts too. One request can carry many channels and a whole thread, and it counts once. See [Limits and errors](/public-api/limits-and-errors).
+A workspace can send 30 `POST /posts` requests an hour. A request refused with `400` during validation, such as a missing setting or a post that is too long, gets its slot back. A refusal once the posts are being created, such as a republish without `republish` or "Media not found", counts. One request can carry many channels and a whole thread, and it counts once. See [Limits and errors](/public-api/limits-and-errors).
 </Note>

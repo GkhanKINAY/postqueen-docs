@@ -19,7 +19,7 @@ A Listmonk channel connects with your server's address, an API user and its toke
 | `list` | string | Yes | The id of the one list that receives the campaign, from the `list` tool, as a string. |
 | `template` | string | No | The id of a template from the `templates` tool, as a string. Leave it out, or send `"0"`, for Listmonk's default template. |
 
-The body comes from `value[0].content` and is sent as an HTML campaign. Media in `value` is not sent, and Listmonk has no follow-ups, so entries after the first in `value` are not published.
+The body comes from `value[0].content` and is sent as an HTML campaign. To show a picture in the email, put `<img src="..." alt="...">` in the content where it should appear, with the `path` of a picture in your media library; a `src` that is not a PostQueen upload is dropped. Media in `value[].image` is not sent, and Listmonk has no follow-ups, so entries after the first in `value` are not published.
 
 ### Find lists and templates
 

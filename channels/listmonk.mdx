@@ -20,7 +20,7 @@ Send email campaigns from your own Listmonk server on schedule, with a subject, 
     Up to 300,000 characters in the editor, sent as an HTML email with basic formatting.
   </Card>
   <Card title="Media" icon="image">
-    None. Images you attach in the editor are not sent.
+    Pictures placed inside the text, where they appear in the email. Files attached under the editor are not sent.
   </Card>
   <Card title="Post types" icon="layers">
     An email campaign to one list, with a subject, preview text and your default or chosen template.
@@ -30,7 +30,7 @@ Send email campaigns from your own Listmonk server on schedule, with a subject, 
   </Card>
 </CardGroup>
 
-**Not supported:** several lists in one campaign, Markdown or plain-text campaigns, images from the editor, Listmonk's own send date, and follow-ups.
+**Not supported:** several lists in one campaign, Markdown or plain-text campaigns, attachments, Listmonk's own send date, and follow-ups.
 
 ## Checked before scheduling
 
@@ -73,6 +73,8 @@ Each Listmonk post in the composer has these settings:
 - **Preview**: the preview text inboxes show next to the subject. It is added to the email as hidden text and can be left empty.
 - **Select List**: who receives the campaign. Required, and one list per campaign.
 - **Select Template**: **Default**, or one of the templates on your server.
+
+**Pictures in the text.** On the channel's own tab, **Insert Media**, an upload, a drop or a paste puts a picture where the cursor is, and you can drag it to another place in the text. Only pictures go in the text: anything else is refused with "Only images can be added to the content". The email shows it at that place, linked from PostQueen's storage.
 
 The body of the post becomes the body of the email. The field names and values for the API are on [Listmonk posting settings](/public-api/providers/listmonk).
 

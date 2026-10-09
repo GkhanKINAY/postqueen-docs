@@ -44,6 +44,8 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | An Article has a title | “Article title is required” |
 | An Article takes images only | “X articles only support images” |
 | A draft Article has no thread replies | “A draft article cannot have thread replies, remove them or publish the article” |
+| `subscribers` or `verified` replies, on an account X reported without Premium | “X only lets Premium accounts limit replies to subscribers or verified accounts, reconnect the channel if this account has Premium now” |
+| An Article, on an account X reported without Premium | “X articles need an X Premium subscription, reconnect the channel if this account has Premium now” |
 
 Video length and file size are X's rules, and PostQueen does not check them first. Some X accounts may not post a video longer than 2 minutes. X also limits unverified accounts to 50 posts and 200 replies a day across every app, and allows 1 cashtag per post.
 
@@ -78,7 +80,7 @@ Each X post in the composer has these settings:
 - **Who can reply to this post?**: **Everyone**, **Accounts you follow**, **Mentioned accounts**, **Subscribers** or **Verified accounts**. It starts on **Everyone**.
 - **Community**: paste a Community link such as `https://x.com/i/communities/1493446837214187523` to post into that Community. X also shows the post to your followers.
 - **Made with AI** and **Paid partnership**: label the post on X.
-- For an Article: **Article title**, **Article status** (**Save as draft** saves it to your X drafts, **Publish** publishes it) and an optional **Cover image**. The Article keeps its headings, bullet lists, bold text and links, and the pictures you attach are placed at its end. Video is not allowed.
+- For an Article: **Article title**, **Article status** (**Save as draft** saves it to your X drafts, **Publish** publishes it) and an optional **Cover image**. The Article keeps its headings, bullet lists, bold text and links. On the channel's own tab, **Insert Media**, a drop or a paste puts a picture where the cursor is, and you can drag it to another place in the text. Only pictures go in the text: anything else is refused with "Only images can be added to the content". Video is not allowed.
 
 **Subscribers**, **Verified accounts** and **Article (long-form)** need an X Premium subscription. When X reports that the account has none, the composer hides them and says "Restricted reply audiences and Articles need an X Premium subscription, and this account has none, so they are not offered here."
 
@@ -96,7 +98,7 @@ In the channel's **Automations** on the **Channels** page ([how automations work
 
 - Every picture is resized to 1,000 px wide and re-encoded as a GIF before upload, which can lower photo quality.
 - X has no way to tell whether a post that was interrupted went out. PostQueen then stops and asks you to check the account instead of posting twice.
-- The Premium check uses what X reports. A Basic subscriber, or an account whose check fails, still sees every option, and X may refuse it when the post is published.
+- The Premium check uses what X reported when the channel was connected. An account X reported without a subscription is refused restricted replies and Articles, and held to 280 characters, until you reconnect it after subscribing. A Basic subscriber, or an account whose check failed, still sees every option, and X may refuse it when the post is published.
 - While you write an Article, the composer's counter still measures against 280 or 4,000 and can turn red. When you schedule, the Article is held to 100,000.
 - During the free trial, an X account that another PostQueen workspace already connected is refused until you end the trial.
 

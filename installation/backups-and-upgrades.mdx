@@ -128,15 +128,21 @@ You never run a database migration by hand. Every time the container starts, it 
 ```bash
 docker compose exec postqueen sh -c \
   'for m in libraries/nestjs-libraries/src/database/prisma/migrations/*/; do
-     npx prisma migrate resolve --applied "$(basename "$m")"
+     pnpm exec prisma migrate resolve --applied "$(basename "$m")"
    done'
 ```
+
+The loop takes every migration folder and skips `migration_lock.toml`, which is a file. Run it before you move the tag, on the image that is running now. If a new image already fails to start, set the tag back to your previous one, run the loop there, and only then move forward.
 
 ```env
 PRISMA_MIGRATE=true
 ```
 
 Marking only `0_init` is not enough on a database that already has later changes: `migrate deploy` would then try to add columns that exist and stop the start. Back up first either way.
+
+<Note>
+**Stuck on v3.6.121?** That release ran `db push` without `--accept-data-loss`, so an install that came from a release older than v3.6.107 stopped at its schema step on every start and restarted in a loop. Move the tag to v3.6.122 or newer, or `latest`, and recreate the container.
+</Note>
 
 ## The command that deletes everything
 

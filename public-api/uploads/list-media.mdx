@@ -1,0 +1,16 @@
+---
+title: "List media"
+description: "Page through the media library to reuse a file in a post instead of uploading it again."
+openapi: "GET /media"
+---
+
+The library comes newest first, 18 files to a page. `pages` says how many pages there are, so ask for `page=2`, `page=3` and so on until you reach it. `page` starts at `1` and is read as a whole number, so `1.5` reads as `1` and `2abc` as `2`. `0`, a negative number or a value that is not a number, such as `abc`, answers `400`.
+
+Each file carries only what a post needs: put its `id` and `path` in `image`, exactly as [Create a post](/public-api/posts/create) takes them. `originalName` is the name the file was uploaded with, and `search` matches part of it, with upper and lower case alike:
+
+```bash
+curl "https://api.postqueen.ai/public/v1/media?search=launch&page=1" \
+  -H "Authorization: YOUR_API_KEY"
+```
+
+A video that is still being converted is left out until it is ready. To follow one you just uploaded, use [Get media status](/public-api/uploads/media-status) with the id the upload returned.

@@ -15,6 +15,7 @@ Every post to a Facebook Page carries a `settings` object with `"__type": "faceb
 | `post_type` | string | No | `post` (the default) or `story`. A story needs at least one photo or video, and each item goes out as its own story. |
 | `url` | string | No | A link attached to the post. It must be a valid URL. Not used on stories. |
 | `text_format_preset_id` | string | No | A background preset id from the list below, for a text-only post. |
+| `title` | string | No | The title of a video posted to the feed. Used only when the post is a video and `post_type` is `post`; ignored otherwise. Without it, the video carries the post text as its description only. |
 
 ### `text_format_preset_id`
 

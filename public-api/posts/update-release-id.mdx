@@ -6,4 +6,6 @@ openapi: "PUT /posts/{id}/release-id"
 
 Take the `id` from [Get missing content](/public-api/posts/missing-content) and send it as `releaseId`.
 
+PostQueen also asks TikTok for the video's link and saves it as the post's `releaseURL`, so the post opens on TikTok from the calendar. If TikTok does not give the link, the id is saved all the same.
+
 Only a post whose release id is `missing` takes one. A post that already has its id answers `400`, and an id that is not a post in your workspace answers `404`.

@@ -1,0 +1,12 @@
+---
+title: "Who am I"
+description: "The workspace your key or token belongs to, and for an OAuth token the person who approved it."
+openapi: "GET /me"
+---
+
+Use it to show which workspace your app or your API key is connected to, for example on your app's settings screen.
+
+- **With an API key**, `user` is `null`. The key belongs to the whole workspace, not to one person.
+- **With an OAuth access token**, `user` is the person who approved your app: their `id`, `name` and `picture`. See [OAuth apps](/public-api/oauth).
+
+To test only that a key works, [Check the API key](/public-api/integrations/is-connected) is enough.

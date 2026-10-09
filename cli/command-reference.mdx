@@ -11,7 +11,7 @@ keywords:
   - cron
 ---
 
-`postqueen` 2.0.26 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
+`postqueen` 2.0.27 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
 
 ```bash
 postqueen <command> [options]
@@ -181,7 +181,7 @@ The CLI sends your key in the `Authorization` header exactly as it is, with noth
 
 `auth:login` calls none of these. It calls only the server you give it with `--auth-server`.
 
-A workspace can run `posts:create` 30 times an hour, shared with every other script and app that uses its API, and a run the API refuses with `400` counts too. `upload` has its own allowance of 300 an hour. One `posts:create` can carry many channels, so list several IDs in `-i` rather than running it once per channel. The limits are on [limits and errors](/public-api/limits-and-errors).
+A workspace can run `posts:create` 30 times an hour, shared with every other script and app that uses its API, and a run the API refuses with `400` during validation, such as a missing setting, does not count. `upload` has its own allowance of 300 an hour. One `posts:create` can carry many channels, so list several IDs in `-i` rather than running it once per channel. The limits are on [limits and errors](/public-api/limits-and-errors).
 
 ## Scripts and scheduled jobs
 

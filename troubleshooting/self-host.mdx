@@ -19,6 +19,9 @@ At start, after `Backend started successfully on port 3000`, the backend checks 
   <Accordion title="The container restarts in a loop, or gets killed">
     Usually memory. The Compose stack needs about 4 GB. `docker stats` shows usage, and `dmesg` on the host shows the kernel killing a process.
   </Accordion>
+  <Accordion title="On v3.6.121 the container restarts in a loop with a data loss warning">
+    The log shows Prisma's data loss warning and suggests `--accept-data-loss`. v3.6.121 applied the schema without that flag, which stopped installs that came from a release older than v3.6.107. Move the image to v3.6.122 or newer and recreate the container. See [Backups and upgrades](/installation/backups-and-upgrades#where-the-schema-changes).
+  </Accordion>
   <Accordion title="The backend stops: UPLOAD_DIRECTORY is not set">
     The log says `STORAGE_PROVIDER is "local" but UPLOAD_DIRECTORY is not set`. Local storage needs a folder. In the official image, set `UPLOAD_DIRECTORY=/uploads` and `NEXT_PUBLIC_UPLOAD_STATIC_DIRECTORY=uploads`, as the Compose file does. See [Uploads and storage](/configuration/uploads).
   </Accordion>

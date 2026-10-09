@@ -21,7 +21,7 @@ A WordPress channel connects with the site address, a username and an Applicatio
 | `tags` | number[] | No | Tag ids from the `tagsList` tool. |
 | `main_image` | object | No | The featured image, `{ "id": "...", "path": "..." }` as [upload a file](/public-api/uploads/upload-file) returns it. It is uploaded to the site's media library. |
 
-The body comes from `value[0].content` and is sent as HTML, so headings, bold, lists and links keep their tags. Media in `value` is not sent: only `main_image` reaches WordPress. WordPress has no follow-ups, so entries after the first in `value` are not published.
+The body comes from `value[0].content` and is sent as HTML, so headings, bold, lists and links keep their tags. To show a picture inside the post, put `<img src="..." alt="...">` in the content where it should appear, with the `path` of a picture in your media library. It is published with that address and is not uploaded to your site; a `src` that is not a PostQueen upload is dropped. Media in `value[].image` is not sent: besides those pictures, only `main_image` reaches WordPress. WordPress has no follow-ups, so entries after the first in `value` are not published.
 
 ### Find post types, categories and tags
 

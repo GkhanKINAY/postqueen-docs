@@ -38,6 +38,28 @@ Click a channel's avatar in the row above the editor, then **Edit content**. Tha
 
 On a channel's own tab you can also type `@` and two or more characters to look up accounts on networks that support mentions.
 
+## Give each channel its own time
+
+A new post goes out on all its channels at the same time. Once it is saved, each channel can have its own time:
+
+<Steps>
+  <Step title="Open the post">
+    Open the post from the [calendar](/using/calendar). The composer loads every channel the post was saved for together, each with its own version and time.
+  </Step>
+  <Step title="Pick a channel">
+    Click the channel's avatar above the editor. The date chip now reads **Time for** and the channel's name.
+  </Step>
+  <Step title="Change its time and save">
+    The new time moves only that channel. The others keep theirs. Choose **Update** to save.
+  </Step>
+</Steps>
+
+When a save would change what the other channels do, PostQueen asks first. Scheduling a post whose other channels are drafts asks "This post was created for more than one channel. Do you want to schedule all of them?", with **Schedule all channels** or **Only** and the channel's name. **Save as draft** asks the same with **Move all channels to drafts**, and **Post now** with **Post all channels now**. A channel that is already published stays published when you move the others to drafts.
+
+**Delete Post** in the composer asks "This post was created for more than one channel. Do you want to delete it from all of them?": **Only from** the channel in view, or **Delete from all channels**. When other channels still have the post scheduled, it adds that deleting it from all channels cancels those too.
+
+A post saved for several channels before this feature arrived opens one channel at a time, as before.
+
 ## Format the text
 
 Select text, then use the buttons under the editor:
@@ -56,6 +78,12 @@ Each network receives the formatting it can show:
 | Every other network | Plain text. Bold and underline are sent as Unicode bold and underlined characters, bullet lists become lines that start with `-`, and links show as their address. |
 
 Only the letters A to Z and the digits 0 to 9 have a Unicode bold or underlined form. Accented letters, other alphabets and symbols stay as you typed them.
+
+Text in a right-to-left language, such as Arabic, Hebrew or Persian, sets its own direction. Each paragraph and heading follows the language it starts with, in the editor and in the previews, so a post can mix right-to-left and left-to-right paragraphs.
+
+## Pictures inside the text
+
+WordPress, Listmonk and an X Article publish the post as a page, so on their own tab pictures go inside the text. **Insert Media**, an upload, a drop or a paste puts the picture where the cursor is, and you can drag it to another place in the text. Only pictures go in the text there: anything else is refused with "Only images can be added to the content". On X this applies when **Post Type** is **Article (long-form)**. See [WordPress](/channels/wordpress), [Listmonk](/channels/listmonk) and [X](/channels/x-twitter).
 
 ## Put media in order
 
