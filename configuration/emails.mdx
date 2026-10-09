@@ -73,7 +73,7 @@ PostQueen sends password reset links, invitations, one-time sign-in codes when [
   </Step>
 </Steps>
 
-Mail goes out through a Temporal workflow that the orchestrator runs, so a stack without a working Temporal sends nothing either.
+Most mail goes out through Temporal, on two task queues the orchestrator serves: `email` for password resets, notifications, billing mail and invites, and `email-bulk` for digests and welcome mail. The Temporal server limits them to about one and a half emails a second together, across all workers, to stay under Resend's default rate. A stack without a working Temporal sends none of it. Sign-in codes and activation links are sent directly by the backend instead. If you set [`EXCLUDE_QUEUE`](/configuration/reference#background-work), keep both queues on at least one worker.
 
 ## Require activation for new accounts
 

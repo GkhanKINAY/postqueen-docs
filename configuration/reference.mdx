@@ -36,8 +36,9 @@ The start-up check reports these when they are missing, and URLs when they are n
 |---|---|
 | `ENCRYPTION_KEY` | Encrypts the secrets PostQueen stores: the workspace API key, OAuth app client secrets, the passwords and keys typed in to connect networks such as Bluesky, WordPress and Nostr, and the Skool cookies. Unset, `JWT_SECRET` is used. |
 | `PREVIOUS_ENCRYPTION_KEY` | The key the data was encrypted with before the current one. Decryption tries `ENCRYPTION_KEY` first, then this. |
+| `ENCRYPT_INTEGRATION_TOKENS` | Unset or anything but `false`: channel OAuth tokens are stored encrypted. `false` stores them as the network issued them and, at the next start, writes the stored ones back that way. Set it only before going back to an image older than v3.6.102, which cannot read encrypted tokens: start once with `false`, wait for the log line `Decrypted N stored channel token row(s)`, then change the image. |
 
-A channel's OAuth access and refresh tokens, the ones a network hands back after sign-in, are stored as the network returned them and are not encrypted with this key. Treat a database dump as sensitive.
+A channel's OAuth access and refresh tokens, the ones a network hands back after sign-in, are encrypted with the same key. Tokens stored before that are encrypted when the app starts. A token is re-encrypted under a new key only when it is next written, and some never expire, so keep `PREVIOUS_ENCRYPTION_KEY` set after a rotation. Treat a database dump as sensitive all the same.
 
 - **On a new install**, set `ENCRYPTION_KEY` to its own random value before there is data. `JWT_SECRET` then only signs sessions, and rotating it only signs people out.
 - **On an install that never set it**, set `ENCRYPTION_KEY` to the current value of `JWT_SECRET`. Nothing needs re-encrypting, because that is the key already in use. After that you can rotate `JWT_SECRET` freely.
@@ -93,7 +94,7 @@ Temporal runs the schedule, and the orchestrator runs its workers. See [Self-hos
 | `PRISMA_MIGRATE` | How the schema is applied at start. Unset, empty, `false`, `False`, `FALSE` or `0` runs `prisma db push --accept-data-loss`; any other value runs `prisma migrate deploy`. See [Backups and upgrades](/installation/backups-and-upgrades#where-the-schema-changes). |
 | `ORCHESTRATOR_PORT` | Port of the orchestrator's health endpoint. Default `3002`. |
 | `WORKER_CONCURRENCY_DIVIDER` | Divides each network's worker concurrency, so several worker machines together stay within what the network allows. Set it to the number of worker machines. |
-| `EXCLUDE_QUEUE` | Queues this worker does not serve, separated by commas, for example `media` to keep it out of video conversion. For pinning a queue to one machine. |
+| `EXCLUDE_QUEUE` | Queues this worker does not serve, separated by commas, for example `media` to keep it out of video conversion. For pinning a queue to one machine. Emails go out on two queues, `email` and `email-bulk`, rate limited by the Temporal server across all workers: leave them on at least one worker, or no queued mail is sent. |
 
 ## Storage and media
 
@@ -137,6 +138,8 @@ Setup: [Email](/configuration/emails).
 | `RESEND_API_KEY` | For `resend`. |
 | `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` | For `nodemailer`, your SMTP server. |
 | `EMAIL_SECURE` | `true` for TLS from the first byte, usually port 465. |
+| `EMAIL_NOTIFICATIONS_FROM_ADDRESS` | Optional. Notifications (publishing summaries, channel and billing alerts) go out from this address instead, on the same verified domain. Replies still reach `EMAIL_FROM_ADDRESS`. |
+| `EMAIL_POSTAL_ADDRESS` | Optional. The company and postal address at the foot of every email. Unset leaves it out. |
 
 ## Networks
 
@@ -238,8 +241,8 @@ A private install needs none of this: without both Stripe keys there is no billi
 | `AFFILIATE_URL` | Adds an **Affiliate** entry to the user menu that opens this address. Only shown with billing on. |
 | `AGENCY_NOTIFICATION_EMAIL` | Receives agency directory submissions. |
 | `ONBOARDING_VIDEO_URL` | A video shown in the first-run experience. |
-| `CHATBASE_BOT_ID`, `CHATBASE_TOKEN` | An in-app support chat widget, loaded only with both set. Use a bot you own: its agent can offer the signed-in user a refund on their own subscription. |
 | `NEXT_PUBLIC_APP_VERSION` | The version label. Fixed when the image is built. |
+| `CANVA_APP_ORIGIN` | Only if you run your own Canva app against this instance: its origin from the Canva Developer Portal (**Security > Credentials**), such as `https://app-xxxxxxxxxxx.canva-apps.com`. The backend allows it as a browser origin. |
 | `DEV_BACKEND_PROXY` | Development only: the Next dev server proxies `/api` to this backend. Pair it with `NEXT_PUBLIC_BACKEND_URL=/api`. |
 
 ## Short links
@@ -254,6 +257,7 @@ These add each new account's email address to a mailing list you run. They have 
 |---|---|
 | `BEEHIIVE_API_KEY`, `BEEHIIVE_PUBLICATION_ID` | Beehiiv. Used when the key is set. |
 | `LISTMONK_DOMAIN`, `LISTMONK_USER`, `LISTMONK_API_KEY`, `LISTMONK_LIST_ID`, `LISTMONK_WELCOME_TEMPLATE_ID` | Listmonk, when Beehiiv is not set and `LISTMONK_API_KEY` is. |
+| `RESEND_CONTACTS_API_KEY`, `RESEND_NEWS_SEGMENT_ID`, `RESEND_NEWS_TOPIC_ID` | Product news through Resend Broadcasts, used in place of the two above when all three are set. New accounts join the segment, and **Settings > Notifications** gets a switch for the news. The key needs full access: a sending-only key is not enough. |
 
 <Note>
 `LISTMONK_*` does not configure the Listmonk channel. The channel takes its server address and API user in the connect form: see [Channel developer apps](/installation/providers/overview#networks-that-need-no-developer-app).
@@ -266,6 +270,7 @@ All optional.
 | Variable | What it does |
 |---|---|
 | `NEXT_PUBLIC_SENTRY_DSN` | Sends frontend and backend errors to Sentry. |
+| `SENTRY_ENVIRONMENT` | The environment the backend and orchestrator report under, such as `production`. The Docker image sets no `NODE_ENV`, so without it events are filed as development. |
 | `SENTRY_SPOTLIGHT` | `1` sends errors to a local Spotlight viewer instead. The Compose file's `debug` profile runs one. |
 | `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Upload source maps when you build your own image. |
 | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | PostHog product analytics. |
