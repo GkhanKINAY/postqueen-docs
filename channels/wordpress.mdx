@@ -20,7 +20,7 @@ Publish posts, pages or any custom post type to your WordPress site on schedule,
     A body of up to 100,000 characters with headings, bold, underline, lists and links, and a title of at least 2 characters.
   </Card>
   <Card title="Media" icon="image">
-    One featured image, uploaded to your media library. Pictures inside the body are not uploaded.
+    One featured image, uploaded to your media library, and pictures placed inside the body. Those are shown from PostQueen's storage, not uploaded to your site.
   </Card>
   <Card title="Post types" icon="layers">
     A post, a page or any custom post type your site offers, published, saved as a draft, sent for review or kept private.
@@ -30,7 +30,7 @@ Publish posts, pages or any custom post type to your WordPress site on schedule,
   </Card>
 </CardGroup>
 
-**Not supported:** excerpts, WordPress's own scheduled status (PostQueen publishes at the time instead), video or audio uploads, images inside the body, and follow-up comments.
+**Not supported:** excerpts, WordPress's own scheduled status (PostQueen publishes at the time instead), video or audio uploads, and follow-up comments.
 
 ## Checked before scheduling
 
@@ -76,6 +76,8 @@ Each WordPress post in the composer has these settings:
 - **Status**: **Publish**, **Draft**, **Pending** (sent for review) or **Private**. It starts on **Publish**.
 - **Categories** and **WordPress Tags**: picked from your site. The first 100 of each are listed.
 - **Cover picture**: the featured image.
+
+**Pictures in the text.** On the channel's own tab, **Insert Media**, an upload, a drop or a paste puts a picture where the cursor is, and you can drag it to another place in the text. Only pictures go in the text: anything else is refused with "Only images can be added to the content". The picture is published at that place in the post, linked from PostQueen's storage.
 
 At the scheduled time PostQueen sends the post with the status you picked, so **Publish** puts it live and **Draft** leaves it in WordPress for you to finish. The field names and values for the API are on [WordPress posting settings](/public-api/providers/wordpress).
 

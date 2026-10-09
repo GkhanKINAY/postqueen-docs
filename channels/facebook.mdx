@@ -67,6 +67,7 @@ Each Facebook post in the composer has these settings:
 
 - **Post Type**: **Post** or **Story**. It starts on **Post**. A story needs a photo or a video, and each item goes out as its own story.
 - **Embedded URL (only for text Post)**: a link attached to the post.
+- **Video title (only for video posts)**: a title for a video posted to the Page's feed. Without one, the video goes out with the post text as its description only. Stories take no title.
 - **Background**: a colored or illustrated background behind a text-only post of 130 characters or fewer, chosen from 74 presets. Facebook publishes no official list, so the colors are approximate, and a background Facebook no longer accepts is dropped: the post goes out as plain text.
 
 The field names, values and preset ids for the API are on [Facebook posting settings](/public-api/providers/facebook).
@@ -77,7 +78,7 @@ The field names, values and preset ids for the API are on [Facebook posting sett
 
 ## Good to know
 
-- The connection lasts about 59 days. After that the Page shows **Needs reconnecting**: choose **Reconnect channel** in its menu.
+- The Page's connection does not expire on a schedule. If Facebook stops accepting it, the Page shows **Needs reconnecting**: choose **Reconnect channel** in its menu.
 - When the first attached item is a video, only that video is published and the other items are ignored. When a photo comes first, every item is sent as a photo.
 - Several items in one story post go out as separate stories, one at a time. If a story post is interrupted, PostQueen stops rather than risk posting twice and asks you to check the Page.
 - The follower numbers are new follows per day, not a running total. Comments and shares are counted for Reels only.

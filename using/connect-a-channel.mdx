@@ -60,8 +60,10 @@ Choose a channel on **Channels** to open its page. Its settings are rows under *
 
 | Row | What it does | Shown for |
 |---|---|---|
+| **Rename channel** | Gives the channel a name of its own in PostQueen. **Rename** opens a **Name** field of up to 100 characters; **Save** confirms with "Channel Renamed". The name changes in PostQueen only, not on the network, and stays when you reconnect. Once renamed, the row shows the original name, and **Reset to original name** goes back to it ("Channel name reset"). | Every channel |
 | **Edit Time Slots** | Sets the times of day the channel posts at. See [Posting times](/using/posting-times). | Every channel |
 | **Move / add to group** | Puts the channel in a customer group. See [Customers](/using/customers). | Every channel |
+| **Edit group name** | Renames the channel's customer group for every channel in it. See [Customers](/using/customers#rename-a-customer). | Channels in a customer group |
 | **Custom URL** | Its hint reads "Edit the connection details for this channel". **Set** opens the form you filled in to connect, with the fields that network asks for. Change them and choose **Connect**. | Channels you connected by entering details: Bluesky, DEV, Hashnode, Lemmy, Listmonk, Nostr and WordPress |
 | **Copy channel ID** | Copies the ID that the API, MCP and the CLI use for the channel. | Every channel |
 | **Update Credentials** | Takes you to the network's sign-in again. On a channel you connected by entering details, it opens the same form as **Custom URL**. | Every channel |
@@ -80,6 +82,7 @@ Each plan allows a number of channels; [Plans and limits](/cloud/plans) has the 
 
 ## Good to know
 
+- A renamed channel shows its new name across PostQueen: the channel lists, calendar cards, the posts list, analytics, webhooks, the API, the CLI and your agent. The post preview page you share with clients keeps the network's name, and so does what is published on the network. The **Bot name & avatar** form edits the name on the network itself.
 - **New post** on the channel's page opens Create Post with that channel selected. It is off while the channel needs reconnecting.
 - During the free trial, X cannot be connected. Its setup step shows "X unlocks after your trial", with **End free trial to unlock X**. See [Free trial](/cloud/trial).
 

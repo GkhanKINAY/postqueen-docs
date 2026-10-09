@@ -40,7 +40,7 @@ The list groups posts under their date, 100 to a page, with **Previous** and **N
 
 Beside the grid, the **Posts** panel has **Scheduled**, **Drafts** and **Posted** tabs. **Hide posts** folds it away and **Show posts** brings it back. Drag a scheduled post from the grid onto the panel and it becomes a draft ("Moved to drafts").
 
-Narrow the view with **All channels** (pick the channels to show) and, once your channels are in more than one [customer](/using/customers) group, **Select Customer**.
+Narrow the view with **All channels** (pick the channels to show) and, once your channels are in more than one [customer](/using/customers) group, **Select Customer**. In the Posts list and panel, the channel filter applies to every page, so each page holds 100 posts of those channels and the page count is theirs.
 
 ## Move a post
 
@@ -64,9 +64,9 @@ Click a card to open it in the composer. Hover it for these actions:
 |---|---|
 | **Edit** | Opens the post in the composer. |
 | **Duplicate Post** | Opens a copy in the composer at the next free time. |
-| **Go to post** | Opens the published post on the network. Shown once it is live. |
+| **Go to post** | Opens the published post on the network, in a new tab. Shown once it is live. PostQueen asks the network for the post's current link on each click, because some networks give it only a while after publishing. |
 | **Preview Post** | Opens the post's preview page in a new tab, where **Share with a client** copies the link. Shown once the post is published. Members of your workspace can sign in there and leave comments. |
-| **Delete Post** | Asks "Are you sure you want to delete this post?", then deletes the post and its comments or thread parts on that channel. Copies of the post on your other channels stay. |
+| **Delete Post** | Asks "Are you sure you want to delete this post?", then deletes the post and its comments or thread parts on that channel. Copies of the post on your other channels stay. To delete it from every channel at once, open the post and use **Delete Post** in the composer: see [Give each channel its own time](/using/create-a-post#give-each-channel-its-own-time). |
 
 In the Posts list, a published post also has **Post Statistics**. Channel-wide numbers are on [Analytics](/using/analytics).
 
@@ -85,6 +85,8 @@ A TikTok post sent with **Upload content to TikTok without posting it** goes to 
     Click the video's cover, then choose **Connect Post**. The **Statistics** window opens with the post's numbers.
   </Step>
 </Steps>
+
+Once you publish the video in TikTok and TikTok reports it, **Go to post** opens the published video and the post is connected to it on its own. Until then, **Go to post** opens your TikTok inbox. To connect it right away, use **Connect Post**:
 
 If you skip this, or choose **Cancel**, the post stays published but has no statistics, and [Analytics](/using/analytics) leaves it out of **Performance per post** and your top posts. You can connect it later, while the video is still among the 20 most recent. To do the same from the CLI, see [Fix a missing release ID](/cli/analytics#fix-a-missing-release-id); with the API, use [Get missing content](/public-api/posts/missing-content) and then [Update release ID](/public-api/posts/update-release-id).
 
@@ -105,6 +107,8 @@ Click an empty slot to open the composer at that time; in the current hour it st
 |---|---|
 | “Could not move this post, please try again” | The card goes back to its old time. Try again, or open the post and change the date there. |
 | “Could not delete the post.” | Reload the page and try again. |
+| “The post link is not available yet, please try again in a minute” | The network has not given the post's public link yet. TikTok, for example, takes a while after publishing. Try **Go to post** again later. |
+| “This post has no public link” | The post is not public, such as a TikTok post set to **Only me** or friends. Open it in the network's app. |
 | “No content found from this provider. The provider may not support this feature.” | TikTok returned no videos for the channel. Publish the video in the TikTok app first, then open **Connect Post** again. |
 | “Failed to connect post” | The video was not connected. Reload the page and try again. |
 | A card with the **Error** status | The post did not go out. See [A post did not go out](/troubleshooting/post-failed). |
