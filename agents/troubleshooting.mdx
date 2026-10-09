@@ -60,12 +60,12 @@ Find the symptom or the message you see. Most failures come from the key, from a
 | `Only scheduled posts that were not published yet (or drafts) can be updated` | `postSettingsTool` was used on a published or failed post | Settings can only change before a post goes out |
 | `The publish time of this post already passed, it cannot be updated` | The post is due or going out now | Nothing to change: check it on the calendar |
 | `This id belongs to a comment, pass the id of the main post` | The agent used a comment's ID | Use the post's own ID from `postsListTool` |
-| `No AI image credits are available on this account.` | The plan's image credits for the month are used up | Wait for the next month, or move to a plan with more. See [plans](/cloud/plans) |
+| `Not enough credits: this costs N and the balance is N.` | The workspace's credits do not cover the image, video or X post | Add credits on **Billing**, or ask for something that costs less, such as a lower `quality` image |
 | `missing_release` from `analyticsPostTool` | PostQueen does not know the post's ID on the network | Connect the post to its published copy, then ask again. See [analytics](/cli/analytics#fix-a-missing-release-id) |
 
 <AccordionGroup>
   <Accordion title="No upload panel appears" icon="cloud-upload">
-    The **Upload Media** panel shows only in apps that can display MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere, give the agent a public link to the file so it can use `uploadFromUrlTool`.
+    The **Upload Media** panel shows only in apps that can display MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere, upload the file with [`postqueen upload`](/cli/media-upload) or the API and the agent finds it with `mediaListTool`, or give the agent a public link so it can use `uploadFromUrlTool`.
   </Accordion>
   <Accordion title="The agent says it deleted or moved a post" icon="trash">
     No MCP tool can delete a post, change its text or time, or move it between draft and scheduled. Check the calendar, and do it there, or with the [CLI](/cli/managing-posts) or the [API](/public-api/introduction).
@@ -136,7 +136,7 @@ These are caught before anything is sent. Each prints a line starting with `❌`
 | `type must be one of: draft, schedule, now, update` | The `type` in your `--json` file is wrong. Use `schedule`, `draft` or `now` |
 | `Cannot change status of a published or errored post` | `posts:status` works only before a post goes out |
 | `API Error (404): {"msg":"Tool not found"}` | `integrations:trigger` got a helper name the channel does not have. The names are under `tools` in `integrations:settings` |
-| `API Error (429)` | The workspace reached its 30 `posts:create` runs in an hour, refused runs included, or its 300 uploads. Wait an hour from the run that went over, and put several channels in one `-i` rather than one command per channel |
+| `API Error (429)` | The workspace reached its 30 `posts:create` runs in an hour or its 300 uploads. Wait an hour from the run that went over, and put several channels in one `-i` rather than one command per channel |
 
 Upload errors are on [upload media](/cli/media-upload#if-an-upload-fails). A post whose analytics answer `{"missing": true}` is fixed on [analytics](/cli/analytics#fix-a-missing-release-id).
 

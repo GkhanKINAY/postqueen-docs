@@ -41,11 +41,11 @@ MARKER = "OVERHAUL-TODO"
 ERRORS: list[str] = []
 DEFERRED: list[str] = []
 
-SPELLED = "ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty-two|twenty-three"
+SPELLED = "ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|twenty-three"
 BANNED: list[tuple[str, re.Pattern]] = [
     ("the /mcp-oauth-claude or /mcp-oauth-chatgpt route (never published)", re.compile(r"mcp-oauth-(?:claude|chatgpt)\b")),
     ("schedulePostTool (the tool is integrationSchedulePostTool)", re.compile(r"(?<![A-Za-z])schedulePostTool")),
-    ("a tool count other than 21 or 20", re.compile(r"\b(?:1\d|2[2-9]|[3-9]\d|\d{3,})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
+    ("a tool count other than 22 or 21", re.compile(r"\b(?:1\d|20|2[3-9]|[3-9]\d|\d{3,})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
     ("a spelled-out tool count", re.compile(rf"\b(?:{SPELLED})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
     ("Windsurf (the product is Devin Desktop)", re.compile(r"windsurf", re.I)),
     ("Medium (the network was removed)", re.compile(r"\bMedium\b(?![- ](?:priority|size|risk|term))")),

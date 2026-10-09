@@ -764,8 +764,8 @@ postqueen posts:create \
 
 An agent that calls tools instead of running shell commands can use PostQueen's MCP server:
 
-- With the API key: `https://api.postqueen.ai/mcp/<API_KEY>`, 21 tools.
-- With OAuth sign-in and no key: `https://api.postqueen.ai/mcp-oauth-dynamic`, 20 tools. A workspace admin approves the connection.
+- With the API key: `https://api.postqueen.ai/mcp/<API_KEY>`, 22 tools.
+- With OAuth sign-in and no key: `https://api.postqueen.ai/mcp-oauth-dynamic`, 21 tools. A workspace admin approves the connection.
 
 Client setup: https://docs.postqueen.ai/mcp/introduction
 

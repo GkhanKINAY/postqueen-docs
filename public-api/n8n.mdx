@@ -15,7 +15,7 @@ import NextStepsApi from '/snippets/next-steps-api.mdx';
 
 [`n8n-nodes-postqueen`](https://www.npmjs.com/package/n8n-nodes-postqueen) is a community node for n8n. It creates, lists and deletes posts, uploads files, makes AI videos and lists your channels, through the PostQueen API with your API key. Everything it creates lands on the same calendar as the posts you write in the app.
 
-This page describes version 1.0.4 of the node.
+This page describes version 1.0.5 of the node.
 
 ## Before you start
 
@@ -138,7 +138,7 @@ What each network needs is on [Posting settings by network](/public-api/provider
   </Step>
 </Steps>
 
-Each run of **Create Post** counts against the 30 requests to create posts a workspace can send in an hour, refused ones included, and each **Upload File** against 300 uploads an hour. Put several channels in one **Create Post** rather than one node per channel. The limits are on [Limits and errors](/public-api/limits-and-errors).
+Each run of **Create Post** counts against the 30 requests to create posts a workspace can send in an hour, except runs refused before anything is saved, and each **Upload File** against 300 uploads an hour. Put several channels in one **Create Post** rather than one node per channel. The limits are on [Limits and errors](/public-api/limits-and-errors).
 
 ## Calls the node does not make
 

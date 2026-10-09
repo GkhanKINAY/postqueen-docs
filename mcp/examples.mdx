@@ -199,7 +199,7 @@ A post takes media from your PostQueen media library, never a link to another si
     Make a square image of a bright spring salad on a wooden table for this post.
     ```
 
-    The agent calls `generateImageTool` with a `prompt` and `"orientation": "square"`. It uses one AI image credit and returns the image's `path`.
+    The agent calls `generateImageTool` with a `prompt` and `"orientation": "square"`. It is paid from the workspace's credits and returns the image's `path`.
   </Tab>
 </Tabs>
 
@@ -241,7 +241,7 @@ It returns a `jobId` at once. Making the video takes minutes, so the agent asks 
 { "status": "completed", "id": "the-media-id", "url": "https://cdn.example.com/k3l4m5n6o7.mp4" }
 ```
 
-The `url` goes into `attachments` of `integrationSchedulePostTool`. The video uses one AI video credit, and it is also in your media library.
+The `url` goes into `attachments` of `integrationSchedulePostTool`. The video is paid from the workspace's credits, and it is also in your media library.
 
 For a narrated slideshow, the agent uses `image-text-slides`. It gets a voice first with `videoFunctionTool` (`"identifier": "image-text-slides"`, `"functionName": "loadVoices"`) and passes its `id` as `voice`, with a `prompt`. During the free trial Seedance is locked, so the agent gets `This video is not available in trial mode` and can use `image-text-slides` instead.
 </Accordion>

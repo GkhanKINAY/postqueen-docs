@@ -295,6 +295,7 @@
                   "public-api/integrations/provider-tools",
                   "public-api/integrations/delete",
                   "public-api/integrations/is-connected",
+                  "public-api/integrations/me",
                   "public-api/integrations/find-slot"
                 ]
               },
@@ -316,7 +317,8 @@
                 "pages": [
                   "public-api/uploads/upload-file",
                   "public-api/uploads/upload-from-url",
-                  "public-api/uploads/media-status"
+                  "public-api/uploads/media-status",
+                  "public-api/uploads/list-media"
                 ]
               },
               {
@@ -667,8 +669,8 @@
     "mcpKeyUrl": "https://api.postqueen.ai/mcp/YOUR_API_KEY",
     "mcpBearerUrl": "https://api.postqueen.ai/mcp",
     "mcpOauthUrl": "https://api.postqueen.ai/mcp-oauth-dynamic",
-    "mcpToolsKey": "21",
-    "mcpToolsOauth": "20",
+    "mcpToolsKey": "22",
+    "mcpToolsOauth": "21",
     "networks": "31",
     "trialDays": "7",
     "refundDays": "30",

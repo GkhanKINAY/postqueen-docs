@@ -15,7 +15,7 @@ import NextStepsApi from '/snippets/next-steps-api.mdx';
 
 [`@postqueen/node`](https://www.npmjs.com/package/@postqueen/node) is a small typed client for the [PostQueen API](/public-api/introduction). It sends your API key and calls five endpoints for you: list channels, create a post, list posts, upload a file and delete a post. Everything else in the API is a plain HTTPS call, shown [below](#calls-the-sdk-does-not-wrap).
 
-This page describes version 1.0.6. Run `npm ls @postqueen/node` to see yours.
+This page describes version 1.0.7. Run `npm ls @postqueen/node` to see yours.
 
 ## Before you start
 
@@ -271,7 +271,7 @@ async function main() {
 main();
 ```
 
-`post()` counts against the 30 `POST /posts` requests a workspace can send in an hour, refused ones included, and `upload()` against 300 uploads an hour. Put several channels in one `post()` call rather than one call per channel. What each status code means is on [Limits and errors](/public-api/limits-and-errors).
+`post()` counts against the 30 `POST /posts` requests a workspace can send in an hour, except calls refused before anything is saved, and `upload()` against 300 uploads an hour. Put several channels in one `post()` call rather than one call per channel. What each status code means is on [Limits and errors](/public-api/limits-and-errors).
 
 ## Calls the SDK does not wrap
 
