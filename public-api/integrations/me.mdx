@@ -4,7 +4,7 @@ description: "The workspace your key or token belongs to, and for an OAuth token
 openapi: "GET /me"
 ---
 
-Use it to show which workspace an integration is connected to, for example on your app's settings screen.
+Use it to show which workspace your app or your API key is connected to, for example on your app's settings screen.
 
 - **With an API key**, `user` is `null`. The key belongs to the whole workspace, not to one person.
 - **With an OAuth access token**, `user` is the person who approved your app: their `id`, `name` and `picture`. See [OAuth apps](/public-api/oauth).

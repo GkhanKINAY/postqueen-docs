@@ -271,7 +271,7 @@ async function main() {
 main();
 ```
 
-`post()` counts against the 30 `POST /posts` requests a workspace can send in an hour, except calls refused before anything is saved, and `upload()` against 300 uploads an hour. Put several channels in one `post()` call rather than one call per channel. What each status code means is on [Limits and errors](/public-api/limits-and-errors).
+`post()` counts against the 30 `POST /posts` requests a workspace can send in an hour, except calls refused during validation, and `upload()` against 300 uploads an hour. Put several channels in one `post()` call rather than one call per channel. What each status code means is on [Limits and errors](/public-api/limits-and-errors).
 
 ## Calls the SDK does not wrap
 

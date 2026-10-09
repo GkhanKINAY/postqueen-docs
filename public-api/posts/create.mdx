@@ -113,5 +113,5 @@ Do not put file data in the body. This endpoint takes about 100 kB of JSON, whic
 </Warning>
 
 <Note>
-A workspace can send 30 `POST /posts` requests an hour. A request refused with `400` before anything is saved does not count. One request can carry many channels and a whole thread, and it counts once. See [Limits and errors](/public-api/limits-and-errors).
+A workspace can send 30 `POST /posts` requests an hour. A request refused with `400` during validation, such as a missing setting or a post that is too long, gets its slot back. A refusal once the posts are being created, such as a republish without `republish` or "Media not found", counts. One request can carry many channels and a whole thread, and it counts once. See [Limits and errors](/public-api/limits-and-errors).
 </Note>

@@ -7,7 +7,7 @@
       "name": "MIT",
       "identifier": "MIT"
     },
-    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\nA workspace can send 30 `POST /posts` requests an hour. A request refused with `400` or `422` before anything is saved does not count. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
+    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\nA workspace can send 30 `POST /posts` requests an hour. A request refused with `400` or `422` during validation gets its slot back; one refused once the posts are being created counts. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
   },
   "servers": [
     {
@@ -1733,7 +1733,7 @@
             "name": "page",
             "in": "query",
             "required": false,
-            "description": "The page, from 1. Default 1",
+            "description": "The page, from 1. Default 1. Read as a whole number: `1.5` is 1",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -1810,7 +1810,7 @@
             }
           },
           "400": {
-            "description": "`page` is not a whole number of at least 1",
+            "description": "`page` is 0, negative or not a number. It is read with `parseInt`, so `1.5` reads as 1 and `2abc` as 2",
             "content": {
               "application/json": {
                 "schema": {
