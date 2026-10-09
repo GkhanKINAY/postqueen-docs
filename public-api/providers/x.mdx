@@ -22,7 +22,7 @@ Every post to X carries a `settings` object with `"__type": "x"`. Read the live 
 | `paid_partnership` | boolean | No | `true` labels the post as a paid partnership. |
 
 <Warning>
-`subscribers`, `verified` and `post_type: "article"` need an X Premium subscription on the connected account. The composer hides them when X reports that the account has none, but the API accepts them, and X may then refuse the post when it is published.
+`subscribers`, `verified` and `post_type: "article"` need an X Premium subscription on the connected account. PostQueen asks X for the account's subscription when the channel is connected. When X answered that it has none, these values are refused with `400` and the post is held to 280 characters. An account that subscribed later is refused until it is reconnected. An account whose answer was anything else, and a channel connected before PostQueen asked, is not checked, and X may refuse the post when it is published.
 </Warning>
 
 ### The text limit
@@ -35,7 +35,7 @@ Each extra entry in `value` is posted as a reply to the entry before it, after i
 
 ### Articles
 
-With `post_type: "article"`, `content` is HTML. X keeps these tags: `h1` and `h2` headings (an `h3` is sent as `h2`), `ul` and `li` bullet lists, `strong` for bold, and `a` links. Every other tag becomes a plain paragraph. The images attached to the entry are placed at the end of the Article. Video is not allowed.
+With `post_type: "article"`, `content` is HTML. X keeps these tags: `h1` and `h2` headings (an `h3` is sent as `h2`), `ul` and `li` bullet lists, `strong` for bold, and `a` links. Every other tag becomes a plain paragraph. A picture goes where it should appear as `<img src="..." alt="...">`, with the `path` of a picture in your media library; a `src` that is not a PostQueen upload is dropped. The images attached to the entry are placed at the end of the Article. Video is not allowed.
 
 ## What PostQueen checks
 
@@ -50,6 +50,8 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | `article_title` set on an Article | “Article title is required” |
 | An Article takes images only | “X articles only support images” |
 | A draft Article has no thread replies | “A draft article cannot have thread replies, remove them or publish the article” |
+| `subscribers` or `verified` replies, on an account X reported without Premium | “X only lets Premium accounts limit replies to subscribers or verified accounts, reconnect the channel if this account has Premium now” |
+| An Article, on an account X reported without Premium | “X articles need an X Premium subscription, reconnect the channel if this account has Premium now” |
 
 The error body names the channel and the rule:
 

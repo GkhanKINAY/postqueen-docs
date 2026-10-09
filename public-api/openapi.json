@@ -7,7 +7,7 @@
       "name": "MIT",
       "identifier": "MIT"
     },
-    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\nA workspace can send 30 `POST /posts` requests an hour, and a request refused with `400` counts too. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
+    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\nA workspace can send 30 `POST /posts` requests an hour. A request refused with `400` or `422` before anything is saved does not count. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
   },
   "servers": [
     {
@@ -473,7 +473,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The channel's record with `deletedAt` set. Its stored credentials are replaced by one-way hashes; read `id` and `deletedAt` and ignore the rest",
+            "description": "The deleted channel's id, and nothing else",
             "content": {
               "application/json": {
                 "schema": {
@@ -481,19 +481,11 @@
                   "properties": {
                     "id": {
                       "type": "string"
-                    },
-                    "deletedAt": {
-                      "type": "string",
-                      "format": "date-time"
                     }
-                  },
-                  "additionalProperties": true
+                  }
                 },
                 "example": {
-                  "id": "cmg1ozx2c0000qz0h8c7w5v3n",
-                  "name": "PostQueen",
-                  "providerIdentifier": "bluesky",
-                  "deletedAt": "2026-10-01T09:00:00.000Z"
+                  "id": "cmg1ozx2c0000qz0h8c7w5v3n"
                 }
               }
             }
@@ -540,6 +532,95 @@
                 },
                 "example": {
                   "connected": true
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "Who am I",
+        "description": "The workspace the key or token belongs to, and for an OAuth access token the person who approved it. An API key belongs to the whole workspace, so `user` is `null` for a key.",
+        "operationId": "getMe",
+        "responses": {
+          "200": {
+            "description": "The workspace, and the approving user for an OAuth token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "organization": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "user": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "`null` for an API key",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "picture": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Profile picture URL"
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "apiKey": {
+                    "summary": "An API key",
+                    "value": {
+                      "organization": {
+                        "id": "cmg1oxa1b0000qz0h3f9e2c7d",
+                        "name": "Acme"
+                      },
+                      "user": null
+                    }
+                  },
+                  "oauth": {
+                    "summary": "An OAuth access token",
+                    "value": {
+                      "organization": {
+                        "id": "cmg1oxa1b0000qz0h3f9e2c7d",
+                        "name": "Acme"
+                      },
+                      "user": {
+                        "id": "cmg1oxb2c0001qz0h5g8f3d1e",
+                        "name": "Sam Lee",
+                        "picture": "https://cdn.example.com/sam.png"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1175,7 +1256,7 @@
         },
         "responses": {
           "200": {
-            "description": "The updated post record",
+            "description": "The updated post record. `releaseURL` is set too when TikTok gives the video's link; a failed link lookup does not fail the request",
             "content": {
               "application/json": {
                 "schema": {
@@ -1186,6 +1267,12 @@
                     },
                     "releaseId": {
                       "type": "string"
+                    },
+                    "releaseURL": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   },
                   "additionalProperties": true
@@ -1193,6 +1280,7 @@
                 "example": {
                   "id": "cmg1p0s7k0001qz0h4yq2a8r1",
                   "releaseId": "7321456789012345678",
+                  "releaseURL": "https://www.tiktok.com/@postqueen/video/7321456789012345678",
                   "state": "PUBLISHED"
                 }
               }
@@ -1628,6 +1716,118 @@
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/media": {
+      "get": {
+        "tags": [
+          "Media"
+        ],
+        "summary": "List media",
+        "description": "Your media library, newest first, 18 items to a page. Each item carries what a post needs to attach it: `id` and `path` go into `image` as they are. Videos that are still being converted are left out until they are ready.",
+        "operationId": "listMedia",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "The page, from 1. Default 1",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Only files whose original name contains this text. Upper and lower case match alike",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "One page of the media library",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "pages": {
+                      "type": "integer",
+                      "description": "How many pages there are for this search. `0` when the library is empty"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The stored file name"
+                          },
+                          "originalName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "The file name it was uploaded with"
+                          },
+                          "path": {
+                            "type": "string",
+                            "description": "The file's address. Put it in `image` with the `id`"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "pages": 3,
+                  "results": [
+                    {
+                      "id": "e639003b-f727-4a1e-87bd-74a2c48ae41e",
+                      "name": "f6g7h8i9j0.mp4",
+                      "originalName": "clip.mov",
+                      "path": "https://cdn.example.com/f6g7h8i9j0.mp4",
+                      "createdAt": "2026-10-01T09:00:00.000Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`page` is not a whole number of at least 1",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "page must not be less than 1"
+                  ],
+                  "error": "Bad Request"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -3406,7 +3606,7 @@
           },
           "name": {
             "type": "string",
-            "description": "Display name of the account"
+            "description": "The channel's name in PostQueen: the name someone gave it with Rename channel in the app, or else the account's name on the network. The network's own name is not returned when the channel is renamed"
           },
           "identifier": {
             "type": "string",
@@ -3607,7 +3807,8 @@
                 "type": "string"
               },
               "name": {
-                "type": "string"
+                "type": "string",
+                "description": "The channel's name in PostQueen, the renamed one when someone renamed it in the app"
               },
               "picture": {
                 "type": [
@@ -3704,7 +3905,7 @@
           "date": {
             "type": "string",
             "format": "date-time",
-            "description": "Publish date and time in UTC, ISO 8601. Required for every type; `now` uses the current minute instead. A date in the past with `schedule` publishes at once"
+            "description": "Publish date and time in UTC, ISO 8601. Required for every type; `now` uses the current minute instead. A date in the past with `schedule` publishes at once. It applies to every entry in `posts`: a `date` inside an entry is ignored"
           },
           "shortLink": {
             "type": "boolean",
@@ -4817,6 +5018,10 @@
           "text_format_preset_id": {
             "type": "string",
             "description": "Background preset for a short text-only post"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the video, used only for a video posted to the feed (not a story)"
           }
         }
       },

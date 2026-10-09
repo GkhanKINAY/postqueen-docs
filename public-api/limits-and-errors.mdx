@@ -19,7 +19,7 @@ The posting limit counts requests, not posts. One request can carry many channel
 
 What counts:
 
-- **Every request that gets past the key check**, including one refused with `400` for a missing setting or a post that is too long. A client that retries a refused post in a loop uses up the hour. A `401` does not count.
+- **Every request that gets as far as saving.** A request refused with `400` or `422` before anything is saved does not count: a body that is not valid, a missing setting, a post that is too long or a channel that is not yours. A request refused while it is saved counts, for example publishing an already published post again without `republish`, or media from another workspace. A `401` does not count either.
 - **Only `POST /posts`** among the post routes. Listing and deleting posts, and changing a post's status or settings, have no limit.
 - **An hour from the first request.** The count starts with the first request and starts again an hour later. The request that goes over the limit starts a block of one hour: until it ends, every request to that endpoint answers `429`.
 

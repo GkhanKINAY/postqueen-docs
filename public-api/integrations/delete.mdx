@@ -8,6 +8,12 @@ openapi: "DELETE /integrations/{id}"
 Deleting a channel deletes all of its posts in PostQueen first: scheduled posts, drafts, published records and failed posts. Pending publishing is canceled. Connecting the same account again does not bring them back.
 </Warning>
 
+The answer is the channel's id and nothing else:
+
+```json
+{ "id": "cmg1ozx2c0000qz0h8c7w5v3n" }
+```
+
 What the delete does not do:
 
 - It does not touch the same content scheduled on your other channels. Each channel has its own posts.

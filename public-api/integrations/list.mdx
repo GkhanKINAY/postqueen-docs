@@ -6,4 +6,6 @@ openapi: "GET /integrations"
 
 The `id` of each channel is what [Create a post](/public-api/posts/create), [Get a channel's settings](/public-api/integrations/settings), [Trigger a tool](/public-api/integrations/trigger) and the [analytics](/public-api/analytics/platform) endpoints take. `identifier` names the network, such as `bluesky` or `wordpress`; the settings each network takes are on [Posting settings by network](/public-api/providers/overview).
 
+`name` is the channel's name in PostQueen. When someone renamed the channel in the app, it is that name, and the account's name on the network is not returned. Renaming is done in the app only: see [Connect a channel](/using/connect-a-channel#channel-settings).
+
 A channel with `disabled: true` is switched off in the app and does not publish until someone turns it back on.
