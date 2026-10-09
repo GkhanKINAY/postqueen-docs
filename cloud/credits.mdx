@@ -15,14 +15,14 @@ keywords:
 
 **Where:** **Credits** on **Billing**, from the **Upgrade** row at the bottom of the left rail, or **Billing & invoices** in the account menu. Only workspace admins see Billing.
 
-Each workspace has one credits balance. Your plan adds credits, and anything that costs PostQueen money to run takes them: AI images and video, the AI Copilot, AI agents connected over MCP, and posts to X.
+Each workspace has one credits balance. Your plan adds credits, and anything that costs PostQueen money to run takes them: AI images and video, the AI Copilot, AI agents that use PostQueen's own agent over MCP, and posts to X.
 
 ## Where credits come from
 
 | Source | How many | When they expire |
 |---|---|---|
-| Your plan, monthly | Pro adds 500 a month. Creator adds 150, Growth 300 and Ultimate 1,000. | 3 days after the billing month ends. The next month's credits replace what is left. |
-| Your plan, yearly | Twelve months of credits at once, as soon as the year is paid: 6,000 on Pro. | 3 days after the year ends. |
+| Your plan, monthly | Pro adds 500 a month. Creator adds 150, Growth 300 and Ultimate 1,000. | When the next month's credits arrive, or at the latest 3 days after the billing month ends. |
+| Your plan, yearly | Twelve months of credits at once, as soon as the year is paid: 6,000 on Pro. | When the next year's credits arrive, or at the latest 3 days after the year ends. |
 | The free trial | One month of the plan's credits, on a yearly plan too. | When the trial ends. |
 | The monthly gift | 5 credits every calendar month, for a paid plan past its trial. | At the end of that month. |
 | A credits pack | 100, 500 or 1,000 credits, bought on Billing. | 12 months after you buy it. |
@@ -49,7 +49,7 @@ An image costs more at a higher **Quality**, and a **Portrait** or **Landscape**
 
 ### AI videos
 
-**Seedance 2.0 (Audio + Video)** is priced per second, by **Model** and **Resolution**. A video is 4 to 15 seconds long, 8 unless you pick another **Length**. The sound track is free.
+**Seedance 2.0 (Audio + Video)** is priced per second, by **Model** and **Resolution**. In the app a video is 5, 8, 10, 12 or 15 seconds long, 8 unless you pick another **Length**. The API takes any length from 4 to 15. The sound track is free.
 
 | Model | 480p | 720p | 1080p |
 |---|---|---|---|
@@ -61,7 +61,7 @@ An 8-second **Fast** video at 720p, the default, costs 32 credits. An **Image Te
 
 ### The AI Copilot and AI agents
 
-The [AI Copilot](/using/ai-copilot), and [AI agents](/agents/overview) that use PostQueen's own agent over MCP, are charged by the tokens each answer uses, so a long chat or a long answer costs more than a short one. A message is accepted whenever the balance is above zero, and an answer that started finishes even if it takes the balance below zero. With no credits left, the Copilot reads "You are out of credits, so Copilot cannot answer."
+The [AI Copilot](/using/ai-copilot), and [AI agents](/agents/overview) that use PostQueen's own agent over MCP, are charged by the tokens each answer uses, so a long chat or a long answer costs more than a short one. A message is accepted whenever the balance is above zero, and an answer that started can take the balance a little below zero before it stops. With no credits left, the Copilot reads "You are out of credits, so Copilot cannot answer."
 
 ### Other AI features
 
@@ -91,9 +91,9 @@ Reading X analytics does not take credits. Other networks take none.
 A scheduled X post sets its credits aside when you save it, not when it publishes. When you choose **Schedule**, **Post now** or **Update** on a post with an X channel, a **Publishing uses credits** window shows what it takes and **Balance after:** with what is left, and says why: "X charges PostQueen for every post published through its API." When the post has a link, it adds that a post with a link costs 5 credits instead of 0.4. Confirm with the same button, or choose **Cancel**.
 
 - **Editing** a scheduled post reuses what it already set aside. Only a difference is charged or given back.
-- **Saving as a draft**, deleting the post, or a publish that fails gives the credits back. Drafts and Social Sets ask nothing.
+- **Saving as a draft**, deleting the post, or a publish that fails gives the credits back, unless the credits they came from have expired meanwhile. Drafts and Social Sets ask nothing.
 - **A repeating post** sets aside its next run each time it publishes.
-- **Too few credits:** the window's title reads **Not enough credits** with your balance, and offers **Get more credits** instead of saving.
+- **Too few credits:** the window's title reads **Not enough credits** with your balance, and offers **Get more credits** to admins instead of saving. **Back** returns to the composer.
 
 ## When the balance is too low
 
@@ -103,7 +103,7 @@ Work that the balance cannot cover is refused before it starts, with this messag
 
 Choose **Move to billing** to buy a pack or move to a plan with more credits. The AI image and video windows say "You don't have enough credits for this image." or "You don't have enough credits for this video." under the price, with **Get more credits**.
 
-Background work stops quietly instead. An Auto Post item becomes a draft, with a notification: "Autopost saved a draft: not enough credits". A plug stops, with "A plug stopped: not enough credits". The public API and MCP answer the same message, with status `402`: see [Limits and errors](/public-api/limits-and-errors#status-codes).
+Background work stops without a dialog instead. An Auto Post item becomes a draft, with a notification: "Autopost saved a draft: not enough credits". A plug stops, with "A plug stopped: not enough credits". The public API and MCP answer the same message, with status `402`: see [Limits and errors](/public-api/limits-and-errors#status-codes).
 
 ## Buy more credits
 
