@@ -1,7 +1,7 @@
 ---
 title: "Manage your subscription"
 sidebarTitle: "Subscription"
-description: "Change plan, update the card, get invoices, cancel or reactivate, and what happens when a payment fails or is disputed."
+description: "Change plan, buy credits, update the card, get invoices, cancel or reactivate, and what happens when a payment fails or is disputed."
 icon: "credit-card"
 keywords:
   - billing
@@ -12,6 +12,8 @@ keywords:
   - failed payment
   - disputed payment
   - chargeback
+  - credits pack
+  - downgrade
 ---
 
 **Where:** **Billing**, from the **Upgrade** row at the bottom of the left rail (**Billing & invoices** on Ultimate, **Founding member** for founding members), or **Billing & invoices** in the account menu.
@@ -32,13 +34,38 @@ Only a workspace Admin or Super Admin can open Billing. Other members see **Bill
   </Step>
 </Steps>
 
-The change applies at once. An upgrade charges the prorated difference right away, and a downgrade leaves the unused difference as a credit on your next invoices. You see "Subscription updated successfully" when it is done.
+When the change takes effect depends on what the new plan costs a month. A yearly price counts as a twelfth of itself.
+
+- **A plan that costs more a month** is charged now: the prorated difference is billed right away, and the new plan applies once that payment goes through. You see "Subscription updated successfully". If the card is declined, you keep your current plan and PostQueen asks you to update the payment method. The rest of the current period gets the new plan's extra credits, in proportion to the time left.
+- **A plan that costs less a month, or a move from yearly to monthly,** waits for renewal. Nothing is charged and there is no credit for the unused time. You keep your current plan until the renewal date, and the new plan starts then. The plan card reads **Changes on** and the date, and a message confirms that you keep your current plan until then. Because a yearly plan costs less a month, moving from monthly to yearly on the same plan also starts at renewal.
+- **During the free trial**, nothing has been paid yet, so any change applies at once.
+
+### Yearly plans and the consent box
+
+A yearly plan adds a full year of credits as soon as the year is paid. To choose yearly, tick the box above the plans (in **Payment details** when you first subscribe). It reads: "I want my yearly credits right away, and I understand I lose my 14-day right to withdraw once I use them." Without it, PostQueen asks you to tick the box before it continues with yearly.
 
 ### What a smaller plan switches off
+
+When the smaller plan starts:
+
 
 - **Channels** above the new limit are disabled, newest first. They are not deleted. A post that comes due on a disabled channel fails with "Channel disabled", so reschedule it after you turn the channel back on.
 - **Team members** are switched off when the new plan has none. Super Admins, such as the workspace owner, keep access. Upgrading again switches the members back on.
 - **Upgrading again** turns the channels the downgrade disabled back on, oldest first, up to the new limit. Channels you disabled yourself stay off.
+
+## Buy more credits
+
+**Credits**, on Billing, shows your balance and when the next of it expires. Under **Buy more credits** there are three packs:
+
+| Pack | Price |
+|---|---|
+| 100 credits | $10 |
+| 500 credits | $45 |
+| 1,000 credits | $80 |
+
+Tick the box under the packs, choose **Buy**, and pay on the Stripe checkout page. The box reads: "I want these credits right away, and I understand I lose my 14-day right to withdraw once I use them." Back on Billing, "Payment received. Your credits will show up in a moment." confirms it.
+
+Packs top up a plan, so the card shows once the workspace has one. Bought credits last 12 months. The credits closest to running out are spent first, so a plan's monthly credits go before a pack's. What credits pay for is on [Credits](/cloud/credits).
 
 ## Update your card and get invoices
 

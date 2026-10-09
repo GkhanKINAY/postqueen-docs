@@ -54,7 +54,7 @@ Wait the number of seconds in `Retry-After` before you send the next request. Re
 | `201` | A `POST` worked: a post, an upload, a tool run or a token. |
 | `400` | The request is wrong: a missing or malformed field, a post that breaks a network's rule, or an unknown channel id in a post. Read the body, fix the request and send it again. |
 | `401` | The key or token is missing or not valid, or the workspace has no subscription. See [401 messages](#401-messages). |
-| `402` | The workspace is at its plan's channel limit, when you connect a channel, or has used this month's AI videos, when you generate one. The body has the billing link. |
+| `402` | The workspace is at its plan's channel limit, when you connect a channel, or its credits do not cover the work: a video you generate, or a post to X when you schedule it or post it now. See [Error bodies](#error-bodies). |
 | `404` | The post, media or channel is not in your workspace or was deleted, or the video generator does not exist. Check the id. |
 | `406` | The feature is locked during the free trial, such as a Seedance video. See [Free trial](/cloud/trial). |
 | `413` | The JSON body of `POST /posts` is over about 100 kB. Upload files first and send their `id` and `path`, not file data. |
@@ -117,6 +117,18 @@ The body of an error has one of four shapes. Read the status code first, then wh
       "statusCode": 402,
       "message": "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels.",
       "url": "https://app.postqueen.ai/billing"
+    }
+    ```
+
+    When the credits balance is too low, the body says what the work costs and what is left, both in credits, with `code` set to `insufficient_credits`. Nothing was made or saved. Buy credits on **Billing**, or ask for something that costs less.
+
+    ```json
+    {
+      "statusCode": 402,
+      "message": "Not enough credits: this costs 32 and the balance is 12.5.",
+      "code": "insufficient_credits",
+      "required": 32,
+      "balance": 12.5
     }
     ```
   </Tab>
