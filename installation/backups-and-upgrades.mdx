@@ -132,7 +132,7 @@ docker compose exec postqueen sh -c \
    done'
 ```
 
-The loop takes every migration folder and skips `migration_lock.toml`, which is a file. Run it before you move the tag, on the image that is running now.
+The loop takes every migration folder and skips `migration_lock.toml`, which is a file. Run it before you move the tag, on the image that is running now. If a new image already fails to start, set the tag back to your previous one, run the loop there, and only then move forward.
 
 ```env
 PRISMA_MIGRATE=true
