@@ -13,7 +13,7 @@ curl -H "Authorization: YOUR_API_KEY" \
 
 ## Which channels report
 
-Nine networks return channel metrics: Instagram, TikTok, YouTube, Facebook Page, X, LinkedIn Page, Threads, Pinterest and Google Business Profile. Every other channel answers `[]`, and that includes every network Available on PostQueen today. The app offers 7, 30 and 90 days, and 7 and 30 on Instagram, Threads and TikTok; the API passes your number to the network as it is. An answer is kept for an hour per channel and range, so asking again within the hour returns the same numbers.
+Nine networks return channel metrics: Instagram, TikTok, YouTube, Facebook Page, X, LinkedIn Page, Threads, Pinterest and Google Business Profile. Every other channel answers `[]`, and that includes every network Available on PostQueen today. The app offers 7, 30 and 90 days, 7 and 30 on Instagram, Threads and TikTok, and 7 on X; the API passes your number to the network as it is. An answer is kept for an hour per channel and range, so asking again within the hour returns the same numbers. X is the exception: the API never asks X. It returns the last 7 days as of the last time someone chose **Refresh** in [Analytics](/using/analytics#good-to-know), whatever `date` you send, and `[]` before the first refresh.
 
 ## Reading the numbers
 
