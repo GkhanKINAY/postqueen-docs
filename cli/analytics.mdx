@@ -19,7 +19,7 @@ Nine networks send analytics to PostQueen. Every other channel answers with an e
 
 | Network | Channel windows | One post's numbers | Followers |
 |---|---|---|---|
-| X | 7, 30, 90 days | Yes | No |
+| X | 7 days | Yes | No |
 | Facebook Page | 7, 30, 90 days | Yes | Yes |
 | Instagram | 7, 30 days | Yes | Yes |
 | Threads | 7, 30 days | Yes | No |
@@ -38,7 +38,7 @@ postqueen analytics:platform <channel-id>          # the last 7 days
 postqueen analytics:platform <channel-id> -d 30    # the last 30 days
 ```
 
-`-d` is the number of days to look back, `7` by default. Use a window the table lists for that network. PostQueen passes any other number to the network unchanged, and the network may refuse it. The answer is a list of metrics, each with a value per day and the change over the window:
+`-d` is the number of days to look back, `7` by default. Use a window the table lists for that network. PostQueen passes any other number to the network unchanged, and the network may refuse it. X is never asked: you get the last 7 days as of the last **Refresh** in [Analytics](/using/analytics#good-to-know), whatever `-d` says, and `[]` before the first refresh. The answer is a list of metrics, each with a value per day and the change over the window:
 
 ```text
 📊 Analytics for integration: cmf1abc2d0003

@@ -10,6 +10,7 @@ Where [Get post analytics](/public-api/analytics/post) asks the network about on
 - The numbers are each post's latest lifetime totals, not growth inside the range. `null` means the network does not report that metric, not zero.
 - Only networks with post metrics are included: Instagram, Facebook, Threads, X, LinkedIn Page, TikTok, YouTube and Pinterest. Facebook reports no comments, and Pinterest no reactions or comments. None of the networks Available on PostQueen today is among them.
 - Stored numbers older than an hour start a refresh in the background. The answer still comes at once, with `syncing: true`: ask again a little later for newer numbers.
+- X is the exception. Its post numbers are read only when someone chooses **Refresh** in [Analytics](/using/analytics#good-to-know), and only for posts from the last 7 days, so X posts never start a background refresh.
 
 Narrow the list with `integrationIds` (comma separated), `platform` or `q` (text in the content or the channel name). Sort with `sort` (`reactions`, `comments`, `impressions`, `engagement` or `published`) and `dir`. `topReactions` and `topComments` always hold the five best posts of the whole filtered range, whatever page you ask for.
 
