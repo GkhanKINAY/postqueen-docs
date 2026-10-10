@@ -45,6 +45,8 @@ Other networks have no **Automations** section. **Auto Repost Posts** reposts th
 
 PostQueen reads the post's like count up to three times: about 6, 18 and 36 hours after it publishes.
 
+The plugs on one channel share a single queue of checks. With two plugs on, the six checks fall about 6, 12, 24, 36, 54 and 72 hours after the post goes out, so each plug's three checks are further apart than they would be on its own.
+
 - The first check that finds enough likes runs the action once. The checks left for that post are dropped.
 - If no check finds enough likes, nothing happens, and the post is not checked again.
 - The post itself still goes out at the time you scheduled. A plug only acts afterward.
