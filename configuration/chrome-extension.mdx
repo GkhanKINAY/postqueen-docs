@@ -27,7 +27,7 @@ Using a browser extension to interact with a platform may violate its terms of s
 
 ## How it works
 
-1. The Chrome build writes your domain and its subdomains into the extension twice: into the manifest's `externally_connectable` list, which decides which pages can reach the extension at all, and into the extension's own check of every message's origin. It also grants the extension access to your frontend and backend addresses.
+1. The Chrome build writes your domain and its subdomains into the extension twice: into the manifest's `externally_connectable` list, which decides which pages can reach the extension at all, and into the extension's own check of every message's origin. It also grants the extension access to your backend address, which the daily refresh needs. A build for any domain other than `localhost` does not answer pages on `localhost`.
 2. When someone picks **Skool** in **Add Channel**, PostQueen shows a **Browser Extension Notice**. After **I understand, continue**, the page asks the extension with the ID in `EXTENSION_ID` for the `client_id` and `auth_token` cookies of skool.com, and PostQueen stores them encrypted.
 3. From then on the extension sends fresh cookies to your backend once a day, whenever Chrome is running, so the connection stays alive.
 
@@ -44,20 +44,17 @@ Using a browser extension to interact with a platform may violate its terms of s
     ```
   </Step>
   <Step title="Build it for your domain">
-    Build with the Chrome configuration, passing your instance's two addresses:
+    Build at the repository root, passing your instance's two addresses:
 
     ```bash
-    cd apps/extension
     FRONTEND_URL="https://postqueen.example.com" \
     NEXT_PUBLIC_BACKEND_URL="https://postqueen.example.com/api" \
-    pnpm exec vite build --config vite.config.chrome.ts
+    pnpm run build:extension
     ```
 
-    The build goes to `apps/extension/dist`. Its `manifest.json` lists `https://postqueen.example.com/*` and `https://*.postqueen.example.com/*` under `externally_connectable`. Nothing in the source needs editing.
+    The build goes to `apps/extension/dist`, and the same files zipped to `apps/extension/extension.zip`. Its `manifest.json` lists `https://postqueen.example.com/*` and `https://*.postqueen.example.com/*` under `externally_connectable`, and `https://postqueen.example.com/*` under `host_permissions`. Nothing in the source needs editing.
 
-    <Warning>
-    **Not `pnpm build`.** That script packs the extension the way the published build is packed: it copies `manifest.json` unchanged and does not read `FRONTEND_URL`, so the result answers only pages on `localhost`, never your domain.
-    </Warning>
+    Both addresses have to be absolute URLs, the same values your instance runs with. Without them, or with a relative backend such as `/api`, the build stops with an error instead of packing an extension that cannot reach your instance.
   </Step>
   <Step title="Load it into Chrome">
     Open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked** and pick the `apps/extension/dist` folder.
@@ -82,7 +79,7 @@ EXTENSION_STORE_URL="https://chromewebstore.google.com/detail/your-listing"
 | Who connects Skool | What to do | `EXTENSION_ID` |
 |---|---|---|
 | One browser | Load the build unpacked, as above | The ID Chrome shows for it |
-| Several people | Zip the contents of `dist`, publish it on the Chrome Web Store (an unlisted item is enough), and set `EXTENSION_STORE_URL` to its page | The ID the Web Store gives the item |
+| Several people | Upload `extension.zip` to the Chrome Web Store (an unlisted item is enough), and set `EXTENSION_STORE_URL` to its page | The ID the Web Store gives the item |
 
 <Tip>
 To give unpacked copies on different computers the same ID without publishing, upload the zipped build to the Chrome Web Store developer dashboard without publishing it, copy the public key it shows, and add it as `"key"` to `apps/extension/manifest.json` before you build. See Chrome's guide to the [manifest key](https://developer.chrome.com/docs/extensions/reference/manifest/key).
@@ -98,7 +95,7 @@ For local development, `pnpm run dev` at the repository root also builds the ext
 
 <AccordionGroup>
   <Accordion title="Extension Not Found">
-    The window says "The PostQueen browser extension is not installed. You need to install it before connecting this channel." Either `EXTENSION_ID` is empty on the instance, or no enabled extension in this browser trusts the page: the build is not loaded, it is turned off, it was built for another domain or with `pnpm build`, or PostQueen is open over plain `http` on an address other than `localhost`.
+    The window says "The PostQueen browser extension is not installed. You need to install it before connecting this channel." Either `EXTENSION_ID` is empty on the instance, or no enabled extension in this browser trusts the page: the build is not loaded, it is turned off, it was built for another domain, or PostQueen is open over plain `http` on an address other than `localhost`.
   </Accordion>
   <Accordion title="PostQueen browser extension is not installed or not reachable.">
     The page can reach an extension but not this one. `EXTENSION_ID` is not the ID Chrome shows for the loaded build, or the build's origin check refused the page because it was built with another `FRONTEND_URL` or PostQueen runs on a port other than 443. Fix the ID or rebuild, then recreate the container.
