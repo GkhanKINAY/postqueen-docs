@@ -63,7 +63,7 @@ postqueen auth:login
 
 It opens PostQueen's sign-in page in the browser, where a workspace admin approves the CLI, and the CLI stores its own token. The token never appears in the output or in the conversation.
 
-The command waits up to 10 minutes for the approval, so run it in the background or with a timeout of at least 10 minutes, and read its output as it comes. Pass the link it prints on to the user: the browser usually opens by itself, but if PostQueen asks the user to sign in first, they have to open the link again afterwards. Run `postqueen auth:status` once the command has finished.
+The command waits up to 10 minutes for the approval, so run it in the background or with a timeout of at least 10 minutes, and read its output as it comes. Pass the link it prints on to the user: the browser usually opens by itself. If PostQueen asks the user to sign in first, it brings them back to the approval page afterwards; if it does not, they can open the printed link again. Run `postqueen auth:status` once the command has finished.
 
 **Never ask the user to paste an API key or token into the conversation, and never write one into a command, a file or code.** If browser sign-in is not possible (the CLI runs on a remote machine with no browser), ask the user to set `POSTQUEEN_API_KEY` themselves, in their own shell or in your secret settings, then run `postqueen auth:status` again. The key is in PostQueen under **Connections > API Keys**, visible to workspace admins only.
 
