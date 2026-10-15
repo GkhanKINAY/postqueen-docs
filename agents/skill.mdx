@@ -96,16 +96,16 @@ Read it yourself on [GitHub](https://github.com/GkhanKINAY/postqueen-agent/blob/
     grok plugin install postqueen --trust
     ```
 
-    The plugin carries the skill only, so install the CLI and set the key as well. Grok Build also connects over MCP with one command: see [Grok Build](/agents/grok-build).
+    The plugin carries the skill only, so install the CLI and sign it in as well. Grok Build also connects over MCP with one command: see [Grok Build](/agents/grok-build).
   </Tab>
 </Tabs>
 
-## Give the agent the key
+## Sign the CLI in
 
-The agent runs `postqueen` in its own environment, which is not always your terminal.
+The agent runs `postqueen` in its own environment, which is not always your terminal. Never paste the key or a token into the agent's chat.
 
-- **A coding agent in your terminal** reads the key from your shell. Add `export POSTQUEEN_API_KEY=your_api_key` to your shell profile, such as `~/.zshrc`, and open a new terminal.
-- **OpenClaw** runs as a background service that does not see your terminal. Put the key under `skills.entries.postqueen.env` in `openclaw.json`, or in the service's own environment, and restart it. See [OpenClaw](/agents/openclaw).
+- **A coding agent on your computer** uses the login the CLI saved. Run `postqueen auth:login` once and approve it in the browser, or let the agent run it and approve the page it opens.
+- **OpenClaw** runs as a background service that does not see your terminal. When it runs under your user account on this computer, `postqueen auth:login` in your terminal is enough, because the CLI reads the saved login. Otherwise put the key under `skills.entries.postqueen.env` in `openclaw.json`, or in the service's own environment, and restart it. See [OpenClaw](/agents/openclaw).
 - **Codex** asks before every command that uses the network, so unattended runs stop. Connect Codex over [MCP](/agents/codex) instead.
 
 ## Check that it loaded
@@ -116,7 +116,7 @@ Start a new session and ask:
 Use the postqueen skill to list my channels.
 ```
 
-The agent runs `postqueen integrations:list` and shows your channels. To check the key on its own, run `postqueen auth:status`: it names the key it uses and says `Credentials are valid` when the API accepts it.
+The agent runs `postqueen integrations:list` and shows your channels. To check the sign-in on its own, run `postqueen auth:status`: it names the login or key it uses and says `Credentials are valid` when the API accepts it.
 
 | What you see | What to do |
 |---|---|

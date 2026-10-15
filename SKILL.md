@@ -2,7 +2,7 @@
 name: postqueen
 description: PostQueen schedules social media and chat posts from the postqueen CLI to 30+ networks, such as X, LinkedIn, LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, Google Business Profile, TikTok, Pinterest, Dribbble, Discord, Slack, Kick, Twitch, Mastodon, Bluesky, Lemmy, Farcaster, Telegram, Nostr, VK, DEV, Hashnode, WordPress, Listmonk, MeWe, Whop, Skool, Moltbook and Tumblr.
 homepage: https://docs.postqueen.ai/public-api/introduction
-metadata: {"openclaw":{"emoji":"🌎","requires":{"bins":["postqueen"],"env":["POSTQUEEN_API_KEY"]}}}
+metadata: {"openclaw":{"emoji":"🌎","requires":{"bins":["postqueen"]}}}
 ---
 
 ## Install PostQueen if it doesn't exist
@@ -56,12 +56,16 @@ Before doing anything else, check auth status:
 postqueen auth:status
 ```
 
-If not authenticated, ask the user for their API key and set it:
+If not authenticated, sign in through the browser:
 ```bash
-export POSTQUEEN_API_KEY=your_api_key
+postqueen auth:login
 ```
 
-The key is in PostQueen under **Connections > API Keys**. Only workspace admins can see it, and each workspace has one.
+It opens PostQueen's sign-in page in the browser, where a workspace admin approves the CLI, and the CLI stores its own token. The token never appears in the output or in the conversation.
+
+The command waits up to 10 minutes for the approval, so run it in the background or with a timeout of at least 10 minutes, and read its output as it comes. Pass the link it prints on to the user: the browser usually opens by itself, but if PostQueen asks the user to sign in first, they have to open the link again afterwards. Run `postqueen auth:status` once the command has finished.
+
+**Never ask the user to paste an API key or token into the conversation, and never write one into a command, a file or code.** If browser sign-in is not possible (the CLI runs on a remote machine with no browser), ask the user to set `POSTQUEEN_API_KEY` themselves, in their own shell or in your secret settings, then run `postqueen auth:status` again. The key is in PostQueen under **Connections > API Keys**, visible to workspace admins only.
 
 **Do NOT proceed with any other commands until authentication is confirmed.**
 
@@ -90,7 +94,7 @@ The fundamental pattern for using PostQueen CLI:
 ```bash
 # 1. Authenticate
 postqueen auth:status
-# If not authenticated: export POSTQUEEN_API_KEY=your_api_key
+# If not authenticated: postqueen auth:login
 
 # 2. Discover
 postqueen integrations:list
@@ -120,30 +124,28 @@ postqueen posts:connect <post-id> --release-id "<content-id>"
 
 ### Authentication
 
-**Option 1: API key (the hosted service)**
+**Option 1: browser sign-in (recommended)**
 ```bash
-export POSTQUEEN_API_KEY=your_api_key_here
-
-# Check auth status (verifies credentials are still valid)
-postqueen auth:status
+postqueen auth:login                # Opens the sign-in page; the user approves the CLI
+postqueen auth:login --no-browser   # Prints the link instead of opening it
+postqueen auth:status               # Verifies the stored credentials
+postqueen auth:logout               # Removes the saved login from this computer
 ```
 
-Copy the key from PostQueen > Connections > API Keys. Only workspace admins can see it.
+Only a workspace admin can approve it, and the link only works in a browser on the same computer as the CLI. The CLI then shows up in PostQueen under **Connections > Approved Apps**. Each sign-in adds an entry there, and only revoking it there cuts the token off: `auth:logout` just deletes the local copy. Credentials from `auth:login` are stored in `~/.postqueen/credentials.json` and take priority over `POSTQUEEN_API_KEY`.
 
-**Option 2: your own auth server**
+**Option 2: an API key the user sets**
 
-PostQueen runs no login server for the CLI, so `postqueen auth:login` on its own only says where to get the API key, and exits 1. If the user runs the device-flow auth server from the CLI repository's `server/` folder, log in through it:
+The user copies the key from PostQueen > Connections > API Keys (workspace admins only) and sets `POSTQUEEN_API_KEY` in their own shell or in the agent's secret settings. Do not ask for the key in the conversation, and do not set it yourself.
+
+**Option 3: a device-flow auth server the user runs**
+
+If the user runs the auth server from the CLI repository's `server/` folder:
 ```bash
 postqueen auth:login --auth-server https://auth.example.com   # or set POSTQUEEN_AUTH_SERVER
-postqueen auth:logout                                          # remove the stored credentials
 ```
 
-Credentials from `auth:login` are stored in `~/.postqueen/credentials.json` and take priority over `POSTQUEEN_API_KEY`.
-
-**Optional custom API URL:**
-```bash
-export POSTQUEEN_API_URL=https://custom-api-url.com
-```
+**Self-hosted PostQueen only:** `POSTQUEEN_API_URL` points the CLI at the user's own server. Leave it unset for the hosted service, and never change it unless the user asks you to use their own server.
 
 ### Output
 
@@ -764,8 +766,8 @@ postqueen posts:create \
 
 An agent that calls tools instead of running shell commands can use PostQueen's MCP server:
 
-- With the API key: `https://api.postqueen.ai/mcp/<API_KEY>`, 22 tools.
-- With OAuth sign-in and no key: `https://api.postqueen.ai/mcp-oauth-dynamic`, 21 tools. A workspace admin approves the connection.
+- With OAuth sign-in and no key: `https://api.postqueen.ai/mcp-oauth-dynamic`, 20 tools. A workspace admin approves the connection.
+- With the API key: `https://api.postqueen.ai/mcp` and the key in an `Authorization: Bearer` header, 21 tools. The user enters the key in the client's own settings, never in the conversation.
 
 Client setup: https://docs.postqueen.ai/mcp/introduction
 
@@ -776,14 +778,14 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 - [CLI documentation](https://docs.postqueen.ai/cli/introduction)
 - [Command reference](https://docs.postqueen.ai/cli/command-reference) - Every command and flag
 - [INTEGRATION_TOOLS_WORKFLOW.md](https://github.com/GkhanKINAY/postqueen-agent/blob/main/INTEGRATION_TOOLS_WORKFLOW.md) - Complete tools workflow guide
-- [Public API reference](https://docs.postqueen.ai/public-api/introduction)
+- [Public API reference](https://api.postqueen.ai/docs)
 - `postqueen integrations:settings <id>` - The settings schema, rules and tools of one channel, straight from the API. Trust it over any example here.
 
 ---
 
 ## Common Gotchas
 
-1. **Not authenticated** - `export POSTQUEEN_API_KEY=key` (PostQueen > Connections > API Keys, admins only) before using the CLI
+1. **Not authenticated** - Run `postqueen auth:login` and have the user approve it in the browser. With no browser, the user sets `POSTQUEEN_API_KEY` themselves (PostQueen > Connections > API Keys, admins only)
 2. **Invalid integration ID** - Run `integrations:list` to get current IDs
 3. **Settings schema mismatch** - Check `integrations:settings` for required fields
 4. **Media MUST be uploaded to PostQueen first** - ⚠️ **CRITICAL (Rule 2):** Every value passed to `-m` or to an `image` field in JSON mode must be a `.path` returned by `postqueen upload`. Raw local filenames (`image.jpg`) and external URLs (`https://...`) will be rejected. No exceptions: even a "quick test post" needs the upload step.
@@ -803,8 +805,7 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 ```bash
 # ⚠️ AUTHENTICATE FIRST - required before any other command
 postqueen auth:status                                             # Check if authenticated
-export POSTQUEEN_API_KEY=key                                      # Set the API key
-postqueen auth:login                                              # Says where to get the API key and exits 1 (or logs in via your own --auth-server)
+postqueen auth:login                                              # Sign in through the browser (the user approves)
 
 # Discovery (only after auth is confirmed)
 postqueen integrations:list                           # Get integration IDs
