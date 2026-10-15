@@ -11,16 +11,24 @@ keywords:
   - cron
 ---
 
-`postqueen` 2.0.27 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
+`postqueen` 2.0.28 has 17 commands. Every one takes `-h, --help` for its own flags and examples, and `-v, --version` prints the installed version.
 
 ```bash
 postqueen <command> [options]
 postqueen posts:create --help
 ```
 
+## Sign in
+
+```bash
+postqueen auth:login
+```
+
+The CLI opens PostQueen's sign-in page in your browser. A workspace Admin or Super Admin approves it, and the CLI saves the token and the API address in `~/.postqueen/credentials.json`. The token never shows up in the terminal. The CLI then appears under **Connections > Approved Apps** as PostQueen CLI. Each sign-in adds its own entry, and revoking the entry is what cuts the token off: `postqueen auth:logout` only deletes the saved login on this computer. The steps it takes are under [key and login](#key-and-login).
+
 ## The key
 
-The CLI reads your workspace API key from `POSTQUEEN_API_KEY`. A workspace Admin or Super Admin copies it from **Connections > API Keys**.
+On a machine with no browser, the CLI reads your workspace API key from `POSTQUEEN_API_KEY` instead. A workspace Admin or Super Admin copies it from **Connections > API Keys**.
 
 ```bash
 export POSTQUEEN_API_KEY=your_api_key
@@ -33,7 +41,7 @@ The CLI also reads two addresses:
 | Variable | On PostQueen Cloud | On your own server |
 |---|---|---|
 | `POSTQUEEN_API_URL` | Leave it unset. The CLI then calls `https://api.postqueen.ai` | Your backend's address, the one the web app calls, without `/public/v1`. For example `https://postqueen.example.com/api` |
-| `POSTQUEEN_AUTH_SERVER` | Leave it unset | Only for a sign-in server you run yourself: see `auth:login` below |
+| `POSTQUEEN_AUTH_SERVER` | Leave it unset | Only for a device sign-in server you run yourself: see `auth:login` below |
 
 A login saved in `~/.postqueen/credentials.json` takes priority over both `POSTQUEEN_API_KEY` and `POSTQUEEN_API_URL`: the CLI then uses the token and the address in that file, and ignores the variables. `postqueen auth:logout` removes the file.
 
@@ -103,22 +111,23 @@ Two letters mean different things in different commands. `-s` is `--date` on `po
 | Command | Flags | What it does | Exit code |
 |---|---|---|---|
 | `auth:status` | | Shows which credentials the CLI uses and checks them against the API | `0` when they work. `1` when none are set, when the API refuses them, or when it could not be reached |
-| `auth:login` | `--auth-server <url>` | Says where to get the API key. It does not sign you in to PostQueen: see below | `1`, unless `--auth-server` signs you in to a server you run yourself |
-| `auth:logout` | | Removes a login saved in `~/.postqueen/credentials.json`, which would otherwise take priority over the key | `0`, also when there was nothing to remove |
+| `auth:login` | `--no-browser`, `--auth-server <url>` | Signs you in through the browser and saves a token. `--no-browser` prints the link without opening it: see below | `0` once you approve. `1` when the sign-in is refused, times out after 10 minutes, or the server offers no browser sign-in |
+| `auth:logout` | | Removes a login saved in `~/.postqueen/credentials.json`, which would otherwise take priority over the key. It does not revoke the login in PostQueen | `0`, also when there was nothing to remove |
 
-### auth:login does not work with PostQueen
+### How auth:login signs in
 
-PostQueen signs in with the API key only. On its own, `auth:login` prints one line on stderr and exits `1`:
+`auth:login` signs in the way MCP clients such as Claude Code and Cursor do:
 
-```text
-❌ PostQueen uses an API key: set POSTQUEEN_API_KEY to the key from PostQueen > Connections > API Keys, visible to workspace admins only.
-```
+1. It reads the sign-in addresses from `<API>/.well-known/oauth-authorization-server/mcp-oauth-dynamic`.
+2. It registers itself as PostQueen CLI, with a callback on `127.0.0.1` at a free port.
+3. It opens the approval page with a PKCE challenge, prints the same link, and waits up to 10 minutes.
+4. Your browser returns to the callback. The CLI checks that the reply belongs to its own sign-in, trades the code for a token, and saves the token, the API address and the workspace ID in `~/.postqueen/credentials.json`.
 
-With the key already set, the line is `❌ PostQueen uses an API key, and POSTQUEEN_API_KEY is already set: run "postqueen auth:status" to check it.`
+`<API>` is `POSTQUEEN_API_URL`, or `https://api.postqueen.ai` when it is unset. Because the browser returns to `127.0.0.1`, the link only works in a browser on the same computer as the CLI. A backend without these routes, such as an old self-hosted version, stops it with `❌ <API> does not offer browser sign-in (HTTP 404).` Use the API key there.
 
-With `--auth-server <url>`, or with `POSTQUEEN_AUTH_SERVER` set, `auth:login` starts a device sign-in on that server: it asks `<url>/device/code` for a code, opens your browser, then asks `<url>/device/token` every few seconds until you approve, and saves the token and API address in `~/.postqueen/credentials.json`. PostQueen has no such server, on PostQueen Cloud or in its own backend, so the command stops with `❌ No auth server is answering at <url>`, followed by the reason, such as `(HTTP 404)` for `https://api.postqueen.ai`, and exits `1`. Sign in with the API key instead.
+Every way it can fail (the server offers no sign-in, a reply that does not belong to the sign-in, a refused approval, a timeout) prints a line starting with `❌` to stderr and exits `1`.
 
-The device sign-in is only for a sign-in server you run yourself. Every way it can fail (no answer, a refused or expired approval, a timeout) prints a line starting with `❌` to stderr and exits `1`.
+With `--auth-server <url>`, or with `POSTQUEEN_AUTH_SERVER` set, `auth:login` starts a device sign-in on that server instead: it asks `<url>/device/code` for a code, opens your browser, then asks `<url>/device/token` every few seconds until you approve. PostQueen runs no such server. It is only for one you run yourself, such as the one in the CLI repository's `server/` folder.
 
 ## What each command prints
 
@@ -179,7 +188,7 @@ The CLI sends your key in the `Authorization` header exactly as it is, with noth
 | `analytics:platform` | `GET /public/v1/analytics/{integration}` |
 | `analytics:post` | `GET /public/v1/analytics/post/{postId}` |
 
-`auth:login` calls none of these. It calls only the server you give it with `--auth-server`.
+`auth:login` calls none of these. It calls the sign-in routes above, or only the server you give it with `--auth-server`.
 
 A workspace can run `posts:create` 30 times an hour, shared with every other script and app that uses its API, and a run the API refuses with `400` during validation, such as a missing setting, does not count. `upload` has its own allowance of 300 an hour. One `posts:create` can carry many channels, so list several IDs in `-i` rather than running it once per channel. The limits are on [limits and errors](/public-api/limits-and-errors).
 

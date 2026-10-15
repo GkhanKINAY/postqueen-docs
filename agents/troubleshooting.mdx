@@ -95,12 +95,12 @@ When the API refuses a command, the CLI prints one line to stderr and exits with
 
 | Message | What to do |
 |---|---|
-| `❌ Error: No authentication found.` | `POSTQUEEN_API_KEY` is not set where the command runs. `export POSTQUEEN_API_KEY=your_api_key` there. A scheduled job or an agent needs it in its own environment |
+| `❌ Error: No authentication found.` | The CLI is not signed in, and `POSTQUEEN_API_KEY` is not set where the command runs. Run `postqueen auth:login`, or set the key there. A scheduled job or an agent on another machine needs the key in its own environment |
 | `❌ Not authenticated.` | The same, reported by `auth:status` |
 | `API Error (401): {"msg":"Invalid API key"}` | The key is wrong or was rotated. Copy it again from **Connections > API Keys** |
 | `❌ Credentials are expired or invalid. Please re-authenticate.` | `auth:status` checked the key and the API refused it. Same fix |
 | `API Error (401): {"msg":"No subscription found"}` | The workspace has no active trial or plan. Start or renew it in **Billing** |
-| `API Error (401): {"msg":"Invalid OAuth token"}` | A saved `auth:login` token, or a `pos_` token in `POSTQUEEN_API_KEY`, no longer works. Run `postqueen auth:logout` and use the API key |
+| `API Error (401): {"msg":"Invalid OAuth token"}` | A saved `auth:login` token, or a `pos_` token in `POSTQUEEN_API_KEY`, no longer works: it was revoked, or the person who approved it left the workspace. Run `postqueen auth:login` again |
 
 `auth:status` names the method it uses. If it says `OAuth2` although you set a key, a saved login in `~/.postqueen/credentials.json` is overriding the key: `postqueen auth:logout` removes it.
 

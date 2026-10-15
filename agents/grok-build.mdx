@@ -87,11 +87,11 @@ Start Grok Build and ask: "List my PostQueen channels." It calls PostQueen and a
     Type `/mcps` in Grok Build, select PostQueen and press `i` to sign in. A workspace admin signs in to PostQueen and approves. Grok keeps the token on your computer, and you can revoke it in PostQueen under **Connections > Approved Apps**.
   </Tab>
   <Tab title="Plugin">
-    The postqueen skill drives the [PostQueen CLI](/cli/introduction), so install the CLI and set your key first:
+    The postqueen skill drives the [PostQueen CLI](/cli/introduction), so install the CLI and sign it in first:
 
     ```bash
     npm install -g postqueen
-    export POSTQUEEN_API_KEY=YOUR_API_KEY
+    postqueen auth:login
     grok plugin marketplace add GkhanKINAY/postqueen-agent
     grok plugin install postqueen --trust
     ```

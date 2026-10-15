@@ -16,7 +16,7 @@ import ApiKeyLocation from '/snippets/api-key-location.mdx';
 
 `postqueen` is the command line for PostQueen. It creates, lists, changes and deletes posts, uploads images and videos, and reads analytics, from a terminal, a script, a scheduled job or an AI agent. It calls the PostQueen API with your API key, and every post it makes lands on the same calendar as the posts you write in the app.
 
-These pages describe `postqueen` 2.0.27. Run `postqueen --version` to see yours.
+These pages describe `postqueen` 2.0.28. Run `postqueen --version` to see yours.
 
 <div className="pq-visual pq-tint-blue">
   <img noZoom src="/images/site/cli-session.webp" alt="Claude Code runs postqueen integrations:list, then postqueen posts:create for X and LinkedIn, and reports the post as scheduled for 9:00 tomorrow" />
@@ -46,12 +46,12 @@ These pages describe `postqueen` 2.0.27. Run `postqueen --version` to see yours.
 
     </CodeGroup>
   </Step>
-  <Step title="Set your key">
+  <Step title="Sign in">
     ```bash
-    export POSTQUEEN_API_KEY=your_api_key
+    postqueen auth:login
     ```
 
-    Add the line to your shell profile, such as `~/.zshrc` or `~/.bashrc`, so a new terminal has it too.
+    Your browser opens PostQueen. A workspace Admin or Super Admin approves the CLI there, and the CLI saves its own token in `~/.postqueen/credentials.json`. If PostQueen asks you to sign in first, open the link the CLI printed again.
   </Step>
   <Step title="Check it">
     ```bash
@@ -59,8 +59,11 @@ These pages describe `postqueen` 2.0.27. Run `postqueen --version` to see yours.
     ```
 
     ```text
-    🔑 Authentication method: API Key (environment variable)
-    🔑 Key: a1b2c3d4...
+    🔐 Authentication method: OAuth2
+    📡 API URL: https://api.postqueen.ai
+    🔑 Token: pos_a1b2...
+    🏢 Organization: 2f6c1d0e-...
+    📁 Credentials file: /Users/you/.postqueen/credentials.json
 
     🔄 Verifying credentials...
     ✅ Credentials are valid. 3 integration(s) connected.
@@ -68,7 +71,7 @@ These pages describe `postqueen` 2.0.27. Run `postqueen --version` to see yours.
   </Step>
 </Steps>
 
-The CLI uses the API key only. There is no browser login: `postqueen auth:login` only says where to get the key, and exits `1`. If you run PostQueen on your own server, also point `POSTQUEEN_API_URL` at your backend: see [the key](/cli/command-reference#the-key).
+The sign-in link works in a browser on the same computer as the CLI. On a machine with no browser, such as a server, set the API key instead: `export POSTQUEEN_API_KEY=your_api_key`, with the key from **Connections > API Keys**. If you run PostQueen on your own server, also point `POSTQUEEN_API_URL` at your backend: see [the key](/cli/command-reference#the-key).
 
 ## Schedule a first post
 
