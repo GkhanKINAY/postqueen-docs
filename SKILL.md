@@ -766,8 +766,8 @@ postqueen posts:create \
 
 An agent that calls tools instead of running shell commands can use PostQueen's MCP server:
 
-- With OAuth sign-in and no key: `https://api.postqueen.ai/mcp-oauth-dynamic`, 20 tools. A workspace admin approves the connection.
-- With the API key: `https://api.postqueen.ai/mcp` and the key in an `Authorization: Bearer` header, 21 tools. The user enters the key in the client's own settings, never in the conversation.
+- With OAuth sign-in and no key: `https://api.postqueen.ai/mcp-oauth-dynamic`, 21 tools. A workspace admin approves the connection.
+- With the API key: `https://api.postqueen.ai/mcp` and the key in an `Authorization: Bearer` header, 22 tools. The user enters the key in the client's own settings, never in the conversation.
 
 Client setup: https://docs.postqueen.ai/mcp/introduction
 
@@ -778,7 +778,7 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 - [CLI documentation](https://docs.postqueen.ai/cli/introduction)
 - [Command reference](https://docs.postqueen.ai/cli/command-reference) - Every command and flag
 - [INTEGRATION_TOOLS_WORKFLOW.md](https://github.com/GkhanKINAY/postqueen-agent/blob/main/INTEGRATION_TOOLS_WORKFLOW.md) - Complete tools workflow guide
-- [Public API reference](https://api.postqueen.ai/docs)
+- [Public API reference](https://docs.postqueen.ai/public-api/introduction)
 - `postqueen integrations:settings <id>` - The settings schema, rules and tools of one channel, straight from the API. Trust it over any example here.
 
 ---
