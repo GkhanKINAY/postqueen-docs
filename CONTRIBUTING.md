@@ -71,7 +71,7 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
 - Describe the product as it works in production (owner, 2026-09-24). Every network is documented as available:
   no status line, no **In review** or **Soon** badge on a network, and no platform-review limits such as "testers
   only", "only accounts with a role on the app" or "posts stay private until the audit". **Soon** is only for what is
-  not built or published yet: Make, Zapier, the Chrome extension and clipping. Conditions the product itself enforces
+  not built or published yet: Make, Zapier and clipping. Conditions the product itself enforces
   stay (X after the trial, Hashnode Pro). An agent page says how to connect, never what PostQueen has or has not
   tested: no status line, no "not tested yet".
 - Every number has one owner. Prices, the trial, the refund window and tool counts come from `docs.json` variables
