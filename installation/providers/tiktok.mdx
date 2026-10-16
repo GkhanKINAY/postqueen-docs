@@ -17,10 +17,10 @@ On a self-hosted PostQueen the TikTok app is yours. **Add Channel** has two TikT
 | Variables | `TIKTOK_CLIENT_ID` (the client key), `TIKTOK_CLIENT_SECRET` |
 | Redirect URI | `FRONTEND_URL` + `/integrations/social/tiktok`, with no trailing slash. When `FRONTEND_URL` is plain `http`, PostQueen sends it wrapped as `https://redirectmeto.com/` + that address |
 | Products | **Login Kit** (Web) and the **Content Posting API** with **Direct Post** turned on |
-| Scopes | `user.info.basic`, `user.info.profile`, `user.info.stats`, `video.list`, `video.publish` |
+| Scopes | `user.info.basic`, `user.info.profile`, `user.info.stats`, `video.list`, `video.upload`, `video.publish` |
 | Review | App review to take the app live, then TikTok's Content Posting API audit before posts can be anything but private |
 
-PostQueen checks all five scopes when an account connects. A missing one stops the connect.
+PostQueen checks all six scopes when an account connects. A missing one stops the connect.
 
 ## Create the app
 
@@ -57,10 +57,10 @@ PostQueen checks all five scopes when an account connects. A missing one stops t
     TikTok accepts only `https` redirect URIs with no query string. That is why PostQueen wraps a plain `http` address through `redirectmeto.com`: register the wrapped address, character for character.
   </Step>
   <Step title="Add the Content Posting API">
-    Choose **Add products** again and add the **Content Posting API**. Turn on **Direct Post**: the **TikTok** tile always publishes directly. Sending a post to the TikTok inbox is a **TikTok Business** feature.
+    Choose **Add products** again and add the **Content Posting API**. Turn on **Direct Post**: PostQueen publishes directly by default, and uses the inbox upload only when a post asks for it.
   </Step>
-  <Step title="Add the five scopes">
-    In **Scopes**, add `user.info.basic`, `user.info.profile`, `user.info.stats`, `video.list` and `video.publish`. Add no others, not even `video.upload`: each scope you request has to be shown in your review video.
+  <Step title="Add the six scopes">
+    In **Scopes**, add `user.info.basic`, `user.info.profile`, `user.info.stats`, `video.list`, `video.upload` and `video.publish`. Add no others: each scope you request has to be shown in your review video.
 
     | Scope | What PostQueen uses it for |
     |---|---|
@@ -68,6 +68,7 @@ PostQueen checks all five scopes when an account connects. A missing one stops t
     | `user.info.profile` | The account's username |
     | `user.info.stats` | Follower, following, like and video counts for analytics |
     | `video.list` | Your recent videos and their view, like, comment and share counts |
+    | `video.upload` | Sending a post to the account's TikTok inbox |
     | `video.publish` | Publishing a post directly |
   </Step>
   <Step title="Verify the domain your media comes from">
@@ -105,11 +106,12 @@ TikTok has two separate gates, and passing the first does not open the second.
     Record it with the **sandbox** keys and a target account set to **private**: an app that has not passed the audit can only post to a private account, as Self only. In one end-to-end video:
 
     1. Start on your website, the one in the app's **Web/Desktop URL**, with its Terms of Service and Privacy Policy links in view, then sign in to PostQueen.
-    2. Choose **Add Channel**, **TikTok**, and approve TikTok's consent screen with the five scopes.
+    2. Choose **Add Channel**, **TikTok**, and approve TikTok's consent screen with the six scopes.
     3. Show the channel in **Channels** with its avatar, name and username (`user.info.basic`, `user.info.profile`).
     4. Open **Analytics** on the channel: followers and likes (`user.info.stats`) and the numbers of recent videos (`video.list`).
     5. Create a post, attach a video and go through the TikTok settings in the order of TikTok's [content sharing guidelines](https://developers.tiktok.com/doc/content-sharing-guidelines): who can see it, the interactions, the disclosure and the consent line.
     6. Publish it with **Post now** and **Self only** (`video.publish`), and open it on TikTok from **Go to post**.
+    7. Send a second post with **Upload content to TikTok without posting it** (`video.upload`), and show it arriving in the TikTok app's inbox on a phone: TikTok's website does not show inbox drafts.
 
     TikTok takes 1 to 5 videos of up to 50 MB each.
   </Step>
@@ -152,7 +154,7 @@ To move existing channels from one tile to the other, `MIGRATE_PROVIDERS="tiktok
     The redirect URI PostQueen sent is not the one registered in Login Kit. Check the trailing slash (none on **TikTok**, one on **TikTok Business**) and, when `FRONTEND_URL` is `http`, register the `redirectmeto.com` form from step 3.
   </Accordion>
   <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
-    One of the five scopes is missing from the app or was declined on the consent screen. Check the list in step 5, then connect again and approve everything.
+    One of the six scopes is missing from the app or was declined on the consent screen. Check the list in step 5, then connect again and approve everything.
   </Accordion>
   <Accordion title="TikTok daily user limit reached, please re-connect your account">
     TikTok's daily limit of people posting through your app was reached (5 in any 24 hours before the audit), so PostQueen disconnected the channel. Reconnect it later, or pass the Content Posting API audit.

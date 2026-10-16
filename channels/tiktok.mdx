@@ -6,7 +6,7 @@ icon: "/images/channels/tiktok.svg"
 
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-Schedule TikTok videos and photo posts with their caption, audience and comment, Duet and Stitch settings. PostQueen posts them through TikTok's official API.
+Schedule TikTok videos and photo posts with their caption, audience and comment, Duet and Stitch settings. PostQueen posts them through TikTok's official API, or sends them to your TikTok inbox to finish in the app.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/tiktok.webp" alt="A new TikTok post in the PostQueen composer, with the post types TikTok takes and the time it goes out" />
@@ -22,7 +22,7 @@ Schedule TikTok videos and photo posts with their caption, audience and comment,
     One MP4 video, or 1 to 35 photos, never both. PNG, WebP and GIF photos are converted to JPEG. AVIF, BMP and TIFF are refused.
   </Card>
   <Card title="Post types" icon="layers">
-    Video post and photo post, published directly.
+    Video post and photo post, published directly or sent to your TikTok inbox.
   </Card>
   <Card title="Analytics" icon="chart-line">
     7 or 30 days: followers, following, total likes and video count, views, likes, comments and shares on your latest 20 videos, plus views, likes, comments and shares for each post.
@@ -50,7 +50,7 @@ Video length is TikTok's rule, and it depends on the account. When you post dire
 
 ## Connect TikTok
 
-Any TikTok account can connect. You don't need a business account. **Add Channel** also lists **TikTok Business** for business accounts, with music and location search on top of the same settings, and the option to send a post to your TikTok inbox instead of publishing it.
+Any TikTok account can connect. You don't need a business account. **Add Channel** also lists **TikTok Business** for business accounts, with music and location search on top of the same settings.
 
 <Steps>
   <Step title="Open Add Channel">
@@ -68,6 +68,7 @@ Any TikTok account can connect. You don't need a business account. **Add Channel
 
 Each TikTok post in the composer has these settings, laid out the way TikTok's content sharing guidelines ask. The audience and the three switches are read from your TikTok account each time, so settings you turned off in TikTok stay off here: greyed out, marked "Turned off on your TikTok account, so it cannot be set here".
 
+- **Content posting method**: **Post content directly to TikTok** publishes the post. **Upload content to TikTok without posting it** sends it to your TikTok inbox, where you finish and publish it in the TikTok app within 24 hours. It starts on posting directly.
 - **Who can see this video?**: a list of the audiences your account allows, from **Public to everyone**, **Mutual follow friends**, **Follower of creator** and **Self only**. Nothing is preselected. If TikTok's nickname for the account differs from the channel's name in PostQueen, the composer names it under the list.
 - **Title**: a photo post's title. A video uses its caption instead.
 - **Auto add music**: let TikTok add recommended music to a photo post.
@@ -75,7 +76,9 @@ Each TikTok post in the composer has these settings, laid out the way TikTok's c
 - **Allow Comments**: off until you turn it on, like Duet and Stitch.
 - **Disclose Video Content**: mark the post as promotional, then choose **Your brand** (you promote yourself or your own brand), **Branded content** (you promote another brand), or both. The composer tells you the label TikTok will show: "Promotional Content" for your brand, "Paid partnership" for branded content. Turning it off clears both choices.
 
-Every post ends with TikTok's consent line, "By posting, you agree to TikTok's Music Usage Confirmation", which also names TikTok's Branded Content Policy when the post is branded content.
+In Upload mode only the media, with a photo post's title and caption, reaches TikTok. A video's caption and every other setting stay behind, so you set them in the TikTok app.
+
+Every direct post ends with TikTok's consent line, "By posting, you agree to TikTok's Music Usage Confirmation", which also names TikTok's Branded Content Policy when the post is branded content.
 
 The field names and values for the API are on [TikTok posting settings](/public-api/providers/tiktok).
 
@@ -87,7 +90,7 @@ TikTok takes no follow-up comments or threads, so the composer offers no follow-
 
 - TikTok does not allow branded content to be private: **Self only** can't be chosen while **Branded content** is on, and **Branded content** can't be chosen while the audience is **Self only**.
 - TikTok processes a video after the upload, so a post can take a few minutes to appear on your profile. PostQueen tells you when TikTok has it and is still processing it.
-- TikTok itself limits how often you post: around 15 direct posts a day per account, shared with every app that posts to it.
+- TikTok itself limits how often you post: around 15 direct posts a day per account, shared with every app that posts to it, and at most 5 uploads waiting in your inbox in any 24 hours.
 - Photos are converted to JPEG when the post is published, not when you schedule it.
 - The connection renews itself.
 - During the free trial, a TikTok account that another PostQueen workspace already connected is refused until you end the trial.
@@ -99,7 +102,7 @@ TikTok takes no follow-up comments or threads, so the composer offers no follow-
     TikTok is not taking new posts from the account at the moment, for example because its daily limit was reached. Choose **Try again** later, or move the post to tomorrow.
   </Accordion>
   <Accordion title="TikTok limits pending posts to 5 within any 24-hour period">
-    On a **TikTok Business** channel, five uploads are already waiting in your TikTok inbox. Publish or delete them in the TikTok app, then try again after 24 hours.
+    Five uploads are already waiting in your TikTok inbox. Publish or delete them in the TikTok app, then try again after 24 hours.
   </Accordion>
   <Accordion title="TikTok says your daily post limit reached, please try again tomorrow">
     TikTok's own daily limit for the account was reached. Move the post to tomorrow.
