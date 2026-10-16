@@ -5,7 +5,7 @@ description: "The settings object a post to TikTok takes in the public API: ever
 icon: "/images/channels/tiktok.svg"
 ---
 
-Every post to TikTok carries a `settings` object with `"__type": "tiktok"`. Most of its fields are required, even the ones TikTok ignores in Upload mode, so send them all. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
+Every post to TikTok carries a `settings` object with `"__type": "tiktok"`. Most of its fields are required, so send them all. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 <Tip>
 Pick `privacy_level` from the audiences the account allows. The `creatorInfo` [tool](/public-api/integrations/provider-tools#tiktok) returns them as `privacyLevelOptions`, along with the longest video the account may post.
@@ -16,7 +16,7 @@ Pick `privacy_level` from the audiences the account allows. The `creatorInfo` [t
 | Field | Type | Required | What it does |
 |---|---|---|---|
 | `__type` | string | No | Always `"tiktok"`. PostQueen sets it from the channel you post to, so it can be left out. |
-| `content_posting_method` | string | Yes | `DIRECT_POST` publishes the post. `UPLOAD` does not publish: it sends the media to the account's TikTok inbox, where the owner finishes and publishes it in the TikTok app within 24 hours. |
+| `content_posting_method` | string | Yes | `DIRECT_POST` publishes the post, and is the only value a **TikTok** channel takes. `UPLOAD` is for **TikTok Business** channels: it does not publish, but sends the media to the account's TikTok inbox, where the owner finishes and publishes it in the TikTok app within 24 hours. |
 | `privacy_level` | string | Yes | Who can see the post: `PUBLIC_TO_EVERYONE`, `MUTUAL_FOLLOW_FRIENDS`, `FOLLOWER_OF_CREATOR` or `SELF_ONLY`. Ignored with `UPLOAD`. |
 | `comment` | boolean | Yes | Allow comments. Ignored with `UPLOAD`. |
 | `duet` | boolean | Yes | Allow Duet. Videos only; ignored on photo posts and with `UPLOAD`. |
@@ -26,8 +26,9 @@ Pick `privacy_level` from the audiences the account allows. The `creatorInfo` [t
 | `brand_content_toggle` | boolean | Yes | Discloses a paid partnership with another brand. TikTok does not allow such a post to be private, so pair it with an audience other than `SELF_ONLY`. Ignored with `UPLOAD`. |
 | `title` | string | No | The title of a photo post, up to 90 characters. A video has no separate title: its caption is the post text. |
 | `video_made_with_ai` | boolean | No | Labels the video as AI-generated. Videos only; ignored with `UPLOAD`. |
+| `disclose` | boolean | No | `true` when the post discloses commercial content: then `brand_organic_toggle` or `brand_content_toggle`, or both, must be `true`. `false` withdraws the disclosure, and both brand toggles are sent to TikTok as `false`. Left out, the two toggles alone decide. |
 
-The caption is the post text in `value[0].content`, up to 2,000 characters. For a photo post it becomes the description under the title. With `UPLOAD`, TikTok keeps only a photo post's title and caption; a video's caption and the other fields are dropped, and the owner sets them in the TikTok app.
+The caption is the post text in `value[0].content`, up to 2,000 characters. For a photo post it becomes the description under the title. On TikTok Business with `UPLOAD`, TikTok keeps only a photo post's title and caption; a video's caption and the other fields are dropped, and the owner sets them in the TikTok app.
 
 Photos are fetched by TikTok from their PostQueen address. Upload each file with [upload a file](/public-api/uploads/upload-file) first and use the `path` it returns: a photo from anywhere else fails at publish time with "You have to upload the picture/video to PostQueen when sending a URL".
 
@@ -54,7 +55,10 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | No AVIF, BMP or TIFF photos, as on every network | “File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4” |
 | Photos at most 1,080 px on the shorter side | “Image 2 is 1440x1920, TikTok allows a maximum of 1080px on the shorter side” (with the photo's number and size) |
 | Caption up to 2,000 characters | “post is too long, please fix it” |
-| Every required field is present, with an allowed value | A validation error naming the field |
+| A **TikTok** channel posts directly | “This TikTok channel posts directly: sending to the TikTok inbox is not available. Choose Post directly (content_posting_method DIRECT_POST).” |
+| A disclosure names a brand: with `disclose: true`, `brand_organic_toggle` or `brand_content_toggle` is `true` | “Choose Your brand, Branded content or both, or turn off Disclose Video Content” |
+| An audience is set | “Choose who can see this video” |
+| Every other required field is present, with an allowed value | A validation error naming the field |
 
 The error body names the channel and the rule:
 
@@ -67,7 +71,7 @@ The error body names the channel and the rule:
 }
 ```
 
-TikTok's own rules are not checked first: the account's maximum video length, videos at least 360 px on both sides, photos up to 20 MB, about 15 direct posts a day per account, and at most 5 uploads waiting in the inbox in any 24 hours. PNG, WebP and GIF photos are converted to JPEG when the post is published. AVIF, BMP and TIFF are refused, not converted: convert them to JPEG or PNG before you upload.
+TikTok's own rules are not checked first: the account's maximum video length, videos at least 360 px on both sides, photos up to 20 MB, about 15 direct posts a day per account, and on TikTok Business at most 5 uploads waiting in the inbox in any 24 hours. PNG, WebP and GIF photos are converted to JPEG when the post is published. AVIF, BMP and TIFF are refused, not converted: convert them to JPEG or PNG before you upload.
 
 ## Examples
 
@@ -143,7 +147,7 @@ Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANN
 }
 ```
 
-```json Upload to the inbox
+```json Upload to the inbox (TikTok Business)
 {
   "type": "schedule",
   "date": "2026-10-01T09:00:00.000Z",
@@ -159,7 +163,7 @@ Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANN
         }
       ],
       "settings": {
-        "__type": "tiktok",
+        "__type": "tiktok-business",
         "content_posting_method": "UPLOAD",
         "privacy_level": "PUBLIC_TO_EVERYONE",
         "comment": true,
@@ -208,7 +212,7 @@ Send each body to [create a post](/public-api/posts/create). Replace `YOUR_CHANN
 
 </CodeGroup>
 
-A post sent with `UPLOAD` counts as published in PostQueen once it reaches the inbox, although nothing is on the profile until the owner publishes it in the TikTok app.
+A TikTok Business post sent with `UPLOAD` counts as published in PostQueen once it reaches the inbox, although nothing is on the profile until the owner publishes it in the TikTok app.
 
 ## Related
 

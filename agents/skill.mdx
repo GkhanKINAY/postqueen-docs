@@ -28,7 +28,7 @@ The skill is for agents that run shell commands, such as OpenClaw, Hermes Agent,
     Every file passed to `-m` goes through `postqueen upload`. A file on disk or a link to another site is refused.
   </Card>
   <Card title="Rule 3: TikTok publishes with DIRECT_POST" icon="send">
-    `UPLOAD` only drops the video into the TikTok app's inbox. The skill uses `DIRECT_POST` unless you ask to finish the post in TikTok.
+    `UPLOAD` only drops the video into the TikTok app's inbox, and only TikTok Business channels take it. The skill uses `DIRECT_POST` unless you ask to finish the post in TikTok on a TikTok Business channel.
   </Card>
   <Card title="Rule 4: read the settings first" icon="list-checks">
     `postqueen integrations:settings` says what a network needs. A setting that does not apply is dropped without an error.
