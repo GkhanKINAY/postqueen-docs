@@ -41,7 +41,7 @@ postqueen posts:create ... -m "$URL" ...
 
 Most commands print one status line before their JSON, so drop it with `tail -n +2` before `jq` (see Output).
 
-**Rule 3: When posting to TikTok, `content_posting_method` MUST be `"DIRECT_POST"`** unless the user has explicitly asked to finish the post inside the TikTok app. `"UPLOAD"` does not publish: it drops the media into the account's TikTok inbox to be completed manually within 24 hours, while the PostQueen API still reports success. A user saying "upload this video to TikTok" means `"DIRECT_POST"`.
+**Rule 3: When posting to TikTok, `content_posting_method` MUST be `"DIRECT_POST"`**. A TikTok channel refuses anything else; only a TikTok Business channel takes `"UPLOAD"`, and only when the user has explicitly asked to finish the post inside the TikTok app. `"UPLOAD"` does not publish: it drops the media into the account's TikTok inbox to be completed manually within 24 hours, while the PostQueen API still reports success. A user saying "upload this video to TikTok" means `"DIRECT_POST"`.
 
 **Rule 4: Fetch `postqueen integrations:settings <id>` before scheduling and honor the returned `rules` and per-field `description`s.** They state which settings apply and when. A setting that doesn't apply (wrong posting method, wrong media type, etc.) is **silently discarded**, not rejected. The post still reports success, so this is your only chance to catch it.
 

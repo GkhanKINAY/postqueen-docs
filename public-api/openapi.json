@@ -4434,7 +4434,11 @@
               "DIRECT_POST",
               "UPLOAD"
             ],
-            "description": "Required. Use \"DIRECT_POST\" to actually publish the post to TikTok. \"UPLOAD\" does NOT publish: it only sends the media to the user's TikTok app inbox, where they must manually finish and publish it within 24 hours or it is discarded. Only use \"UPLOAD\" when the user explicitly asks to review or edit the post inside the TikTok app before publishing. \"UPLOAD\" also makes TikTok ignore every other setting in this object except the title."
+            "description": "Required. Use \"DIRECT_POST\" to actually publish the post to TikTok; a TikTok channel accepts nothing else. \"UPLOAD\" is for TikTok Business channels only. It does NOT publish: it only sends the media to the user's TikTok app inbox, where they must manually finish and publish it within 24 hours or it is discarded. Only use \"UPLOAD\" when the user explicitly asks to review or edit the post inside the TikTok app before publishing. \"UPLOAD\" also makes TikTok ignore every other setting in this object except the title."
+          },
+          "disclose": {
+            "type": "boolean",
+            "description": "Optional. true when the post discloses commercial content; then brand_organic_toggle (your own brand) or brand_content_toggle (a third party), or both, must be true. false withdraws the disclosure and sends both brand toggles as false."
           },
           "music": {
             "type": "object",
