@@ -17,10 +17,10 @@ On a self-hosted PostQueen the Google Cloud project is yours. You create one **W
 | Variables | `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET` |
 | Redirect URI | `FRONTEND_URL` + `/integrations/social/youtube`, shared by the YouTube connect and **Continue with Google**. Add `FRONTEND_URL` + `/integrations/social/gmb` if Google Business Profile uses this client too |
 | APIs | **YouTube Data API v3** and **YouTube Analytics API** |
-| Scopes | `userinfo.profile`, `userinfo.email`, `youtube`, `youtube.force-ssl`, `youtube.readonly`, `youtube.upload`, `youtubepartner`, `yt-analytics.readonly` |
+| Scopes | `userinfo.profile`, `userinfo.email`, `youtube.force-ssl`, `youtube.readonly`, `youtube.upload`, `yt-analytics.readonly` |
 | Review | Google's verification of the sensitive scopes, and YouTube's API audit before uploads can be public |
 
-PostQueen checks all eight scopes when a channel connects. A missing one stops the connect.
+PostQueen checks all six scopes when a channel connects. A missing one stops the connect. `youtube.force-ssl` is the scope that posts comments under a video, and it also covers editing and deleting videos.
 
 <Warning>
 **This client is also Google sign-in.** When `IS_GENERAL` is set, **Continue with Google** on the sign-in page uses `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET` and asks only for `userinfo.profile` and `userinfo.email`. Do not create a second client for sign-in: both come back to the same redirect URI.
@@ -45,16 +45,14 @@ PostQueen checks all eight scopes when a channel connects. A missing one stops t
     While the app is in **Testing**, only the accounts under **Test users** can sign in or connect a channel. Add your own Google account there with **Add users**.
   </Step>
   <Step title="Add the scopes">
-    In **Data access**, choose **Add or remove scopes** and add all eight, then save:
+    In **Data access**, choose **Add or remove scopes** and add all six, then save:
 
     ```text
     https://www.googleapis.com/auth/userinfo.profile
     https://www.googleapis.com/auth/userinfo.email
-    https://www.googleapis.com/auth/youtube
     https://www.googleapis.com/auth/youtube.force-ssl
     https://www.googleapis.com/auth/youtube.readonly
     https://www.googleapis.com/auth/youtube.upload
-    https://www.googleapis.com/auth/youtubepartner
     https://www.googleapis.com/auth/yt-analytics.readonly
     ```
   </Step>
@@ -121,7 +119,7 @@ Two Google processes stand between a new client and everyone's public uploads:
     The redirect URI PostQueen sent is not in **Authorized redirect URIs**. Add it exactly as in step 5, with the scheme and port your `FRONTEND_URL` uses and no trailing slash.
   </Accordion>
   <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
-    A scope is missing from **Data access**, or was declined on the consent screen. Add all eight, then connect again and approve everything.
+    A scope is missing from **Data access**, or was declined on the consent screen. Add all six, then connect again and approve everything.
   </Accordion>
   <Accordion title="Access blocked or access denied on Google's screen">
     The app is in **Testing** and the account is not a test user. Add it under **Audience > Test users**, or publish the app.
