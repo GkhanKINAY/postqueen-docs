@@ -2,6 +2,8 @@
 
 The Guide pages carry one screenshot each, in `images/app/`. They were taken on 2026-09-23 from app v3.6.81.
 
+On 2026-10-19 the logo changed to the crown speech bubble. In the six full-window shots (`add-channel`, `analytics`, `calendar-month`, `calendar-week`, `channels`, `media-library`) the sidebar's logo tile was redrawn the way the app's header draws it: 30 px, 9 px corners, the brand gradient and the mark. Nothing else in those shots changed, so the rest of each picture is still v3.6.81.
+
 ## How they were made
 
 - **The app ran locally from a git worktree of `postqueen-app` main.** It used its own ports, and a scratch Postgres database created only for the shots and dropped afterwards. Nobody's real database or account was touched.
