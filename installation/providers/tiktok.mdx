@@ -134,16 +134,22 @@ The **TikTok Business** tile talks to TikTok's Business API instead of the Conte
 | Variables | `TIKTOK_BUSINESS_CLIENT_ID`, `TIKTOK_BUSINESS_CLIENT_SECRET` |
 | Redirect URI | `FRONTEND_URL` + `/integrations/social/tiktok-business/`, **with** a trailing slash. PostQueen sends the slash on both the login and the token exchange, so a URI registered without it fails. The `redirectmeto.com` wrap applies here too |
 | Scopes | `user.info.basic`, `user.info.username`, `user.info.stats`, `video.list`, `video.upload`, `video.publish`, all checked at connect |
-| Media | The Business API fetches photos and videos from their URL, so your media domain must be a verified URL property of this app too |
+| Media | The Business API fetches photos and videos from their URL, so your media domain must be a verified URL property of this app too, as below |
 
 ```env
 TIKTOK_BUSINESS_CLIENT_ID="your business client id"
 TIKTOK_BUSINESS_CLIENT_SECRET="your business client secret"
 ```
 
-<Warning>
-In the composer, the audience picker is loaded through a call only the **TikTok** tile implements, so a direct post on a **TikTok Business** channel cannot get its audience from the editor. Posts sent through the API or an AI agent set `privacy_level` themselves.
-</Warning>
+The TikTok API for Business portal has no URL properties page, and the domain verified for the **TikTok** app does not count here. Verify it through the API, with this app's id and secret. Add the domain your uploads are served from:
+
+```bash
+curl -X POST https://business-api.tiktok.com/open_api/v1.3/business/property/add/ \
+  -H 'Content-Type: application/json' \
+  -d '{"app_id":"YOUR_APP_ID","secret":"YOUR_SECRET","url_property_meta":{"property_type":1,"url":"example.com"}}'
+```
+
+Add the `signature` from the answer as a TXT record of that domain. Once the record resolves, call `/business/property/verify/` with the same body: `property_status` `1` means verified. A verified domain covers its subdomains, and `/business/property/list/?app_id=...&secret=...` shows what the app has. Until it is verified, every TikTok Business post fails with "TikTok only takes media from an address verified for PostQueen".
 
 To move existing channels from one tile to the other, `MIGRATE_PROVIDERS="tiktok:tiktok-business"` sends a reconnect of the old tile through the new tile's login and keeps the channel and its posts, and `HIDDEN_PROVIDERS="tiktok"` takes the old tile out of **Add Channel**. Both are in the [configuration reference](/configuration/reference).
 
@@ -159,8 +165,8 @@ To move existing channels from one tile to the other, `MIGRATE_PROVIDERS="tiktok
   <Accordion title="TikTok daily user limit reached, please re-connect your account">
     TikTok's daily limit of people posting through your app was reached (5 in any 24 hours before the audit), so PostQueen disconnected the channel. Reconnect it later, or pass the Content Posting API audit.
   </Accordion>
-  <Accordion title="You have to upload the picture/video to PostQueen when sending a URL">
-    TikTok could not fetch the photo because its domain is not a verified URL property of the app. Verify the domain your uploads are served from, as in step 6.
+  <Accordion title="TikTok only takes media from an address verified for PostQueen">
+    TikTok could not fetch the media because its domain is not a verified URL property of the app. On **TikTok**, verify the domain your uploads are served from, as in step 6. On **TikTok Business**, verify it through the API, as in [TikTok Business](#tiktok-business-optional).
   </Accordion>
   <Accordion title="An account that is not a sandbox target user cannot connect">
     The app is not live yet. Add the account as a target user of the sandbox, or submit the app for review.

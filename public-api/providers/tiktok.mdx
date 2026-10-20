@@ -25,12 +25,12 @@ Pick `privacy_level` from the audiences the account allows. The `creatorInfo` [t
 | `brand_organic_toggle` | boolean | Yes | Discloses that you promote yourself or your own brand. Ignored with `UPLOAD`. |
 | `brand_content_toggle` | boolean | Yes | Discloses a paid partnership with another brand. TikTok does not allow such a post to be private, so pair it with an audience other than `SELF_ONLY`. Ignored with `UPLOAD`. |
 | `title` | string | No | The title of a photo post, up to 90 characters. A video has no separate title: its caption is the post text. |
-| `video_made_with_ai` | boolean | No | Labels the video as AI-generated. Videos only; ignored with `UPLOAD`. |
+| `video_made_with_ai` | boolean | No | Labels the post as AI-generated, a video or a photo post. Ignored with `UPLOAD`. On TikTok Business it labels videos only (see below). |
 | `disclose` | boolean | No | `true` when the post discloses commercial content: then `brand_organic_toggle` or `brand_content_toggle`, or both, must be `true`. `false` withdraws the disclosure, and both brand toggles are sent to TikTok as `false`. Left out, the two toggles alone decide. |
 
 The caption is the post text in `value[0].content`, up to 2,000 characters. For a photo post it becomes the description under the title. With `UPLOAD`, TikTok keeps only a photo post's title and caption; a video's caption and the other fields are dropped, and the owner sets them in the TikTok app.
 
-Photos are fetched by TikTok from their PostQueen address. Upload each file with [upload a file](/public-api/uploads/upload-file) first and use the `path` it returns: a photo from anywhere else fails at publish time with "You have to upload the picture/video to PostQueen when sending a URL".
+Photos are fetched by TikTok from their PostQueen address. Upload each file with [upload a file](/public-api/uploads/upload-file) first and use the `path` it returns: a photo from anywhere else fails at publish time with "TikTok only takes media from an address verified for PostQueen. Upload the media to PostQueen, and if it already is, please contact support".
 
 ### TikTok Business
 
@@ -42,6 +42,10 @@ A channel on the **TikTok Business** tile takes `"__type": "tiktok-business"`, t
 | `location` | object | A location tag: `{ "id": "...", "name": "..." }`, from the `locationSearch` tool. |
 
 On that tile `privacy_level` and `autoAddMusic` apply to photo posts only, `autoAddMusic: "yes"` attaches a random track and overrides `music`, and captions can run to 2,200 characters.
+
+`video_made_with_ai` labels TikTok Business videos only. TikTok's Business API has no AI-generated label for photo posts, so a photo post goes out unlabeled whatever the field says. For AI-generated photos, disclose it in the caption, or send the post with `UPLOAD` and turn the label on in the TikTok app before publishing.
+
+TikTok Business fetches videos from their URL too, so the upload rule above covers videos there as well.
 
 ## What PostQueen checks
 

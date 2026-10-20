@@ -72,7 +72,7 @@ Each TikTok post in the composer has these settings, laid out the way TikTok's c
 - **Who can see this video?**: a list of the audiences your account allows, from **Public to everyone**, **Mutual follow friends**, **Follower of creator** and **Self only**. Nothing is preselected. If TikTok's nickname for the account differs from the channel's name in PostQueen, the composer names it under the list.
 - **Title**: a photo post's title. A video uses its caption instead.
 - **Auto add music**: let TikTok add recommended music to a photo post.
-- **Video features**: **Allow Duet**, **Allow Stitch** and **Video made with AI**, for videos only. A photo post shows only **Allow Comments**.
+- **Video features**: **Allow Duet**, **Allow Stitch** and **Video made with AI**, for videos. A photo post has no Duet or Stitch. On the **TikTok** tile it shows **Made with AI**, which labels the photos as AI-generated; on **TikTok Business** it can't (see below).
 - **Allow Comments**: off until you turn it on, like Duet and Stitch.
 - **Disclose Video Content**: mark the post as promotional, then choose **Your brand** (you promote yourself or your own brand), **Branded content** (you promote another brand), or both. The composer tells you the label TikTok will show: "Promotional Content" for your brand, "Paid partnership" for branded content. Turning it off clears both choices.
 
@@ -92,6 +92,7 @@ TikTok takes no follow-up comments or threads, so the composer offers no follow-
 - TikTok processes a video after the upload, so a post can take a few minutes to appear on your profile. PostQueen tells you when TikTok has it and is still processing it.
 - TikTok itself limits how often you post: around 15 direct posts a day per account, shared with every app that posts to it, and at most 5 uploads waiting in your inbox in any 24 hours.
 - Photos are converted to JPEG when the post is published, not when you schedule it.
+- On **TikTok Business**, a photo post can't carry TikTok's AI-generated label, because TikTok's Business API has no such setting for photos. If the photos are AI generated, say so in the caption, or choose **Upload content to TikTok without posting it** and turn the label on in the TikTok app before you publish. A video takes **Video made with AI** on both tiles.
 - The connection renews itself.
 - During the free trial, a TikTok account that another PostQueen workspace already connected is refused until you end the trial.
 
@@ -109,6 +110,9 @@ TikTok takes no follow-up comments or threads, so the composer offers no follow-
   </Accordion>
   <Accordion title="Could not load who can see this video from TikTok">
     PostQueen could not read your account's audiences, so it cannot offer them. Choose **Try again**. If it keeps failing, reconnect the channel.
+  </Accordion>
+  <Accordion title="TikTok only takes media from an address verified for PostQueen">
+    TikTok fetches each photo or video from its address, and only from addresses verified for PostQueen. Media you add in PostQueen always has such an address, so if a post made in PostQueen shows this, contact support. A post sent through the API or an AI agent with media from another website needs that media uploaded to PostQueen first.
   </Accordion>
   <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
     A permission was switched off on TikTok's screen. Connect the channel again and approve every permission.

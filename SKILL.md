@@ -711,6 +711,8 @@ VIDEO_URL=$(postqueen upload video.mp4 | tail -n +2 | jq -r '.path')
 # brand_organic_toggle, content_posting_method. Optional: title, video_made_with_ai.
 # privacy_level is PUBLIC_TO_EVERYONE, MUTUAL_FOLLOW_FRIENDS, FOLLOWER_OF_CREATOR or SELF_ONLY,
 # whichever the account allows.
+# Set video_made_with_ai to true for AI-generated media. It labels videos and photos on TikTok,
+# but only videos on TikTok Business: for AI photos there, disclose it in the caption instead.
 postqueen posts:create \
   -c "Video caption #fyp" \
   -s "2026-12-31T12:00:00Z" \
