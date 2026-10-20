@@ -16,7 +16,7 @@ Paperclip is an open-source app for running a team of AI agents, such as Claude 
 ## Before you start
 
 - **Plans:** Paperclip is free and open source (MIT). You host it yourself, and no Paperclip account is needed.
-- **Platforms:** your own macOS, Linux or WSL2 machine with Node 24.11 or later, or Docker. PostQueen's tools reach Paperclip's Claude Code and Codex agents.
+- **Platforms:** your own macOS, Linux or WSL2 machine with Node 24.11 or later, or Docker. PostQueen's tools reach Paperclip's Claude Code and Codex agents, and agents on Paperclip's ACP engine.
 - **A PostQueen API key.** A workspace admin copies it from **Connections**.
 
 <ApiKeyLocation />
@@ -48,7 +48,7 @@ Assign a Claude Code or Codex agent a task: "List my PostQueen channels." The ag
 
 ## Good to know
 
-- **Only Claude Code and Codex agents get the Apps connection.** Other agent types in Paperclip use their own MCP settings.
+- **Only Claude Code and Codex agents, and agents on Paperclip's ACP engine, get the Apps connection.** Other agent types in Paperclip use their own MCP settings.
 - **Every value you enter becomes an encrypted Paperclip secret** and is never shown again.
 - **A Claude Code agent managed by Paperclip ignores** servers added on the same machine with `claude mcp add`. Give it access in **Apps** instead.
 - **There is no `paperclipai` command for MCP connections yet.** Use the **Apps** page.
@@ -107,7 +107,7 @@ Source: [Paperclip on GitHub](https://github.com/paperclipai/paperclip).
 | A Claude Code agent does not see PostQueen | Give that agent, its project or the company access in **Apps**. Servers added with `claude mcp add` are ignored while Paperclip manages MCP. |
 | Scheduling a post does nothing | Tools that change something start off. Turn them on in **Apps**, then approve each call when Paperclip asks. |
 | The key is refused | Paste the key on its own, without the word `Bearer`, copied from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
-| Another agent type cannot use PostQueen | Only Claude Code and Codex agents get the Apps connection. Give other agents the PostQueen CLI instead. |
+| Another agent type cannot use PostQueen | Only Claude Code and Codex agents, and agents on Paperclip's ACP engine, get the Apps connection. Give other agents the PostQueen CLI instead. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

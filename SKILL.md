@@ -65,7 +65,7 @@ It opens PostQueen's sign-in page in the browser, where a workspace admin approv
 
 The command waits up to 10 minutes for the approval, so run it in the background or with a timeout of at least 10 minutes, and read its output as it comes. Pass the link it prints on to the user: the browser usually opens by itself. If PostQueen asks the user to sign in first, it brings them back to the approval page afterwards; if it does not, they can open the printed link again. Run `postqueen auth:status` once the command has finished.
 
-**Never ask the user to paste an API key or token into the conversation, and never write one into a command, a file or code.** If browser sign-in is not possible (the CLI runs on a remote machine with no browser), ask the user to set `POSTQUEEN_API_KEY` themselves, in their own shell or in your secret settings, then run `postqueen auth:status` again. The key is in PostQueen under **Connections > API Keys**, visible to workspace admins only.
+**Never ask the user to paste an API key or token into the conversation, and never write one into a command, a file or code.** If browser sign-in is not possible (the CLI runs on a remote machine with no browser), ask the user to set `POSTQUEEN_API_KEY` themselves, in their own shell or in your secret settings, then run `postqueen auth:status` again. The key is in PostQueen under **Connections > API key**, visible to workspace admins only.
 
 **Do NOT proceed with any other commands until authentication is confirmed.**
 
@@ -136,7 +136,7 @@ Only a workspace admin can approve it, and the link only works in a browser on t
 
 **Option 2: an API key the user sets**
 
-The user copies the key from PostQueen > Connections > API Keys (workspace admins only) and sets `POSTQUEEN_API_KEY` in their own shell or in the agent's secret settings. Do not ask for the key in the conversation, and do not set it yourself.
+The user copies the key from PostQueen > Connections > API key (workspace admins only) and sets `POSTQUEEN_API_KEY` in their own shell or in the agent's secret settings. Do not ask for the key in the conversation, and do not set it yourself.
 
 **Option 3: a device-flow auth server the user runs**
 
@@ -787,7 +787,7 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 
 ## Common Gotchas
 
-1. **Not authenticated** - Run `postqueen auth:login` and have the user approve it in the browser. With no browser, the user sets `POSTQUEEN_API_KEY` themselves (PostQueen > Connections > API Keys, admins only)
+1. **Not authenticated** - Run `postqueen auth:login` and have the user approve it in the browser. With no browser, the user sets `POSTQUEEN_API_KEY` themselves (PostQueen > Connections > API key, admins only)
 2. **Invalid integration ID** - Run `integrations:list` to get current IDs
 3. **Settings schema mismatch** - Check `integrations:settings` for required fields
 4. **Media MUST be uploaded to PostQueen first** - ⚠️ **CRITICAL (Rule 2):** Every value passed to `-m` or to an `image` field in JSON mode must be a `.path` returned by `postqueen upload`. Raw local filenames (`image.jpg`) and external URLs (`https://...`) will be rejected. No exceptions: even a "quick test post" needs the upload step.
