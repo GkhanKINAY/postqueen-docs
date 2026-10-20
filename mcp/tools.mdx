@@ -218,7 +218,7 @@ The tool cannot reach a file on your computer or on a private address. Upload th
 
 ### `mediaListTool`
 
-Lists what is already in your media library, newest first, 18 to a page. The agent uses it to reuse a file instead of uploading it again. Videos that are still being converted are left out.
+Lists what is already in your media library, newest first, 18 to a page. The agent uses it to reuse a file instead of uploading it again, and to find files you uploaded on the **Media** page by their names. Videos that are still being converted are left out.
 
 | Input | Type | Required | What it is |
 |---|---|---|---|
@@ -229,9 +229,9 @@ Lists what is already in your media library, newest first, 18 to a page. The age
 
 ### `uploadWidgetTool`
 
-Opens an **Upload Media** panel in the chat, where you add photos or videos from your device. It works in apps that can show MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere no panel appears: upload a file from your computer with the CLI or the API, or use `uploadFromUrlTool` for a public link. Takes no input.
+Opens an **Upload Media** panel in the chat, where you add photos or videos from your device. It works in apps that can show MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere no panel appears. An agent that runs commands on your computer uploads the file itself with the CLI or the API. Any other agent gives you the link to PostQueen's **Media** page: upload the files there, and the agent finds them by name with `mediaListTool`. `uploadFromUrlTool` is only for public links. Takes no input.
 
-**Returns** a `sessionId`. What you upload through the panel is reported in the chat, and `uploadWidgetStatusTool` lists it.
+**Returns** a `sessionId` and `mediaPageUrl`, the link to the **Media** page. What you upload through the panel is reported in the chat, and `uploadWidgetStatusTool` lists it.
 
 ### `uploadWidgetTicketTool`
 
