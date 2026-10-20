@@ -25,6 +25,10 @@ Claude is Anthropic's AI assistant on the web, in the desktop app and in the iOS
 
 These steps use the key address. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
 
+<Note>
+**On Team and Enterprise,** only an Owner can add a custom connector (on Enterprise, also a role that manages the connector library), so ask one. They add it under **Organization settings > Connectors > Add > Custom > Web**, and members then connect it from **Customize > Connectors**. With the key address, everyone who uses the connector acts with the workspace's API key. With the sign-in address, each person signs in on their own.
+</Note>
+
 <Steps>
   <Step title="Copy your MCP address">
     In PostQueen, open **Connections** and copy the address from the Claude card, or build it from your key:
@@ -37,16 +41,12 @@ These steps use the key address. To sign in instead of using a key, see [Other w
     In Claude, open **Customize > Connectors**, then **+ > Add custom connector**.
   </Step>
   <Step title="Paste the address">
-    Name it `PostQueen` and paste the address as the URL, with no slash at the end. Leave **Advanced settings** empty and click **Add**.
+    Name it `PostQueen` and paste the address as the URL, with no slash at the end. Leave **Advanced settings** empty and click **Add**. If Claude asks in two steps instead, choose **No sign-in**.
   </Step>
   <Step title="Switch it on in a chat">
     In a chat, open **+** (or type `/`), choose **Connectors** and switch PostQueen on.
   </Step>
 </Steps>
-
-<Note>
-**On Team and Enterprise,** an Owner adds the connector first under **Organization settings > Connectors > Add > Custom > Web**. Members then connect it from **Customize > Connectors**.
-</Note>
 
 ## Check that it works
 
@@ -54,7 +54,7 @@ Ask Claude: "List my PostQueen channels." Claude calls PostQueen and answers wit
 
 ## Good to know
 
-- **Anthropic advises against secrets in a URL.** The key address works, but it carries your key, so keep it private. The sign-in under [Other ways to connect](#other-ways-to-connect) avoids a key in the URL. If the address leaks, a workspace admin rotates the key under **Connections > API Keys**.
+- **Anthropic advises against secrets in a URL.** The key address works, but it carries your key, so keep it private. The sign-in under [Other ways to connect](#other-ways-to-connect) avoids a key in the URL. If the address leaks, a workspace admin rotates the key under **Connections > API key**.
 - **Claude cannot add PostQueen for you.** Asked in a chat, it says it cannot add servers itself. Add the connector in **Connectors**.
 - **PostQueen is not in Anthropic's connector directory**, so searching **Connectors** does not find it. Add it as a custom connector.
 - **Upload from your device.** In Claude, PostQueen's upload widget opens an **Upload Media** panel where you add a photo or video from your device. It works on the web, in Claude Desktop, in Cowork and in the mobile apps.
@@ -77,7 +77,7 @@ The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOau
 
   <Steps>
     <Step title="Add the sign-in address">
-      In **Customize > Connectors**, choose **+ > Add custom connector**, name it `PostQueen` and paste `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL, with no slash at the end. Leave the OAuth client ID and secret empty, so Claude registers itself, and click **Add**.
+      In **Customize > Connectors**, choose **+ > Add custom connector**, name it `PostQueen` and paste `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL, with no slash at the end. Leave the OAuth client ID and secret empty, so Claude registers itself, and click **Add**. If Claude asks in two steps instead, choose **Sign in now**, and under **OAuth client** choose **Register automatically**.
     </Step>
     <Step title="Sign in and approve">
       Click **Connect**, sign in to PostQueen and approve access.
@@ -118,9 +118,9 @@ No. Anthropic ships three products that can use PostQueen, and two of them share
 | Product | What it is | How it connects |
 |---|---|---|
 | **Claude** (this page) | Anthropic's assistant on the web, desktop and mobile | A custom connector |
-| [Claude Cowork](/agents/claude-cowork) | Claude's agent mode for everyday work | The same connector, switched on in a Cowork session |
+| [Claude Cowork](/agents/claude-cowork) | Claude's agent mode for everyday work | The same connector, switched on in a Cowork session or chat |
 | [Claude Code](/agents/claude-code) | Anthropic's coding agent for the terminal and IDEs | One `claude mcp add` command |
 
-A connector you add in Claude also shows up in Claude Code when you log in to Claude Code with a claude.ai subscription.
+A connector you add in Claude also shows up in Claude Code when you log in to Claude Code with a claude.ai account, not with an API key.
 
 <NextStepsAgent />

@@ -39,6 +39,15 @@ NanoClaw keeps keys in its OneCLI vault and adds them to the agent's requests, s
     ncl groups list
     ```
   </Step>
+  <Step title="Grant the secret to the group's agent">
+    A new OneCLI agent starts with only its Anthropic secret, so without this step PostQueen calls go out with no key. `onecli agents list` shows the agent whose identifier is the group's id. Use that agent's id, and the id of the PostQueen secret you just saved:
+
+    ```bash
+    onecli agents grants attach-secret --id <agent-id> --secret-id <secret-id>
+    ```
+
+    That command needs OneCLI 2.9 or later. On an older OneCLI, merge the secret into the agent's list with `onecli agents set-secrets`, which replaces the whole list.
+  </Step>
   <Step title="Add PostQueen and restart the group">
     Use the group's id in place of `YOUR_GROUP_ID`. The address has no key in it:
 
@@ -65,7 +74,7 @@ Message the agent in one of your chat apps: "List my PostQueen channels." It ans
   ```
 
   The key then sits in the group's config, where the agent can read it.
-- **Do not use the address with the key in it.** NanoClaw expects keys in the vault, not in a URL.
+- **Do not use the address with the key in it.** NanoClaw rejects URLs that embed credentials. Keep the key in the vault.
 - **Use the MCP server, not the PostQueen CLI or skill.** NanoClaw's containers never get your environment, and the CLI does not send its requests through the vault.
 - **The agent can add the server itself** with its `add_mcp_server` tool, which needs admin approval in NanoClaw. The key still has to go into the vault first.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
@@ -101,10 +110,11 @@ Source: [NanoClaw, scheduled tasks](https://docs.nanoclaw.dev/guides/scheduled-t
 
 | Symptom | Fix |
 |---|---|
-| PostQueen tools do not load | Restart the group with `ncl groups restart`. If they still do not load, add the server with the key as a header, as [Good to know](#good-to-know) shows. |
-| You put the key in the address | NanoClaw expects keys in the OneCLI vault. Save it there and use `{{mcpBearerUrl}}`. |
+| PostQueen tools do not load | Check that the secret is granted to the group's agent, then restart the group with `ncl groups restart`. If they still do not load, add the server with the key as a header, as [Good to know](#good-to-know) shows. |
+| You put the key in the address | NanoClaw rejects URLs that embed credentials. Save the key in the OneCLI vault and use `{{mcpBearerUrl}}`. |
+| PostQueen answers `Missing Authorization header` | The group's agent has no access to the secret. Grant it with `onecli agents grants attach-secret`, as in [Connect NanoClaw](#connect-nanoclaw). |
 | The PostQueen CLI does nothing inside NanoClaw | Its containers never get your environment. Use the MCP server. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 | You followed an OpenClaw guide | OpenClaw is a different app with its own setup. See [OpenClaw](/agents/openclaw). |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting). To pick a chat app, see [Chat channels](/agents/chat-channels).

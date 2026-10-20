@@ -108,7 +108,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 | Every command fails with a malformed settings file error | Add `"schema_version": 1` at the top of `settings.json`. |
 | A run stops when PostQueen cannot be reached | Set `"mode": "optional"` on the `postqueen` entry. |
 | `/mcp` does not list PostQueen | Restart Muse Code after saving, and check the JSON is valid. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
@@ -119,6 +119,6 @@ No. Meta ships two agents with the Muse name, and they connect to PostQueen in d
 | Product | What it is | How it connects |
 |---|---|---|
 | **Muse Code** (this page) | Meta's coding agent for the terminal and CI | PostQueen's MCP address in its settings file |
-| [Muse](/agents/muse) | Meta's personal agent in the Muse app, on muse.ai and in WhatsApp | Not by address yet |
+| [Muse](/agents/muse) | Meta's personal agent in the Muse app, on muse.ai and in WhatsApp | A custom connector it builds with you in chat |
 
 <NextStepsAgent />

@@ -114,7 +114,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 |---|---|
 | PostQueen tools do not show up | Run `grok mcp doctor postqueen`, or open `/mcps` and check the server. |
 | Your key ended up in `config.toml` | Add the server again with the header in single quotes, so Grok reads `${POSTQUEEN_API_KEY}` from your environment. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 | PostQueen works in one project only | It was added with `--scope project`. Add it again without the flag for your user config. |
 | You set up Grok or Grok Bot instead | Each product is set up on its own. Open its page below. |
 
@@ -128,7 +128,7 @@ No. xAI has three products with Grok in the name, and each one connects to PostQ
 |---|---|---|
 | **Grok Build** (this page) | xAI's coding agent for the terminal | One `grok mcp add` command |
 | [Grok](/agents/grok) | xAI's assistant at grok.com and in its mobile apps | A custom connector at grok.com/connectors |
-| [Grok Bot](/agents/grok-bot) | An always-on AI teammate with its own cloud computer | Ask in chat, key in the secure prompt |
+| [Grok Bot](/agents/grok-bot) | An always-on AI teammate on a cloud computer | Ask in chat, key in the secure prompt |
 
 A server in Grok Build's `config.toml` does not reach Grok on grok.com or Grok Bot.
 

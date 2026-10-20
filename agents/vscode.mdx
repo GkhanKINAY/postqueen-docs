@@ -1,17 +1,17 @@
 ---
 title: "VS Code"
-description: "Add PostQueen to VS Code as an MCP server, then ask GitHub Copilot in agent mode to write your posts for PostQueen to schedule, and check how they did."
+description: "Add PostQueen to VS Code as an MCP server, then ask GitHub Copilot in the Copilot chat to write your posts for PostQueen to schedule, and check how they did."
 icon: "/images/brand/icon-vscode.svg"
 ---
 
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-VS Code is Microsoft's code editor, and GitHub Copilot's agent mode in it uses MCP servers. Add PostQueen once and Copilot can write posts about your work, schedule them and report how your published posts did.
+VS Code is Microsoft's code editor, and GitHub Copilot's agent sessions in it use MCP servers. Add PostQueen once and Copilot can write posts about your work for PostQueen to schedule, and report how your published posts did.
 
 ## Before you start
 
-- **Plans:** you need GitHub Copilot. Copilot Free, Pro, Pro+ and Max are not restricted. On Copilot Business and Enterprise, the **MCP servers in Copilot** policy must be on, and it is off by default.
+- **Plans:** you need GitHub Copilot. Copilot Free, Pro, Pro+ and Max are not restricted. On Copilot Business and Enterprise, your organization's **MCP servers in Copilot** policy must allow it.
 - **Platforms:** VS Code 1.99 or later on macOS, Windows and Linux.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
@@ -21,19 +21,34 @@ VS Code is Microsoft's code editor, and GitHub Copilot's agent mode in it uses M
 
 <Steps>
   <Step title="Add the server">
-    Open the Command Palette and run **MCP: Add Server**. Choose **HTTP (HTTP or Server-Sent Events)**, enter your key address as the server URL, enter `postqueen` as the server ID, and pick **Global** or **Workspace**:
+    Open the Command Palette and run **MCP: Add Server**. Choose **HTTP (HTTP or Server-Sent Events)** and paste your key address:
 
     ```text wrap
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
+
+    Enter `postqueen` as the server ID, then choose **Global**, then **Copilot Global**. VS Code writes the server to `~/.copilot/mcp-config.json`.
   </Step>
   <Step title="Start it">
-    VS Code asks you to confirm that you trust the server. Confirm, then open Copilot Chat in agent mode.
+    VS Code asks you to confirm that you trust the server. Confirm, then open the Copilot chat.
   </Step>
 </Steps>
 
-<Accordion title="Prefer to edit mcp.json yourself?" icon="file-code">
-  Open `.vscode/mcp.json` in the project, or run **MCP: Open User Configuration** for every workspace, and add:
+<Accordion title="Prefer to edit the file yourself?" icon="file-code">
+  **Copilot Global** is `~/.copilot/mcp-config.json`, which uses `mcpServers`:
+
+  ```json ~/.copilot/mcp-config.json
+  {
+    "mcpServers": {
+      "postqueen": {
+        "type": "http",
+        "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+      }
+    }
+  }
+  ```
+
+  A project's `.vscode/mcp.json` still works too, for compatibility. It uses `servers`:
 
   ```json .vscode/mcp.json
   {
@@ -49,13 +64,13 @@ VS Code is Microsoft's code editor, and GitHub Copilot's agent mode in it uses M
 
 ## Check that it works
 
-In Copilot Chat, in agent mode, ask: "List my PostQueen channels." Copilot calls PostQueen and answers with the channels you connected.
+In the Copilot chat, ask: "List my PostQueen channels." Copilot calls PostQueen and answers with the channels you connected.
 
 ## Good to know
 
-- **VS Code uses `"servers"`, not `"mcpServers"`,** and `"type"` must be `"http"`. A block copied from Cursor does not work here.
-- **The file holds your key** when you use the key address. Keep a workspace `.vscode/mcp.json` out of version control, or use an input variable below.
-- **Copilot can add the entry for you** in agent mode, if you allow it to edit `.vscode/mcp.json`.
+- **Two file shapes.** `~/.copilot/mcp-config.json` uses `"mcpServers"`, and a project's `.vscode/mcp.json` uses `"servers"`. Both need `"type": "http"`.
+- **The file holds your key** when you use the key address. Keep a project's `.vscode/mcp.json` out of version control, or, in a Local session, use an input variable below.
+- **Copilot can add the entry for you** in the Copilot chat, if you allow it to edit the file.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
 - **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
@@ -68,8 +83,8 @@ In Copilot Chat, in agent mode, ask: "List my PostQueen channels." Copilot calls
 | Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
 <Tabs>
-  <Tab title="Input variable">
-    VS Code recommends input variables for secrets. It prompts you for the key instead of reading it from the file, so the file holds no secret:
+  <Tab title="Input variable (Local sessions)">
+    VS Code recommends input variables for secrets. It prompts you for the key instead of reading it from the file, so the file holds no secret. Input variables work only in **Local** harness sessions:
 
     ```json .vscode/mcp.json
     {
@@ -112,10 +127,10 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 
 | Symptom | Fix |
 |---|---|
-| Copilot does not list PostQueen | Run **MCP: List Servers** and check that PostQueen is running. Make sure you are in agent mode. |
-| The server does not start | Check that the file uses `"servers"` and `"type": "http"`, not `"mcpServers"`. |
-| On Business or Enterprise, MCP is not available | Ask your GitHub admin to turn on the **MCP servers in Copilot** policy. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| Copilot does not list PostQueen | Run **MCP: List Servers** and check that PostQueen is running, then ask in the Copilot chat. |
+| The server does not start | Check the shape: `"mcpServers"` in `~/.copilot/mcp-config.json`, `"servers"` in `.vscode/mcp.json`, and `"type": "http"` in both. |
+| On Business or Enterprise, MCP is not available | Your organization's **MCP servers in Copilot** policy must allow it. Ask your GitHub admin. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

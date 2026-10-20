@@ -64,9 +64,20 @@ Most clients take the server in one of these shapes. Check your client's docs fo
 }
 ```
 
+```json Cline
+{
+  "mcpServers": {
+    "postqueen": {
+      "type": "streamableHttp",
+      "url": "https://api.postqueen.ai/mcp/YOUR_API_KEY"
+    }
+  }
+}
+```
+
 </CodeGroup>
 
-The first shape is the one Cursor and Devin Desktop use, and the second is VS Code's. Zed reads `context_servers`, Gemini CLI writes `url` with `"type": "http"`, and Muse Code needs a `schema_version`. Their pages have the exact blocks: [Cursor](/agents/cursor), [VS Code](/agents/vscode), [Devin Desktop](/agents/devin-desktop), [Zed](/agents/zed), [Gemini CLI](/agents/gemini-cli), [Muse Code](/agents/muse-code).
+The first shape is the one Cursor and Devin Desktop use, and the second is a VS Code project's `.vscode/mcp.json` (VS Code's **MCP: Add Server** now writes `mcpServers` with `"type": "http"`). Cline needs `"type": "streamableHttp"`: without it, Cline falls back to the older SSE transport. Zed reads `context_servers`, Gemini CLI writes `url` with `"type": "http"`, and Muse Code needs a `schema_version`. Their pages have the exact blocks: [Cursor](/agents/cursor), [VS Code](/agents/vscode), [Devin Desktop](/agents/devin-desktop), [Zed](/agents/zed), [Gemini CLI](/agents/gemini-cli), [Muse Code](/agents/muse-code).
 
 If the client asks for a transport, choose streamable HTTP. Choose SSE only when the client offers nothing else, and then use `https://api.postqueen.ai/sse/YOUR_API_KEY`.
 
@@ -101,8 +112,11 @@ Some clients can only start a program on your computer and talk to it over stand
         "mcp-remote",
         "https://api.postqueen.ai/mcp",
         "--header",
-        "Authorization: Bearer YOUR_API_KEY"
-      ]
+        "Authorization:${AUTH_HEADER}"
+      ],
+      "env": {
+        "AUTH_HEADER": "Bearer YOUR_API_KEY"
+      }
     }
   }
 }
@@ -110,11 +124,13 @@ Some clients can only start a program on your computer and talk to it over stand
 
 </CodeGroup>
 
+In the Bearer header form, the header value comes from `env`, with no space after `Authorization:`. On Windows, a space inside `args` breaks the command.
+
 Use the bridge only when the client cannot take an address. A direct connection has fewer parts that can fail.
 
 ## Keep the key safe
 
-The key can post to every channel in your workspace. It sits in the client's config file either way, so keep that file out of version control and off shared screens. If the key leaks, an admin chooses **Rotate key** under **Connections > API Keys**, and you update every client that used it.
+The key can post to every channel in your workspace. It sits in the client's config file either way, so keep that file out of version control and off shared screens. If the key leaks, an admin chooses **Rotate key** under **Connections > API key**, and you update every client that used it.
 
 ## Check that it works
 

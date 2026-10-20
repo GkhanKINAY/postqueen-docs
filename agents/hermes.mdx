@@ -7,7 +7,7 @@ icon: "/images/brand/icon-hermes.svg"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Hermes Agent is Nous Research's open-source agent with persistent memory, skills, scheduled jobs and gateways to Telegram, Discord, Slack, WhatsApp, Signal, email and more. You run it on your own computer or a server, or hosted in Hermes Cloud. Add PostQueen as an MCP server and Hermes can plan your posts, schedule them and report how they did, in a chat or on a schedule.
+Hermes Agent is Nous Research's open-source agent with persistent memory, skills, scheduled jobs and gateways to Telegram, Discord, Slack, WhatsApp, Signal, email and more. You run it on your own computer or a server, or hosted in Hermes Cloud. Add PostQueen as an MCP server and Hermes can plan and write your posts for PostQueen to schedule, and report how they did, in a chat or on a schedule.
 
 <div className="pq-visual pq-tint-peach pq-visual-phone">
   <img noZoom src="/images/site/agents/hermes.webp" alt="A sample Hermes Agent chat on a phone with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -16,7 +16,7 @@ Hermes Agent is Nous Research's open-source agent with persistent memory, skills
 ## Before you start
 
 - **Plans:** Hermes Agent is free and open source (MIT). Nous Research also offers the Nous Portal subscription and hosted instances in Hermes Cloud.
-- **Platforms:** wherever you run Hermes: macOS (Apple Silicon), Windows 10 and 11, Linux and WSL2, or Docker. The installer brings Python 3.11 and Node.
+- **Platforms:** wherever you run Hermes: macOS (Apple Silicon), Windows 10 and 11, Linux and WSL2, or Docker. The installer brings Python 3.14 and Node.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
 <ApiKeyLocation />
@@ -106,7 +106,7 @@ Source: [Nous Research, scheduled tasks](https://hermes-agent.nousresearch.com/d
 | PostQueen is not in `hermes mcp catalog` | The catalog lists only servers Nous has approved. Add PostQueen with `hermes mcp add` or in `config.yaml`. |
 | The tools do not show in a running chat | Type `/reload-mcp`, or start a new `hermes chat`. |
 | You are not sure it connected | Run `hermes mcp test postqueen`. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting). To message Hermes from WhatsApp, Telegram, Slack or Discord, see [Chat channels](/agents/chat-channels).
 

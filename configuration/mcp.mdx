@@ -47,9 +47,11 @@ curl -i -X POST https://postqueen.example.com/api/mcp \
 |---|---|
 | A JSON list of tools | MCP works. Use the same address in the agent. |
 | `401` with `Missing Authorization header` | The header did not reach the backend. |
-| `401` with `Invalid API Key or OAuth token` | The key is wrong or was rotated. |
-| `400` with `Invalid API Key` | On the key-in-the-address form: the key is wrong, or it is an OAuth token, which only the header form takes. |
+| `401` with `Invalid API Key or OAuth token, or no active subscription` | The key or token is wrong or was rotated, or, with [billing](/configuration/reference#billing) set up, the workspace has no trial or plan. |
+| `400` with `Invalid API Key or no active subscription` | On the key-in-the-address form: the key is wrong, or, with billing set up, the workspace has no trial or plan. |
 | The web app's 404 page | The request went to the frontend. `NEXT_PUBLIC_BACKEND_URL` or the proxy's `/api/` route is wrong. |
+
+Send an OAuth access token (`pos_...`) as `Authorization: Bearer` on `/mcp`. Do not put it in the URL, where it can end up in logs.
 
 Errors come back as plain text, not JSON, so some agents show only a generic server error. Read the raw response before changing settings. Both addresses also answer a browser's `OPTIONS` preflight with `200` before any key is checked, so an agent that reports it connected has not yet proved the key works: the first tool call does.
 

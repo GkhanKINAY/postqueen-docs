@@ -7,7 +7,7 @@ icon: "/images/brand/icon-claude-code.svg"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Claude Code is Anthropic's coding agent for the terminal and IDEs. Add PostQueen with one command and Claude Code can turn a changelog into posts, schedule them and report how your published posts did, from the terminal you already have open.
+Claude Code is Anthropic's coding agent for the terminal and IDEs. Add PostQueen with one command and Claude Code can turn a changelog into posts for PostQueen to schedule, and report how your published posts did, from the terminal you already have open.
 
 <div className="pq-visual pq-tint-blue">
   <img noZoom src="/images/site/agents/claude-code.webp" alt="A sample Claude Code terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -51,7 +51,7 @@ In the new session, ask: "List my PostQueen channels." Claude Code calls PostQue
 - **Scopes:** the default is local, this project only, stored in `~/.claude.json`. `--scope user` covers every project, and `--scope project` writes a shared `.mcp.json` into the project.
 - **Keep the key out of a shared file.** `.mcp.json` expands `${VAR}` in the address and headers, so a committed file can read the key from your environment. Or use the header form below.
 - **Claude Code can run the command for you** if you allow it, since it runs shell commands. The tools still load only in a new session.
-- **A connector you added in Claude** on claude.ai also shows up in Claude Code when you log in with a claude.ai subscription.
+- **A connector you added in Claude** on claude.ai also shows up in Claude Code when you log in with a claude.ai account, not with an API key.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
 - **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
@@ -108,7 +108,7 @@ claude -p "Turn CHANGELOG.md into three PostQueen drafts for Bluesky" \
 |---|---|
 | PostQueen is missing from a session | Run `claude mcp list`, then start a new session so the tools load. |
 | It works in one project only | The default scope is local. Add it again with `--scope user`. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 | A `-p` run stops at a permission prompt | Add `--allowedTools "mcp__postqueen"` to the command. |
 | You meant the Claude app | Claude and Claude Cowork use a connector instead. See [Claude](/agents/claude). |
 
@@ -122,6 +122,6 @@ No. Claude Code is Anthropic's coding agent, with its own command. Claude and Cl
 |---|---|---|
 | **Claude Code** (this page) | Anthropic's coding agent for the terminal and IDEs | One `claude mcp add` command |
 | [Claude](/agents/claude) | Anthropic's assistant on the web, desktop and mobile | A custom connector |
-| [Claude Cowork](/agents/claude-cowork) | Claude's agent mode for everyday work | The Claude connector, switched on in a Cowork session |
+| [Claude Cowork](/agents/claude-cowork) | Claude's agent mode for everyday work | The Claude connector, switched on in a Cowork session or chat |
 
 <NextStepsAgent />

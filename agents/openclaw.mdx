@@ -76,7 +76,7 @@ Message OpenClaw, from its chat or a linked chat app: "List my PostQueen channel
 ## Good to know
 
 - **The gateway has to be running** to answer your messages. A machine that sleeps means an agent that goes quiet.
-- **OpenClaw can install the CLI and the skill itself** if you allow it. You still give it the key.
+- **OpenClaw can install the CLI and the skill itself** if you allow it. You still sign the CLI in, or give it the key.
 - **The CLI can do more than MCP:** it can also delete a post. See [the CLI](/cli/introduction) for every command.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
 
@@ -100,9 +100,11 @@ Message OpenClaw, from its chat or a linked chat app: "List my PostQueen channel
     Set the transport: OpenClaw assumes SSE when it is left out. MCP tools appear in the coding and messaging tool profiles, not in minimal.
   </Tab>
   <Tab title="Sign in">
-    Add the server with `--auth oauth` and the address `https://api.postqueen.ai/mcp-oauth-dynamic`, then run:
+    Add the server with the sign-in address and `--auth oauth`, then sign in:
 
     ```bash
+    openclaw mcp add postqueen --url https://api.postqueen.ai/mcp-oauth-dynamic \
+      --transport streamable-http --auth oauth
     openclaw mcp login postqueen
     ```
 
@@ -137,7 +139,7 @@ Source: [OpenClaw, managing scheduled jobs](https://docs.openclaw.ai/automation/
 | `postqueen` is not in `openclaw skills list --eligible` | Put the `postqueen` command on the `PATH`. |
 | The gateway does not see your login or key | Run `postqueen auth:login` as the user the gateway runs as. An `export` in your terminal does not reach a background gateway, so a key goes in `openclaw.json`, then restart the gateway. |
 | MCP connects but no tools appear | Add `--transport streamable-http`. Without it OpenClaw assumes SSE. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 | You followed a NanoClaw guide | NanoClaw is a different app with its own setup. See [NanoClaw](/agents/nanoclaw). |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).

@@ -86,7 +86,7 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
   fine. The docs home carries the one fork line and the one link to Self-hosting.
 - Never document `/mcp-oauth-claude` or `/mcp-oauth-chatgpt`. Clipping is documented, as **Soon** until the app
   switches it on. The API key is under
-  **Connections > API Keys**, and only a workspace Admin or Super Admin can reveal it.
+  **Connections > API key**, and only a workspace Admin or Super Admin can reveal it.
 - API examples send the raw key: `Authorization: YOUR_API_KEY`, never `Bearer` on `/public/v1`.
 
 ### Mintlify mechanics that bite

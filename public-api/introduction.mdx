@@ -91,7 +91,7 @@ Every request to `/public/v1` carries one header:
 Authorization: YOUR_API_KEY
 ```
 
-The value is the key itself. Adding `Bearer ` in front makes it an invalid key. The key belongs to the whole workspace and has no expiry: it works until an admin rotates it under **Connections > API Keys**, which ends the old key at once. Treat it as a password.
+The value is the key itself. Adding `Bearer ` in front makes it an invalid key. The key belongs to the whole workspace and has no expiry: it works until an admin rotates it under **Connections > API key**, which ends the old key at once. Treat it as a password.
 
 If you are building a product that other PostQueen users connect to, do not ask them for their key. Register an [OAuth app](/public-api/oauth): they approve it on a consent screen, and you get a `pos_` token that goes in the same header, also with no prefix.
 

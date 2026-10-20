@@ -7,7 +7,7 @@
       "name": "MIT",
       "identifier": "MIT"
     },
-    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API Keys** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\nA workspace can send 30 `POST /posts` requests an hour. A request refused with `400` or `422` during validation gets its slot back; one refused once the posts are being created counts. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
+    "description": "Schedule posts, upload media, read analytics and manage the channels of your PostQueen workspace.\n\n## Authentication\n\nSend your API key in the `Authorization` header exactly as it is, with no prefix:\n\n```\nAuthorization: YOUR_API_KEY\n```\n\nThe key is under **Connections > API key** in the app. Only a workspace Admin or Super Admin can reveal or rotate it. An app your users sign in to with OAuth sends its `pos_` access token in the same header, also with no prefix. The workspace needs a subscription, and the free trial counts.\n\n## Rate limits\n\nA workspace can send 30 `POST /posts` requests an hour. A request refused with `400` or `422` during validation gets its slot back; one refused once the posts are being created counts. `POST /upload` and `POST /upload-from-url` allow 300 requests an hour each, per workspace. Nothing else is limited. A limited endpoint answers with `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` headers, and over the limit with `429` and `Retry-After` (seconds).\n\n## Terminology\n\nThe app says channel, the API says integration. They are the same thing: a connected account on a network."
   },
   "servers": [
     {
@@ -3119,7 +3119,7 @@
             "name": "client_id",
             "in": "query",
             "required": true,
-            "description": "The app's client id: `pca_...` for an app made under Connections > Developers, `pcd_...` for a registered client",
+            "description": "The app's client id: `pca_...` for an app made under Connections > OAuth apps, `pcd_...` for a registered client",
             "schema": {
               "type": "string"
             }
@@ -3149,7 +3149,7 @@
             "name": "redirect_uri",
             "in": "query",
             "required": false,
-            "description": "Required for a registered client, and must be one of its `redirect_uris`. An app made under Connections > Developers always uses its stored Redirect URL",
+            "description": "Required for a registered client, and must be one of its `redirect_uris`. An app made under Connections > OAuth apps always uses its stored Redirect URL",
             "schema": {
               "type": "string"
             }
@@ -3417,7 +3417,7 @@
           "OAuth"
         ],
         "summary": "Register a client",
-        "description": "Dynamic Client Registration (RFC 7591). A client, usually an MCP client, registers itself and gets a `pcd_` client id without anyone making an app under Connections > Developers. Callbacks must be https, an http loopback address (`localhost`, `127.0.0.1`, `[::1]`) or a private-use scheme such as `cursor://`. Only the `authorization_code` grant is supported. Send `token_endpoint_auth_method: none` for a public client, which then gets no secret and must use PKCE (`S256`). A registered client that nobody has approved after 30 days may be removed.\n\nOutside `/public/v1`; takes no API key.",
+        "description": "Dynamic Client Registration (RFC 7591). A client, usually an MCP client, registers itself and gets a `pcd_` client id without anyone making an app under Connections > OAuth apps. Callbacks must be https, an http loopback address (`localhost`, `127.0.0.1`, `[::1]`) or a private-use scheme such as `cursor://`. Only the `authorization_code` grant is supported. Send `token_endpoint_auth_method: none` for a public client, which then gets no secret and must use PKCE (`S256`). A registered client that nobody has approved after 30 days may be removed.\n\nOutside `/public/v1`; takes no API key.",
         "operationId": "oauthRegister",
         "security": [],
         "servers": [
@@ -3597,7 +3597,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        "description": "Your API key from Connections > API Keys, or an OAuth access token (`pos_...`). Send it as it is, with no `Bearer` prefix."
+        "description": "Your API key from Connections > API key, or an OAuth access token (`pos_...`). Send it as it is, with no `Bearer` prefix."
       }
     },
     "schemas": {

@@ -49,7 +49,7 @@ In a new Grok chat, ask: "List my PostQueen channels." Grok answers with the cha
 
 ## Good to know
 
-- **The address carries your API key.** Keep it private, like a password. If it leaks, a workspace admin rotates the key under **Connections > API Keys**, and you update the connector with the new address.
+- **The address carries your API key.** Keep it private, like a password. If it leaks, a workspace admin rotates the key under **Connections > API key**, and you update the connector with the new address.
 - **Grok on grok.com is separate from Grok Bot and Grok Build.** Each one is set up on its own; see the last section.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
 - **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
@@ -75,8 +75,8 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 | Symptom | Fix |
 |---|---|
 | Grok does not use PostQueen | Check at grok.com/connectors that the PostQueen connector is there, then start a new chat. |
-| The key is refused | Copy the address again from the Grok card on **Connections**, or the key from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
-| The address with your key leaked | A workspace admin rotates the key under **Connections > API Keys**. Then update the connector. |
+| The key is refused | Copy the address again from the Grok card on **Connections**, or the key from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
+| The address with your key leaked | A workspace admin rotates the key under **Connections > API key**. Then update the connector. |
 | On Business or Enterprise, you cannot add it | An admin adds it first at console.x.ai under **Grok Business > Connectors**. |
 | You set it up in Grok, but Grok Bot or Grok Build does not see it | Each product is set up on its own. Open its page below. |
 
@@ -89,7 +89,7 @@ No. xAI has three products with Grok in the name, and each one connects to PostQ
 | Product | What it is | How it connects |
 |---|---|---|
 | **Grok** (this page) | xAI's assistant at grok.com and in its mobile apps | A custom connector at grok.com/connectors |
-| [Grok Bot](/agents/grok-bot) | An always-on AI teammate with its own cloud computer | Ask in chat, key in the secure prompt |
+| [Grok Bot](/agents/grok-bot) | An always-on AI teammate on a cloud computer | Ask in chat, key in the secure prompt |
 | [Grok Build](/agents/grok-build) | xAI's coding agent for the terminal | One `grok mcp add` command |
 
 <NextStepsAgent />

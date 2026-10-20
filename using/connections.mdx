@@ -1,6 +1,6 @@
 ---
 title: "Connections"
-description: "Connect an AI agent, the CLI or your own code to PostQueen: the agent cards with your MCP address, the API key, OAuth apps and the apps you approved."
+description: "Connect an AI agent, an automation or your own code to PostQueen: the setup card for each agent and tool, your API key and MCP address, OAuth apps and the apps you approved."
 icon: "cable"
 keywords:
   - connections
@@ -15,26 +15,19 @@ import McpAddresses from '/snippets/mcp-addresses.mdx';
 
 **Where:** **Connect PostQueen** at the top of the left rail. It opens **Connections**.
 
-Connections is where anything outside the app plugs into your workspace: AI agents over MCP, the `postqueen` CLI, the public API and automation tools. All of them use the workspace API key, and the cards show the address or header with your key already filled in.
-
-<Frame>
-  <img className="pq-shot" src="/images/app/connections.webp" alt="The Connections window with the API key hidden, its copy buttons, and cards for Claude, ChatGPT, Cursor, Grok and other agents" />
-</Frame>
+Connections is where anything outside the app plugs into your workspace: AI agents over MCP, automations, the `postqueen` CLI and the public API. The left menu has **Browse**, with a setup card for each agent and tool, and **Account**.
 
 ## Connect an agent
 
 <Steps>
   <Step title="Find its card">
-    Under **Connectors**, pick a card from **Featured** or from a category, or type its name in **Search connectors**.
+    Under **Browse**, choose **All** or a category, or type the name in **Search agents and tools**.
   </Step>
-  <Step title="Follow How to connect">
-    The card opens on **How to connect**: the agent's own steps, with the commands to copy.
+  <Step title="Follow Setup">
+    The card opens on **Setup**: numbered steps, with the text to copy and a prompt to try. The key sits in the step that needs it: an admin sees the real key, a member sees where it goes. Some cards let you choose **Sign in, no key** or **Key in the address** first.
   </Step>
-  <Step title="Copy your address">
-    The **API key** tab shows your key and, for an agent, the **MCP URL** with the key in it. Paste what the steps ask for into the agent.
-  </Step>
-  <Step title="Try it">
-    When the card has **Examples**, try one of its prompts in the agent.
+  <Step title="Use the other tabs when you need them">
+    **Tips and fixes** has what to know and what to do when something fails. **All ways to connect** lists every route, marked **No key** or **API key**.
   </Step>
 </Steps>
 
@@ -44,21 +37,26 @@ Each agent has a setup guide in these docs: start at [AI agents](/agents/overvie
 
 ## What Connections holds
 
-| Section | What is in it |
+| Menu row | What is in it |
 |---|---|
-| **Connectors** | **Featured** cards for Claude, ChatGPT, Cursor and Grok, **Any MCP client**, then the **Agents**, **Bots**, **Chat**, **Editors** and **Automation** groups |
-| **Automation** | n8n; Zapier and Make, marked **Soon**; **Webhooks** and **RSS AutoPost**, which open their tab in Settings |
-| **Develop** | **Public API**, **CLI** and **Node SDK**, each with its setup steps |
-| **Account** | **API Keys**, **Developers** and **Approved Apps** |
+| **All** | Every category on one page. **Assistants and bots** starts with Grok Bot, Muse, OpenClaw and Hermes Agent, each with a prompt to try |
+| **Assistants and bots** | Chat assistants and bots such as Claude, ChatGPT and Grok, and a card for asking from WhatsApp, Telegram, Slack or Discord |
+| **Coding agents** | Claude Code, Codex, Cursor, Gemini CLI, Grok Build and Paperclip |
+| **Editors and other apps** | VS Code, Devin Desktop, Zed, Muse Code and **Any MCP client** |
+| **Automations** | n8n; Zapier and Make, marked **Soon**; **Webhooks** and **RSS AutoPost**, marked **In Settings**, which open their tab in Settings |
+| **Developer tools** | **Public API**, **Command line**, **Node SDK** and **OAuth apps** |
+| **Account** | **API key**, **OAuth apps** and **Approved Apps** |
+
+Social networks such as TikTok are channels, not connections: you add them from **Channels**.
 
 ## Rotate the API key
 
 <Steps>
-  <Step title="Open API Keys">
-    In Connections, choose **API Keys** in the Account group.
+  <Step title="Open API key">
+    Choose **Your API key** at the top of Connections, or **API key** in the Account group.
   </Step>
   <Step title="Rotate">
-    Choose **Rotate key**, then **Rotate** to confirm. PostQueen makes a new key at once.
+    Choose **Rotate key**, then **Rotate** to confirm "Rotate API Key?". PostQueen makes a new key at once.
   </Step>
   <Step title="Update what used it">
     The old key stops working right away, so paste the new one, or the new MCP address, into every agent, script and n8n credential that used it.
@@ -69,12 +67,14 @@ A workspace has one key. Only an admin can reveal or rotate it.
 
 ## Your MCP address
 
+Under **API key**, the **Addresses** card lists the **MCP address**, the **Sign-in address** and the **Public API header**. For an admin, **Copy** puts the real key in.
+
 <McpAddresses />
 
-## Developers and Approved Apps
+## OAuth apps and Approved Apps
 
-- **Developers** is for building your own product on PostQueen. An admin chooses **Create OAuth App** and fills in **App Name**, **Description**, **Profile Picture** and **Redirect URL**. The **Client Secret** is shown only when the app is created or the secret is rotated, so copy it then. A workspace has one OAuth app. See [OAuth apps](/public-api/oauth).
-- **Approved Apps** lists the apps you approved, with the date. Only an Admin or Super Admin can approve an app, and an approved app can act for the whole workspace. Choose **Revoke** to cut an app off.
+- **OAuth apps** is for building your own product on PostQueen. An admin chooses **Create OAuth App** and fills in **App Name**, **Description**, **Profile Picture** and **Redirect URL**. The **Client Secret** is shown only when the app is created or the secret is rotated, so copy it then. A workspace has one OAuth app. See [OAuth apps](/public-api/oauth).
+- **Approved Apps** lists the apps you connected by signing in, with no key, and the date of each. Only an Admin or Super Admin can approve an app, and an approved app can act for the whole workspace. Choose **Revoke** to take its access away. Each person sees and revokes the apps they approved.
 
 ## If something goes wrong
 

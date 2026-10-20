@@ -7,7 +7,7 @@ icon: "/images/brand/icon-perplexity.png"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a cloud sandbox, with a browser, files and your connected tools. Add PostQueen as a custom connector and Computer can draft posts from your research, schedule them and report how your published posts did.
+Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a cloud sandbox, with a browser, files and your connected tools. Add PostQueen as a custom connector and Computer can draft posts from your research for PostQueen to schedule, and report how your published posts did.
 
 <div className="pq-visual pq-tint-lilac">
   <img noZoom src="/images/site/agents/perplexity-computer.webp" alt="A sample Perplexity Computer chat with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -24,8 +24,8 @@ Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a
 ## Connect Perplexity Computer
 
 <Steps>
-  <Step title="Open Connectors">
-    In Perplexity on the web, open **Account settings**, then **Connectors**. Click **+ Custom connector** and choose **Remote**.
+  <Step title="Open Plugins">
+    In Perplexity on the web, open **Plugins** in the sidebar (or **Customize > Connectors** if you don't see Plugins yet), then **Add custom > Connector > Add MCP connector**, and choose **Remote**.
   </Step>
   <Step title="Fill in the connector">
     Name it `PostQueen` and fill in the fields as below, with your key in the address:
@@ -37,8 +37,8 @@ Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a
     Transport:      Streamable HTTP
     ```
   </Step>
-  <Step title="Add and enable it">
-    Tick the acknowledgement box and click **Add**, then click the PostQueen card to enable it.
+  <Step title="Add it">
+    Tick the acknowledgement box and click **Add**. PostQueen appears on the **Plugins** page.
   </Step>
   <Step title="Turn it on in Computer">
     In Computer, check that PostQueen is on under **Connectors**.
@@ -46,20 +46,19 @@ Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a
 </Steps>
 
 <Note>
-**On Enterprise,** an admin first turns on **Allow members to add custom connectors** under **Enterprise settings**, then **Permissions**, or adds PostQueen for the whole organization there.
+**On Enterprise,** an admin can add PostQueen for the whole organization under **Enterprise settings > Permissions > Connectors permissions**, then **+ Custom connector**. Members add their own custom connectors only if an admin allows it.
 </Note>
 
 ## Check that it works
 
-Start a Computer task: "List my PostQueen channels." Computer answers with the channels you connected in PostQueen. If it does not use PostQueen, check that the connector is enabled under **Account settings > Connectors** and on under **Connectors** in Computer.
+Start a Computer task: "List my PostQueen channels." Computer answers with the channels you connected in PostQueen. If it does not use PostQueen, check that it is on the **Plugins** page and on under **Connectors** in Computer.
 
 ## Good to know
 
 - **Keep Authentication on None.** The key is already in the address, and Perplexity's API Key option does not say which header it sends.
-- **Add it under Connectors, not under Settings > MCP servers.** That setting is for servers on your own device, which cloud Computer tasks do not use.
+- **Choose Remote.** A local MCP server works only in the Mac app, and cloud Computer tasks need a remote one.
 - **Use the connector, not the PostQueen CLI.** Computer keeps saved keys in its Credential vault and never passes them into its sandbox.
-- **The address carries your API key.** Keep it private. If it leaks, a workspace admin rotates the key under **Connections > API Keys**, and you update the connector.
-- **Do not see + Custom connector?** Look for **Add a custom connection**: Perplexity's own pages use both names.
+- **The address carries your API key.** Keep it private. If it leaks, a workspace admin rotates the key under **Connections > API key**, and you update the connector.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
 - **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
@@ -69,7 +68,6 @@ Start a Computer task: "List my PostQueen channels." Computer answers with the c
 |---|---|---|
 | The key in the address, Authentication None | `{{mcpKeyUrl}}` | From Perplexity's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | Not documented: Perplexity does not say which header its API Key option sends |
-| Sign in with PostQueen | Not offered | Not supported with Perplexity yet. Use the key address |
 
 ## Try this first
 
@@ -93,10 +91,10 @@ Source: [Perplexity, Scheduled Tasks in Computer](https://www.perplexity.ai/help
 
 | Symptom | Fix |
 |---|---|
-| PostQueen tools do not show up in a task | Click the PostQueen card under **Account settings > Connectors** to enable it, and check that it is on under **Connectors** in Computer. |
-| You added it under **Settings > MCP servers** | That setting is for servers on your own device. Add PostQueen as a custom connector under **Connectors** instead. |
-| The key is refused | Use the key address with **Authentication** set to **None**, and copy the key again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
-| On Enterprise you cannot add it | Ask an admin to turn on **Allow members to add custom connectors** under **Enterprise settings**, then **Permissions**. |
+| PostQueen tools do not show up in a task | Check that PostQueen is on the **Plugins** page and on under **Connectors** in Computer. |
+| You added PostQueen as a local server | A local MCP server works only in the Mac app. Add PostQueen again and choose **Remote**. |
+| The key is refused | Use the key address with **Authentication** set to **None**, and copy the key again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
+| On Enterprise you cannot add it | Ask an admin to allow members to add custom connectors, or to add PostQueen under **Enterprise settings > Permissions > Connectors permissions**, then **+ Custom connector**. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

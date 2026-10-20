@@ -26,7 +26,7 @@ These pages describe `postqueen` 2.0.28. Run `postqueen --version` to see yours.
 
 - **Node.js 20.19 or newer.** On Node.js 22, use 22.12 or newer.
 - **A PostQueen workspace on a trial or a paid plan**, with at least one connected channel.
-- **The API key.** Only a workspace Admin or Super Admin can reveal it.
+- **A workspace Admin or Super Admin**, who approves the CLI's sign-in. On a machine with no browser you use the API key instead, which only an admin can reveal.
 
 <ApiKeyLocation />
 
@@ -71,7 +71,7 @@ These pages describe `postqueen` 2.0.28. Run `postqueen --version` to see yours.
   </Step>
 </Steps>
 
-The sign-in link works in a browser on the same computer as the CLI. On a machine with no browser, such as a server, set the API key instead: `export POSTQUEEN_API_KEY=your_api_key`, with the key from **Connections > API Keys**. If you run PostQueen on your own server, also point `POSTQUEEN_API_URL` at your backend: see [the key](/cli/command-reference#the-key).
+The sign-in link works in a browser on the same computer as the CLI. On a machine with no browser, such as a server, set the API key instead: `export POSTQUEEN_API_KEY=your_api_key`, with the key from **Connections > API key**. If you run PostQueen on your own server, also point `POSTQUEEN_API_URL` at your backend: see [the key](/cli/command-reference#the-key).
 
 ## Schedule a first post
 
@@ -142,7 +142,9 @@ An agent that runs shell commands, such as OpenClaw, Hermes Agent, Claude Code, 
 npx skills add GkhanKINAY/postqueen-agent
 ```
 
-Set `POSTQUEEN_API_KEY` where the agent's commands run, which is not always your own terminal.
+Without `-g`, the skill goes into the current project only. Add `-g` to install it for every project, and `-a` to name the agent, as [the postqueen skill](/agents/skill#install-the-skill) shows.
+
+Sign the CLI in with `postqueen auth:login`, or set `POSTQUEEN_API_KEY` where the agent's commands run, which is not always your own terminal.
 
 ### CLI or MCP?
 
