@@ -35,8 +35,8 @@ Find the symptom or the message you see. Most failures come from the key, from a
   </Accordion>
   <Accordion title="The sign-in fails" icon="lock-keyhole">
     - Only a workspace Admin or Super Admin can approve the sign-in. Ask one to connect the agent.
-    - Paste `{{mcpOauthUrl}}` with no slash at the end, and leave any client ID and secret fields empty.
-    - Grok Bot, Grok and NanoClaw cannot sign in. Give them the API key the way their guides show. NanoClaw takes it only in the Bearer header: it rejects URLs that embed credentials.
+    - Paste `{{mcpOauthUrl}}` with no slash at the end, and leave any client ID and secret fields empty. In Claude's two-step dialog, choose **Register automatically** under **OAuth client**.
+    - The Grok Bot, Grok and NanoClaw guides use the API key. Give it to them the way their guides show; NanoClaw keeps it in its OneCLI vault.
 
     If it still fails, use the key address.
   </Accordion>

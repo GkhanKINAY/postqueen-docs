@@ -21,7 +21,7 @@ Muse is Meta's personal agent in the Muse app, on muse.ai and in WhatsApp. It la
 ## Before you start
 
 - **Plans:** Muse is free with a usage limit. Power costs \$20 a month and Maximum \$100 a month. Meta does not tie connectors to a plan.
-- **Platforms:** the Muse app on iOS and Android, muse.ai on the web, WhatsApp and Mac. Muse is rolling out in the US and is not available in every location yet.
+- **Platforms:** the Muse app on iOS and Android, muse.ai on the web, WhatsApp and Mac. Muse is available in the US and Canada, and not in every location yet.
 - **A PostQueen API key.** A workspace admin copies it from **Connections**.
 
 <ApiKeyLocation />
@@ -46,8 +46,8 @@ These are the steps Meta documents for a service that is not in the Connector li
   <Step title="Ask Muse to create a custom connector">
     In a Muse chat, ask Muse to create a custom connector for PostQueen. Muse guides you through it and may look up PostQueen's API information.
   </Step>
-  <Step title="Enter the key only in the secure prompt">
-    When Muse asks for your API key, enter it only in the secure prompt Muse shows, never in the chat. Muse keeps it in its Secure Credentials Store, away from the model.
+  <Step title="Keep the key in the Secure Credentials Store">
+    Muse keeps your API key in its **Secure Credentials Store**, away from the model. Give Muse the key only when it asks to store it there, never in a chat message.
   </Step>
   <Step title="Choose what Muse may do">
     Muse asks before a connector acts. Choose **Allow once**, **Allow for this task** or **Always allow**, and change it later under **Settings > Permissions**.
@@ -68,7 +68,7 @@ Meta does not review custom connectors or how they use your information. A PostQ
 The first message to send is the one that starts the custom connector:
 
 ```text wrap
-Create a custom connector for PostQueen, so you can schedule my social media posts. Ask me for my API key in a secure prompt, not in this chat.
+Create a custom connector for PostQueen, so you can write my social media posts for PostQueen to schedule. Ask me for my API key to keep in your Secure Credentials Store, not in this chat.
 ```
 
 ## Troubleshooting
@@ -76,9 +76,9 @@ Create a custom connector for PostQueen, so you can schedule my social media pos
 | Symptom | Fix |
 |---|---|
 | PostQueen is not under **Settings > Connectors** | It is not in Meta's reviewed directory yet. Ask Muse in chat to create a custom connector instead. |
-| Muse asks for the key in the chat | Do not paste it there; ask for the secure prompt. If the key was sent in a chat, a workspace admin rotates it under **Connections > API key**. |
+| Muse asks for the key in the chat | Do not paste it there; ask Muse to store it in its Secure Credentials Store. If the key was sent in a chat, a workspace admin rotates it under **Connections > API key**. |
 | You wanted Meta's terminal agent | That is Muse Code. Follow [the Muse Code page](/agents/muse-code). |
-| Muse is not available to you | Muse is rolling out in the US and is not in every location yet. |
+| Muse is not available to you | Muse is available in the US and Canada, and not in every location yet. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

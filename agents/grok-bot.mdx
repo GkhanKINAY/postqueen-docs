@@ -16,7 +16,7 @@ Grok Bot is xAI's always-on AI teammate. It works on a cloud computer, and you s
 
 ## Before you start
 
-- **Plans:** Grok Bot is included on X Premium, Super and Ultra (Plus does not include it). It is also included with Cursor Pro, Pro+, Ultra and Teams, and an individual SuperGrok, SuperGrok Plus, SuperGrok Heavy or X Premium+ subscription can be linked instead. Not Hobby or SuperGrok Lite. On Enterprise, an admin turns Grok Bot on in the Cursor dashboard.
+- **Plans:** on The X Subscription, Grok Bot is included on Premium, Super and Ultra, including team seats; Free and Plus do not include it. On legacy plans it is included with Cursor Pro, Pro+, Ultra and Teams, or you can link an individual SuperGrok, SuperGrok Plus, SuperGrok Heavy or X Premium+ subscription (not SuperGrok Lite), or sign in with a seat on a self-serve Grok Business plan. On Enterprise, an admin turns Grok Bot on in the Cursor dashboard.
 - **Platforms:** the desktop app on macOS, Windows and Linux, and the mobile app on iPhone, iPad and Android.
 - **A PostQueen API key.** A workspace admin copies it from **Connections**.
 
@@ -24,7 +24,7 @@ Grok Bot is xAI's always-on AI teammate. It works on a cloud computer, and you s
 
 ## Connect Grok Bot
 
-You add PostQueen from inside a Grok Bot chat. There is no settings form to fill in.
+You add PostQueen from inside a Grok Bot chat.
 
 <Steps>
   <Step title="Ask the Bot to connect PostQueen">
@@ -53,7 +53,7 @@ Ask Grok Bot: "List my PostQueen channels." It answers with the channels you con
 - **The key stays out of the chat.** If a key ever lands in a chat message, a workspace admin rotates it under **Connections > API key**, and you connect again with the new key.
 - **Servers you add from chat are your plugins.** Open **Connect apps** in the sidebar, choose **Your plugins**, and check PostQueen is under **Installed**. On a phone, tap your avatar, then **Connect apps**.
 - **The address must be public HTTPS.** Grok Bot runs in the cloud, so it cannot reach a server on your own computer. `api.postqueen.ai` is public.
-- **On Teams and Enterprise,** Grok Bot inherits your team's Cursor connector policy. On Enterprise, PostQueen's address must also be on the team's MCP allowlist. A plugin the team blocks shows as **Disabled by team admin**.
+- **On Teams and Enterprise,** Grok Bot inherits your team's Cursor connector policy. On Enterprise, also add PostQueen's address to the team's MCP allowlist if you use one. A plugin the team blocks shows as **Disabled by team admin**.
 - **Adding a server by chat** is described by Cursor staff on Cursor's forum, not in xAI's docs. It works with PostQueen.
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
 - **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
@@ -66,7 +66,7 @@ Use the route above. The other PostQueen addresses do not suit Grok Bot:
 |---|---|---|
 | The address, with the key in the secure prompt | `{{mcpBearerUrl}}` | The route above |
 | The key in the address | `{{mcpKeyUrl}}` | Do not use: you would have to paste the key into the chat |
-| Sign in with PostQueen | Not offered | Cursor staff acknowledged an open problem with MCP sign-in redirects in Grok Bot on 2026-09-14 |
+| Sign in with PostQueen | Not offered | Not covered by this guide |
 
 ## Try this first
 
@@ -95,7 +95,7 @@ xAI recommends approval for anything that publishes. Saving drafts keeps you in 
 | The Bot says it has no PostQueen tools | Open **Connect apps** in the sidebar, choose **Your plugins**, and check PostQueen is under **Installed**. |
 | You pasted the key into the chat | Ask a workspace admin to rotate it under **Connections > API key**, then connect again and use the secure prompt on the **Connect** card. |
 | The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
-| On Teams or Enterprise, PostQueen shows **Disabled by team admin** | Ask your admin to allow it in the team's connector policy, and on Enterprise to add PostQueen's address to the MCP allowlist. |
+| On Teams or Enterprise, PostQueen shows **Disabled by team admin** | Ask your admin to allow it in the team's connector policy, and on Enterprise to add PostQueen's address to the MCP allowlist if the team uses one. |
 | A sign-in page fails | Use `{{mcpBearerUrl}}` with the key in the secure prompt. |
 | You added PostQueen at grok.com, but the Bot does not see it | Grok Bot is set up in the Bot itself. Follow the steps on this page. |
 

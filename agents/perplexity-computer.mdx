@@ -15,8 +15,8 @@ Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a
 
 ## Before you start
 
-- **Plans:** Pro, Max, Education Pro, Enterprise Pro and Enterprise Max; not Free. Computer tasks use credits: Max gets a monthly allowance, Pro a one-time bonus. On Enterprise, members add their own custom connectors only if an admin allows it.
-- **Platforms:** add the connector in Perplexity on the web. Computer runs on the web, in the iOS and Android apps, in the Comet browser, and from Slack, Teams and email.
+- **Plans:** Pro, Max, Education Pro, Enterprise Pro and Enterprise Max; not Free. Computer tasks use credits: Max includes 10,000 credits a month, and Pro includes weekly Computer usage. On Enterprise, members add their own custom connectors only if an admin allows it.
+- **Platforms:** add the connector in Perplexity on the web. Computer runs on the web, in the iOS and Android apps, and from Slack, Teams and email.
 - **A PostQueen API key.** A workspace admin copies it from **Connections**.
 
 <ApiKeyLocation />
@@ -40,18 +40,18 @@ Perplexity Computer is Perplexity's agent that carries out multi-step tasks in a
   <Step title="Add it">
     Tick the acknowledgement box and click **Add**. PostQueen appears on the **Plugins** page.
   </Step>
-  <Step title="Turn it on in Computer">
-    In Computer, check that PostQueen is on under **Connectors**.
+  <Step title="Turn it on">
+    On the **Plugins** page, click the PostQueen card to enable it.
   </Step>
 </Steps>
 
 <Note>
-**On Enterprise,** an admin can add PostQueen for the whole organization under **Enterprise settings > Permissions > Connectors permissions**, then **+ Custom connector**. Members add their own custom connectors only if an admin allows it.
+**On Enterprise,** an admin can add PostQueen for the whole organization under **Enterprise settings > Permissions > Connectors permissions**, then **+ Custom connector**, and then share it with the organization from the **Permissions** screen in **Enterprise settings**. Members add their own custom connectors only if an admin allows it.
 </Note>
 
 ## Check that it works
 
-Start a Computer task: "List my PostQueen channels." Computer answers with the channels you connected in PostQueen. If it does not use PostQueen, check that it is on the **Plugins** page and on under **Connectors** in Computer.
+Start a Computer task: "List my PostQueen channels." Computer answers with the channels you connected in PostQueen. If it does not use PostQueen, open the **Plugins** page and click the PostQueen card to enable it.
 
 ## Good to know
 
@@ -91,10 +91,10 @@ Source: [Perplexity, Scheduled Tasks in Computer](https://www.perplexity.ai/help
 
 | Symptom | Fix |
 |---|---|
-| PostQueen tools do not show up in a task | Check that PostQueen is on the **Plugins** page and on under **Connectors** in Computer. |
+| PostQueen tools do not show up in a task | On the **Plugins** page, click the PostQueen card to enable it. |
 | You added PostQueen as a local server | A local MCP server works only in the Mac app. Add PostQueen again and choose **Remote**. |
 | The key is refused | Use the key address with **Authentication** set to **None**, and copy the key again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
-| On Enterprise you cannot add it | Ask an admin to allow members to add custom connectors, or to add PostQueen under **Enterprise settings > Permissions > Connectors permissions**, then **+ Custom connector**. |
+| On Enterprise you cannot add it | Ask an admin to allow members to add custom connectors, or to add PostQueen under **Enterprise settings > Permissions > Connectors permissions**, then **+ Custom connector**, and share it with the organization from the **Permissions** screen. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

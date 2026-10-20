@@ -24,7 +24,7 @@ Claude Cowork is Anthropic's agent mode for everyday knowledge work, built on th
 ## Connect Claude Cowork
 
 <Note>
-**On Team and Enterprise,** only an Owner can add a custom connector (on Enterprise, also a role that manages the connector library), so ask one to add PostQueen in Claude first. With the key address, everyone who uses that connector acts with the workspace's API key.
+**On Team and Enterprise,** only an Owner can add a custom connector (on Enterprise, also a role that manages the connector library), so ask one to add PostQueen in Claude first. Members then find it under **Customize > Connectors** and click **Connect**. With the key address, everyone who uses that connector acts with the workspace's API key.
 </Note>
 
 <Steps>
@@ -62,7 +62,7 @@ Ask Cowork: "List my PostQueen channels." It answers with the channels you conne
 
 | Way | Address | Notes |
 |---|---|---|
-| The key in the address | `{{mcpKeyUrl}}` | From Anthropic's docs. The route above |
+| The key in the address | `{{mcpKeyUrl}}` | The route above |
 | Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs |
 
 The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}, all but `ask_postqueen`.
@@ -93,7 +93,7 @@ Source: [Anthropic, schedule recurring tasks in Claude Cowork](https://support.c
 |---|---|
 | PostQueen is missing in a Cowork session or chat | Turn it on from the **+** menu in the chat box, or from **Customize > Connectors**. |
 | A key you set on your computer does nothing | Cowork's cloud sessions do not see your computer's environment. Add PostQueen as a connector. |
-| Cowork is missing on the web or mobile | On Enterprise, an admin turns on Cowork for the web and mobile. |
+| Cowork is missing on the web or mobile | Update the Claude app. Where Cowork is now part of Claude itself, there is no Cowork option: ask in a normal chat with PostQueen on. On Enterprise, an admin turns on Cowork for the web and mobile. |
 | The key is refused | Copy the address again from the Claude Cowork card on **Connections**. Only a workspace Admin or Super Admin can reveal the key. |
 | “Only an admin can approve” | Ask a PostQueen workspace admin to sign in and approve. |
 

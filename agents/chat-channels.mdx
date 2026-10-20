@@ -56,7 +56,7 @@ All three are free and open source; the outside cost is the model provider you r
 
 <Steps>
   <Step title="Connect PostQueen to the agent">
-    Follow the agent's page: [OpenClaw](/agents/openclaw), [Hermes Agent](/agents/hermes) or [NanoClaw](/agents/nanoclaw). You need a PostQueen API key, which a workspace admin copies from **Connections > API key**. For OpenClaw on a computer with a browser, `postqueen auth:login` signs the CLI in instead, and Hermes can sign in with `auth: oauth`.
+    Follow the agent's page: [OpenClaw](/agents/openclaw), [Hermes Agent](/agents/hermes) or [NanoClaw](/agents/nanoclaw). You need a PostQueen API key, which a workspace admin copies from **Connections > API key**. For OpenClaw on a computer with a browser, `postqueen auth:login` signs the CLI in instead, and Hermes can sign in with `auth: oauth` and `hermes mcp login`.
   </Step>
   <Step title="Check it before you add a chat app">
     Ask the agent, in its own chat: "List my PostQueen channels." When it answers with your channels, the PostQueen half is ready.
@@ -70,7 +70,7 @@ All three are free and open source; the outside cost is the model provider you r
 
 **On your side:** a WhatsApp account and a phone that can scan a QR code. OpenClaw recommends a separate WhatsApp number, though a personal number works too.
 
-With OpenClaw, log in by QR code, start the gateway and approve the first person who messages it:
+With OpenClaw, log in by QR code and start the gateway. Every new sender needs a pairing code, which you approve:
 
 ```bash
 openclaw channels add --channel whatsapp
@@ -86,11 +86,12 @@ Full steps: [OpenClaw, WhatsApp](https://docs.openclaw.ai/channels/whatsapp). Wi
 
 **On your side:** a Telegram bot. Message `@BotFather` in Telegram, run `/newbot` and save the token it gives you.
 
-With OpenClaw, add the token, start the gateway and approve your first message:
+With OpenClaw, add the token and start the gateway. Then send your bot a message, and approve the pairing code it gives you:
 
 ```bash
 openclaw channels add --channel telegram --token <BOT_TOKEN>
 openclaw gateway
+openclaw pairing list telegram
 openclaw pairing approve telegram <CODE>
 ```
 
@@ -102,15 +103,77 @@ Full steps: [OpenClaw, Telegram](https://docs.openclaw.ai/channels/telegram). Wi
 
 This is the one for a team: anyone the bot accepts messages from can ask for a post, and everything they schedule lands on the same PostQueen calendar.
 
+With OpenClaw:
+
+1. Install the Slack plugin: `openclaw plugins install @openclaw/slack`.
+2. Create the Slack app from OpenClaw's manifest: in Slack, choose **Create New App > From a manifest** and paste the manifest from [OpenClaw's Slack setup](https://docs.openclaw.ai/channels/slack/setup). Generate the app-level token with `connections:write`, install the app to your workspace and copy the bot token.
+3. Put both tokens in `~/.openclaw/.env` as `SLACK_APP_TOKEN` and `SLACK_BOT_TOKEN`. A gateway that runs as a service does not see tokens you `export` in your shell.
+4. Add a `channels.slack` block that allows one channel by its ID (in Slack, right-click the channel and choose **Copy link**; the ID at the end starts with `C`), then apply it with the gateway stopped:
+
+   ```json5 slack.socket.patch.json5
+   {
+     channels: {
+       slack: {
+         enabled: true,
+         mode: "socket",
+         appToken: { source: "env", provider: "default", id: "SLACK_APP_TOKEN" },
+         botToken: { source: "env", provider: "default", id: "SLACK_BOT_TOKEN" },
+         groupPolicy: "allowlist",
+         channels: { "<CHANNEL_ID>": { enabled: true, requireMention: true } },
+       },
+     },
+   }
+   ```
+
+   ```bash
+   openclaw gateway stop
+   openclaw config patch --file ./slack.socket.patch.json5
+   openclaw gateway start
+   ```
+
+5. Invite the app to that channel. In a DM, the bot answers with a pairing code: approve it with `openclaw pairing list slack` and `openclaw pairing approve slack <CODE>`.
+
 Full steps: [OpenClaw, Slack](https://docs.openclaw.ai/channels/slack). With Hermes Agent, `hermes gateway setup` walks you through it.
 
 ## Discord
 
 **On your side:** a Discord application with a bot, made in the Discord Developer Portal.
 
+With OpenClaw:
+
 1. Create the application and its bot, and copy the bot token. Keep it out of any chat.
-2. Turn on **Message Content Intent** in the bot settings, so the bot can read messages.
-3. Invite the bot to your server, give the token to OpenClaw, and approve your first DM when it asks for pairing.
+2. Turn on **Message Content Intent** in the bot settings. The bot needs it to read ordinary channel messages; DMs and messages that mention the bot work without it.
+3. Invite the bot to your server. Turn on **Developer Mode** in Discord, then copy your server ID and your own user ID.
+4. Install the Discord plugin, and put the token in `~/.openclaw/.env` as `DISCORD_BOT_TOKEN`:
+
+   ```bash
+   openclaw plugins install @openclaw/discord
+   ```
+
+5. Add a `channels.discord` block with your server on the guild allowlist. Without it, the bot answers DMs only. Apply it with the gateway stopped:
+
+   ```json5 discord.patch.json5
+   {
+     channels: {
+       discord: {
+         enabled: true,
+         token: { source: "env", provider: "default", id: "DISCORD_BOT_TOKEN" },
+         groupPolicy: "allowlist",
+         guilds: {
+           "<SERVER_ID>": { requireMention: true, users: ["<YOUR_USER_ID>"] },
+         },
+       },
+     },
+   }
+   ```
+
+   ```bash
+   openclaw gateway stop
+   openclaw config patch --file ./discord.patch.json5
+   openclaw gateway start
+   ```
+
+6. DM the bot. It answers with a pairing code: approve it with `openclaw pairing list discord` and `openclaw pairing approve discord <CODE>`.
 
 Full steps: [OpenClaw, Discord](https://docs.openclaw.ai/channels/discord). With Hermes Agent, `hermes gateway setup` walks you through it.
 

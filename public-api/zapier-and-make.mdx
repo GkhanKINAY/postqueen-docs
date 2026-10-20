@@ -54,7 +54,7 @@ The channel id comes from [List channels](/public-api/integrations/list). A netw
 
 <Steps>
   <Step title="Add the action">
-    Add a **Webhooks by Zapier** action and choose the **Custom Request** event. The plain POST event cannot send the nested JSON a post needs.
+    Add a **Webhooks by Zapier** action and choose the **Custom Request** event. The plain POST event cannot send the arrays of objects a post needs.
   </Step>
   <Step title="Fill in the request">
     Set **Method** to `POST`, **URL** to `{{apiBase}}/posts`, and **Data** to the JSON body. Under **Headers**, add `Authorization` with your API key and `Content-Type` with `application/json`.

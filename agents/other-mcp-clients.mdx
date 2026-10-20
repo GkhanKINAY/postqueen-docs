@@ -124,7 +124,7 @@ Some clients can only start a program on your computer and talk to it over stand
 
 </CodeGroup>
 
-In the Bearer header form, the header value comes from `env`, with no space after `Authorization:`. On Windows, a space inside `args` breaks the command.
+Cursor, Codex CLI and Claude Desktop on Windows break a value with a space inside `args`. So in the Bearer header form, the header value comes from `env`, with no space after `Authorization:`.
 
 Use the bridge only when the client cannot take an address. A direct connection has fewer parts that can fail.
 

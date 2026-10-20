@@ -61,7 +61,7 @@ Anyone with the key can post to every channel in the workspace, so treat it like
 
 <Steps>
   <Step title="Add the sign-in address">
-    Paste `{{mcpOauthUrl}}` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen.
+    Paste `{{mcpOauthUrl}}` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen. In Claude's two-step dialog, choose **Register automatically** under **OAuth client**.
   </Step>
   <Step title="Sign in and approve">
     The agent opens PostQueen in your browser. Sign in and approve the access. Only a workspace Admin or Super Admin can approve it.
@@ -71,9 +71,9 @@ Anyone with the key can post to every channel in the workspace, so treat it like
   </Step>
 </Steps>
 
-<Warning>
-Grok Bot, Grok and NanoClaw cannot sign in. Give them the API key the way their guides show. NanoClaw takes it only in the Bearer header: it rejects URLs that embed credentials.
-</Warning>
+<Note>
+The Grok Bot, Grok and NanoClaw guides use the API key. Give it to them the way their guides show; NanoClaw keeps it in its OneCLI vault.
+</Note>
 
 ## What the agent can do
 

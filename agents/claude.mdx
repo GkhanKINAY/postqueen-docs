@@ -26,7 +26,7 @@ Claude is Anthropic's AI assistant on the web, in the desktop app and in the iOS
 These steps use the key address. To sign in instead of using a key, see [Other ways to connect](#other-ways-to-connect).
 
 <Note>
-**On Team and Enterprise,** only an Owner can add a custom connector (on Enterprise, also a role that manages the connector library), so ask one. They add it under **Organization settings > Connectors > Add > Custom > Web**, and members then connect it from **Customize > Connectors**. With the key address, everyone who uses the connector acts with the workspace's API key. With the sign-in address, each person signs in on their own.
+**On Team and Enterprise,** only an Owner can add a custom connector (on Enterprise, also a role that manages the connector library), so ask one. They add it under **Organization settings > Connectors > Add > Custom > Web**. Members then find it under **Customize > Connectors** and click **Connect**. With the key address, everyone who uses the connector acts with the workspace's API key. With the sign-in address, each person signs in on their own.
 </Note>
 
 <Steps>
@@ -68,7 +68,7 @@ Ask Claude: "List my PostQueen channels." Claude calls PostQueen and answers wit
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | The route above |
 | Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs |
-| The Bearer header | `{{mcpBearerUrl}}` | Not for Claude: custom headers in the connector dialog are a limited beta |
+| The Bearer header | `{{mcpBearerUrl}}` | From Anthropic's docs, in beta for a limited set of organizations: choose **No sign-in** and add the key under **Request headers** |
 
 The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}, all but `ask_postqueen`.
 
@@ -103,7 +103,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 | Symptom | Fix |
 |---|---|
 | Searching **Connectors** does not find PostQueen | PostQueen is not in Anthropic's directory. Add it as a custom connector. |
-| Claude refuses the address | Paste it with no slash at the end. Claude checks that it matches exactly. |
+| Claude refuses the address | Paste it exactly as shown, with no slash at the end. |
 | The tools do not show up in a chat | Open **+** (or type `/`), choose **Connectors** and switch PostQueen on. |
 | The key is refused | Copy the address again from the Claude card on **Connections**. Only a workspace Admin or Super Admin can reveal the key. |
 | “Only an admin can approve” | Ask a PostQueen workspace admin to sign in and approve, or to set it up with the key address. |

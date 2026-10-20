@@ -58,7 +58,7 @@ OpenClaw uses PostQueen through the `postqueen` CLI, taught by the postqueen ski
     }
     ```
 
-    Or set `POSTQUEEN_API_KEY` in the environment the gateway service starts with. Restart the gateway after either change.
+    Or set `POSTQUEEN_API_KEY` in the environment the gateway service starts with. After either change, run `openclaw gateway restart`.
   </Step>
   <Step title="Check that the skill is eligible">
     ```bash
@@ -71,7 +71,7 @@ OpenClaw uses PostQueen through the `postqueen` CLI, taught by the postqueen ski
 
 ## Check that it works
 
-Message OpenClaw, from its chat or a linked chat app: "List my PostQueen channels." It runs the CLI and answers with the channels you connected. To link WhatsApp, Telegram, Slack or Discord, see [Chat channels](/agents/chat-channels).
+OpenClaw loads skills when a session starts, so start a new session first. Then message OpenClaw, from its chat or a linked chat app: "List my PostQueen channels." It runs the CLI and answers with the channels you connected. To link WhatsApp, Telegram, Slack or Discord, see [Chat channels](/agents/chat-channels).
 
 ## Good to know
 
@@ -90,22 +90,28 @@ Message OpenClaw, from its chat or a linked chat app: "List my PostQueen channel
 
 <Tabs>
   <Tab title="MCP">
+    OpenClaw changes its MCP servers only while the gateway is stopped:
+
     ```bash
+    openclaw gateway stop
     openclaw mcp add postqueen --url https://api.postqueen.ai/mcp \
       --transport streamable-http \
       --header "Authorization=Bearer YOUR_API_KEY"
     openclaw mcp probe postqueen
+    openclaw gateway start
     ```
 
-    Set the transport: OpenClaw assumes SSE when it is left out. MCP tools appear in the coding and messaging tool profiles, not in minimal.
+    Set the transport: OpenClaw assumes SSE when it is left out, and the add then fails its connection check. MCP tools appear in the coding and messaging tool profiles, not in minimal.
   </Tab>
   <Tab title="Sign in">
-    Add the server with the sign-in address and `--auth oauth`, then sign in:
+    With the gateway stopped, add the server with the sign-in address and `--auth oauth`, then sign in:
 
     ```bash
+    openclaw gateway stop
     openclaw mcp add postqueen --url https://api.postqueen.ai/mcp-oauth-dynamic \
       --transport streamable-http --auth oauth
     openclaw mcp login postqueen
+    openclaw gateway start
     ```
 
     A workspace admin signs in to PostQueen and approves. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
@@ -137,8 +143,10 @@ Source: [OpenClaw, managing scheduled jobs](https://docs.openclaw.ai/automation/
 | Symptom | Fix |
 |---|---|
 | `postqueen` is not in `openclaw skills list --eligible` | Put the `postqueen` command on the `PATH`. |
-| The gateway does not see your login or key | Run `postqueen auth:login` as the user the gateway runs as. An `export` in your terminal does not reach a background gateway, so a key goes in `openclaw.json`, then restart the gateway. |
-| MCP connects but no tools appear | Add `--transport streamable-http`. Without it OpenClaw assumes SSE. |
+| The gateway does not see your login or key | Run `postqueen auth:login` as the user the gateway runs as. An `export` in your terminal does not reach a background gateway, so a key goes in `openclaw.json`, then run `openclaw gateway restart`. |
+| OpenClaw does not use the skill | Skills load when a session starts. Start a new session. |
+| `openclaw mcp add` refuses to run | Stop the gateway first with `openclaw gateway stop`, then start it again after. |
+| `openclaw mcp add` fails its connection check | Add `--transport streamable-http`. Without it OpenClaw assumes SSE. |
 | The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 | You followed a NanoClaw guide | NanoClaw is a different app with its own setup. See [NanoClaw](/agents/nanoclaw). |
 

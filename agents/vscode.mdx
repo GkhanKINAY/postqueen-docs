@@ -12,7 +12,7 @@ VS Code is Microsoft's code editor, and GitHub Copilot's agent sessions in it us
 ## Before you start
 
 - **Plans:** you need GitHub Copilot. Copilot Free, Pro, Pro+ and Max are not restricted. On Copilot Business and Enterprise, your organization's **MCP servers in Copilot** policy must allow it.
-- **Platforms:** VS Code 1.99 or later on macOS, Windows and Linux.
+- **Platforms:** VS Code 1.140 or later on macOS, Windows and Linux.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
 <ApiKeyLocation />
@@ -30,7 +30,7 @@ VS Code is Microsoft's code editor, and GitHub Copilot's agent sessions in it us
     Enter `postqueen` as the server ID, then choose **Global**, then **Copilot Global**. VS Code writes the server to `~/.copilot/mcp-config.json`.
   </Step>
   <Step title="Start it">
-    VS Code asks you to confirm that you trust the server. Confirm, then open the Copilot chat.
+    VS Code might ask you to confirm that you trust the server. If it does, confirm, then open the Copilot chat.
   </Step>
 </Steps>
 
@@ -84,7 +84,7 @@ In the Copilot chat, ask: "List my PostQueen channels." Copilot calls PostQueen 
 
 <Tabs>
   <Tab title="Input variable (Local sessions)">
-    VS Code recommends input variables for secrets. It prompts you for the key instead of reading it from the file, so the file holds no secret. Input variables work only in **Local** harness sessions:
+    An input variable makes VS Code prompt you for the key instead of reading it from the file, so the file holds no secret. Input variables work only in **Local** harness sessions:
 
     ```json .vscode/mcp.json
     {

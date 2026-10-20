@@ -50,8 +50,7 @@ Ask Hermes: "List my PostQueen channels." It calls PostQueen and answers with th
 ## Good to know
 
 - **PostQueen is not in `hermes mcp catalog`.** The catalog, and the setup card you get by asking in chat, cover only servers Nous has approved. Add PostQueen in `config.yaml` or with `hermes mcp add`.
-- **Hermes can edit the config for you** if you allow it, then run `/reload-mcp`.
-- **Recurring jobs live in `hermes cron`,** not in `config.yaml`. See [Run it on a schedule](#run-it-on-a-schedule).
+- **Scheduled jobs live in `~/.hermes/cron/jobs.json`,** not in `config.yaml`. See [Run it on a schedule](#run-it-on-a-schedule).
 - **Ask for drafts when you want to check first.** A draft waits on your PostQueen calendar, and nothing publishes until you schedule it.
 - **What it cannot do over MCP:** delete a post, or change a post's text or time. Do that on the calendar in the app. [The MCP tools](/mcp/tools) lists what it can do.
 
@@ -74,7 +73,7 @@ Ask Hermes: "List my PostQueen channels." It calls PostQueen and answers with th
     Hermes keeps the key in its own secrets file as `MCP_POSTQUEEN_API_KEY` and sends it as a Bearer token.
   </Tab>
   <Tab title="Sign in">
-    Set `auth: oauth` on the server, with the address `https://api.postqueen.ai/mcp-oauth-dynamic`. Hermes registers itself, opens the PostQueen sign-in in your browser and keeps the token on your machine. A workspace admin approves.
+    Set `auth: oauth` on the server, with the address `https://api.postqueen.ai/mcp-oauth-dynamic`, then run `hermes mcp login postqueen`. Hermes registers itself, opens the PostQueen sign-in in your browser and keeps the token on your machine. A workspace admin approves.
 
     The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
   </Tab>

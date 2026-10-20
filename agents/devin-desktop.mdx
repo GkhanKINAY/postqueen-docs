@@ -51,7 +51,7 @@ Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Add P
 
 ## Check that it works
 
-Ask Devin Local: "List my PostQueen channels." By default it asks before each tool call; allow the tool, or every PostQueen tool, for the session or permanently. It then answers with the channels you connected.
+Ask Devin Local: "List my PostQueen channels." Devin asks before each MCP tool call; allow the tool, or every PostQueen tool, for the session or permanently. It then answers with the channels you connected.
 
 ## Good to know
 
@@ -72,8 +72,8 @@ Ask Devin Local: "List my PostQueen channels." By default it asks before each to
 <Tabs>
   <Tab title="Bearer header">
     ```bash
-    devin mcp add -s user postqueen https://api.postqueen.ai/mcp \
-      -H "Authorization: Bearer YOUR_API_KEY"
+    devin mcp add -s user -H "Authorization: Bearer YOUR_API_KEY" \
+      postqueen https://api.postqueen.ai/mcp
     ```
   </Tab>
   <Tab title="Sign in">
