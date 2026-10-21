@@ -22,7 +22,7 @@ Run them all before you push. CI runs the same ones on every push and pull reque
 | Command | What it checks |
 |---|---|
 | `npm run check` | Navigation, orphans, redirects, snippet imports, card icons, internal links, frontmatter (title, description, and an icon except on endpoint pages), alt text, no em dash, no self-hosting words outside the Self-hosting tab |
-| `npm run check:facts` | Banned facts (old tool counts, removed routes, the old API key location and more), channel and agent status lines against `facts/facts.json`, the MCP tool list against the app, prices, trial and refund numbers and the `docs.json` variables against `facts/facts.json` |
+| `npm run check:facts` | Banned facts (old tool counts, removed routes, the old API key location and more), channel and agent status lines against `facts/facts.json`, the MCP tool list against the app, prices, trial, refund and withdrawal numbers, refund promises the rule does not give, the removed withdrawal waiver, undefined `{{variables}}` and the `docs.json` variables against `facts/facts.json` |
 | `npm run validate` | `mint validate`: the build, failing on warnings |
 | `npm run links` | `mint broken-links` |
 | `npm run a11y` | `mint a11y`: contrast and alt text |
@@ -42,7 +42,7 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
 | `support.mdx`, `faq.mdx`, `troubleshooting/`, `security-and-privacy.mdx` | Help tab (`troubleshooting/self-host` belongs to Self-hosting) |
 | `installation/`, `reverse-proxies/`, `configuration/` | Self-hosting tab |
 | `snippets/` | Reusable blocks, imported into pages |
-| `facts/facts.json` | The facts pages repeat: prices, trial, refund, MCP addresses and tools, channel and agent status. Generated, never edited by hand |
+| `facts/facts.json` | The facts pages repeat: prices, trial, the refund rule and the right of withdrawal, MCP addresses and tools, channel and agent status. Generated, never edited by hand |
 | `_templates/` | Page templates to copy. Listed in `.mintignore`, so Mintlify never publishes them |
 | `style.css`, `fonts/`, `logo/`, `images/og/` | The theme |
 
@@ -74,9 +74,14 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
   not built or published yet: Make, Zapier and clipping. Conditions the product itself enforces
   stay (X after the trial, Hashnode Pro). An agent page says how to connect, never what PostQueen has or has not
   tested: no status line, no "not tested yet".
-- Every number has one owner. Prices, the trial, the refund window and tool counts come from `docs.json` variables
-  (`{{trialDays}}`, `{{refundDays}}`, `{{priceCreator}}`, `{{mcpToolsKey}}`, `{{mcpToolsOauth}}`, `{{mcpKeyUrl}}`,
-  `{{mcpBearerUrl}}`, `{{apiBase}}` ...), or the page links to the page that owns the fact.
+- Every number has one owner. Prices, the trial, the refund window, the withdrawal days and tool counts come from
+  `docs.json` variables (`{{trialDays}}`, `{{refundWindowDays}}`, `{{withdrawalDays}}`, `{{priceCreator}}`,
+  `{{mcpToolsKey}}`, `{{mcpToolsOauth}}`, `{{mcpKeyUrl}}`, `{{mcpBearerUrl}}`, `{{apiBase}}` ...), or the page links
+  to the page that owns the fact.
+- Refunds follow sections 9 and 10 of the Terms of Service (owner, 2026-10-21): at most one month's plan fee per
+  account within the refund window, no yearly charges under that rule, and the right of withdrawal for consumers in
+  the EU, the EEA and the UK. Never write that any charge is refunded in full. The old 30-day promise appears only
+  in the transition line on `cloud/refunds.mdx`, which starts "Charges made before".
 - Channel and agent pages carry no status line. `check:facts` fails a page with a `ChannelStatus` line, a review
   note ("In review", "testers", "until Meta approves" ...) or an agent test status.
 - Examples may use any network. Bluesky, WordPress, DEV and Nostr need no sign-in page, so they are the easiest to
