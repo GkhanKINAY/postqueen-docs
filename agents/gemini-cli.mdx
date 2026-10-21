@@ -7,7 +7,7 @@ icon: "/images/brand/icon-gemini-cli.svg"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Gemini CLI is Google's AI agent for the terminal. Add PostQueen with one command and Gemini CLI can turn release notes into posts, schedule them and report how your published posts did.
+Gemini CLI is Google's AI agent for the terminal. Add PostQueen with one command and Gemini CLI can turn release notes into posts for PostQueen to schedule, and report how your published posts did.
 
 <div className="pq-visual pq-tint-blue">
   <img noZoom src="/images/site/agents/gemini-cli.webp" alt="A sample Gemini CLI terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -15,7 +15,7 @@ Gemini CLI is Google's AI agent for the terminal. Add PostQueen with one command
 
 ## Before you start
 
-- **Plans:** free with a personal Google account, up to 60 requests a minute and 1,000 a day.
+- **Plans:** Since June 18, 2026, free and Google AI Pro/Ultra accounts use Antigravity CLI instead of Gemini CLI. Gemini CLI still works with a paid Gemini API key, a Gemini Enterprise Agent Platform key, or a Gemini Code Assist Standard or Enterprise license.
 - **Platforms:** the terminal on macOS 15+, Windows 11 24H2+ and Ubuntu 20.04+, with Node 20 or later.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
@@ -45,7 +45,6 @@ Ask Gemini CLI: "List my PostQueen channels." It calls PostQueen and answers wit
 
 ## Good to know
 
-- **Use the key address, not the sign-in.** Since v0.60.0, Gemini CLI refuses PostQueen's sign-in, so the sign-in address does not work here.
 - **Without `--scope user`,** the command writes `.gemini/settings.json` in the current project only.
 - **The command writes `"url"` with `"type": "http"`,** which works. `httpUrl` is the older key; a guide that calls `url` wrong is out of date.
 - **Gemini CLI can run the command for you** if you allow it.
@@ -58,7 +57,6 @@ Ask Gemini CLI: "List my PostQueen channels." It calls PostQueen and answers wit
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From Google's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | From Google's docs |
-| Sign in with PostQueen | Not offered | Does not work with Gemini CLI. Use the key |
 
 To keep the key out of the address, send it as a header:
 
@@ -80,10 +78,9 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 
 | Symptom | Fix |
 |---|---|
-| The sign-in address fails | Gemini CLI refuses PostQueen's sign-in. Use the key address. |
 | PostQueen is missing in another folder | The default scope is project. Add it again with `--scope user`. |
 | A guide says your `url` setting is wrong | `url` with `"type": "http"` works. `httpUrl` is the older key. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

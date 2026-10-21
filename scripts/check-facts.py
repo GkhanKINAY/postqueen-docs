@@ -51,7 +51,7 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ("Windsurf (the product is Devin Desktop)", re.compile(r"windsurf", re.I)),
     # **Medium** in bold is the AI image quality label, not the network.
     ("Medium (the network was removed)", re.compile(r"(?<!\*\*)\bMedium\b(?!\*\*)(?![- ](?:priority|size|risk|term))")),
-    ("Settings > API Keys (the key is under Connections > API Keys)", re.compile(r"Settings\s*(?:→|>|->|&gt;|/)\s*API Keys", re.I)),
+    ("Settings > API Keys (the key is under Connections > API key)", re.compile(r"Settings\s*(?:→|>|->|&gt;|/)\s*API Keys", re.I)),
     ("app.postqueen.ai/settings as the key location", re.compile(r"app\.postqueen\.ai/settings(?![?\w/])")),
     ('"no card" (the trial takes a card)', re.compile(r"\bno (?:credit )?card\b", re.I)),
     ('"60-day" (refunds are 30 days)', re.compile(r"\b60-day\b", re.I)),

@@ -15,13 +15,17 @@ Claude Cowork is Anthropic's agent mode for everyday knowledge work, built on th
 
 ## Before you start
 
-- **Plans:** Pro, Max, Team and Enterprise, not Free. On Enterprise, Cowork on the web and mobile needs an admin to turn it on.
-- **Platforms:** Claude Desktop on macOS and Windows; in beta on claude.ai and in the iOS and Android apps.
+- **Plans:** Pro, Max, Team and Enterprise, not Free.
+- **Platforms:** Claude Desktop on macOS and Windows, on every paid plan. On claude.ai and in the iOS and Android apps on Pro, Max, Team (in beta) and Enterprise, where an admin turns it on.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
 <ApiKeyLocation />
 
 ## Connect Claude Cowork
+
+<Note>
+**On Team and Enterprise,** only an Owner can add a custom connector (on Enterprise, also a role that manages the connector library), so ask one to add PostQueen in Claude first. Members then find it under **Customize > Connectors** and click **Connect**. With the key address, everyone who uses that connector acts with the workspace's API key.
+</Note>
 
 <Steps>
   <Step title="Add the PostQueen connector in Claude">
@@ -31,10 +35,10 @@ Claude Cowork is Anthropic's agent mode for everyday knowledge work, built on th
     https://api.postqueen.ai/mcp/YOUR_API_KEY
     ```
 
-    Click **Add**. [The Claude page](/agents/claude) has the full steps, including the Team and Enterprise ones.
+    Click **Add**. If Claude asks in two steps instead, choose **No sign-in**. [The Claude page](/agents/claude) has the full steps, including the Team and Enterprise ones.
   </Step>
   <Step title="Switch it on in Cowork">
-    In a Cowork session, turn PostQueen on from the **+** menu in the chat box, or from **Customize > Connectors**.
+    In a Cowork session, turn PostQueen on from the **+** menu in the chat box, or from **Customize > Connectors**. Where Cowork is now part of Claude itself, there is no Cowork switch: ask in a normal chat with PostQueen on.
   </Step>
   <Step title="Check the tools">
     Ask Cowork to list your connected PostQueen channels.
@@ -43,7 +47,7 @@ Claude Cowork is Anthropic's agent mode for everyday knowledge work, built on th
 
 ## Check that it works
 
-Ask Cowork: "List my PostQueen channels." It answers with the channels you connected in PostQueen. If it does not use PostQueen, open the **+** menu in the chat box and check that the connector is on for this session.
+Ask Cowork: "List my PostQueen channels." It answers with the channels you connected in PostQueen. If it does not use PostQueen, open the **+** menu in the chat box and check that the connector is on for this session or chat.
 
 ## Good to know
 
@@ -58,12 +62,12 @@ Ask Cowork: "List my PostQueen channels." It answers with the channels you conne
 
 | Way | Address | Notes |
 |---|---|---|
-| The key in the address | `{{mcpKeyUrl}}` | From Anthropic's docs. The route above |
+| The key in the address | `{{mcpKeyUrl}}` | The route above |
 | Sign in with PostQueen | `{{mcpOauthUrl}}` | From Anthropic's docs |
 
 The key address has {{mcpToolsKey}} tools. The sign-in address has {{mcpToolsOauth}}, all but `ask_postqueen`.
 
-To sign in instead of using a key, add the connector with `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL, click **Connect** and sign in to PostQueen. Only a workspace admin can approve. [The Claude page](/agents/claude#other-ways-to-connect) has the steps. The sign-in covers Claude and Cowork at once, and you revoke it in PostQueen under **Connections > Approved Apps**.
+To sign in instead of using a key, add the connector with `https://api.postqueen.ai/mcp-oauth-dynamic` as the URL (if Claude asks in two steps, choose **Sign in now**, and under **OAuth client** choose **Register automatically**), click **Connect** and sign in to PostQueen. Only a workspace admin can approve. [The Claude page](/agents/claude#other-ways-to-connect) has the steps. The sign-in covers Claude and Cowork at once, and you revoke it in PostQueen under **Connections > Approved Apps**.
 
 ## Try this first
 
@@ -87,9 +91,9 @@ Source: [Anthropic, schedule recurring tasks in Claude Cowork](https://support.c
 
 | Symptom | Fix |
 |---|---|
-| PostQueen is missing in a Cowork session | Turn it on from the **+** menu in the chat box, or from **Customize > Connectors**. |
+| PostQueen is missing in a Cowork session or chat | Turn it on from the **+** menu in the chat box, or from **Customize > Connectors**. |
 | A key you set on your computer does nothing | Cowork's cloud sessions do not see your computer's environment. Add PostQueen as a connector. |
-| Cowork is missing on the web or mobile | On Enterprise, an admin turns on Cowork for the web and mobile. |
+| Cowork is missing on the web or mobile | Update the Claude app. Where Cowork is now part of Claude itself, there is no Cowork option: ask in a normal chat with PostQueen on. On Enterprise, an admin turns on Cowork for the web and mobile. |
 | The key is refused | Copy the address again from the Claude Cowork card on **Connections**. Only a workspace Admin or Super Admin can reveal the key. |
 | “Only an admin can approve” | Ask a PostQueen workspace admin to sign in and approve. |
 
@@ -101,7 +105,7 @@ Cowork and Claude share one connector; Claude Code has its own setup:
 
 | Product | What it is | How it connects |
 |---|---|---|
-| **Claude Cowork** (this page) | Claude's agent mode for everyday work | The Claude connector, switched on in a Cowork session |
+| **Claude Cowork** (this page) | Claude's agent mode for everyday work | The Claude connector, switched on in a Cowork session or chat |
 | [Claude](/agents/claude) | Anthropic's assistant on the web, desktop and mobile | A custom connector |
 | [Claude Code](/agents/claude-code) | Anthropic's coding agent for the terminal and IDEs | One `claude mcp add` command |
 

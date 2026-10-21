@@ -16,7 +16,7 @@ import McpAddresses from '/snippets/mcp-addresses.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Protocol, is how AI agents use outside tools. Give your agent one address and it can list your channels, schedule posts, add media and read how your posts did. There is nothing to install or run on your side.
+PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Protocol, is how AI agents use outside tools. Give your agent one address and it can list your channels, write posts for PostQueen to schedule, add media and read how your posts did. There is nothing to install or run on your side.
 
 <div className="pq-visual pq-tint-lilac">
   <img noZoom src="/images/site/mcp-chat.webp" alt="Claude, connected to PostQueen, reads last month's Instagram results, generates three images and schedules three posts for next week with four PostQueen tools" />
@@ -55,13 +55,13 @@ Each agent's guide says which address to use and where it goes. The list is on [
 
 <ApiKeyLocation />
 
-Anyone with the key can post to every channel in the workspace, so treat it like a password. If it leaks, an admin chooses **Rotate key** under **Connections > API Keys**. The old key stops working at once, in every agent that used it, so update each one with the new key.
+Anyone with the key can post to every channel in the workspace, so treat it like a password. If it leaks, an admin chooses **Rotate key** under **Connections > API key**. The old key stops working at once, in every agent that used it, so update each one with the new key.
 
 ## Sign in instead of a key
 
 <Steps>
   <Step title="Add the sign-in address">
-    Paste `{{mcpOauthUrl}}` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen.
+    Paste `{{mcpOauthUrl}}` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen. In Claude's two-step dialog, choose **Register automatically** under **OAuth client**.
   </Step>
   <Step title="Sign in and approve">
     The agent opens PostQueen in your browser. Sign in and approve the access. Only a workspace Admin or Super Admin can approve it.
@@ -71,9 +71,9 @@ Anyone with the key can post to every channel in the workspace, so treat it like
   </Step>
 </Steps>
 
-<Warning>
-Grok Bot, Grok, Gemini CLI, Perplexity Computer and NanoClaw cannot sign in. Give them the API key, in the key address or the Bearer header.
-</Warning>
+<Note>
+The Grok Bot, Grok and NanoClaw guides use the API key. Give it to them the way their guides show; NanoClaw keeps it in its OneCLI vault.
+</Note>
 
 ## What the agent can do
 
@@ -84,7 +84,7 @@ The tools come in seven groups. The agent picks the ones it needs from what you 
 | Channels | 4 | List your channels and customers, read each network's rules and settings, look up values a setting needs |
 | Posts | 4 | Create a draft, a scheduled post or a post that goes out now; list posts; read one in full; change the settings of one that has not gone out |
 | Analytics | 3 | Totals for your published posts over 7, 30 or 90 days, your best posts, and the numbers for one post |
-| Uploads | 4 | Bring an image or video in from a link, or open an upload panel in Claude, Claude Cowork and ChatGPT |
+| Uploads | 5 | Bring an image or video in from a link, find what is already in the media library, or open an upload panel in Claude, Claude Cowork and ChatGPT |
 | Images and video | 5 | Create an image for a post, or start a video job and follow it. Creating an image or a video is paid from your workspace's [credits](/cloud/credits) |
 | Clipping | 3 | Soon: turn a long YouTube video into short vertical clips with captions. Not available on PostQueen yet |
 | Agent | 1 | `ask_postqueen`: hand over a request in plain words and let PostQueen's own agent run the other tools. Its answers are paid from your credits by the tokens they use |

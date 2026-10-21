@@ -7,7 +7,7 @@ icon: "laptop"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Add PostQueen as an MCP server and Devin Local can write posts about your work, schedule them and report how your published posts did.
+Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Add PostQueen as an MCP server and Devin Local can write posts about your work for PostQueen to schedule, and report how your published posts did.
 
 ## Before you start
 
@@ -51,7 +51,7 @@ Devin Desktop is Cognition's AI code editor, and Devin Local is its agent. Add P
 
 ## Check that it works
 
-Ask Devin Local: "List my PostQueen channels." By default it asks before each tool call; allow the tool, or every PostQueen tool, for the session or permanently. It then answers with the channels you connected.
+Ask Devin Local: "List my PostQueen channels." Devin asks before each MCP tool call; allow the tool, or every PostQueen tool, for the session or permanently. It then answers with the channels you connected.
 
 ## Good to know
 
@@ -72,8 +72,8 @@ Ask Devin Local: "List my PostQueen channels." By default it asks before each to
 <Tabs>
   <Tab title="Bearer header">
     ```bash
-    devin mcp add -s user postqueen https://api.postqueen.ai/mcp \
-      -H "Authorization: Bearer YOUR_API_KEY"
+    devin mcp add -s user -H "Authorization: Bearer YOUR_API_KEY" \
+      postqueen https://api.postqueen.ai/mcp
     ```
   </Tab>
   <Tab title="Sign in">
@@ -103,7 +103,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 | It works in one project only | It was added without `-s user`. Add it again with `-s user`. |
 | Every PostQueen call asks for approval | That is Devin Local's default. Allow the tool, or every PostQueen tool, for the session or permanently. |
 | PostQueen shows **Needs auth** | Press **Authenticate** to sign in again, or use the key address. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

@@ -7,7 +7,7 @@ icon: "/images/brand/icon-grok.svg"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Grok Build is xAI's coding agent for the terminal: the `grok` CLI. It also runs headless in scripts and inside other apps, and its source is open under Apache 2.0. Add PostQueen with one command and Grok Build can announce a release, draft posts from your repo and report how published posts did, without leaving the terminal.
+Grok Build is xAI's coding agent for the terminal: the `grok` CLI. This is the terminal agent, not Grok Build on grok.com or in the apps. It also runs headless in scripts and inside other apps, and its source is open under Apache 2.0. Add PostQueen with one command and Grok Build can announce a release, draft posts from your repo and report how published posts did, without leaving the terminal.
 
 <div className="pq-visual pq-tint-blue">
   <img noZoom src="/images/site/agents/grok-build.webp" alt="A sample Grok Build terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -15,7 +15,7 @@ Grok Build is xAI's coding agent for the terminal: the `grok` CLI. It also runs 
 
 ## Before you start
 
-- **Plans:** xAI first opened the `grok` CLI to SuperGrok and X Premium+ subscribers. No xAI plan page names the CLI today; free and X Basic accounts get a usage limit. Sign in through the browser, with `grok login --device-auth`, or with an xAI API key.
+- **Plans:** xAI's pricing lists Grok Build on every plan, with limited use on Free. Sign in through the browser, with `grok login --device-auth`, or with an xAI API key.
 - **Platforms:** the terminal on macOS, Linux and Windows. WSL uses the Linux build.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
@@ -114,7 +114,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 |---|---|
 | PostQueen tools do not show up | Run `grok mcp doctor postqueen`, or open `/mcps` and check the server. |
 | Your key ended up in `config.toml` | Add the server again with the header in single quotes, so Grok reads `${POSTQUEEN_API_KEY}` from your environment. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 | PostQueen works in one project only | It was added with `--scope project`. Add it again without the flag for your user config. |
 | You set up Grok or Grok Bot instead | Each product is set up on its own. Open its page below. |
 
@@ -128,7 +128,7 @@ No. xAI has three products with Grok in the name, and each one connects to PostQ
 |---|---|---|
 | **Grok Build** (this page) | xAI's coding agent for the terminal | One `grok mcp add` command |
 | [Grok](/agents/grok) | xAI's assistant at grok.com and in its mobile apps | A custom connector at grok.com/connectors |
-| [Grok Bot](/agents/grok-bot) | An always-on AI teammate with its own cloud computer | Ask in chat, key in the secure prompt |
+| [Grok Bot](/agents/grok-bot) | An always-on AI teammate on a cloud computer | Ask in chat, key in the secure prompt |
 
 A server in Grok Build's `config.toml` does not reach Grok on grok.com or Grok Bot.
 

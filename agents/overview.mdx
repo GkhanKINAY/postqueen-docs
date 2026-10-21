@@ -1,6 +1,6 @@
 ---
 title: "AI agents"
-description: "Let an AI agent list your channels, schedule posts and read how they did. Every agent PostQueen supports and how each one connects."
+description: "Let an AI agent list your channels, write posts for PostQueen to schedule and read how they did. Every agent PostQueen supports and how each one connects."
 icon: "bot"
 mode: "wide"
 keywords:
@@ -68,22 +68,22 @@ Connect channels and edit a post's text or time in the app.
 
 ## Every agent
 
-**How it connects** is what you set up in the agent. **Sign-in or key** says whether the agent can sign in to PostQueen or takes your API key.
+**How it connects** is what you set up in the agent. **Sign-in or key** says whether the agent can sign in to PostQueen or takes your API key. **Key** means its guide uses the key.
 
 ### Assistants and bots
 
 | Agent | Made by | How it connects | Sign-in or key | Guide |
 |---|---|---|---|---|
-| Grok Bot <Badge color="purple">NEW</Badge> | xAI (runs on Cursor's cloud) | Custom MCP server, added by chat | Key only | [Guide](/agents/grok-bot) |
-| Muse <Badge color="purple">NEW</Badge> | Meta | Custom connector, built in chat | Key only | [Guide](/agents/muse) |
+| Grok Bot <Badge color="purple">NEW</Badge> | xAI (runs on Cursor's cloud) | Custom MCP server, added by chat | Key | [Guide](/agents/grok-bot) |
+| Muse <Badge color="purple">NEW</Badge> | Meta | Custom connector, built in chat | Key | [Guide](/agents/muse) |
 | OpenClaw | OpenClaw | Skill and CLI | Key or sign-in | [Guide](/agents/openclaw) |
 | Hermes Agent | Nous Research | Config file | Key or sign-in | [Guide](/agents/hermes) |
 | Claude | Anthropic | Custom connector | Sign-in or key | [Guide](/agents/claude) |
 | Claude Cowork | Anthropic | Custom connector, the same one as Claude | Sign-in or key | [Guide](/agents/claude-cowork) |
-| ChatGPT | OpenAI | Developer mode app | Sign-in or key | [Guide](/agents/chatgpt) |
-| Grok | xAI | Custom connector | Key only | [Guide](/agents/grok) |
-| Perplexity Computer | Perplexity | Custom remote connector | Key only | [Guide](/agents/perplexity-computer) |
-| NanoClaw | NanoCo | MCP server added with `ncl`, key kept in the OneCLI vault | Key only | [Guide](/agents/nanoclaw) |
+| ChatGPT | OpenAI | Custom MCP server, created as a plugin | Sign-in or key | [Guide](/agents/chatgpt) |
+| Grok | xAI | Custom connector | Key | [Guide](/agents/grok) |
+| Perplexity Computer | Perplexity | Custom remote connector | Key | [Guide](/agents/perplexity-computer) |
+| NanoClaw | NanoCo | MCP server added with `ncl`, key kept in the OneCLI vault | Key | [Guide](/agents/nanoclaw) |
 
 ### Coding agents
 
@@ -92,15 +92,15 @@ Connect channels and edit a post's text or time in the app.
 | Claude Code | Anthropic | `claude mcp add` command | Key or sign-in | [Guide](/agents/claude-code) |
 | Codex | OpenAI | `codex mcp add` command | Key or sign-in | [Guide](/agents/codex) |
 | Cursor | Anysphere | Config file | Key or sign-in | [Guide](/agents/cursor) |
-| Gemini CLI | Google | `gemini mcp add` command | Key only | [Guide](/agents/gemini-cli) |
+| Gemini CLI | Google | `gemini mcp add` command | Key | [Guide](/agents/gemini-cli) |
 | Grok Build | xAI | `grok mcp add` command | Key or sign-in | [Guide](/agents/grok-build) |
-| Paperclip | Paperclip AI | Remote MCP connection in Apps | Key or sign-in | [Guide](/agents/paperclip) |
+| Paperclip | Paperclip AI | Remote MCP connection in Connectors | Key or sign-in | [Guide](/agents/paperclip) |
 
 ### Editors and more
 
 | Agent | Made by | How it connects | Sign-in or key | Guide |
 |---|---|---|---|---|
-| VS Code | Microsoft (GitHub Copilot agent mode) | Config file | Key or sign-in | [Guide](/agents/vscode) |
+| VS Code | Microsoft (GitHub Copilot) | Config file | Key or sign-in | [Guide](/agents/vscode) |
 | Devin Desktop | Cognition | Config file | Key or sign-in | [Guide](/agents/devin-desktop) |
 | Zed | Zed Industries | Config file | Key or sign-in | [Guide](/agents/zed) |
 | Muse Code | Meta | Config file | Key or sign-in | [Guide](/agents/muse-code) |
@@ -121,7 +121,7 @@ Using an agent that is not listed? If it can reach a remote MCP server, give it 
     You see each post before it goes out, and you can edit or delete it until its time.
   </Card>
   <Card title="Access you can take back" icon="key-round">
-    An admin rotates the API key under **Connections > API Keys**, which stops every agent that used it, or revokes one sign-in under **Connections > Approved Apps**.
+    An admin rotates the API key under **Connections > API key**, which stops every agent that used it. The person who approved a sign-in revokes it under **Connections > Approved Apps**.
   </Card>
   <Card title="No social passwords" icon="shield-check">
     The agent never sees the passwords of your social accounts. It works through PostQueen, which posts with each network's own API.

@@ -7,7 +7,7 @@ icon: "/images/brand/icon-codex.svg"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Codex is OpenAI's coding agent, available as a CLI, an IDE extension, in the ChatGPT desktop app and in the cloud. Add PostQueen once and Codex can write posts from your commits, schedule them and report how your published posts did.
+Codex is OpenAI's coding agent, available as a CLI, an IDE extension, in the ChatGPT desktop app and in the cloud. Add PostQueen once and Codex can write posts from your commits for PostQueen to schedule, and report how your published posts did.
 
 <div className="pq-visual pq-tint-blue">
   <img noZoom src="/images/site/agents/codex.webp" alt="A sample Codex terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -43,7 +43,7 @@ Codex is OpenAI's coding agent, available as a CLI, an IDE extension, in the Cha
 </Steps>
 
 <Tip>
-**Prefer a form?** In the IDE extension, open the gear menu, then **MCP servers > Add server > Streamable HTTP**, paste the address, save and choose **Restart extension**. In the ChatGPT desktop app, open **Settings > MCP servers > Add server**, then restart.
+**Prefer a form?** In the IDE extension, open the gear menu, then **MCP servers > Add server > Streamable HTTP**, paste the address, save and choose **Restart extension**. In the ChatGPT desktop app, open **Settings > MCP servers > Add server**, enter a name, choose **Streamable HTTP**, paste the URL, save it, then select **Restart**.
 </Tip>
 
 ## Check that it works
@@ -85,7 +85,7 @@ Ask Codex: "List my PostQueen channels." It calls PostQueen and answers with the
       --url https://api.postqueen.ai/mcp-oauth-dynamic
     ```
 
-    Codex detects the sign-in and opens the PostQueen sign-in page, which a workspace admin approves. `codex mcp login postqueen` runs it again. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+    Codex detects the sign-in and opens the PostQueen sign-in page, which a workspace admin approves. If the browser does not open, run `codex mcp login postqueen`. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
   </Tab>
 </Tabs>
 
@@ -99,13 +99,20 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 
 ## Run it on a schedule
 
-`codex exec` runs Codex without a chat, from cron or a CI job. It reads the same `config.toml`, so the PostQueen tools come along:
+`codex exec` runs Codex without a chat, from cron or a CI job. It reads the same `config.toml`, so the PostQueen tools come along. It cancels any MCP tool call that needs approval, so first let the scheduling tool run without asking, in `~/.codex/config.toml`:
+
+```toml ~/.codex/config.toml
+[mcp_servers.postqueen.tools.integrationSchedulePostTool]
+approval_mode = "approve"
+```
+
+`approval_mode` takes `auto`, `prompt`, `writes` or `approve`. To set it for every PostQueen tool at once, put `default_tools_approval_mode` under `[mcp_servers.postqueen]` instead. With the default approval mode, the image and video tools also need approval, so if the job generates media, set `default_tools_approval_mode = "approve"` or approve those tools too. Then run:
 
 ```bash
 codex exec "Turn the last ten commits into three PostQueen drafts for Bluesky"
 ```
 
-Source: [OpenAI, non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode).
+Source: [OpenAI, MCP in Codex](https://learn.chatgpt.com/docs/extend/mcp) and [non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode).
 
 ## Troubleshooting
 
@@ -113,8 +120,9 @@ Source: [OpenAI, non-interactive mode](https://learn.chatgpt.com/docs/non-intera
 |---|---|
 | Every PostQueen CLI call asks for approval | The default sandbox has network access off. Use the MCP server instead of the CLI. |
 | The IDE extension does not see PostQueen | Choose **Restart extension** after you add the server. |
+| A `codex exec` run cancels the PostQueen call | `codex exec` cancels tool calls that need approval. Set `approval_mode = "approve"` for the tool, as in [Run it on a schedule](#run-it-on-a-schedule). |
 | ChatGPT on the web does not see it | It does not read Codex's config. Add PostQueen to ChatGPT on its own. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 
@@ -125,7 +133,7 @@ No. Codex lives in the ChatGPT desktop app, but ChatGPT on the web has its own s
 | Product | What it is | How it connects |
 |---|---|---|
 | **Codex** (this page) | OpenAI's coding agent: CLI, IDE extension and the ChatGPT desktop app | One `codex mcp add` command |
-| [ChatGPT](/agents/chatgpt) | OpenAI's assistant on the web | A developer mode app at chatgpt.com/plugins |
+| [ChatGPT](/agents/chatgpt) | OpenAI's assistant on the web | A custom MCP server, created as a plugin at chatgpt.com/plugins |
 
 The **MCP servers** setting in the ChatGPT desktop app belongs to Codex, not to the web chat.
 

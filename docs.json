@@ -555,7 +555,7 @@
           },
           {
             "label": "AI agents CLI",
-            "href": "https://postqueen.ai/agent"
+            "href": "https://postqueen.ai/cli"
           }
         ]
       },
@@ -661,7 +661,7 @@
     "instructions": [
       "PostQueen's hosted API is https://api.postqueen.ai. The public API base is https://api.postqueen.ai/public/v1 and takes the raw API key in the Authorization header, with no Bearer prefix.",
       "The MCP server for posting is https://api.postqueen.ai/mcp/YOUR_API_KEY (or /mcp with Authorization: Bearer YOUR_API_KEY). docs.postqueen.ai/mcp only searches these docs and cannot post.",
-      "The API key is under Connections > API Keys in the app, and only workspace admins can see it."
+      "The API key is under Connections > API key in the app, and only workspace admins can see it."
     ]
   },
   "variables": {

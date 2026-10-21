@@ -7,7 +7,7 @@ icon: "/images/brand/icon-cursor.svg"
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-Cursor is an AI code editor with a built-in agent. Add PostQueen to its MCP settings and the agent can write posts about what you shipped, schedule them and report how your published posts did, without leaving the editor.
+Cursor is an AI code editor with a built-in agent. Add PostQueen to its MCP settings and the agent can write posts about what you shipped for PostQueen to schedule, and report how your published posts did, without leaving the editor.
 
 <div className="pq-visual pq-tint-blue">
   <img noZoom src="/images/site/agents/cursor.webp" alt="A sample Cursor terminal session with PostQueen connected: a request for posts, the PostQueen tools it used, and the reply" />
@@ -15,7 +15,7 @@ Cursor is an AI code editor with a built-in agent. Add PostQueen to its MCP sett
 
 ## Before you start
 
-- **Plans:** Cursor lists MCP on its paid Individual plan. For the free Hobby plan, check [cursor.com/pricing](https://cursor.com/pricing).
+- **Plans:** check what your Cursor plan includes on [cursor.com/pricing](https://cursor.com/pricing).
 - **Platforms:** macOS, Windows and Linux.
 - **A PostQueen API key.** A workspace admin copies it, or the ready-made address, from **Connections**.
 
@@ -40,8 +40,8 @@ Cursor is an AI code editor with a built-in agent. Add PostQueen to its MCP sett
     }
     ```
   </Step>
-  <Step title="Check it in Cursor">
-    Open **Customize > MCPs** and check that PostQueen is listed and on.
+  <Step title="Restart and check">
+    Save the file and restart Cursor, then check **Customize > MCPs**: PostQueen is listed and on.
   </Step>
 </Steps>
 
@@ -102,10 +102,10 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 
 | Symptom | Fix |
 |---|---|
-| The agent does not list PostQueen | Check that the `postqueen` entry is in `~/.cursor/mcp.json` or `.cursor/mcp.json`, and look under **Customize > MCPs**. |
+| The agent does not list PostQueen | Check that the `postqueen` entry is in `~/.cursor/mcp.json` or `.cursor/mcp.json`, restart Cursor, and look under **Customize > MCPs**. |
 | It works in one project only | `.cursor/mcp.json` covers one project. Use `~/.cursor/mcp.json` for all of them. |
 | The Cursor CLI does not sign in | Run `agent mcp login postqueen`. |
-| The key is refused | Copy it again from **Connections > API Keys**. Only a workspace Admin or Super Admin can reveal it. |
+| The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

@@ -6,7 +6,7 @@ icon: "key-round"
 
 If you are automating your own workspace, use its [API key](/public-api/introduction#authentication). If you are building a product that other PostQueen users connect to, use OAuth: they approve your app on a PostQueen consent screen, and you get a `pos_` token that acts on their workspace. Nobody hands you their API key.
 
-A `pos_` token works on every [public API](/public-api/introduction) endpoint, sent the same way as a key: `Authorization: pos_...`, with no prefix. It also works on the MCP server at `https://api.postqueen.ai/mcp`, sent there as `Authorization: Bearer pos_...`. It does not work in the `/mcp/YOUR_API_KEY` address, which only takes API keys.
+A `pos_` token works on every [public API](/public-api/introduction) endpoint, sent the same way as a key: `Authorization: pos_...`, with no prefix. It also works on the MCP server. Send a `pos_` token as `Authorization: Bearer pos_...` on `https://api.postqueen.ai/mcp`. Do not put it in the URL, where it can end up in logs.
 
 ## How it works
 
@@ -30,7 +30,7 @@ sequenceDiagram
 
 <Steps>
   <Step title="Create the app">
-    In PostQueen, open **Connections > Developers** and choose **Create OAuth App**. Fill in:
+    In PostQueen, open **Connections > OAuth apps** and choose **Create OAuth App**. Fill in:
 
     | Field | What it is for |
     |---|---|
@@ -140,9 +140,9 @@ curl -X POST "https://api.postqueen.ai/oauth/register" \
   }'
 ```
 
-A registered client gets a `pcd_` Client ID and differs from an app made under **Developers**:
+A registered client gets a `pcd_` Client ID and differs from an app made under **OAuth apps**:
 
-| | App under Developers | Registered client |
+| | App under OAuth apps | Registered client |
 |---|---|---|
 | Callback | Its stored **Redirect URL** | One of its `redirect_uris`, sent on both the consent URL and the token request |
 | Secret | Always | None when registered with `token_endpoint_auth_method: none` |

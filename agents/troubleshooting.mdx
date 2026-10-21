@@ -19,13 +19,13 @@ Find the symptom or the message you see. Most failures come from the key, from a
 
 <AccordionGroup>
   <Accordion title="The connection fails with Invalid API Key" icon="key-round">
-    The key address answers `400` with `Invalid API Key` when it does not know the key. Copy the key again from **Connections > API Keys** and paste the whole address, `{{mcpKeyUrl}}`, with no space or quote around the key. Only a workspace Admin or Super Admin can reveal the key; other members see it masked.
+    The key address answers `400` with `Invalid API Key or no active subscription`. Either the key is wrong, or the workspace has no trial or plan: start or renew it in **Billing**. For the key, copy it again from **Connections > API key** and paste the whole address, `{{mcpKeyUrl}}`, with no space or quote around the key. Only a workspace Admin or Super Admin can reveal the key; other members see it masked.
   </Accordion>
   <Accordion title="The connection fails with 401" icon="shield-x">
-    With the Bearer header on `{{mcpBearerUrl}}`, `Missing Authorization header` means the agent sent no header, and `Invalid API Key or OAuth token` means the key in it is wrong. The header must read `Authorization: Bearer YOUR_API_KEY`.
+    With the Bearer header on `{{mcpBearerUrl}}`, `Missing Authorization header` means the agent sent no header. `Invalid API Key or OAuth token, or no active subscription` means the key or token in it is wrong, or the workspace has no trial or plan (see **Billing**). The header must read `Authorization: Bearer YOUR_API_KEY`.
   </Accordion>
   <Accordion title="It worked before, and stopped" icon="rotate-ccw">
-    An admin may have rotated the key under **Connections > API Keys**, which stops the old key everywhere at once, or revoked a sign-in under **Connections > Approved Apps**. Put the new key in every agent that used the old one, or sign in again.
+    An admin may have rotated the key under **Connections > API key**, which stops the old key everywhere at once. Or the person who approved a sign-in revoked it under **Connections > Approved Apps**, or the workspace's trial or plan ended. Put the new key in every agent that used the old one, or sign in again.
   </Accordion>
   <Accordion title="Connected, but no PostQueen tools" icon="wrench">
     Many agents load their tools when a session starts. Start a new session, or reload the servers: `/mcp` in Claude Code, `/reload-mcp` in Hermes Agent, a restart in most editors. Then ask the agent to list your PostQueen channels.
@@ -35,10 +35,10 @@ Find the symptom or the message you see. Most failures come from the key, from a
   </Accordion>
   <Accordion title="The sign-in fails" icon="lock-keyhole">
     - Only a workspace Admin or Super Admin can approve the sign-in. Ask one to connect the agent.
-    - Paste `{{mcpOauthUrl}}` with no slash at the end, and leave any client ID and secret fields empty.
-    - Grok Bot, Grok, Gemini CLI, Perplexity Computer and NanoClaw cannot sign in. Give them the API key, in the key address or the Bearer header.
+    - Paste `{{mcpOauthUrl}}` with no slash at the end, and leave any client ID and secret fields empty. In Claude's two-step dialog, choose **Register automatically** under **OAuth client**.
+    - The Grok Bot, Grok and NanoClaw guides use the API key. Give it to them the way their guides show; NanoClaw keeps it in its OneCLI vault.
 
-    PostQueen has not completed this sign-in end to end yet. If it fails, use the key address.
+    If it still fails, use the key address.
   </Accordion>
   <Accordion title="The agent answers from the docs but cannot post" icon="book-open">
     It is connected to `docs.postqueen.ai/mcp`, which searches these docs only. Connect it to an address from [MCP server](/mcp/introduction) instead.
@@ -97,7 +97,7 @@ When the API refuses a command, the CLI prints one line to stderr and exits with
 |---|---|
 | `❌ Error: No authentication found.` | The CLI is not signed in, and `POSTQUEEN_API_KEY` is not set where the command runs. Run `postqueen auth:login`, or set the key there. A scheduled job or an agent on another machine needs the key in its own environment |
 | `❌ Not authenticated.` | The same, reported by `auth:status` |
-| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong or was rotated. Copy it again from **Connections > API Keys** |
+| `API Error (401): {"msg":"Invalid API key"}` | The key is wrong or was rotated. Copy it again from **Connections > API key** |
 | `❌ Credentials are expired or invalid. Please re-authenticate.` | `auth:status` checked the key and the API refused it. Same fix |
 | `API Error (401): {"msg":"No subscription found"}` | The workspace has no active trial or plan. Start or renew it in **Billing** |
 | `API Error (401): {"msg":"Invalid OAuth token"}` | A saved `auth:login` token, or a `pos_` token in `POSTQUEEN_API_KEY`, no longer works: it was revoked, or the person who approved it left the workspace. Run `postqueen auth:login` again |
