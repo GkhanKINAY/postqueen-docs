@@ -18,6 +18,8 @@
    a page equal facts.json, and no page promises a refund the rule does not
    give (Terms section 9, owner 2026-10-21): a full refund of any charge, yearly
    charges treated like monthly ones, or a refund that leaves the plan running.
+   Accounts created before the current Terms keep their earlier promise (a full
+   refund within 30 days), so a sentence with "Accounts created before" may say it.
 
 Checks 3 to 6 run on every page without an OVERHAUL-TODO marker (check 3 also
 on the snippets and on SKILL.md); pages still marked, and openapi.json while it carries
@@ -61,7 +63,8 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ('"60-day" (no 60-day refund or withdrawal exists)', re.compile(r"\b60-day\b", re.I)),
     ("the withdrawal waiver (checkout no longer asks anyone to give up the right of withdrawal, owner 2026-10-21)",
      re.compile(r"\blose my 14-day right\b|\bright to withdraw once I use\b|\bconsent box\b", re.I)),
-    ("a year of credits at once (every plan adds its credits once a month, yearly plans too)",
+    ("a year of credits at once (plans bought from the current Terms add credits once a month; a yearly plan bought "
+     "before gets \"the whole year's credits\" at the start of each yearly period)",
      re.compile(r"\b(?:twelve|12) months of credits\b|\b(?:a |the |full )year of credits\b", re.I)),
     ('"ten connectors" (nine networks report analytics)', re.compile(r"\bten connectors\b", re.I)),
     ("api.postqueen.ai/docs (the internal Swagger list, never linked)", re.compile(r"api\.postqueen\.ai/docs\b")),
@@ -81,7 +84,8 @@ REVIEW_NOTE_RE = re.compile(
     r"(?<!week )\bin review\b|\btesters?\b|\buntil (?:Meta|TikTok|Google)\b|\bSelf only until\b|\bopens soon\b"
     r"|\bcannot (?:be )?connect(?:ed)? (?:on PostQueen )?yet\b|\bapproves PostQueen'?s app\b", re.I)
 STATUS_TAG_RE = re.compile(r'^tag: "(?:Soon|In review)"', re.M)
-TRANSITION_RE = re.compile(r"\bcharges? made before\b", re.I)
+# Accounts created before the current Terms keep their earlier refund promise (owner, 2026-10-21).
+LEGACY_ACCOUNTS_RE = re.compile(r"\baccounts? created before\b", re.I)
 
 
 def norm(s: str) -> str:
@@ -198,24 +202,32 @@ def check_numbers(rel: str, text: str, facts: dict, pending: bool) -> None:
         days = int(m.group(1))
         if days in (window, withdrawal):
             continue
-        # The transition line keeps the old 30-day promise for charges made before the new Terms.
-        end = body.find("\n", m.end())
-        line = body[body.rfind("\n", 0, m.start()) + 1:end if end != -1 else len(body)]
-        if days == refund["transitionDays"] and TRANSITION_RE.search(line):
+        if days == refund["legacyAccountsRefundDays"] and LEGACY_ACCOUNTS_RE.search(sentence(body, m)):
             continue
-        report(pending, f"{rel}: a refund within {days} days, facts.json says {window} (the refund rule) or {withdrawal} (withdrawal)")
+        report(pending, f"{rel}: a refund within {days} days, facts.json says {window} (the refund rule) or {withdrawal} (withdrawal); "
+                        f"{refund['legacyAccountsRefundDays']} only in a sentence about accounts created before the current Terms")
     for m in re.finditer(r"\bwithdraw\w*[^.\n]{0,60}?\b(\d+) days\b|\b(\d+)-day right (?:of|to) withdraw", body, re.I):
         days = int(m.group(1) or m.group(2))
         if days != withdrawal:
             report(pending, f"{rel}: withdrawal within {days} days, facts.json says {withdrawal}")
     for label, pattern in refund_claims(refund):
         for m in pattern.finditer(body):
+            if LEGACY_ACCOUNTS_RE.search(sentence(body, m)):
+                continue
             line = body.count("\n", 0, m.start()) + 1
             report(pending, f"{rel}:{line}: {label}: {m.group(0)!r}")
 
 
+def sentence(body: str, m: re.Match) -> str:
+    """The sentence a match sits in: from the last full stop or line break before it to the next one after it."""
+    start = max(body.rfind(". ", 0, m.start()), body.rfind("\n", 0, m.start())) + 1
+    ends = [i for i in (body.find(".", m.end()), body.find("\n", m.end())) if i != -1]
+    return body[start:min(ends) if ends else len(body)]
+
+
 def refund_claims(refund: dict) -> list[tuple[str, re.Pattern]]:
-    """Wording that promises more than the refund rule in facts.json gives."""
+    """Wording that promises more than the refund rule in facts.json gives. A sentence about
+    accounts created before the current Terms may still state their earlier promise."""
     claims = []
     if refund["oneMonthMax"]:
         claims.append((

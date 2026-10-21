@@ -78,10 +78,13 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
   `docs.json` variables (`{{trialDays}}`, `{{refundWindowDays}}`, `{{withdrawalDays}}`, `{{priceCreator}}`,
   `{{mcpToolsKey}}`, `{{mcpToolsOauth}}`, `{{mcpKeyUrl}}`, `{{mcpBearerUrl}}`, `{{apiBase}}` ...), or the page links
   to the page that owns the fact.
-- Refunds follow sections 9 and 10 of the Terms of Service (owner, 2026-10-21): at most one month's plan fee per
-  account within the refund window, no yearly charges under that rule, and the right of withdrawal for consumers in
-  the EU, the EEA and the UK. Never write that any charge is refunded in full. The old 30-day promise appears only
-  in the transition line on `cloud/refunds.mdx`, which starts "Charges made before".
+- The current Terms of Service apply to accounts created from their publish day; older accounts stay on the earlier
+  Terms (owner, 2026-10-21). For new accounts, a refund is at most one month's plan fee per account within the refund
+  window, with no yearly charges under that rule. Older accounts keep the earlier promise, and only a sentence that
+  says "Accounts created before" may state it: any charge is refunded in full if you ask within 30 days of it. The
+  right of withdrawal for consumers in the EU, the EEA and the UK applies to every account. Credits follow the same
+  split: a yearly plan bought from the publish day adds its credits once a month, and one bought before keeps getting
+  the whole year's credits at the start of each yearly period.
 - Channel and agent pages carry no status line. `check:facts` fails a page with a `ChannelStatus` line, a review
   note ("In review", "testers", "until Meta approves" ...) or an agent test status.
 - Examples may use any network. Bluesky, WordPress, DEV and Nostr need no sign-in page, so they are the easiest to
