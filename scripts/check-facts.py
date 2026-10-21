@@ -46,7 +46,7 @@ SPELLED = "ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eightee
 BANNED: list[tuple[str, re.Pattern]] = [
     ("the /mcp-oauth-claude or /mcp-oauth-chatgpt route (never published)", re.compile(r"mcp-oauth-(?:claude|chatgpt)\b")),
     ("schedulePostTool (the tool is integrationSchedulePostTool)", re.compile(r"(?<![A-Za-z])schedulePostTool")),
-    ("a tool count other than 22 or 21", re.compile(r"\b(?:1\d|20|2[3-9]|[3-9]\d|\d{3,})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
+    ("a tool count other than 23 or 22", re.compile(r"\b(?:1\d|2[01]|2[4-9]|[3-9]\d|\d{3,})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
     ("a spelled-out tool count", re.compile(rf"\b(?:{SPELLED})(?:\s+|-)(?:(?:MCP|hosted|PostQueen)\s+)*tools?\b", re.I)),
     ("Windsurf (the product is Devin Desktop)", re.compile(r"windsurf", re.I)),
     # **Medium** in bold is the AI image quality label, not the network.

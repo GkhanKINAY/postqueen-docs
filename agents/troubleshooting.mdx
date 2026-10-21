@@ -65,7 +65,7 @@ Find the symptom or the message you see. Most failures come from the key, from a
 
 <AccordionGroup>
   <Accordion title="No upload panel appears" icon="cloud-upload">
-    The **Upload Media** panel shows only in apps that can display MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere, upload the file on PostQueen's **Media** page, in the workspace the agent is connected to, and tell the agent its name: it finds the file with `mediaListTool`. An agent that runs commands on your computer can upload it with [`postqueen upload`](/cli/media-upload) instead, and a file on a public link goes in with `uploadFromUrlTool`.
+    The **Upload Media** panel shows only in apps that can display MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere, upload the file on PostQueen's **Media** page, in the workspace the agent is connected to, and tell the agent its name: it finds the file with `mediaListTool`. An agent that runs commands on your computer can upload it itself with `uploadLinkTool`, or with [`postqueen upload`](/cli/media-upload), and a file on a public link goes in with `uploadFromUrlTool`.
   </Accordion>
   <Accordion title="The agent says it deleted or moved a post" icon="trash">
     No MCP tool can delete a post, change its text or time, or move it between draft and scheduled. Check the calendar, and do it there, or with the [CLI](/cli/managing-posts) or the [API](/public-api/introduction).
