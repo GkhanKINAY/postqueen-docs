@@ -10,7 +10,7 @@ On 2026-10-19 the logo changed to the crown speech bubble. In the six full-windo
 - **The workspace was a fictional café, "Harbor Street Café", with a demo user.** Its eight channels were fake Integration rows with placeholder tokens, so nothing could reach a network. The analytics numbers were written to the cache by hand, and the images were generated posters.
 - **Capture settings:** light theme, a 1440×900 viewport at 2× scale, and the UTC time zone.
 - **Output:** each shot was saved as WebP at quality 90, 1600 px wide, or cropped to its dialog. Each file is under 400 KB (most are under 100 KB).
-- **The API key is blurred** in `connections.webp`.
+- **`connections.webp` was retaken on 2026-10-21 from app v3.6.145**, the same way: a worktree of main, a scratch database dropped afterwards, the demo user in "Harbor Street Café" with no channels, light theme, 1440×900 at 2×, UTC. It shows the Connections page the 2026-09-25 rebuild introduced, cropped to its window. The API key is not in the picture, so nothing is blurred.
 
 ## Rules for a new or retaken shot
 
