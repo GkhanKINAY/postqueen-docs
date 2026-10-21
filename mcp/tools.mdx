@@ -39,7 +39,7 @@ How to connect: [MCP server](/mcp/introduction).
     `integrationSchema` returns the rules, the character limit and the settings a post needs. If a setting needs a value only the network knows, such as a WordPress post type, `triggerTool` looks it up.
   </Step>
   <Step title="Bring in media, if the post has any">
-    A file already in your media library is found with `mediaListTool`. `uploadFromUrlTool`, the upload panel (`uploadWidgetTool`) or `generateImageTool` puts a new file there and returns its `path`. A video made with `generateVideoTool` takes minutes: `videoStatusTool` returns its `url` when it is done.
+    A file already in your media library is found with `mediaListTool`. `uploadFromUrlTool`, the upload panel (`uploadWidgetTool`), the upload link (`uploadLinkTool`) or `generateImageTool` puts a new file there and returns its `path`. A video made with `generateVideoTool` takes minutes: `videoStatusTool` returns its `url` when it is done.
   </Step>
   <Step title="Create the post">
     `integrationSchedulePostTool` saves a draft, schedules the post or publishes it now, and returns the new post's ID.
@@ -229,7 +229,7 @@ Lists what is already in your media library, newest first, 18 to a page. The age
 
 ### `uploadWidgetTool`
 
-Opens an **Upload Media** panel in the chat, where you add photos or videos from your device. It works in apps that can show MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere no panel appears. An agent that runs commands on your computer uploads the file itself with the CLI or the API. Any other agent gives you the link to PostQueen's **Media** page: upload the files there, and the agent finds them by name with `mediaListTool`. `uploadFromUrlTool` is only for public links. Takes no input.
+Opens an **Upload Media** panel in the chat, where you add photos or videos from your device. It works in apps that can show MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere no panel appears. An agent that runs commands on your computer uploads the file itself with `uploadLinkTool`, or with the CLI. Any other agent gives you the link to PostQueen's **Media** page: upload the files there, and the agent finds them by name with `mediaListTool`. `uploadFromUrlTool` is only for public links. Takes no input.
 
 **Returns** a `sessionId` and `mediaPageUrl`, the link to the **Media** page. What you upload through the panel is reported in the chat, and `uploadWidgetStatusTool` lists it.
 
@@ -252,6 +252,12 @@ Lists what you uploaded through the panel in that session, not the whole media l
 | `sessionId` | string | Yes | The `sessionId` from `uploadWidgetTool` |
 
 **Returns** `media`, each with `id`, `path` and `status`. An empty list means nothing was uploaded yet. A file that is `processing` is still being prepared: the agent waits about 10 seconds and asks again. A `ready` file can go into a post.
+
+### `uploadLinkTool`
+
+Gives an agent that runs commands on your computer, such as Codex or Claude Code, a short-lived link to upload your files with `curl`. It needs no panel and no CLI sign-in. Takes no input.
+
+**Returns** `uploadUrl` and `sessionId`. The agent sends each file with `curl -F "file=@picture.png" "<uploadUrl>"`, and the answer is the stored file with its `id`, `path` and `status`. One link takes any number of files for about 10 minutes. A video that answers `processing` is followed with `uploadWidgetStatusTool` until it is `ready`. Anyone holding the link can upload to your workspace until it expires, so the agent never puts it in a post.
 
 ## Images and video
 

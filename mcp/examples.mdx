@@ -192,7 +192,7 @@ A post takes media from your PostQueen media library, never a link to another si
     I want to add a photo from my laptop to this post.
     ```
 
-    In Claude, Claude Cowork and ChatGPT the agent calls `uploadWidgetTool`, and an **Upload Media** panel opens in the chat. Add the file there. The agent then calls `uploadWidgetStatusTool` and uses the `path` once the file is `ready`. Other apps show no panel. An agent that runs commands on your computer, such as Codex or Claude Code, uploads the file with the CLI. Any other agent gives you the link to PostQueen's **Media** page: upload the file there and tell the agent its name, and it finds the file with `mediaListTool`.
+    In Claude, Claude Cowork and ChatGPT the agent calls `uploadWidgetTool`, and an **Upload Media** panel opens in the chat. Add the file there. The agent then calls `uploadWidgetStatusTool` and uses the `path` once the file is `ready`. Other apps show no panel. An agent that runs commands on your computer, such as Codex or Claude Code, uploads the file itself with `uploadLinkTool`, with no sign-in. Any other agent gives you the link to PostQueen's **Media** page: upload the file there and tell the agent its name, and it finds the file with `mediaListTool`.
   </Tab>
   <Tab title="Generate one">
     ```text Prompt wrap
