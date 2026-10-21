@@ -29,7 +29,15 @@ Each channel keeps a short list of times of day, its time slots. When PostQueen 
   </Step>
 </Steps>
 
-The times are in your time zone. A teammate in another time zone sees the same moments in their own time.
+You pick each time in your time zone, and PostQueen saves it in UTC. A teammate in another time zone sees the same moments in their own time.
+
+## Clock changes
+
+Each slot keeps the UTC offset your time zone had when you added it. After a daylight saving time change, the slot shows one hour earlier or later, and PostQueen uses that time for new posts. For example, a 09:00 slot added in summer shows as 08:00 once the clocks go back.
+
+Posts you already scheduled keep their time.
+
+To set a slot again, open **Channels** in the left rail, pick the channel and choose **Edit** on the **Edit Time Slots** row. Remove the slot with the trash icon, add the time you want under **Add Time Slot**, then choose **Save changes**. **Save changes** on its own does not move a slot. Do this on each channel.
 
 ## What a new channel starts with
 
