@@ -115,7 +115,7 @@ Source: [NanoClaw, scheduled tasks](https://docs.nanoclaw.dev/guides/scheduled-t
 | PostQueen tools do not load | Check the secret and the agent as in the next row, then restart the group with `ncl groups restart`. The header in [Good to know](#good-to-know) is a last resort. |
 | PostQueen answers `Missing Authorization header` | The vault did not add the key. Check that the secret's host pattern is `api.postqueen.ai` (`onecli secrets list`) and the agent's secret mode (`onecli agents list`). An agent in `selective` mode needs the secret, as in [Connect NanoClaw](#connect-nanoclaw). |
 | You put the key in the address | The key would sit in the group's config. Save it in the OneCLI vault and use `{{mcpBearerUrl}}`. |
-| The PostQueen CLI does nothing inside NanoClaw | NanoClaw keeps keys out of its containers. Use the MCP server. |
+| NanoClaw refuses `POSTQUEEN_API_KEY` in a container | It rejects credential values in a container's environment. Keep the key in the OneCLI vault and use the MCP server. |
 | The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
 | You followed an OpenClaw guide | OpenClaw is a different app with its own setup. See [OpenClaw](/agents/openclaw). |
 

@@ -25,14 +25,14 @@ Paperclip is an open-source app for running a team of AI agents, such as Claude 
 
 <Steps>
   <Step title="Add your own MCP server">
-    In Paperclip, open **Connectors**, choose **Connect** on **Connect your own tool**, then **Connect your own MCP server**. Enter this address and press **Check link**:
+    In Paperclip, open **Connectors**, choose **Connect** on **Connect your own tool**, then **Connect your own MCP server**. Paste this address and choose **Continue**:
 
     ```text wrap
     https://api.postqueen.ai/mcp
     ```
   </Step>
   <Step title="Enter the key">
-    Under **Advanced authentication**, choose **Key or token**, then paste your PostQueen API key into **App key** on its own, without the word `Bearer`. Paperclip saves it as an encrypted secret.
+    Under **Advanced authentication**, choose **Key or token**, paste your PostQueen API key into **App key** on its own, without the word `Bearer`, and press **Check link**. Paperclip saves it as an encrypted secret.
   </Step>
   <Step title="Review the tools">
     Paperclip turns on every PostQueen tool as **Allowed**, including scheduling. To approve each post first, open PostQueen's **Permissions** and choose **Set all: Ask first** on the **Write** group.
@@ -48,7 +48,7 @@ Assign a Claude Code or Codex agent a task: "List my PostQueen channels." The ag
 
 ## Good to know
 
-- **Only Claude Code and Codex agents, and agents on Paperclip's ACP engine, get a Connectors connection.** Other agent types in Paperclip use their own MCP settings.
+- **Paperclip hands PostQueen's tools straight to its Claude Code and Codex agents, and to agents on its ACP engine.** For other agent types, the PostQueen CLI is the surer route.
 - **Every value you enter becomes an encrypted Paperclip secret** and is never shown again.
 - **A Claude Code agent managed by Paperclip ignores** servers added on the same machine with `claude mcp add`. Give it access in **Connectors** instead.
 - **There is no `paperclipai` command for MCP connections yet.** Use the **Connectors** page.
@@ -65,7 +65,7 @@ Assign a Claude Code or Codex agent a task: "List my PostQueen channels." The ag
 
 <Tabs>
   <Tab title="Sign in">
-    In **Connect your own MCP server**, enter `https://api.postqueen.ai/mcp-oauth-dynamic` and press **Check link**. Paperclip registers itself and starts the browser sign-in; a workspace admin signs in to PostQueen and approves.
+    In **Connect your own MCP server**, enter `https://api.postqueen.ai/mcp-oauth-dynamic`, choose **Continue**, then press **Check link**. Paperclip registers itself and starts the browser sign-in; a workspace admin signs in to PostQueen and approves.
 
     The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
   </Tab>
@@ -107,7 +107,7 @@ Source: [Paperclip on GitHub](https://github.com/paperclipai/paperclip).
 | A Claude Code agent does not see PostQueen | Give that agent access to PostQueen in **Connectors**. Servers added with `claude mcp add` are ignored while Paperclip manages MCP. |
 | Scheduling a post does nothing | Open PostQueen's **Permissions** in **Connectors**. The scheduling tool must be **Allowed** or **Ask first**, not **Off**. With **Ask first**, approve the call when Paperclip asks. |
 | The key is refused | Paste the key on its own, without the word `Bearer`, copied from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
-| Another agent type cannot use PostQueen | Only Claude Code and Codex agents, and agents on Paperclip's ACP engine, get a Connectors connection. Give other agents the PostQueen CLI instead. |
+| Another agent type cannot use PostQueen | Claude Code and Codex agents, and agents on Paperclip's ACP engine, get the tools directly. Give other agents the PostQueen CLI instead. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

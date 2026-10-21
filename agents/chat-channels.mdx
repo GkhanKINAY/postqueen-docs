@@ -131,6 +131,8 @@ With OpenClaw:
    openclaw gateway start
    ```
 
+   If you run the gateway in a terminal with `openclaw gateway` instead of as a service, press `Ctrl+C` there before the patch and run `openclaw gateway` again after it.
+
 5. Invite the app to that channel. In a DM, the bot answers with a pairing code: approve it with `openclaw pairing list slack` and `openclaw pairing approve slack <CODE>`.
 
 Full steps: [OpenClaw, Slack](https://docs.openclaw.ai/channels/slack). With Hermes Agent, `hermes gateway setup` walks you through it.
@@ -142,7 +144,7 @@ Full steps: [OpenClaw, Slack](https://docs.openclaw.ai/channels/slack). With Her
 With OpenClaw:
 
 1. Create the application and its bot, and copy the bot token. Keep it out of any chat.
-2. Turn on **Message Content Intent** in the bot settings. The bot needs it to read ordinary channel messages; DMs and messages that mention the bot work without it.
+2. Turn on **Message Content Intent** in the bot settings. OpenClaw asks Discord for it by default, and the bot needs it to read ordinary server messages.
 3. Invite the bot to your server. Turn on **Developer Mode** in Discord, then copy your server ID and your own user ID.
 4. Install the Discord plugin, and put the token in `~/.openclaw/.env` as `DISCORD_BOT_TOKEN`:
 
@@ -150,7 +152,7 @@ With OpenClaw:
    openclaw plugins install @openclaw/discord
    ```
 
-5. Add a `channels.discord` block with your server on the guild allowlist. Without it, the bot answers DMs only. Apply it with the gateway stopped:
+5. Add a `channels.discord` block with your server on the guild allowlist. Without it, the bot answers DMs only. Add teammates' user IDs to `users`, or leave `users` out to let anyone in the server ask. Apply it with the gateway stopped:
 
    ```json5 discord.patch.json5
    {
@@ -172,6 +174,8 @@ With OpenClaw:
    openclaw config patch --file ./discord.patch.json5
    openclaw gateway start
    ```
+
+   If you run the gateway in a terminal with `openclaw gateway` instead of as a service, press `Ctrl+C` there before the patch and run `openclaw gateway` again after it.
 
 6. DM the bot. It answers with a pairing code: approve it with `openclaw pairing list discord` and `openclaw pairing approve discord <CODE>`.
 
