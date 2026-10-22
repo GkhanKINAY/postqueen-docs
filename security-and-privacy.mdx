@@ -82,8 +82,10 @@ The API key acts for the whole workspace. Anyone who has it can read, create and
 
 **Delete channel**, on the channel's page under **Access**, stops PostQueen publishing to it and discards the credentials PostQueen kept for it, so they cannot be used again. It also deletes that channel's posts in PostQueen: scheduled posts, drafts and the records of published posts. [Connect a channel](/using/connect-a-channel#disable-or-delete-a-channel) has the steps.
 
+For a YouTube channel, PostQueen also revokes its access at Google right away, unless another channel you still have connected signs in with the same Google account, and deletes what it received from YouTube for that channel within 7 days.
+
 <Warning>
-To cut PostQueen off at the network too, remove it in the network's own settings, in its list of connected apps: deleting the channel does not do that. For a network you connected with an app password, a key or a token, delete that credential where you created it. [Delete My Account](https://postqueen.ai/delete-my-account) has the steps for each network.
+To cut PostQueen off at any other network too, remove it in the network's own settings, in its list of connected apps: deleting the channel does not do that. For a network you connected with an app password, a key or a token, delete that credential where you created it. [Delete My Account](https://postqueen.ai/delete-my-account) has the steps for each network.
 </Warning>
 
 Revoking at the network first works too: PostQueen can no longer publish to that account, and the channel shows **Needs reconnecting** until you reconnect or delete it.
