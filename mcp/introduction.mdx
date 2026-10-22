@@ -45,7 +45,7 @@ PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Proto
     The header also takes an access token (it starts with `pos_`) from a [PostQueen OAuth app](/public-api/oauth).
   </Tab>
   <Tab title="Sign-in address">
-    For agents that can sign in to an MCP server, such as Claude, Claude Cowork and ChatGPT. No key goes into the agent, and the agent gets every tool except `ask_postqueen`. How it works: [sign in instead of a key](#sign-in-instead-of-a-key).
+    For agents that can sign in to an MCP server, such as Claude, Claude Cowork, ChatGPT and Gemini CLI. No key goes into the agent, and the agent gets every tool except `ask_postqueen`. How it works: [sign in instead of a key](#sign-in-instead-of-a-key).
   </Tab>
 </Tabs>
 
@@ -64,7 +64,7 @@ Anyone with the key can post to every channel in the workspace, so treat it like
     Paste `{{mcpOauthUrl}}` into the agent, with no slash at the end. Leave any client ID and secret fields empty: the agent registers itself with PostQueen. In Claude's two-step dialog, choose **Register automatically** under **OAuth client**.
   </Step>
   <Step title="Sign in and approve">
-    The agent opens PostQueen in your browser. Sign in and approve the access. Only a workspace Admin or Super Admin can approve it.
+    The agent opens PostQueen in your browser. In Gemini CLI, run `/mcp auth postqueen` to start it. Sign in and approve the access. Only a workspace Admin or Super Admin can approve it.
   </Step>
   <Step title="Use it">
     The access does not expire on its own. To end it, open **Connections > Approved Apps** in PostQueen and revoke it.

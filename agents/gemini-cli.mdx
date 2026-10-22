@@ -57,14 +57,29 @@ Ask Gemini CLI: "List my PostQueen channels." It calls PostQueen and answers wit
 |---|---|---|
 | The key in the address | `{{mcpKeyUrl}}` | From Google's docs. The route above |
 | The Bearer header | `{{mcpBearerUrl}}` | From Google's docs |
+| Sign in with PostQueen | `{{mcpOauthUrl}}` | A workspace admin approves the sign-in |
 
-To keep the key out of the address, send it as a header:
+<Tabs>
+  <Tab title="Bearer header">
+    To keep the key out of the address, send it as a header:
 
-```bash
-gemini mcp add --transport http --scope user \
-  --header "Authorization: Bearer YOUR_API_KEY" \
-  postqueen https://api.postqueen.ai/mcp
-```
+    ```bash
+    gemini mcp add --transport http --scope user \
+      --header "Authorization: Bearer YOUR_API_KEY" \
+      postqueen https://api.postqueen.ai/mcp
+    ```
+  </Tab>
+  <Tab title="Sign in">
+    Prefer to sign in? Add the sign-in address instead of the key address:
+
+    ```bash
+    gemini mcp add --transport http --scope user \
+      postqueen https://api.postqueen.ai/mcp-oauth-dynamic
+    ```
+
+    Then, inside Gemini CLI, run `/mcp auth postqueen` and sign in to PostQueen as a workspace admin. Gemini CLI registers itself, opens the sign-in in your browser and keeps the token on your computer. The sign-in address has {{mcpToolsOauth}} tools, all but `ask_postqueen`. Revoke access in PostQueen under **Connections > Approved Apps**.
+  </Tab>
+</Tabs>
 
 ## Try this first
 
@@ -81,6 +96,7 @@ The draft appears on your PostQueen calendar, ready for you to check and schedul
 | PostQueen is missing in another folder | The default scope is project. Add it again with `--scope user`. |
 | A guide says your `url` setting is wrong | `url` with `"type": "http"` works. `httpUrl` is the older key. |
 | The key is refused | Copy it again from **Connections > API key**. Only a workspace Admin or Super Admin can reveal it. |
+| The sign-in address shows no tools | Run `/mcp auth postqueen` and sign in to PostQueen as a workspace admin. Run it again after the access was revoked. |
 
 More fixes are on [Troubleshooting agents](/agents/troubleshooting).
 

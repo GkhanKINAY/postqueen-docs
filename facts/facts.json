@@ -973,7 +973,7 @@
       "badgeColor": "surface",
       "tested": null,
       "route": "mcp-key",
-      "signin": "none"
+      "signin": "offered"
     },
     {
       "slug": "grok-build",
