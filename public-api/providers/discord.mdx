@@ -53,7 +53,7 @@ The error body for a too-long entry names the channel and the rule:
 
 A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
 
-Discord's own rules are not checked first: 20 MiB per file by default, and the bot's permissions in the channel. When Discord refuses a post, it fails with "Bot doesn't have access to this channel", "Bot lacks permission to send messages in this channel", "Channel no longer exists" or "Attachment exceeds Discord's size limit".
+Discord's own rules are not checked first: 20 MiB per file by default, and the bot's permissions in the channel. When Discord refuses a post, it fails with what to fix, such as "The PostQueen bot cannot see this channel. Give it View Channel, or add it back to the server.", "The PostQueen bot is missing a permission in this channel. Give it View Channel, Send Messages, Embed Links, Attach Files and Create Public Threads.", "This Discord channel no longer exists. Pick another channel." or "A file in this post is larger than this Discord server accepts. Use a smaller file."
 
 ## Examples
 

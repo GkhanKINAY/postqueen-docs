@@ -15,7 +15,7 @@ Every post to MeWe carries a `settings` object with `"__type": "mewe"`. Read the
 | `postType` | string | Yes | `timeline` posts to your own timeline, `group` to one of your groups. |
 | `group` | string | For `group` | The id of the group. See below. |
 
-Photos in `image` are uploaded to MeWe with the post. MP4 files are left out, and any other file, a MOV video included, is sent as a photo.
+Photos in `image` are uploaded to MeWe with the post. A post with an MP4 file is refused, and any other file, a MOV video included, is sent as a photo.
 
 ### `group`
 
@@ -36,6 +36,7 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 
 | Rule | Message |
 |---|---|
+| No MP4 video | “MeWe posts can include pictures but not videos.” |
 | Text up to 63,206 characters | “post is too long, please fix it” |
 | `postType` is `timeline` or `group` | A validation error naming the field |
 | A `group` post has a `group` | A validation error that says “Select a group to post to” |

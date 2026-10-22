@@ -6,7 +6,7 @@ icon: "/images/channels/instagram.svg"
 
 import NextStepsChannel from '/snippets/next-steps-channel.mdx';
 
-Schedule Instagram feed posts, carousels of up to 10 photos and videos, Reels and Stories. PostQueen publishes them through Instagram's official API when their time comes.
+Schedule Instagram feed posts, carousels of up to 20 photos and videos, Reels and Stories. PostQueen publishes them through Instagram's official API when their time comes.
 
 <div className="pq-visual pq-visual-card pq-tint-lilac">
   <img noZoom src="/images/site/channels/instagram.webp" alt="A new Instagram post in the PostQueen composer, with the post types Instagram takes and the time it goes out" />
@@ -19,7 +19,7 @@ Schedule Instagram feed posts, carousels of up to 10 photos and videos, Reels an
     Captions up to 2,200 characters, with at most 30 hashtags and 20 @mentions. Every post needs a photo or a video.
   </Card>
   <Card title="Media" icon="image">
-    Photos and MP4 videos, up to 10 items in a carousel. PNG, WebP and GIF are converted to JPEG. AVIF, BMP and TIFF are refused.
+    Photos and MP4 videos, up to 20 items in a carousel. PNG, WebP and GIF are converted to JPEG. AVIF, BMP and TIFF are refused.
   </Card>
   <Card title="Post types" icon="layers">
     Feed photo, carousel, Reel, Trial Reel and Story. A single video in a feed post goes out as a Reel.
@@ -38,7 +38,8 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | Rule | Message |
 |---|---|
 | At least one photo or video | “Should have at least one media” |
-| At most 10 items in a feed post | “Instagram carousel only supports up to 10 media attachments” |
+| At most 20 items in a feed post | “Instagram carousels can have up to 20 photos or videos” |
+| Feed photos between 4:5 and 1.91:1. Reels and stories are not checked | “Image 2 is 1080x1920. Instagram feed photos must be between 4:5 and 1.91:1. Crop the photo or post it as a story.” (with your photo's number and size) |
 | At most 30 hashtags in the caption | “Instagram allows up to 30 hashtags in a caption” |
 | At most 20 @mentions in the caption | “Instagram allows up to 20 @mentions in a caption” |
 | No AVIF, BMP or TIFF images, as on every network | “File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4” |
@@ -48,9 +49,9 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | At most 3 collaborators | “Instagram allows up to 3 collaborators” |
 | Caption up to 2,200 characters | “post is too long, please fix it” |
 
-Both Instagram connections run the same checks. A story has no caption and no item limit, so the hashtag, @mention and 10-item checks do not apply to it.
+Both Instagram connections run the same checks. A story has no caption and no item limit, so the hashtag, @mention, 20-item and aspect ratio checks do not apply to it.
 
-Aspect ratio, image size and video length are Instagram's rules, and PostQueen does not check them first. Instagram takes images up to 8 MB between 4:5 and 1.91:1, Reels from 3 seconds to 15 minutes and up to 300 MB, and story videos from 3 to 60 seconds and up to 100 MB. When Instagram refuses one, PostQueen shows its reason, for example "Aspect ratio not supported, must be between 4:5 to 1.91:1".
+Image size and video length are Instagram's rules, and PostQueen does not check them first. Instagram takes images up to 8 MB, Reels from 3 seconds to 15 minutes and up to 300 MB, and story videos from 3 to 60 seconds and up to 100 MB. When Instagram refuses one, PostQueen shows its reason, for example "Instagram images must be 8 MB or smaller."
 
 ## Connect Instagram
 
@@ -125,7 +126,7 @@ The field names and values for the API are on [Instagram posting settings](/publ
   <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
     A permission was switched off on Meta's screen. Connect the channel again and approve every permission.
   </Accordion>
-  <Accordion title="Your Instagram account is not a business account, please convert it to a business account">
+  <Accordion title="Your Instagram account is not a professional (Business or Creator) account. Switch it in the Instagram app, then reconnect the channel.">
     Switch the account to a Business or Creator account in the Instagram app, then reconnect the channel.
   </Accordion>
   <Accordion title="Facebook rejected the post due to missing permissions">
@@ -134,8 +135,8 @@ The field names and values for the API are on [Instagram posting settings](/publ
   <Accordion title="We couldn't find any business connected to the selected pages.">
     Seen on the Facebook Business tile when no shared Page has an Instagram account linked. Link the Instagram account to a Facebook Page, then connect again and share that Page, and every business, when Facebook asks.
   </Accordion>
-  <Accordion title="Aspect ratio not supported, must be between 4:5 to 1.91:1">
-    Instagram refused the image. Crop it to between 4:5 (portrait) and 1.91:1 (landscape) and schedule the post again.
+  <Accordion title="Instagram feed photos must be between 4:5 and 1.91:1. Crop the photo or post it as a story.">
+    A feed photo is too tall or too wide. Crop it to between 4:5 (portrait) and 1.91:1 (landscape), or post it as a story, and schedule the post again. When PostQueen finds it while you schedule, the message starts with the photo's number and size.
   </Accordion>
   <Accordion title="You have reached the maximum number of posts per day allowed for your account">
     Instagram's own daily cap was reached. Move the post to a later time.

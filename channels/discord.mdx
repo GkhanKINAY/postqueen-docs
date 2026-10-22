@@ -66,7 +66,7 @@ The field names and values for the API are on [Discord posting settings](/public
 - **Add comment** adds follow-ups, each with its own delay. The first starts a thread on the message, named "Thread", and later ones go into the same thread. Discord archives the thread after a day without activity.
 - Type `@` to mention a member or a role, found by search. `@here` and `@everyone` are offered too, but they only notify people when the bot's role has the **Mention Everyone** permission in that server.
 - The bot asks for **View Channel**, **Send Messages**, **Embed Links**, **Attach Files** and the thread permissions. If a channel limits who can see it, give the bot's role **View Channel**, **Send Messages** and **Attach Files** there.
-- When Discord refuses a post, it fails with the reason: "Bot doesn't have access to this channel", "Bot lacks permission to send messages in this channel", "Channel no longer exists" or "Attachment exceeds Discord's size limit".
+- When Discord refuses a post, it fails with what to fix, such as "The PostQueen bot cannot see this channel. Give it View Channel, or add it back to the server.", "The PostQueen bot is missing a permission in this channel. Give it View Channel, Send Messages, Embed Links, Attach Files and Create Public Threads.", "This Discord channel no longer exists. Pick another channel." or "A file in this post is larger than this Discord server accepts. Use a smaller file."
 - Discord's own file limit is not checked first: 20 MiB per file by default, and more in boosted servers.
 
 <NextStepsChannel />

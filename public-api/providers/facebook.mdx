@@ -114,6 +114,7 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | Rule | Message |
 |---|---|
 | A story has at least one photo or video | “Story should have at least one media” |
+| A `post` has several photos or one video, not both (not for stories) | “Facebook posts can have several photos or one video, not both.” |
 | Text up to 63,206 characters | “post is too long, please fix it” |
 
 The error body names the channel and the rule:
@@ -127,7 +128,7 @@ The error body names the channel and the rule:
 }
 ```
 
-Facebook's own rules are not checked first: photos in JPEG, PNG, GIF, BMP or TIFF up to 10 MB, and story videos up to 60 seconds. When the first item is an MP4, only that video is published and the other items are ignored. When a photo comes first, every item is sent as a photo.
+Facebook's own rules are not checked first: photos in JPEG, PNG, GIF, BMP or TIFF up to 10 MB, and story videos up to 60 seconds.
 
 ## Examples
 

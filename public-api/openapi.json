@@ -4355,7 +4355,7 @@
             "items": {
               "$ref": "#/components/schemas/Tag"
             },
-            "description": "At most 500 characters across all tags"
+            "description": "At most 500 characters across all tags, counting the comma between two tags"
           }
         }
       },
@@ -4924,7 +4924,7 @@
         }
       },
       "GmbSettings": {
-        "title": "Google My Business",
+        "title": "Google Business Profile",
         "type": "object",
         "description": "An EVENT or OFFER post needs `eventTitle`, `eventStartDate` and `eventEndDate` (an offer uses them for its title and dates).",
         "properties": {

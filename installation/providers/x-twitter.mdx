@@ -88,7 +88,7 @@ Three optional variables change how X behaves:
 
 <RestartAndAddChannel />
 
-Pick **X**. PostQueen connects whichever X account is signed in on x.com in that browser, so switch accounts on X first if you want a different one. The **Long posts** setting, which raises the limit from 280 to 4,000 characters, is read from X when the account connects. Change it later in the channel's menu under **Publishing options**.
+Pick **X**. PostQueen connects whichever X account is signed in on x.com in that browser, so switch accounts on X first if you want a different one. The **Long posts** setting, which raises the limit from 280 to 25,000 characters, is read from X when the account connects. Change it later in the channel's menu under **Publishing options**.
 
 <Note>
 With billing on (both `STRIPE_PUBLISHABLE_KEY` and `STRIPE_SECRET_KEY` set), a workspace still in its free trial cannot connect X until the trial ends. Without billing there is no trial, and no lock.
@@ -109,13 +109,13 @@ X's own account limits still apply to every account that connects: unverified ac
   <Accordion title="X unlocks when your free trial ends. End the trial to connect it now.">
     Billing is on and the workspace is in its free trial. End the trial in the app, or wait for it to end.
   </Accordion>
-  <Accordion title="There is a problem posting, please edit your post and check character count and media attachments">
-    X refused the post. If every post fails this way, check that **App permissions** is **Read and write**, then reconnect the channel so its token carries the new permission.
+  <Accordion title="X refused this post without saying why. Check the text length, media and reply settings, then try again.">
+    X refused the post and gave no reason. If every post fails this way, check that **App permissions** is **Read and write**, then reconnect the channel so its token carries the new permission.
   </Accordion>
-  <Accordion title="Posting failed - capped reached. Please try again later">
-    X capped the app's usage. Check the credit balance and the spending limit in the Developer Console.
+  <Accordion title="PostQueen's X API allowance ran out, so nothing was published. Please contact support.">
+    X capped the app's usage. On your own install the allowance is your app's, so check the credit balance and the spending limit in the Developer Console.
   </Accordion>
-  <Accordion title="X authentication has expired, please reconnect your account">
+  <Accordion title="X did not accept how this channel signed in. Reconnect the X channel and try again.">
     X no longer accepts the account's token, for example after the app's permissions changed. Reconnect the channel.
   </Accordion>
 </AccordionGroup>

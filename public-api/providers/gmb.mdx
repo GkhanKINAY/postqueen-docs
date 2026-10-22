@@ -5,7 +5,7 @@ description: "The settings object a post to Google Business Profile takes in the
 icon: "/images/channels/google-business.svg"
 ---
 
-Every post to Google Business Profile carries a `settings` object with `"__type": "gmb"`. In **Add Channel** the tile is named **Google My Business**, and each channel is one location. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
+Every post to Google Business Profile carries a `settings` object with `"__type": "gmb"`. Each channel is one location. Read the live schema for your channel with [Get a channel's settings](/public-api/integrations/settings).
 
 ## Fields
 
@@ -30,8 +30,8 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 
 | Rule | Message |
 |---|---|
-| At most one photo | “Google My Business posts can only have one image” |
-| No video | “Google My Business posts do not support video attachments” |
+| At most one photo | “Google Business Profile posts can only have one image” |
+| No video | “Google Business Profile posts do not support video attachments” |
 | An event has `eventTitle` | “Event posts require an event title” |
 | An event has `eventStartDate` and `eventEndDate` | “Event posts require a start and an end date” |
 | An offer has `eventTitle` | “Offer posts require an offer title” |

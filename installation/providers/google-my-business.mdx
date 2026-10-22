@@ -7,7 +7,7 @@ icon: "/images/channels/google-business.svg"
 import OAuthRedirect from '/snippets/oauth2redirect.mdx';
 import RestartAndAddChannel from '/snippets/restart-and-add-channel.mdx';
 
-On a self-hosted PostQueen the Google Cloud project is yours. Google must first approve the project for the Business Profile APIs. Then you turn on four APIs, create a **Web application** OAuth client, and give PostQueen its client ID and secret. In **Add Channel** the tile is named **Google My Business**.
+On a self-hosted PostQueen the Google Cloud project is yours. Google must first approve the project for the Business Profile APIs. Then you turn on four APIs, create a **Web application** OAuth client, and give PostQueen its client ID and secret.
 
 ## Before you start
 
@@ -107,7 +107,7 @@ GOOGLE_GMB_CLIENT_SECRET="your client secret"
 
 <RestartAndAddChannel />
 
-Pick **Google My Business**, sign in with Google and approve every permission, then choose the location. Every location in every account that Google user manages is listed. Unverified locations do not accept posts.
+Pick **Google Business Profile**, sign in with Google and approve every permission, then choose the location. Every location in every account that Google user manages is listed. Unverified locations do not accept posts.
 
 ## App review
 
@@ -120,11 +120,11 @@ Pick **Google My Business**, sign in with Google and approve every permission, t
   <Accordion title="Google My Business API is not in the API library">
     Google shows it only once your access request is approved. Check the email address you used on the request form, or send the form again.
   </Accordion>
-  <Accordion title="Rate limit exceeded. Please try again later.">
+  <Accordion title="Google is limiting how many requests PostQueen can send. Try again later.">
     Google refused the request for quota. On a new project, the Business Profile quota is still 0 because the access request is not approved yet.
   </Accordion>
-  <Accordion title="Permission denied. Please ensure you have access to this business location.">
-    The Google account is not an owner or manager of the location, or an API is not enabled. Check the four APIs in step 1, and the account's role on the Business Profile. A Google Workspace account also needs Business Profile turned on by its admin.
+  <Accordion title="Google refused to post to this Business Profile. Check that it is verified and not suspended, and that the connected Google account is still an owner or manager.">
+    The profile is not verified or is suspended, the Google account is not an owner or manager of the location, or an API is not enabled. Check the four APIs in step 1, and the account's role on the Business Profile. A Google Workspace account also needs Business Profile turned on by its admin.
   </Accordion>
   <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
     A scope is missing from **Data access**, or was declined on the consent screen. Add all three, then connect again and approve everything.

@@ -105,8 +105,8 @@ WordPress takes no follow-up comments, so the composer shows no **Add comment** 
   <Accordion title="WordPress did not return a valid response. The REST API may be disabled or blocked by a security plugin.">
     The site answered with a page instead of REST API data, often a security or maintenance plugin. Allow the REST API and connect again.
   </Accordion>
-  <Accordion title="The connect user has insufficient permissions to create posts">
-    The WordPress user cannot create posts of the type you picked. Give it a role such as Author or Editor, or connect with another user.
+  <Accordion title="WordPress refused the post. Check that the connected user has the Author or Editor role.">
+    The WordPress user cannot create or publish posts of the type you picked. When WordPress gives its own reason, the message starts with "WordPress refused:" and quotes it. Give the user a role such as Author or Editor, or connect with another user.
   </Accordion>
 </AccordionGroup>
 

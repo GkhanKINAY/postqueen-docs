@@ -17,11 +17,13 @@ Every post is public. Alt text goes on each file in `image`, as `alt`, and PostQ
 
 ## What PostQueen checks
 
-A post that breaks this rule is refused with `400` before it is scheduled:
+A post that breaks one of these rules is refused with `400` before it is scheduled:
 
 | Rule | Message |
 |---|---|
 | Each entry up to 500 characters | “post is too long, please fix it” |
+| At most 4 files in each entry | “Mastodon allows up to 4 files per post.” |
+| A video is the only file in its entry | “Mastodon allows one video per post, without other media.” |
 
 The error body names the channel and the rule:
 
@@ -34,7 +36,7 @@ The error body names the channel and the rule:
 }
 ```
 
-The server's own rules are not checked first: how many files a post can carry, usually 4 images or 1 video, and the largest video it accepts. PostQueen waits until the server has processed a video before it creates the first post. Files in later thread parts are posted without that wait, so a part with a large video can fail.
+The server's own rules are not checked first: the largest video it accepts. PostQueen waits until the server has processed a video before it creates the first post. Files in later thread parts are posted without that wait, so a part with a large video can fail.
 
 ## Examples
 
