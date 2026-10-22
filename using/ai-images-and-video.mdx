@@ -30,7 +30,7 @@ PostQueen can draw an image or make a short video from a description and attach 
     Choose a **Style**: Realistic, Cartoon, Anime, Minimalist, Sketch or Watercolor. Then choose an **Orientation**: **Square**, **Portrait** or **Landscape**. PostQueen preselects the shape that suits the first channel on the post.
   </Step>
   <Step title="Pick a quality">
-    Under **Quality**, choose **Low**, **Medium** or **High**. Each option shows its price in credits for the shape you picked: a higher quality costs more, and a portrait or landscape image costs more than a square one.
+    Under **Quality**, choose **Low**, **Medium** or **High**. Each option shows its price in credits: a higher quality costs more, and the shape does not change the price.
   </Step>
   <Step title="Generate">
     Choose **Generate**. The image is attached to the post and saved in [Media](/using/media-library).
@@ -63,7 +63,7 @@ You can also ask for an image in the [AI Copilot](/using/ai-copilot): **Generate
 
 | Generator | What you get | What the form asks for |
 |---|---|---|
-| **Seedance 2.0 (Audio + Video)** | One clip with sound, 8 seconds at 720p unless you pick otherwise. Vertical is 9:16, horizontal 16:9. | **Prompt**: one scene, described by the camera, the subject, the motion, the light and the mood. Leave out on-screen text and logos. **Images (max 3)**: optional. Choose **Insert Media** to pick up to three pictures from your library for the clip to follow. Videos and any picture past the third are left out. **Model**: **Fast** (the default), **Standard** or **Mini**. "Mini costs the least. Standard is the sharpest and the only one in 1080p." **Resolution**: 480p or 720p, and 1080p on **Standard**. **Length**: 5, 8, 10, 12 or 15 seconds. |
+| **Seedance 2.0 (Audio + Video)** | One clip with sound, 5 seconds at 720p unless you pick otherwise. Vertical is 9:16, horizontal 16:9. | **Prompt**: one scene, described by the camera, the subject, the motion, the light and the mood. Leave out on-screen text and logos. **Images (max 3)**: optional. Choose **Insert Media** to pick up to three pictures from your library for the clip to follow. Videos and any picture past the third are left out. **Model**: **Mini** (the default), **Fast** or **Standard**. "Mini costs the least. Standard is the sharpest and the only one in 1080p." **Resolution**: 480p or 720p, and 1080p on **Standard**. **Length**: 5, 8, 10, 12 or 15 seconds. |
 | **Image Text Slides** | A narrated slideshow. PostQueen writes three to five slides from your prompt, draws a picture for each, reads the text aloud and shows it as captions. Vertical is 1080 × 1920, horizontal 1920 × 1080. | **Prompt**: what the video should say and show. **Select a Voice**: the voice that reads it. The list reads "Loading voices..." until it arrives. **▶ Play** plays a sample and **⏹ Stop** ends it. The first voice is selected until you pick another. |
 
 ### While the video is made
@@ -83,9 +83,11 @@ Images and videos are paid from the workspace's credits balance, which your plan
 
 | What | Credits |
 |---|---|
-| An image | 0.3 to 5, by **Quality** and shape. A **Medium** square image is 1. |
-| A Seedance video | Per second, by **Model** and **Resolution**: from 0.5 a second (**Mini**, 480p) to 12.5 a second (**Standard**, 1080p). The default, 8 seconds of **Fast** at 720p, is 32. |
-| An Image Text Slides video | 14, whatever its length. |
+| An image | 1 at **Low**, 2 at **Medium** and 4 at **High**, in any shape. |
+| A Seedance video | Per second, by **Model** and **Resolution**: from 2 a second (**Mini**, 480p) to 20 a second (**Standard**, 1080p). The default, 5 seconds of **Mini** at 720p, is 20. |
+| An Image Text Slides video | 20, whatever its length. |
+
+Subscriptions started before 23 October 2026 keep the credits and prices they started with.
 
 - An image or a video that fails gives its credits back. A request PostQueen refuses before it starts, such as Seedance during the trial, takes none.
 - The free trial includes one month of your plan's credits. During the trial, Seedance waits for the paid plan: use **Image Text Slides**, or end the trial on **Billing**. See [Free trial](/cloud/trial).

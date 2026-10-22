@@ -25,7 +25,7 @@ Schedule X posts, threads, images, GIFs and MP4 video, post into X Communities a
     Post, thread, Community post and long-form Article, with optional Made with AI and Paid partnership labels.
   </Card>
   <Card title="Analytics" icon="chart-line">
-    The last 7 days: impressions, likes, retweets, replies, quotes and bookmarks for each post, and the same six totaled over your own posts. No follower count. The numbers update when you choose **Refresh** in [Analytics](/using/analytics#good-to-know).
+    The last 7 days: impressions, likes, retweets, replies, quotes and bookmarks for each post, and the same six totaled over your own posts. No follower count. The numbers update when you choose **Refresh** in [Analytics](/using/analytics#good-to-know), which takes credits.
   </Card>
 </CardGroup>
 
@@ -99,11 +99,12 @@ In the channel's **Automations** on the **Channels** page ([how automations work
 
 X charges PostQueen for its API, so X actions take [credits](/cloud/credits#x) from your workspace's balance:
 
-- **Posts.** Each post, and each part of a thread, takes 0.4 credits, or 5 when its text has a link. The credits are set aside when you schedule the post, not when it goes out, and the composer asks you to confirm in a **Publishing uses credits** window. Editing the post reuses what it set aside. Moving it to drafts, deleting it, or a publish that fails gives them back, unless the credits they came from have expired meanwhile. With too few credits, scheduling is refused.
-- **Plugs and re-posters.** An Auto-Plugs like check takes 0.13, at most once a day for the same post. A repost takes 0.4 for each account, and an **Auto plug post** reply is priced like a post.
-- **Mentions.** Looking up accounts for an `@` mention takes 0.25, at most once a day for the same lookup.
+- **Posts.** Each post, and each part of a thread, takes 1 credit, or 10 when its text has a link. The credits are set aside when you schedule the post, not when it goes out, and the composer asks you to confirm in a **Publishing uses credits** window. Editing the post reuses what it set aside. Moving it to drafts, deleting it, or a publish that fails gives them back, unless the credits they came from have expired meanwhile. With too few credits, scheduling is refused.
+- **Plugs and re-posters.** An Auto-Plugs like check takes 0.25, at most once a day for the same post. A repost takes 1 for each account, and an **Auto plug post** reply is priced like a post.
+- **Mentions.** Looking up accounts for an `@` mention takes 0.5, at most once a day for the same lookup.
+- **Analytics.** **Refresh** takes 0.25 for each post it reads from X and 0.5 for the channel's totals. A post already read that day (UTC) is not charged again, and the totals are charged once a day, so a second refresh the same day is free unless new posts went out in between. The button shows what a refresh will take before you choose it. Reading the stored numbers, in the app, the public API, the CLI or an AI agent, takes no credits.
 
-Reading X analytics takes no credits.
+Subscriptions started before 23 October 2026 keep the credits and prices they started with.
 
 ## Good to know
 

@@ -272,7 +272,7 @@ Creates an image and puts it in your media library.
 | `prompt` | string | Yes | What to draw, described as a scene rather than a caption |
 | `style` | string | No | `Realistic` (default), `Cartoon`, `Anime`, `Minimalist`, `Sketch` or `Watercolor` |
 | `orientation` | string | No | `square` (default), `portrait` or `landscape` |
-| `quality` | string | No | `low`, `medium` (default) or `high`. It sets the price: `high` costs several times `medium`, and `low` a fraction of it |
+| `quality` | string | No | `low`, `medium` (default) or `high`. It sets the price, whatever the `orientation`: 1 credit for `low`, 2 for `medium` and 4 for `high` |
 
 **Returns** the image's `id`, `path`, `alt` and `thumbnail`, or `error`. An image that could not be made reads `Image generation failed:`, the reason, and `No credits were used.`
 
@@ -300,7 +300,7 @@ The two generators take these inputs:
 
 | Generator | Inputs | What it makes |
 |---|---|---|
-| `seedance` | `prompt`: one scene of about 8 seconds, as a visual brief of camera, subject, motion, light and atmosphere, with no on-screen text or logos. `images`: up to three images from your media library as `{ id, path }`, or an empty list for a video from the prompt alone | One 8-second clip at 720p, with sound |
+| `seedance` | `prompt`: one scene, as a visual brief of camera, subject, motion, light and atmosphere, with no on-screen text or logos. `images`: up to three images from your media library as `{ id, path }`, or an empty list for a video from the prompt alone. Optional: `model` (`mini`, `fast` or `standard`), `resolution` (`480p`, `720p` or `1080p`) and `duration` (4 to 15 seconds), which set the price | One clip with sound, 5 seconds of `mini` at 720p unless the inputs say otherwise |
 | `image-text-slides` | `voice`: a voice id from `loadVoices`. `prompt`: what the video should say and show, in plain text | A narrated slideshow with captions, three to five slides |
 
 ### `videoFunctionTool`
