@@ -59,6 +59,7 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | No AVIF, BMP or TIFF photos, as on every network | “File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4” |
 | **TikTok**: photos at most 1,080 px on the shorter side | “Image 2 is 1440x1920, TikTok allows a maximum of 1080px on the shorter side” (with the photo's number and size) |
 | **TikTok Business**: photos at most 1080x1920 or 1920x1080 | “Image 1 is 1080x2400, TikTok Business allows a maximum of 1080x1920 (or 1920x1080)” (with the photo's number and size) |
+| **TikTok**: a video up to 4 GB; **TikTok Business**: up to 1 GB (skipped when the size cannot be read) | “TikTok accepts videos up to 4 GB. Use a smaller file.” or “TikTok Business accepts videos up to 1 GB. Use a smaller file.” |
 | Caption up to 2,000 characters | “post is too long, please fix it” |
 | A disclosure names a brand: with `disclose: true`, `brand_organic_toggle` or `brand_content_toggle` is `true` | “Choose Your brand, Branded content or both, or turn off Disclose Video Content” |
 | An audience is set | “Choose who can see this video” |
