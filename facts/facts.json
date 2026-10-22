@@ -81,7 +81,7 @@
     "planGraceDays": 3,
     "yearlyAddedMonthly": true,
     "legacyYearlyWholeYear": true,
-    "legacyYearlyBefore": "PUBLISH_DATE_TBD",
+    "legacyYearlyBefore": "22 October 2026",
     "trialMonths": 1,
     "packMonths": 12,
     "packs": [
@@ -134,11 +134,11 @@
       "UK"
     ],
     "legacyAccountsRefundDays": 30,
-    "legacyAccountsBefore": "PUBLISH_DATE_TBD",
-    "text": "For accounts created from PUBLISH_DATE_TBD: at most one month's plan fee per account, and only if the account's last charge was within the 120 days before the request. Yearly charges, credit packs and the founding member fee are refunded only under the right of withdrawal, the other sections of the Terms or the law. More is at PostQueen's discretion.",
+    "legacyAccountsBefore": "22 October 2026",
+    "text": "For accounts created from 22 October 2026: at most one month's plan fee per account, and only if the account's last charge was within the 120 days before the request. Yearly charges, credit packs and the founding member fee are refunded only under the right of withdrawal, the other sections of the Terms or the law. More is at PostQueen's discretion.",
     "how": "Email support@postqueen.ai from the address on the account with the invoice number, or use the contact page. Refunds go to the original payment method; banks usually show them within 5 to 10 business days.",
     "withdrawal": "Consumers in the EU, the EEA and the UK can withdraw within 14 days for a full refund, with no deduction for days or credits used. A plan's 14 days start at sign-up, which is the trial start if it has one; a switch to a yearly plan and each credit pack start their own 14 days. It applies to every account, whenever it was created. Business customers have no right of withdrawal.",
-    "transition": "Accounts created before PUBLISH_DATE_TBD keep the earlier promise: any charge is refunded in full if you ask within 30 days of it."
+    "transition": "Accounts created before 22 October 2026 keep the earlier promise: any charge is refunded in full if you ask within 30 days of it."
   },
   "mcp": {
     "addresses": [
