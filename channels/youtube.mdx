@@ -42,11 +42,11 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | No `<` or `>` in the title | “YouTube titles cannot contain < or >” |
 | No `<` or `>` in the description | “YouTube descriptions cannot contain < or >” |
 | Description up to 5,000 bytes | “YouTube descriptions can be at most 5,000 bytes, and accented letters, emoji and non-Latin scripts take 2 to 4 bytes each” |
-| Tags up to 500 characters in total | “The maximum allowed is 500 characters in total for all tags.” |
+| Tags up to 500 characters in total, commas between them included | “YouTube tags can total at most 500 characters. Commas between tags count, and a tag with a space counts 2 extra. Remove some tags.” |
 
 The title is also held to 2 to 100 characters. The composer's counter shows the description in characters while YouTube measures it in bytes, so a description in another script can be refused before the counter reaches 5,000.
 
-Video length and the thumbnail are YouTube's rules, and PostQueen does not check them first. YouTube takes videos up to 15 minutes on an unverified channel and up to 12 hours once the channel is verified, and custom thumbnails only on verified channels. A thumbnail problem is reported after the video is already up, for example "Your account is not verified, we have uploaded your video but we could not set the thumbnail. Please verify your account and try again."
+Video length and the thumbnail are YouTube's rules, and PostQueen does not check them first. YouTube takes videos up to 15 minutes on an unverified channel and up to 12 hours once the channel is verified, and custom thumbnails only on verified channels. A thumbnail problem is reported after the video is already up, for example "Your video was uploaded to YouTube successfully, but we could not set the thumbnail: custom thumbnails require a phone-verified YouTube channel. Verify your channel at youtube.com/verify, and set this video's thumbnail manually in YouTube Studio." The post then shows as failed although the video is live, and the email says so. Set the thumbnail in YouTube Studio instead of scheduling the post again.
 
 ## Connect YouTube
 
@@ -74,7 +74,7 @@ Each YouTube post in the composer has these settings. The post text is the video
 - **Title**: 2 to 100 characters. Required.
 - **Type**: **Public**, **Private** or **Unlisted**. It starts on **Public**.
 - **Made for kids**: **No** or **Yes**. It starts on **No**.
-- **Tags**: up to 3 tags, 500 characters in total. A tag with a space counts 2 extra characters, because YouTube wraps it in quotes.
+- **Tags**: up to 3 tags, 500 characters in total. The comma between two tags counts as 1, and a tag with a space counts 2 extra characters, because YouTube wraps it in quotes.
 - **Thumbnail**: an optional picture, set as the video's thumbnail right after the upload.
 
 The field names and values for the API are on [YouTube posting settings](/public-api/providers/youtube).
@@ -103,12 +103,15 @@ YouTube turns comments off on videos made for kids, so a post with **Made for ki
     A permission was switched off on Google's screen. Connect the channel again and approve every permission.
   </Accordion>
   <Accordion title="You have reached your daily upload limit, please try again tomorrow.">
-    The shared daily upload limit was reached. Move the post to tomorrow.
+    YouTube's daily upload limit for this channel was reached. Move the post to tomorrow.
   </Accordion>
-  <Accordion title="You have to link your youtube account to your google account first.">
-    The Google account has no YouTube channel set up yet. Create the channel in YouTube, then schedule the post again.
+  <Accordion title="PostQueen reached its daily YouTube upload limit, so nothing was uploaded. The limit resets at midnight Pacific time. Reschedule this post for later.">
+    The uploads a day that every PostQueen customer shares ran out before this video went up. Move the post to after midnight Pacific time.
   </Accordion>
-  <Accordion title="Please re-authenticate your YouTube account">
+  <Accordion title="This Google account has no YouTube channel yet. Create one on youtube.com, then reconnect.">
+    The Google account has no YouTube channel set up yet. Create the channel on youtube.com, reconnect the channel in PostQueen, then schedule the post again.
+  </Accordion>
+  <Accordion title="Reconnect your YouTube channel.">
     Google no longer accepts the connection, for example after a password change or when access was removed in your Google account. Choose **Reconnect channel** in the channel's menu.
   </Accordion>
 </AccordionGroup>

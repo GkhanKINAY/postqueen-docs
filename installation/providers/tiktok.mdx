@@ -162,8 +162,8 @@ To move existing channels from one tile to the other, `MIGRATE_PROVIDERS="tiktok
   <Accordion title="Not enough scopes, when choosing a provider, please add all the scopes">
     One of the six scopes is missing from the app or was declined on the consent screen. Check the list in step 5, then connect again and approve everything.
   </Accordion>
-  <Accordion title="TikTok daily user limit reached, please re-connect your account">
-    TikTok's daily limit of people posting through your app was reached (5 in any 24 hours before the audit), so PostQueen disconnected the channel. Reconnect it later, or pass the Content Posting API audit.
+  <Accordion title="TikTok limits how many accounts can post through PostQueen's TikTok app each day, and that limit is reached. Your channel is fine. Try again in 24 hours.">
+    TikTok's daily limit of people posting through your app was reached (5 in any 24 hours before the audit). The channel stays connected and the post fails: schedule it again after 24 hours, or pass the Content Posting API audit. When `MIGRATE_PROVIDERS` moves `tiktok` to another tile, PostQueen disconnects the channel instead and the message asks for a reconnect, which carries the channel to the new tile.
   </Accordion>
   <Accordion title="TikTok only takes media from an address verified for PostQueen">
     TikTok could not fetch the media because its domain is not a verified URL property of the app. On **TikTok**, verify the domain your uploads are served from, as in step 6. On **TikTok Business**, verify it through the API, as in [TikTok Business](#tiktok-business-optional).

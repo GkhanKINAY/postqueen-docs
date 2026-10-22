@@ -42,7 +42,7 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | A title of at least 3 characters in each community | “title must be longer than or equal to 3 characters” |
 | A title of at most 200 characters in each community | “title must be shorter than or equal to 200 characters” |
 | **URL**, when you give one, is a web address | “url must be a URL address” |
-| The first file is a PNG, JPG, JPEG, GIF or WebP image | “You can set only one picture for a cover” |
+| The first file is a PNG, JPG, JPEG, GIF or WebP image | “Lemmy uses the first picture as the post thumbnail, so it must be a PNG, JPG, GIF or WEBP.” |
 | Text within 10,000 characters | “post is too long, please fix it” |
 
 Each instance sets its own posting rate and image rules, and PostQueen does not check them first. Lemmy's default is 6 posts in 10 minutes from one address, and it is shared by everyone who posts to that instance through PostQueen.
@@ -92,8 +92,8 @@ The field names and values for the API are on [Lemmy posting settings](/public-a
   <Accordion title="subreddit must contain at least 1 elements">
     The post has no community yet, and the settings say “Please add at least one community”. Choose **Add Community** and pick one.
   </Accordion>
-  <Accordion title="You can set only one picture for a cover">
-    The first file is not an image Lemmy takes as a cover. Attach a PNG, JPG, JPEG, GIF or WebP image first.
+  <Accordion title="Lemmy uses the first picture as the post thumbnail, so it must be a PNG, JPG, GIF or WEBP.">
+    The first file is not an image Lemmy takes as the thumbnail. Attach a PNG, JPG, JPEG, GIF or WebP image first.
   </Accordion>
 </AccordionGroup>
 

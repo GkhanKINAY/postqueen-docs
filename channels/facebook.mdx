@@ -38,6 +38,7 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | Rule | Message |
 |---|---|
 | A story has at least one photo or video | “Story should have at least one media” |
+| A post has several photos or one video, not both. Stories are not checked | “Facebook posts can have several photos or one video, not both.” |
 | Text up to 63,206 characters | “post is too long, please fix it” |
 
 Photo size and video length are Facebook's rules, and PostQueen does not check them first. Facebook takes photos in JPEG, PNG, GIF, BMP or TIFF up to 10 MB, and story videos up to 60 seconds. When Facebook refuses a post, PostQueen shows its reason, for example "You are posting too fast, please slow down".
@@ -79,7 +80,6 @@ The field names, values and preset ids for the API are on [Facebook posting sett
 ## Good to know
 
 - The Page's connection does not expire on a schedule. If Facebook stops accepting it, the Page shows **Needs reconnecting**: choose **Reconnect channel** in its menu.
-- When the first attached item is a video, only that video is published and the other items are ignored. When a photo comes first, every item is sent as a photo.
 - Several items in one story post go out as separate stories, one at a time. If a story post is interrupted, PostQueen stops rather than risk posting twice and asks you to check the Page.
 - The follower numbers are new follows per day, not a running total. Comments and shares are counted for Reels only.
 - During the free trial, a Page that another PostQueen workspace already connected is refused until you end the trial.

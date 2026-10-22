@@ -27,7 +27,7 @@ Every post to X carries a `settings` object with `"__type": "x"`. Read the live 
 
 ### The text limit
 
-A post takes 280 characters, or 4,000 when the channel is marked Verified. The Verified mark is read from X when the channel is connected and is changed in the app, not per post. An Article takes up to 100,000. Length is counted the way X counts it: a link is 23 characters, and most emoji and CJK characters are 2.
+A post takes 280 characters, or 25,000 when the channel is marked Verified. The Verified mark is read from X when the channel is connected and is changed in the app, not per post. An Article takes up to 100,000. Length is counted the way X counts it: a link is 23 characters, and most emoji and CJK characters are 2.
 
 ### Thread replies
 
@@ -45,7 +45,8 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 |---|---|
 | At most 4 pictures in each entry | “X allows up to 4 pictures per post” |
 | A GIF or a video goes alone in its entry | “X allows one video or one GIF per post, without other media” |
-| Each entry within 280, 4,000 on a Verified channel, or 100,000 in an Article | “post is too long, please fix it” |
+| Each entry within 280, 25,000 on a Verified channel, or 100,000 in an Article | “post is too long, please fix it” |
+| At most one cashtag in each entry, where the same cashtag twice counts once. Articles are not checked | “X allows only one cashtag (like $TSLA) per post sent through its API. Remove the others.” |
 | `community` empty or in the right format | “Invalid X community URL. It should be in the format: https://x.com/i/communities/1493446837214187523” |
 | `article_title` set on an Article | “Article title is required” |
 | An Article takes images only | “X articles only support images” |
@@ -64,7 +65,7 @@ The error body names the channel and the rule:
 }
 ```
 
-X's own rules are not checked first: video length and size, 1 cashtag per post, and 50 posts and 200 replies a day for unverified accounts. Every picture is resized to 1,000 px wide and re-encoded as a GIF before upload.
+X's own rules are not checked first: video length and size, and 50 posts and 200 replies a day for unverified accounts. Every picture is resized to 1,000 px wide and re-encoded as a GIF before upload.
 
 ## Examples
 

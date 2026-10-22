@@ -29,7 +29,7 @@ Read the live schema for your channel with [Get a channel's settings](/public-ap
 
 | Value | What is published |
 |---|---|
-| `post` | A feed post. One image is a photo post, 2 to 10 items are a carousel, and a single video goes out as a Reel. |
+| `post` | A feed post. One image is a photo post, 2 to 20 items are a carousel, and a single video goes out as a Reel. |
 | `reel` | A Reel. The post must carry exactly one MP4. |
 | `story` | Stories. Each attached photo or video goes out as its own story, in order. There is no caption and no item limit. |
 
@@ -60,7 +60,8 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | Rule | Message |
 |---|---|
 | At least one photo or video | “Should have at least one media” |
-| At most 10 items (not for stories) | “Instagram carousel only supports up to 10 media attachments” |
+| At most 20 items (not for stories) | “Instagram carousels can have up to 20 photos or videos” |
+| Photos in a `post` between 4:5 and 1.91:1 (not for Reels or stories) | “Image 2 is 1080x1920. Instagram feed photos must be between 4:5 and 1.91:1. Crop the photo or post it as a story.” (with your photo's number and size) |
 | At most 30 hashtags in the caption (not for stories) | “Instagram allows up to 30 hashtags in a caption” |
 | At most 20 @mentions in the caption (not for stories) | “Instagram allows up to 20 @mentions in a caption” |
 | No AVIF, BMP or TIFF images, as on every network | “File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4” |
@@ -77,11 +78,11 @@ The error body names the channel and the rule:
   "statusCode": 400,
   "provider": "instagram",
   "name": "Your channel name",
-  "message": "Instagram carousel only supports up to 10 media attachments"
+  "message": "Instagram carousels can have up to 20 photos or videos"
 }
 ```
 
-Instagram's own rules are not checked first: images up to 8 MB with an aspect ratio between 4:5 and 1.91:1, Reels from 3 seconds to 15 minutes and up to 300 MB, and story videos from 3 to 60 seconds. PNG, WebP and GIF images are converted to JPEG when the post is published. AVIF, BMP and TIFF are refused, not converted: convert them to JPEG or PNG before you upload.
+Instagram's own rules are not checked first: images up to 8 MB, Reels from 3 seconds to 15 minutes and up to 300 MB, and story videos from 3 to 60 seconds. PNG, WebP and GIF images are converted to JPEG when the post is published. AVIF, BMP and TIFF are refused, not converted: convert them to JPEG or PNG before you upload.
 
 ## Examples
 

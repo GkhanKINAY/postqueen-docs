@@ -56,7 +56,7 @@ The error body for a too-long entry names the channel and the rule:
 
 A missing or empty field fails the request validation instead, and the body lists every problem under `message`.
 
-After scheduling, a post can still fail at Whop. If Whop has not finished processing a file after about 9 minutes, the post fails with "File upload timed out". A forum that was deleted, or that the account can no longer reach, fails with "Forum or experience not found".
+After scheduling, a post can still fail at Whop. If Whop has not finished processing a file after about 9 minutes, the post fails with "Whop did not finish processing a file in this post within 9 minutes." A forum that was deleted, or that the account can no longer reach, fails with "Whop could not find this forum. Check that it still exists, or pick another one."
 
 ## Examples
 

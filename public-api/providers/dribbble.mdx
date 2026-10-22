@@ -34,9 +34,11 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 
 | Rule | Message |
 |---|---|
-| Exactly one file | “Requires one item” |
-| The file is not an MP4 | “Does not support mp4 files” |
-| The image is exactly 400 × 300 or 800 × 600 pixels | “Invalid image size. Requires 400x300 or 800x600 px images.” |
+| Exactly one file | “Dribbble needs exactly one image for a shot.” |
+| The file is not a video | “Dribbble does not accept videos. Attach one GIF, JPG or PNG image.” |
+| The file is a GIF, JPG or PNG | “Dribbble does not accept this file type. Attach one GIF, JPG or PNG image.” |
+| The file is at most 8 MB | “Dribbble accepts images up to 8 MB.” |
+| The image is exactly 400 × 300 or 800 × 600 pixels | “Dribbble needs an image of exactly 400 x 300 or 800 x 600 pixels. This one is 1600 x 1200.” (with your image's size) |
 | Description up to 40,000 characters | “post is too long, please fix it” |
 | `title` set | A validation error that says “Title is required” |
 | `team` a string | A validation error naming the field |
@@ -48,11 +50,11 @@ The error body names the channel and the rule:
   "statusCode": 400,
   "provider": "dribbble",
   "name": "Your channel name",
-  "message": "Invalid image size. Requires 400x300 or 800x600 px images."
+  "message": "Dribbble needs an image of exactly 400 x 300 or 800 x 600 pixels. This one is 1600 x 1200."
 }
 ```
 
-Dribbble's own rules are not checked first: GIF, JPG or PNG files of up to 8 MB, and an account that is allowed to upload shots.
+Dribbble's own rule is not checked first: the account has to be allowed to upload shots. When Dribbble refuses a shot, the post fails with Dribbble's reason.
 
 ## Examples
 

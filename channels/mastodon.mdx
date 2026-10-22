@@ -19,7 +19,7 @@ PostQueen posts public Mastodon posts and threads with images, video and alt tex
     Up to 500 characters, even on a server that allows more.
   </Card>
   <Card title="Media" icon="image">
-    Images and MP4 video, with alt text. How many a post can carry is your server's rule, usually 4 images or 1 video.
+    Images and MP4 video, with alt text. Up to 4 files in a post, and a video goes alone.
   </Card>
   <Card title="Post types" icon="layers">
     Post and thread. Every post is public.
@@ -55,7 +55,7 @@ Mastodon posts have no settings of their own in the composer: the text, the medi
 
 - **Continue thread** adds parts to the post. Each part is posted as a reply to the part before, can carry its own media and has its own delay.
 - PostQueen waits until your server has processed a video before it creates the post. Media in later thread parts is posted without that wait, so a part with a large video can fail.
-- The number of files per post is not checked first: your server refuses a post that carries more than it allows.
+- Before a post is scheduled, PostQueen checks that each part has at most 4 files, with "Mastodon allows up to 4 files per post.", and that a video is its only file, with "Mastodon allows one video per post, without other media."
 - The first post carries a key that stops Mastodon from publishing it twice when the request is retried.
 
 <NextStepsChannel />
