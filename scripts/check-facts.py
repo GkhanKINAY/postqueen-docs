@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
 """Facts check: the numbers and names the docs repeat, against facts/facts.json.
 
-1. docs.json variables equal facts.json (prices, trial and refund days, tool
-   counts, the MCP and API addresses, the network count).
+1. docs.json variables equal facts.json (prices, trial days, the refund window
+   and the withdrawal days, tool counts, the MCP and API addresses, the network
+   count).
 2. facts.json's MCP tools equal the app's tool list on GitHub main
    (tool.list.ts, raw fetch), minus the classes facts.json keeps out of the docs.
 3. Banned strings: removed routes and tools, wrong tool counts, Windsurf, Medium,
    the old API key location, trial and rate-limit claims that are not true,
-   Bearer on the public API, veo3.
+   Bearer on the public API, veo3, the removed withdrawal waiver, a year of
+   credits at once.
 4. Channel and agent pages describe the product in production (owner,
    2026-09-24): no status line or Soon/In review tag on a network, no platform-review
    note ("In review", "testers", "until Meta approves" ...), no agent test status.
 5. mcp/tools names exactly facts.json's tools.
-6. Prices, trial days, refund days and monthly credits written in a page
-   equal facts.json.
+6. Prices, trial days, refund and withdrawal days and monthly credits written in
+   a page equal facts.json, and no page promises a refund the rule does not
+   give (Terms section 9, owner 2026-10-21): a full refund of any charge, yearly
+   charges treated like monthly ones, or a refund that leaves the plan running.
+   Accounts created before the current Terms keep their earlier promise (a full
+   refund within 30 days), so a sentence with "Accounts created before" may say it.
 
 Checks 3 to 6 run on every page without an OVERHAUL-TODO marker (check 3 also
 on the snippets and on SKILL.md); pages still marked, and openapi.json while it carries
@@ -54,7 +60,12 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ("Settings > API Keys (the key is under Connections > API key)", re.compile(r"Settings\s*(?:→|>|->|&gt;|/)\s*API Keys", re.I)),
     ("app.postqueen.ai/settings as the key location", re.compile(r"app\.postqueen\.ai/settings(?![?\w/])")),
     ('"no card" (the trial takes a card)', re.compile(r"\bno (?:credit )?card\b", re.I)),
-    ('"60-day" (refunds are 30 days)', re.compile(r"\b60-day\b", re.I)),
+    ('"60-day" (no 60-day refund or withdrawal exists)', re.compile(r"\b60-day\b", re.I)),
+    ("the withdrawal waiver (checkout no longer asks anyone to give up the right of withdrawal, owner 2026-10-21)",
+     re.compile(r"\blose my 14-day right\b|\bright to withdraw once I use\b|\bconsent box\b", re.I)),
+    ("a year of credits at once (plans bought from the current Terms add credits once a month; a yearly plan bought "
+     "before gets \"the whole year's credits\" at the start of each yearly period)",
+     re.compile(r"\b(?:twelve|12) months of credits\b|\b(?:a |the |full )year of credits\b", re.I)),
     ('"ten connectors" (nine networks report analytics)', re.compile(r"\bten connectors\b", re.I)),
     ("api.postqueen.ai/docs (the internal Swagger list, never linked)", re.compile(r"api\.postqueen\.ai/docs\b")),
     ("veo3 (no such video type)", re.compile(r"veo3", re.I)),
@@ -73,6 +84,8 @@ REVIEW_NOTE_RE = re.compile(
     r"(?<!week )\bin review\b|\btesters?\b|\buntil (?:Meta|TikTok|Google)\b|\bSelf only until\b|\bopens soon\b"
     r"|\bcannot (?:be )?connect(?:ed)? (?:on PostQueen )?yet\b|\bapproves PostQueen'?s app\b", re.I)
 STATUS_TAG_RE = re.compile(r'^tag: "(?:Soon|In review)"', re.M)
+# Accounts created before the current Terms keep their earlier refund promise (owner, 2026-10-21).
+LEGACY_ACCOUNTS_RE = re.compile(r"\baccounts? created before\b", re.I)
 
 
 def norm(s: str) -> str:
@@ -97,7 +110,8 @@ def check_variables(facts: dict, docs: dict) -> None:
         "mcpToolsOauth": str(facts["mcp"]["toolCount"]["signin"]),
         "networks": str(facts["channelCounts"]["total"]),
         "trialDays": str(facts["trial"]["days"]),
-        "refundDays": str(facts["refund"]["days"]),
+        "refundWindowDays": str(facts["refund"]["refundWindowDays"]),
+        "withdrawalDays": str(facts["refund"]["withdrawalDays"]),
         "priceCreator": f"${tiers['creator']['monthly']}",
         "priceGrowth": f"${tiers['growth']['monthly']}",
         "pricePro": f"${tiers['pro']['monthly']}",
@@ -154,6 +168,15 @@ def scan_banned(rel: str, text: str, pending: bool) -> None:
             report(pending, f"{rel}:{line}: Bearer in a /public/v1 example (the API takes the raw key)")
 
 
+def check_variable_use(rel: str, text: str, names: set[str], pending: bool) -> None:
+    """A {{variable}} that docs.json does not define reaches the reader as written."""
+    body = COMMENT_RE.sub("", text)
+    for m in re.finditer(r"\{\{([A-Za-z]\w*)\}\}", body):
+        if m.group(1) not in names:
+            line = body.count("\n", 0, m.start()) + 1
+            report(pending, f"{rel}:{line}: {{{{{m.group(1)}}}}} is not a docs.json variable")
+
+
 def check_numbers(rel: str, text: str, facts: dict, pending: bool) -> None:
     body = COMMENT_RE.sub("", text)
     tiers = {t["name"]: t for t in facts["plans"]["tiers"]}
@@ -173,9 +196,55 @@ def check_numbers(rel: str, text: str, facts: dict, pending: bool) -> None:
     for m in re.finditer(r"\b(\d+)[- ]day (?:free )?trial\b", body, re.I):
         if int(m.group(1)) != facts["trial"]["days"]:
             report(pending, f"{rel}: a {m.group(1)}-day trial, facts.json says {facts['trial']['days']}")
+    refund = facts["refund"]
+    window, withdrawal = refund["refundWindowDays"], refund["withdrawalDays"]
     for m in re.finditer(r"\brefund[^.\n]{0,80}?\b(\d+) days\b", body, re.I):
-        if int(m.group(1)) != facts["refund"]["days"]:
-            report(pending, f"{rel}: a refund within {m.group(1)} days, facts.json says {facts['refund']['days']}")
+        days = int(m.group(1))
+        if days in (window, withdrawal):
+            continue
+        if days == refund["legacyAccountsRefundDays"] and LEGACY_ACCOUNTS_RE.search(sentence(body, m)):
+            continue
+        report(pending, f"{rel}: a refund within {days} days, facts.json says {window} (the refund rule) or {withdrawal} (withdrawal); "
+                        f"{refund['legacyAccountsRefundDays']} only in a sentence about accounts created before the current Terms")
+    for m in re.finditer(r"\bwithdraw\w*[^.\n]{0,60}?\b(\d+) days\b|\b(\d+)-day right (?:of|to) withdraw", body, re.I):
+        days = int(m.group(1) or m.group(2))
+        if days != withdrawal:
+            report(pending, f"{rel}: withdrawal within {days} days, facts.json says {withdrawal}")
+    for label, pattern in refund_claims(refund):
+        for m in pattern.finditer(body):
+            if LEGACY_ACCOUNTS_RE.search(sentence(body, m)):
+                continue
+            line = body.count("\n", 0, m.start()) + 1
+            report(pending, f"{rel}:{line}: {label}: {m.group(0)!r}")
+
+
+def sentence(body: str, m: re.Match) -> str:
+    """The sentence a match sits in: from the last full stop or line break before it to the next one after it."""
+    start = max(body.rfind(". ", 0, m.start()), body.rfind("\n", 0, m.start())) + 1
+    ends = [i for i in (body.find(".", m.end()), body.find("\n", m.end())) if i != -1]
+    return body[start:min(ends) if ends else len(body)]
+
+
+def refund_claims(refund: dict) -> list[tuple[str, re.Pattern]]:
+    """Wording that promises more than the refund rule in facts.json gives. A sentence about
+    accounts created before the current Terms may still state their earlier promise."""
+    claims = []
+    if refund["oneMonthMax"]:
+        claims.append((
+            "a full refund of any charge (the rule is at most one month's plan fee per account)",
+            re.compile(r"\b(?:any|every) charge (?:is )?refunded in full\b|\brefunds? (?:any|every) charge in full\b", re.I),
+        ))
+    if not refund["yearlyUnderRule"]:
+        claims.append((
+            "yearly charges refunded like monthly ones (the rule does not cover yearly charges)",
+            re.compile(r"\bmonthly(?:,| and) yearly\b[^.\n]{0,60}\btreated the same\b", re.I),
+        ))
+    if refund["fullRefundEndsPlan"]:
+        claims.append((
+            "a refund that leaves the plan running (a full refund of the current period ends the plan)",
+            re.compile(r"\brefund on its own does not cancel\b", re.I),
+        ))
+    return claims
 
 
 def check_channel(rel: str, text: str, channel: dict, pending: bool) -> None:
@@ -239,6 +308,7 @@ def main() -> int:
         pending = MARKER in text
         pending_pages += pending
         scan_banned(rel, text, pending)
+        check_variable_use(rel, text, set(docs.get("variables") or {}), pending)
         if rel.startswith("snippets/") or rel == "SKILL.md":
             continue
         check_numbers(rel, text, facts, pending)

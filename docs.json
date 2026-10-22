@@ -613,6 +613,10 @@
             "href": "https://postqueen.ai/cookie-policy"
           },
           {
+            "label": "DPA",
+            "href": "https://postqueen.ai/dpa"
+          },
+          {
             "label": "Delete my account",
             "href": "https://postqueen.ai/delete-my-account"
           }
@@ -674,7 +678,8 @@
     "mcpToolsOauth": "22",
     "networks": "31",
     "trialDays": "7",
-    "refundDays": "30",
+    "refundWindowDays": "120",
+    "withdrawalDays": "14",
     "priceCreator": "$20",
     "priceGrowth": "$33",
     "pricePro": "$49",
