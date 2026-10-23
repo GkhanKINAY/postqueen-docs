@@ -1072,10 +1072,10 @@
                 },
                 "example": {
                   "statusCode": 402,
-                  "message": "Not enough credits: this costs 5 and the balance is 1.2.",
+                  "message": "Not enough credits: this costs 10 and the balance is 2.5.",
                   "code": "insufficient_credits",
-                  "required": 5,
-                  "balance": 1.2
+                  "required": 10,
+                  "balance": 2.5
                 }
               }
             }
@@ -2330,9 +2330,9 @@
                 },
                 "example": {
                   "statusCode": 402,
-                  "message": "Not enough credits: this costs 32 and the balance is 12.5.",
+                  "message": "Not enough credits: this costs 20 and the balance is 12.5.",
                   "code": "insufficient_credits",
-                  "required": 32,
+                  "required": 20,
                   "balance": 12.5
                 }
               }
@@ -5537,7 +5537,7 @@
       "SeedanceParams": {
         "type": "object",
         "title": "seedance",
-        "description": "`customParams` for `seedance`: one clip with sound, 8 seconds at 720p unless you ask otherwise. Priced per second by `model` and `resolution`.",
+        "description": "`customParams` for `seedance`: one clip with sound, 5 seconds at 720p unless you ask otherwise. Priced per second by `model` and `resolution`.",
         "required": [
           "prompt",
           "images"
@@ -5572,11 +5572,11 @@
           "model": {
             "type": "string",
             "enum": [
+              "mini",
               "fast",
-              "standard",
-              "mini"
+              "standard"
             ],
-            "default": "fast",
+            "default": "mini",
             "description": "`standard` is the sharpest and the only one with 1080p and costs the most credits a second; `mini` costs the least"
           },
           "resolution": {
@@ -5593,7 +5593,7 @@
             "type": "integer",
             "minimum": 4,
             "maximum": 15,
-            "default": 8,
+            "default": 5,
             "description": "Length in seconds. Credits are per second"
           },
           "aspectRatio": {
@@ -5647,7 +5647,7 @@
               "seedance",
               "image-text-slides"
             ],
-            "description": "The generator. `seedance` makes an 8-second clip with sound, `image-text-slides` a narrated slideshow"
+            "description": "The generator. `seedance` makes a 5-second clip with sound, `image-text-slides` a narrated slideshow"
           },
           "output": {
             "type": "string",

@@ -1,7 +1,7 @@
 ---
 title: "Credits"
 sidebarTitle: "Credits"
-description: "The one credits balance that pays for AI images and video, the AI Copilot, AI agents and posts to X: what each thing costs, where credits come from and when they expire."
+description: "The one credits balance that pays for AI images and video, the AI Copilot, AI agents and X: what each thing costs, where credits come from and when they expire."
 icon: "coins"
 keywords:
   - credits
@@ -15,14 +15,16 @@ keywords:
 
 **Where:** **Credits** on **Billing**, from the **Upgrade** row at the bottom of the left rail, or **Billing & invoices** in the account menu. Only workspace admins see Billing.
 
-Each workspace has one credits balance. Your plan adds credits, and anything that costs PostQueen money to run takes them: AI images and video, the AI Copilot, AI agents that use PostQueen's own agent over MCP, and posts to X.
+Each workspace has one credits balance. Your plan adds credits, and anything that costs PostQueen money to run takes them: AI images and video, the AI Copilot, AI agents that use PostQueen's own agent over MCP, and X, which charges PostQueen for posts and reads.
+
+Subscriptions started before 23 October 2026 keep the credits and prices they started with.
 
 ## Where credits come from
 
 | Source | How many | When they expire |
 |---|---|---|
-| Your plan | Once a month, on a monthly plan or a yearly plan bought from 22 October 2026. Pro adds 500 a month. Creator adds 150, Growth 300 and Ultimate 1,000. | When the next month's credits arrive, or at the latest 3 days after the billing month ends. |
-| A yearly plan bought before 22 October 2026 | The whole year's credits at the start of each yearly period, renewals included: 6,000 on Pro. | When the next year's credits arrive, or at the latest 3 days after the year ends. |
+| Your plan | Once a month, on a monthly plan or a yearly plan bought from 22 October 2026. Pro adds 600 a month. Creator adds 60, Growth 200 and Ultimate 1,200. | When the next month's credits arrive, or at the latest 3 days after the billing month ends. |
+| A yearly plan bought before 22 October 2026 | The whole year's credits at the start of each yearly period, renewals included. | When the next year's credits arrive, or at the latest 3 days after the year ends. |
 | The free trial | One month of the plan's credits, on a yearly plan too. | When the trial ends. |
 | The monthly gift | 5 credits every calendar month, for a paid plan past its trial. | At the end of that month. |
 | A credits pack | 100, 500 or 1,000 credits, bought on Billing. | 12 months after you buy it. |
@@ -39,37 +41,40 @@ Prices are in credits. Work that fails gives its credits back, and a request Pos
 
 ### AI images
 
-An image costs more at a higher **Quality**, and a **Portrait** or **Landscape** image costs more than a **Square** one. The **Generate AI Image** window shows the price of each quality.
+An image costs more at a higher **Quality**, and the same in every shape: **Square**, **Portrait** or **Landscape**. **Medium** is the default. The **Generate AI Image** window shows the price of each quality.
 
-| Quality | Square | Portrait or landscape |
-|---|---|---|
-| **Low** | 0.3 | 0.4 |
-| **Medium** | 1 | 1.3 |
-| **High** | 3.5 | 5 |
+| Quality | Credits |
+|---|---|
+| **Low** | 1 |
+| **Medium** | 2 |
+| **High** | 4 |
 
 ### AI videos
 
-**Seedance 2.0 (Audio + Video)** is priced per second, by **Model** and **Resolution**. In the app a video is 5, 8, 10, 12 or 15 seconds long, 8 unless you pick another **Length**. The API takes any length from 4 to 15. The sound track is free.
+**Seedance 2.0 (Audio + Video)** is priced per second, by **Model** and **Resolution**. In the app a video is 5, 8, 10, 12 or 15 seconds long, 5 unless you pick another **Length**. The API takes any length from 4 to 15. The sound track is free.
 
 | Model | 480p | 720p | 1080p |
 |---|---|---|---|
-| **Mini** | 0.5 a second | 1 a second | Not offered |
-| **Fast** | 1.85 a second | 4 a second | Not offered |
-| **Standard** | 2.35 a second | 5 a second | 12.5 a second |
+| **Mini** | 2 a second | 4 a second | Not offered |
+| **Fast** | 3 a second | 7 a second | Not offered |
+| **Standard** | 4 a second | 8 a second | 20 a second |
 
-An 8-second **Fast** video at 720p, the default, costs 32 credits. An **Image Text Slides** video costs 14 credits, whatever its length. The **Generate video** window shows the price before you choose **Generate**. See [AI images and video](/using/ai-images-and-video).
+A 5-second **Mini** video at 720p, what the app, the API and MCP make when you choose nothing else, costs 20 credits. An **Image Text Slides** video costs 20 credits, whatever its length. The **Generate video** window shows the price before you choose **Generate**. See [AI images and video](/using/ai-images-and-video).
 
 ### The AI Copilot and AI agents
 
-The [AI Copilot](/using/ai-copilot), and [AI agents](/agents/overview) that use PostQueen's own agent over MCP, are charged by the tokens each answer uses, so a long chat or a long answer costs more than a short one. A message is accepted whenever the balance is above zero, and an answer that started can take the balance a little below zero before it stops. With no credits left, the Copilot reads "You are out of credits, so Copilot cannot answer."
+The [AI Copilot](/using/ai-copilot), and [AI agents](/agents/overview) that use PostQueen's own agent over MCP, are charged by the tokens each answer uses: 50 credits for each US dollar the AI provider charges for them. The part of a prompt the provider has cached from an earlier request is charged at its lower cached price. A long chat or a long answer costs more than a short one. A message is accepted whenever the balance is above zero, and an answer that started can take the balance a little below zero before it stops. With no credits left, the Copilot reads "You are out of credits, so Copilot cannot answer."
 
 ### Other AI features
 
-These are charged in credits:
+These cost a fixed number of credits:
 
-- **AI post** in the **Create Post** menu, which writes a draft and can make an image for it.
-- [Auto Post](/using/rss-auto-post) with **Autogenerate content** or **Generate Picture?** set to **Yes**.
-- Splitting a long post into several posts with AI.
+| Feature | Credits |
+|---|---|
+| **AI post** in the **Create Post** menu, which writes a draft and can make an image for it | 2.5 for the draft, plus 2 for each image it makes |
+| [Auto Post](/using/rss-auto-post) with **Autogenerate content** set to **Yes** | 0.5 for each item |
+| Auto Post with **Generate Picture?** set to **Yes** | 2.1 for each item |
+| Splitting a long post into several posts with AI | 0.5 |
 
 ### X
 
@@ -77,18 +82,19 @@ X charges PostQueen for its API, so these X actions take credits:
 
 | Action | Credits |
 |---|---|
-| A post, or each part of a thread | 0.4 |
-| A post whose text has a link | 5 |
-| An Auto-Plugs like check on a post | 0.13, once a day at most for the same post |
-| A repost by **Auto Repost Posts** or **Add Re-posters** | 0.4 for each account |
-| An **Auto plug post** reply | 0.4, or 5 when it has a link |
-| Looking up accounts for an `@` mention, or reading the X account's subscription | 0.25, once a day at most for the same lookup |
+| A post, or each part of a thread | 1 |
+| A post whose text has a link | 10 |
+| An Auto-Plugs like check on a post | 0.25, once a day at most for the same post |
+| A repost by **Auto Repost Posts** or **Add Re-posters** | 1 for each account |
+| An **Auto plug post** reply | 1, or 10 when it has a link |
+| Looking up accounts for an `@` mention, or reading the X account's subscription | 0.5, once a day at most for the same lookup |
+| **Refresh** in [Analytics](/using/analytics#good-to-know) | 0.25 for each post it reads from X, plus 0.5 for the channel's totals |
 
-Reading X analytics does not take credits. Other networks take none.
+X bills a read of the same post once a day (UTC), so a post already read that day is not charged again, and the channel's totals are charged once a day. A second **Refresh** the same day is free unless new posts went out in between. The button shows what a refresh will take before you choose it. Reading the numbers PostQueen has stored, in the app, the public API, the CLI or an AI agent, takes no credits. Other networks take none.
 
 ## Posting to X sets credits aside
 
-A scheduled X post sets its credits aside when you save it, not when it publishes. When you choose **Schedule**, **Post now** or **Update** on a post with an X channel and the save needs more credits set aside than the post already has, a **Publishing uses credits** window shows what it takes and **Balance after:** with what is left, and says why: "X charges PostQueen for every post published through its API." When the post has a link, it adds that a post with a link costs 5 credits instead of 0.4. Confirm with the same button, or choose **Cancel**.
+A scheduled X post sets its credits aside when you save it, not when it publishes. When you choose **Schedule**, **Post now** or **Update** on a post with an X channel and the save needs more credits set aside than the post already has, a **Publishing uses credits** window shows what it takes and **Balance after:** with what is left, and says why: "X charges PostQueen for every post published through its API." When the post has a link, it adds that a post with a link costs 10 credits instead of 1. Confirm with the same button, or choose **Cancel**.
 
 - **Editing** a scheduled post reuses what it already set aside. Only a difference is charged or given back.
 - **Saving as a draft**, deleting the post, or a publish that fails gives the credits back, unless the credits they came from have expired meanwhile. Drafts and Social Sets ask nothing.
@@ -107,13 +113,13 @@ Background work stops without a dialog instead. An Auto Post item becomes a draf
 
 ## Buy more credits
 
-On Billing, under **Buy more credits**, pick a pack and choose **Buy**. Larger packs cost less a credit.
+On Billing, under **Buy more credits**, pick a pack and choose **Buy**. Larger packs cost less a credit, and every subscription pays the same, whenever it started.
 
 | Pack | Price | A credit |
 |---|---|---|
-| 1,000 credits | $80 | $0.08 |
-| 500 credits | $45 | $0.09 |
-| 100 credits | $10 | $0.10 |
+| 1,000 credits | $100 | $0.10 |
+| 500 credits | $60 | $0.12 |
+| 100 credits | $15 | $0.15 |
 
 [Manage your subscription](/cloud/subscription#buy-more-credits) covers the checkout.
 

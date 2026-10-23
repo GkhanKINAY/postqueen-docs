@@ -85,6 +85,11 @@ CI runs its checks in release mode (`DOCS_RELEASE=1`) for pushes to `main` and p
   right of withdrawal for consumers in the EU, the EEA and the UK applies to every account. Credits follow the same
   split: a yearly plan bought from the publish day adds its credits once a month, and one bought before keeps getting
   the whole year's credits at the start of each yearly period.
+- Credits have two price lists (owner, 2026-10-23). Subscriptions started from 23 October 2026 get the current one:
+  the plans' monthly credits and what images, video, X and the AI features cost. Pages state only that list, and one
+  sentence covers the rest: "Subscriptions started before 23 October 2026 keep the credits and prices they started
+  with." Credit packs cost the same for everyone. The plans' credits are in `facts/facts.json` (`monthlyCredits`),
+  generated from `PLAN_MONTHLY_CREDITS` in the app's `pricing.ts`, which holds every other price too.
 - Channel and agent pages carry no status line. `check:facts` fails a page with a `ChannelStatus` line, a review
   note ("In review", "testers", "until Meta approves" ...) or an agent test status.
 - Examples may use any network. Bluesky, WordPress, DEV and Nostr need no sign-in page, so they are the easiest to
