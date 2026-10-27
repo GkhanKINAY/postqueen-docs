@@ -79,9 +79,14 @@ In **Settings > Account**:
 
 ## Your time zone
 
-PostQueen shows every time in the time zone your browser reports, which is the time zone of your computer or phone. **Settings > Account** shows it under **Timezone**, with a **Coming soon** badge: you cannot change it in PostQueen yet.
+**Settings > Account** has a **Timezone** select: "How dates and times are shown in the app. Posting times already set for a channel stay at the same moment."
 
-To see and schedule times in another time zone, change your device's time zone, then reload PostQueen. A post is saved as a moment, not a clock time: a post set for 09:00 in Berlin shows as 08:00 to a teammate in London, and goes out once, at that moment.
+- **Automatic** is the default. It shows the time zone your browser reports, for example **Automatic (Europe/Berlin)**, which is the time zone of your computer or phone.
+- Or pick **UTC** or any time zone in the list, each shown with its current offset.
+
+PostQueen saves your choice and reloads the page. From then on the calendar, the composer and its date picker, post previews, the posts list, notifications and billing dates use that time zone, and so does the composer of the Chrome extension. The choice is yours: each teammate picks their own. If it cannot be saved, "Could not save the timezone" appears and the select goes back.
+
+A post is saved as a moment, not a clock time: a post set for 09:00 in Berlin shows as 08:00 to a teammate who picked London, and goes out once, at that moment. Changing your time zone moves nothing: scheduled posts and channel posting times keep their moments and only show in the new zone. The public API is unchanged: its dates are in UTC, as before.
 
 ## Delete your account
 
