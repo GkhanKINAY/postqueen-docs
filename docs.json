@@ -98,7 +98,6 @@
                   "channels/linkedin",
                   "channels/threads",
                   "channels/bluesky",
-                  "channels/reddit",
                   "channels/mastodon",
                   "channels/tumblr",
                   "channels/vk",
@@ -367,7 +366,6 @@
               "public-api/providers/threads",
               "public-api/providers/pinterest",
               "public-api/providers/bluesky",
-              "public-api/providers/reddit",
               "public-api/providers/gmb",
               "public-api/providers/telegram",
               "public-api/providers/discord",
@@ -498,7 +496,6 @@
               "installation/providers/linkedin",
               "installation/providers/threads",
               "installation/providers/pinterest",
-              "installation/providers/reddit",
               "installation/providers/google-my-business",
               "installation/providers/telegram",
               "installation/providers/discord",
@@ -676,7 +673,7 @@
     "mcpOauthUrl": "https://api.postqueen.ai/mcp-oauth-dynamic",
     "mcpToolsKey": "25",
     "mcpToolsOauth": "24",
-    "networks": "31",
+    "networks": "30",
     "trialDays": "7",
     "refundWindowDays": "120",
     "withdrawalDays": "14",
@@ -847,7 +844,7 @@
     },
     {
       "source": "/providers/reddit",
-      "destination": "/channels/reddit"
+      "destination": "/channels/overview"
     },
     {
       "source": "/providers/lemmy",
@@ -1056,6 +1053,18 @@
     {
       "source": "/public-api/providers/medium",
       "destination": "/public-api/providers/overview"
+    },
+    {
+      "source": "/public-api/providers/reddit",
+      "destination": "/public-api/providers/overview"
+    },
+    {
+      "source": "/channels/reddit",
+      "destination": "/channels/overview"
+    },
+    {
+      "source": "/installation/providers/reddit",
+      "destination": "/installation/providers/overview"
     },
     {
       "source": "/installation/system-requirements",

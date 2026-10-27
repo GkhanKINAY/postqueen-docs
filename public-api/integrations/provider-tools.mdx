@@ -50,7 +50,7 @@ This page is the catalog. For the live list on one connected channel, with each 
 | [Instagram](#instagram) | `audioSearch` |
 | [TikTok](#tiktok) | `creatorInfo` |
 | [TikTok Business](#tiktok-business) | `musicSearch`, `locationSearch` |
-| [Reddit](#reddit), [Pinterest](#pinterest), [Discord](#discord), [Slack](#slack), [Dribbble](#dribbble), [MeWe](#mewe), [Whop](#whop), [Skool](#skool), [Farcaster](#farcaster) | Listed below |
+| [Pinterest](#pinterest), [Discord](#discord), [Slack](#slack), [Dribbble](#dribbble), [MeWe](#mewe), [Whop](#whop), [Skool](#skool), [Farcaster](#farcaster) | Listed below |
 
 Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook, YouTube, Instagram Standalone, LinkedIn, Mastodon, Telegram, VK, Kick, Twitch, Tumblr and Google Business Profile. Everything they need is in the post's settings.
 
@@ -80,7 +80,7 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 
 | Tool | Inputs | Returns |
 |---|---|---|
-| `subreddits` | `word` | Lemmy communities matching the word, as `{ id, title, name }`. The name comes from the Reddit tool it shares a shape with; it searches communities. |
+| `subreddits` | `word` | Lemmy communities matching the word, as `{ id, title, name }`. The tool keeps its historical name; it searches communities. |
 
 ## Listmonk
 
@@ -107,13 +107,6 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 |---|---|---|
 | `musicSearch` | `genre`, optional, such as `POP`, `ROCK` or `ELECTRONIC` | Tracks from TikTok's commercial music list, as `{ id, title, artist, image, duration, previewUrl }`, with `duration` in milliseconds. There is no text search, so filter the list yourself. Send the id as `music.id` in the [TikTok settings](/public-api/providers/tiktok). |
 | `locationSearch` | `q` | Location tags matching the search, as `{ id, name, address }`. An empty `q` returns an empty list. Send `id` and `name` as `location`. |
-
-## Reddit
-
-| Tool | Inputs | Returns |
-|---|---|---|
-| `subreddits` | `word` | Subreddits matching the word, as `{ id, title, name }`. **`name` is the `/r/...` path**, the form `restrictions` and the `subreddit` setting expect. |
-| `restrictions` | `subreddit` | An object, not a list: `{ subreddit, allow, is_flair_required, flairs }`. `allow` says which post types the subreddit accepts, `is_flair_required` whether a flair must be picked, and `flairs` is `{ id, name }`. Send `subreddit` as `/r/name`. |
 
 ## Pinterest
 
@@ -163,11 +156,11 @@ Every other network has no tools: Bluesky, Nostr, Moltbook, X, Threads, Facebook
 
 | Tool | Inputs | Returns |
 |---|---|---|
-| `subreddits` | `word` | Farcaster channels matching the word, as `{ id, title, name }`. The name comes from the Reddit tool it shares a shape with; it searches Farcaster channels. |
+| `subreddits` | `word` | Farcaster channels matching the word, as `{ id, title, name }`. The tool keeps its historical name; it searches Farcaster channels. |
 
 ## Tools that take another tool's answer
 
-Whop's `experiences` needs a company id from `companies`, Skool's `label` needs a group id from `groups`, and Reddit's `restrictions` needs a `name` from `subreddits`. Call the tools in that order:
+Whop's `experiences` needs a company id from `companies`, and Skool's `label` needs a group id from `groups`. Call the tools in that order:
 
 ```bash
 # 1. The companies you administer

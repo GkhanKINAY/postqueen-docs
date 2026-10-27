@@ -57,6 +57,11 @@ BANNED: list[tuple[str, re.Pattern]] = [
     ("Windsurf (the product is Devin Desktop)", re.compile(r"windsurf", re.I)),
     # **Medium** in bold is the AI image quality label, not the network.
     ("Medium (the network was removed)", re.compile(r"(?<!\*\*)\bMedium\b(?!\*\*)(?![- ](?:priority|size|risk|term))")),
+    # The retired network. Lemmy's and Farcaster's lowercase `subreddit` field and
+    # `subreddits` tool are API names and stay allowed.
+    ("Reddit (the network was removed)", re.compile(r"(?<!sub)reddit", re.I)),
+    ("Subreddit as a product noun (the network was removed)", re.compile(r"\bSubreddits?\b")),
+    ("flairs (the network was removed)", re.compile(r"\bflairs?\b", re.I)),
     ("Settings > API Keys (the key is under Connections > API key)", re.compile(r"Settings\s*(?:→|>|->|&gt;|/)\s*API Keys", re.I)),
     ("app.postqueen.ai/settings as the key location", re.compile(r"app\.postqueen\.ai/settings(?![?\w/])")),
     ('"no card" (the trial takes a card)', re.compile(r"\bno (?:credit )?card\b", re.I)),
