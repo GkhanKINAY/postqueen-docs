@@ -3686,7 +3686,6 @@
               "moltbook",
               "nostr",
               "pinterest",
-              "reddit",
               "skool",
               "slack",
               "telegram",
@@ -4047,9 +4046,6 @@
               },
               {
                 "$ref": "#/components/schemas/TikTokSettings"
-              },
-              {
-                "$ref": "#/components/schemas/RedditSettings"
               },
               {
                 "$ref": "#/components/schemas/LemmySettings"
@@ -4541,87 +4537,6 @@
               "address": {
                 "type": "string"
               }
-            }
-          }
-        }
-      },
-      "RedditSettings": {
-        "title": "Reddit",
-        "type": "object",
-        "required": [
-          "subreddit"
-        ],
-        "properties": {
-          "__type": {
-            "type": "string",
-            "enum": [
-              "reddit"
-            ],
-            "description": "Set from the channel. You may leave it out"
-          },
-          "subreddit": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "type": "object",
-              "properties": {
-                "value": {
-                  "type": "object",
-                  "required": [
-                    "subreddit",
-                    "title",
-                    "type",
-                    "is_flair_required"
-                  ],
-                  "properties": {
-                    "subreddit": {
-                      "type": "string",
-                      "minLength": 2,
-                      "description": "Subreddit path starting with /r/"
-                    },
-                    "title": {
-                      "type": "string",
-                      "minLength": 2,
-                      "description": "Post title",
-                      "maxLength": 300
-                    },
-                    "type": {
-                      "type": "string",
-                      "enum": [
-                        "self",
-                        "link",
-                        "media"
-                      ],
-                      "description": "Post type. `media` is the only value that attaches an uploaded file; `image`, `video` and `videogif` set a Reddit kind without ever sending the file."
-                    },
-                    "url": {
-                      "type": "string",
-                      "description": "URL for link posts"
-                    },
-                    "is_flair_required": {
-                      "type": "boolean"
-                    },
-                    "flair": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "name"
-                      ]
-                    }
-                  }
-                }
-              },
-              "required": [
-                "value"
-              ]
             }
           }
         }

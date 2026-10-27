@@ -1,4 +1,4 @@
-# Server environment variable names from the app's .env.example (v3.6.166).
+# Server environment variable names from the app's .env.example (v3.6.170).
 # scripts/check-docs.py bans them on the user tabs. Refresh with:
 #   git -C <app> show origin/main:.env.example | grep -oE '^#? ?[A-Z][A-Z0-9_]+=' | sed -E 's/^# ?//; s/=$//' | sort -u
 ACCOUNT_PURGE_HOLD
@@ -163,8 +163,6 @@ POSTQUEEN_OAUTH_USERINFO_URL
 PREVIOUS_ENCRYPTION_KEY
 PREVIOUS_FRONTEND_URLS
 PRISMA_MIGRATE
-REDDIT_CLIENT_ID
-REDDIT_CLIENT_SECRET
 REDIS_URL
 REPOSITORY_URL
 REQUIRE_EMAIL_ACTIVATION
