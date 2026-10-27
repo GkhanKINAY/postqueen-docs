@@ -75,7 +75,7 @@ This endpoint has no hourly limit. Your credits balance is the limit.
 | `400` with a `message` list | A field is missing or wrong. `type must be any of: ...` lists the generators you can use |
 | `400` `Seedance <model> does not offer <resolution>` | Only `standard` offers `1080p`, and `mini` offers `480p` and `720p` |
 | `402` `Not enough credits: this costs N and the balance is N.` | The balance does not cover the video. `required` and `balance` in the body give both numbers. Buy credits on **Billing**, or ask for a cheaper video |
-| `406` `This video is not available in trial mode` | Seedance during the free trial. Use `image-text-slides`, or end the trial on **Billing** |
+| `406` `This video is not available during the trial. To use it now, open https://app.postqueen.ai/billing and click "End free trial": ...` | Seedance during the free trial. Use `image-text-slides`, or end the trial on **Billing** |
 | `422` `Your request was rejected by the AI safety system.` | The provider refused the prompt. The message names the flagged categories when the provider gives them. Change the prompt |
 | `500` `AI generation failed, please try again later.` | The generation failed or timed out. The credits were given back. Try again |
 

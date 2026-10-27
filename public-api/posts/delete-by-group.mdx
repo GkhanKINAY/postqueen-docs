@@ -6,4 +6,4 @@ openapi: "DELETE /posts/group/{group}"
 
 A group is one channel's post together with its thread or comments. It is not the whole multi-channel request: when you post to three channels in one [Create a post](/public-api/posts/create) call, each channel gets its own group. Read a post's `group` from [List posts](/public-api/posts/list).
 
-Since the answer is the same whether or not any post had that group, this call cannot tell you the group existed. Nothing already published is taken down from the network.
+The answer is `{ "id": "..." }`, the id of the group's post, when your workspace has or had a post with that group, including a group that was already deleted. When no post of your workspace ever had that group, the answer is `{ "error": true }`, still with status `200`. Nothing already published is taken down from the network.
