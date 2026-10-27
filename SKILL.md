@@ -1,6 +1,6 @@
 ---
 name: postqueen
-description: PostQueen schedules social media and chat posts from the postqueen CLI to 30+ networks, such as X, LinkedIn, LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, Google Business Profile, TikTok, Pinterest, Dribbble, Discord, Slack, Kick, Twitch, Mastodon, Bluesky, Lemmy, Farcaster, Telegram, Nostr, VK, DEV, Hashnode, WordPress, Listmonk, MeWe, Whop, Skool, Moltbook and Tumblr.
+description: PostQueen schedules social media and chat posts from the postqueen CLI to 30+ networks, such as X, LinkedIn, LinkedIn Page, Instagram, Facebook Page, Threads, YouTube, Google Business Profile, TikTok, Pinterest, Dribbble, Discord, Slack, Kick, Twitch, Mastodon, Bluesky, Lemmy, Farcaster, Telegram, Nostr, VK, DEV, Hashnode, WordPress, Listmonk, MeWe, Whop, Skool, Moltbook and Tumblr.
 homepage: https://docs.postqueen.ai/public-api/introduction
 metadata: {"openclaw":{"emoji":"🌎","requires":{"bins":["postqueen"]}}}
 ---
@@ -23,7 +23,7 @@ official website: https://postqueen.ai
 | Property | Value |
 |----------|-------|
 | **name** | postqueen |
-| **description** | Social media automation CLI for scheduling posts across 30+ networks, including X, LinkedIn, LinkedIn Pages, Instagram, Facebook, Threads, YouTube, TikTok, Reddit, Pinterest, Bluesky, Mastodon, Google Business Profile, Discord, Slack, Telegram, Twitch, Kick, Lemmy, Farcaster, Nostr, VK, MeWe, Tumblr, Skool, Whop, Moltbook, Dribbble, DEV, Hashnode, WordPress and Listmonk. |
+| **description** | Social media automation CLI for scheduling posts across 30+ networks, including X, LinkedIn, LinkedIn Pages, Instagram, Facebook, Threads, YouTube, TikTok, Pinterest, Bluesky, Mastodon, Google Business Profile, Discord, Slack, Telegram, Twitch, Kick, Lemmy, Farcaster, Nostr, VK, MeWe, Tumblr, Skool, Whop, Moltbook, Dribbble, DEV, Hashnode, WordPress and Listmonk. |
 | **allowed-tools** | Bash(postqueen:*) |
 
 ---
@@ -73,7 +73,7 @@ The command waits up to 10 minutes for the approval, so run it in the background
 
 ## Networks
 
-PostQueen supports 30+ networks: X, LinkedIn and LinkedIn Page, Reddit, Instagram, Facebook Page, Threads, YouTube, TikTok and TikTok Business, Pinterest, Google Business Profile, Bluesky, Mastodon, Tumblr, VK, Farcaster, Nostr, Lemmy, MeWe, Twitch, Kick, Dribbble, Telegram, Discord, Slack, Skool, Whop, Moltbook, WordPress, DEV, Hashnode and Listmonk. `postqueen integrations:list` shows which of them the workspace has connected.
+PostQueen supports 30+ networks: X, LinkedIn and LinkedIn Page, Instagram, Facebook Page, Threads, YouTube, TikTok and TikTok Business, Pinterest, Google Business Profile, Bluesky, Mastodon, Tumblr, VK, Farcaster, Nostr, Lemmy, MeWe, Twitch, Kick, Dribbble, Telegram, Discord, Slack, Skool, Whop, Moltbook, WordPress, DEV, Hashnode and Listmonk. `postqueen integrations:list` shows which of them the workspace has connected.
 
 Two conditions come from the product itself: X connects once the workspace's 7-day trial ends, or right away if the trial is ended early, and Hashnode needs Hashnode Pro on the publication you connect.
 
@@ -85,7 +85,7 @@ The fundamental pattern for using PostQueen CLI:
 
 1. **Authenticate** - Verify or set up authentication (see above)
 2. **Discover** - List integrations and get their settings
-3. **Fetch** - Use integration tools to retrieve dynamic data (subreddits and flairs, Pinterest boards, Discord and Slack channels)
+3. **Fetch** - Use integration tools to retrieve dynamic data (Pinterest boards, Lemmy communities, Discord and Slack channels)
 4. **Prepare** - Upload media files if needed
 5. **Post** - Create posts with content, media, and platform-specific settings
 6. **Analyze** - Track performance with platform and post-level analytics
@@ -207,12 +207,13 @@ postqueen posts:create \
 # channels that take the same settings, or use --json)
 postqueen posts:create -c "Content" -s "2026-12-31T12:00:00Z" -i "bluesky-id,mastodon-id"
 
-# Platform-specific settings
+# Platform-specific settings (a Pinterest Pin needs a board ID and an uploaded image)
 postqueen posts:create \
   -c "Content" \
   -s "2026-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Post","type":"self","is_flair_required":false}}]}' \
-  -i "reddit-id"
+  -m "$IMG1" \
+  --settings '{"board":"<board id>","title":"My Pin"}' \
+  -i "pinterest-id"
 
 # Complex post from JSON file
 postqueen posts:create --json post.json
@@ -240,7 +241,7 @@ postqueen posts:status <post-id> --status schedule  # Promote a draft into the p
 # Only DRAFT/QUEUE (unpublished) posts can be updated. Pass the MAIN post id, not a comment id.
 # Do NOT include __type: the backend adds it automatically from the integration.
 postqueen posts:settings <post-id> --settings '{"content_posting_method":"DIRECT_POST"}'   # Switch a TikTok draft to direct publishing
-postqueen posts:settings <post-id> --settings '{"subreddit":[{"value":{"subreddit":"/r/selfhosted","title":"My title","type":"self","is_flair_required":true}}]}'  # Set a Reddit post's subreddit
+postqueen posts:settings <post-id> --settings '{"type":"unlisted"}'                       # Make a YouTube draft unlisted
 ```
 
 ### Analytics
@@ -317,26 +318,23 @@ postqueen posts:create -c "Content" -s "2026-12-31T12:00:00Z" -m "$VIDEO_PATH" -
 
 ### Pattern 1: Discover & Use Integration Tools
 
-**Reddit: find a subreddit, then its post types and flairs:**
+**Lemmy: find a community, then post to it:**
 ```bash
-# Get Reddit integration ID
-REDDIT_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="reddit") | .id' | head -n 1)
+# Get Lemmy integration ID
+LEMMY_ID=$(postqueen integrations:list | tail -n +2 | jq -r '.[] | select(.identifier=="lemmy") | .id' | head -n 1)
 
-# Search subreddits: each result's "name" is the /r/... path to use as "subreddit"
-postqueen integrations:trigger "$REDDIT_ID" subreddits -d '{"word":"programming"}'
+# Search communities by keyword. The tool is called "subreddits"; each result has an "id" and a "name"
+COMMUNITY=$(postqueen integrations:trigger "$LEMMY_ID" subreddits -d '{"word":"selfhosted"}' | tail -n +2 | jq -c '.output[0]')
+COMMUNITY_ID=$(echo "$COMMUNITY" | jq -r '.id')
+COMMUNITY_NAME=$(echo "$COMMUNITY" | jq -r '.name')
 
-# Allowed post types ("allow": self, link, media), whether a flair is required, and the flairs
-RULES=$(postqueen integrations:trigger "$REDDIT_ID" restrictions -d '{"subreddit":"/r/programming"}' | tail -n +2)
-echo "$RULES" | jq '.output'
-FLAIR_ID=$(echo "$RULES" | jq -r '.output.flairs[0].id')
-FLAIR_NAME=$(echo "$RULES" | jq -r '.output.flairs[0].name')
-
-# Use in post (here the subreddit requires a flair)
+# Use in post. The "subreddit" setting is a list of communities, so one post can go to several.
+# Each needs the community "id" (as a string), its name as "subreddit", and a "title" of 3 to 200 characters; "url" is optional
 postqueen posts:create \
   -c "My post content" \
   -s "2026-12-31T12:00:00Z" \
-  --settings "{\"subreddit\":[{\"value\":{\"subreddit\":\"/r/programming\",\"title\":\"Post Title\",\"type\":\"self\",\"is_flair_required\":true,\"flair\":{\"id\":\"$FLAIR_ID\",\"name\":\"$FLAIR_NAME\"}}}]}" \
-  -i "$REDDIT_ID"
+  --settings "{\"subreddit\":[{\"value\":{\"id\":\"$COMMUNITY_ID\",\"subreddit\":\"$COMMUNITY_NAME\",\"title\":\"Post Title\"}}]}" \
+  -i "$LEMMY_ID"
 ```
 
 **Pinterest: pick a board:**
@@ -539,7 +537,7 @@ done
 
 ### Integration Tools Workflow
 
-Some settings need an ID that only the network knows (a subreddit's flair, a Pinterest board, a Discord channel). The tools workflow fetches them:
+Some settings need an ID that only the network knows (a Lemmy community, a Pinterest board, a Discord channel). The tools workflow fetches them:
 
 1. **Check available tools** - `integrations:settings` returns a `tools` array (empty when the network has none)
 2. **Review tool schema** - Each tool has `methodName`, `description`, and `dataSchema` (the keys to pass with `-d`)
@@ -550,12 +548,10 @@ Some settings need an ID that only the network knows (a subreddit's flair, a Pin
 
 | Network | Tools (`methodName`) | Input (`-d`) | Setting it helps fill |
 |---|---|---|---|
-| Reddit (`reddit`) | `subreddits` | `{"word":"programming"}` | `subreddit[].value.subreddit` (the result's `name`, a `/r/...` path) |
-| Reddit (`reddit`) | `restrictions` | `{"subreddit":"/r/programming"}` | `type` (one of `allow`), `is_flair_required`, `flair` (`{id, name}`) |
 | Pinterest (`pinterest`) | `boards` | none | `board` |
 | Discord (`discord`) | `channels` | none | `channel` |
 | Slack (`slack`) | `channels` | none | `channel` |
-| Lemmy (`lemmy`) | `subreddits` (communities) | `{"word":"..."}` | `subreddit[].value` |
+| Lemmy (`lemmy`) | `subreddits` (communities) | `{"word":"..."}` | `subreddit[].value` (`id` and `subreddit` from the result's `id` and `name`) |
 | Farcaster (`wrapcast`) | `subreddits` (channels) | `{"word":"..."}` | `subreddit[].value.id` |
 | DEV (`devto`) | `tags`, `organizations` | none | `tags`, `organization` |
 | Hashnode (`hashnode`) | `tagsList`, `publications` | none | `tags`, `publication` |
@@ -578,17 +574,12 @@ Platform-specific settings go in each post's `settings`. The backend adds the `_
 {
   "posts": [
     {
-      "integration": { "id": "reddit-id" },
-      "value": [{ "content": "...", "image": [] }],
+      "integration": { "id": "pinterest-id" },
+      "value": [{ "content": "...", "image": [{ "id": "<upload id>", "path": "<upload path>" }] }],
       "settings": {
-        "subreddit": [{
-          "value": {
-            "subreddit": "/r/programming",
-            "title": "Post Title",
-            "type": "self",
-            "is_flair_required": false
-          }
-        }]
+        "board": "<board id>",
+        "title": "Pin Title",
+        "link": "https://example.com"
       }
     }
   ]
@@ -597,7 +588,7 @@ Platform-specific settings go in each post's `settings`. The backend adds the `_
 
 Pass settings directly:
 ```bash
-postqueen posts:create -c "Content" -s "2026-12-31T12:00:00Z" --settings '{"subreddit":[...]}' -i "reddit-id"
+postqueen posts:create -c "Content" -s "2026-12-31T12:00:00Z" -m "$MEDIA_PATH" --settings '{"board":"<board id>"}' -i "pinterest-id"
 # Backend automatically adds "__type" based on integration ID
 ```
 
@@ -677,14 +668,19 @@ JSON mode supports:
 
 ## Platform-Specific Examples
 
-### Reddit
+### Pinterest
 ```bash
-# type is self (text), link (needs "url") or media (the post's first image or MP4)
+# Upload the media first: up to 5 images, or one video and its cover image
+PIN=$(postqueen upload pin.jpg | tail -n +2 | jq -r '.path')
+
+# board is required: the numeric board ID from the boards tool, not the board name.
+# title (up to 100 characters) and link are optional.
 postqueen posts:create \
-  -c "Post content" \
+  -c "Pin description" \
   -s "2026-12-31T12:00:00Z" \
-  --settings '{"subreddit":[{"value":{"subreddit":"/r/programming","title":"My Title","type":"self","is_flair_required":false}}]}' \
-  -i "reddit-id"
+  -m "$PIN" \
+  --settings '{"board":"<board id>","title":"My Pin","link":"https://example.com"}' \
+  -i "pinterest-id"
 ```
 
 ### YouTube
@@ -795,7 +791,7 @@ Client setup: https://docs.postqueen.ai/mcp/introduction
 6. **Date format** - Must be ISO 8601: `"2026-12-31T12:00:00Z"` and is REQUIRED
 7. **Tool not found** - Only the tools in `integrations:settings` exist; any other name fails with `Tool not found`
 8. **Character limits** - Each platform has different limits, check `maxLength` in settings
-9. **Required settings** - Some platforms require specific settings: X `who_can_reply_post`, Reddit `subreddit` (with `title`, `type`, `is_flair_required`), YouTube `title` and `type`, TikTok (see its example), Instagram `post_type`, Pinterest `board`, Discord and Slack `channel`
+9. **Required settings** - Some platforms require specific settings: X `who_can_reply_post`, Lemmy `subreddit` (a list of communities, each with `id`, `subreddit` and `title`), YouTube `title` and `type`, TikTok (see its example), Instagram `post_type`, Pinterest `board`, Discord and Slack `channel`
 10. **Status line before the JSON** - Pipe through `tail -n +2` before `jq`
 11. **Analytics returns `{"missing": true}`** - The post was published but the platform didn't return a post ID. Run `posts:missing <post-id>` to get available content, then `posts:connect <post-id> --release-id "<id>"` to link it. Analytics will work after connecting.
 12. **`posts:settings` merges** - Only the keys you pass change; everything else on the post is preserved, so pass a partial object, not the full settings blob. Only **DRAFT/QUEUE** (unpublished) posts can be updated; published posts are rejected. Pass the **main post id**, not a comment id. Never include `__type`: the backend adds it automatically from the integration.
