@@ -20,6 +20,8 @@ keywords:
 
 Only a workspace Admin or Super Admin can open Billing. Other members see **Billing is managed by admins** and need to ask one of them.
 
+The line under your plan's name says when it charges next, for example "PostQueen Pro · renews on 3 Nov, 2026", or "PostQueen Pro · free trial until 3 Nov, 2026" during the trial. A plan set to end gives its last day instead, and a founding member's plan does not renew.
+
 ## Change your plan
 
 <Steps>
@@ -30,7 +32,7 @@ Only a workspace Admin or Super Admin can open Billing. Other members see **Bill
     On its card, choose **Upgrade to** or **Downgrade to** followed by the plan name. On your current plan's card, **Switch to yearly** or **Switch to monthly** changes only the period.
   </Step>
   <Step title="Confirm what you lose">
-    Moving from a plan with team members to Creator asks you to confirm that your team members will be removed from the workspace (switched off, not deleted). Choose **Yes, continue** to go ahead.
+    Moving from a plan with team members to Creator, in a workspace that has other members, asks you to confirm: "Your team members will be disabled and lose access to your organization until you choose a plan that includes team members again." They are switched off, not deleted. Choose **Yes, continue** to go ahead.
   </Step>
 </Steps>
 
@@ -80,6 +82,8 @@ Under **Payment method & invoices**, choose **Open billing portal**. The portal 
 
 Six invoices show at first. **Show older invoices** adds six more. Before the first payment the list reads "No invoices yet. They show up here after your first payment." Like the rest of Billing, only a workspace Admin or Super Admin sees it.
 
+When the workspace has no plan, the plan picker takes the place of the whole app, Billing included. Its header then has a **Billing history** button that opens the same list, for an Admin or Super Admin of a workspace that has been through checkout before.
+
 ## Cancel
 
 <Steps>
@@ -96,12 +100,14 @@ Six invoices show at first. **Show older invoices** adds six more. Before the fi
 
 The plan keeps working until the end of the period you already paid for, and nothing more is charged. Billing shows the end date and a **Reactivate subscription** button. Choose it before that date to keep the plan as it was.
 
+When the workspace has other members, the cancel dialog says that they will be disabled and lose access to the workspace until you choose a plan that includes team members again.
+
 Two cases end at once instead:
 
 - **The last payment failed.** Canceling ends the plan immediately.
 - **A founding-member trial.** Canceling returns the workspace to no plan immediately, and you lose the lifetime offer.
 
-Deleting your account also cancels the plans of the workspaces you own. See [Refunds](/cloud/refunds#deleting-your-account).
+Deleting your account also cancels the plans of the workspaces it deletes, at once. See [Refunds](/cloud/refunds#deleting-your-account).
 
 ## When a payment fails
 
@@ -115,7 +121,7 @@ The workspace is then without a plan, as described below. If you did not dispute
 
 ## When a plan ends
 
-The workspace has no plan. Its channels are switched off, not deleted, and scheduled posts stop publishing. Auto Post feeds are switched off and stay off until you turn them on again. Your posts, channels and settings stay until you delete them. To come back, choose a plan on Billing. A workspace gets one free trial, so coming back starts the paid plan at once.
+The workspace has no plan. Its channels are switched off, not deleted, and scheduled posts stop publishing. Auto Post feeds are switched off and stay off until you turn them on again. Your posts, channels and settings stay until you delete them. To come back, choose a plan on Billing. A workspace gets one free trial, so coming back starts the paid plan at once. Past invoices stay one click away under **Billing history** at the top of the plan picker.
 
 ## Coupons and the founding-member offer
 

@@ -36,7 +36,7 @@ Every new workspace gets one {{trialDays}}-day free trial on the plan you choose
 ## What happens to your card
 
 - **Today:** \$0. To check the card, PostQueen places a \$1 authorization on it and releases it at once. It is never charged, though your bank may show it as pending for a short time.
-- **When the trial ends:** the plan starts and the card is charged the plan's monthly or yearly price, plus tax where it applies. **Billing** shows the amount while the trial runs.
+- **When the trial ends:** the plan starts and the card is charged the plan's monthly or yearly price, plus tax where it applies. While the trial runs, **Billing** shows the amount and the day, for example "Your free trial runs until 3 Nov, 2026. Then your first payment of $49 is charged."
 - **If you cancel first:** nothing is charged. See [Cancel before the trial ends](#cancel-before-the-trial-ends).
 
 ## Credits during the trial
@@ -47,7 +47,7 @@ The trial adds one month of your plan's credits, such as 600 on Pro, even when y
 
 <TrialLocks />
 
-In **Add Channel**, X's setup step shows "X unlocks after your trial" in place of its connect button. The AI Copilot page and the **AI Copilot** tab in Create Post show "AI Copilot unlocks after your trial". In the **Generate video** window, **Generate** with **Seedance 2.0 (Audio + Video)** opens a **Trial** dialog instead of making the video, and no credit is used. The API and the MCP server answer `This video is not available in trial mode`.
+In **Add Channel**, X's setup step shows "X unlocks after your trial" in place of its connect button. The AI Copilot page and the **AI Copilot** tab in Create Post show "AI Copilot unlocks after your trial". In the **Generate video** window, **Generate** with **Seedance 2.0 (Audio + Video)** opens an **End free trial** dialog instead of making the video, and no credit is used. The API and the MCP server answer `This video is not available during the trial.`, followed by where to end the trial.
 
 During the trial, PostQueen also refuses a social account that another PostQueen account connected before. End the trial to add it.
 
@@ -60,14 +60,19 @@ Everything else works from the first day: every other channel you can connect, s
     Choose **Upgrade** at the bottom of the left rail, or **Billing & invoices** in the account menu.
   </Step>
   <Step title="End the trial">
-    Choose **End free trial** on the trial banner above the plan cards. There is no second confirmation: PostQueen charges the card for the plan right away.
+    Choose **End free trial** on the trial banner above the plan cards. A dialog of the same name says what it charges: "Ending the trial charges your plan's first payment today instead of at the end of the trial. Nothing extra is added." Choose **End trial and pay now**, or **Cancel** to keep the trial.
+  </Step>
+  <Step title="Confirm with your bank, if it asks">
+    Some banks ask you to approve the payment (3D Secure). PostQueen then shows "Confirm the payment with your bank": finish the check in the window that opened.
   </Step>
   <Step title="Check the result">
     When the payment goes through, you see "Your trial is finished and your card has been charged." X, Seedance videos and the AI Copilot are unlocked.
   </Step>
 </Steps>
 
-The **End free trial to unlock X** and **End free trial to unlock AI Copilot** buttons on the lock cards do the same thing.
+The **End free trial to unlock X** and **End free trial to unlock AI Copilot** buttons on the lock cards ask the same question first.
+
+If the card is declined, or the bank's check fails, the trial still ends but its first payment does not go through. PostQueen shows "We could not charge your credit card" and "Your trial has ended, but its first payment did not go through. Pay the open invoice with a working card to keep using PostQueen." Choose **Update card and pay** to pay the open invoice with another card.
 
 ## Cancel before the trial ends
 
@@ -78,10 +83,11 @@ Only a workspace Admin or Super Admin can cancel. On **Billing**, choose **Cance
 | Message | What to do |
 |---|---|
 | “X unlocks when your free trial ends. End the trial to connect it now.” | End the trial on **Billing**, or wait for it to end, then connect X again. |
-| “You are currently on trial, in order to use the feature you must finish the trial” | Shown for a Seedance video. Choose **Finish the trial, charge me now** to start the paid plan, or close the dialog and make the video with **Image Text Slides**. |
-| `This video is not available in trial mode` | The API or an agent asked for a Seedance video. End the trial on **Billing**, or use `image-text-slides`. |
-| “This social channel was connected previously to another PostQueen account.” | Choose **Fast track - Charge me now** to end the trial and add the channel, or **Cancel**. |
-| “We could not charge your credit card” after **End free trial** | Choose **Update payment method**, fix the card in the billing portal, and try again. The trial stays active until the payment succeeds. |
+| “This feature is not available during the trial. You can end the trial now: your plan's first payment is charged today instead of at the end of the trial.” | Shown for a Seedance video. Choose **End trial and pay now** to start the paid plan, or **Cancel** and make the video with **Image Text Slides**. |
+| `This video is not available during the trial. ...` | The API or an agent asked for a Seedance video. End the trial on **Billing**, or use `image-text-slides`. |
+| “This social channel was previously connected to another PostQueen account.” | Choose **End trial and pay now** to end the trial and add the channel, or **Cancel**. |
+| “We could not charge your credit card” after **End free trial**, with “Your trial has ended, but its first payment did not go through.” | The card was declined. Choose **Update card and pay** and pay the open invoice with a working card. |
+| “We could not charge your credit card” after **End free trial**, with “Update your payment method and try again.” | Choose **Update payment method**, fix the card in the billing portal, and try again. The trial stays active until the payment succeeds. |
 
 ## Next steps
 
