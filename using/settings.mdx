@@ -79,9 +79,14 @@ In **Settings > Account**:
 
 ## Your time zone
 
-PostQueen shows every time in the time zone your browser reports, which is the time zone of your computer or phone. **Settings > Account** shows it under **Timezone**, with a **Coming soon** badge: you cannot change it in PostQueen yet.
+**Settings > Account** has a **Timezone** select: "How dates and times are shown in the app. Posting times already set for a channel stay at the same moment."
 
-To see and schedule times in another time zone, change your device's time zone, then reload PostQueen. A post is saved as a moment, not a clock time: a post set for 09:00 in Berlin shows as 08:00 to a teammate in London, and goes out once, at that moment.
+- **Automatic** is the default. It shows the time zone your browser reports, for example **Automatic (Europe/Berlin)**, which is the time zone of your computer or phone.
+- Or pick **UTC** or any time zone in the list, each shown with its current offset.
+
+PostQueen saves your choice and reloads the page. From then on the calendar, the composer and its date picker, post previews, the posts list, notifications and billing dates use that time zone, and so does the composer of the Chrome extension. The choice is yours: each teammate picks their own. If it cannot be saved, "Could not save the timezone" appears and the select goes back.
+
+A post is saved as a moment, not a clock time: a post set for 09:00 in Berlin shows as 08:00 to a teammate who picked London, and goes out once, at that moment. Changing your time zone moves nothing: scheduled posts and channel posting times keep their moments and only show in the new zone. The public API is unchanged: its dates are in UTC, as before.
 
 ## Delete your account
 
@@ -89,23 +94,25 @@ To see and schedule times in another time zone, change your device's time zone, 
   <Step title="Open Delete Account">
     In **Settings > Account**, scroll to **Delete Account** and choose it.
   </Step>
+  <Step title="Read what goes with it">
+    The red box above the fields says what deleting your account does. With a paid plan and other members it reads: "Your account, organizations, channels and posts will be deleted, your subscription will be cancelled now and the other team members will be removed from your organization. This cannot be undone."
+  </Step>
   <Step title="Confirm it is you">
     Type your email in **Type your email to confirm** and enter your **Current password**. If your account has no password, sign out and sign in again with your connected account first. That sign-in counts for 20 minutes.
   </Step>
   <Step title="Delete">
-    Choose **Delete Account**, then **Yes, delete my account**.
+    Choose **Delete Account**. The last dialog repeats what goes with it; choose **Yes, delete my account**.
   </Step>
 </Steps>
 
 <Warning>
-This cannot be undone. Every workspace you own is deleted with its channels and posts, and its paid plan is canceled first. Workspaces you only belong to carry on without you. For what happens to your data afterward, see [Security and privacy](/security-and-privacy).
+This cannot be undone. Every workspace you own is deleted with its channels and posts, its paid plan is canceled at once, and its other members are removed from it. A workspace that has another Super Admin is not deleted: you only leave it. Workspaces you only belong to carry on without you. For what happens to your data afterward, see [Security and privacy](/security-and-privacy).
 </Warning>
 
 ## If something goes wrong
 
 | Message | What to do |
 |---|---|
-| “Please remove your team members before deleting your account” | In each workspace you own, remove the other members in **Teams**, or make an Admin the Super Admin with **Transfer**. |
 | “Current password is incorrect” | Enter the password you sign in with. |
 | “Re-authenticate with a connected account to delete your account” | Sign out, sign in again with your connected account, then delete within 20 minutes. |
 | “Could not cancel your subscription, please try again or contact support” | Try again. If it repeats, email [support@postqueen.ai](mailto:support@postqueen.ai). |

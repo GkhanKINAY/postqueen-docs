@@ -16,7 +16,7 @@ Every post to YouTube carries a `settings` object with `"__type": "youtube"`. Th
 | `type` | string | Yes | Who can watch: `public`, `private` or `unlisted`. |
 | `selfDeclaredMadeForKids` | string | No | `yes` or `no`. Left out, the video is declared not made for kids. |
 | `tags` | array of objects | No | Video tags, each `{ "value": "tag", "label": "tag" }`. The `label` is sent. 500 characters in total, with 1 for each comma between two tags, and a tag with a space counts 2 extra because YouTube wraps it in quotes. The composer stops at 3 tags; the API does not. |
-| `thumbnail` | object | No | Your own thumbnail, `{ "id": "...", "path": "..." }` from [upload a file](/public-api/uploads/upload-file). JPEG or PNG, set right after the upload, and only on a verified YouTube channel. |
+| `thumbnail` | object | No | Your own thumbnail, `{ "id": "...", "path": "..." }` from [upload a file](/public-api/uploads/upload-file). JPEG or PNG, set right after the upload, and only on a verified YouTube channel. Without it, the `thumbnail` of the video in `image` is used, if it has one. |
 
 Your subscribers are always notified of the upload.
 

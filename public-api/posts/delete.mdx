@@ -10,4 +10,6 @@ A delete removes the post's **group**: the post on one channel with every entry 
 An id that is unknown or already deleted answers `404 Post not found`. A client that retries deletes can treat that `404` as done.
 </Tip>
 
+The answer is `{ "id": "..." }`, the id of the deleted post. When you pass the id of a comment, it is the id of the post the comment belongs to. Before app v3.6.166 the answer was `{ "error": true }` even on success.
+
 Nothing already published is taken down from the network. To delete by group id instead, use [Delete a post by group](/public-api/posts/delete-by-group).

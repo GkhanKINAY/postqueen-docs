@@ -1107,11 +1107,23 @@
         ],
         "responses": {
           "200": {
-            "description": "Deleted. The body is always `{ \"error\": true }`: judge the call by the status code",
+            "description": "Deleted. `id` is the post's own id, or the id of the post a comment belongs to when you passed a comment's id",
             "content": {
               "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The id of the deleted post"
+                    }
+                  }
+                },
                 "example": {
-                  "error": true
+                  "id": "cmg1p0s7k0001qz0h4yq2a8r1"
                 }
               }
             }
@@ -1158,11 +1170,50 @@
         ],
         "responses": {
           "200": {
-            "description": "Done. The body is always `{ \"error\": true }`, also when no post had that group",
+            "description": "`{ \"id\": ... }`, the id of the group's post, when your workspace has or had a post with that group. A group that was already deleted answers the same. `{ \"error\": true }`, also with status 200, when no post of your workspace ever had that group",
             "content": {
               "application/json": {
-                "example": {
-                  "error": true
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "id"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The id of the group's post"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": [
+                        "error"
+                      ],
+                      "properties": {
+                        "error": {
+                          "type": "boolean",
+                          "description": "No post of your workspace had that group"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "examples": {
+                  "deleted": {
+                    "summary": "The group had a post",
+                    "value": {
+                      "id": "cmg1p0s7k0001qz0h4yq2a8r1"
+                    }
+                  },
+                  "unknown": {
+                    "summary": "No post had that group",
+                    "value": {
+                      "error": true
+                    }
+                  }
                 }
               }
             }
@@ -2038,7 +2089,7 @@
             }
           },
           "406": {
-            "description": "`Clipping is not available in trial mode`",
+            "description": "Clipping during the free trial: `Clipping is not available during the trial.`, followed by where to end the trial",
             "content": {
               "application/json": {
                 "schema": {
@@ -2046,7 +2097,7 @@
                 },
                 "example": {
                   "statusCode": 406,
-                  "message": "Clipping is not available in trial mode"
+                  "message": "Clipping is not available during the trial. To use it now, open https://app.postqueen.ai/billing and click \"End free trial\": your plan's first payment is charged today instead of at the end of the trial."
                 }
               }
             }
@@ -2347,7 +2398,7 @@
                 },
                 "example": {
                   "statusCode": 406,
-                  "message": "This video is not available in trial mode"
+                  "message": "This video is not available during the trial. To use it now, open https://app.postqueen.ai/billing and click \"End free trial\": your plan's first payment is charged today instead of at the end of the trial."
                 }
               }
             }
@@ -4067,7 +4118,8 @@
         "properties": {
           "content": {
             "type": "string",
-            "description": "The text. It may be empty when `image` has at least one file. HTML is accepted and converted for each network. `(post:ID)`, with the id of another post of the workspace, is replaced with that post's address on its network when this post is published, or removed when that post has no address yet"
+            "maxLength": 1000000,
+            "description": "The text. It may be empty when `image` has at least one file. HTML is accepted and converted for each network. `(post:ID)`, with the id of another post of the workspace, is replaced with that post's address on its network when this post is published, or removed when that post has no address yet. At most 1,000,000 characters"
           },
           "image": {
             "type": "array",
@@ -4103,7 +4155,8 @@
           },
           "alt": {
             "type": "string",
-            "description": "Alt text, on networks that take it"
+            "maxLength": 1000,
+            "description": "Alt text, on networks that take it. Up to 1000 characters"
           },
           "thumbnail": {
             "type": "string",

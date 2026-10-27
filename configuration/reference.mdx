@@ -206,6 +206,8 @@ Details: [MCP on your server](/configuration/mcp).
 | `NEXT_PUBLIC_OVERRIDE_BACKEND_URL` | The base address MCP's OAuth discovery advertises for the resource, the issuer and the token, registration and userinfo endpoints. Falls back to `NEXT_PUBLIC_BACKEND_URL`. Set it to a host that serves the backend at its root: see [Split deployments](/reverse-proxies/split-deployments#give-the-backend-its-own-host). |
 | `DCR_VERIFIED_DOMAINS` | Domains, separated by commas, that self-registering OAuth clients may send people back to. With a list, an `https` callback must be on a listed domain or a subdomain of one. `localhost` and app schemes such as `cursor://` are not checked. Unset, any `https` callback registers. |
 | `OPENAI_OAUTH_CLIENT_ID` | The client id of a ChatGPT app you published. Turns on the `openid` and `email` scopes and the `/oauth/userinfo` endpoint, for that client and for self-registered clients whose callbacks are all on a `DCR_VERIFIED_DOMAINS` domain. |
+| `HUBSPOT_OAUTH_CLIENT_ID` | The client id of an OAuth app (**Settings > Developers**) for HubSpot agents. HubSpot sends no client secret, so this one app signs in with PKCE instead, gets a refresh token, and OAuth discovery is also answered at the root of the MCP address's domain. That root has to reach the backend, so it works only with the backend at the root of a host of its own (`NEXT_PUBLIC_OVERRIDE_BACKEND_URL`). Unset, nothing HubSpot-specific is served. |
+| `HUBSPOT_APP_CLIENT_ID`, `HUBSPOT_APP_CLIENT_SECRET` | The client id and secret of the HubSpot app itself (HubSpot project > app > **Auth** tab), not of the OAuth app above. Its redirect URL is `NEXT_PUBLIC_BACKEND_URL` + `/oauth/hubspot/callback`, which finishes the install. With both set, **Settings > Integrations** shows a HubSpot card with the install link. Set them on the backend. |
 | `OPENAI_APP_CHALLANGE` | The domain verification string OpenAI gives you, served at `/.well-known/openai-apps-challenge`. The misspelling is the name the code reads. |
 | `MCP_ONLY` | Serves only MCP and its OAuth routes, for an instance that exists for that alone. The web app and the public API stop working on it. |
 | `AGENT_API_KEY` | Secret for `POST /public/agent`, which turns a text brief into a post. Unset, the route refuses every request. |
@@ -273,16 +275,16 @@ All optional.
 | `SENTRY_ENVIRONMENT` | The environment the backend and orchestrator report under, such as `production`. The Docker image sets no `NODE_ENV`, so without it events are filed as development. |
 | `SENTRY_SPOTLIGHT` | `1` sends errors to a local Spotlight viewer instead. The Compose file's `debug` profile runs one. |
 | `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | Upload source maps when you build your own image. |
-| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | PostHog product analytics. |
 | `NEXT_PUBLIC_GTM_ID` | Google Tag Manager. |
-| `NEXT_PUBLIC_FACEBOOK_PIXEL`, `FACEBOOK_PIXEL_ACCESS_TOKEN` | Meta Pixel and its server-side Conversions API. |
+| `NEXT_PUBLIC_FACEBOOK_PIXEL` | The Meta Pixel id. Set, the browser loads the pixel and reports ViewContent, CompleteRegistration and InitiateCheckout. |
+| `FACEBOOK_PIXEL_ACCESS_TOKEN` | The Conversions API token, used together with `NEXT_PUBLIC_FACEBOOK_PIXEL`; on its own it sends nothing. With both, the server sends StartTrial and Purchase from the Stripe webhooks: StartTrial once a trial has started and its card check passed, Purchase for a subscription's first paid invoice. The browser never reports those two. |
 | `DATAFAST_API_KEY`, `DATAFAST_WEBSITE_ID` | Datafast analytics. |
 | `DUB_PUBLISHABLE_KEY` | Dub's click analytics in the browser, separate from short links. |
 | `NEXT_PUBLIC_TRACKING_TRIAL` | Fires a conversion event when a trial starts. Only relevant with billing. |
 
 ## Listed in example files, but not read
 
-These appear in the Compose file or `.env.example` and change nothing: `FEE_AMOUNT`, `NX_ADD_PLUGINS`, `SLACK_SIGNING_SECRET`, `STRIPE_SIGNING_KEY_CONNECT`, `POSTQUEEN_OAUTH_URL` and `BACKEND_URL`. `MCP_URL` is passed to the web app, but no page uses it: the MCP addresses on **Connections** come from `NEXT_PUBLIC_BACKEND_URL`.
+These appear in the Compose file or `.env.example` and change nothing: `FEE_AMOUNT`, `NX_ADD_PLUGINS`, `SLACK_SIGNING_SECRET`, `STRIPE_SIGNING_KEY_CONNECT`, `POSTQUEEN_OAUTH_URL` and `BACKEND_URL`. `MCP_URL` moves only the `/mcp` addresses **Connections** shows; unset, they follow `NEXT_PUBLIC_OVERRIDE_BACKEND_URL`, then `NEXT_PUBLIC_BACKEND_URL`. The sign-in address never moves to it.
 
 ## Related
 

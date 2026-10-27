@@ -29,7 +29,7 @@ A draft is checked too: the body, each network's required settings, and that eve
 
 Every field, with its type, is in the body schema on this page.
 
-Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`, and a video must be `ready`: see [Upload a file](/public-api/uploads/upload-file).
+Media must be uploaded first. A post's media path must end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`, and a video must be `ready`: see [Upload a file](/public-api/uploads/upload-file). Each media item can also carry `alt`, its alt text of up to 1000 characters, and `thumbnail`, the URL of a cover picture for a video. A longer `alt` answers `400`.
 
 ## Link to another post
 
@@ -109,7 +109,7 @@ Every status the endpoint returns, and what to do about it, is on [Limits and er
 ## Size and rate limits
 
 <Warning>
-Do not put file data in the body. This endpoint takes about 100 kB of JSON, which one base64 image exceeds, and answers `413` before anything is checked. Upload the file first and send its `id` and `path`.
+Do not put file data in the body. This endpoint takes about 100 kB of JSON, which one base64 image exceeds, and answers `413` before anything is checked. Upload the file first and send its `id` and `path`. The `content` of each item is also capped at 1,000,000 characters: longer content answers `400` with `The post content is too long.`
 </Warning>
 
 <Note>

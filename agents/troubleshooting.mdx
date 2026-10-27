@@ -55,11 +55,13 @@ Find the symptom or the message you see. Most failures come from the key, from a
 | `<channel>: ... please fix it, and try integrationSchedulePostTool again.` | The post is missing a setting, or is too long for the network | The agent should read `integrationSchema` for that network and try again |
 | `Your post should have at least one character or one image.` | An item in the post is empty | Give every item text or media |
 | `File must have a valid extension: .png, .jpg, .jpeg, .gif, .webp, or .mp4` | An attachment is not a supported file | Bring the file in with `uploadFromUrlTool`, the upload panel or `generateImageTool`, and use the `path` it returns |
+| `The thumbnail must be a .jpg, .jpeg or .png file` | An attachment's `thumbnail` is not a JPEG or PNG | Upload a `.jpg`, `.jpeg` or `.png` picture and use its `path` as the `thumbnail` |
 | `Method "..." not found for this integration, ...` | The agent asked for a helper this network does not have | The agent should use a `methodName` from `integrationSchema` |
 | `The channel was disconnected because its token expired, ...` | The network no longer accepts the channel's sign-in | Reconnect the channel on the **Channels** page |
 | `Only scheduled posts that were not published yet (or drafts) can be updated` | `postSettingsTool` was used on a published or failed post | Settings can only change before a post goes out |
 | `The publish time of this post already passed, it cannot be updated` | The post is due or going out now | Nothing to change: check it on the calendar |
-| `This id belongs to a comment, pass the id of the main post` | The agent used a comment's ID | Use the post's own ID from `postsListTool` |
+| `This id belongs to a comment, pass the id of the main post` | The agent used a comment's ID with `postSettingsTool` or `deletePostTool` | Use the post's own ID from `postsListTool` |
+| `Post not found` from `deletePostTool` | The ID is not a post of this workspace, or the post was already deleted | List the posts again with `postsListTool` and use the post's `id` |
 | `Not enough credits: this costs N and the balance is N.` | The workspace's credits do not cover the image, video or X post | Add credits on **Billing**, or ask for something that costs less, such as a lower `quality` image |
 | `missing_release` from `analyticsPostTool` | PostQueen does not know the post's ID on the network | Connect the post to its published copy, then ask again. See [analytics](/cli/analytics#fix-a-missing-release-id) |
 
@@ -67,8 +69,11 @@ Find the symptom or the message you see. Most failures come from the key, from a
   <Accordion title="No upload panel appears" icon="cloud-upload">
     The **Upload Media** panel shows only in apps that can display MCP panels, such as Claude, Claude Cowork and ChatGPT. Elsewhere, upload the file on PostQueen's **Media** page, in the workspace the agent is connected to, and tell the agent its name: it finds the file with `mediaListTool`. An agent that runs commands on your computer can upload it itself with `uploadLinkTool`, or with [`postqueen upload`](/cli/media-upload), and a file on a public link goes in with `uploadFromUrlTool`.
   </Accordion>
-  <Accordion title="The agent says it deleted or moved a post" icon="trash">
-    No MCP tool can delete a post, change its text or time, or move it between draft and scheduled. Check the calendar, and do it there, or with the [CLI](/cli/managing-posts) or the [API](/public-api/introduction).
+  <Accordion title="The agent says it moved a post or changed its text" icon="calendar-x">
+    No MCP tool can change a post's text or time, or move it between draft and scheduled. Check the calendar, and do it there, or with the [CLI](/cli/managing-posts) or the [API](/public-api/introduction).
+  </Accordion>
+  <Accordion title="A deleted post is still on the network" icon="trash">
+    `deletePostTool` deletes a post from PostQueen only. A post that was already published stays live on the network: delete it there too.
   </Accordion>
   <Accordion title="A video post failed" icon="film">
     A video is prepared after it is uploaded, and its file can change when that is done. From the upload panel, wait until `uploadWidgetStatusTool` says `ready` before the post goes out. For a video from a link, check the post on your calendar before its time.
