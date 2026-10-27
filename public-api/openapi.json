@@ -4118,7 +4118,8 @@
         "properties": {
           "content": {
             "type": "string",
-            "description": "The text. It may be empty when `image` has at least one file. HTML is accepted and converted for each network. `(post:ID)`, with the id of another post of the workspace, is replaced with that post's address on its network when this post is published, or removed when that post has no address yet"
+            "maxLength": 1000000,
+            "description": "The text. It may be empty when `image` has at least one file. HTML is accepted and converted for each network. `(post:ID)`, with the id of another post of the workspace, is replaced with that post's address on its network when this post is published, or removed when that post has no address yet. At most 1,000,000 characters"
           },
           "image": {
             "type": "array",

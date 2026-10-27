@@ -116,6 +116,7 @@ Creates posts: a draft, a post scheduled for a time, or a post that goes out now
 **Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again. An `integrationId` that is not a channel of your workspace, or a channel that was deleted, returns `errors`: `Integration not found`.
 
 - Settings and length are checked for scheduled posts and posts that go out now. Over MCP, a draft is saved even when a required setting is missing, so add it before the draft is scheduled. The CLI and the API check a draft's settings too.
+- The `content` of each item is at most 1,000,000 characters.
 - Attachments must be media paths that end in `.png`, `.jpg`, `.jpeg`, `.gif`, `.webp` or `.mp4`. Bring a file in with an upload tool first.
 - An attachment is either the `path` as a string, or `{ path, alt, thumbnail, thumbnailTimestamp }` with only `path` required. `alt` is the alt text, up to 1000 characters. `thumbnail` is the `path` of an uploaded `.jpg`, `.jpeg` or `.png`, used as a video's cover. `thumbnailTimestamp` is the frame to use as the cover, in milliseconds. Networks that take no alt text or cover leave them out.
 - On WordPress, Listmonk and an X Article, pictures go inside the content as `<img src="..." alt="...">` where they should appear. The `src` is the `path` of a picture in your media library. `integrationSchema` says so in the network's `rules`.
