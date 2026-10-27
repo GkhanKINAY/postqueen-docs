@@ -239,7 +239,7 @@ async function main() {
 main();
 ```
 
-A delete answers `{ "error": true }` when it works. Judge it by the status code, as above.
+A delete answers `{ "id": "..." }`, the id of the deleted post, when it works. Before app v3.6.166 it answered `{ "error": true }` even then, so judge it by the status code, as above.
 
 ## Errors
 
