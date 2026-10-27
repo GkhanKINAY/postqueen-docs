@@ -247,7 +247,7 @@
         "class": "DeletePostTool",
         "group": "posts",
         "signin": true,
-        "summary": "Deletes a post on one channel, with its comments, after you confirm which one. A post already published stays live on the network."
+        "summary": "Deletes a post on one channel, with its comments. The agent is told to show you the post and ask first. A post already published stays live on the network."
       },
       {
         "name": "analyticsSummaryTool",

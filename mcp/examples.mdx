@@ -289,7 +289,7 @@ Delete the Bluesky post about the spring menu.
 ```
 
 <Accordion title="The tool calls" icon="code">
-The agent finds the post with `postsListTool`, shows you its channel, date and text, and waits for your yes. Then it deletes it:
+The agent finds the post with `postsListTool`. It is told to show you the post's channel, date and text and ask first, and AI apps that support it ask for your approval too. Then it deletes it:
 
 ```json deletePostTool
 { "id": "the-post-id" }
