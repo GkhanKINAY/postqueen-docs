@@ -100,7 +100,7 @@ The questions support hears most, answered in a few lines each. Not here? Try [C
   </Accordion>
 
   <Accordion title="Can an agent delete my posts?" icon="shield-check">
-    Not over MCP: no MCP tool deletes a post. The CLI and the API can delete posts, because they act with your API key. Give the key only to tools you trust, and rotate it if it leaks.
+    Yes, when you ask it to. Over MCP an agent deletes a post with `deletePostTool`, which tells it to show you the post first and wait for your yes. MCP clients that ask before destructive actions ask you as well. A post that was already published is only removed from PostQueen and stays live on the network. The CLI and the API can delete posts too, because they act with your API key. Give the key only to tools you trust, and rotate it if it leaks.
   </Accordion>
 </AccordionGroup>
 
@@ -124,7 +124,7 @@ The questions support hears most, answered in a few lines each. Not here? Try [C
 
 <AccordionGroup>
   <Accordion title="How do I delete my account?" icon="user-x">
-    In **Settings > Account**, choose **Delete Account** and confirm with your email and password: [Settings](/using/settings#delete-your-account). Your plan is canceled at once, and your data is erased within 30 days.
+    In **Settings > Account**, choose **Delete Account** and confirm with your email and password: [Settings](/using/settings#delete-your-account). Your plan is canceled at once, the other members of the workspaces you own are removed from them, and your data is erased within 30 days.
 
     [Security and privacy](/security-and-privacy#when-you-delete-your-account) says what is removed and what the law requires PostQueen to keep.
   </Accordion>
