@@ -4296,6 +4296,9 @@
                 "$ref": "#/components/schemas/FacebookSettings"
               },
               {
+                "$ref": "#/components/schemas/ThreadsSettings"
+              },
+              {
                 "$ref": "#/components/schemas/YouTubeSettings"
               },
               {
@@ -5267,15 +5270,31 @@
           }
         }
       },
-      "EmptySettings": {
-        "title": "Networks with no settings",
+      "ThreadsSettings": {
+        "title": "Threads",
         "type": "object",
-        "description": "Threads, Mastodon, Bluesky, Telegram, Nostr, VK and Kick take no settings. The whole object may be left out",
         "properties": {
           "__type": {
             "type": "string",
             "enum": [
-              "threads",
+              "threads"
+            ],
+            "description": "Set from the channel. You may leave it out"
+          },
+          "made_with_ai": {
+            "type": "boolean",
+            "description": "Labels the post as made with AI (Threads' AI info label), on text, image, video and carousel posts"
+          }
+        }
+      },
+      "EmptySettings": {
+        "title": "Networks with no settings",
+        "type": "object",
+        "description": "Mastodon, Bluesky, Telegram, Nostr, VK and Kick take no settings. The whole object may be left out",
+        "properties": {
+          "__type": {
+            "type": "string",
+            "enum": [
               "mastodon",
               "bluesky",
               "telegram",

@@ -30,7 +30,7 @@ A post that breaks one of these rules is refused with `400` before it is schedul
 | At most 5 different links in each entry | “Threads allows up to 5 links per post” |
 | Each entry within 500 characters | “post is too long, please fix it” |
 
-The 500 limit is counted in characters (Unicode code points) for the whole text, so an emoji or an accented letter counts as one.
+The 500 limit is counted in Unicode code points for the whole text: an accented letter and most emoji count as one, a flag as two and a family emoji as several. Threads itself counts each emoji as its UTF-8 bytes, so an entry with many emoji close to 500 can pass this check and be refused by Threads with "Post text exceeds 500 characters limit".
 
 The error body names the channel and the rule:
 

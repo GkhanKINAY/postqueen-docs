@@ -14,7 +14,7 @@ PostQueen sends password reset links, invitations, one-time sign-in codes when [
 
 <Steps>
   <Step title="Choose the provider and the sender">
-    `EMAIL_PROVIDER` must be exactly `resend`, `ses` or `nodemailer`. Any other value, including a typo or no value, selects a provider that sends nothing and reports no error. Both need a sender:
+    `EMAIL_PROVIDER` must be exactly `resend`, `ses` or `nodemailer`. Any other value, including a typo or no value, selects a provider that sends nothing and reports no error. Every provider needs a sender:
 
     ```env
     EMAIL_FROM_NAME=PostQueen
