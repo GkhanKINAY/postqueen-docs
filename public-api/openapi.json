@@ -4603,6 +4603,10 @@
                 "maximum": 100
               }
             }
+          },
+          "made_with_ai": {
+            "type": "boolean",
+            "description": "Labels a post, carousel or Reel as made with AI (Instagram's AI info label). Ignored on a story"
           }
         }
       },
@@ -4623,9 +4627,9 @@
           },
           "title": {
             "type": "string",
-            "minLength": 2,
+            "minLength": 1,
             "maxLength": 100,
-            "description": "Video title, 2 to 100 characters, without < or >",
+            "description": "Video title, 1 to 100 characters, without < or >",
             "pattern": "^[^<>]*$"
           },
           "type": {
@@ -4644,6 +4648,10 @@
               "no"
             ],
             "description": "Made for kids declaration"
+          },
+          "made_with_ai": {
+            "type": "boolean",
+            "description": "Discloses realistic altered or synthetic content, which YouTube labels. Not needed for animation or content that is clearly unrealistic"
           },
           "thumbnail": {
             "allOf": [
@@ -5252,6 +5260,10 @@
           "title": {
             "type": "string",
             "description": "Title of the video, used only for a video posted to the feed (not a story)"
+          },
+          "made_with_ai": {
+            "type": "boolean",
+            "description": "Labels a text, link or photo post as made with AI, right after it is live. Ignored on videos and stories"
           }
         }
       },

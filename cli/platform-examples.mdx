@@ -176,11 +176,11 @@ postqueen posts:create \
   -i "instagram-id"
 ```
 
-`collaborators` (up to three) is optional. On an Instagram channel connected through Facebook, `audio` adds a track found with the `audioSearch` helper.
+`collaborators` (up to three) and `made_with_ai` (not on a story) are optional. On an Instagram channel connected through Facebook, `audio` adds a track found with the `audioSearch` helper.
 
 ### Facebook
 
-No required settings. `post_type` (`post` or `story`) and `url` are optional.
+No required settings. `post_type` (`post` or `story`), `url` and `made_with_ai` (text, link and photo posts) are optional.
 
 ```bash
 postqueen posts:create \
@@ -191,7 +191,7 @@ postqueen posts:create \
 
 ### Threads
 
-No settings. Extra `-c` items become a thread.
+No required settings. `made_with_ai` is optional. Extra `-c` items become a thread.
 
 ```bash
 postqueen posts:create \
@@ -230,7 +230,7 @@ postqueen posts:create \
 
 ### YouTube
 
-Needs a `title` of 2 to 100 characters, without `<` or `>`, and a `type`: `public`, `private` or `unlisted`. `selfDeclaredMadeForKids` (`yes` or `no`), `thumbnail` and `tags` are optional; all tags together may have 500 characters. A post takes one video, and `-c` is its description.
+Needs a `title` of 1 to 100 characters, without `<` or `>`, and a `type`: `public`, `private` or `unlisted`. `selfDeclaredMadeForKids` (`yes` or `no`), `made_with_ai` (`true` for realistic altered or synthetic content), `thumbnail` and `tags` are optional; all tags together may have 500 characters. A post takes one video, and `-c` is its description.
 
 ```bash
 postqueen posts:create \
