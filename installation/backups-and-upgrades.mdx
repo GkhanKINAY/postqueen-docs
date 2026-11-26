@@ -144,6 +144,10 @@ Marking only `0_init` is not enough on a database that already has later changes
 **Stuck on v3.6.121?** That release ran `db push` without `--accept-data-loss`, so an install that came from a release older than v3.6.107 stopped at its schema step on every start and restarted in a loop. Move the tag to v3.6.122 or newer, or `latest`, and recreate the container.
 </Note>
 
+<Note>
+**Upgrading to v3.6.176 or later with a very large database?** That release adds seven indexes, on the `Post`, `Media`, `Notifications`, `User` and `Errors` tables, and drops eight, at start. On most installs this takes moments, but writes to a table wait while its index builds. With very large `Post` or `Media` tables, first create the new indexes with `CREATE INDEX CONCURRENTLY`, under the names in [the migration](https://github.com/GkhanKINAY/postqueen-app/blob/v3.6.176/libraries/nestjs-libraries/src/database/prisma/migrations/20261125150000_post_media_notification_indexes/migration.sql), then move the tag. The schema step finds them and skips them.
+</Note>
+
 ## The command that deletes everything
 
 <Warning>

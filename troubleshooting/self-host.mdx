@@ -109,7 +109,7 @@ At start, after `Backend started successfully on port 3000`, the backend checks 
     Your reverse proxy limits the body size. Allow 1 GB: `client_max_body_size 1G;` in Nginx. See [Nginx](/reverse-proxies/nginx).
   </Accordion>
   <Accordion title="No email arrives">
-    `EMAIL_PROVIDER` must be exactly `resend` or `nodemailer`, with `EMAIL_FROM_ADDRESS` and `EMAIL_FROM_NAME` set. Without them nothing is sent and nothing fails. See [Email](/configuration/emails).
+    `EMAIL_PROVIDER` must be exactly `resend`, `ses` or `nodemailer`, with `EMAIL_FROM_ADDRESS` and `EMAIL_FROM_NAME` set. Without them nothing is sent and nothing fails. See [Email](/configuration/emails).
   </Accordion>
 </AccordionGroup>
 

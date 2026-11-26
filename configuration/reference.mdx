@@ -133,11 +133,13 @@ Setup: [Email](/configuration/emails).
 
 | Variable | What it does |
 |---|---|
-| `EMAIL_PROVIDER` | `resend` or `nodemailer`. Anything else, including unset, sends nothing. |
+| `EMAIL_PROVIDER` | `resend`, `ses` or `nodemailer`. Anything else, including unset, sends nothing. |
 | `EMAIL_FROM_ADDRESS`, `EMAIL_FROM_NAME` | The sender. Without both, no mail goes out even with a provider. |
 | `RESEND_API_KEY` | For `resend`. |
 | `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` | For `nodemailer`, your SMTP server. |
 | `EMAIL_SECURE` | `true` for TLS from the first byte, usually port 465. |
+| `SES_REGION` | For `ses`: the AWS region of your SES account, where the sender is verified. |
+| `SES_ACCESS_KEY`, `SES_SECRET_ACCESS_KEY` | For `ses`, optional. Left out, the server's own AWS credentials are used, which need `ses:SendEmail`. |
 | `EMAIL_NOTIFICATIONS_FROM_ADDRESS` | Optional. Notifications (publishing summaries, channel and billing alerts) go out from this address instead, on the same verified domain. Replies still reach `EMAIL_FROM_ADDRESS`. |
 | `EMAIL_POSTAL_ADDRESS` | Optional. The company and postal address at the foot of every email. Unset leaves it out. |
 
@@ -280,6 +282,7 @@ All optional.
 | `DATAFAST_API_KEY`, `DATAFAST_WEBSITE_ID` | Datafast analytics. |
 | `DUB_PUBLISHABLE_KEY` | Dub's click analytics in the browser, separate from short links. |
 | `NEXT_PUBLIC_TRACKING_TRIAL` | Fires a conversion event when a trial starts. Only relevant with billing. |
+| `SLACK_ALERT_WEBHOOK_URL` | A Slack incoming webhook. Once a day, PostQueen counts the TikTok accounts that posted through this install in the last 24 hours, and from half of TikTok's daily cap of 300 it posts a warning there. Runs only with `RUN_CRON`. Unset, nothing is sent. |
 
 ## Listed in example files, but not read
 

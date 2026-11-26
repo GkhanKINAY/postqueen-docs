@@ -1,4 +1,4 @@
-# Server environment variable names from the app's .env.example (v3.6.170).
+# Server environment variable names from the app's .env.example (v3.6.179).
 # scripts/check-docs.py bans them on the user tabs. Refresh with:
 #   git -C <app> show origin/main:.env.example | grep -oE '^#? ?[A-Z][A-Z0-9_]+=' | sed -E 's/^# ?//; s/=$//' | sort -u
 ACCOUNT_PURGE_HOLD
@@ -126,6 +126,7 @@ MEWE_APP_ID
 MEWE_HOST
 MIGRATE_PROVIDERS
 MOBILE_APP_SCHEME
+MUSE_CHALLENGE
 NEXT_PUBLIC_APP_VERSION
 NEXT_PUBLIC_BACKEND_URL
 NEXT_PUBLIC_FACEBOOK_PIXEL
@@ -176,6 +177,9 @@ REVENUECAT_WEBHOOK_SECRET
 RUN_CRON
 SENTRY_ENVIRONMENT
 SENTRY_SPOTLIGHT
+SES_ACCESS_KEY
+SES_REGION
+SES_SECRET_ACCESS_KEY
 SHORT_IO_SECRET_KEY
 SLACK_ALERT_WEBHOOK_URL
 SLACK_ID
