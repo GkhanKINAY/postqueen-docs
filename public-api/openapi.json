@@ -237,6 +237,121 @@
         }
       }
     },
+    "/integrations/connect": {
+      "post": {
+        "tags": [
+          "Channels"
+        ],
+        "summary": "Create a connect link",
+        "description": "Returns the URL of a PostQueen page that connects one new channel to your workspace. Whoever opens it reads what connecting the channel means, then continues to the network to sign in and approve the access. They do not need a PostQueen account.\n\nThe link works for one hour and for one channel: once a channel is connected through it, create a new one for the next. A sign-in that was cancelled can be tried again with the same link. It cannot reconnect a channel you already have: use Get a connect URL with `refresh` for that.\n\nIt is for networks that sign in on their own consent page. A network that connects with a handle, key, password, server address, bot code, wallet or the browser extension answers `400`: connect those from **Add Channel** in the app.\n\nThe plan's channel limit is checked when you create the link, and again when the person continues from the page.",
+        "operationId": "createConnectLink",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "integration"
+                ],
+                "properties": {
+                  "integration": {
+                    "type": "string",
+                    "description": "The network's identifier, for example `youtube`, `linkedin-page` or `instagram-standalone`"
+                  },
+                  "redirectUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "maxLength": 2048,
+                    "description": "An absolute `http` or `https` URL with no `#` fragment. The page names its website before the person continues, and once the channel is connected it offers a button to this URL, with `added` (the network's identifier), `focus` (the new channel's id) and `msg` (a short status) added to its query string. Without it, a person signed in to PostQueen lands on their **Channels** page, and anyone else sees that the channel is connected"
+                  }
+                }
+              },
+              "example": {
+                "integration": "youtube",
+                "redirectUrl": "https://example.com/settings/social"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The URL to hand to the person",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "description": "The PostQueen page that connects the channel. It works for one hour and one channel"
+                    }
+                  }
+                },
+                "example": {
+                  "url": "https://app.postqueen.ai/integrations/connect/3f9c..."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A network that cannot be connected with a link, a `redirectUrl` that is refused, or a body that fails validation (the standard error shape, with `message` as a list)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "examples": {
+                  "notLinkable": {
+                    "summary": "A network that connects another way",
+                    "value": {
+                      "msg": "This platform cannot be connected with a link, add it from the PostQueen app instead"
+                    }
+                  },
+                  "redirect": {
+                    "summary": "A redirect URL with a fragment or credentials",
+                    "value": {
+                      "msg": "The redirect URL must be an absolute http(s) URL without a fragment or credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "402": {
+            "description": "The workspace is at its plan's channel limit",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequired"
+                },
+                "example": {
+                  "statusCode": 402,
+                  "message": "You have reached the maximum number of channels for your subscription. Please upgrade your subscription to add more channels.",
+                  "url": "https://app.postqueen.ai/billing"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "During the free trial, a network that unlocks when the trial ends (X)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageError"
+                },
+                "example": {
+                  "msg": "X unlocks when your free trial ends. End the trial to connect it now."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/integration-settings/{id}": {
       "get": {
         "tags": [
@@ -1566,6 +1681,128 @@
                   "message": "Only scheduled posts that were not published yet (or drafts) can be updated",
                   "error": "Bad Request",
                   "statusCode": 400
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Post not found`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "example": {
+                  "message": "Post not found",
+                  "error": "Not Found",
+                  "statusCode": 404
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/posts/{id}/attachments": {
+      "put": {
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Update post attachments",
+        "description": "Replaces the media of a post that has not been published yet. The list you pass becomes the post's media: anything you leave out is removed, and an empty list removes all of it. The content, the settings, the publish date and the post ids stay as they are, and a repeating post keeps repeating.\n\nWorks on a draft, or on a scheduled post (`QUEUE`) whose publish time is still ahead. Only the main post's media change: the media of its comments or thread items stay. Pass the id of the main post, not of a comment in its thread.\n\nNew media must be in your workspace's media library, so upload it first and pass its `id` and `path`. The post's current media can be passed back as they are. The post then goes through the same validation as creating one, except on a draft, where only the empty-content check runs.",
+        "operationId": "updatePostAttachments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The post's id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "attachments"
+                ],
+                "properties": {
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/Media"
+                    },
+                    "description": "The full new list of the post's media. An empty list removes all of it"
+                  }
+                }
+              },
+              "example": {
+                "attachments": [
+                  {
+                    "id": "YOUR_MEDIA_ID",
+                    "path": "https://cdn.example.com/a1b2c3d4e5.png",
+                    "alt": "The new calendar view"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Post attachments updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "postId": {
+                      "type": "string"
+                    },
+                    "publishDate": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "postId": "cmg1p0s7k0001qz0h4yq2a8r1",
+                  "publishDate": "2026-12-01T09:00:00"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The id belongs to a comment (pass the main post's id), the post was already published or failed, its publish time has passed, a new file is not in your media library, or the post with its new media failed validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NestError"
+                },
+                "examples": {
+                  "notInLibrary": {
+                    "summary": "A file that is not in your media library",
+                    "value": {
+                      "message": "Media not found: https://example.com/picture.png. Upload it to the media library first.",
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  },
+                  "published": {
+                    "summary": "A post that already went out",
+                    "value": {
+                      "message": "Only scheduled posts that were not published yet (or drafts) can be updated",
+                      "error": "Bad Request",
+                      "statusCode": 400
+                    }
+                  }
                 }
               }
             }

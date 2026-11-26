@@ -1,0 +1,15 @@
+---
+title: "Update post attachments"
+description: "Replace the media of a draft or a scheduled post without touching its text, settings or date."
+openapi: "PUT /posts/{id}/attachments"
+---
+
+Send the full list the post should have. Anything you leave out is removed, and an empty list removes all of the post's media. For example, to give a scheduled post one picture:
+
+```json
+{ "attachments": [{ "id": "YOUR_MEDIA_ID", "path": "https://cdn.example.com/a1b2c3d4e5.png" }] }
+```
+
+- A new file has to be in your media library first: [upload it](/public-api/uploads/upload-file) and pass the `id` and `path` the upload returns. Files the post already carries can be passed back as they are.
+- Only the main post's media change. The media of its comments or thread items stay.
+- A video's cover and alt text go in the same objects, as in [Create a post](/public-api/posts/create).

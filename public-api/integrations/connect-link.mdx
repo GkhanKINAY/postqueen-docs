@@ -1,0 +1,33 @@
+---
+title: "Create a connect link"
+description: "A PostQueen page that connects one new channel to your workspace, for someone to open in a browser."
+openapi: "POST /integrations/connect"
+---
+
+[Get a connect URL](/public-api/integrations/connect) returns the network's own sign-in page. This returns a PostQueen page instead: whoever opens it first reads what connecting the channel means, then continues to the network to sign in and approve. They do not need a PostQueen account, so you can send the link to a client or a teammate.
+
+```json
+{ "integration": "linkedin-page", "redirectUrl": "https://example.com/settings/social" }
+```
+
+## How long a link works
+
+- One hour, and one channel. Once a channel is connected through it, create a new link for the next one.
+- A sign-in that was cancelled on the network can be tried again with the same link.
+- It cannot reconnect a channel you already have. Use [Get a connect URL](/public-api/integrations/connect) with `refresh` for that.
+
+## Which networks it is for
+
+The networks that sign in on their own consent page: Instagram (`instagram`, `instagram-standalone`), Facebook, Threads, X, TikTok, TikTok Business, YouTube, LinkedIn, LinkedIn Page, Pinterest, Google Business Profile, Discord, Slack, Mastodon, Tumblr, Twitch, Kick, VK, Dribbble, MeWe and Whop. Any other network answers `400`: connect it from **Add Channel** in the app.
+
+## After the sign-in
+
+With a `redirectUrl`, the page names that website before the person continues, and the confirmation offers a button back to it. Its query string carries `added` (the network's identifier), `focus` (the new channel's id) and `msg` (a short status). Without one, a person signed in to PostQueen lands on their **Channels** page, and anyone else sees that the channel is connected.
+
+<Check>
+The new channel appears in [List channels](/public-api/integrations/list).
+</Check>
+
+<Note>
+The plan's channel limit is checked when you create the link and again when the person continues. During the free trial, a network that unlocks when the trial ends answers `406`.
+</Note>

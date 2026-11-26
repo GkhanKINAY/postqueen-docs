@@ -16,7 +16,7 @@ import McpAddresses from '/snippets/mcp-addresses.mdx';
 import ApiKeyLocation from '/snippets/api-key-location.mdx';
 import NextStepsAgent from '/snippets/next-steps-agent.mdx';
 
-PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Protocol, is how AI agents use outside tools. Give your agent one address and it can list your channels, write posts for PostQueen to schedule, add media and read how your posts did. There is nothing to install or run on your side.
+PostQueen runs an MCP server at `api.postqueen.ai`. MCP, the Model Context Protocol, is how AI agents use outside tools. Give your agent one address and it can list your channels, write posts for PostQueen to schedule, add media and read how your posts and channels did. There is nothing to install or run on your side.
 
 <div className="pq-visual pq-tint-lilac">
   <img noZoom src="/images/site/mcp-chat.webp" alt="Claude, connected to PostQueen, reads last month's Instagram results, generates three images and schedules three posts for next week with four PostQueen tools" />
@@ -81,9 +81,9 @@ The tools come in seven groups. The agent picks the ones it needs from what you 
 
 | Group | Tools | What they do |
 |---|---|---|
-| Channels | 4 | List your channels and customers, read each network's rules and settings, look up values a setting needs |
-| Posts | 5 | Create a draft, a scheduled post or a post that goes out now; list posts; read one in full; change the settings of one that has not gone out; delete one |
-| Analytics | 3 | Totals for your published posts over 7, 30 or 90 days, your best posts, and the numbers for one post |
+| Channels | 5 | List your channels and customers, give you a link to connect a new channel, read each network's rules and settings, look up values a setting needs |
+| Posts | 6 | Create a draft, a scheduled post or a post that goes out now; list posts; read one in full; change the settings or the media of one that has not gone out; delete one |
+| Analytics | 4 | Totals for your published posts over 7, 30 or 90 days, your best posts, the numbers for one post, and a channel's own numbers by day, such as followers |
 | Uploads | 7 | Bring an image or video in from a link, find what is already in the media library, check that a video is ready, open an upload panel in Claude, Claude Cowork and ChatGPT, or give an agent that runs commands an upload link |
 | Images and video | 5 | Create an image for a post, or start a video job and follow it. Creating an image or a video is paid from your workspace's [credits](/cloud/credits) |
 | Clipping | 3 | Soon: turn a long YouTube video into short vertical clips with captions. Not available on PostQueen yet |
@@ -93,8 +93,8 @@ Every tool, with what it takes and what it returns: [MCP tools](/mcp/tools).
 
 ### What it cannot do yet
 
-- Change a post's text or time, or move a draft to scheduled. It can change a post's settings.
-- Read channel numbers such as follower counts.
+- Change a post's text or time, or move a draft to scheduled. It can change a post's settings and its media.
+- Reconnect a channel, or connect a network that signs in with a key, a password or a server address. It can give you a link to connect the others.
 
 Do those in the app, or with the [CLI](/cli/introduction) or the [API](/public-api/introduction).
 
