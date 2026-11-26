@@ -275,7 +275,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "The URL to hand to the person",
             "content": {
               "application/json": {
@@ -299,7 +299,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageError"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/MessageError"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NestError"
+                    }
+                  ]
                 },
                 "examples": {
                   "notLinkable": {
@@ -312,6 +319,16 @@
                     "summary": "A redirect URL with a fragment or credentials",
                     "value": {
                       "msg": "The redirect URL must be an absolute http(s) URL without a fragment or credentials"
+                    }
+                  },
+                  "validation": {
+                    "summary": "Validation",
+                    "value": {
+                      "message": [
+                        "redirectUrl must be a URL address"
+                      ],
+                      "error": "Bad Request",
+                      "statusCode": 400
                     }
                   }
                 }
