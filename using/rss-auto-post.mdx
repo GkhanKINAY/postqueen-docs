@@ -47,7 +47,7 @@ Auto Post checks a feed every hour. When the feed has a new item, PostQueen writ
 - The post is the text, a blank line, then the item's link.
 - It goes on your calendar at the next free [posting time](/using/posting-times).
 - With **Create a draft for review**, every chosen channel gets a draft. Nothing goes out until you open the draft and schedule it.
-- With **Publish automatically**, the post is scheduled on each channel where it passes that network's checks. A channel that needs settings of its own, such as a title, gets a draft instead, and a notification names it. Channels that are disabled or need reconnecting are skipped.
+- With **Publish automatically**, the post is scheduled on each channel where it passes that network's checks. A channel that needs settings of its own, such as a title, gets a draft instead, and a notification names it. Channels that are disabled, need reconnecting or were never finished connecting are skipped.
 
 <Tip>
 For **Publish automatically**, pick channels that need nothing but text and a link, such as Bluesky or Nostr. A network that asks for a title or other settings on every post always falls back to a draft.
@@ -70,7 +70,7 @@ With no badge, every chosen channel can take the feed's posts. A **Create a draf
 What happens to new items meanwhile depends on the feed:
 
 - With **Publish automatically**, the channels that cannot post are skipped. When none is left, the item is skipped for good and the bell shows "Autopost has no channel to post to".
-- With **Create a draft for review**, channels that are disabled or need reconnecting still get their drafts, which wait for you to fix the channel.
+- With **Create a draft for review**, channels that are disabled, need reconnecting or were never finished connecting still get their drafts, which wait for you to fix the channel.
 
 See [Connect a channel](/using/connect-a-channel) to reconnect or enable a channel.
 

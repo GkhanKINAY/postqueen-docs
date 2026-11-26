@@ -133,7 +133,7 @@ Creates posts: a draft, a post scheduled for a time, or a post that goes out now
 | `postsAndComments` | list | Yes | The post, then its comments or thread items. Each has `content` (HTML: `p`, `h1` to `h3`, `strong`, `u`, `ul`, `li`, and `img` where the network's rules say pictures go inside the content), `attachments` (a list of media, each a `path` or an object, see below) and an optional `delay`, the minutes to wait after the item before it |
 | `settings` | list | Yes | The network's settings as `key` and `value` pairs, from `integrationSchema`. An empty list when it needs none |
 
-**Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again. An `integrationId` that is not a channel of your workspace, or a channel that was deleted, returns `errors`: `Integration not found`.
+**Returns** `output`, a list of `postId` and `integration` for each post it created. When a post fails the checks, `output` is `errors` with the reason, and nothing is created. The agent fixes the post and calls the tool again. An `integrationId` that is not a channel of your workspace, or a channel that was deleted, returns `errors`: `Integration not found`. A channel that is turned off or needs a reconnect returns `errors` with the channel's name and "This channel needs to be reconnected before you can schedule posts. Please reconnect it from Channels." A channel that was never finished connecting returns the channel's name and "The connection of this channel was not finished. Please finish connecting it from Channels and select the page or account to post to, then try again."
 
 - Settings and length are checked for scheduled posts and posts that go out now. Over MCP, a draft is saved even when a required setting is missing, so add it before the draft is scheduled. The CLI and the API check a draft's settings too.
 - The `content` of each item is at most 1,000,000 characters.
@@ -175,7 +175,8 @@ Changes the network settings of a post that has not gone out. The text and the p
 
 **Returns** `output` with `postId` and `publishDate`, or `errors`. It works on drafts and on scheduled posts whose time has not passed.
 
-The tool tells MCP clients that it changes data that is already saved, so a client that asks before such changes asks you to approve it.
+- A repeating post keeps repeating.
+- The tool tells MCP clients that it changes data that is already saved, so a client that asks before such changes asks you to approve it.
 
 ### `postAttachmentsTool`
 
@@ -496,7 +497,7 @@ Sends a request in plain words to PostQueen's own agent, which picks and runs th
 |---|---|---|---|
 | `message` | string | Yes | What you want done |
 
-**Returns** the agent's answer.
+**Returns** the agent's answer as text. If the agent stops before it finishes, for example when the credits run out partway, the answer ends with "The agent stopped before it finished its answer", and says that actions it took may already have run, so check them before you ask again. An error comes back as its message.
 
 The agent's work is paid from your workspace's [credits](/cloud/credits) by the tokens it uses, and any image or video it makes at its own price. With a balance of zero or less, the tool is refused with `Not enough credits: ...`.
 
