@@ -107,7 +107,7 @@ Work that the balance cannot cover is refused before it starts, with this messag
 
 > Not enough credits: this costs N and the balance is N.
 
-Choose **Move to billing** to buy a pack or move to a plan with more credits. The AI image and video windows say "You don't have enough credits for this image." or "You don't have enough credits for this video." under the price, with **Get more credits**.
+Choose **Move to billing** to buy a pack or move to a plan with more credits. A member who is not an admin cannot open Billing, so for them the message adds "Please ask an admin of this workspace." and the dialog has only **OK**. The AI image and video windows say "You don't have enough credits for this image." or "You don't have enough credits for this video." under the price, with **Get more credits**.
 
 Background work stops without a dialog instead. An Auto Post item becomes a draft, with a notification: "Autopost saved a draft: not enough credits". A plug stops, with "A plug stopped: not enough credits". The public API and MCP answer the same message, with status `402`: see [Limits and errors](/public-api/limits-and-errors#status-codes).
 

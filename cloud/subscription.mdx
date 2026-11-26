@@ -113,6 +113,8 @@ Deleting your account also cancels the plans of the workspaces it deletes, at on
 
 If Stripe cannot charge a renewal, you get an email and an in-app notice, and Billing shows "We could not charge your credit card" with **Update payment method**. The plan keeps working while Stripe retries the payment. The next attempt uses the card you set in the billing portal. If the payment still cannot be collected, the plan ends.
 
+The unpaid renewal stays open after that. Paying it later brings the plan back for the period it covers, with that period's credits, as long as the workspace has not started another plan in the meantime. Any other unpaid invoice of the ended subscription, such as an upgrade that was never paid, is voided.
+
 ## When a payment is disputed
 
 If a payment to PostQueen is disputed with your bank (a chargeback) and the workspace has no subscription still running, such as a founding-member payment, the plan is suspended at once. Every member gets an email titled "Payment disputed", and the bell shows the same words: "A payment for PostQueen was disputed with your bank, so your plan has been suspended. Contact support if this was not you." **Go to billing** on the notice opens Billing.
