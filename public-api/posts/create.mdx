@@ -94,7 +94,7 @@ Every status the endpoint returns, and what to do about it, is on [Limits and er
 
 ## Changing or copying a post
 
-- **Change a scheduled post.** Send it again with `value[].id` set to the id of each part you keep, and its `group` from [List posts](/public-api/posts/list) so the parts you leave out are deleted. Use `update` with the post's current `date` to change its text or media without touching the schedule, or `schedule` with a new `date` to move it. To change only its settings, [Update post settings](/public-api/posts/settings) is simpler.
+- **Change a scheduled post.** Send it again with `value[].id` set to the id of each part you keep, and its `group` from [List posts](/public-api/posts/list) so the parts you leave out are deleted. Use `update` with the post's current `date` to change its text or media without touching the schedule, or `schedule` with a new `date` to move it. To change only its settings or only its media, [Update post settings](/public-api/posts/settings) or [Update post attachments](/public-api/posts/attachments) is simpler.
 - **`update` needs the id of the main post.** In each entry of `posts`, `value[0].id` must be the id of a post in your workspace, and of the post itself, not of one of its comments. A missing, mistyped or deleted id is refused with `400` before anything is saved:
 
   ```text

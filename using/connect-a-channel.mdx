@@ -37,6 +37,8 @@ A channel is one account on one network that PostQueen posts to. Connect at leas
 
 When a client owns the account, choose **Invite by link** instead of **Connect myself**, pick the network and choose **Copy Link**. The link works for one hour, and the channel lands in your workspace when the owner finishes. Only networks that sign in on their own page are offered this way.
 
+An AI agent connected over MCP can give you such a link too, with [`integrationConnectTool`](/mcp/tools#integrationconnecttool), and so can the API, with [Create a connect link](/public-api/integrations/connect-link).
+
 ## Reconnect a channel
 
 When a network's sign-in expires or is revoked, the channel shows **Needs reconnecting** in the list, and its page says "This channel lost its connection and will not publish until you reconnect it." Choose **Reconnect** and sign in again. A network that uses a key or password asks for the details again. The channel keeps its posts and time slots.

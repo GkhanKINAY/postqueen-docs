@@ -5,11 +5,14 @@ icon: "wrench"
 keywords:
   - mcp tools
   - integrationList
+  - integrationConnectTool
   - integrationSchema
   - integrationSchedulePostTool
   - postsListTool
+  - postAttachmentsTool
   - deletePostTool
   - analyticsPostsTool
+  - integrationAnalyticsTool
   - uploadWidgetTool
   - mediaListTool
   - mediaStatusTool
@@ -35,7 +38,7 @@ How to connect: [MCP server](/mcp/introduction).
 
 <Steps>
   <Step title="Find the channel">
-    `integrationList` gives the channel's `id` and its network (`platform`).
+    `integrationList` gives the channel's `id` and its network (`platform`). If the channel is not connected yet, `integrationConnectTool` gives you a link to connect it.
   </Step>
   <Step title="Read the network's rules">
     `integrationSchema` returns the rules, the character limit and the settings a post needs. If a setting needs a value only the network knows, such as a WordPress post type, `triggerTool` looks it up.
@@ -65,6 +68,23 @@ Lists the channels the agent can post to. Channels that are turned off, need to 
 Lists your customers, the groups your channels are sorted into. Takes no input.
 
 **Returns** `output`, a list of `id` and `name`.
+
+### `integrationConnectTool`
+
+Gives you a link to connect a new channel. The link opens a PostQueen page that says what connecting the channel means, then sends whoever opens it to the network to sign in and approve. The agent cannot connect a channel on its own: a person clicks through the network's consent screen. You can also pass the link to a client or a teammate, who needs no PostQueen account.
+
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `platform` | string | Yes | The network's identifier, such as `youtube`, `linkedin-page` or `instagram-standalone` |
+| `redirectUrl` | string | No | An `http` or `https` address the confirmation offers as a button once the channel is connected, with `added`, `focus` and `msg` added to its query string. The agent passes one only when you, or the app you are in, gave an address to return to |
+
+**Returns** `output.url`, or `output.errors` with the reason, such as `This platform cannot be connected with a link, add it from the PostQueen app instead` or, during the free trial, `X unlocks when your free trial ends. End the trial to connect it now.`
+
+- The link works for one hour and for one channel. A sign-in that was cancelled can be tried again with the same link.
+- It cannot reconnect a channel you already have. Reconnect it in the app.
+- It is for the networks that sign in on their own consent page, listed under [Create a connect link](/public-api/integrations/connect-link#which-networks-it-is-for). The others connect with a handle, key, password, server address, bot code, wallet or the browser extension, from **Add Channel** in the app.
+- The plan's channel limit is checked when the person continues from the page. When the plan has no channel left, the page says so and nothing is connected.
+- Once the sign-in is done, the new channel is listed by `integrationList`.
 
 ### `integrationSchema`
 
@@ -157,6 +177,23 @@ Changes the network settings of a post that has not gone out. The text and the p
 
 The tool tells MCP clients that it changes data that is already saved, so a client that asks before such changes asks you to approve it.
 
+### `postAttachmentsTool`
+
+Replaces the media of a post that has not gone out. The text, the settings and the publish time stay as they are.
+
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `id` | string | Yes | The post's `id`. Use the post itself, not one of its comments |
+| `attachments` | list | Yes | Every file the post should have, each a `path` or `{ path, alt, thumbnail, thumbnailTimestamp }` as in `integrationSchedulePostTool`. Anything left out is removed, and an empty list removes all of the post's media |
+
+**Returns** `output` with `postId` and `publishDate`, or `errors`. It works on drafts and on scheduled posts whose time has not passed.
+
+- Only the post's own media change. The media of its comments or thread items stay.
+- A new file must be in your media library: bring it in with an upload tool or find it with `mediaListTool`, and pass its `path`. The post's current files can be passed back as they are. Any other file is refused with `Media not found: ... Upload it to the media library first.`
+- A scheduled post is checked again with its new media, the way the app checks it. A draft is only checked for being empty.
+- A repeating post keeps repeating.
+- The tool tells MCP clients that it changes data that is already saved, so a client that asks before such changes asks you to approve it.
+
 ### `deletePostTool`
 
 Deletes a post: scheduled, draft, published or failed. The tool's description tells the agent to show you which post it will delete (channel, date and text) and ask first. PostQueen does not check that it did.
@@ -175,7 +212,7 @@ Deletes a post: scheduled, draft, published or failed. The tool's description te
 
 ## Analytics
 
-The three analytics tools read your published posts on the networks that report numbers: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. [Analytics](/using/analytics#the-nine-networks-that-report-numbers) lists what each one reports.
+Three of the analytics tools read your published posts, and `integrationAnalyticsTool` reads a channel as a whole. The post tools work on the networks that report numbers: X, Facebook Page, Instagram, LinkedIn Page, YouTube, Threads, Pinterest, TikTok and Google Business Profile. [Analytics](/using/analytics#the-nine-networks-that-report-numbers) lists what each one reports.
 
 - The window (7, 30 or 90 days) picks which posts count, by publish date. The numbers are each post's totals so far, not only what happened inside the window.
 - `null` means the network does not report that number. Facebook gives no comment counts, Pinterest gives impressions only, and Google Business Profile gives no numbers per post.
@@ -219,6 +256,20 @@ The numbers for one published post.
 | `postId` | string | Yes | A post ID from `postsListTool` or `analyticsPostsTool` |
 
 **Returns** `output.post` with the same fields as a post in `analyticsPostsTool`, or `output.error`: `not_found`, `not_published`, `unsupported`, or `missing_release` when PostQueen does not know the post's ID on the network yet. Connect the post to its published copy in the app, or with [`postqueen posts:connect`](/cli/analytics#fix-a-missing-release-id).
+
+### `integrationAnalyticsTool`
+
+A channel's own numbers, one value a day, such as followers, impressions and engagement: the numbers the channel shows under **Analytics** in the app, and the same as [Get channel analytics](/public-api/analytics/platform) in the API. For the numbers of your posts, use the three tools above.
+
+| Input | Type | Required | What it is |
+|---|---|---|---|
+| `id` | string | Yes | The channel's `id` from `integrationList` |
+| `days` | number | No | How many days to look back, 1 to 90. Default `7` |
+
+**Returns** `output.analytics`, one entry per metric, each with a `label`, a `percentageChange` and `data`, a list of `total` and `date`. The metrics depend on the network, and [reading the numbers](/public-api/analytics/platform#reading-the-numbers) explains them. An empty list means the network has no channel numbers in PostQueen or returned none for the window. A channel that is not found or needs to be reconnected returns `output.errors`.
+
+- The numbers are read from the network and kept for up to an hour, so asking again within the hour returns the same numbers.
+- The tool never reads X itself, since X charges for every read. It returns what the last **Refresh** under [Analytics](/using/analytics#good-to-know) loaded, and an empty list until someone chooses it.
 
 ## Uploads
 
@@ -455,6 +506,6 @@ The agent's work is paid from your workspace's [credits](/cloud/credits) by the 
 |---|---|
 | Change a post's text or time | The app |
 | Move a post between draft and scheduled | The app, [`postqueen posts:status`](/cli/managing-posts#change-a-post) or [the API](/public-api/posts/change-status) |
-| Read channel numbers, such as followers | The app, [`postqueen analytics:platform`](/cli/analytics) or [the API](/public-api/analytics/platform) |
+| Reconnect a channel, or add one that connects with a handle, key, password, server address, bot code, wallet or the browser extension | **Add Channel** and the channel's page in the app |
 
 <NextStepsAgent />
