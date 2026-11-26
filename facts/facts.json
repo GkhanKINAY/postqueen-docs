@@ -191,7 +191,7 @@
         "class": "IntegrationListTool",
         "group": "channels",
         "signin": true,
-        "summary": "Lists the channels you can post to, optionally for one customer; disabled channels and channels that need a reconnect are left out."
+        "summary": "Lists the channels you can post to, optionally for one customer; disabled channels, channels that need a reconnect and channels that were never finished connecting are left out."
       },
       {
         "name": "groupList",
@@ -516,7 +516,7 @@
       "badge": "Available",
       "badgeColor": "green",
       "statusNote": "",
-      "textLimit": "500 bytes",
+      "textLimit": "500 characters",
       "analytics": true
     },
     {

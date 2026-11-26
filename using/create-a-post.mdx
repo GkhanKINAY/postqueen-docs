@@ -65,9 +65,14 @@ A new post goes out on all its channels at the same time. Once it is saved, each
   </Step>
 </Steps>
 
-When a save would change what the other channels do, PostQueen asks first. Scheduling a post whose other channels are drafts asks "This post was created for more than one channel. Do you want to schedule all of them?", with **Schedule all channels** or **Only** and the channel's name. **Save as draft** asks the same with **Move all channels to drafts**, and **Post now** with **Post all channels now**. A channel that is already published stays published when you move the others to drafts.
+When a save would change what the other channels do, PostQueen asks which channels it applies to. The window takes the button's name, **Schedule**, **Update**, **Save as draft** or **Post now**, and lists the post's channels with a checkbox and a status each, under a line such as "Choose the channels to schedule." and "Unticked channels keep their status, but your edits are still saved to them."
 
-**Delete Post** in the composer asks "This post was created for more than one channel. Do you want to delete it from all of them?": **Only from** the channel in view, or **Delete from all channels**. When other channels still have the post scheduled, it adds that deleting it from all channels cancels those too.
+- A channel the save leaves as it is has no checkbox and says so, such as **Stays scheduled**, **Stays a draft** or **Stays published**.
+- A channel that already went out starts unticked, with "tick to post it again". Tick it only to publish it a second time.
+- A channel whose time has passed is published at once when ticked, and says "will be posted now".
+- The confirm button says what happens, such as **Update and reschedule**, **Update and post now**, or **Just update the post details** when no ticked channel changes.
+
+**Delete Post** in the composer asks "Choose the channels to delete it from." over the same list, with only the channel in view ticked. The button reads **Delete from 1 channel**, or **Delete from** and the number of channels. When one of them is published, it adds "A published post is removed from PostQueen only and stays live where it was published."
 
 A post saved for several channels before this feature arrived opens one channel at a time, as before.
 
@@ -93,6 +98,8 @@ Each network receives the formatting it can show:
 | Every other network | Plain text. Bold and underline are sent as Unicode bold and underlined characters, bullet lists become lines that start with `-`, and links show as their address. |
 
 Only the letters A to Z and the digits 0 to 9 have a Unicode bold or underlined form. Accented letters, other alphabets and symbols stay as you typed them.
+
+**Shift+Enter** starts a new line inside the same paragraph, and the line breaks in text you paste are kept. Networks receive them as line breaks, except inside a bullet, and inside a heading on DEV, Hashnode, Discord and Whop, where a line break becomes a space. WordPress, Listmonk, Telegram and X Articles keep every line break.
 
 Text in a right-to-left language, such as Arabic, Hebrew or Persian, sets its own direction. Each paragraph and heading follows the language it starts with, in the editor and in the previews, so a post can mix right-to-left and left-to-right paragraphs.
 
@@ -138,7 +145,7 @@ Open the repeat control (it reads **Doesn't repeat**), then pick how often: **Ev
 - The badge under the editor counts characters against each channel's limit, and its details name any channel under **Links will be removed from** or **Comments cannot be published on**.
 - PostQueen does not shorten links today. Links are published as you wrote them, and Settings has no **Shortlink Settings** card.
 - An existing post opens as **Edit Post**. A scheduled post saves with **Update** and a draft with **Schedule**. Updating a post whose time has passed asks whether to **Just update the post details** or **Republish the post**.
-- A post that failed opens with a banner above the editor: "This post didn't go out on", the date, the reason, and "Fix it, then schedule it again or post it now." See [A post did not go out](/troubleshooting/post-failed).
+- A post that failed opens with a banner above the editor: "This post didn't go out on", the date, the reason, and "Fix it, then schedule it again or post it now." When the post may already be live, the banner ends with "Check the network first. If the post isn't there, schedule it again or post it now." instead. See [A post did not go out](/troubleshooting/post-failed).
 - On X, the settings card has **Add Re-posters**: pick a **Delay** and your other X channels under **Accounts that will engage:** and they repost the post. X can be connected once the free trial ends, or right away if you end the trial early.
 
 ## Open a published post

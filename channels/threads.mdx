@@ -16,7 +16,7 @@ Schedule Threads posts, photos, videos, carousels and multi-part threads that pu
 
 <CardGroup cols={2}>
   <Card title="Text" icon="type">
-    500 bytes per post and per reply. Plain ASCII letters count 1 and every other character 2 to 4, so text with accents or emoji fits fewer than 500 characters.
+    500 characters per post and per reply. Most emoji count as one, a flag as two and a family emoji as several.
   </Card>
   <Card title="Media" icon="image">
     JPEG or PNG images and MP4 videos: one item, or a carousel of 2 to 20 mixed. GIF, WebP, AVIF, BMP and TIFF are refused.
@@ -40,9 +40,9 @@ PostQueen refuses a post that breaks these rules and shows the message in the co
 | At most 20 items | “Threads carousels can have up to 20 items” |
 | JPEG or PNG images only | “Threads accepts JPEG or PNG images only” |
 | At most 5 different links | “Threads allows up to 5 links per post” |
-| Text within 500 bytes | “post is too long, please fix it” |
+| Text within 500 characters | “post is too long, please fix it” |
 
-The composer's counter measures a Threads post in bytes too. Threads documents byte counting for emoji only, so a post full of accented letters can be refused by PostQueen although Threads might take it.
+PostQueen counts characters as Unicode code points, in the composer's counter and before scheduling: an accented letter and most emoji count as one, a flag as two and a family emoji as several. Threads itself counts each emoji as its length in UTF-8 bytes, 4 for most emoji, so a post with many emoji close to 500 can pass PostQueen's check and be refused by Threads with "Post text exceeds 500 characters limit".
 
 Image size and video length are Threads' rules, and PostQueen does not check them first. Threads takes images up to 8 MB and videos up to 5 minutes and 1 GB, and allows 250 posts and 1,000 replies in any 24 hours.
 
@@ -62,7 +62,11 @@ Image size and video length are Threads' rules, and PostQueen does not check the
 
 ## Post settings
 
-Threads has no post settings. The API takes `"__type": "threads"` and nothing else, as [Threads posting settings](/public-api/providers/threads) shows.
+Besides the thread finisher (see below), each Threads post in the composer has this setting:
+
+- **Made with AI**: Threads' AI info label, on a text, photo, video or carousel post. It starts unticked.
+
+The field name for the API is on [Threads posting settings](/public-api/providers/threads).
 
 ## Comments and threads
 

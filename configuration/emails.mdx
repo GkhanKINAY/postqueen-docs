@@ -1,6 +1,6 @@
 ---
 title: "Email"
-description: "Send PostQueen's mail (password resets, invitations, sign-in codes and notifications) through Resend or your own SMTP server, and decide whether new accounts must confirm their address."
+description: "Send PostQueen's mail (password resets, invitations, sign-in codes and notifications) through Resend, Amazon SES or your own SMTP server, and decide whether new accounts must confirm their address."
 icon: "mail"
 ---
 
@@ -14,7 +14,7 @@ PostQueen sends password reset links, invitations, one-time sign-in codes when [
 
 <Steps>
   <Step title="Choose the provider and the sender">
-    `EMAIL_PROVIDER` must be exactly `resend` or `nodemailer`. Any other value, including a typo or no value, selects a provider that sends nothing and reports no error. Both need a sender:
+    `EMAIL_PROVIDER` must be exactly `resend`, `ses` or `nodemailer`. Any other value, including a typo or no value, selects a provider that sends nothing and reports no error. Every provider needs a sender:
 
     ```env
     EMAIL_FROM_NAME=PostQueen
@@ -36,6 +36,20 @@ PostQueen sends password reset links, invitations, one-time sign-in codes when [
         ```
 
         `EMAIL_FROM_ADDRESS` has to be on the domain you verified, or Resend refuses the mail.
+      </Tab>
+      <Tab title="Amazon SES">
+        `ses` sends through Amazon SES, in the region you name:
+
+        ```env
+        EMAIL_PROVIDER=ses
+        SES_REGION=us-east-1
+        SES_ACCESS_KEY=your-access-key-id
+        SES_SECRET_ACCESS_KEY=your-secret-access-key
+        EMAIL_FROM_NAME=PostQueen
+        EMAIL_FROM_ADDRESS=hello@example.com
+        ```
+
+        `EMAIL_FROM_ADDRESS`, and `EMAIL_NOTIFICATIONS_FROM_ADDRESS` if you set it, must be an identity verified in `SES_REGION`. Leave out both keys to use the AWS credentials the server already has, from `AWS_*` variables or a role its machine or container runs with; they need `ses:SendEmail`. A new SES account starts in the sandbox, where it sends only to addresses you verified.
       </Tab>
       <Tab title="SMTP">
         `nodemailer` sends through any SMTP server:
@@ -65,7 +79,7 @@ PostQueen sends password reset links, invitations, one-time sign-in codes when [
     ```
 
     <Check>
-    `Email service provider: resend` (or `nodemailer`), with no `Missing environment variable` line after it.
+    `Email service provider: resend` (or `ses`, or `nodemailer`), with no `Missing environment variable` line after it.
     </Check>
   </Step>
   <Step title="Send a test">
@@ -93,10 +107,13 @@ Activation then applies once mail can actually go out: a provider named in `EMAI
 
 <AccordionGroup>
   <Accordion title="Nothing is sent and nothing is logged">
-    `EMAIL_PROVIDER` is not exactly `resend` or `nodemailer`, or one of the two sender values is missing. The log line `Email service provider:` shows which provider was chosen; `no provider` means none.
+    `EMAIL_PROVIDER` is not exactly `resend`, `ses` or `nodemailer`, or one of the two sender values is missing. The log line `Email service provider:` shows which provider was chosen; `no provider` means none.
   </Accordion>
   <Accordion title="Resend refuses the mail">
     `EMAIL_FROM_ADDRESS` is not on a domain verified in your Resend account.
+  </Accordion>
+  <Accordion title="SES refuses the mail">
+    The log shows `[email] SES refused the email:` with SES's reason. Usually the sender is not verified in `SES_REGION`, or the account is still in the SES sandbox and the recipient is not verified.
   </Accordion>
   <Accordion title="SMTP times out">
     Many hosting providers block outbound mail ports until you ask. Test from the server: `nc -zv smtp.example.com 465`.

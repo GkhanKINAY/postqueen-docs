@@ -24,6 +24,7 @@ Read the live schema for your channel with [Get a channel's settings](/public-ap
 | `graduation_strategy` | string | No | How a Trial Reel reaches your followers: `MANUAL` or `SS_PERFORMANCE` (automatically, based on performance). Left out, a Trial Reel uses `MANUAL`. |
 | `collaborators` | array of objects | No | Up to 3 accounts to invite as collaborators, each `{ "label": "username" }`. A leading `@` is removed. Private accounts can't be invited. Not sent on stories. |
 | `audio` | object | No | Music or original sound for a single-video Reel. Facebook Business tile only: an `instagram-standalone` channel ignores it. See below. |
+| `made_with_ai` | boolean | No | `true` gives a post, carousel or Reel Instagram's AI info label, on both tiles. Ignored on a story, which Instagram has no AI label for. |
 
 ### `post_type`
 
